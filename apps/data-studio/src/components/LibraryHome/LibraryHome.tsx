@@ -151,11 +151,22 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 }}
                 defaultActionsForItem={['edit', 'remove']}
                 defaultPrimaryActions={['create']}
+                defaultMassActions={['deactivate']}
+                defaultViewSettings={{
+                    pageSize: 3
+                }}
                 itemActions={[
                     {
                         label: 'Test 1',
                         icon: <FaBeer />,
                         callback: item => console.info(1, item)
+                    }
+                ]}
+                massActions={[
+                    {
+                        icon: null,
+                        label: 'test',
+                        callback: console.log
                     }
                 ]}
                 primaryActions={[

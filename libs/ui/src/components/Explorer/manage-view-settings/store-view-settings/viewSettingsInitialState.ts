@@ -20,6 +20,7 @@ export const viewSettingsInitialState: IViewSettingsState = {
     pageSize: defaultPageSizeOptions[0],
     filters: [],
     maxFilters: defaultMaxFilters,
+    massSelection: [],
     initialViewSettings: {
         viewType: 'table',
         attributesIds: [],

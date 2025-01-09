@@ -1,18 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {cloneElement, FunctionComponent, memo, ReactNode} from 'react';
+import {cloneElement, ComponentProps, FunctionComponent, memo, ReactNode} from 'react';
 import {KitButton, KitDropDown, KitPagination, KitTable, useKitTheme} from 'aristid-ds';
 import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import {FaEllipsisH} from 'react-icons/fa';
 import {Override} from '@leav/utils';
 import styled from 'styled-components';
+import isEqual from 'lodash/isEqual';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IExplorerData, IItemAction, IItemData} from './_types';
 import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
-import isEqual from 'lodash/isEqual';
+import {MASS_SELECTION_ALL} from '_ui/components/Explorer/_constants';
 import {useColumnWidth} from './useColumnWidth';
 
 const USELESS = '';
@@ -64,23 +65,43 @@ interface IDataViewProps {
     attributesToDisplay: string[];
     paginationProps?: {
         pageSizeOptions: number[];
-        totalItems: number;
+        totalCount: number;
         currentPage: number;
         pageSize: number;
         setNewPage: (page: number, pageSize: number) => void;
         setNewPageSize: (page: number, pageSize: number) => void;
+    };
+    selection: {
+        onSelectionChange: null | ((keys: string[]) => void);
+        isMassSelectionAll: boolean;
+        selectedKeys: string[];
     };
 }
 
 // TODO: tests will fail if we don't check attributeToDisplay because we have a render with no attributes but data is present. We should check why there's this behavior
 const arePropsEqual = (prevProps: IDataViewProps, nextProps: IDataViewProps) =>
     isEqual(
-        {attributesToDisplay: prevProps.attributesToDisplay, data: prevProps.dataGroupedFilteredSorted},
-        {attributesToDisplay: nextProps.attributesToDisplay, data: nextProps.dataGroupedFilteredSorted}
+        {
+            attributesToDisplay: prevProps.attributesToDisplay,
+            data: prevProps.dataGroupedFilteredSorted,
+            selectedKeys: prevProps.selection.selectedKeys
+        },
+        {
+            attributesToDisplay: nextProps.attributesToDisplay,
+            data: nextProps.dataGroupedFilteredSorted,
+            selectedKeys: nextProps.selection.selectedKeys
+        }
     );
 
 export const DataView: FunctionComponent<IDataViewProps> = memo(
-    ({dataGroupedFilteredSorted, attributesToDisplay, attributesProperties, paginationProps, itemActions}) => {
+    ({
+        dataGroupedFilteredSorted,
+        attributesToDisplay,
+        attributesProperties,
+        paginationProps,
+        itemActions,
+        selection: {onSelectionChange, selectedKeys, isMassSelectionAll}
+    }) => {
         const {t} = useSharedTranslation();
         const {theme} = useKitTheme();
 
@@ -97,13 +118,14 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                 <StyledActionsList ref={columnRef}>
                     {isLessThanFourActions ? (
                         <>
-                            {actions.map(({label, icon, isDanger, callback}, actionIndex) => (
+                            {actions.map(({label, icon, isDanger, callback, disabled}, actionIndex) => (
                                 <KitButton
+                                    key={actionIndex}
                                     title={label}
                                     icon={icon}
                                     onClick={callback}
                                     danger={isDanger}
-                                    key={actionIndex}
+                                    disabled={disabled}
                                 >
                                     {label}
                                 </KitButton>
@@ -117,6 +139,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                 onClick={actions[0].callback}
                                 title={actions[0].label}
                                 danger={actions[0].isDanger}
+                                disabled={actions[0].disabled}
                             />
                             <KitButton
                                 type="tertiary"
@@ -124,13 +147,15 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                 onClick={actions[1].callback}
                                 title={actions[1].label}
                                 danger={actions[1].isDanger}
+                                disabled={actions[1].disabled}
                             />
                             <KitDropDown
                                 menu={{
-                                    items: actions.slice(2).map(({callback, icon, label, isDanger}) => ({
+                                    items: actions.slice(2).map(({callback, icon, label, isDanger, disabled}) => ({
                                         key: label,
                                         title: label,
                                         danger: isDanger,
+                                        disabled,
                                         label,
                                         icon: icon ? cloneElement(icon, {size: '2em'}) : null, // TODO: find better tuning
                                         onClick: callback
@@ -189,6 +214,24 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                       ]
             );
 
+        const _rowSelection: ComponentProps<typeof KitTable>['rowSelection'] =
+            onSelectionChange === null
+                ? undefined
+                : {
+                      type: 'checkbox',
+                      columnTitle: ' ', // blank string to hide select all checkbox from <KitTable />
+                      selectedRowKeys: selectedKeys,
+                      preserveSelectedRowKeys: true,
+                      // TODO: review types from antd directly
+                      onChange: (selectedRowKeys: string[], _selectedRows: IItemData[], _info: {type: string}) =>
+                          onSelectionChange(selectedRowKeys),
+                      getCheckboxProps: isMassSelectionAll
+                          ? () => ({
+                                disabled: true
+                            })
+                          : undefined
+                  };
+
         // TODO: handle columns width based on attribute type/format
         return (
             <DataViewContainerDivStyled ref={containerRef}>
@@ -202,18 +245,21 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                     scroll={{y: scrollHeight, x: '100%'}}
                     dataSource={dataGroupedFilteredSorted}
                     pagination={false}
+                    rowSelection={_rowSelection}
                 />
                 {paginationProps && (
                     <div className="pagination">
                         <KitPagination
                             showSizeChanger
-                            showTotal={(total, [from, to]) => t('explorer.pagination-total-number', {from, to, total})}
-                            total={paginationProps?.totalItems}
-                            defaultCurrent={paginationProps?.currentPage}
-                            defaultPageSize={paginationProps?.pageSize}
-                            pageSizeOptions={paginationProps?.pageSizeOptions}
-                            onChange={paginationProps?.setNewPage}
-                            onShowSizeChange={paginationProps?.setNewPageSize}
+                            showTotal={(total, [from, to]) =>
+                                t('explorer.pagination-total-number', {from, to, count: total})
+                            }
+                            total={paginationProps.totalCount}
+                            defaultCurrent={paginationProps.currentPage}
+                            defaultPageSize={paginationProps.pageSize}
+                            pageSizeOptions={paginationProps.pageSizeOptions}
+                            onChange={paginationProps.setNewPage}
+                            onShowSizeChange={paginationProps.setNewPageSize}
                         />
                     </div>
                 )}

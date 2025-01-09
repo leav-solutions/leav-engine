@@ -730,4 +730,20 @@ describe('ViewSettings Reducer', () => {
 
         expect(state).toEqual(viewSettingsInitialState);
     });
+
+    test(`Action ${ViewSettingsActionTypes.SET_SELECTED_KEYS} test`, async () => {
+        const newSelectedKeys = ['key1', 'key2', 'key3'];
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                massSelection: ['toBeDeletedKey']
+            },
+            {
+                type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
+                payload: newSelectedKeys
+            }
+        );
+
+        expect(state.massSelection).toEqual(newSelectedKeys);
+    });
 });
