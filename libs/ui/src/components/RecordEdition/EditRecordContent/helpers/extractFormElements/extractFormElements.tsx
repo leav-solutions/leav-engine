@@ -5,14 +5,31 @@ import {IRecordForm} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
 import {formComponents} from '../../uiElements';
 import ErrorField from '../../uiElements/ErrorField';
 import {IFormElementsByContainer} from '../../_types';
+import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
+import {QueryResult} from '@apollo/client';
 
-export const extractFormElements = (form: IRecordForm): IFormElementsByContainer =>
+const isComputeValueInError = (computeErrors: QueryResult['error'], attributeId: string): boolean =>
+    computeErrors?.graphQLErrors[0]?.extensions?.fields?.[attributeId];
+
+export const extractFormElements = (
+    form: IRecordForm,
+    computedValues: GetRecordColumnsValuesRecord,
+    computeErrors: QueryResult['error']
+): IFormElementsByContainer =>
     form.elements.reduce((allElements, element) => {
         if (typeof allElements[element.containerId] === 'undefined') {
             allElements[element.containerId] = [];
         }
 
-        const uiElement = element.valueError ? ErrorField : formComponents[element.uiElementType];
+        const computeInError = element.attribute?.id
+            ? isComputeValueInError(computeErrors, element.attribute?.id)
+            : false;
+
+        const uiElement =
+            (element.valueError && (!computedValues || !computedValues[element.attribute?.id])) || computeInError
+                ? ErrorField
+                : formComponents[element.uiElementType];
+
         const useAttributeLabel = element.settings.find(setting => setting.key === 'useAttributeLabel')?.value;
 
         const settings = element.settings.reduce((allSettings, curSettings) => {

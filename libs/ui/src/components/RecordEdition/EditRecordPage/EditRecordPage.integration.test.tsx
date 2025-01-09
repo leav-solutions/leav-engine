@@ -101,4 +101,75 @@ describe('EditRecordPage', () => {
         expect(refetchMock).toHaveBeenCalledTimes(1);
         expect(calculatedInput).toHaveValue('updated calculated');
     });
+
+    test('Should display error component if formula is in error and input when formula is working again', async () => {
+        const simpleElementInput = {
+            ...mockFormElementInput,
+            settings: [{key: 'label', value: {fr: 'simple attribute'}}]
+        };
+        const calculatedValues = (value: string) => [
+            {
+                isCalculated: false,
+                payload: null,
+                raw_payload: null,
+                created_at: 123456789,
+                modified_at: 123456789,
+                id_value: null,
+                attribute: mockAttributeSimple,
+                metadata: null,
+                version: null
+            },
+            {
+                isCalculated: true,
+                payload: value,
+                raw_payload: value,
+                created_at: 123456789,
+                modified_at: 123456789,
+                id_value: null,
+                attribute: mockAttributeSimple,
+                metadata: null,
+                version: null
+            }
+        ];
+        const calculatedElementInput = {
+            ...mockFormElementInput,
+            id: 'input_calculated_element',
+            attribute: mockFormAttributeCompute,
+            values: calculatedValues('calculated'),
+            settings: [{key: 'label', value: {fr: 'calculated attribute'}}],
+            valueError: true
+        };
+
+        useGetRecordFormMock.mockReturnValue({
+            loading: false,
+            recordForm: {...mockRecordForm, elements: [simpleElementInput, calculatedElementInput]},
+            refetch: jest.fn()
+        });
+
+        const refetchMock = jest.fn();
+        useGetRecordValuesQueryMock.mockReturnValue({
+            loading: false,
+            data: null,
+            refetch: refetchMock
+        });
+
+        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />);
+
+        expect(screen.getAllByRole('textbox')).toHaveLength(1);
+        expect(screen.queryByRole('textbox', {name: 'calculated attribute'})).not.toBeInTheDocument();
+
+        useGetRecordValuesQueryMock.mockReturnValue({
+            loading: false,
+            data: {[mockRecord.id]: {[mockFormAttributeCompute.id]: calculatedValues('updated calculated')}},
+            refetch: refetchMock
+        });
+
+        const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
+        await user.click(simpleInput);
+        await userEvent.type(simpleInput, 'some value');
+        await userEvent.tab();
+
+        expect(refetchMock).toHaveBeenCalledTimes(1);
+        expect(screen.getAllByRole('textbox')).toHaveLength(2);
+    });
 });
