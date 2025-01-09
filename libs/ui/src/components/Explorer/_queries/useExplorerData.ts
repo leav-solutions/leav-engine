@@ -83,6 +83,12 @@ const _getDateRequestFilters = ({
                     field,
                     condition: RecordFilterCondition.GREATER_THAN,
                     value: dayjs.unix(Number(value)).endOf('day').unix().toString()
+                },
+                {operator: RecordFilterOperator.OR},
+                {
+                    field,
+                    condition: RecordFilterCondition.IS_EMPTY,
+                    value: null
                 }
             ];
         case RecordFilterCondition.EQUAL:
