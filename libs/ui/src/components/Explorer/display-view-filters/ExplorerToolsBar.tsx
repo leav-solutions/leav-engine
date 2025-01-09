@@ -33,9 +33,9 @@ const DividerStyled = styled(KitDivider)`
     height: 2em;
 `;
 
-export const ExplorerToolBar: FunctionComponent<{
+export const ExplorerToolsBar: FunctionComponent<{
     libraryId: string;
-}> = ({libraryId}) => {
+}> = ({libraryId, children}) => {
     const {t} = useSharedTranslation();
 
     const {
@@ -46,9 +46,10 @@ export const ExplorerToolBar: FunctionComponent<{
 
     const {attributeDetailsById} = useAttributeDetailsData(libraryId);
 
-    if (filters.length === 0 && sort.length === 0) {
+    if (filters.length === 0 && sort.length === 0 && children === null) {
         return null;
     }
+
     const sortValues =
         sort.length === 0
             ? undefined
@@ -61,29 +62,39 @@ export const ExplorerToolBar: FunctionComponent<{
 
     return (
         <ExplorerToolBarListStyled aria-label={t('explorer.toolbar.active')}>
-            <KitSpace size="s">
-                {filters.map(filter => (
-                    <li key={filter.id}>
-                        <CommonFilterItem key={filter.id} filter={filter} />
-                    </li>
-                ))}
-            </KitSpace>
-            {filters.length > 0 && sort.length > 0 && <DividerStyled type="vertical" />}
-            {sort.length > 0 && (
-                <li>
-                    <FilterStyled
-                        label={t('explorer.sort-items')}
-                        values={sortValues}
-                        onClick={() => openSettingsPanel('sort-items')}
-                    />
-                </li>
+            {children !== null && (
+                <>
+                    <li>{children}</li>
+                    {filters.length !== 0 && <DividerStyled type="vertical" />}
+                </>
             )}
-            <DividerStyled type="vertical" />
-            <li>
-                <FilterStyled as={KitButton} type="secondary" size="s" danger icon={<FaTrash />} disabled>
-                    {t('explorer.reset-view')}
-                </FilterStyled>
-            </li>
+            {filters.length !== 0 && (
+                <>
+                    <KitSpace size="s">
+                        {filters.map(filter => (
+                            <li key={filter.id}>
+                                <CommonFilterItem key={filter.id} filter={filter} />
+                            </li>
+                        ))}
+                    </KitSpace>
+                    {filters.length > 0 && sort.length > 0 && <DividerStyled type="vertical" />}
+                    {sort.length > 0 && (
+                        <li>
+                            <FilterStyled
+                                label={t('explorer.sort-items')}
+                                values={sortValues}
+                                onClick={() => openSettingsPanel('sort-items')}
+                            />
+                        </li>
+                    )}
+                    <DividerStyled type="vertical" />
+                    <li>
+                        <FilterStyled as={KitButton} type="secondary" size="s" danger icon={<FaTrash />} disabled>
+                            {t('explorer.reset-view')}
+                        </FilterStyled>
+                    </li>
+                </>
+            )}
         </ExplorerToolBarListStyled>
     );
 };

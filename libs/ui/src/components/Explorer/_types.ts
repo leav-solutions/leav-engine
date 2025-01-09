@@ -7,6 +7,7 @@ import {
     AttributePropertiesFragment,
     PropertyValueFragment,
     RecordFilterCondition,
+    RecordFilterInput,
     RecordIdentityFragment
 } from '_ui/_gqlTypes';
 import {ReactElement} from 'react';
@@ -44,6 +45,12 @@ export interface IItemAction {
 export interface IPrimaryAction {
     callback: () => void;
     disabled?: boolean;
+    icon: ReactElement;
+    label: string;
+}
+
+export interface IMassActions {
+    callback: (massSelectedFilter: RecordFilterInput[]) => void;
     icon: ReactElement;
     label: string;
 }

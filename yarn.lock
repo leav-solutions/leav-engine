@@ -13169,8 +13169,8 @@ __metadata:
   linkType: hard
 
 "antd@npm:^5.22.2":
-  version: 5.23.1
-  resolution: "antd@npm:5.23.1"
+  version: 5.23.2
+  resolution: "antd@npm:5.23.2"
   dependencies:
     "@ant-design/colors": "npm:^7.2.0"
     "@ant-design/cssinjs": "npm:^1.22.0"
@@ -13207,7 +13207,7 @@ __metadata:
     rc-rate: "npm:~2.13.0"
     rc-resize-observer: "npm:^1.4.3"
     rc-segmented: "npm:~2.7.0"
-    rc-select: "npm:~14.16.5"
+    rc-select: "npm:~14.16.6"
     rc-slider: "npm:~11.1.8"
     rc-steps: "npm:~6.0.1"
     rc-switch: "npm:~4.1.0"
@@ -13224,7 +13224,7 @@ __metadata:
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: d41d8f2f207ba6846d1c1740d3e4712987c03247ac465c22b2ea9cc67d7a5ade3995918560f46159342beab2cdc0df40d995e8c3076853378a7dcc912018596f
+  checksum: 7e65ecde0b9c453400717163e4099c4ddf29da387d924ff9471ccef322410e44c60d7aac34c21f4fbf4339ff18ea2024a73cc07eec60c1a4c182281f2bafdbc7
   languageName: node
   linkType: hard
 
@@ -29927,7 +29927,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-select@npm:~14.16.2, rc-select@npm:~14.16.5":
+"rc-select@npm:~14.16.2, rc-select@npm:~14.16.6":
   version: 14.16.6
   resolution: "rc-select@npm:14.16.6"
   dependencies:

@@ -564,6 +564,8 @@ describe('Explorer', () => {
         }
     };
 
+    let user: ReturnType<typeof userEvent.setup>;
+
     beforeEach(() => {
         spyUseExplorerLibraryDataQuery = jest
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
@@ -588,10 +590,6 @@ describe('Explorer', () => {
         jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
             mockAttributesByLibResult as gqlTypes.GetAttributesByLibQueryResult
         );
-    });
-
-    let user: ReturnType<typeof userEvent.setup>;
-    beforeEach(() => {
         jest.clearAllMocks();
         user = userEvent.setup();
     });
@@ -654,6 +652,7 @@ describe('Explorer', () => {
         const [firstRecordRow] = tableRows;
         const [record1] = mockRecords;
         const [
+            selectAllCell,
             whoAmICell,
             simpleAttributeCell,
             linkCell,
