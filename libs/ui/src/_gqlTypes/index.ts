@@ -1398,12 +1398,15 @@ export type ExplorerLinkDataQueryVariables = Exact<{
 
 export type ExplorerLinkDataQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, library: { id: string } }, property: Array<{ id_value?: string | null, payload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null, valueRawPayload?: any | null }> }> } | null } | { id_value?: string | null }> }> } };
 
-export type GetLibraryAttributesQueryVariables = Exact<{
-  id: Scalars['ID'];
+export type ExplorerAllKeysQueryVariables = Exact<{
+  libraryId: Scalars['ID'];
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+  multipleSort?: InputMaybe<Array<RecordSortInput> | RecordSortInput>;
+  searchQuery?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetLibraryAttributesQuery = { libraries?: { list: Array<{ id: string, attributes?: Array<{ id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null, attributes?: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> | null } | null } | { format?: AttributeFormat | null, id: string, type: AttributeType, label?: any | null } | { id: string, type: AttributeType, label?: any | null }> | null }> } | null };
+export type ExplorerAllKeysQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> } };
 
 export type ExplorerLibraryDetailsQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -4288,46 +4291,51 @@ export function useExplorerLinkDataLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type ExplorerLinkDataQueryHookResult = ReturnType<typeof useExplorerLinkDataQuery>;
 export type ExplorerLinkDataLazyQueryHookResult = ReturnType<typeof useExplorerLinkDataLazyQuery>;
 export type ExplorerLinkDataQueryResult = Apollo.QueryResult<ExplorerLinkDataQuery, ExplorerLinkDataQueryVariables>;
-export const GetLibraryAttributesDocument = gql`
-    query GetLibraryAttributes($id: ID!) {
-  libraries(filters: {id: [$id]}) {
+export const ExplorerAllKeysDocument = gql`
+    query ExplorerAllKeys($libraryId: ID!, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
+  records(
+    library: $libraryId
+    filters: $filters
+    multipleSort: $multipleSort
+    searchQuery: $searchQuery
+  ) {
     list {
-      id
-      attributes {
-        ...LibraryAttribute
-      }
+      ...RecordIdentity
     }
   }
 }
-    ${LibraryAttributeFragmentDoc}`;
+    ${RecordIdentityFragmentDoc}`;
 
 /**
- * __useGetLibraryAttributesQuery__
+ * __useExplorerAllKeysQuery__
  *
- * To run a query within a React component, call `useGetLibraryAttributesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLibraryAttributesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useExplorerAllKeysQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExplorerAllKeysQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetLibraryAttributesQuery({
+ * const { data, loading, error } = useExplorerAllKeysQuery({
  *   variables: {
- *      id: // value for 'id'
+ *      libraryId: // value for 'libraryId'
+ *      filters: // value for 'filters'
+ *      multipleSort: // value for 'multipleSort'
+ *      searchQuery: // value for 'searchQuery'
  *   },
  * });
  */
-export function useGetLibraryAttributesQuery(baseOptions: Apollo.QueryHookOptions<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>) {
+export function useExplorerAllKeysQuery(baseOptions: Apollo.QueryHookOptions<ExplorerAllKeysQuery, ExplorerAllKeysQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>(GetLibraryAttributesDocument, options);
+        return Apollo.useQuery<ExplorerAllKeysQuery, ExplorerAllKeysQueryVariables>(ExplorerAllKeysDocument, options);
       }
-export function useGetLibraryAttributesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>) {
+export function useExplorerAllKeysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerAllKeysQuery, ExplorerAllKeysQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>(GetLibraryAttributesDocument, options);
+          return Apollo.useLazyQuery<ExplorerAllKeysQuery, ExplorerAllKeysQueryVariables>(ExplorerAllKeysDocument, options);
         }
-export type GetLibraryAttributesQueryHookResult = ReturnType<typeof useGetLibraryAttributesQuery>;
-export type GetLibraryAttributesLazyQueryHookResult = ReturnType<typeof useGetLibraryAttributesLazyQuery>;
-export type GetLibraryAttributesQueryResult = Apollo.QueryResult<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>;
+export type ExplorerAllKeysQueryHookResult = ReturnType<typeof useExplorerAllKeysQuery>;
+export type ExplorerAllKeysLazyQueryHookResult = ReturnType<typeof useExplorerAllKeysLazyQuery>;
+export type ExplorerAllKeysQueryResult = Apollo.QueryResult<ExplorerAllKeysQuery, ExplorerAllKeysQueryVariables>;
 export const ExplorerLibraryDetailsDocument = gql`
     query ExplorerLibraryDetails($libraryId: ID!) {
   libraries(filters: {id: [$libraryId]}) {
