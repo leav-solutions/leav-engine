@@ -1,13 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {v4 as uuid} from 'uuid';
 import {SortOrder, RecordFilterCondition} from '_ui/_gqlTypes';
 import {Entrypoint, IExplorerFilter} from '../../_types';
-import {v4 as uuid} from 'uuid';
 import {hasOnlyNoValueConditions} from '../../conditionsHelper';
+import {MASS_SELECTION_ALL} from '../../_constants';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
+export type MassSelection = string[] | typeof MASS_SELECTION_ALL;
 
 export const ViewSettingsActionTypes = {
     RESET: 'RESET',
@@ -28,6 +30,7 @@ export const ViewSettingsActionTypes = {
     REMOVE_FILTER: 'REMOVE_FILTER',
     MOVE_FILTER: 'MOVE_FILTER',
     CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG',
+    SET_SELECTED_KEYS: 'SET_SELECTED_KEYS',
     RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS'
 } as const;
 
@@ -46,6 +49,7 @@ export interface IViewSettingsState {
     filters: IExplorerFilter[];
     maxFilters: number;
     initialViewSettings: Pick<IViewSettingsState, 'viewType' | 'attributesIds' | 'sort' | 'pageSize' | 'filters'>;
+    massSelection: MassSelection;
 }
 
 interface IViewSettingsActionChangePageSize {
@@ -145,30 +149,40 @@ interface IViewSettingsActionReset {
     payload: IViewSettingsState;
 }
 
+interface IViewSettingsActionSetSelectedKeys {
+    type: typeof ViewSettingsActionTypes.SET_SELECTED_KEYS;
+    payload: MassSelection;
+}
+
 interface IViewSettingsActionRestoreInitialViewSettings {
     type: typeof ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS;
 }
 
-type Reducer<PAYLOAD = 'no_payload'> = PAYLOAD extends 'no_payload'
+type Reducer<
+    PAYLOAD extends {
+        type: keyof typeof ViewSettingsActionTypes;
+        payload?: unknown;
+    } = {type: any; payload: 'no_payload'}
+> = PAYLOAD['payload'] extends 'no_payload'
     ? (state: IViewSettingsState) => IViewSettingsState
-    : (state: IViewSettingsState, payload: PAYLOAD) => IViewSettingsState;
+    : (state: IViewSettingsState, payload: PAYLOAD['payload']) => IViewSettingsState;
 
-const changePageSize: Reducer<IViewSettingsActionChangePageSize['payload']> = (state, payload) => ({
+const changePageSize: Reducer<IViewSettingsActionChangePageSize> = (state, payload) => ({
     ...state,
     pageSize: payload.pageSize
 });
 
-const addAttribute: Reducer<IViewSettingsActionAddAttribute['payload']> = (state, payload) => ({
+const addAttribute: Reducer<IViewSettingsActionAddAttribute> = (state, payload) => ({
     ...state,
     attributesIds: [...state.attributesIds, payload.attributeId]
 });
 
-const removeAttribute: Reducer<IViewSettingsActionRemoveAttribute['payload']> = (state, payload) => ({
+const removeAttribute: Reducer<IViewSettingsActionRemoveAttribute> = (state, payload) => ({
     ...state,
     attributesIds: state.attributesIds.filter(attributesId => attributesId !== payload.attributeId)
 });
 
-const moveAttribute: Reducer<IViewSettingsActionMoveAttribute['payload']> = (state, payload) => {
+const moveAttribute: Reducer<IViewSettingsActionMoveAttribute> = (state, payload) => {
     const attributesIds = [...state.attributesIds];
     const [attributeIdToMove] = attributesIds.splice(payload.indexFrom, 1);
     // TODO use newES6 syntax (toSpliced)
@@ -184,27 +198,27 @@ const resetAttributes: Reducer = state => ({
     attributesIds: []
 });
 
-const changeViewType: Reducer<IViewSettingsActionChangeViewType['payload']> = (state, payload) => ({
+const changeViewType: Reducer<IViewSettingsActionChangeViewType> = (state, payload) => ({
     ...state,
     viewType: payload.viewType
 });
 
-const addSort: Reducer<IViewSettingsActionAddSort['payload']> = (state, payload) => ({
+const addSort: Reducer<IViewSettingsActionAddSort> = (state, payload) => ({
     ...state,
     sort: [...state.sort, {field: payload.field, order: payload.order}]
 });
 
-const removeSort: Reducer<IViewSettingsActionRemoveSort['payload']> = (state, payload) => ({
+const removeSort: Reducer<IViewSettingsActionRemoveSort> = (state, payload) => ({
     ...state,
     sort: state.sort.filter(({field: attributeId}) => attributeId !== payload.field)
 });
 
-const changeSortOrder: Reducer<IViewSettingsActionChangeSortOrder['payload']> = (state, payload) => ({
+const changeSortOrder: Reducer<IViewSettingsActionChangeSortOrder> = (state, payload) => ({
     ...state,
     sort: state.sort.map(sort => (sort.field === payload.field ? {...sort, order: payload.order} : sort))
 });
 
-const moveSort: Reducer<IViewSettingsActionMoveSort['payload']> = (state, payload) => {
+const moveSort: Reducer<IViewSettingsActionMoveSort> = (state, payload) => {
     const attributesUsedToSort = [...state.sort];
     const [sortToMove] = attributesUsedToSort.splice(payload.indexFrom, 1);
     attributesUsedToSort.splice(payload.indexTo, 0, sortToMove);
@@ -214,7 +228,7 @@ const moveSort: Reducer<IViewSettingsActionMoveSort['payload']> = (state, payloa
     };
 };
 
-const changeFulltextSearch: Reducer<IViewSettingsActionChangeFulltextSearch['payload']> = (state, payload) => ({
+const changeFulltextSearch: Reducer<IViewSettingsActionChangeFulltextSearch> = (state, payload) => ({
     ...state,
     fulltextSearch: payload.search
 });
@@ -224,7 +238,7 @@ export const clearFulltextSearch: Reducer = state => ({
     fulltextSearch: ''
 });
 
-const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payload) => ({
+const addFilter: Reducer<IViewSettingsActionAddFilter> = (state, payload) => ({
     ...state,
     filters: [
         ...state.filters,
@@ -239,7 +253,7 @@ const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payl
     ]
 });
 
-const resetFilter: Reducer<IViewSettingsActionResetFilter['payload']> = (state, payload) => ({
+const resetFilter: Reducer<IViewSettingsActionResetFilter> = (state, payload) => ({
     ...state,
     filters: state.filters.map(filter => {
         if (filter.id === payload.id) {
@@ -258,17 +272,17 @@ const resetFilter: Reducer<IViewSettingsActionResetFilter['payload']> = (state, 
     })
 });
 
-const removeFilter: Reducer<IViewSettingsActionRemoveFilter['payload']> = (state, payload) => ({
+const removeFilter: Reducer<IViewSettingsActionRemoveFilter> = (state, payload) => ({
     ...state,
     filters: state.filters.filter(({id}) => id !== payload.id)
 });
 
-const changeFilterConfig: Reducer<IViewSettingsActionChangeFilterConfig['payload']> = (state, payload) => ({
+const changeFilterConfig: Reducer<IViewSettingsActionChangeFilterConfig> = (state, payload) => ({
     ...state,
     filters: state.filters.map(filter => (filter.id === payload.id ? {...filter, ...payload} : filter))
 });
 
-const moveFilter: Reducer<IViewSettingsActionMoveFilter['payload']> = (state, payload) => {
+const moveFilter: Reducer<IViewSettingsActionMoveFilter> = (state, payload) => {
     const attributesUsedToFilter = [...state.filters];
     const [filterToMove] = attributesUsedToFilter.splice(payload.indexFrom, 1);
     attributesUsedToFilter.splice(payload.indexTo, 0, filterToMove);
@@ -278,7 +292,12 @@ const moveFilter: Reducer<IViewSettingsActionMoveFilter['payload']> = (state, pa
     };
 };
 
-const reset: Reducer<IViewSettingsActionReset['payload']> = (_, payload) => payload;
+const reset: Reducer<IViewSettingsActionReset> = (_, payload) => payload;
+
+const setSelectedKeys: Reducer<IViewSettingsActionSetSelectedKeys> = (state, payload) => ({
+    ...state,
+    massSelection: payload
+});
 
 const restoreInitialViewSettings: Reducer = state => ({
     ...state,
@@ -304,6 +323,7 @@ export type IViewSettingsAction =
     | IViewSettingsActionChangeFilterConfig
     | IViewSettingsActionMoveFilter
     | IViewSettingsActionReset
+    | IViewSettingsActionSetSelectedKeys
     | IViewSettingsActionRestoreInitialViewSettings;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
@@ -361,6 +381,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.RESET: {
             return reset(state, action.payload);
+        }
+        case ViewSettingsActionTypes.SET_SELECTED_KEYS: {
+            return setSelectedKeys(state, action.payload);
         }
         case ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS: {
             return restoreInitialViewSettings(state);
