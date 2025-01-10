@@ -8,6 +8,7 @@ export const defaultPageSizeOptions = [20, 50, 100];
 export const defaultMaxFilters = 3;
 
 export const viewSettingsInitialState: IViewSettingsState = {
+    libraryId: null as unknown as string,
     viewType: 'table',
     attributesIds: [],
     fulltextSearch: '',

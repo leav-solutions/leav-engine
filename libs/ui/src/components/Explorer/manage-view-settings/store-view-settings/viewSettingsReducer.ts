@@ -30,6 +30,7 @@ export const ViewSettingsActionTypes = {
 } as const;
 
 export interface IViewSettingsState {
+    libraryId: string;
     viewId?: string;
     viewType: ViewType;
     attributesIds: string[];

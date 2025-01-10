@@ -1,10 +1,25 @@
 query ExplorerAttributes($ids: [ID!]) {
-  attributes(filters: { ids: $ids }) {
-    list {
-      id
-      type
-      format
-      label
+    attributes(filters: { ids: $ids }) {
+        list {
+            id
+            type
+            format
+            label
+        }
     }
-  }
+}
+
+fragment LinkAttributeDetails on LinkAttribute {
+    linked_library {
+        id
+    }
+}
+
+query ExplorerLinkAttribute($id: ID!) {
+    attributes(filters: { ids: [$id] }) {
+        list {
+            id
+            ...LinkAttributeDetails
+        }
+    }
 }

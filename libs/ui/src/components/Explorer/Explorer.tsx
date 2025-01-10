@@ -5,7 +5,7 @@ import {FunctionComponent} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
-import {DefaultViewSettings, IItemAction, IPrimaryAction} from './_types';
+import {DefaultViewSettings, IEntrypointLibrary, IItemAction, IPrimaryAction} from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
 import {useDeactivateAction} from './useDeactivateAction';
@@ -14,11 +14,11 @@ import {usePrimaryActionsButton} from './usePrimaryActions';
 import {ExplorerTitle} from './ExplorerTitle';
 import {useCreateAction} from './useCreateAction';
 import {
+    defaultPageSizeOptions,
     SidePanel,
     useEditSettings,
     useOpenViewSettings,
-    ViewSettingsContext,
-    defaultPageSizeOptions
+    ViewSettingsContext
 } from './manage-view-settings';
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
@@ -47,8 +47,8 @@ const ExplorerPageDivStyled = styled.div`
 `;
 
 interface IExplorerProps {
+    entrypoint: IEntrypointLibrary;
     noPagination?: true;
-    library: string;
     itemActions?: IItemAction[];
     primaryActions?: IPrimaryAction[];
     title?: string;
@@ -58,7 +58,7 @@ interface IExplorerProps {
 }
 
 export const Explorer: FunctionComponent<IExplorerProps> = ({
-    library,
+    entrypoint,
     itemActions,
     primaryActions,
     title,
@@ -71,12 +71,17 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {panelElement} = useEditSettings();
 
-    const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(library, defaultViewSettings);
+    const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(entrypoint, defaultViewSettings);
 
     const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
 
-    const {data, loading, refetch} = useExplorerData({
-        libraryId: library,
+    const {
+        data,
+        loading: loadingData,
+        refetch
+    } = useExplorerData({
+        entrypoint,
+        libraryId: view.libraryId,
         attributeIds: view.attributesIds,
         fulltextSearch: view.fulltextSearch,
         pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
@@ -95,13 +100,13 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {createAction, createModal} = useCreateAction({
         isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
-        library,
+        library: view.libraryId,
         refetch
     });
 
     const {primaryButton} = usePrimaryActionsButton([createAction, ...(primaryActions ?? [])].filter(Boolean));
 
-    const {viewSettingsButton} = useOpenViewSettings(library);
+    const {viewSettingsButton} = useOpenViewSettings(view.libraryId);
 
     const {searchInput} = useSearchInput({view, dispatch});
 
@@ -112,7 +117,11 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
             <ExplorerPageDivStyled>
                 <ExplorerHeaderDivStyled>
                     <KitTypography.Title level="h1">
-                        <ExplorerTitle library={library} title={title} />
+                        {
+                            !viewSettingsLoading && (
+                                <ExplorerTitle library={view.libraryId} title={title} />
+                            ) /*TODO: manage loading*/
+                        }
                     </KitTypography.Title>
                     <KitSpace size="xs">
                         {searchInput}
@@ -120,8 +129,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         {primaryButton}
                     </KitSpace>
                 </ExplorerHeaderDivStyled>
-                <ExplorerToolBar libraryId={library} />
-                {loading || viewSettingsLoading ? (
+                {!viewSettingsLoading && <ExplorerToolBar libraryId={view.libraryId} />}
+                {loadingData || viewSettingsLoading ? (
                     <Loading />
                 ) : hasNoResults ? (
                     <KitEmpty title={t('explorer.empty-data')} />

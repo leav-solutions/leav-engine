@@ -144,44 +144,19 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
     return params.has(explorerQueryParamName) ? (
         <ExplorerContainerDivStyled>
             <Explorer
-                library={library}
+                entrypoint={{
+                    type: 'link',
+                    parentLibraryId: 'parent',
+                    parentRecordId: '4921561',
+                    linkAttributeId: 'link'
+                }}
                 defaultActionsForItem={['edit', 'deactivate']}
                 defaultPrimaryActions={['create']}
-                // Uncomment to test default filters
-                // defaultViewSettings={{
-                //     filters: [
-                //         {
-                //             field: 'offers_label',
-                //             condition: RecordFilterCondition.CONTAINS,
-                //             value: 'Café'
-                //         },
-                //         {
-                //             field: 'bad_attribute',
-                //             condition: RecordFilterCondition.CONTAINS,
-                //             value: 'Café'
-                //         }
-                //     ]
-                // }}
                 itemActions={[
                     {
                         label: 'Test 1',
                         icon: <FaBeer />,
                         callback: item => console.info(1, item)
-                    },
-                    {
-                        label: 'Test 2',
-                        icon: <FaAccessibleIcon />,
-                        callback: item => console.info(2, item)
-                    },
-                    {
-                        label: 'Test 3',
-                        icon: <FaXbox />,
-                        callback: item => console.info(3, item)
-                    },
-                    {
-                        label: 'Test 4',
-                        icon: <FaJs />,
-                        callback: item => console.info(4, item)
                     }
                 ]}
                 primaryActions={[
@@ -189,16 +164,6 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                         icon: <FaBeer />,
                         label: 'Additional action 1',
                         callback: () => console.info('Clicked action 1')
-                    },
-                    {
-                        icon: <FaCheese />,
-                        label: 'Additional action 2',
-                        callback: () => console.info('Clicked action 2')
-                    },
-                    {
-                        icon: <FaBirthdayCake />,
-                        label: 'Additional action 3',
-                        callback: () => console.info('Clicked action 3')
                     }
                 ]}
             />

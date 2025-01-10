@@ -2,15 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {IExplorerData, IExplorerFilter} from '../_types';
+import {Entrypoint, IEntrypointLink, IExplorerData, IExplorerFilter} from '../_types';
 import {
     AttributeFormat,
-    ExplorerQuery,
+    ExplorerLibraryDataQuery,
+    ExplorerLinkDataQuery,
     RecordFilterCondition,
     RecordFilterInput,
     RecordFilterOperator,
     SortOrder,
-    useExplorerQuery
+    useExplorerLibraryDataQuery,
+    useExplorerLinkDataQuery
 } from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 import {useMemo} from 'react';
@@ -20,7 +22,11 @@ import {nullValueConditions} from '../nullValuesConditions';
 
 export const dateValuesSeparator = '\n';
 
-const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
+const _mapping = (
+    data: ExplorerLibraryDataQuery | ExplorerLinkDataQuery,
+    libraryId: string,
+    availableLangs: string[]
+): IExplorerData => {
     const attributes = data.records.list.length
         ? data.records.list[0].properties.reduce((acc, property) => {
               acc[property.attributeId] = {
@@ -43,6 +49,11 @@ const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string
             preview: null,
             ...whoAmI
         },
+        id_value:
+            'links' in data
+                ? (data.links.list.find(item => (item.properties[0].values[0] as any).payload.whoAmI.id === whoAmI.id)
+                      ?.properties[0].values[0].id_value ?? undefined)
+                : undefined,
         propertiesById: properties.reduce((acc, {attributeId, values}) => ({...acc, [attributeId]: values}), {})
     }));
 
@@ -114,6 +125,7 @@ const _getDateRequestFilters = ({
 };
 
 export const useExplorerData = ({
+    entrypoint,
     libraryId,
     attributeIds,
     fulltextSearch,
@@ -122,6 +134,7 @@ export const useExplorerData = ({
     filters,
     skip
 }: {
+    entrypoint: Entrypoint;
     libraryId: string;
     attributeIds: string[];
     fulltextSearch: string;
@@ -152,26 +165,52 @@ export const useExplorerData = ({
             )
     );
 
-    const {data, loading, refetch} = useExplorerQuery({
-        skip,
+    const isLibrary = entrypoint.type === 'library';
+    const isLink = entrypoint.type === 'link';
+
+    const {
+        data: linkData,
+        loading: linkLoading,
+        refetch: linkRefetch
+    } = useExplorerLinkDataQuery({
+        skip: skip || !isLink,
+        variables: {
+            childLibraryId: libraryId,
+            parentLibraryId: (entrypoint as IEntrypointLink).parentLibraryId,
+            parentRecordId: (entrypoint as IEntrypointLink).parentRecordId,
+            linkAttributeId: (entrypoint as IEntrypointLink).linkAttributeId,
+            attributeIds,
+            pagination,
+            searchQuery: fulltextSearch,
+            multipleSort: sorts,
+            filters: queryFilters // TODO: add a filter to link between child and parent
+        }
+    });
+
+    const {
+        data: libraryData,
+        loading: libraryLoading,
+        refetch: libraryRefetch
+    } = useExplorerLibraryDataQuery({
+        skip: skip || !isLibrary,
         variables: {
             libraryId,
             attributeIds,
             pagination,
             searchQuery: fulltextSearch,
-            multipleSort: sorts.map(({order, field}) => ({
-                field,
-                order
-            })),
+            multipleSort: sorts,
             filters: queryFilters
         }
     });
 
-    const memoizedData = useMemo(() => (data !== undefined ? _mapping(data, libraryId, availableLangs) : null), [data]);
+    const memoizedData = useMemo(() => {
+        const data = isLibrary ? libraryData : linkData;
+        return data !== undefined ? _mapping(data, libraryId, availableLangs) : null;
+    }, [libraryData, linkData]);
 
     return {
         data: memoizedData,
-        loading,
-        refetch
+        loading: isLibrary ? libraryLoading : linkLoading,
+        refetch: isLibrary ? libraryRefetch : linkRefetch
     };
 };

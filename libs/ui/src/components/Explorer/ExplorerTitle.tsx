@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {useExplorerLibraryDataQuery} from '_ui/_gqlTypes';
+import {useExplorerLibraryDetailsQuery} from '_ui/_gqlTypes';
 import useLang from '_ui/hooks/useLang';
 import {AntSkeleton} from 'aristid-ds';
 import {FunctionComponent} from 'react';
@@ -14,7 +14,7 @@ interface IExplorerTitleProps {
 
 // TODO: use <h1 /> tag
 export const ExplorerTitle: FunctionComponent<IExplorerTitleProps> = ({title, library}) => {
-    const {data, loading, error} = useExplorerLibraryDataQuery({variables: {libraryId: library}, skip: !!title});
+    const {data, loading, error} = useExplorerLibraryDetailsQuery({variables: {libraryId: library}, skip: !!title});
     const {lang} = useLang();
 
     if (title) {

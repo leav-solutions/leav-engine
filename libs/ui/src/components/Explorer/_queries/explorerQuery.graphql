@@ -24,7 +24,7 @@ fragment AttributeProperties on Attribute {
     multiple_values
 }
 
-query Explorer(
+query ExplorerLibraryData(
     $libraryId: ID!,
     $attributeIds: [ID!]!,
     $pagination: RecordsPagination,
@@ -43,6 +43,50 @@ query Explorer(
                 }
                 values {
                     ...PropertyValue
+                }
+            }
+        }
+    }
+}
+
+query ExplorerLinkData(
+    $attributeIds: [ID!]!,
+    $pagination: RecordsPagination,
+    $filters: [RecordFilterInput], # TODO: add a filter to get only linked records
+    $multipleSort: [RecordSortInput!],
+    $searchQuery: String,
+    $childLibraryId: ID!,
+    $parentLibraryId: ID!,
+    $parentRecordId: String,
+    $linkAttributeId: ID!,
+) {
+    records(library: $childLibraryId, filters: $filters, pagination: $pagination, multipleSort: $multipleSort, searchQuery: $searchQuery) {
+        totalCount
+        list {
+            ...RecordIdentity
+            properties(attributeIds: $attributeIds) {
+                attributeId
+                attributeProperties {
+                    ...AttributeProperties
+                }
+                values {
+                    ...PropertyValue
+                }
+            }
+        }
+    }
+    links: records(library: $parentLibraryId, filters: [{field: "id", condition: EQUAL, value: $parentRecordId}]) {
+        list {
+            ...RecordIdentity
+            properties(attributeIds: [$linkAttributeId]) {
+                attributeId
+                values {
+                    id_value
+                    ... on LinkValue {
+                        payload {
+                            ...RecordIdentity
+                        }
+                    }
                 }
             }
         }
