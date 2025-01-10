@@ -332,6 +332,6 @@ describe('inheritanceCalculationAction', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data.records.list[0][simpleAttributeId][0].payload).toBeNull();
+        expect(res.data.data.records.list[0][simpleAttributeId].length).toBe(0);
     });
 });
