@@ -1,31 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
+import {FunctionComponent, useEffect, useRef} from 'react';
 import {MetadataSubmitValueFunc} from '../EditRecordContent/_types';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import RecordSummary from './RecordSummary';
 import ValueDetails from './ValueDetails';
 import ValuesVersions from './ValuesVersions';
-import {themeVars} from '../../../antdTheme';
-import styled from 'styled-components';
 import {createPortal} from 'react-dom';
-import {IEditRecordReducerState} from '../editRecordReducer/editRecordReducer';
+import {EditRecordReducerActionsTypes, IEditRecordReducerState} from '../editRecordReducer/editRecordReducer';
+import {KitSidePanel} from 'aristid-ds';
+import {KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 
 interface IEditRecordSidebarProps {
     onMetadataSubmit: MetadataSubmitValueFunc;
+    open: boolean;
     sidebarContainer?: HTMLElement;
 }
-
-const SidebarWrapper = styled.div`
-    overflow-x: hidden;
-    overflow-y: scroll;
-    position: relative;
-    grid-area: sidebar;
-    background: ${themeVars.secondaryBg};
-    border-top-right-radius: 3px;
-    z-index: 1;
-`;
 
 const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubmit: MetadataSubmitValueFunc) => {
     switch (state.sidebarContent) {
@@ -46,18 +37,38 @@ const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubm
     }
 };
 
-export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({onMetadataSubmit, sidebarContainer}) => {
-    const {state} = useEditRecordReducer();
-    const shouldUsePortal = sidebarContainer !== undefined;
+export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
+    onMetadataSubmit,
+    open,
+    sidebarContainer
+}) => {
+    const {state, dispatch} = useEditRecordReducer();
+    const sidePanelRef = useRef<KitSidePanelRef | null>(null);
 
-    return shouldUsePortal ? (
-        createPortal(
-            <SidebarWrapper>{_getRecordSidebarContent(state, onMetadataSubmit)}</SidebarWrapper>,
-            sidebarContainer
-        )
-    ) : (
-        <SidebarWrapper>{_getRecordSidebarContent(state, onMetadataSubmit)}</SidebarWrapper>
+    const editRecordSidebarContent = (
+        <KitSidePanel ref={sidePanelRef} initialOpen={open} size="s">
+            {_getRecordSidebarContent(state, onMetadataSubmit)}
+        </KitSidePanel>
     );
+
+    useEffect(() => {
+        if (sidePanelRef.current) {
+            if (open) {
+                sidePanelRef.current.open();
+
+                dispatch({
+                    type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
+                    content: state.sidebarContent === 'none' ? 'summary' : state.sidebarContent
+                });
+            } else {
+                sidePanelRef.current.close();
+            }
+        }
+    }, [open]);
+
+    return sidebarContainer === undefined
+        ? editRecordSidebarContent
+        : createPortal(editRecordSidebarContent, sidebarContainer);
 };
 
 export default EditRecordSidebar;

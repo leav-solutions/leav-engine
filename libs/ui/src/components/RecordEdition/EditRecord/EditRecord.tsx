@@ -68,21 +68,22 @@ interface IPendingValues {
     [attributeId: string]: {[idValue: string]: ValueDetailsFragment};
 }
 
-const sidebarWidth = 300;
+const sidebarWidth = '352px';
 
 const Container = styled.div<{$shouldUseLayoutWithSidebar: boolean; style: CSSObject}>`
     display: grid;
-    grid-template-columns: ${props =>
-        props.$shouldUseLayoutWithSidebar ? `minmax(0, auto) ${sidebarWidth}px` : '1fr'};
+    grid-template-columns: ${props => (props.$shouldUseLayoutWithSidebar ? `minmax(0, auto) ${sidebarWidth}` : '1fr')};
     grid-template-areas: ${props => (props.$shouldUseLayoutWithSidebar ? '"content sidebar"' : '"content"')};
     overflow: hidden;
 `;
 
-const Content = styled.div`
+const Content = styled.div<{$shouldUseLayoutWithSidebar: boolean}>`
     grid-area: content;
     padding: 24px;
     overflow-x: hidden;
     overflow-y: scroll;
+    border-right: ${props =>
+        props.$shouldUseLayoutWithSidebar ? '1px solid var(--general-utilities-border)' : 'none'};
 `;
 
 export const EditRecord: FunctionComponent<IEditRecordProps> = ({
@@ -465,14 +466,14 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         }
     };
 
-    const shouldUseLayoutWithSidebar = state.sidebarContent !== 'none' && sidebarContainer === undefined;
+    const shouldUseLayoutWithSidebar = state.sidebarContent !== 'none' && sidebarContainer === undefined && showSidebar;
 
     return (
         <ErrorBoundary>
             <EditRecordReducerContext.Provider value={{state, dispatch}}>
                 <CreationErrorContext.Provider value={creationErrors}>
                     <Container $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar} style={containerStyle}>
-                        <Content className="content">
+                        <Content $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar}>
                             {permissionsLoading ? (
                                 <EditRecordSkeleton rows={5} />
                             ) : canEdit ? (
@@ -492,6 +493,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                         </Content>
                         <EditRecordSidebar
                             onMetadataSubmit={_handleMetadataSubmit}
+                            open={showSidebar}
                             sidebarContainer={sidebarContainer}
                         />
                     </Container>
