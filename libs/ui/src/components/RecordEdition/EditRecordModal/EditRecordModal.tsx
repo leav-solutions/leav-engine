@@ -5,7 +5,6 @@ import {Modal} from 'antd';
 import {FunctionComponent, useRef, useState} from 'react';
 import {KitButton, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
-import {themeVars} from '_ui/antdTheme';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IValueVersion} from '_ui/types';
 import {RecordIdentityFragment} from '_ui/_gqlTypes';
@@ -31,8 +30,14 @@ export interface IEditRecordModalProps {
 
 const modalWidth = 1200;
 const StyledModal = styled(Modal)`
-    && .ant-modal-content {
-        padding: 0;
+    && {
+        .ant-modal-content {
+            padding: 0;
+        }
+
+        .ant-modal-footer {
+            margin-top: 0;
+        }
     }
 `;
 
@@ -42,7 +47,7 @@ const Header = styled.div`
     align-self: center;
     font-size: 1rem;
     padding: 10px 50px 10px 10px;
-    border-bottom: 1px solid ${themeVars.borderColor};
+    border-bottom: 1px solid var(--general-utilities-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -52,6 +57,7 @@ const ModalFooter = styled.div`
     display: flex;
     justify-content: flex-end;
     padding: 0.5rem 1rem;
+    border-top: 1px solid var(--general-utilities-border);
 `;
 
 export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({

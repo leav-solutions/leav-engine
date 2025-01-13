@@ -68,7 +68,7 @@ describe('EditRecordSidebar', () => {
     test("Don't display sidebar content if none", async () => {
         render(
             <EditRecordReducerContext.Provider value={mockReducerWithoutValue}>
-                <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
             </EditRecordReducerContext.Provider>
         );
 
@@ -81,7 +81,11 @@ describe('EditRecordSidebar', () => {
 
         render(
             <EditRecordReducerContext.Provider value={mockReducer}>
-                <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} sidebarContainer={sidebarContainer} />
+                <EditRecordSidebar
+                    onMetadataSubmit={mockHandleMetadataSubmit}
+                    sidebarContainer={sidebarContainer}
+                    open
+                />
             </EditRecordReducerContext.Provider>
         );
 
@@ -94,7 +98,7 @@ describe('EditRecordSidebar', () => {
         test('Display record summary', async () => {
             render(
                 <EditRecordReducerContext.Provider value={mockReducer}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
 
@@ -107,7 +111,7 @@ describe('EditRecordSidebar', () => {
             const {value, attribute} = mockReducerWithValue.state.activeValue;
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithValue}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
 
@@ -127,7 +131,7 @@ describe('EditRecordSidebar', () => {
         test("Don't display modifier if not set in value", async () => {
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithValueSimple}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
 
@@ -155,7 +159,7 @@ describe('EditRecordSidebar', () => {
             };
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithTreeValue}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
 
@@ -183,7 +187,7 @@ describe('EditRecordSidebar', () => {
 
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithValueAndMetadata}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
 
