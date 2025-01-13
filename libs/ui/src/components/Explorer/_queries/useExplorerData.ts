@@ -7,6 +7,7 @@ import {
     AttributeFormat,
     ExplorerLibraryDataQuery,
     ExplorerLinkDataQuery,
+    LinkPropertyLinkValueFragment,
     RecordFilterCondition,
     RecordFilterInput,
     RecordFilterOperator,
@@ -22,8 +23,8 @@ import {nullValueConditions} from '../nullValuesConditions';
 
 export const dateValuesSeparator = '\n';
 
-const _mapping = (
-    data: ExplorerLibraryDataQuery | ExplorerLinkDataQuery,
+const _mappingLibrary = (
+    data: ExplorerLibraryDataQuery,
     libraryId: string,
     availableLangs: string[]
 ): IExplorerData => {
@@ -49,16 +50,57 @@ const _mapping = (
             preview: null,
             ...whoAmI
         },
-        id_value:
-            'links' in data
-                ? (data.links.list.find(item => (item.properties[0].values[0] as any).payload.whoAmI.id === whoAmI.id)
-                      ?.properties[0].values[0].id_value ?? undefined)
-                : undefined,
         propertiesById: properties.reduce((acc, {attributeId, values}) => ({...acc, [attributeId]: values}), {})
     }));
 
     return {
         totalCount: data.records.totalCount ?? 0,
+        attributes,
+        records
+    };
+};
+const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
+    const attributes = data.records.list.length
+        ? ((data.records.list[0].property[0] as LinkPropertyLinkValueFragment)?.payload?.properties ?? []).reduce(
+              (acc, property) => {
+                  acc[property.attributeId] = {
+                      ...property.attributeProperties,
+                      label: localizedTranslation(property.attributeProperties.label, availableLangs)
+                  };
+
+                  return acc;
+              },
+              {}
+          )
+        : {};
+
+    const records = data.records.list[0].property
+        .map((linkValue: LinkPropertyLinkValueFragment) => {
+            if (!linkValue.payload) {
+                return null;
+            }
+
+            return {
+                libraryId,
+                key: linkValue.payload.whoAmI.id, // For <KitTable /> only
+                itemId: linkValue.payload.whoAmI.id, // For <KitTable /> only
+                whoAmI: {
+                    label: null,
+                    subLabel: null,
+                    color: null,
+                    preview: null,
+                    ...linkValue.payload.whoAmI
+                },
+                propertiesById: linkValue.payload.properties.reduce(
+                    (acc, {attributeId, values}) => ({...acc, [attributeId]: values}),
+                    {}
+                )
+            };
+        })
+        .filter(Boolean);
+
+    return {
+        totalCount: records.length,
         attributes,
         records
     };
@@ -175,15 +217,10 @@ export const useExplorerData = ({
     } = useExplorerLinkDataQuery({
         skip: skip || !isLink,
         variables: {
-            childLibraryId: libraryId,
             parentLibraryId: (entrypoint as IEntrypointLink).parentLibraryId,
             parentRecordId: (entrypoint as IEntrypointLink).parentRecordId,
             linkAttributeId: (entrypoint as IEntrypointLink).linkAttributeId,
-            attributeIds,
-            pagination,
-            searchQuery: fulltextSearch,
-            multipleSort: sorts,
-            filters: queryFilters // TODO: add a filter to link between child and parent
+            attributeIds
         }
     });
 
@@ -204,8 +241,15 @@ export const useExplorerData = ({
     });
 
     const memoizedData = useMemo(() => {
-        const data = isLibrary ? libraryData : linkData;
-        return data !== undefined ? _mapping(data, libraryId, availableLangs) : null;
+        if (isLibrary) {
+            return libraryData ? _mappingLibrary(libraryData, libraryId, availableLangs) : null;
+        }
+
+        if (isLink) {
+            return linkData ? _mappingLink(linkData, libraryId, availableLangs) : null;
+        }
+
+        return null;
     }, [libraryData, linkData]);
 
     return {

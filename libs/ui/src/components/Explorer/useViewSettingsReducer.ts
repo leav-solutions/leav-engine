@@ -35,7 +35,7 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
     );
     const [view, dispatch] = useReducer(viewSettingsReducer, viewSettingsInitialState);
 
-    const {loading: linkAttributeLoading} = useExplorerLinkAttributeQuery({
+    useExplorerLinkAttributeQuery({
         skip: entrypoint.type !== 'link',
         variables: {
             id: (entrypoint as IEntrypointLink).linkAttributeId

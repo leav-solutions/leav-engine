@@ -955,6 +955,12 @@ export type PropertyValueValueFragment = { valuePayload?: any | null };
 
 export type PropertyValueFragment = PropertyValueLinkValueFragment | PropertyValueTreeValueFragment | PropertyValueValueFragment;
 
+export type LinkPropertyLinkValueFragment = { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null }> }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
+
+export type LinkPropertyTreeValueValueFragment = { id_value?: string | null };
+
+export type LinkPropertyFragment = LinkPropertyLinkValueFragment | LinkPropertyTreeValueValueFragment;
+
 export type CheckApplicationExistenceQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
   endpoint?: InputMaybe<Scalars['String']>;
@@ -1380,18 +1386,13 @@ export type ExplorerLibraryDataQuery = { records: { totalCount?: number | null, 
 
 export type ExplorerLinkDataQueryVariables = Exact<{
   attributeIds: Array<Scalars['ID']> | Scalars['ID'];
-  pagination?: InputMaybe<RecordsPagination>;
-  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
-  multipleSort?: InputMaybe<Array<RecordSortInput> | RecordSortInput>;
-  searchQuery?: InputMaybe<Scalars['String']>;
-  childLibraryId: Scalars['ID'];
   parentLibraryId: Scalars['ID'];
   parentRecordId?: InputMaybe<Scalars['String']>;
   linkAttributeId: Scalars['ID'];
 }>;
 
 
-export type ExplorerLinkDataQuery = { records: { totalCount?: number | null, list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null }> }> }> }, links: { list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, values: Array<{ id_value?: string | null, payload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { id_value?: string | null }> }> }> } };
+export type ExplorerLinkDataQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, library: { id: string } }, property: Array<{ id_value?: string | null, payload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null }> }> } | null } | { id_value?: string | null }> }> } };
 
 export type ExplorerLibraryDetailsQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -1965,6 +1966,15 @@ export const LinkAttributeDetailsFragmentDoc = gql`
   }
 }
     `;
+export const AttributePropertiesFragmentDoc = gql`
+    fragment AttributeProperties on Attribute {
+  id
+  label
+  type
+  format
+  multiple_values
+}
+    `;
 export const PropertyValueFragmentDoc = gql`
     fragment PropertyValue on GenericValue {
   ... on Value {
@@ -1984,15 +1994,27 @@ export const PropertyValueFragmentDoc = gql`
   }
 }
     ${RecordIdentityFragmentDoc}`;
-export const AttributePropertiesFragmentDoc = gql`
-    fragment AttributeProperties on Attribute {
-  id
-  label
-  type
-  format
-  multiple_values
+export const LinkPropertyFragmentDoc = gql`
+    fragment LinkProperty on GenericValue {
+  id_value
+  ... on LinkValue {
+    payload {
+      ...RecordIdentity
+      properties(attributeIds: $attributeIds) {
+        attributeId
+        attributeProperties {
+          ...AttributeProperties
+        }
+        values {
+          ...PropertyValue
+        }
+      }
+    }
+  }
 }
-    `;
+    ${RecordIdentityFragmentDoc}
+${AttributePropertiesFragmentDoc}
+${PropertyValueFragmentDoc}`;
 export const CheckApplicationExistenceDocument = gql`
     query CHECK_APPLICATION_EXISTENCE($id: ID, $endpoint: String) {
   applications(filters: {id: $id, endpoint: $endpoint}) {
@@ -4170,51 +4192,26 @@ export type ExplorerLibraryDataQueryHookResult = ReturnType<typeof useExplorerLi
 export type ExplorerLibraryDataLazyQueryHookResult = ReturnType<typeof useExplorerLibraryDataLazyQuery>;
 export type ExplorerLibraryDataQueryResult = Apollo.QueryResult<ExplorerLibraryDataQuery, ExplorerLibraryDataQueryVariables>;
 export const ExplorerLinkDataDocument = gql`
-    query ExplorerLinkData($attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String, $childLibraryId: ID!, $parentLibraryId: ID!, $parentRecordId: String, $linkAttributeId: ID!) {
+    query ExplorerLinkData($attributeIds: [ID!]!, $parentLibraryId: ID!, $parentRecordId: String, $linkAttributeId: ID!) {
   records(
-    library: $childLibraryId
-    filters: $filters
-    pagination: $pagination
-    multipleSort: $multipleSort
-    searchQuery: $searchQuery
-  ) {
-    totalCount
-    list {
-      ...RecordIdentity
-      properties(attributeIds: $attributeIds) {
-        attributeId
-        attributeProperties {
-          ...AttributeProperties
-        }
-        values {
-          ...PropertyValue
-        }
-      }
-    }
-  }
-  links: records(
     library: $parentLibraryId
     filters: [{field: "id", condition: EQUAL, value: $parentRecordId}]
   ) {
     list {
-      ...RecordIdentity
-      properties(attributeIds: [$linkAttributeId]) {
-        attributeId
-        values {
-          id_value
-          ... on LinkValue {
-            payload {
-              ...RecordIdentity
-            }
-          }
+      id
+      whoAmI {
+        id
+        library {
+          id
         }
+      }
+      property(attribute: $linkAttributeId) {
+        ...LinkProperty
       }
     }
   }
 }
-    ${RecordIdentityFragmentDoc}
-${AttributePropertiesFragmentDoc}
-${PropertyValueFragmentDoc}`;
+    ${LinkPropertyFragmentDoc}`;
 
 /**
  * __useExplorerLinkDataQuery__
@@ -4229,11 +4226,6 @@ ${PropertyValueFragmentDoc}`;
  * const { data, loading, error } = useExplorerLinkDataQuery({
  *   variables: {
  *      attributeIds: // value for 'attributeIds'
- *      pagination: // value for 'pagination'
- *      filters: // value for 'filters'
- *      multipleSort: // value for 'multipleSort'
- *      searchQuery: // value for 'searchQuery'
- *      childLibraryId: // value for 'childLibraryId'
  *      parentLibraryId: // value for 'parentLibraryId'
  *      parentRecordId: // value for 'parentRecordId'
  *      linkAttributeId: // value for 'linkAttributeId'

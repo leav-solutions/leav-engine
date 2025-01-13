@@ -22,7 +22,7 @@ import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {explorerQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useSearchParams} from 'react-router-dom';
-import {FaAccessibleIcon, FaBeer, FaBirthdayCake, FaCheese, FaJs, FaXbox} from 'react-icons/all';
+import {FaBeer} from 'react-icons/all';
 import styled from 'styled-components';
 
 interface ILibraryHomeProps {
@@ -146,9 +146,9 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
             <Explorer
                 entrypoint={{
                     type: 'link',
-                    parentLibraryId: 'parent',
-                    parentRecordId: '4921561',
-                    linkAttributeId: 'link'
+                    parentLibraryId: 'campaigns',
+                    parentRecordId: '612694174',
+                    linkAttributeId: 'campaigns_delivery_platforms'
                 }}
                 defaultActionsForItem={['edit', 'deactivate']}
                 defaultPrimaryActions={['create']}
