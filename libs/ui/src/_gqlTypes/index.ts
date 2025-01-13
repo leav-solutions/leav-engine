@@ -943,7 +943,7 @@ export type ViewDetailsFragment = { id: string, shared: boolean, label: any, des
 
 export type ViewDetailsFilterFragment = { field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null };
 
-export type LinkAttributeDetailsFragment = { linked_library?: { id: string } | null };
+export type LinkAttributeDetailsFragment = { label?: any | null, linked_library?: { id: string } | null };
 
 export type AttributePropertiesFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean };
 
@@ -1370,7 +1370,7 @@ export type ExplorerLinkAttributeQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<{ id: string, linked_library?: { id: string } | null } | { id: string }> } | null };
+export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<{ label?: any | null, id: string, linked_library?: { id: string } | null } | { id: string }> } | null };
 
 export type ExplorerLibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -1961,6 +1961,7 @@ export const ViewDetailsFragmentDoc = gql`
 ${RecordIdentityFragmentDoc}`;
 export const LinkAttributeDetailsFragmentDoc = gql`
     fragment LinkAttributeDetails on LinkAttribute {
+  label
   linked_library {
     id
   }

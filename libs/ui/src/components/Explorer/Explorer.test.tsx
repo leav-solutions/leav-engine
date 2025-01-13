@@ -842,7 +842,7 @@ describe('Explorer', () => {
         test('should handle filters for the request and for the display', async () => {
             render(
                 <Explorer
-                    library="campaigns"
+                    entrypoint={{type: 'library', libraryId: 'campaigns'}}
                     defaultViewSettings={{
                         filters: [
                             {

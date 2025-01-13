@@ -119,7 +119,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     <KitTypography.Title level="h1">
                         {
                             !viewSettingsLoading && (
-                                <ExplorerTitle library={view.libraryId} title={title} />
+                                <ExplorerTitle library={view.libraryId} title={title} entrypoint={entrypoint} />
                             ) /*TODO: manage loading*/
                         }
                     </KitTypography.Title>
@@ -139,14 +139,18 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         dataGroupedFilteredSorted={data?.records ?? emptyArray}
                         attributesProperties={data?.attributes ?? emptyObject}
                         attributesToDisplay={['whoAmI', ...view.attributesIds]}
-                        paginationProps={{
-                            pageSizeOptions: defaultPageSizeOptions,
-                            currentPage,
-                            pageSize: view.pageSize,
-                            setNewPageSize,
-                            setNewPage,
-                            totalItems: data?.totalCount ?? 0
-                        }}
+                        paginationProps={
+                            entrypoint.type === 'library'
+                                ? {
+                                      pageSizeOptions: defaultPageSizeOptions,
+                                      currentPage,
+                                      pageSize: view.pageSize,
+                                      setNewPageSize,
+                                      setNewPage,
+                                      totalItems: data?.totalCount ?? 0
+                                  }
+                                : undefined
+                        }
                         itemActions={[editAction, deactivateAction, ...(itemActions ?? emptyArray)].filter(Boolean)}
                     />
                 )}

@@ -109,6 +109,7 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
         if (libraryId !== null && !viewsLoading && !attributesLoading) {
             const hydratedSettings: IViewSettingsState = {
                 ...viewSettingsInitialState,
+                entrypoint,
                 libraryId,
                 viewId: userView?.id,
                 viewType: userView?.display

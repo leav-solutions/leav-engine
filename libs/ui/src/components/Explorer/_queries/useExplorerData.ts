@@ -94,7 +94,8 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
                 propertiesById: linkValue.payload.properties.reduce(
                     (acc, {attributeId, values}) => ({...acc, [attributeId]: values}),
                     {}
-                )
+                ),
+                id_value: linkValue.id_value
             };
         })
         .filter(Boolean);

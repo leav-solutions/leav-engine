@@ -10,6 +10,7 @@ query ExplorerAttributes($ids: [ID!]) {
 }
 
 fragment LinkAttributeDetails on LinkAttribute {
+    label
     linked_library {
         id
     }
