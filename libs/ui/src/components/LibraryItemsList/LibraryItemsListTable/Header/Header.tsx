@@ -179,9 +179,9 @@ const Header = ({id, children, type}: IHeaderProps) => {
                 <DropdownContent>
                     <WrapperArrow
                         className="wrapper-arrow"
-                        data-testid={`wrapper-arrow-${searchState.sort?.[0].order}`}
-                        $filterDirection={searchState.sort?.[0].order}
-                        $filterActive={searchState.sort?.[0].field === id}
+                        data-testid={`wrapper-arrow-${searchState.sort?.[0]?.order}`}
+                        $filterDirection={searchState.sort?.[0]?.order}
+                        $filterActive={searchState.sort?.[0]?.field === id}
                         style={{fontSize: '130%'}}
                     >
                         <CaretUpOutlined />
