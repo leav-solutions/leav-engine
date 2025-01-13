@@ -7,7 +7,7 @@ import {useLang} from '_ui/hooks';
 import {useEffect, useMemo, useReducer} from 'react';
 import {DefaultViewSettings, IExplorerFilter} from './_types';
 import {v4 as uuid} from 'uuid';
-import {viewSettingsReducer, viewSettingsInitialState, IViewSettingsState} from './manage-view-settings';
+import {viewSettingsReducer, viewSettingsInitialState} from './manage-view-settings';
 import {mapViewTypeFromLegacyToExplorer} from './_constants';
 
 type ValidFieldFilter = Override<
@@ -75,49 +75,49 @@ export const useViewSettingsReducer = (library: string, defaultViewSettings: Def
         [attributesData]
     );
 
-    const hydratedSettings = useMemo<IViewSettingsState>(
-        () => ({
-            ...viewSettingsInitialState,
-            viewId: userView?.id,
-            attributesIds: (userView?.attributes ?? []).map(attr => attr.id),
-            viewType: userView?.display
-                ? mapViewTypeFromLegacyToExplorer[userView.display.type]
-                : viewSettingsInitialState.viewType,
-            ...defaultViewSettings,
-            sort: [...(defaultViewSettings?.sort ?? []), ...(userView?.sort ?? [])].map(s => ({
-                field: s.field,
-                order: s.order
-            })),
-            filters: [...(defaultViewSettings?.filters ?? []), ...userViewFilters].reduce<IExplorerFilter[]>(
-                (acc, filter) => {
-                    if (!attributesDataById[filter.field]) {
-                        console.warn(
-                            `Attribute ${filter.field} from defaultViewSettings or user view not found in database.`
-                        );
-                        return acc;
-                    }
-
-                    return [
-                        ...acc,
-                        {
-                            ...filter,
-                            value: filter.value ?? null,
-                            id: uuid(),
-                            attribute: {
-                                label: localizedTranslation(attributesDataById[filter.field].label, lang),
-                                format: attributesDataById[filter.field].format
-                            }
-                        }
-                    ];
-                },
-                []
-            )
-        }),
-        [defaultViewSettings, attributesDataById, userView, userViewFilters, lang]
-    );
-
     useEffect(() => {
-        if (!attributesLoading) {
+        if (!attributesLoading && !viewsLoading) {
+            const hydratedSettings = {
+                ...viewSettingsInitialState,
+                viewId: userView?.id,
+                viewType: userView?.display
+                    ? mapViewTypeFromLegacyToExplorer[userView.display.type]
+                    : viewSettingsInitialState.viewType,
+                ...defaultViewSettings,
+                attributesIds: [
+                    ...(userView?.attributes ?? []).map(attr => attr.id),
+                    ...(defaultViewSettings?.attributesIds ?? [])
+                ],
+                sort: [...(defaultViewSettings?.sort ?? []), ...(userView?.sort ?? [])].map(s => ({
+                    field: s.field,
+                    order: s.order
+                })),
+                filters: [...(defaultViewSettings?.filters ?? []), ...userViewFilters].reduce<IExplorerFilter[]>(
+                    (acc, filter) => {
+                        if (!attributesDataById[filter.field]) {
+                            console.warn(
+                                `Attribute ${filter.field} from defaultViewSettings or user view not found in database.`
+                            );
+                            return acc;
+                        }
+
+                        return [
+                            ...acc,
+                            {
+                                ...filter,
+                                value: filter.value ?? null,
+                                id: uuid(),
+                                attribute: {
+                                    label: localizedTranslation(attributesDataById[filter.field].label, lang),
+                                    format: attributesDataById[filter.field].format
+                                }
+                            }
+                        ];
+                    },
+                    []
+                )
+            };
+
             dispatch({
                 type: 'RESET',
                 payload: {
@@ -132,7 +132,7 @@ export const useViewSettingsReducer = (library: string, defaultViewSettings: Def
                 }
             });
         }
-    }, [attributesLoading]);
+    }, [attributesLoading, viewsLoading]);
 
     const res = {
         loading: attributesLoading || viewsLoading,
