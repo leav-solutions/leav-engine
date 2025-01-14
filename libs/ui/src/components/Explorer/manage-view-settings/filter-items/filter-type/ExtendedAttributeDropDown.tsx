@@ -43,10 +43,6 @@ export const ExtendedAttributeDropDown: FunctionComponent<IFilterDropDownProps> 
             }
         });
 
-    const showInput =
-        filter.condition !== AttributeConditionFilter.IS_EMPTY &&
-        filter.condition !== AttributeConditionFilter.IS_NOT_EMPTY;
-
     return (
         <KitSpace size="xxs" direction="vertical">
             <KitSelect
@@ -55,7 +51,6 @@ export const ExtendedAttributeDropDown: FunctionComponent<IFilterDropDownProps> 
                 value={filter.condition}
                 placeholder={t('explorer.select-condition')}
             />
-            {showInput}
             <KitDivider noMargin />
             <KitButton type="redirect" icon={<FaClock />} onClick={_onResetFilter}>
                 {t('explorer.reset-filter')}
