@@ -22,7 +22,7 @@ export interface IRecordColumnTreeValue {
 }
 
 export interface IRecordColumnValueStandard {
-    value: string | null;
+    payload: string | null;
     isCalculated: boolean;
     isInherited: boolean;
 }

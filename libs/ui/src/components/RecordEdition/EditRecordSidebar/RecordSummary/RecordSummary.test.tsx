@@ -1,50 +1,35 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getRecordColumnsValues} from '_ui/_queries/records/getRecordColumnsValues';
 import {render, screen} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import RecordSummary from './RecordSummary';
+import {IUseGetRecordColumnsValuesQueryHook} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
+
+jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary/RecordInformations/RecordInformations', () => ({
+    RecordInformations: () => <div>Informations</div>
+}));
+
+jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
+    useGetRecordValuesQuery: (): Partial<IUseGetRecordColumnsValuesQueryHook> => ({
+        loading: false,
+        data: {},
+        refetch: jest.fn()
+    })
+}));
 
 describe('RecordSummary', () => {
-    test('Display summary', async () => {
-        const mocks = [
-            {
-                request: {
-                    query: getRecordColumnsValues(['created_at', 'created_by', 'modified_at', 'modified_by']),
-                    variables: {
-                        library: 'record_lib',
-                        filters: [{field: 'id', condition: 'EQUAL', value: '123456'}]
-                    }
-                },
-                result: {
-                    data: {
-                        records: {
-                            list: [
-                                {
-                                    _id: 123456,
-                                    created_at: '2020-01-01',
-                                    created_by: {
-                                        id: '1',
-                                        label: 'admin'
-                                    },
-                                    modified_at: '2020-01-01',
-                                    modified_by: {
-                                        id: '1',
-                                        label: 'admin'
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        ];
+    it('Should display three tabs: informations, chat and history', async () => {
+        render(<RecordSummary record={mockRecord} />);
 
-        render(<RecordSummary record={mockRecord} />, {mocks});
-
-        expect(await screen.findByAltText('record preview')).toBeInTheDocument();
-        expect(screen.getByText(mockRecord.id)).toBeInTheDocument();
-        expect(screen.getByText(mockRecord.label)).toBeInTheDocument();
+        expect(screen.getByText('record_summary.informations')).toBeInTheDocument();
+        expect(screen.getByText('record_summary.chat')).toBeInTheDocument();
+        expect(screen.getByText('record_summary.history')).toBeInTheDocument();
     });
+
+    //TODO: In XSTREAM-1134, we will have to handle the loading state
+    it.todo('Should display loading state');
+
+    //TODO: In XSTREAM-1134, we will have to handle the error state
+    it.todo('Should display error state');
 });
