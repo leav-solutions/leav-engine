@@ -61,7 +61,7 @@ describe('extractFormElements', () => {
             ]
         };
 
-        const convertForm = extractFormElements(baseForm);
+        const convertForm = extractFormElements(baseForm, null, null);
 
         const expectation = {
             __root: [
@@ -155,7 +155,7 @@ describe('extractFormElements', () => {
             ]
         };
 
-        const convertForm = extractFormElements(baseForm);
+        const convertForm = extractFormElements(baseForm, null, null);
 
         const expectation = {
             __root: [
@@ -237,7 +237,7 @@ describe('extractFormElements', () => {
             ]
         };
 
-        const convertForm = extractFormElements(baseForm);
+        const convertForm = extractFormElements(baseForm, null, null);
 
         const expectation = {
             __root: [
