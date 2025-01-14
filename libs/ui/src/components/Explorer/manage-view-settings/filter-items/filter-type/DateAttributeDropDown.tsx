@@ -13,7 +13,7 @@ import {AttributeConditionFilter} from '_ui/types';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import {dateValuesSeparator} from '_ui/components/Explorer/_queries/useExplorerData';
-import {nullValueConditions} from '_ui/components/Explorer/nullValuesConditions';
+import {nullValueConditions} from '_ui/components/Explorer/conditionsHelper';
 
 const DatePickerContainerStyledDiv = styled.div`
     .ant-picker {

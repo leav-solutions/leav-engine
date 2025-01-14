@@ -309,7 +309,7 @@ describe('ViewSettings Reducer', () => {
                         id: expect.any(String),
                         attribute: attributeData,
                         field: 'second',
-                        condition: RecordFilterCondition.EQUAL,
+                        condition: RecordFilterCondition.CONTAINS,
                         value: null
                     }
                 ]);
@@ -334,7 +334,7 @@ describe('ViewSettings Reducer', () => {
                             id: 'second-id',
                             attribute: attributeData,
                             field: 'second',
-                            condition: RecordFilterCondition.CONTAINS,
+                            condition: RecordFilterCondition.EQUAL,
                             value: '42'
                         },
                         {
@@ -366,7 +366,7 @@ describe('ViewSettings Reducer', () => {
                     id: 'second-id',
                     attribute: attributeData,
                     field: 'second',
-                    condition: RecordFilterCondition.EQUAL,
+                    condition: RecordFilterCondition.CONTAINS,
                     value: null
                 },
                 {

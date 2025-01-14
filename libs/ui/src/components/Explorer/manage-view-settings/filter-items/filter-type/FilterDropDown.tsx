@@ -9,6 +9,10 @@ import {TextAttributeDropDown} from './TextAttributeDropDown';
 import {NumericAttributeDropDown} from './NumericAttributeDropDown';
 import {BooleanAttributeDropDown} from './BooleanAttributeDropdown';
 import {DateAttributeDropDown} from './DateAttributeDropDown';
+import {EncryptedAttributeDropDown} from './EncryptedAttributeDropDown';
+import {ExtendedAttributeDropDown} from './ExtendedAttributeDropDown';
+import {ColorAttributeDropDown} from './ColorAttributeDropDown';
+import {DateRangeAttributeDropDown} from './DateRangeAttributeDropDown';
 
 export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
     switch (filter.attribute.format) {
@@ -21,6 +25,14 @@ export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}
             return <TextAttributeDropDown filter={filter} />;
         case AttributeFormat.boolean:
             return <BooleanAttributeDropDown filter={filter} />;
+        case AttributeFormat.encrypted:
+            return <EncryptedAttributeDropDown filter={filter} />;
+        case AttributeFormat.extended:
+            return <ExtendedAttributeDropDown filter={filter} />;
+        case AttributeFormat.color:
+            return <ColorAttributeDropDown filter={filter} />;
+        case AttributeFormat.date_range:
+            return <DateRangeAttributeDropDown filter={filter} />;
         default:
             return <SimpleFilterDropdown filter={filter} />;
     }

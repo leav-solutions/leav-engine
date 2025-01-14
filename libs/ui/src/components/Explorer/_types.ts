@@ -52,7 +52,7 @@ export interface IExplorerFilter {
         label: string;
     };
     field: string;
-    condition: RecordFilterCondition;
+    condition: RecordFilterCondition | null;
     value: string | null;
 }
 

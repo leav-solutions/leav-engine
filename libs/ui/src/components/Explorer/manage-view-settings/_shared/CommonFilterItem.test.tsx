@@ -260,4 +260,80 @@ describe('CommonFilterItem', () => {
             expect(screen.queryAllByRole('textbox').length).toBe(2);
         });
     });
+
+    describe('color filter', () => {
+        test('should render color filter', async () => {
+            const filter: IExplorerFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'color filter',
+                    format: AttributeFormat.color
+                },
+                field: 'test',
+                value: null,
+                condition: null
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            await userEvent.click(screen.getByRole('button', {name: /color/}));
+            expect(await screen.findByText(/select-condition/)).toBeVisible();
+        });
+    });
+
+    describe('encrypted filter', () => {
+        test('should render encrypted filter', async () => {
+            const filter: IExplorerFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'encrypted filter',
+                    format: AttributeFormat.encrypted
+                },
+                field: 'test',
+                value: null,
+                condition: null
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            await userEvent.click(screen.getByRole('button', {name: /encrypted/}));
+            expect(await screen.findByText(/select-condition/)).toBeVisible();
+        });
+    });
+
+    describe('extended filter', () => {
+        test('should render extended filter', async () => {
+            const filter: IExplorerFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'extended filter',
+                    format: AttributeFormat.extended
+                },
+                field: 'test',
+                value: null,
+                condition: null
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            await userEvent.click(screen.getByRole('button', {name: /extended/}));
+            expect(await screen.findByText(/select-condition/)).toBeVisible();
+        });
+    });
+
+    describe('period filter', () => {
+        test('should render period filter', async () => {
+            const filter: IExplorerFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'period filter',
+                    format: AttributeFormat.date_range
+                },
+                field: 'test',
+                value: null,
+                condition: null
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            await userEvent.click(screen.getByRole('button', {name: /period/}));
+            expect(await screen.findByText(/select-condition/)).toBeVisible();
+        });
+    });
 });
