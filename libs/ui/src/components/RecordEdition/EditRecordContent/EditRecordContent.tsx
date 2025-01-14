@@ -71,7 +71,11 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         version: state.valuesVersion
     });
 
-    const {data: computeFieldsData, refetch: refetchComputeFields} = useGetRecordValuesQuery(
+    const {
+        data: computeFieldsData,
+        error: computeFieldsError,
+        refetch: refetchComputeFields
+    } = useGetRecordValuesQuery(
         library,
         recordForm
             ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
@@ -130,8 +134,6 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         return deleteRes;
     };
 
-    const elementsByContainer = extractFormElements(recordForm);
-
     const rootElement: FormElement<{}> = {
         id: FORM_ROOT_CONTAINER_ID,
         containerId: null,
@@ -146,6 +148,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
     const antdFormInitialValues = getAntdFormInitialValues(recordForm);
     const recordComputedValues = computeFieldsData && record ? computeFieldsData[record.id] : null;
+    const elementsByContainer = extractFormElements(recordForm, recordComputedValues, computeFieldsError);
 
     return (
         <Form
