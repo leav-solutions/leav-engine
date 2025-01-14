@@ -488,7 +488,16 @@
         "created_at": "Créé le",
         "created_at_value": "{{date}} par {{user}}",
         "modified_at": "Modifié le",
-        "modified_at_value": "{{date}} par {{user}}"
+        "modified_at_value": "{{date}} par {{user}}",
+        "new_record": "Nouvel élément",
+        "id_entity": "Identifiant entité",
+        "creation": "Création",
+        "last_modification": "Dernière modification",
+        "date_by_user": "Le {{date}} par {{user}}",
+        "open_preview_modal": "Ouvrir la modale d'aperçu",
+        "informations": "Informations",
+        "chat": "Chat",
+        "history": "Historique"
     },
     "view": {
         "views": "Vues",

@@ -7,12 +7,11 @@ import {KitTooltip} from 'aristid-ds';
 import {FaLayerGroup, FaSquareRootAlt} from 'react-icons/fa';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 
 const ComputeIndicatorWrapper = styled.div`
     font-size: calc(var(--general-typography-fontSize7) * 1px);
 `;
-
-const TOOLTIP_DEFAULT_DELAY_IN_SECONDS = 0.5;
 
 export const ComputeIndicator: FunctionComponent<{
     calculatedFlags: CalculatedFlags;
