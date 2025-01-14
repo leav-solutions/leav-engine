@@ -11,6 +11,7 @@ import {createPortal} from 'react-dom';
 import {EditRecordReducerActionsTypes, IEditRecordReducerState} from '../editRecordReducer/editRecordReducer';
 import {KitSidePanel} from 'aristid-ds';
 import {KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 interface IEditRecordSidebarProps {
     onMetadataSubmit: MetadataSubmitValueFunc;
@@ -19,6 +20,7 @@ interface IEditRecordSidebarProps {
 }
 
 const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubmit: MetadataSubmitValueFunc) => {
+    // TODO: ValueDetails and ValuesVersions should be removed or refactored later
     switch (state.sidebarContent) {
         case 'none':
             return null;
@@ -42,11 +44,13 @@ export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
     open,
     sidebarContainer
 }) => {
+    const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
     const sidePanelRef = useRef<KitSidePanelRef | null>(null);
+    const sidePanelTitle = state.record?.label ?? state.record?.id ?? t('record_summary.new_record');
 
     const editRecordSidebarContent = (
-        <KitSidePanel ref={sidePanelRef} initialOpen={open} size="s">
+        <KitSidePanel ref={sidePanelRef} initialOpen={open} idCardProps={{title: sidePanelTitle}}>
             {_getRecordSidebarContent(state, onMetadataSubmit)}
         </KitSidePanel>
     );

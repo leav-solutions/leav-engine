@@ -50,3 +50,5 @@ export const APP_ENDPOINT = window.location.pathname.split('/').filter(e => e)[1
 
 export const PREFIX_USER_VIEWS_ORDER_KEY = 'user_views_order_';
 export const PREFIX_SHARED_VIEWS_ORDER_KEY = 'shared_views_order_';
+
+export const TOOLTIP_DEFAULT_DELAY_IN_SECONDS = 0.5;
