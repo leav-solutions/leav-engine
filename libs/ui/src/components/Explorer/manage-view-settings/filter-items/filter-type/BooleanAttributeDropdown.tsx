@@ -2,14 +2,34 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ComponentProps, FunctionComponent} from 'react';
-import {KitSwitch} from 'aristid-ds';
+import {KitSelect} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
 import {IFilterChildrenDropDownProps} from '_ui/components/Explorer/_types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 export const BooleanAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({filter, onFilterChange}) => {
-    const _onBooleanChanged: ComponentProps<typeof KitSwitch>['onChange'] = checked => {
-        onFilterChange({...filter, condition: AttributeConditionFilter.EQUAL, value: checked ? 'true' : 'false'});
+    const {t} = useSharedTranslation();
+    const _onSelectionChanged: ComponentProps<typeof KitSelect>['onChange'] = value => {
+        onFilterChange({...filter, condition: AttributeConditionFilter.EQUAL, value});
     };
 
-    return <KitSwitch defaultValue={Boolean(filter.value)} onChange={_onBooleanChanged} />;
+    const valuesOptions = [
+        {
+            label: t('explorer.true'),
+            value: 'true'
+        },
+        {
+            label: t('explorer.false'),
+            value: 'false'
+        }
+    ];
+
+    return (
+        <KitSelect
+            options={valuesOptions}
+            onChange={_onSelectionChanged}
+            value={filter.value}
+            placeholder={t('filters.equal')}
+        />
+    );
 };
