@@ -12,7 +12,6 @@
   "scripts": {
     "test": "CI=true node ./scripts/testChangedProjects.js",
     "test:ci": "",
-    "test:commit": "node ./scripts/preCommit.js",
     "lint": "eslint --ext=ts,tsx --fix apps/ libs/",
     "tscheck": "yarn workspaces foreach -vpA --exclude 'libs/types' run tscheck",
     "license:check": "license-check-and-add check -f license-check-config.json",
