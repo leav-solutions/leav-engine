@@ -6,7 +6,7 @@ import {useExplorerLibraryDetailsQuery, useExplorerLinkAttributeQuery} from '_ui
 import useLang from '_ui/hooks/useLang';
 import {AntSkeleton} from 'aristid-ds';
 import {FunctionComponent} from 'react';
-import {Entrypoint} from './_types';
+import {Entrypoint, IEntrypointLink} from './_types';
 
 interface IExplorerTitleProps {
     title?: string;

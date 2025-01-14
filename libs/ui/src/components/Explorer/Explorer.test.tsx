@@ -9,7 +9,7 @@ import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
-import {IItemAction, IPrimaryAction} from './_types';
+import {IEntrypointLibrary, IItemAction, IPrimaryAction} from './_types';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -364,9 +364,9 @@ describe('Explorer', () => {
                 }
             ]
         }
-    ] satisfies gqlTypes.ExplorerQuery['records']['list'];
+    ] satisfies gqlTypes.ExplorerLibraryDataQuery['records']['list'];
 
-    const mockEmptyExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerQuery> = {
+    const mockEmptyExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
         loading: false,
         called: true,
         data: {
@@ -377,7 +377,7 @@ describe('Explorer', () => {
         }
     };
 
-    const mockExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerQuery> = {
+    const mockExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
         loading: false,
         called: true,
         data: {
@@ -389,7 +389,7 @@ describe('Explorer', () => {
     };
 
     const campaignName = 'Campagnes';
-    const mockLibraryDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
+    const mockLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
         loading: false,
         called: true,
         data: {
@@ -467,13 +467,18 @@ describe('Explorer', () => {
 
     let spyUseExplorerQuery: jest.SpyInstance;
 
+    const libraryEntrypoint: IEntrypointLibrary = {
+        type: 'library',
+        libraryId: 'campaigns'
+    };
+
     beforeEach(() => {
         spyUseExplorerQuery = jest
-            .spyOn(gqlTypes, 'useExplorerQuery')
-            .mockImplementation(() => mockExplorerQueryResult as gqlTypes.ExplorerQueryResult);
+            .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+            .mockImplementation(() => mockExplorerQueryResult as gqlTypes.ExplorerLibraryDataQueryResult);
 
-        jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
-            () => mockLibraryDataQueryResult as gqlTypes.ExplorerLibraryDataQueryResult
+        jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+            () => mockLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
         );
 
         jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
@@ -497,20 +502,20 @@ describe('Explorer', () => {
 
     describe('props title', () => {
         test('Should display library label as title', () => {
-            render(<Explorer library="campaigns" />);
+            render(<Explorer entrypoint={libraryEntrypoint} />);
 
             expect(screen.getByText(campaignName)).toBeInTheDocument();
         });
 
         test('Should display custom title', () => {
-            render(<Explorer library="campaigns" title="Here's my explorer!" />);
+            render(<Explorer entrypoint={libraryEntrypoint} title="Here's my explorer!" />);
 
             expect(screen.getByText("Here's my explorer!")).toBeInTheDocument();
         });
     });
 
     test('Should display the list of records in a table', async () => {
-        render(<Explorer library="campaigns" />);
+        render(<Explorer entrypoint={libraryEntrypoint} />);
 
         expect(screen.getByRole('table')).toBeVisible();
         expect(screen.getAllByRole('row')).toHaveLength(mockRecords.length); // 2 records
@@ -521,7 +526,7 @@ describe('Explorer', () => {
 
     test('Should display message on empty data', async () => {
         spyUseExplorerQuery.mockReturnValue(mockEmptyExplorerQueryResult);
-        render(<Explorer library="campaigns" />);
+        render(<Explorer entrypoint={libraryEntrypoint} />);
 
         expect(screen.getByText(/empty-data/)).toBeVisible();
     });
@@ -529,7 +534,7 @@ describe('Explorer', () => {
     test('Should display the list of records in a table with attributes values', async () => {
         render(
             <Explorer
-                library="campaigns"
+                entrypoint={libraryEntrypoint}
                 defaultViewSettings={{
                     attributesIds: [
                         simpleMockAttribute.id,
@@ -619,7 +624,7 @@ describe('Explorer', () => {
             {loading: false, called: false, client: {} as any, reset: jest.fn()}
         ]);
 
-        render(<Explorer library="campaigns" />);
+        render(<Explorer entrypoint={libraryEntrypoint} />);
 
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
@@ -631,7 +636,7 @@ describe('Explorer', () => {
     });
 
     test('Should be able to edit a record with default actions', async () => {
-        render(<Explorer library="campaigns" />);
+        render(<Explorer entrypoint={libraryEntrypoint} />);
 
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.edit-item'}));
@@ -645,7 +650,7 @@ describe('Explorer', () => {
                 label: 'Custom action',
                 callback: jest.fn()
             };
-            render(<Explorer library="campaigns" itemActions={[customAction]} />);
+            render(<Explorer entrypoint={libraryEntrypoint} itemActions={[customAction]} />);
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             await user.click(within(firstRecordRow).getByRole('button', {name: customAction.label}));
@@ -676,7 +681,7 @@ describe('Explorer', () => {
                     callback: jest.fn()
                 }
             ];
-            render(<Explorer library="campaigns" itemActions={customActions} />);
+            render(<Explorer entrypoint={libraryEntrypoint} itemActions={customActions} />);
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             await user.hover(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
@@ -694,7 +699,7 @@ describe('Explorer', () => {
         });
 
         test('Should display the list of records with no actions', () => {
-            render(<Explorer library="campaigns" defaultActionsForItem={[]} />);
+            render(<Explorer entrypoint={libraryEntrypoint} defaultActionsForItem={[]} />);
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             expect(within(firstRecordRow).queryByRole('button')).not.toBeInTheDocument();
@@ -703,7 +708,7 @@ describe('Explorer', () => {
 
     describe('Primary Action', () => {
         test('Should be able to create a new record', async () => {
-            render(<Explorer library="campaigns" />);
+            render(<Explorer entrypoint={libraryEntrypoint} />);
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
 
@@ -711,7 +716,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to display custom primary actions', async () => {
-            render(<Explorer library="campaigns" primaryActions={customPrimaryActions} />);
+            render(<Explorer entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} />);
 
             const createButton = screen.getByRole('button', {name: 'explorer.create-one'});
             const dropdownButton = createButton.nextElementSibling; // Not nice, but no way to get the dropdown button directly
@@ -729,7 +734,13 @@ describe('Explorer', () => {
         });
 
         test('Should be able to display custom primary actions without create button', async () => {
-            render(<Explorer library="campaigns" primaryActions={customPrimaryActions} defaultPrimaryActions={[]} />);
+            render(
+                <Explorer
+                    entrypoint={libraryEntrypoint}
+                    primaryActions={customPrimaryActions}
+                    defaultPrimaryActions={[]}
+                />
+            );
 
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             const firstActionButton = screen.getByRole('button', {name: customPrimaryAction1.label});
@@ -751,7 +762,7 @@ describe('Explorer', () => {
     });
 
     test('Should be able to make a fulltext search', async () => {
-        const mockExplorerQueryResultWithSearch: Mockify<typeof gqlTypes.useExplorerQuery> = {
+        const mockExplorerQueryResultWithSearch: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
             loading: false,
             called: true,
             data: {
@@ -780,14 +791,16 @@ describe('Explorer', () => {
                 }
             }
         };
-        jest.spyOn(gqlTypes, 'useExplorerQuery').mockImplementation(
+        jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
             ({variables}) =>
                 (variables?.searchQuery
                     ? mockExplorerQueryResultWithSearch
-                    : mockExplorerQueryResult) as gqlTypes.ExplorerQueryResult
+                    : mockExplorerQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
         );
 
-        render(<Explorer library="campaigns" primaryActions={customPrimaryActions} defaultPrimaryActions={[]} />);
+        render(
+            <Explorer entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} defaultPrimaryActions={[]} />
+        );
 
         const searchInput = screen.getByRole('textbox', {name: /search/});
         await userEvent.type(searchInput, 'Christ{Enter}');
@@ -801,7 +814,7 @@ describe('Explorer', () => {
     });
 
     describe('With filters', () => {
-        const mockExplorerQueryResultWithFilters: Mockify<typeof gqlTypes.useExplorerQuery> = {
+        const mockExplorerQueryResultWithFilters: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
             loading: false,
             called: true,
             data: {
@@ -831,12 +844,12 @@ describe('Explorer', () => {
         };
 
         const spy = jest
-            .spyOn(gqlTypes, 'useExplorerQuery')
+            .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
             .mockImplementation(
                 ({variables}) =>
                     (Array.isArray(variables?.filters) && variables.filters.length
                         ? mockExplorerQueryResultWithFilters
-                        : mockExplorerQueryResult) as gqlTypes.ExplorerQueryResult
+                        : mockExplorerQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
             );
 
         test('should handle filters for the request and for the display', async () => {
