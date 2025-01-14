@@ -20,7 +20,8 @@ const base: IAttribute = {
     embedded_fields: null,
     actions_list: null,
     permissions_conf: null,
-    versions_conf: {versionable: false}
+    versions_conf: {versionable: false},
+    required: false
 };
 
 export const mockAttrSimple: IAttribute = {...base, id: 'simple_attribute'};

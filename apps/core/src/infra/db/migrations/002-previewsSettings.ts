@@ -89,6 +89,7 @@ export default function ({
                     multiple_values: false,
                     system: true,
                     readonly: false,
+                    required: false,
                     actions_list: {
                         [ActionsListEvents.GET_VALUE]: [
                             {
