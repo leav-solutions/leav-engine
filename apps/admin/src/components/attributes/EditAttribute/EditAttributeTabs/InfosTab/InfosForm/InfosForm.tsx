@@ -348,7 +348,7 @@ function InfosForm({
                         width="4"
                         disabled={readonly || values.system}
                         name="required"
-                        aria-label="required"
+                        aria-label={t('attributes.required')}
                         onChange={_handleChangeWithSubmit}
                         onBlur={_handleBlur}
                         checked={values.required}
