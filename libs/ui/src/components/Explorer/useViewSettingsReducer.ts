@@ -1,13 +1,20 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useExplorerAttributesQuery, useGetViewsListQuery, ViewDetailsFilterFragment} from '_ui/_gqlTypes';
+import {
+    ExplorerLinkAttributeQuery,
+    LinkAttributeDetailsFragment,
+    useExplorerAttributesQuery,
+    useExplorerLinkAttributeQuery,
+    useGetViewsListQuery,
+    ViewDetailsFilterFragment
+} from '_ui/_gqlTypes';
 import {localizedTranslation, Override} from '@leav/utils';
 import {useLang} from '_ui/hooks';
-import {useEffect, useMemo, useReducer} from 'react';
-import {DefaultViewSettings, IExplorerFilter} from './_types';
+import {useEffect, useMemo, useReducer, useState} from 'react';
+import {DefaultViewSettings, Entrypoint, IEntrypointLink, IExplorerFilter} from './_types';
 import {v4 as uuid} from 'uuid';
-import {viewSettingsReducer, viewSettingsInitialState} from './manage-view-settings';
+import {IViewSettingsState, viewSettingsInitialState, viewSettingsReducer} from './manage-view-settings';
 import {mapViewTypeFromLegacyToExplorer} from './_constants';
 
 type ValidFieldFilter = Override<
@@ -21,17 +28,41 @@ type ValidFieldFilter = Override<
 const _isValidFieldFilter = (filter: ViewDetailsFilterFragment): filter is ValidFieldFilter =>
     !!filter.field && !!filter.condition;
 
-export const useViewSettingsReducer = (library: string, defaultViewSettings: DefaultViewSettings = {}) => {
+const _isLinkAttributeDetails = (
+    linkAttributeData: NonNullable<ExplorerLinkAttributeQuery['attributes']>['list'][number]
+): linkAttributeData is LinkAttributeDetailsFragment & {id: string} => 'linked_library' in linkAttributeData;
+
+export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettings: DefaultViewSettings = {}) => {
     const {lang} = useLang();
+    const [loading, setLoading] = useState(true);
+    const [libraryId, setLibraryId] = useState<null | string>(
+        entrypoint.type === 'library' ? entrypoint.libraryId : null
+    );
     const [view, dispatch] = useReducer(viewSettingsReducer, viewSettingsInitialState);
+
+    useExplorerLinkAttributeQuery({
+        skip: entrypoint.type !== 'link',
+        variables: {
+            id: (entrypoint as IEntrypointLink).linkAttributeId
+        },
+        onCompleted: data => {
+            const attributeData = data?.attributes?.list?.[0];
+            if (!attributeData) {
+                throw new Error('Unknown link attribute');
+            }
+
+            setLibraryId(_isLinkAttributeDetails(attributeData) ? (attributeData.linked_library?.id ?? '') : null);
+        }
+    });
 
     const {
         data: viewData,
         loading: viewsLoading,
         error: viewError
     } = useGetViewsListQuery({
+        skip: libraryId === null,
         variables: {
-            libraryId: library
+            libraryId: libraryId as string
         }
     });
 
@@ -47,12 +78,14 @@ export const useViewSettingsReducer = (library: string, defaultViewSettings: Def
             })) ?? [];
 
     const attributesToHydrate = [
-        ...new Set([
-            ...(defaultViewSettings.filters?.map(filter => filter.field) ?? []),
-            ...(defaultViewSettings.sort?.map(sort => sort.field) ?? []),
-            ...userViewFilters.map(filter => String(filter.field)),
-            ...(userView?.sort?.map(sort => sort.field) ?? [])
-        ])
+        ...new Set(
+            [
+                ...(defaultViewSettings.filters ?? []),
+                ...(defaultViewSettings.sort ?? []),
+                ...userViewFilters,
+                ...(userView?.sort ?? [])
+            ].map(({field}) => field)
+        )
     ];
 
     const {
@@ -63,7 +96,7 @@ export const useViewSettingsReducer = (library: string, defaultViewSettings: Def
         variables: {
             ids: attributesToHydrate
         },
-        skip: viewsLoading || !attributesToHydrate.length
+        skip: libraryId === null || viewsLoading || attributesToHydrate.length === 0
     });
 
     const attributesDataById = useMemo(
@@ -76,9 +109,11 @@ export const useViewSettingsReducer = (library: string, defaultViewSettings: Def
     );
 
     useEffect(() => {
-        if (!attributesLoading && !viewsLoading) {
-            const hydratedSettings = {
+        if (libraryId !== null && !viewsLoading && !attributesLoading) {
+            const hydratedSettings: IViewSettingsState = {
                 ...viewSettingsInitialState,
+                entrypoint,
+                libraryId,
                 viewId: userView?.id,
                 viewType: userView?.display
                     ? mapViewTypeFromLegacyToExplorer[userView.display.type]
@@ -117,7 +152,6 @@ export const useViewSettingsReducer = (library: string, defaultViewSettings: Def
                     []
                 )
             };
-
             dispatch({
                 type: 'RESET',
                 payload: {
@@ -131,15 +165,14 @@ export const useViewSettingsReducer = (library: string, defaultViewSettings: Def
                     }
                 }
             });
+            setLoading(false);
         }
-    }, [attributesLoading, viewsLoading]);
+    }, [attributesLoading, viewsLoading, libraryId]);
 
-    const res = {
-        loading: attributesLoading || viewsLoading,
+    return {
+        loading,
         error: viewError ?? attributesError,
         view,
         dispatch
     };
-
-    return res;
 };

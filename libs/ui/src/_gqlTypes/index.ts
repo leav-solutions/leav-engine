@@ -284,6 +284,7 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String'];
   recordId: Scalars['String'];
@@ -935,6 +936,8 @@ export type ViewDetailsFragment = { id: string, shared: boolean, label: any, des
 
 export type ViewDetailsFilterFragment = { field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null };
 
+export type LinkAttributeDetailsFragment = { label?: any | null, linked_library?: { id: string } | null };
+
 export type AttributePropertiesFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean };
 
 export type PropertyValueLinkValueFragment = { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
@@ -944,6 +947,12 @@ export type PropertyValueTreeValueFragment = { treePayload?: { record: { id: str
 export type PropertyValueValueFragment = { valuePayload?: any | null };
 
 export type PropertyValueFragment = PropertyValueLinkValueFragment | PropertyValueTreeValueFragment | PropertyValueValueFragment;
+
+export type LinkPropertyLinkValueFragment = { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null }> }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
+
+export type LinkPropertyTreeValueValueFragment = { id_value?: string | null };
+
+export type LinkPropertyFragment = LinkPropertyLinkValueFragment | LinkPropertyTreeValueValueFragment;
 
 export type CheckApplicationExistenceQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -1349,7 +1358,14 @@ export type ExplorerAttributesQueryVariables = Exact<{
 
 export type ExplorerAttributesQuery = { attributes?: { list: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> } | null };
 
-export type ExplorerQueryVariables = Exact<{
+export type ExplorerLinkAttributeQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<{ label?: any | null, id: string, linked_library?: { id: string } | null } | { id: string }> } | null };
+
+export type ExplorerLibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID'];
   attributeIds: Array<Scalars['ID']> | Scalars['ID'];
   pagination?: InputMaybe<RecordsPagination>;
@@ -1359,14 +1375,24 @@ export type ExplorerQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerQuery = { records: { totalCount?: number | null, list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null }> }> }> } };
+export type ExplorerLibraryDataQuery = { records: { totalCount?: number | null, list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null }> }> }> } };
 
-export type ExplorerLibraryDataQueryVariables = Exact<{
+export type ExplorerLinkDataQueryVariables = Exact<{
+  attributeIds: Array<Scalars['ID']> | Scalars['ID'];
+  parentLibraryId: Scalars['ID'];
+  parentRecordId?: InputMaybe<Scalars['String']>;
+  linkAttributeId: Scalars['ID'];
+}>;
+
+
+export type ExplorerLinkDataQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, library: { id: string } }, property: Array<{ id_value?: string | null, payload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null }> }> } | null } | { id_value?: string | null }> }> } };
+
+export type ExplorerLibraryDetailsQueryVariables = Exact<{
   libraryId: Scalars['ID'];
 }>;
 
 
-export type ExplorerLibraryDataQuery = { libraries?: { list: Array<{ id: string, label?: any | null }> } | null };
+export type ExplorerLibraryDetailsQuery = { libraries?: { list: Array<{ id: string, label?: any | null }> } | null };
 
 export type TreeDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID'];
@@ -1927,6 +1953,23 @@ export const ViewDetailsFragmentDoc = gql`
 }
     ${ViewDetailsFilterFragmentDoc}
 ${RecordIdentityFragmentDoc}`;
+export const LinkAttributeDetailsFragmentDoc = gql`
+    fragment LinkAttributeDetails on LinkAttribute {
+  label
+  linked_library {
+    id
+  }
+}
+    `;
+export const AttributePropertiesFragmentDoc = gql`
+    fragment AttributeProperties on Attribute {
+  id
+  label
+  type
+  format
+  multiple_values
+}
+    `;
 export const PropertyValueFragmentDoc = gql`
     fragment PropertyValue on GenericValue {
   ... on Value {
@@ -1946,15 +1989,27 @@ export const PropertyValueFragmentDoc = gql`
   }
 }
     ${RecordIdentityFragmentDoc}`;
-export const AttributePropertiesFragmentDoc = gql`
-    fragment AttributeProperties on Attribute {
-  id
-  label
-  type
-  format
-  multiple_values
+export const LinkPropertyFragmentDoc = gql`
+    fragment LinkProperty on GenericValue {
+  id_value
+  ... on LinkValue {
+    payload {
+      ...RecordIdentity
+      properties(attributeIds: $attributeIds) {
+        attributeId
+        attributeProperties {
+          ...AttributeProperties
+        }
+        values {
+          ...PropertyValue
+        }
+      }
+    }
+  }
 }
-    `;
+    ${RecordIdentityFragmentDoc}
+${AttributePropertiesFragmentDoc}
+${PropertyValueFragmentDoc}`;
 export const CheckApplicationExistenceDocument = gql`
     query CHECK_APPLICATION_EXISTENCE($id: ID, $endpoint: String) {
   applications(filters: {id: $id, endpoint: $endpoint}) {
@@ -4033,8 +4088,46 @@ export function useExplorerAttributesLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type ExplorerAttributesQueryHookResult = ReturnType<typeof useExplorerAttributesQuery>;
 export type ExplorerAttributesLazyQueryHookResult = ReturnType<typeof useExplorerAttributesLazyQuery>;
 export type ExplorerAttributesQueryResult = Apollo.QueryResult<ExplorerAttributesQuery, ExplorerAttributesQueryVariables>;
-export const ExplorerDocument = gql`
-    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
+export const ExplorerLinkAttributeDocument = gql`
+    query ExplorerLinkAttribute($id: ID!) {
+  attributes(filters: {ids: [$id]}) {
+    list {
+      id
+      ...LinkAttributeDetails
+    }
+  }
+}
+    ${LinkAttributeDetailsFragmentDoc}`;
+
+/**
+ * __useExplorerLinkAttributeQuery__
+ *
+ * To run a query within a React component, call `useExplorerLinkAttributeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExplorerLinkAttributeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExplorerLinkAttributeQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useExplorerLinkAttributeQuery(baseOptions: Apollo.QueryHookOptions<ExplorerLinkAttributeQuery, ExplorerLinkAttributeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExplorerLinkAttributeQuery, ExplorerLinkAttributeQueryVariables>(ExplorerLinkAttributeDocument, options);
+      }
+export function useExplorerLinkAttributeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerLinkAttributeQuery, ExplorerLinkAttributeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExplorerLinkAttributeQuery, ExplorerLinkAttributeQueryVariables>(ExplorerLinkAttributeDocument, options);
+        }
+export type ExplorerLinkAttributeQueryHookResult = ReturnType<typeof useExplorerLinkAttributeQuery>;
+export type ExplorerLinkAttributeLazyQueryHookResult = ReturnType<typeof useExplorerLinkAttributeLazyQuery>;
+export type ExplorerLinkAttributeQueryResult = Apollo.QueryResult<ExplorerLinkAttributeQuery, ExplorerLinkAttributeQueryVariables>;
+export const ExplorerLibraryDataDocument = gql`
+    query ExplorerLibraryData($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
   records(
     library: $libraryId
     filters: $filters
@@ -4062,49 +4155,6 @@ ${AttributePropertiesFragmentDoc}
 ${PropertyValueFragmentDoc}`;
 
 /**
- * __useExplorerQuery__
- *
- * To run a query within a React component, call `useExplorerQuery` and pass it any options that fit your needs.
- * When your component renders, `useExplorerQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useExplorerQuery({
- *   variables: {
- *      libraryId: // value for 'libraryId'
- *      attributeIds: // value for 'attributeIds'
- *      pagination: // value for 'pagination'
- *      filters: // value for 'filters'
- *      multipleSort: // value for 'multipleSort'
- *      searchQuery: // value for 'searchQuery'
- *   },
- * });
- */
-export function useExplorerQuery(baseOptions: Apollo.QueryHookOptions<ExplorerQuery, ExplorerQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ExplorerQuery, ExplorerQueryVariables>(ExplorerDocument, options);
-      }
-export function useExplorerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerQuery, ExplorerQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ExplorerQuery, ExplorerQueryVariables>(ExplorerDocument, options);
-        }
-export type ExplorerQueryHookResult = ReturnType<typeof useExplorerQuery>;
-export type ExplorerLazyQueryHookResult = ReturnType<typeof useExplorerLazyQuery>;
-export type ExplorerQueryResult = Apollo.QueryResult<ExplorerQuery, ExplorerQueryVariables>;
-export const ExplorerLibraryDataDocument = gql`
-    query ExplorerLibraryData($libraryId: ID!) {
-  libraries(filters: {id: [$libraryId]}) {
-    list {
-      id
-      label
-    }
-  }
-}
-    `;
-
-/**
  * __useExplorerLibraryDataQuery__
  *
  * To run a query within a React component, call `useExplorerLibraryDataQuery` and pass it any options that fit your needs.
@@ -4117,6 +4167,11 @@ export const ExplorerLibraryDataDocument = gql`
  * const { data, loading, error } = useExplorerLibraryDataQuery({
  *   variables: {
  *      libraryId: // value for 'libraryId'
+ *      attributeIds: // value for 'attributeIds'
+ *      pagination: // value for 'pagination'
+ *      filters: // value for 'filters'
+ *      multipleSort: // value for 'multipleSort'
+ *      searchQuery: // value for 'searchQuery'
  *   },
  * });
  */
@@ -4131,6 +4186,96 @@ export function useExplorerLibraryDataLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type ExplorerLibraryDataQueryHookResult = ReturnType<typeof useExplorerLibraryDataQuery>;
 export type ExplorerLibraryDataLazyQueryHookResult = ReturnType<typeof useExplorerLibraryDataLazyQuery>;
 export type ExplorerLibraryDataQueryResult = Apollo.QueryResult<ExplorerLibraryDataQuery, ExplorerLibraryDataQueryVariables>;
+export const ExplorerLinkDataDocument = gql`
+    query ExplorerLinkData($attributeIds: [ID!]!, $parentLibraryId: ID!, $parentRecordId: String, $linkAttributeId: ID!) {
+  records(
+    library: $parentLibraryId
+    filters: [{field: "id", condition: EQUAL, value: $parentRecordId}]
+  ) {
+    list {
+      id
+      whoAmI {
+        id
+        library {
+          id
+        }
+      }
+      property(attribute: $linkAttributeId) {
+        ...LinkProperty
+      }
+    }
+  }
+}
+    ${LinkPropertyFragmentDoc}`;
+
+/**
+ * __useExplorerLinkDataQuery__
+ *
+ * To run a query within a React component, call `useExplorerLinkDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExplorerLinkDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExplorerLinkDataQuery({
+ *   variables: {
+ *      attributeIds: // value for 'attributeIds'
+ *      parentLibraryId: // value for 'parentLibraryId'
+ *      parentRecordId: // value for 'parentRecordId'
+ *      linkAttributeId: // value for 'linkAttributeId'
+ *   },
+ * });
+ */
+export function useExplorerLinkDataQuery(baseOptions: Apollo.QueryHookOptions<ExplorerLinkDataQuery, ExplorerLinkDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExplorerLinkDataQuery, ExplorerLinkDataQueryVariables>(ExplorerLinkDataDocument, options);
+      }
+export function useExplorerLinkDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerLinkDataQuery, ExplorerLinkDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExplorerLinkDataQuery, ExplorerLinkDataQueryVariables>(ExplorerLinkDataDocument, options);
+        }
+export type ExplorerLinkDataQueryHookResult = ReturnType<typeof useExplorerLinkDataQuery>;
+export type ExplorerLinkDataLazyQueryHookResult = ReturnType<typeof useExplorerLinkDataLazyQuery>;
+export type ExplorerLinkDataQueryResult = Apollo.QueryResult<ExplorerLinkDataQuery, ExplorerLinkDataQueryVariables>;
+export const ExplorerLibraryDetailsDocument = gql`
+    query ExplorerLibraryDetails($libraryId: ID!) {
+  libraries(filters: {id: [$libraryId]}) {
+    list {
+      id
+      label
+    }
+  }
+}
+    `;
+
+/**
+ * __useExplorerLibraryDetailsQuery__
+ *
+ * To run a query within a React component, call `useExplorerLibraryDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExplorerLibraryDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExplorerLibraryDetailsQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *   },
+ * });
+ */
+export function useExplorerLibraryDetailsQuery(baseOptions: Apollo.QueryHookOptions<ExplorerLibraryDetailsQuery, ExplorerLibraryDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExplorerLibraryDetailsQuery, ExplorerLibraryDetailsQueryVariables>(ExplorerLibraryDetailsDocument, options);
+      }
+export function useExplorerLibraryDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerLibraryDetailsQuery, ExplorerLibraryDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExplorerLibraryDetailsQuery, ExplorerLibraryDetailsQueryVariables>(ExplorerLibraryDetailsDocument, options);
+        }
+export type ExplorerLibraryDetailsQueryHookResult = ReturnType<typeof useExplorerLibraryDetailsQuery>;
+export type ExplorerLibraryDetailsLazyQueryHookResult = ReturnType<typeof useExplorerLibraryDetailsLazyQuery>;
+export type ExplorerLibraryDetailsQueryResult = Apollo.QueryResult<ExplorerLibraryDetailsQuery, ExplorerLibraryDetailsQueryVariables>;
 export const TreeDataQueryDocument = gql`
     query TreeDataQuery($treeId: ID!) {
   trees(filters: {id: [$treeId]}) {

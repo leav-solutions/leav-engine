@@ -23,7 +23,7 @@ const MockOpenEditSettings: FunctionComponent = () => {
 };
 
 const MockViewSettingsContextProvider: FunctionComponent<{viewMock: IViewSettingsState}> = ({viewMock, children}) => {
-    const {view, dispatch} = useViewSettingsReducer('my_lib', viewMock);
+    const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, viewMock);
     return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
 };
 

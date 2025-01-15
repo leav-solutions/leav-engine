@@ -19,10 +19,10 @@ import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {explorerQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
+import {explorerLinkQueryParamName, explorerLibraryQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useSearchParams} from 'react-router-dom';
-import {FaAccessibleIcon, FaBeer, FaBirthdayCake, FaCheese, FaJs, FaXbox} from 'react-icons/all';
+import {FaBeer} from 'react-icons/all';
 import styled from 'styled-components';
 
 interface ILibraryHomeProps {
@@ -141,47 +141,20 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
         );
     };
 
-    return params.has(explorerQueryParamName) ? (
+    return params.has(explorerLibraryQueryParamName) ? (
         <ExplorerContainerDivStyled>
             <Explorer
-                library={library}
+                entrypoint={{
+                    type: 'library',
+                    libraryId: library
+                }}
                 defaultActionsForItem={['edit', 'deactivate']}
                 defaultPrimaryActions={['create']}
-                // Uncomment to test default filters
-                // defaultViewSettings={{
-                //     filters: [
-                //         {
-                //             field: 'offers_label',
-                //             condition: RecordFilterCondition.CONTAINS,
-                //             value: 'Café'
-                //         },
-                //         {
-                //             field: 'bad_attribute',
-                //             condition: RecordFilterCondition.CONTAINS,
-                //             value: 'Café'
-                //         }
-                //     ]
-                // }}
                 itemActions={[
                     {
                         label: 'Test 1',
                         icon: <FaBeer />,
                         callback: item => console.info(1, item)
-                    },
-                    {
-                        label: 'Test 2',
-                        icon: <FaAccessibleIcon />,
-                        callback: item => console.info(2, item)
-                    },
-                    {
-                        label: 'Test 3',
-                        icon: <FaXbox />,
-                        callback: item => console.info(3, item)
-                    },
-                    {
-                        label: 'Test 4',
-                        icon: <FaJs />,
-                        callback: item => console.info(4, item)
                     }
                 ]}
                 primaryActions={[
@@ -189,18 +162,19 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                         icon: <FaBeer />,
                         label: 'Additional action 1',
                         callback: () => console.info('Clicked action 1')
-                    },
-                    {
-                        icon: <FaCheese />,
-                        label: 'Additional action 2',
-                        callback: () => console.info('Clicked action 2')
-                    },
-                    {
-                        icon: <FaBirthdayCake />,
-                        label: 'Additional action 3',
-                        callback: () => console.info('Clicked action 3')
                     }
                 ]}
+            />
+        </ExplorerContainerDivStyled>
+    ) : params.has(explorerLinkQueryParamName) ? (
+        <ExplorerContainerDivStyled>
+            <Explorer
+                entrypoint={{
+                    type: 'link',
+                    parentLibraryId: 'sebastien_s_librairy',
+                    parentRecordId: '600359434',
+                    linkAttributeId: 'multiple_link'
+                }}
             />
         </ExplorerContainerDivStyled>
     ) : (

@@ -5,7 +5,7 @@ import {useMemo, useState} from 'react';
 import {FaPen} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
-import {RecordFilterCondition, useExplorerLazyQuery} from '_ui/_gqlTypes';
+import {RecordFilterCondition, useExplorerLibraryDataLazyQuery} from '_ui/_gqlTypes';
 import {ActionHook, IItemAction, IItemData} from './_types';
 
 /**
@@ -21,7 +21,7 @@ import {ActionHook, IItemAction, IItemData} from './_types';
 export const useEditAction = ({isEnabled}: ActionHook) => {
     const {t} = useSharedTranslation();
 
-    const [refreshItem] = useExplorerLazyQuery({fetchPolicy: 'network-only'});
+    const [refreshItem] = useExplorerLibraryDataLazyQuery({fetchPolicy: 'network-only'});
 
     const [editingItem, setEditingItem] = useState<null | IItemData>(null);
 
@@ -37,7 +37,7 @@ export const useEditAction = ({isEnabled}: ActionHook) => {
         refreshItem({
             variables: {
                 libraryId: item.libraryId,
-                attributeIds: ['id'],
+                attributeIds: ['id'], // TODO: get list of displayed attributes stored in the view
                 pagination: {limit: 1},
                 filters: [
                     {
