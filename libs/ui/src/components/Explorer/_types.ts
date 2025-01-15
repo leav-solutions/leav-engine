@@ -56,6 +56,11 @@ export interface IExplorerFilter {
     value: string | null;
 }
 
+export interface IFilterChildrenDropDownProps {
+    filter: IExplorerFilter;
+    onFilterChange: (filterData: IExplorerFilter) => void;
+}
+
 export interface IFilterDropDownProps {
     filter: IExplorerFilter;
 }

@@ -8,6 +8,7 @@ import {ChangeEvent, FunctionComponent, useMemo, useState} from 'react';
 import {FaCheck, FaSearch} from 'react-icons/fa';
 import styled from 'styled-components';
 
+// Example file for value list
 interface IFilterValueListProps {
     values: string[];
     selectedValues: string[];

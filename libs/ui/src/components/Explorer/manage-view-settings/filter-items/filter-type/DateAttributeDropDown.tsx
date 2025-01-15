@@ -4,16 +4,12 @@
 import {ComponentProps, FunctionComponent, useRef} from 'react';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import {KitDatePicker, KitDivider, KitSelect, KitSpace} from 'aristid-ds';
+import {KitDatePicker, KitSelect} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IExplorerFilter, IFilterDropDownProps} from '_ui/components/Explorer/_types';
+import {IFilterChildrenDropDownProps} from '_ui/components/Explorer/_types';
 import {nullValueConditions} from '_ui/components/Explorer/conditionsHelper';
 import {dateValuesSeparator} from '_ui/components/Explorer/_queries/useExplorerData';
-import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
-import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
-import {FilterOptionsInDropDown} from './filter-options/FilterOptionsInDropDown';
 
 const DatePickerContainerStyledDiv = styled.div`
     .ant-picker {
@@ -31,19 +27,10 @@ const DatePickerDropdowncontainerStyledDiv = styled.div`
     }
 `;
 
-export const DateAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
-    const {t} = useSharedTranslation();
-    const {dispatch} = useViewSettingsContext();
+export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({filter, onFilterChange}) => {
     const datePickerRef = useRef<HTMLDivElement>(null);
 
     const {conditionOptionsByType} = useConditionsOptionsByType(filter);
-
-    const _updateFilter = (filterData: IExplorerFilter) => {
-        dispatch({
-            type: ViewSettingsActionTypes.CHANGE_FILTER_CONFIG,
-            payload: filterData
-        });
-    };
 
     const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition => {
         const isMultiDate = filter.value?.includes(dateValuesSeparator);
@@ -52,7 +39,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
             (!isMultiDate && condition === AttributeConditionFilter.BETWEEN) ||
             (isMultiDate && condition !== AttributeConditionFilter.BETWEEN);
 
-        _updateFilter({
+        onFilterChange({
             ...filter,
             condition,
             value: unsetValue ? null : filter.value
@@ -60,7 +47,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
     };
 
     const _onDateChanged: ComponentProps<typeof KitDatePicker>['onChange'] = date => {
-        _updateFilter({
+        onFilterChange({
             ...filter,
             value: date ? String(date.unix()) : null
         });
@@ -80,10 +67,10 @@ export const DateAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
             }
         }
 
-        _updateFilter({...filter, value});
+        onFilterChange({...filter, value});
     };
 
-    const showDatePicker = !nullValueConditions.includes(filter.condition);
+    const showDatePicker = filter.condition && !nullValueConditions.includes(filter.condition);
 
     const getDateRangeValue = (dates: string): [dayjs.Dayjs, dayjs.Dayjs] => {
         const [dateFrom, dateTo] = dates.split(dateValuesSeparator).map(date => dayjs.unix(Number(date)));
@@ -91,7 +78,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
     };
 
     return (
-        <KitSpace size="xxs" direction="vertical">
+        <>
             <KitSelect options={conditionOptionsByType} onChange={_onConditionChanged} value={filter.condition} />
             {showDatePicker && (
                 <DatePickerContainerStyledDiv>
@@ -113,8 +100,6 @@ export const DateAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
                     <DatePickerDropdowncontainerStyledDiv ref={datePickerRef} />
                 </DatePickerContainerStyledDiv>
             )}
-            <KitDivider noMargin />
-            <FilterOptionsInDropDown filter={filter} />
-        </KitSpace>
+        </>
     );
 };

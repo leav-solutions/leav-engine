@@ -2,32 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ComponentProps, FunctionComponent} from 'react';
-import {KitDivider, KitSpace, KitSwitch} from 'aristid-ds';
+import {KitSwitch} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
-import {IExplorerFilter, IFilterDropDownProps} from '_ui/components/Explorer/_types';
-import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
-import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
-import {FilterOptionsInDropDown} from './filter-options/FilterOptionsInDropDown';
+import {IFilterChildrenDropDownProps} from '_ui/components/Explorer/_types';
 
-export const BooleanAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
-    const {dispatch} = useViewSettingsContext();
-
-    const _updateFilter = (filterData: IExplorerFilter) => {
-        dispatch({
-            type: ViewSettingsActionTypes.CHANGE_FILTER_CONFIG,
-            payload: filterData
-        });
-    };
-
+export const BooleanAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({filter, onFilterChange}) => {
     const _onBooleanChanged: ComponentProps<typeof KitSwitch>['onChange'] = checked => {
-        _updateFilter({...filter, condition: AttributeConditionFilter.EQUAL, value: checked ? 'true' : 'false'});
+        onFilterChange({...filter, condition: AttributeConditionFilter.EQUAL, value: checked ? 'true' : 'false'});
     };
 
-    return (
-        <KitSpace size="xxs" direction="vertical">
-            <KitSwitch defaultValue={Boolean(filter.value)} onChange={_onBooleanChanged} />
-            <KitDivider noMargin />
-            <FilterOptionsInDropDown filter={filter} />
-        </KitSpace>
-    );
+    return <KitSwitch defaultValue={Boolean(filter.value)} onChange={_onBooleanChanged} />;
 };
