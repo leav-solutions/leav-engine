@@ -125,6 +125,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                 id: ID!,
                 type: AttributeType!,
                 format: AttributeFormat,
+                required: Boolean!,
                 system: Boolean!,
                 readonly: Boolean!,
                 label(lang: [AvailableLanguage!]): SystemTranslation,
@@ -209,9 +210,9 @@ export default function (deps: IDeps): ICoreAttributeApp {
                     }
 
                     input AttributeInput {
-                        id: ID!
-                        type: AttributeType
-                        format: AttributeFormat
+                        id: ID!,
+                        type: AttributeType,
+                        format: AttributeFormat,
                         label: SystemTranslation,
                         readonly: Boolean,
                         required: Boolean,

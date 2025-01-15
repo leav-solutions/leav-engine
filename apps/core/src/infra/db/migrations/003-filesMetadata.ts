@@ -28,6 +28,7 @@ export default function ({
                 multiple_values: false,
                 versions_conf: {versionable: false},
                 readonly: true,
+                required: false,
                 actions_list: {
                     [ActionsListEvents.GET_VALUE]: [],
                     [ActionsListEvents.SAVE_VALUE]: [

@@ -51,6 +51,7 @@ describe('<DSListSelect />', () => {
     const commonAttribute: RecordFormAttributeStandardAttributeFragment = {
         ...mockAttributeSimple,
         readonly: false,
+        required: false,
         multiple_values: false,
         permissions: {access_attribute: true, edit_value: true},
         compute: false

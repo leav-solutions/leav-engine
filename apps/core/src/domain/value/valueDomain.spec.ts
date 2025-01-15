@@ -1899,6 +1899,43 @@ describe('ValueDomain', () => {
             await expect(deleteVal).rejects.toHaveProperty('fields.recordId');
         });
 
+        test('Should throw if delete last value of required attribute', async function () {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttrSimple, required: true}),
+                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
+            };
+
+            const mockValRepo = {
+                getValues: global.__mockPromise([{payload: 'payload'}])
+            };
+
+            const mockValidHelper: Mockify<IValidateHelper> = {
+                validateLibrary: global.__mockPromise(true),
+                validateRecord: global.__mockPromise(true)
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
+            });
+
+            const deleteVal = valDomain.deleteValue({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                value: {id_value: '123'},
+                ctx
+            });
+
+            await expect(deleteVal).rejects.toThrow(ValidationError);
+            await expect(deleteVal).rejects.toHaveProperty('fields.attribute');
+        });
+
         test('Should throw if unknown value', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
