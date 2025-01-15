@@ -27,7 +27,7 @@ import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {
-    explorerQueryParamName,
+    explorerLibraryQueryParamName,
     getExplorerLibraryLink,
     getLibraryLink,
     getLinkExplorerLink,
@@ -359,9 +359,9 @@ const Sidebar: FunctionComponent = () => {
                 <Menu
                     style={{width: '100%'}}
                     selectedKeys={
-                        params.has(explorerQueryParamName)
+                        params.has(explorerLibraryQueryParamName)
                             ? [explorerTabKey]
-                            : params.has(explorerQueryParamName)
+                            : params.has(explorerLibraryQueryParamName)
                               ? [explorerLinkTabKey]
                               : [activePanel, `${activePanel}.${activeLibrary?.id || activeTree?.id}`]
                     }

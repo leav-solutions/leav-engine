@@ -19,7 +19,7 @@ import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {explorerLinkQueryParamName, explorerQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
+import {explorerLinkQueryParamName, explorerLibraryQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useSearchParams} from 'react-router-dom';
 import {FaBeer} from 'react-icons/all';
@@ -141,7 +141,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
         );
     };
 
-    return params.has(explorerQueryParamName) ? (
+    return params.has(explorerLibraryQueryParamName) ? (
         <ExplorerContainerDivStyled>
             <Explorer
                 entrypoint={{
