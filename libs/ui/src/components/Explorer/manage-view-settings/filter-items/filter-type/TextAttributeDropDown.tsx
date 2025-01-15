@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitButton, KitDivider, KitInput, KitSelect, KitSpace} from 'aristid-ds';
 import {ComponentProps, FunctionComponent} from 'react';
 import styled from 'styled-components';
-import {FaClock, FaTrash} from 'react-icons/fa';
+import {KitDivider, KitInput, KitSelect, KitSpace} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
-import {IExplorerFilter, IFilterDropDownProps} from '../../../_types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {IExplorerFilter, IFilterDropDownProps} from '_ui/components/Explorer/_types';
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
+import {FilterOptionsInDropDown} from './filter-options/FilterOptionsInDropDown';
 
 const InputStyled = styled(KitInput)`
     width: 100%;
@@ -43,22 +43,6 @@ export const TextAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
         _updateFilter({...filter, value: event.target.value.length === 0 ? null : event.target.value});
     };
 
-    const _onResetFilter: ComponentProps<typeof KitButton>['onClick'] = () =>
-        dispatch({
-            type: ViewSettingsActionTypes.RESET_FILTER,
-            payload: {
-                id: filter.id
-            }
-        });
-
-    const _onDeleteFilter: ComponentProps<typeof KitButton>['onClick'] = () =>
-        dispatch({
-            type: ViewSettingsActionTypes.REMOVE_FILTER,
-            payload: {
-                id: filter.id
-            }
-        });
-
     const showSearch =
         filter.condition !== AttributeConditionFilter.IS_EMPTY &&
         filter.condition !== AttributeConditionFilter.IS_NOT_EMPTY;
@@ -74,12 +58,7 @@ export const TextAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
                 />
             )}
             <KitDivider noMargin />
-            <KitButton type="redirect" icon={<FaClock />} onClick={_onResetFilter}>
-                {t('explorer.reset-filter')}
-            </KitButton>
-            <KitButton type="redirect" icon={<FaTrash />} onClick={_onDeleteFilter}>
-                {t('global.delete')}
-            </KitButton>
+            <FilterOptionsInDropDown filter={filter} />
         </KitSpace>
     );
 };

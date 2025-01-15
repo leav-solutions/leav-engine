@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitButton, KitDatePicker, KitDivider, KitSelect, KitSpace} from 'aristid-ds';
 import {ComponentProps, FunctionComponent, useRef} from 'react';
-import {FaClock, FaTrash} from 'react-icons/fa';
+import dayjs from 'dayjs';
+import styled from 'styled-components';
+import {KitDatePicker, KitDivider, KitSelect, KitSpace} from 'aristid-ds';
+import {AttributeConditionFilter} from '_ui/types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {IExplorerFilter, IFilterDropDownProps} from '_ui/components/Explorer/_types';
+import {nullValueConditions} from '_ui/components/Explorer/conditionsHelper';
+import {dateValuesSeparator} from '_ui/components/Explorer/_queries/useExplorerData';
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
-import {IExplorerFilter, IFilterDropDownProps} from '_ui/components/Explorer/_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
-import {AttributeConditionFilter} from '_ui/types';
-import styled from 'styled-components';
-import dayjs from 'dayjs';
-import {dateValuesSeparator} from '_ui/components/Explorer/_queries/useExplorerData';
-import {nullValueConditions} from '_ui/components/Explorer/conditionsHelper';
+import {FilterOptionsInDropDown} from './filter-options/FilterOptionsInDropDown';
 
 const DatePickerContainerStyledDiv = styled.div`
     .ant-picker {
@@ -83,22 +83,6 @@ export const DateAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
         _updateFilter({...filter, value});
     };
 
-    const _onDeleteFilter: ComponentProps<typeof KitButton>['onClick'] = () =>
-        dispatch({
-            type: ViewSettingsActionTypes.REMOVE_FILTER,
-            payload: {
-                id: filter.id
-            }
-        });
-
-    const _onResetFilter: ComponentProps<typeof KitButton>['onClick'] = () =>
-        dispatch({
-            type: ViewSettingsActionTypes.RESET_FILTER,
-            payload: {
-                id: filter.id
-            }
-        });
-
     const showDatePicker = !nullValueConditions.includes(filter.condition);
 
     const getDateRangeValue = (dates: string): [dayjs.Dayjs, dayjs.Dayjs] => {
@@ -130,12 +114,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
                 </DatePickerContainerStyledDiv>
             )}
             <KitDivider noMargin />
-            <KitButton type="redirect" icon={<FaClock />} onClick={_onResetFilter}>
-                {t('explorer.reset-filter')}
-            </KitButton>
-            <KitButton type="redirect" icon={<FaTrash />} onClick={_onDeleteFilter}>
-                {t('global.delete')}
-            </KitButton>
+            <FilterOptionsInDropDown filter={filter} />
         </KitSpace>
     );
 };
