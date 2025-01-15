@@ -23,6 +23,7 @@ const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     format: AttributeFormat.text,
     multiple_values: false,
     system: false,
+    required: false,
     readonly: false,
     linked_tree: null,
     linked_library: null,
