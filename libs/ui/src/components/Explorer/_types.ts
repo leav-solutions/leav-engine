@@ -52,8 +52,13 @@ export interface IExplorerFilter {
         label: string;
     };
     field: string;
-    condition: RecordFilterCondition;
+    condition: RecordFilterCondition | null;
     value: string | null;
+}
+
+export interface IFilterChildrenDropDownProps {
+    filter: IExplorerFilter;
+    onFilterChange: (filterData: IExplorerFilter) => void;
 }
 
 export interface IFilterDropDownProps {
