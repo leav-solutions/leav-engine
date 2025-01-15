@@ -9,7 +9,7 @@ import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
-import {IEntrypointLibrary, IItemAction, IPrimaryAction} from './_types';
+import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -377,13 +377,45 @@ describe('Explorer', () => {
         }
     };
 
-    const mockExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
+    const mockExplorerLibraryDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
         loading: false,
         called: true,
         data: {
             records: {
                 totalCount: mockRecords.length,
                 list: mockRecords
+            }
+        }
+    };
+
+    const mockExplorerLinkDataQueryResultProperty = [
+        {
+            id_value: '0',
+            payload: mockRecords[0]
+        },
+        {
+            id_value: '1',
+            payload: mockRecords[1]
+        }
+    ];
+
+    const mockExplorerLinkDataQueryResult: Mockify<typeof gqlTypes.useExplorerLinkDataQuery> = {
+        loading: false,
+        called: true,
+        data: {
+            records: {
+                list: [
+                    {
+                        id: '612694174',
+                        whoAmI: {
+                            id: '612694174',
+                            library: {
+                                id: 'campaigns'
+                            }
+                        },
+                        property: mockExplorerLinkDataQueryResultProperty
+                    }
+                ]
             }
         }
     };
@@ -465,17 +497,58 @@ describe('Explorer', () => {
         called: true
     };
 
-    let spyUseExplorerQuery: jest.SpyInstance;
+    let spyUseExplorerLibraryDataQuery: jest.SpyInstance;
 
     const libraryEntrypoint: IEntrypointLibrary = {
         type: 'library',
         libraryId: 'campaigns'
     };
 
+    const linkEntrypoint: IEntrypointLink = {
+        type: 'link',
+        parentLibraryId: 'campaigns',
+        parentRecordId: '42',
+        linkAttributeId: 'link_attribute'
+    };
+
+    const explorerLinkAttribute = {
+        id: 'link_attribute',
+        label: {
+            en: 'Delivery Platforms',
+            fr: 'Plateformes de diffusion'
+        },
+        linked_library: {
+            id: 'delivery_platforms',
+            __typename: 'Library'
+        },
+        __typename: 'LinkAttribute'
+    };
+
+    const ExplorerLinkAttributeQueryMock = {
+        request: {
+            query: gqlTypes.ExplorerLinkAttributeDocument,
+            variables: {
+                id: linkEntrypoint.linkAttributeId
+            }
+        },
+        result: {
+            data: {
+                attributes: {
+                    list: [explorerLinkAttribute],
+                    __typename: 'AttributesList'
+                }
+            }
+        }
+    };
+
     beforeEach(() => {
-        spyUseExplorerQuery = jest
+        spyUseExplorerLibraryDataQuery = jest
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
-            .mockImplementation(() => mockExplorerQueryResult as gqlTypes.ExplorerLibraryDataQueryResult);
+            .mockImplementation(() => mockExplorerLibraryDataQueryResult as gqlTypes.ExplorerLibraryDataQueryResult);
+
+        jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
+            () => mockExplorerLinkDataQueryResult as gqlTypes.ExplorerLinkDataQueryResult
+        );
 
         jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
             () => mockLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
@@ -525,7 +598,7 @@ describe('Explorer', () => {
     });
 
     test('Should display message on empty data', async () => {
-        spyUseExplorerQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+        spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
         render(<Explorer entrypoint={libraryEntrypoint} />);
 
         expect(screen.getByText(/empty-data/)).toBeVisible();
@@ -762,7 +835,7 @@ describe('Explorer', () => {
     });
 
     test('Should be able to make a fulltext search', async () => {
-        const mockExplorerQueryResultWithSearch: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
+        const mockExplorerLibraryDataQueryResultWithSearch: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
             loading: false,
             called: true,
             data: {
@@ -794,8 +867,8 @@ describe('Explorer', () => {
         jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
             ({variables}) =>
                 (variables?.searchQuery
-                    ? mockExplorerQueryResultWithSearch
-                    : mockExplorerQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
+                    ? mockExplorerLibraryDataQueryResultWithSearch
+                    : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
         );
 
         render(
@@ -814,7 +887,7 @@ describe('Explorer', () => {
     });
 
     describe('With filters', () => {
-        const mockExplorerQueryResultWithFilters: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
+        const mockExplorerLibraryDataQueryResultWithFilters: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
             loading: false,
             called: true,
             data: {
@@ -848,8 +921,8 @@ describe('Explorer', () => {
             .mockImplementation(
                 ({variables}) =>
                     (Array.isArray(variables?.filters) && variables.filters.length
-                        ? mockExplorerQueryResultWithFilters
-                        : mockExplorerQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
+                        ? mockExplorerLibraryDataQueryResultWithFilters
+                        : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
             );
 
         test('should handle filters for the request and for the display', async () => {
@@ -893,6 +966,54 @@ describe('Explorer', () => {
                     })
                 })
             );
+        });
+    });
+
+    describe('Entrypoint type link', () => {
+        test('Should display the list of linked records', async () => {
+            const actionCallback = jest.fn();
+            const {container} = render(
+                <Explorer
+                    entrypoint={linkEntrypoint}
+                    primaryActions={customPrimaryActions}
+                    defaultPrimaryActions={[]}
+                    itemActions={[
+                        {
+                            label: 'Test 1',
+                            icon: <FaBeer />,
+                            callback: actionCallback
+                        }
+                    ]}
+                />,
+                {
+                    mocks: [ExplorerLinkAttributeQueryMock]
+                }
+            );
+
+            const rows = await screen.findAllByRole('row');
+            expect(rows).toHaveLength(2); // 2 linked records
+            expect(rows[0]).toHaveTextContent(mockRecords[0].whoAmI.label);
+            await user.click(screen.getAllByRole('button', {name: 'Test 1'})[0]);
+            expect(actionCallback).toBeCalledWith(
+                expect.objectContaining({
+                    id_value: mockExplorerLinkDataQueryResultProperty[0].id_value
+                })
+            );
+        });
+
+        test('Should display attribute label as title', async () => {
+            render(
+                <Explorer
+                    entrypoint={linkEntrypoint}
+                    primaryActions={customPrimaryActions}
+                    defaultPrimaryActions={[]}
+                />,
+                {
+                    mocks: [ExplorerLinkAttributeQueryMock]
+                }
+            );
+
+            expect(await screen.findByText(explorerLinkAttribute.label.fr)).toBeInTheDocument();
         });
     });
 });

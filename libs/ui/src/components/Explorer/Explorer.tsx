@@ -5,7 +5,7 @@ import {FunctionComponent} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
-import {DefaultViewSettings, IEntrypointLibrary, IItemAction, IPrimaryAction} from './_types';
+import {DefaultViewSettings, Entrypoint, IItemAction, IPrimaryAction} from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
 import {useDeactivateAction} from './useDeactivateAction';
@@ -47,7 +47,7 @@ const ExplorerPageDivStyled = styled.div`
 `;
 
 interface IExplorerProps {
-    entrypoint: IEntrypointLibrary;
+    entrypoint: Entrypoint;
     noPagination?: true;
     itemActions?: IItemAction[];
     primaryActions?: IPrimaryAction[];
