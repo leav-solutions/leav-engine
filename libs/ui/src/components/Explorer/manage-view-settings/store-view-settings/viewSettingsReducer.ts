@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SortOrder, RecordFilterCondition} from '_ui/_gqlTypes';
-import {IExplorerFilter} from '../../_types';
+import {Entrypoint, IExplorerFilter} from '../../_types';
 import {v4 as uuid} from 'uuid';
 import {hasOnlyNoValueConditions} from '../../conditionsHelper';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
@@ -32,7 +32,9 @@ export const ViewSettingsActionTypes = {
 } as const;
 
 export interface IViewSettingsState {
+    libraryId: string;
     viewId?: string;
+    entrypoint: Entrypoint;
     viewType: ViewType;
     attributesIds: string[];
     fulltextSearch: string;

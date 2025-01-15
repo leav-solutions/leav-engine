@@ -28,6 +28,10 @@ export interface IItemData {
     propertiesById: {
         [attributeId: string]: PropertyValueFragment[];
     };
+    /**
+     * Can be named `linkId` too, but for historical reason we keep old name 👴🏼.
+     */
+    id_value?: string;
 }
 
 export interface IItemAction {
@@ -75,3 +79,23 @@ export type DefaultViewSettings = Override<
         }>;
     }
 >;
+
+export interface IEntrypointTree {
+    type: 'tree';
+    treeId: string;
+    nodeId: string;
+}
+
+export interface IEntrypointLibrary {
+    type: 'library';
+    libraryId: string;
+}
+
+export interface IEntrypointLink {
+    type: 'link';
+    parentLibraryId: string;
+    parentRecordId: string;
+    linkAttributeId: string;
+}
+
+export type Entrypoint = IEntrypointTree | IEntrypointLibrary | IEntrypointLink;
