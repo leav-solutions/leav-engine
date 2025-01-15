@@ -92,17 +92,21 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                                 title={t('explorer.configure-display')}
                                 onClick={() => openSettingsPanel('configure-display')}
                             />
-                            <SettingItem
-                                icon={<FaFilter />}
-                                title={t('explorer.filters')}
-                                value={String(t('explorer.active-items-number', {count: view.filters.length}))}
-                                onClick={() => openSettingsPanel('filter-items')}
-                            />
-                            <SettingItem
-                                icon={<FaSortAlphaDown />}
-                                title={t('explorer.sort-items')}
-                                onClick={() => openSettingsPanel('sort-items')}
-                            />
+                            {view.entrypoint.type === 'library' && (
+                                <>
+                                    <SettingItem
+                                        icon={<FaFilter />}
+                                        title={t('explorer.filters')}
+                                        value={String(t('explorer.active-items-number', {count: view.filters.length}))}
+                                        onClick={() => openSettingsPanel('filter-items')}
+                                    />
+                                    <SettingItem
+                                        icon={<FaSortAlphaDown />}
+                                        title={t('explorer.sort-items')}
+                                        onClick={() => openSettingsPanel('sort-items')}
+                                    />
+                                </>
+                            )}
                         </ConfigurationStyledMenu>
                     </nav>
                     <FooterStyledDiv>

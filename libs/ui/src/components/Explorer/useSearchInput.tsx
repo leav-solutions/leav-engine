@@ -36,16 +36,17 @@ export const useSearchInput = ({view, dispatch}: IUseSearchInputParams) => {
     };
 
     return {
-        searchInput: (
-            <form onSubmit={_handleSubmit}>
-                <KitInput
-                    prefix={<FontAwesomeIcon icon={faMagnifyingGlass} />}
-                    title={String(t('global.search'))}
-                    placeholder={String(t('global.search'))}
-                    value={search ?? ''}
-                    onChange={_handleChange}
-                />
-            </form>
-        )
+        searchInput:
+            view.entrypoint.type === 'library' ? (
+                <form onSubmit={_handleSubmit}>
+                    <KitInput
+                        prefix={<FontAwesomeIcon icon={faMagnifyingGlass} />}
+                        title={String(t('global.search'))}
+                        placeholder={String(t('global.search'))}
+                        value={search ?? ''}
+                        onChange={_handleChange}
+                    />
+                </form>
+            ) : null
     };
 };
