@@ -4,6 +4,8 @@
 import {SortOrder, RecordFilterCondition} from '_ui/_gqlTypes';
 import {IExplorerFilter} from '../../_types';
 import {v4 as uuid} from 'uuid';
+import {hasOnlyNoValueConditions} from '../../conditionsHelper';
+import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 
@@ -222,7 +224,17 @@ export const clearFulltextSearch: Reducer = state => ({
 
 const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payload) => ({
     ...state,
-    filters: [...state.filters, {...payload, id: uuid(), condition: RecordFilterCondition.EQUAL, value: null}]
+    filters: [
+        ...state.filters,
+        {
+            ...payload,
+            id: uuid(),
+            condition: hasOnlyNoValueConditions(payload.attribute.format)
+                ? null
+                : ((conditionsByFormat[payload.attribute.format][0] ?? null) as RecordFilterCondition),
+            value: null
+        }
+    ]
 });
 
 const resetFilter: Reducer<IViewSettingsActionResetFilter['payload']> = (state, payload) => ({
@@ -233,7 +245,9 @@ const resetFilter: Reducer<IViewSettingsActionResetFilter['payload']> = (state, 
             return (
                 initialViewFilter ?? {
                     ...filter,
-                    condition: RecordFilterCondition.EQUAL,
+                    condition: hasOnlyNoValueConditions(filter.attribute.format)
+                        ? null
+                        : ((conditionsByFormat[filter.attribute.format][0] ?? null) as RecordFilterCondition),
                     value: null
                 }
             );

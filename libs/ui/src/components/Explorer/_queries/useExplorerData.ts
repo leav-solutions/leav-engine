@@ -16,7 +16,7 @@ import {useLang} from '_ui/hooks';
 import {useMemo} from 'react';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
 import dayjs from 'dayjs';
-import {nullValueConditions} from '../nullValuesConditions';
+import {nullValueConditions} from '../conditionsHelper';
 
 export const dateValuesSeparator = '\n';
 
@@ -138,7 +138,7 @@ export const useExplorerData = ({
     const queryFilters = interleaveElement(
         {operator: RecordFilterOperator.AND},
         filters
-            .filter(({value, condition}) => value !== null || nullValueConditions.includes(condition))
+            .filter(({value, condition}) => value !== null || (condition && nullValueConditions.includes(condition)))
             .map(({attribute, field, condition, value}) =>
                 attribute.format === AttributeFormat.date
                     ? _getDateRequestFilters({field, condition, value})
