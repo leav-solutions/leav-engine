@@ -19,7 +19,7 @@ import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {explorerQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
+import {explorerLinkQueryParamName, explorerQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useSearchParams} from 'react-router-dom';
 import {FaBeer} from 'react-icons/all';
@@ -145,10 +145,8 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
         <ExplorerContainerDivStyled>
             <Explorer
                 entrypoint={{
-                    type: 'link',
-                    parentLibraryId: 'campaigns',
-                    parentRecordId: '612694174',
-                    linkAttributeId: 'campaigns_delivery_platforms'
+                    type: 'library',
+                    libraryId: library
                 }}
                 defaultActionsForItem={['edit', 'deactivate']}
                 defaultPrimaryActions={['create']}
@@ -166,6 +164,17 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                         callback: () => console.info('Clicked action 1')
                     }
                 ]}
+            />
+        </ExplorerContainerDivStyled>
+    ) : params.has(explorerLinkQueryParamName) ? (
+        <ExplorerContainerDivStyled>
+            <Explorer
+                entrypoint={{
+                    type: 'link',
+                    parentLibraryId: 'sebastien_s_librairy',
+                    parentRecordId: '600359434',
+                    linkAttributeId: 'multiple_link'
+                }}
             />
         </ExplorerContainerDivStyled>
     ) : (

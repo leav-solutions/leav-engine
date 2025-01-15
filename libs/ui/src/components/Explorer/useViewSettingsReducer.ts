@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
+    ExplorerLinkAttributeQuery,
     LinkAttributeDetailsFragment,
     useExplorerAttributesQuery,
     useExplorerLinkAttributeQuery,
@@ -27,6 +28,10 @@ type ValidFieldFilter = Override<
 const _isValidFieldFilter = (filter: ViewDetailsFilterFragment): filter is ValidFieldFilter =>
     !!filter.field && !!filter.condition;
 
+const _isLinkAttributeDetails = (
+    linkAttributeData: NonNullable<ExplorerLinkAttributeQuery['attributes']>['list'][number]
+): linkAttributeData is LinkAttributeDetailsFragment & {id: string} => 'linked_library' in linkAttributeData;
+
 export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettings: DefaultViewSettings = {}) => {
     const {lang} = useLang();
     const [loading, setLoading] = useState(true);
@@ -41,14 +46,12 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
             id: (entrypoint as IEntrypointLink).linkAttributeId
         },
         onCompleted: data => {
-            // TODO: improve readability, manage error case
-            setLibraryId(
-                (data &&
-                    data.attributes &&
-                    data.attributes.list[0] &&
-                    (data.attributes.list[0] as LinkAttributeDetailsFragment).linked_library?.id) ??
-                    ''
-            );
+            const attributeData = data?.attributes?.list?.[0];
+            if (!attributeData) {
+                throw new Error('Unknown link attribute');
+            }
+
+            setLibraryId(_isLinkAttributeDetails(attributeData) ? (attributeData.linked_library?.id ?? '') : null);
         }
     });
 

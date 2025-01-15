@@ -602,6 +602,7 @@
         "libraries": "Libraries",
         "trees": "Trees",
         "explorer": "Explorer",
+        "explorer_link": "Link Explorer",
         "advanced_settings": "Advanced settings",
         "showTransparency": "Show transparency",
         "mode_confirm_title":  "Are you sure ?",
