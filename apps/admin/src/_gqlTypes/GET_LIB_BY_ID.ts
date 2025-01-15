@@ -78,6 +78,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute {
     format: AttributeFormat | null;
     system: boolean;
     readonly: boolean;
+    required: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
@@ -151,6 +152,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute {
     format: AttributeFormat | null;
     system: boolean;
     readonly: boolean;
+    required: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
@@ -225,6 +227,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute {
     format: AttributeFormat | null;
     system: boolean;
     readonly: boolean;
+    required: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;

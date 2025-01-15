@@ -114,6 +114,7 @@ export const mockFormAttribute: RecordFormAttributeFragment = {
     },
     system: false,
     readonly: false,
+    required: false,
     multiple_values: false,
     values_list: {
         enable: false,

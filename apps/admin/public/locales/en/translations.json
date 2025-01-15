@@ -103,6 +103,7 @@
         "format": "Format",
         "isSystem": "System",
         "readonly": "Readonly",
+        "required": "Required",
         "unique": "Unique",
         "confirm_delete": "Do you really want to delete attribute {{attrLabel}}?",
         "action_list": "Actions List",
