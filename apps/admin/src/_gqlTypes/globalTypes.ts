@@ -255,6 +255,7 @@ export interface AttributeInput {
     format?: AttributeFormat | null;
     label?: SystemTranslation | null;
     readonly?: boolean | null;
+    required?: boolean | null;
     description?: SystemTranslation | null;
     linked_library?: string | null;
     linked_tree?: string | null;

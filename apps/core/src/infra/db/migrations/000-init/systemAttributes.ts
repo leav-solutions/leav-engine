@@ -7,6 +7,7 @@ import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 
 const commonAttributeData = {
     system: true,
+    required: false,
     multiple_values: false,
     versions_conf: {versionable: false},
     readonly: false,
@@ -142,6 +143,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     {
         ...commonAttributeData,
         system: false,
+        required: false,
         id: 'label',
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,

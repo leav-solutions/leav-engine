@@ -71,6 +71,7 @@ export interface AttributeDetails_StandardAttribute {
     format: AttributeFormat | null;
     system: boolean;
     readonly: boolean;
+    required: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
@@ -144,6 +145,7 @@ export interface AttributeDetails_LinkAttribute {
     format: AttributeFormat | null;
     system: boolean;
     readonly: boolean;
+    required: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
@@ -218,6 +220,7 @@ export interface AttributeDetails_TreeAttribute {
     format: AttributeFormat | null;
     system: boolean;
     readonly: boolean;
+    required: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;

@@ -269,6 +269,25 @@ const valueDomain = function ({
         return processedValue;
     };
 
+    async function _isLastValue(params: {
+        attribute: IAttribute;
+        library: string;
+        recordId: string;
+        reverseLink?: IAttribute;
+        ctx: IQueryInfos;
+    }): Promise<boolean> {
+        const {attribute, library, recordId, reverseLink, ctx} = params;
+
+        const values = await valueRepo.getValues({
+            library,
+            recordId,
+            attribute: {...attribute, reverse_link: reverseLink},
+            ctx
+        });
+
+        return values.length === 1;
+    }
+
     async function _getExistingValue(params: {
         value: IValue;
         attribute: IAttribute;
@@ -276,7 +295,7 @@ const valueDomain = function ({
         recordId: string;
         reverseLink?: IAttribute;
         ctx: IQueryInfos;
-    }) {
+    }): Promise<IValue> {
         const {value, attribute, library, recordId, reverseLink, ctx} = params;
 
         let v: IValue;
@@ -343,16 +362,29 @@ const valueDomain = function ({
 
         const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
-        if (attributeProps.readonly) {
-            throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
-        }
-
         let reverseLink: IAttribute;
         if (!!attributeProps.reverse_link) {
             reverseLink = await attributeDomain.getAttributeProperties({
                 id: attributeProps.reverse_link as string,
                 ctx
             });
+        }
+
+        const isRequired =
+            attributeProps.required &&
+            (!attributeProps.multiple_values ||
+                (await _isLastValue({
+                    attribute: attributeProps,
+                    library,
+                    recordId,
+                    ctx,
+                    reverseLink
+                })));
+
+        if (attributeProps.readonly) {
+            throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
+        } else if (isRequired) {
+            throw new ValidationError<IValue>({attribute: {msg: Errors.REQUIRED_ATTRIBUTE, vars: {attribute}}});
         }
 
         const existingValue: IValue = await _getExistingValue({

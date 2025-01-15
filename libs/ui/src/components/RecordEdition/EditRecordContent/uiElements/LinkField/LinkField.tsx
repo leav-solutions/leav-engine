@@ -132,7 +132,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
             name={attribute.id}
             rules={[
                 {
-                    required: state.formElement.settings.required,
+                    required: state.formElement.attribute.required,
                     message: t('errors.standard_field_required')
                 }
             ]}
@@ -142,7 +142,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                     activeValues={activeValues}
                     attribute={attribute}
                     label={label}
-                    required={state.formElement.settings.required}
+                    required={state.formElement.attribute.required}
                     onValueDeselect={_handleDeleteValue}
                     onSelectChange={_handleUpdateValueSubmit}
                 />
@@ -151,7 +151,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                     activeValue={activeValues[0]}
                     attribute={attribute}
                     label={label}
-                    required={state.formElement.settings.required}
+                    required={state.formElement.attribute.required}
                     onSelectClear={_handleDeleteValue}
                     onSelectChange={_handleUpdateValueSubmit}
                 />

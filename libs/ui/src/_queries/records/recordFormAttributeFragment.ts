@@ -12,6 +12,7 @@ export const recordFormAttributeFragment = gql`
         format
         system
         readonly
+        required
         multiple_values
         compute
         permissions(record: {id: $recordId, library: $libraryId}) {
