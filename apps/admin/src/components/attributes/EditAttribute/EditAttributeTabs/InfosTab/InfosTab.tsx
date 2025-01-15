@@ -69,6 +69,7 @@ function InfosTab({attribute, onPostSave, forcedType, redirectAfterCreate = true
                 type: dataToSave.type,
                 format: dataToSave.format,
                 readonly: dataToSave.readonly,
+                required: dataToSave.required,
                 linked_tree: dataToSave.linked_tree,
                 linked_library: dataToSave.linked_library,
                 reverse_link: dataToSave.reverse_link,
@@ -96,7 +97,7 @@ function InfosTab({attribute, onPostSave, forcedType, redirectAfterCreate = true
     return (
         <InfosForm
             onSubmitInfos={onSubmitInfos}
-            errors={(formErrors as unknown) as IFormError}
+            errors={formErrors as unknown as IFormError}
             attribute={attribute || null}
             readonly={false}
             onCheckIdExists={_isIdUnique}

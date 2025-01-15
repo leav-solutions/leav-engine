@@ -39,6 +39,7 @@ const defaultAttributeData: AttributeInfosFormValues = {
     id: '',
     system: false,
     readonly: false,
+    required: false,
     label: {
         fr: '',
         en: ''
@@ -287,9 +288,9 @@ function InfosForm({
                         aria-label="type"
                         onChange={_handleChangeWithSubmit}
                         options={Object.keys(AttributeType).map(attrType => ({
-                                text: t('attributes.types.' + attrType),
-                                value: attrType
-                            }))}
+                            text: t('attributes.types.' + attrType),
+                            value: attrType
+                        }))}
                         value={values.type}
                     />
                 </FormFieldWrapper>
@@ -338,6 +339,19 @@ function InfosForm({
                         onChange={_handleChangeWithSubmit}
                         onBlur={_handleBlur}
                         checked={values.readonly}
+                        toggle
+                    />
+                </FormFieldWrapper>
+                <FormFieldWrapper error={_getErrorByField('required')}>
+                    <Form.Checkbox
+                        label={t('attributes.required')}
+                        width="4"
+                        disabled={readonly || values.system}
+                        name="required"
+                        aria-label="required"
+                        onChange={_handleChangeWithSubmit}
+                        onBlur={_handleBlur}
+                        checked={values.required}
                         toggle
                     />
                 </FormFieldWrapper>

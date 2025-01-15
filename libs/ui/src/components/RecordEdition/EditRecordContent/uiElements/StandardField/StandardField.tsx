@@ -250,7 +250,7 @@ const StandardField: FunctionComponent<
         <Wrapper $metadataEdit={metadataEdit}>
             <KitInputWrapperStyled
                 label={label}
-                required={element.settings.required}
+                required={attribute.required}
                 disabled={isReadOnly}
                 bordered={attribute.multiple_values}
                 status={isFieldInError ? 'error' : undefined}
@@ -269,7 +269,7 @@ const StandardField: FunctionComponent<
                         presentationValue={presentationValues[0]}
                         handleSubmit={_handleSubmit(backendWithoutCalculatedOrInheritedValues[0]?.id_value)}
                         attribute={attribute}
-                        required={element.settings.required}
+                        required={attribute.required}
                         readonly={isReadOnly}
                         label={label}
                         calculatedFlags={calculatedFlags}
@@ -299,7 +299,7 @@ const StandardField: FunctionComponent<
                                                         )}
                                                         attribute={attribute}
                                                         label={label}
-                                                        required={element.settings.required}
+                                                        required={attribute.required}
                                                         readonly={isReadOnly}
                                                         calculatedFlags={calculatedFlags}
                                                         inheritedFlags={inheritedFlags}
