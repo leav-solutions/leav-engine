@@ -7,7 +7,7 @@ import {AttributeConditionFilter, AttributeConditionType} from '_ui/types';
 import {TFunction} from 'i18next';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
-const conditionsByFormat: Record<AttributeFormat, AttributeConditionType[]> = {
+export const conditionsByFormat: Record<AttributeFormat, AttributeConditionType[]> = {
     [AttributeFormat.text]: [
         AttributeConditionFilter.CONTAINS,
         AttributeConditionFilter.NOT_CONTAINS,
@@ -25,7 +25,6 @@ const conditionsByFormat: Record<AttributeFormat, AttributeConditionType[]> = {
         AttributeConditionFilter.IS_NOT_EMPTY
     ],
     [AttributeFormat.boolean]: [],
-    [AttributeFormat.color]: [],
     [AttributeFormat.date]: [
         AttributeConditionFilter.EQUAL,
         AttributeConditionFilter.NOT_EQUAL,
@@ -40,19 +39,10 @@ const conditionsByFormat: Record<AttributeFormat, AttributeConditionType[]> = {
         AttributeConditionFilter.NEXT_MONTH,
         AttributeConditionFilter.BETWEEN
     ],
-    [AttributeFormat.date_range]: [
-        AttributeConditionFilter.CONTAINS,
-        AttributeConditionFilter.START_ON,
-        AttributeConditionFilter.START_AFTER,
-        AttributeConditionFilter.START_BEFORE,
-        AttributeConditionFilter.END_ON,
-        AttributeConditionFilter.END_AFTER,
-        AttributeConditionFilter.END_BEFORE,
-        AttributeConditionFilter.IS_EMPTY,
-        AttributeConditionFilter.IS_NOT_EMPTY
-    ],
-    [AttributeFormat.encrypted]: [],
-    [AttributeFormat.extended]: [],
+    [AttributeFormat.date_range]: [AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY],
+    [AttributeFormat.encrypted]: [AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY],
+    [AttributeFormat.extended]: [AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY],
+    [AttributeFormat.color]: [AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY],
     [AttributeFormat.numeric]: [
         AttributeConditionFilter.EQUAL,
         AttributeConditionFilter.NOT_EQUAL,
