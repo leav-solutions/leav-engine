@@ -7,7 +7,7 @@ export interface IParam {
     type: string;
     description: string;
     required: boolean;
-    default_value: string;
+    helper_value: string;
     value?: string;
 }
 

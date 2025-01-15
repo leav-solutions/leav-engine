@@ -17,7 +17,7 @@ export interface GET_AVAILABLE_ACTIONS_availableActions_params {
     type: string;
     description: string | null;
     required: boolean | null;
-    default_value: string | null;
+    helper_value: string | null;
 }
 
 export interface GET_AVAILABLE_ACTIONS_availableActions {

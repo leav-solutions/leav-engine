@@ -33,7 +33,7 @@ export default function ({'core.domain.actionsList': actionsListDomain, translat
                         type: String!,
                         description: String,
                         required: Boolean,
-                        default_value: String
+                        helper_value: String
                     }
 
                     type Action {

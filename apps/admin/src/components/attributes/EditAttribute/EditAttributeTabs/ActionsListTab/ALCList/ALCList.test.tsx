@@ -56,7 +56,7 @@ const twoActionsMock = {
                     type: 'number',
                     description: 'a float or integer to add',
                     required: true,
-                    default_value: '0',
+                    helper_value: '0',
                     value: '4'
                 }
             ]
@@ -75,7 +75,7 @@ const twoActionsMock = {
                     type: 'number',
                     description: 'a float or integer to substract',
                     required: true,
-                    default_value: '0',
+                    helper_value: '0',
                     value: '0.5'
                 }
             ]
@@ -106,7 +106,7 @@ const twoIncompatibleActionsMock = {
                     type: 'number',
                     description: 'a float or integer to add',
                     required: true,
-                    default_value: '0',
+                    helper_value: '0',
                     value: '4'
                 }
             ]
@@ -125,7 +125,7 @@ const twoIncompatibleActionsMock = {
                     type: 'number',
                     description: 'a float or integer to substract',
                     required: true,
-                    default_value: '0',
+                    helper_value: '0',
                     value: '0.5'
                 }
             ]
@@ -143,9 +143,13 @@ function onSelectorChangeMock(event) {
     return undefined;
 }
 
-jest.mock('../ALCCard', () => function ALCCard() {
-        return <div>Card</div>;
-    });
+jest.mock(
+    '../ALCCard',
+    () =>
+        function ALCCard() {
+            return <div>Card</div>;
+        }
+);
 
 describe('ALCList', () => {
     test('One action get instanciated in list', async () => {
