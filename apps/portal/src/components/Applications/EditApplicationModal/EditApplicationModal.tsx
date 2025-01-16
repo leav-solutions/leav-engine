@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql, useApolloClient} from '@apollo/client';
-import {dsTheme, EditApplication, IEditApplicationProps, themeVars, useLang} from '@leav/ui';
+import {EditApplication, IEditApplicationProps, themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Modal} from 'antd';
 import {useMemo, useState} from 'react';
@@ -11,10 +11,10 @@ import {styled} from 'styled-components';
 
 const SubmitButton = styled(Button)`
     && {
-        background-color: ${dsTheme.general.colors.primary['400']};
+        background-color: var(--general-colors-primary-400);
 
         &:hover {
-            background-color: ${dsTheme.general.colors.primary['100']};
+            background-color: var(--general-colors-primary-100);
         }
     }
 `;

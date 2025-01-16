@@ -3,16 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {ThemeConfig} from 'antd/lib/config-provider/context';
-import {KitApp} from 'aristid-ds';
-import {ComponentProps} from 'react';
 
 export * from './types';
 
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const baseTextColor = '#000000';
 export const themeVars = {
-    primaryColor: '#0f97e4',
-    primaryColorLighter: '#37b2f0',
+    primaryColor: 'var(--general-colors-primary-400)',
+    primaryColorLighter: 'var(--general-colors-primary-100)',
     defaultBg: '#ffffff',
     invertedDefaultBg: '#000000',
     defaultTextColor: baseTextColor,
@@ -33,56 +31,16 @@ export const themeVars = {
 };
 
 export const customTheme: ThemeConfig = {
-    token: {
-        colorPrimary: themeVars.primaryColor,
-        colorError: themeVars.errorColor,
-        colorBgBase: themeVars.defaultBg,
-        colorTextBase: themeVars.defaultTextColor,
-        colorBorder: themeVars.borderColor,
-        colorBorderSecondary: themeVars.borderLightColor,
-        colorSplit: themeVars.borderColor,
-        wireframe: false
-    },
     components: {
         Layout: {
             headerBg: themeVars.secondaryBg,
             controlHeight: 24 // Used by antd to compute the height of the header (2 * controlHeight)
         },
-        Dropdown: {
-            controlItemBgHover: themeVars.activeColor,
-            colorSplit: themeVars.borderLightColor
-        },
         Menu: {
             colorActiveBarBorderSize: 0
         },
         Table: {
-            colorBgContainer: 'transparent', // To avoid issues with border-radius on footer
-            colorFillAlter: themeVars.lightBg
-        }
-    }
-};
-
-export const dsTheme: ComponentProps<typeof KitApp>['customTheme'] = {
-    general: {
-        colors: {
-            primary: {
-                100: '#ddf1fd',
-                200: '#98d6f8',
-                300: '#54baf4',
-                400: themeVars.primaryColor,
-                500: '#0d80c2',
-                600: '#0b6aa0',
-                700: '#08537d'
-            }
-        }
-    },
-    components: {
-        Input: {
-            colors: {
-                border: {
-                    hover: customTheme.token.colorPrimary
-                }
-            }
+            colorBgContainer: 'transparent' // To avoid issues with border-radius on footer
         }
     }
 };
