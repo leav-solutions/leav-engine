@@ -627,7 +627,7 @@
         "create-one": "Create",
         "actions": "Actions",
         "more-actions": "Show more",
-        "deactivate-item": "Deactivate item",
+        "remove-item": "Deactivate item",
         "edit-item": "Edit item",
         "settings": "Settings",
         "back": "Back",

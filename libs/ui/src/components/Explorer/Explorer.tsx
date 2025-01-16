@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import {DefaultViewSettings, Entrypoint, IItemAction, IPrimaryAction} from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
-import {useDeactivateAction} from './useDeactivateAction';
+import {useRemoveAction} from './useRemoveAction';
 import {useEditAction} from './useEditAction';
 import {usePrimaryActionsButton} from './usePrimaryActions';
 import {ExplorerTitle} from './ExplorerTitle';
@@ -52,7 +52,7 @@ interface IExplorerProps {
     itemActions?: IItemAction[];
     primaryActions?: IPrimaryAction[];
     title?: string;
-    defaultActionsForItem?: Array<'edit' | 'deactivate'>;
+    defaultActionsForItem?: Array<'edit' | 'remove'>;
     defaultPrimaryActions?: Array<'create'>;
     defaultViewSettings?: DefaultViewSettings;
 }
@@ -63,7 +63,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     primaryActions,
     title,
     noPagination,
-    defaultActionsForItem = ['edit', 'deactivate'],
+    defaultActionsForItem = ['edit', 'remove'],
     defaultPrimaryActions = ['create'],
     defaultViewSettings
 }) => {
@@ -90,9 +90,9 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         skip: viewSettingsLoading
     }); // TODO: refresh when go back on page
 
-    const {deactivateAction} = useDeactivateAction(
+    const {removeAction} = useRemoveAction(
         {
-            isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('deactivate')
+            isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('remove')
         },
         entrypoint
     );
@@ -154,7 +154,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                                   }
                                 : undefined
                         }
-                        itemActions={[editAction, deactivateAction, ...(itemActions ?? emptyArray)].filter(Boolean)}
+                        itemActions={[editAction, removeAction, ...(itemActions ?? emptyArray)].filter(Boolean)}
                     />
                 )}
             </ExplorerPageDivStyled>

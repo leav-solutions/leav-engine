@@ -12,12 +12,15 @@ import {useValuesCacheUpdate} from '_ui/hooks';
 /**
  * Hook used to get the action for `<DataView />` component.
  *
- * When the mutation for deactivation is done, the Apollo cache will be clean (`Record` and `RecordIdentity`)
- * from deactivated record.
+ * When the mutation for removing is done, the Apollo cache will be clean (`Record` and `RecordIdentity`)
+ * from removed record.
  *
  * @param isEnabled - whether the action is present
  */
-export const useDeactivateAction = ({isEnabled}: ActionHook, entrypoint: Entrypoint) => {
+export const useRemoveAction = (
+    {isEnabled}: ActionHook,
+    entrypoint: Entrypoint
+): {removeAction: IItemAction | null} => {
     const {t} = useSharedTranslation();
     const updateValuesCache = useValuesCacheUpdate();
 
@@ -32,21 +35,21 @@ export const useDeactivateAction = ({isEnabled}: ActionHook, entrypoint: Entrypo
         }
     });
 
-    const [deactivateRecordLinkMutation] = useDeleteValueMutation({
-        update: (_, deactivatedRecord) => {
+    const [deleteRecordLinkMutation] = useDeleteValueMutation({
+        update: (_, deletedRecord) => {
             const parentRecord = {
                 id: (entrypoint as IEntrypointLink).parentRecordId,
                 library: {
                     id: (entrypoint as IEntrypointLink).parentLibraryId
                 }
             };
-            updateValuesCache(parentRecord, deactivatedRecord.data?.deleteValue ?? []);
+            updateValuesCache(parentRecord, deletedRecord.data?.deleteValue ?? []);
         }
     });
 
-    const _deactivateAction: IItemAction = useMemo(
+    const _removeAction: IItemAction = useMemo(
         () => ({
-            label: t('explorer.deactivate-item'),
+            label: t('explorer.remove-item'),
             icon: <FaTrash />,
             isDanger: true,
             callback: ({itemId, libraryId, id_value}) => {
@@ -70,7 +73,7 @@ export const useDeactivateAction = ({isEnabled}: ActionHook, entrypoint: Entrypo
                                 });
                                 break;
                             case 'link':
-                                deactivateRecordLinkMutation({
+                                deleteRecordLinkMutation({
                                     variables: {
                                         library: entrypoint.parentLibraryId,
                                         attribute: entrypoint.linkAttributeId,
@@ -89,10 +92,10 @@ export const useDeactivateAction = ({isEnabled}: ActionHook, entrypoint: Entrypo
                 });
             }
         }),
-        [t, deactivateRecordsMutation]
+        [t, deactivateRecordsMutation, deleteRecordLinkMutation]
     );
 
     return {
-        deactivateAction: isEnabled ? _deactivateAction : null
+        removeAction: isEnabled ? _removeAction : null
     };
 };
