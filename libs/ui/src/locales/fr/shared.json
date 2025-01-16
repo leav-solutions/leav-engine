@@ -405,6 +405,7 @@
         "add_value_link": "Ajouter une liaison",
         "delete_value": "Supprimer cette valeur",
         "delete_value_confirm": "Êtes-vous sûr de vouloir supprimer cette valeur?",
+        "delete_link_confirm": "Êtes-vous sûr de vouloir supprimer cette liaison?",
         "whoAmI": "Informations",
         "no_value": "Pas de valeur",
         "value_details": "Infos valeur",

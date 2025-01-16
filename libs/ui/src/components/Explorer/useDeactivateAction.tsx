@@ -3,10 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FaTrash} from 'react-icons/fa';
 import {KitModal} from 'aristid-ds';
-import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
+import {useDeactivateRecordsMutation, useDeleteValueMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ActionHook, IItemAction} from './_types';
+import {ActionHook, Entrypoint, IEntrypointLink, IItemAction} from './_types';
 import {useMemo} from 'react';
+import {useValuesCacheUpdate} from '_ui/hooks';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -16,8 +17,9 @@ import {useMemo} from 'react';
  *
  * @param isEnabled - whether the action is present
  */
-export const useDeactivateAction = ({isEnabled}: ActionHook) => {
+export const useDeactivateAction = ({isEnabled}: ActionHook, entrypoint: Entrypoint) => {
     const {t} = useSharedTranslation();
+    const updateValuesCache = useValuesCacheUpdate();
 
     const [deactivateRecordsMutation] = useDeactivateRecordsMutation({
         update(cache, deactivatedRecords) {
@@ -30,26 +32,62 @@ export const useDeactivateAction = ({isEnabled}: ActionHook) => {
         }
     });
 
+    const [deactivateRecordLinkMutation] = useDeleteValueMutation({
+        update: (_, deactivatedRecord) => {
+            const parentRecord = {
+                id: (entrypoint as IEntrypointLink).parentRecordId,
+                library: {
+                    id: (entrypoint as IEntrypointLink).parentLibraryId
+                }
+            };
+            updateValuesCache(parentRecord, deactivatedRecord.data?.deleteValue ?? []);
+        }
+    });
+
     const _deactivateAction: IItemAction = useMemo(
         () => ({
             label: t('explorer.deactivate-item'),
             icon: <FaTrash />,
             isDanger: true,
-            callback: ({itemId, libraryId}) =>
+            callback: ({itemId, libraryId, id_value}) => {
                 KitModal.confirm({
                     type: 'confirm',
                     dangerConfirm: true,
-                    content: t('records_deactivation.confirm_one') ?? undefined,
+                    content:
+                        entrypoint.type === 'library'
+                            ? t('records_deactivation.confirm_one')
+                            : t('record_edition.delete_link_confirm'),
                     okText: t('global.submit') ?? undefined,
                     cancelText: t('global.cancel') ?? undefined,
-                    onOk: () =>
-                        deactivateRecordsMutation({
-                            variables: {
-                                libraryId,
-                                recordsIds: [itemId]
-                            }
-                        })
-                })
+                    onOk: () => {
+                        switch (entrypoint.type) {
+                            case 'library':
+                                deactivateRecordsMutation({
+                                    variables: {
+                                        libraryId,
+                                        recordsIds: [itemId]
+                                    }
+                                });
+                                break;
+                            case 'link':
+                                deactivateRecordLinkMutation({
+                                    variables: {
+                                        library: entrypoint.parentLibraryId,
+                                        attribute: entrypoint.linkAttributeId,
+                                        recordId: entrypoint.parentRecordId,
+                                        value: {
+                                            payload: itemId,
+                                            id_value
+                                        }
+                                    }
+                                });
+                                break;
+                            default:
+                                return;
+                        }
+                    }
+                });
+            }
         }),
         [t, deactivateRecordsMutation]
     );

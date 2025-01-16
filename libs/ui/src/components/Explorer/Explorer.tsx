@@ -90,9 +90,12 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         skip: viewSettingsLoading
     }); // TODO: refresh when go back on page
 
-    const {deactivateAction} = useDeactivateAction({
-        isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('deactivate')
-    });
+    const {deactivateAction} = useDeactivateAction(
+        {
+            isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('deactivate')
+        },
+        entrypoint
+    );
 
     const {editAction, editModal} = useEditAction({
         isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit')
