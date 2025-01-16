@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {dsTheme, ErrorDisplay, Loading, useLang} from '@leav/ui';
+import {ErrorDisplay, Loading, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {FloatButton} from 'antd';
 import {useApplicationsPermissions} from 'hooks/useApplicationsPermissions';
@@ -17,10 +17,10 @@ import ApplicationsSearch from './ApplicationsSearch';
 import {EditApplicationModal} from './EditApplicationModal';
 
 const PrimaryFloatButton = styled(FloatButton)`
-    background-color: ${dsTheme.general.colors.primary['400']};
+    background-color: var(--general-colors-primary-400);
 
     .ant-float-btn-body {
-        background-color: ${dsTheme.general.colors.primary['400']};
+        background-color: var(--general-colors-primary-400);
     }
 `;
 
