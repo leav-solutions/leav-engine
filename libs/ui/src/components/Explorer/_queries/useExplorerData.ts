@@ -20,6 +20,7 @@ import {useMemo} from 'react';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
 import dayjs from 'dayjs';
 import {nullValueConditions} from '../conditionsHelper';
+import {AttributeConditionFilter} from '_ui/types';
 
 export const dateValuesSeparator = '\n';
 
@@ -167,6 +168,24 @@ const _getDateRequestFilters = ({
     }
 };
 
+const _getBooleanRequestFilters = ({
+    field,
+    condition,
+    value
+}: Pick<IExplorerFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
+    if (value === 'false') {
+        return [
+            {
+                field,
+                condition: AttributeConditionFilter.NOT_EQUAL,
+                value: 'true'
+            }
+        ];
+    }
+
+    return [{field, condition, value}];
+};
+
 export const useExplorerData = ({
     entrypoint,
     libraryId,
@@ -194,18 +213,23 @@ export const useExplorerData = ({
     const queryFilters = interleaveElement(
         {operator: RecordFilterOperator.AND},
         filters
-            .filter(({value, condition}) => value !== null || (condition && nullValueConditions.includes(condition)))
-            .map(({attribute, field, condition, value}) =>
-                attribute.format === AttributeFormat.date
-                    ? _getDateRequestFilters({field, condition, value})
-                    : [
-                          {
-                              field,
-                              condition,
-                              value
-                          }
-                      ]
-            )
+            .filter(({value, condition}) => value !== null || nullValueConditions.includes(condition))
+            .map(({attribute, field, condition, value}) => {
+                switch (attribute.format) {
+                    case AttributeFormat.date:
+                        return _getDateRequestFilters({field, condition, value});
+                    case AttributeFormat.boolean:
+                        return _getBooleanRequestFilters({field, condition, value});
+                    default:
+                        return [
+                            {
+                                field,
+                                condition,
+                                value
+                            }
+                        ];
+                }
+            })
     );
 
     const isLibrary = entrypoint.type === 'library';

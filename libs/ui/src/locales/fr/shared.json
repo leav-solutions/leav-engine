@@ -666,6 +666,8 @@
         "type-a-value": "Saisissez une valeur",
         "save-view": "Enregistrer",
         "reinit-view": "Réinitialiser",
-        "select-condition": "Sélectionner une condition"
+        "select-condition": "Sélectionner une condition",
+        "true": "Vrai",
+        "false": "Faux"
     }
 }

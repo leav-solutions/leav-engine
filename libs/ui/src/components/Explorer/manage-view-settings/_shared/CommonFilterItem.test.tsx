@@ -203,9 +203,7 @@ describe('CommonFilterItem', () => {
 
             render(<CommonFilterItem filter={filter} />);
             await userEvent.click(screen.getByRole('button', {name: /boolean/}));
-            const switchInput = screen.getByRole('switch');
-            expect(switchInput).toBeVisible();
-            expect(switchInput).toHaveAttribute('aria-checked', filter.value);
+            expect(screen.getByText(/true/)).toBeVisible();
         });
     });
 
