@@ -84,9 +84,9 @@ function ALCList({
             }
         },
         collect: monitor => ({
-                hovered: monitor.isOver(),
-                canDrop: !!monitor.canDrop()
-            })
+            hovered: monitor.isOver(),
+            canDrop: !!monitor.canDrop()
+        })
     });
 
     /////// DRAG / DROP FOR THE HIDDEN DIV

@@ -16,7 +16,7 @@ export const getAvailableActionsQuery = gql`
                 type
                 description
                 required
-                default_value
+                helper_value
             }
         }
     }

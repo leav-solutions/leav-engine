@@ -38,7 +38,7 @@ export type ActionsListParamsConfig<ParamsRequired extends Record<string, boolea
         type: 'boolean' | 'string' | 'number'; // TODO: find admin type
         description: string;
         required: ParamsRequired[Name];
-        default_value: string;
+        helper_value: string;
     };
 }[keyof ParamsRequired];
 

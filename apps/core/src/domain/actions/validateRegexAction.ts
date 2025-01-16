@@ -12,7 +12,7 @@ export default function (): IActionsListFunction<{regex: true}> {
         description: 'Check if value is a string matching given regex',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
-        params: [{name: 'regex', type: 'string', description: 'Validation regex', required: true, default_value: ''}],
+        params: [{name: 'regex', type: 'string', description: 'Validation regex', required: true, helper_value: ''}],
         compute: false,
         action: (values, params) => {
             const allErrors = values.reduce<Array<{errorType: Errors; attributeValue: IValue}>>(
