@@ -81,14 +81,14 @@ export default function ({
                 type: 'string',
                 description: 'Quick description of your calculation',
                 required: true,
-                default_value: 'Your description'
+                helper_value: 'Your description'
             },
             {
                 name: 'Formula',
                 type: 'string',
                 description: 'Excel formula to perform, place variables like so : {attribute_identifier}',
                 required: true,
-                default_value: '21*2'
+                helper_value: '21*2'
             }
         ],
         action: async (values, params, ctx) => {
@@ -100,6 +100,7 @@ export default function ({
                 values.map(v => v.payload)
             );
             const parser = new Parser();
+
             const {error, result} = parser.parse(finalFormula);
 
             if (error) {

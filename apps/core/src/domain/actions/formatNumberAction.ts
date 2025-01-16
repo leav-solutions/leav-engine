@@ -38,35 +38,35 @@ export default function (): IActionsListFunction<{
                 type: 'number',
                 description: 'Number of decimals',
                 required: true,
-                default_value: '2'
+                helper_value: '2'
             },
             {
                 name: 'thousandsSeparator',
                 type: 'string',
                 description: 'Thousands separator',
                 required: false,
-                default_value: ' '
+                helper_value: ' '
             },
             {
                 name: 'decimalsSeparator',
                 type: 'string',
                 description: 'Decimals separator',
                 required: false,
-                default_value: ','
+                helper_value: ','
             },
             {
                 name: 'prefix',
                 type: 'string',
                 description: 'Number prefix',
                 required: false,
-                default_value: ''
+                helper_value: ''
             },
             {
                 name: 'suffix',
                 type: 'string',
                 description: 'Number suffix',
                 required: false,
-                default_value: ''
+                helper_value: ''
             }
         ],
         action: (values, params) => {

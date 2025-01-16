@@ -171,7 +171,8 @@
         "date_range_to": "Au",
         "linked_libraries": "Bibliothèques associées",
         "select_attributes": "Sélectionner des attributs",
-        "version_profile": "Profil de version"
+        "version_profile": "Profil de version",
+        "example": "Exemple : "
     },
     "trees": {
         "title": "Arbres",
