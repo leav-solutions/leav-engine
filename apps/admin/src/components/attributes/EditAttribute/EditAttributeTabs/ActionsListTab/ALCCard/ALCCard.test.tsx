@@ -2,16 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render} from 'enzyme';
-import React from 'react';
 import {DndProvider} from 'react-dnd';
 import {TestBackend} from 'react-dnd-test-backend';
 import ALCCard from './ALCCard';
-
-// import HTML5Backend from 'react-dnd-html5-backend';
-
-function placeholder() {
-    return undefined;
-}
 
 jest.mock('hooks/useLang');
 

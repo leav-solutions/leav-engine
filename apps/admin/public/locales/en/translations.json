@@ -171,7 +171,8 @@
         "date_range_to": "To",
         "linked_libraries": "Linked libraries",
         "select_attributes": "Select attributes",
-        "version_profile": "Version profile"
+        "version_profile": "Version profile",
+        "example": "Example: "
     },
     "trees": {
         "title": "Trees",

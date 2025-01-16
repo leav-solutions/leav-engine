@@ -151,24 +151,24 @@ function ALCCard({
     //////////////////// RENDER
     function renderListCard(listAction: IAction) {
         return (
-            <ActionRow
-                ref={node => {
-                    // if the card is blocked, meaning an input field is being focused on,
-                    // return the node without crag and drop context to allow
-                    // text selection in Firefox
-                    if (blockedCard) {
-                        return node;
-                    }
-                    return drag(drop(node));
-                }}
-                opacity={opacity}
-                marginTop={marginTop}
-                index={index}
-                isDragging={dragging}
-            >
-                <Card fluid>
-                    <Connector inputs={inputs} dictionnary={colorTypeDictionnary} isDragging={dragging} />
-                    <Card.Content>
+            <Card fluid>
+                <Connector inputs={inputs} dictionnary={colorTypeDictionnary} isDragging={dragging} />
+                <Card.Content>
+                    <ActionRow
+                        ref={node => {
+                            // if the card is blocked, meaning an input field is being focused on,
+                            // return the node without crag and drop context to allow
+                            // text selection in Firefox
+                            if (blockedCard) {
+                                return node;
+                            }
+                            return drag(drop(node));
+                        }}
+                        opacity={opacity}
+                        marginTop={marginTop}
+                        index={index}
+                        isDragging={isDragging}
+                    >
                         <h3>{listAction.name}</h3>
                         <p>{listAction.description}</p>
                         {listAction.isSystem ? (
@@ -195,62 +195,62 @@ function ALCCard({
                                 onClick={onRemoveButtonClicked}
                             />
                         )}
-                        {listAction.params && listAction.params.length > 0 && (
-                            <div style={{textAlign: 'right'}} onClick={handleToggleParams}>
-                                <Card.Meta>
-                                    {paramOpen ? t('attributes.hide_params') : t('attributes.display_params')}
-                                    <Icon name={paramOpen ? 'triangle down' : 'triangle right'} />
-                                </Card.Meta>
-                            </div>
-                        )}
-                    </Card.Content>
-                    {paramOpen && (
-                        <Card.Content>
-                            <div style={{margin: '5px 0'}}>
-                                {listAction.params &&
-                                    listAction.params.length &&
-                                    listAction.params.map((param, i) => (
-                                        <Param
-                                            index={index}
-                                            key={i}
-                                            actionId={listAction.list_id !== undefined ? listAction.list_id : -1}
-                                            param={param}
-                                            changeParam={changeParam}
-                                            setBlockCard={setBlockCard}
-                                        />
-                                    ))}
-                            </div>
-                        </Card.Content>
+                    </ActionRow>
+                    {listAction.params && listAction.params.length > 0 && (
+                        <div style={{textAlign: 'right', cursor: 'pointer'}} onClick={handleToggleParams}>
+                            <Card.Meta>
+                                {paramOpen ? t('attributes.hide_params') : t('attributes.display_params')}
+                                <Icon name={paramOpen ? 'triangle down' : 'triangle right'} />
+                            </Card.Meta>
+                        </div>
                     )}
-                    <div
-                        style={{textAlign: 'right', marginBottom: '13px', marginRight: '13px'}}
-                        onClick={handleToggleParamsMessage}
-                    >
-                        <Card.Meta>
-                            {paramMessageOpen ? t('attributes.hide_messages') : t('attributes.display_messages')}
-                            <Icon name={paramMessageOpen ? 'triangle down' : 'triangle right'} />
-                        </Card.Meta>
-                    </div>
+                </Card.Content>
+                {paramOpen && (
                     <Card.Content>
-                        <div>
-                            {paramMessageOpen &&
-                                availableLangs.map(lang => (
-                                    <CustomMessage
+                        <div style={{margin: '5px 0'}}>
+                            {listAction.params &&
+                                listAction.params.length &&
+                                listAction.params.map((param, i) => (
+                                    <Param
                                         index={index}
-                                        customMessage={listAction.error_message?.[lang] ?? ''}
-                                        lang={lang}
-                                        key={lang}
+                                        key={i}
                                         actionId={listAction.list_id !== undefined ? listAction.list_id : -1}
-                                        onChangeCustomMessage={onChangeCustomMessage}
+                                        param={param}
+                                        changeParam={changeParam}
                                         setBlockCard={setBlockCard}
                                     />
                                 ))}
                         </div>
                     </Card.Content>
+                )}
+                <div
+                    style={{textAlign: 'right', marginBottom: '13px', marginRight: '13px', cursor: 'pointer'}}
+                    onClick={handleToggleParamsMessage}
+                >
+                    <Card.Meta>
+                        {paramMessageOpen ? t('attributes.hide_messages') : t('attributes.display_messages')}
+                        <Icon name={paramMessageOpen ? 'triangle down' : 'triangle right'} />
+                    </Card.Meta>
+                </div>
+                <Card.Content>
+                    <div>
+                        {paramMessageOpen &&
+                            availableLangs.map(lang => (
+                                <CustomMessage
+                                    index={index}
+                                    customMessage={listAction.error_message?.[lang] ?? ''}
+                                    lang={lang}
+                                    key={lang}
+                                    actionId={listAction.list_id !== undefined ? listAction.list_id : -1}
+                                    onChangeCustomMessage={onChangeCustomMessage}
+                                    setBlockCard={setBlockCard}
+                                />
+                            ))}
+                    </div>
+                </Card.Content>
 
-                    <Connector inputs={outputs} dictionnary={colorTypeDictionnary} isDragging={dragging} />
-                </Card>
-            </ActionRow>
+                <Connector inputs={outputs} dictionnary={colorTypeDictionnary} isDragging={dragging} />
+            </Card>
         );
     }
 

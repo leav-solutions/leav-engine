@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
-import {Form, Input, Label, Segment, TextArea, TextAreaProps} from 'semantic-ui-react';
+import {Form, Input, Label, TextArea} from 'semantic-ui-react';
+import {useTranslation} from 'react-i18next';
 import {IParam, IParamInput} from '../../../interfaces/interfaces';
 
 //////////////////// INTERFACES
@@ -22,7 +23,8 @@ interface ICorrespondences {
 //////////////////// COMPONENT
 
 function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps): JSX.Element {
-    const [currentValue, setCurrentValue] = useState(param ? (param.value ? param.value : param.default_value) : null);
+    const {t} = useTranslation();
+    const [currentValue, setCurrentValue] = useState(param ? param.value : null);
 
     //////////////////// COMPONENT CONSTANTS
 
@@ -60,39 +62,49 @@ function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps)
         if (correspondences[param.type] === 'text') {
             return (
                 <Form>
-                    <Label attached="top" basic>
+                    <Label basic>
                         {param.name} - {param.description}
                     </Label>
                     <TextArea
                         style={{marginBottom: '3px'}}
                         name={param.name}
-                        placeholder={param.default_value}
                         value={currentValue ?? ''}
                         onChange={_onChange}
                         onFocus={_onFocus}
                         onBlur={_onBlur}
                     />
+                    <div>
+                        {t('attributes.example')}
+                        {param.helper_value}
+                    </div>
                 </Form>
             );
         } else {
             return (
-                <Input
-                    style={{marginBottom: '3px'}}
-                    description="test"
-                    fluid
-                    label={{basic: true, content: `${param.name}:`}}
-                    labelPosition="left"
-                    type={correspondences[param.type]}
-                    name={param.name}
-                    placeholder={param.default_value}
-                    value={currentValue ?? ''}
-                    checked={
-                        correspondences[param.type] === 'checkbox' && currentValue ? JSON.parse(currentValue) : false
-                    }
-                    onChange={_onChange}
-                    onFocus={_onFocus}
-                    onBlur={_onBlur}
-                />
+                <>
+                    <Input
+                        style={{marginBottom: '3px'}}
+                        description="test"
+                        fluid
+                        label={{basic: true, content: `${param.name}:`}}
+                        labelPosition="left"
+                        type={correspondences[param.type]}
+                        name={param.name}
+                        value={currentValue ?? ''}
+                        checked={
+                            correspondences[param.type] === 'checkbox' && currentValue
+                                ? JSON.parse(currentValue)
+                                : false
+                        }
+                        onChange={_onChange}
+                        onFocus={_onFocus}
+                        onBlur={_onBlur}
+                    />
+                    <div>
+                        {t('attributes.example')}
+                        {param.helper_value}
+                    </div>
+                </>
             );
         }
     };
