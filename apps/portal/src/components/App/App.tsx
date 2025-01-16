@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {dsTheme, ErrorDisplay, LangContext, Loading, themeVars, useAntdLocale, useAppLang} from '@leav/ui';
+import {ErrorDisplay, LangContext, Loading, themeVars, useAntdLocale, useAppLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {ConfigProvider, Layout, theme} from 'antd';
 import {KitApp} from 'aristid-ds';
@@ -54,10 +54,11 @@ function App(): JSX.Element {
 
     const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
 
-    const {data: applicationData, loading: applicationLoading, error: applicationError} = useQuery<
-        GET_APPLICATIONS,
-        GET_APPLICATIONSVariables
-    >(getApplicationsQuery, {
+    const {
+        data: applicationData,
+        loading: applicationLoading,
+        error: applicationError
+    } = useQuery<GET_APPLICATIONS, GET_APPLICATIONSVariables>(getApplicationsQuery, {
         variables: {filters: {endpoint: APP_ENDPOINT}}
     });
 
@@ -129,7 +130,7 @@ function App(): JSX.Element {
                 <ApplicationContext.Provider value={appContextData}>
                     <UserContext.Provider value={userData.me}>
                         <ConfigProvider locale={locale}>
-                            <KitApp customTheme={dsTheme}>
+                            <KitApp>
                                 <Layout>
                                     <Header style={{background: themeVars.secondaryBg}}>
                                         <AppIcon size="tiny" style={{maxHeight: '2rem', margin: 'auto'}} />

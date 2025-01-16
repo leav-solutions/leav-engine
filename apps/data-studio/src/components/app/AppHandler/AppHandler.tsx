@@ -7,7 +7,6 @@ import {
     APPS_ENDPOINT,
     APP_ENDPOINT,
     customTheme,
-    dsTheme,
     ErrorBoundary,
     ErrorDisplay,
     ErrorDisplayTypes,
@@ -198,7 +197,6 @@ function AppHandler(): JSX.Element {
                     <ErrorBoundary recoveryButtons={recoveryButtons}>
                         <ApplicationContext.Provider value={appContextData}>
                             <KitApp
-                                customTheme={dsTheme}
                                 locale={{
                                     locale: localeByLang[lang[0]],
                                     ItemList: null,
