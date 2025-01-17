@@ -730,7 +730,7 @@ describe('Explorer', () => {
         });
 
         const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
-        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-link'}));
+        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'}));
 
         expect(screen.getByText('record_edition.delete_link_confirm')).toBeVisible();
         await user.click(screen.getByText('global.submit'));
