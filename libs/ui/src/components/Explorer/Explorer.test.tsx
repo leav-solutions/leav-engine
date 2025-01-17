@@ -708,6 +708,36 @@ describe('Explorer', () => {
         expect(mockDeactivateMutation).toHaveBeenCalled();
     });
 
+    test('Should be able to delete a linked record with default actions', async () => {
+        const mockDeleteValueMutation = jest.fn().mockReturnValue({
+            data: {
+                deleteValue: [
+                    {
+                        id_value: 0,
+                        linkValue: mockRecords[0]
+                    }
+                ]
+            }
+        });
+
+        jest.spyOn(gqlTypes, 'useDeleteValueMutation').mockImplementation(() => [
+            mockDeleteValueMutation,
+            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+        ]);
+
+        render(<Explorer entrypoint={linkEntrypoint} />, {
+            mocks: [ExplorerLinkAttributeQueryMock]
+        });
+
+        const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
+        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'}));
+
+        expect(screen.getByText('record_edition.delete_link_confirm')).toBeVisible();
+        await user.click(screen.getByText('global.submit'));
+
+        expect(mockDeleteValueMutation).toHaveBeenCalled();
+    });
+
     test('Should be able to edit a record with default actions', async () => {
         render(<Explorer entrypoint={libraryEntrypoint} />);
 
@@ -972,7 +1002,7 @@ describe('Explorer', () => {
     describe('Entrypoint type link', () => {
         test('Should display the list of linked records', async () => {
             const actionCallback = jest.fn();
-            const {container} = render(
+            render(
                 <Explorer
                     entrypoint={linkEntrypoint}
                     primaryActions={customPrimaryActions}

@@ -148,7 +148,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                     type: 'library',
                     libraryId: library
                 }}
-                defaultActionsForItem={['edit', 'deactivate']}
+                defaultActionsForItem={['edit', 'remove']}
                 defaultPrimaryActions={['create']}
                 itemActions={[
                     {
