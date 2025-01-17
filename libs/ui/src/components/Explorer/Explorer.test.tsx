@@ -19,6 +19,7 @@ import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from '
 import {SNACKBAR_MASS_ID} from './useMassActions';
 import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
+import * as useExplorerData from './_queries/useExplorerData';
 import * as useColumnWidth from './useColumnWidth';
 
 const EditRecordModalMock = 'EditRecordModal';
@@ -551,6 +552,23 @@ describe('Explorer', () => {
 
     let user: ReturnType<typeof userEvent.setup>;
 
+    const ExplorerLinkAttributeMonoValueQueryMock = {
+        request: {
+            query: gqlTypes.ExplorerLinkAttributeDocument,
+            variables: {
+                id: linkEntrypoint.linkAttributeId
+            }
+        },
+        result: {
+            data: {
+                attributes: {
+                    list: [explorerLinkAttribute],
+                    __typename: 'AttributesList'
+                }
+            }
+        }
+    };
+
     beforeEach(() => {
         spyUseExplorerLibraryDataQuery = jest
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
@@ -583,6 +601,11 @@ describe('Explorer', () => {
 
         jest.clearAllMocks();
         user = userEvent.setup();
+    });
+
+    afterEach(() => {
+        // restore the spy created with spyOn
+        jest.restoreAllMocks();
     });
 
     describe('props title', () => {
