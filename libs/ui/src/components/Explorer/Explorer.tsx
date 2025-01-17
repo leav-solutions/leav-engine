@@ -37,6 +37,7 @@ const ExplorerHeaderDivStyled = styled.div`
     justify-content: space-between;
     align-items: center;
     padding-bottom: calc(var(--general-spacing-xs) * 1px);
+    padding-right: calc(var(--general-spacing-xxs) * 1px);
 `;
 
 const ExplorerPageDivStyled = styled.div`
@@ -104,6 +105,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     const {createAction, createModal} = useCreateAction({
         isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
         library: view.libraryId,
+        entrypoint: view.entrypoint,
+        itemsCount: data?.totalCount ?? 0,
         refetch
     });
 

@@ -10,11 +10,18 @@ import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
 import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
+import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
+import * as useExplorerData from './_queries/useExplorerData';
 
 const EditRecordModalMock = 'EditRecordModal';
 
 jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
-    EditRecordModal: () => <div>{EditRecordModalMock}</div>
+    EditRecordModal: ({onCreate}) => (
+        <div>
+            {EditRecordModalMock}
+            <button onClick={() => onCreate({})}>create-record</button>
+        </div>
+    )
 }));
 
 jest.mock('@uidotdev/usehooks', () => ({
@@ -513,6 +520,7 @@ describe('Explorer', () => {
 
     const explorerLinkAttribute = {
         id: 'link_attribute',
+        multiple_values: true,
         label: {
             en: 'Delivery Platforms',
             fr: 'Plateformes de diffusion'
@@ -525,6 +533,23 @@ describe('Explorer', () => {
     };
 
     const ExplorerLinkAttributeQueryMock = {
+        request: {
+            query: gqlTypes.ExplorerLinkAttributeDocument,
+            variables: {
+                id: linkEntrypoint.linkAttributeId
+            }
+        },
+        result: {
+            data: {
+                attributes: {
+                    list: [explorerLinkAttribute],
+                    __typename: 'AttributesList'
+                }
+            }
+        }
+    };
+
+    const ExplorerLinkAttributeMonoValueQueryMock = {
         request: {
             query: gqlTypes.ExplorerLinkAttributeDocument,
             variables: {
@@ -571,6 +596,11 @@ describe('Explorer', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         user = userEvent.setup();
+    });
+
+    afterEach(() => {
+        // restore the spy created with spyOn
+        jest.restoreAllMocks();
     });
 
     describe('props title', () => {
@@ -818,12 +848,61 @@ describe('Explorer', () => {
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
         });
 
+        test('should not try to link created record if entrypoint is not a link', async () => {
+            const saveValues = jest.fn();
+            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
+                loading: false,
+                saveValues
+            });
+
+            jest.spyOn(useExplorerData, 'useExplorerData').mockReturnValue({
+                refetch: jest.fn(),
+                loading: false,
+                data: null
+            });
+
+            render(<Explorer entrypoint={libraryEntrypoint} />);
+
+            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+
+            expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+            const createButtonLibrary = screen.getByRole('button', {name: 'create-record'});
+            await user.click(createButtonLibrary);
+
+            expect(saveValues).not.toHaveBeenCalled();
+        });
+
+        test('Should be able to link a new record', async () => {
+            const saveValues = jest.fn();
+            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
+                loading: false,
+                saveValues
+            });
+
+            const spiedModule = jest.spyOn(useExplorerData, 'useExplorerData').mockReturnValue({
+                refetch: jest.fn(),
+                loading: false,
+                data: null
+            });
+
+            render(<Explorer entrypoint={linkEntrypoint} />, {
+                mocks: [ExplorerLinkAttributeQueryMock]
+            });
+
+            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+
+            expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+
+            const createButton = screen.getByRole('button', {name: 'create-record'});
+            await user.click(createButton);
+
+            expect(saveValues).toHaveBeenCalled();
+        });
+
         test('Should be able to display custom primary actions', async () => {
             render(<Explorer entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} />);
 
-            const createButton = screen.getByRole('button', {name: 'explorer.create-one'});
-            const dropdownButton = createButton.nextElementSibling; // Not nice, but no way to get the dropdown button directly
-
+            const dropdownButton = screen.getByTestId('actions-dropdown');
             expect(screen.queryByText(customPrimaryAction1.label)).not.toBeInTheDocument();
             expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
 
@@ -852,7 +931,7 @@ describe('Explorer', () => {
             await user.click(firstActionButton);
             expect(customPrimaryActions[0].callback).toHaveBeenCalled();
 
-            const dropdownButton = firstActionButton.nextElementSibling; // Not nice, but no way to get the dropdown button directly
+            const dropdownButton = screen.getByTestId('actions-dropdown');
             expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
 
             await user.click(dropdownButton!);
@@ -946,16 +1025,16 @@ describe('Explorer', () => {
             }
         };
 
-        const spy = jest
-            .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
-            .mockImplementation(
-                ({variables}) =>
-                    (Array.isArray(variables?.filters) && variables.filters.length
-                        ? mockExplorerLibraryDataQueryResultWithFilters
-                        : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
-            );
-
         test('should handle filters for the request and for the display', async () => {
+            const spy = jest
+                .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+                .mockImplementation(
+                    ({variables}) =>
+                        (Array.isArray(variables?.filters) && variables.filters.length
+                            ? mockExplorerLibraryDataQueryResultWithFilters
+                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
+                );
+
             render(
                 <Explorer
                     entrypoint={{type: 'library', libraryId: 'campaigns'}}

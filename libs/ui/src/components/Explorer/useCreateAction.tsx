@@ -5,7 +5,9 @@ import {useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
 import {EditRecordModal} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ActionHook, IPrimaryAction} from './_types';
+import {ActionHook, Entrypoint, IEntrypointLink, IPrimaryAction} from './_types';
+import useSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
+import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -21,20 +23,43 @@ import {ActionHook, IPrimaryAction} from './_types';
 export const useCreateAction = ({
     isEnabled,
     library,
+    entrypoint,
+    itemsCount,
     refetch
 }: ActionHook<{
     library: string;
+    entrypoint: Entrypoint;
+    itemsCount: number;
     refetch: () => void;
 }>) => {
     const {t} = useSharedTranslation();
 
     const [isRecordCreationVisible, setRecordCreationVisible] = useState(false);
+    const [multipleValues, setIsMultivalues] = useState(false);
+    const {saveValues} = useSaveValueBatchMutation();
+
+    useExplorerLinkAttributeQuery({
+        skip: entrypoint.type !== 'link',
+        variables: {
+            id: (entrypoint as IEntrypointLink).linkAttributeId
+        },
+        onCompleted: data => {
+            const attributeData = data?.attributes?.list?.[0];
+            if (!attributeData) {
+                throw new Error('Unknown link attribute');
+            }
+            setIsMultivalues(attributeData.multiple_values);
+        }
+    });
+
+    const canCreateRecord = entrypoint.type === 'library' ? true : multipleValues || itemsCount === 0;
 
     const createAction: IPrimaryAction = {
         callback: () => {
             setRecordCreationVisible(true);
         },
         icon: <FaPlus />,
+        disabled: !canCreateRecord,
         label: t('explorer.create-one')
     };
 
@@ -48,9 +73,26 @@ export const useCreateAction = ({
                 onClose={() => {
                     setRecordCreationVisible(false);
                 }}
-                onCreate={() => {
+                onCreate={newRecord => {
                     refetch();
                     setRecordCreationVisible(false);
+                    if (entrypoint.type === 'link') {
+                        saveValues(
+                            {
+                                id: entrypoint.parentRecordId,
+                                library: {
+                                    id: entrypoint.parentLibraryId
+                                }
+                            },
+                            [
+                                {
+                                    attribute: entrypoint.linkAttributeId,
+                                    idValue: null,
+                                    value: newRecord.id
+                                }
+                            ]
+                        );
+                    }
                 }}
                 submitButtons={['create']}
             />

@@ -24,7 +24,7 @@ import {GetRecordColumnsValuesRecord, RecordColumnValue} from '_ui/_queries/reco
 export interface IValueToSubmit {
     attribute: string;
     value: AnyPrimitive | null;
-    idValue: string;
+    idValue: string | null;
     metadata?: IKeyValue<AnyPrimitive>;
 }
 
