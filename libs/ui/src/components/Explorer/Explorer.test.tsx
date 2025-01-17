@@ -700,7 +700,7 @@ describe('Explorer', () => {
         render(<Explorer entrypoint={libraryEntrypoint} />);
 
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
-        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.remove-item'}));
+        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
 
         expect(screen.getByText('records_deactivation.confirm_one')).toBeVisible();
         await user.click(screen.getByText('global.submit'));
@@ -730,7 +730,7 @@ describe('Explorer', () => {
         });
 
         const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
-        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.remove-item'}));
+        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-link'}));
 
         expect(screen.getByText('record_edition.delete_link_confirm')).toBeVisible();
         await user.click(screen.getByText('global.submit'));

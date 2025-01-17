@@ -49,7 +49,7 @@ export const useRemoveAction = (
 
     const _removeAction: IItemAction = useMemo(
         () => ({
-            label: t('explorer.remove-item'),
+            label: entrypoint.type === 'library' ? t('explorer.deactivate-item') : t('explorer.delete-item'),
             icon: <FaTrash />,
             isDanger: true,
             callback: ({itemId, libraryId, id_value}) => {
@@ -92,7 +92,7 @@ export const useRemoveAction = (
                 });
             }
         }),
-        [t, deactivateRecordsMutation, deleteRecordLinkMutation]
+        [t, deactivateRecordsMutation, deleteRecordLinkMutation, entrypoint.type]
     );
 
     return {
