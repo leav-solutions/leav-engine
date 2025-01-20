@@ -39,6 +39,7 @@ export interface IItemAction {
     callback: (item: IItemData) => void;
     icon: ReactElement;
     label: string;
+    iconOnly?: boolean;
     isDanger?: boolean;
     disabled?: boolean;
 }
