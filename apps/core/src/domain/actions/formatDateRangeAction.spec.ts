@@ -84,6 +84,11 @@ describe('formatDateRangeAction', () => {
     });
 
     describe('edge cases', () => {
+        test('should fallback to timestamp when no param is provided', async () => {
+            const resultWithoutParams = await action([testValue], {}, ctx);
+            expect(resultWithoutParams.values[0].payload).toStrictEqual({from: '2119477320', to: '2119477380'});
+        });
+
         test('should return null value if properties are omitted', async () => {
             expect((await action([{payload: 'aaaa', raw_payload: 'aaa'}], {}, ctx)).values[0].payload).toBe(null);
             expect((await action([{payload: {}, raw_payload: {}}], {}, ctx)).values[0].payload).toBe(null);
@@ -101,6 +106,7 @@ describe('formatDateRangeAction', () => {
             ).toBe(null);
             expect((await action([{payload: null, raw_payload: null}], {}, ctx)).values[0].payload).toBe(null);
         });
+
         test('should return empty string couple on non numerical value in DB', async () => {
             expect(
                 (

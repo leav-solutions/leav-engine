@@ -75,6 +75,10 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                     };
                 }
 
+                if (!localized) {
+                    return elementValue;
+                }
+
                 let options: Intl.DateTimeFormatOptions = {};
                 try {
                     options = JSON.parse(localized ?? '{}');
