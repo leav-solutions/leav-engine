@@ -25,9 +25,10 @@ const DataViewContainerDivStyled = styled.div`
         padding-bottom: ${defaultPaginationHeight}px;
         position: relative;
     }
+
     .pagination {
         flex: 0 0 auto;
-        justify-content: flex-end;
+        justify-content: center;
         display: flex;
         padding-top: calc(var(--general-spacing-xs) * 1px);
     }
@@ -36,6 +37,7 @@ const DataViewContainerDivStyled = styled.div`
 interface IDataViewProps {
     dataGroupedFilteredSorted: IItemData[];
     itemActions: IItemAction[];
+    iconsOnlyItemActions: boolean;
     attributesProperties: IExplorerData['attributes'];
     attributesToDisplay: string[];
     paginationProps?: {
@@ -74,10 +76,10 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         attributesProperties,
         paginationProps,
         itemActions,
-        selection: {updateSelectedKeys, selectedKeys}
+        selection: {updateSelectedKeys, selectedKeys},
+        iconsOnlyItemActions
     }) => {
         const {t} = useSharedTranslation();
-        const {theme} = useKitTheme();
 
         const {containerRef, scrollHeight} = useTableScrollableHeight(!!paginationProps);
 
@@ -86,9 +88,9 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
 
             return isLessThanFourActions ? (
                 <KitSpace>
-                    {actions.map(({label, icon, isDanger, callback}, index) => (
+                    {actions.map(({label, icon, iconOnly, isDanger, callback}, index) => (
                         <KitButton title={label} icon={icon} onClick={callback} danger={isDanger} key={index}>
-                            {label}
+                            {!iconsOnlyItemActions && !iconOnly && label}
                         </KitButton>
                     ))}
                 </KitSpace>
@@ -184,9 +186,6 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         return (
             <DataViewContainerDivStyled ref={containerRef}>
                 <KitTable
-                    borderedRows
-                    cellsBackgroundColor={theme.utilities.light}
-                    backgroundColor={theme.colors.primary['50']}
                     showHeader={dataGroupedFilteredSorted.length > 0}
                     columns={columns}
                     scroll={{y: scrollHeight}}
