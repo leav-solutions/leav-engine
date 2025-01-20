@@ -164,7 +164,7 @@ describe('Records', () => {
                 values: [
                     {
                         id_value: null,
-                        valuePayload: expect.any(String)
+                        valuePayload: expect.any(Number)
                     }
                 ]
             },

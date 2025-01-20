@@ -608,8 +608,8 @@ describe('Values', () => {
 
             expect(res.data.errors).toBeUndefined();
             expect(res.data.data.saveValue[0].payload).toEqual({
-                from: '1/1/1970, 12:16:40 AM',
-                to: '1/1/1970, 12:33:20 AM'
+                from: 1000,
+                to: 2000
             });
         });
 
