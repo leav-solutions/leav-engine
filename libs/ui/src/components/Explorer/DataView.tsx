@@ -32,7 +32,7 @@ const DataViewContainerDivStyled = styled.div`
 
     .pagination {
         flex: 0 0 auto;
-        justify-content: flex-end;
+        justify-content: center;
         display: flex;
         padding-top: calc(var(--general-spacing-xs) * 1px);
     }
@@ -60,6 +60,7 @@ const StyledTable = styled(KitTable)`
 interface IDataViewProps {
     dataGroupedFilteredSorted: IItemData[];
     itemActions: IItemAction[];
+    iconsOnlyItemActions: boolean;
     attributesProperties: IExplorerData['attributes'];
     attributesToDisplay: string[];
     paginationProps?: {
@@ -100,9 +101,9 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         paginationProps,
         itemActions,
         selection: {onSelectionChange, selectedKeys, isMassSelectionAll}
+        iconsOnlyItemActions
     }) => {
         const {t} = useSharedTranslation();
-        const {theme} = useKitTheme();
 
         const {containerRef, scrollHeight} = useTableScrollableHeight(!!paginationProps);
         const {ref, getFieldColumnWidth, columnWidth} = useColumnWidth();
@@ -113,7 +114,6 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         ): ReactNode => {
             const isLessThanFourActions = actions.length < 4;
 
-            return (
                 <StyledActionsList ref={columnRef}>
                     {isLessThanFourActions ? (
                         <>
@@ -126,7 +126,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     danger={isDanger}
                                     disabled={disabled}
                                 >
-                                    {label}
+                            {!iconsOnlyItemActions && !iconOnly && label}
                                 </KitButton>
                             ))}
                         </>
@@ -135,8 +135,8 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                             <KitButton
                                 type="tertiary"
                                 icon={actions[0].icon}
-                                onClick={actions[0].callback}
                                 title={actions[0].label}
+                                onClick={actions[0].callback}
                                 danger={actions[0].isDanger}
                                 disabled={actions[0].disabled}
                             />
@@ -234,10 +234,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         // TODO: handle columns width based on attribute type/format
         return (
             <DataViewContainerDivStyled ref={containerRef}>
-                <StyledTable
-                    borderedRows
-                    cellsBackgroundColor={theme.utilities.light}
-                    backgroundColor={theme.colors.primary['50']}
+                <KitTable
                     showHeader={dataGroupedFilteredSorted.length > 0}
                     columns={columns}
                     tableLayout="fixed"

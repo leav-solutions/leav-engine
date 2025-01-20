@@ -20,6 +20,9 @@ const ExplorerToolbarListStyled = styled.ul`
     padding: calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-xxs) * 1px)
         calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-xxs) * 1px);
     margin: 0;
+    margin-bottom: calc(var(--general-spacing-s) * 1px);
+    background: var(--general-colors-neutral-grey-100);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
     list-style: none;
     display: flex;
     overflow: auto;

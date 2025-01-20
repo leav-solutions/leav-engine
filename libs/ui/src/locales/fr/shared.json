@@ -638,7 +638,7 @@
         "more-actions": "Voir plus",
         "deactivate-item": "Désactiver",
         "delete-item": "Supprimer",
-        "edit-item": "Éditer l’élément",
+        "edit-item": "Éditer",
         "settings": "Paramètres",
         "back": "Retour",
         "router-menu": "Configuration de la vue",
@@ -692,6 +692,7 @@
                 "select_all": "Tout sélectionner ({{count, number}})",
                 "deselect_all": "Tout désélectionner"
             }
-        }
+        },
+        "add-existing-item": "Ajouter un élément existant"
     }
 }

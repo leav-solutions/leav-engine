@@ -638,7 +638,7 @@
         "more-actions": "Show more",
         "deactivate-item": "Deactivate",
         "delete-item": "Delete",
-        "edit-item": "Edit item",
+        "edit-item": "Edit",
         "settings": "Settings",
         "back": "Back",
         "router-menu": "View Configuration",
@@ -692,6 +692,7 @@
                 "select_all": "Select all items ({{count, number}})",
                 "deselect_all": "Deselect all items"
             }
-        }
+        },
+        "add-existing-item": "Add existing item"
     }
 }
