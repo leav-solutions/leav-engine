@@ -879,7 +879,7 @@ describe('Explorer', () => {
                 saveValues
             });
 
-            const spiedModule = jest.spyOn(useExplorerData, 'useExplorerData').mockReturnValue({
+            jest.spyOn(useExplorerData, 'useExplorerData').mockReturnValue({
                 refetch: jest.fn(),
                 loading: false,
                 data: null

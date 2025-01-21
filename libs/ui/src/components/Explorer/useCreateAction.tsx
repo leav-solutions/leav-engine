@@ -6,7 +6,7 @@ import {FaPlus} from 'react-icons/fa';
 import {EditRecordModal} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ActionHook, Entrypoint, IEntrypointLink, IPrimaryAction} from './_types';
-import useSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
+import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 
 /**
