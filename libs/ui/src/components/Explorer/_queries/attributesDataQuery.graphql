@@ -1,3 +1,11 @@
+fragment LinkAttributeDetails on LinkAttribute {
+    label
+    linked_library {
+        id
+        label
+    }
+}
+
 query ExplorerAttributes($ids: [ID!]) {
     attributes(filters: { ids: $ids }) {
         list {
@@ -5,14 +13,9 @@ query ExplorerAttributes($ids: [ID!]) {
             type
             format
             label
-        }
-    }
-}
 
-fragment LinkAttributeDetails on LinkAttribute {
-    label
-    linked_library {
-        id
+            ...LinkAttributeDetails
+        }
     }
 }
 

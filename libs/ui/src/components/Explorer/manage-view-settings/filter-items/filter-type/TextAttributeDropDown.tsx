@@ -38,7 +38,12 @@ export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
 
     return (
         <>
-            <KitSelect options={conditionOptionsByType} onChange={_onConditionChanged} value={filter.condition} />
+            <KitSelect
+                options={conditionOptionsByType}
+                onChange={_onConditionChanged}
+                value={filter.condition}
+                aria-label={String(t('explorer.filter-condition'))}
+            />
             {showSearch && (
                 <InputStyled
                     placeholder={String(t('explorer.type-a-value'))}

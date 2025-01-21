@@ -4,6 +4,7 @@
 import {
     ExplorerLinkAttributeQuery,
     LinkAttributeDetailsFragment,
+    RecordFilterCondition,
     useExplorerAttributesQuery,
     useExplorerLinkAttributeQuery,
     useGetViewsListQuery,
@@ -12,10 +13,20 @@ import {
 import {localizedTranslation, Override} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {useEffect, useMemo, useReducer, useState} from 'react';
-import {DefaultViewSettings, Entrypoint, IEntrypointLink, IExplorerFilter} from './_types';
+import {
+    DefaultViewSettings,
+    Entrypoint,
+    ExplorerFilter,
+    IEntrypointLink,
+    IExplorerFilterLink,
+    IExplorerFilterStandard,
+    IExplorerFilterThrough
+} from './_types';
 import {v4 as uuid} from 'uuid';
 import {IViewSettingsState, viewSettingsInitialState, viewSettingsReducer} from './manage-view-settings';
 import {mapViewTypeFromLegacyToExplorer} from './_constants';
+import {ThroughConditionFilter} from '_ui/types';
+import {isLinkAttribute, isStandardAttribute} from '_ui/_utils/attributeType';
 
 type ValidFieldFilter = Override<
     ViewDetailsFilterFragment,
@@ -25,8 +36,23 @@ type ValidFieldFilter = Override<
     }
 >;
 
+type ValidFieldFilterThrough = Override<
+    ValidFieldFilter,
+    {
+        condition: ThroughConditionFilter.THROUGH;
+    }
+> & {
+    subField: NonNullable<ViewDetailsFilterFragment['field']>;
+    subCondition?: ViewDetailsFilterFragment['condition'];
+};
+
 const _isValidFieldFilter = (filter: ViewDetailsFilterFragment): filter is ValidFieldFilter =>
     !!filter.field && !!filter.condition;
+
+const _isValidFieldFilterThrough = (
+    filter: ValidFieldFilter | ValidFieldFilterThrough
+): filter is ValidFieldFilterThrough =>
+    filter.condition === ThroughConditionFilter.THROUGH && !!filter.subCondition && !!filter.subField;
 
 const _isLinkAttributeDetails = (
     linkAttributeData: NonNullable<ExplorerLinkAttributeQuery['attributes']>['list'][number]
@@ -68,19 +94,59 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
 
     // Take the last view from the array
     const userView = viewData?.views?.list?.at(-1);
-    const userViewFilters: ValidFieldFilter[] =
-        userView?.filters
-            ?.filter(filter => _isValidFieldFilter(filter))
-            .map(filter => ({
-                field: filter.field,
-                value: filter.value ?? null,
-                condition: filter.condition
-            })) ?? [];
+
+    const userViewFilters =
+        userView?.filters?.reduce<Array<ValidFieldFilter | ValidFieldFilterThrough>>((acc, filter) => {
+            if (!_isValidFieldFilter(filter)) {
+                return acc;
+            }
+
+            const _isThroughFilter = filter.field.includes('.');
+            const [field, subField] = filter.field.split('.');
+            if (_isThroughFilter) {
+                const throughFilter: ValidFieldFilterThrough = {
+                    field,
+                    subField,
+                    value: filter.value ?? null,
+                    condition: ThroughConditionFilter.THROUGH,
+                    subCondition: filter.condition
+                };
+                acc.push(throughFilter);
+            } else {
+                acc.push(filter);
+            }
+
+            return acc;
+        }, []) ?? [];
+
+    const preparedDefaultFilters =
+        defaultViewSettings.filters?.reduce<Array<ValidFieldFilter | ValidFieldFilterThrough>>((acc, filter) => {
+            if (!_isValidFieldFilter(filter)) {
+                return acc;
+            }
+
+            const _isThroughFilter = filter.field.includes('.');
+            const [field, subField] = filter.field.split('.');
+            if (_isThroughFilter) {
+                const throughFilter: ValidFieldFilterThrough = {
+                    field,
+                    subField,
+                    value: filter.value ?? null,
+                    condition: ThroughConditionFilter.THROUGH,
+                    subCondition: filter.condition
+                };
+                acc.push(throughFilter);
+            } else {
+                acc.push(filter);
+            }
+
+            return acc;
+        }, []) ?? [];
 
     const attributesToHydrate = [
         ...new Set(
             [
-                ...(defaultViewSettings.filters ?? []),
+                ...(preparedDefaultFilters ?? []),
                 ...(defaultViewSettings.sort ?? []),
                 ...userViewFilters,
                 ...(userView?.sort ?? [])
@@ -110,6 +176,8 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
 
     useEffect(() => {
         if (libraryId !== null && !viewsLoading && !attributesLoading) {
+            const allFilters = [...preparedDefaultFilters, ...userViewFilters];
+
             const hydratedSettings: IViewSettingsState = {
                 ...viewSettingsInitialState,
                 entrypoint,
@@ -127,32 +195,67 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                     field: s.field,
                     order: s.order
                 })),
-                filters: [...(defaultViewSettings?.filters ?? []), ...userViewFilters].reduce<IExplorerFilter[]>(
-                    (acc, filter) => {
-                        if (!attributesDataById[filter.field]) {
-                            console.warn(
-                                `Attribute ${filter.field} from defaultViewSettings or user view not found in database.`
-                            );
-                            return acc;
-                        }
+                filters: allFilters.reduce<ExplorerFilter[]>((acc, filter) => {
+                    if (!attributesDataById[filter.field]) {
+                        console.warn(
+                            `Attribute ${filter.field} from defaultViewSettings or user view not found in database.`
+                        );
+                        return acc;
+                    }
 
-                        return [
-                            ...acc,
-                            {
-                                ...filter,
+                    const filterAttributeBase = {
+                        label: localizedTranslation(attributesDataById[filter.field].label, lang),
+                        type: attributesDataById[filter.field].type
+                    };
+
+                    // filter is standardFilter
+                    if (isStandardAttribute(filterAttributeBase.type)) {
+                        const newFilter: IExplorerFilterStandard = {
+                            field: filter.field,
+                            value: filter.value ?? null,
+                            id: uuid(),
+                            condition: (filter.condition as RecordFilterCondition) ?? null,
+                            attribute: {
+                                ...filterAttributeBase,
+                                format: attributesDataById[filter.field].format
+                            }
+                        };
+                        acc.push(newFilter);
+                    }
+
+                    if (isLinkAttribute(filterAttributeBase.type)) {
+                        if (_isValidFieldFilterThrough(filter)) {
+                            const newFilter: IExplorerFilterThrough = {
+                                field: filter.field,
                                 value: filter.value ?? null,
                                 id: uuid(),
+                                condition: filter.condition,
                                 attribute: {
-                                    label: localizedTranslation(attributesDataById[filter.field].label, lang),
-                                    format: attributesDataById[filter.field].format,
-                                    multi_values: attributesDataById[filter.field].multi_values
+                                    ...filterAttributeBase,
+                                    linkedLibrary: attributesDataById[filter.field].linked_library
+                                },
+                                subCondition: filter.subCondition ?? null,
+                                subField: filter.subField
+                            };
+                            acc.push(newFilter);
+                        } else {
+                            const newFilter: IExplorerFilterLink = {
+                                field: filter.field,
+                                value: filter.value ?? null,
+                                id: uuid(),
+                                condition: filter.condition,
+                                attribute: {
+                                    ...filterAttributeBase,
+                                    linkedLibrary: attributesDataById[filter.field].linked_library
                                 }
-                            }
-                        ];
-                    },
-                    []
-                )
+                            };
+                            acc.push(newFilter);
+                        }
+                    }
+                    return acc;
+                }, [])
             };
+
             dispatch({
                 type: 'RESET',
                 payload: {

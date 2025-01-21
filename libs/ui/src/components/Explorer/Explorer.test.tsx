@@ -1089,7 +1089,8 @@ describe('Explorer', () => {
                     defaultPrimaryActions={[]}
                 />,
                 {
-                    mocks: [ExplorerLinkAttributeQueryMock]
+                    // Query called twice : in run time, the cache is effective, but not in tests, so we use the mock twice
+                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
                 }
             );
 
