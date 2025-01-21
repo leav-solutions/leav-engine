@@ -61,7 +61,8 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                 field: attributeId,
                 attribute: {
                     label: attributeDetailsById[attributeId].label,
-                    format: attributeDetailsById[attributeId].format ?? AttributeFormat.text
+                    format: attributeDetailsById[attributeId].format ?? AttributeFormat.text,
+                    type: attributeDetailsById[attributeId].type
                 }
             }
         });

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {Entrypoint, IEntrypointLink, IExplorerData, IExplorerFilter} from '../_types';
+import {Entrypoint, IEntrypointLink, IExplorerData, IExplorerBaseFilter} from '../_types';
 import {
     AttributeFormat,
     ExplorerLibraryDataQuery,
@@ -112,7 +112,7 @@ const _getDateRequestFilters = ({
     field,
     condition,
     value
-}: Pick<IExplorerFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
+}: Pick<IExplorerBaseFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
     switch (condition) {
         case RecordFilterCondition.BETWEEN:
             const [from, to] = value!.split(dateValuesSeparator);
@@ -172,7 +172,7 @@ const _getBooleanRequestFilters = ({
     field,
     condition,
     value
-}: Pick<IExplorerFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
+}: Pick<IExplorerBaseFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
     if (value === 'false') {
         return [
             {
@@ -205,7 +205,7 @@ export const useExplorerData = ({
         order: SortOrder;
     }>;
     pagination: null | {limit: number; offset: number};
-    filters: IExplorerFilter[];
+    filters: IExplorerBaseFilter[];
     skip: boolean;
 }) => {
     const {lang: availableLangs} = useLang();

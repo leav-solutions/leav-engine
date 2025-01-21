@@ -12,7 +12,7 @@ import {
 import {localizedTranslation, Override} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {useEffect, useMemo, useReducer, useState} from 'react';
-import {DefaultViewSettings, Entrypoint, IEntrypointLink, IExplorerFilter} from './_types';
+import {DefaultViewSettings, Entrypoint, ExplorerFilter, IEntrypointLink} from './_types';
 import {v4 as uuid} from 'uuid';
 import {IViewSettingsState, viewSettingsInitialState, viewSettingsReducer} from './manage-view-settings';
 import {mapViewTypeFromLegacyToExplorer} from './_constants';
@@ -127,7 +127,7 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                     field: s.field,
                     order: s.order
                 })),
-                filters: [...(defaultViewSettings?.filters ?? []), ...userViewFilters].reduce<IExplorerFilter[]>(
+                filters: [...(defaultViewSettings?.filters ?? []), ...userViewFilters].reduce<ExplorerFilter[]>(
                     (acc, filter) => {
                         if (!attributesDataById[filter.field]) {
                             console.warn(
@@ -144,7 +144,9 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                                 id: uuid(),
                                 attribute: {
                                     label: localizedTranslation(attributesDataById[filter.field].label, lang),
-                                    format: attributesDataById[filter.field].format
+                                    format: attributesDataById[filter.field].format,
+                                    type: attributesDataById[filter.field].type,
+                                    linkedLibrary: attributesDataById[filter.field].linked_library
                                 }
                             }
                         ];
