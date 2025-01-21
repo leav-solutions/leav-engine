@@ -4,6 +4,7 @@
 import {localizedTranslation} from '@leav/utils';
 import {useMemo} from 'react';
 import {useLang} from '_ui/hooks';
+import {Entrypoint, IEntrypointLink, IExplorerData, ExplorerFilter} from '../_types';
 import {
     ExplorerLibraryDataQuery,
     ExplorerLinkDataQuery,
@@ -12,7 +13,6 @@ import {
     useExplorerLibraryDataQuery,
     useExplorerLinkDataQuery
 } from '_ui/_gqlTypes';
-import {Entrypoint, IEntrypointLink, IExplorerData, IExplorerFilter, IItemData} from '../_types';
 import {prepareFiltersForRequest} from './prepareFiltersForRequest';
 
 export const dateValuesSeparator = '\n';
@@ -121,7 +121,7 @@ export const useExplorerData = ({
         order: SortOrder;
     }>;
     pagination: null | {limit: number; offset: number};
-    filters: IExplorerFilter[];
+    filters: ExplorerFilter[];
     skip: boolean;
 }) => {
     const {lang: availableLangs} = useLang();
@@ -134,6 +134,7 @@ export const useExplorerData = ({
         loading: linkLoading,
         refetch: linkRefetch
     } = useExplorerLinkDataQuery({
+        fetchPolicy: 'network-only',
         skip: skip || !isLink,
         variables: {
             parentLibraryId: (entrypoint as IEntrypointLink).parentLibraryId,
@@ -148,6 +149,7 @@ export const useExplorerData = ({
         loading: libraryLoading,
         refetch: libraryRefetch
     } = useExplorerLibraryDataQuery({
+        fetchPolicy: 'network-only',
         skip: skip || !isLibrary,
         variables: {
             libraryId,

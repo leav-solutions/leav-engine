@@ -11,10 +11,9 @@ import {EditSettingsContextProvider} from './open-view-settings/EditSettingsCont
 import {SidePanel} from './open-view-settings/SidePanel';
 import {useOpenViewSettings} from './open-view-settings/useOpenViewSettings';
 import {ViewSettingsContext} from './store-view-settings/ViewSettingsContext';
-import {IViewSettingsState} from './store-view-settings/viewSettingsReducer';
-import {viewSettingsInitialState} from './store-view-settings/viewSettingsInitialState';
 import {act, waitFor} from '@testing-library/react';
 import {useViewSettingsReducer} from '../useViewSettingsReducer';
+import {DefaultViewSettings} from '../_types';
 
 const MockOpenEditSettings: FunctionComponent = () => {
     const {viewSettingsButton} = useOpenViewSettings('');
@@ -22,8 +21,11 @@ const MockOpenEditSettings: FunctionComponent = () => {
     return <>{viewSettingsButton}</>;
 };
 
-const MockViewSettingsContextProvider: FunctionComponent<{viewMock: IViewSettingsState}> = ({viewMock, children}) => {
-    const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, viewMock);
+const MockViewSettingsContextProvider: FunctionComponent<{defaultSettings?: DefaultViewSettings}> = ({
+    defaultSettings,
+    children
+}) => {
+    const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, defaultSettings);
     return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
 };
 
@@ -119,7 +121,7 @@ describe('Integration tests about managing view settings feature', () => {
     test('should be able to open panel and navigate inside to advanced setting and go back', async () => {
         render(
             <EditSettingsContextProvider>
-                <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                <MockViewSettingsContextProvider>
                     <MockOpenEditSettings />
                     <SidePanel />
                 </MockViewSettingsContextProvider>
@@ -143,7 +145,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle attribute visibility', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -192,7 +194,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle sort activation', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -295,7 +297,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle filter activation', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -334,7 +336,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('Should be able to save view', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -367,7 +369,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -386,7 +388,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>

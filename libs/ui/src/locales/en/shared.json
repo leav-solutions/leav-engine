@@ -30,7 +30,8 @@
         "create": "Create",
         "ok": "Ok",
         "max_length": "Max length",
-        "confirm": "Confirm"
+        "confirm": "Confirm",
+        "loading": "Loading"
     },
     "errors": {
         "default_language_required": "The default language is required",
@@ -251,7 +252,7 @@
         "not-classified-in": "Not classified in",
         "equal": "Is Equal",
         "not-equal": "Isn't Equal",
-        "through": "Through",
+        "through": "Whose attribute",
         "begin-with": "Begin With",
         "end-with": "End With",
         "is-empty": "Is Empty",
@@ -673,6 +674,8 @@
         "select-condition": "Select condition",
         "true": "True",
         "false": "False",
+        "filter-condition": "Condition",
+        "filter-link-attribute": "Link attribute",
         "massAction": {
             "itemsTotal_one": "{{count, number}} item",
             "itemsTotal_other": "{{count, number}} items",

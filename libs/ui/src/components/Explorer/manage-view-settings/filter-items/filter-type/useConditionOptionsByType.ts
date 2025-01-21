@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AttributeFormat} from '_ui/_gqlTypes';
-import {IExplorerFilter} from '_ui/components/Explorer/_types';
+import {AttributeFormat, RecordFilterCondition} from '_ui/_gqlTypes';
+import {ExplorerFilter, isExplorerFilterStandard} from '_ui/components/Explorer/_types';
 import {AttributeConditionFilter, AttributeConditionType} from '_ui/types';
 import {TFunction} from 'i18next';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
-export const conditionsByFormat: Record<AttributeFormat, AttributeConditionType[]> = {
+export const conditionsByFormat: Record<AttributeFormat, RecordFilterCondition[]> = {
     [AttributeFormat.text]: [
         AttributeConditionFilter.CONTAINS,
         AttributeConditionFilter.NOT_CONTAINS,
@@ -53,6 +53,8 @@ export const conditionsByFormat: Record<AttributeFormat, AttributeConditionType[
     ]
 };
 
+export const linkFilterConditions = [...conditionsByFormat[AttributeFormat.text], AttributeConditionFilter.THROUGH];
+
 interface IExplorerFilterConditionOption<T> {
     label: string;
     value: T;
@@ -96,17 +98,22 @@ const _getAttributeConditionOptions = (t: TFunction): Array<IExplorerFilterCondi
     {label: t('filters.through'), value: AttributeConditionFilter.THROUGH}
 ];
 
-export const useConditionsOptionsByType = (filter: IExplorerFilter) => {
+export const useConditionsOptionsByType = (filter: ExplorerFilter) => {
     const {t} = useSharedTranslation();
 
-    const attributeConditionOptions = _getAttributeConditionOptions(t);
-
     return {
-        conditionOptionsByType: attributeConditionOptions
-            .filter(({value}) => conditionsByFormat[filter.attribute.format].includes(value))
+        conditionOptionsByType: _getAttributeConditionOptions(t)
+            .filter(({value}) =>
+                isExplorerFilterStandard(filter)
+                    ? conditionsByFormat[filter.attribute.format].includes(value)
+                    : linkFilterConditions.includes(value)
+            )
             .map(option => ({
                 ...option,
-                label: option.textByFormat?.[filter.attribute.format] ?? option.label
+                label:
+                    isExplorerFilterStandard(filter) && option.textByFormat?.[filter.attribute.format]
+                        ? option.textByFormat?.[filter.attribute.format]
+                        : option.label
             }))
     };
 };
