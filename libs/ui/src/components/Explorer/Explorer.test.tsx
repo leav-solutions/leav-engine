@@ -11,7 +11,6 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
 import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
-import * as useExplorerData from './_queries/useExplorerData';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -387,6 +386,7 @@ describe('Explorer', () => {
     const mockExplorerLibraryDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
         loading: false,
         called: true,
+        refetch: jest.fn(),
         data: {
             records: {
                 totalCount: mockRecords.length,
@@ -409,6 +409,7 @@ describe('Explorer', () => {
     const mockExplorerLinkDataQueryResult: Mockify<typeof gqlTypes.useExplorerLinkDataQuery> = {
         loading: false,
         called: true,
+        refetch: jest.fn(),
         data: {
             records: {
                 list: [
@@ -549,23 +550,6 @@ describe('Explorer', () => {
         }
     };
 
-    const ExplorerLinkAttributeMonoValueQueryMock = {
-        request: {
-            query: gqlTypes.ExplorerLinkAttributeDocument,
-            variables: {
-                id: linkEntrypoint.linkAttributeId
-            }
-        },
-        result: {
-            data: {
-                attributes: {
-                    list: [explorerLinkAttribute],
-                    __typename: 'AttributesList'
-                }
-            }
-        }
-    };
-
     beforeEach(() => {
         spyUseExplorerLibraryDataQuery = jest
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
@@ -596,11 +580,6 @@ describe('Explorer', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         user = userEvent.setup();
-    });
-
-    afterEach(() => {
-        // restore the spy created with spyOn
-        jest.restoreAllMocks();
     });
 
     describe('props title', () => {
@@ -855,15 +834,10 @@ describe('Explorer', () => {
                 saveValues
             });
 
-            jest.spyOn(useExplorerData, 'useExplorerData').mockReturnValue({
-                refetch: jest.fn(),
-                loading: false,
-                data: null
-            });
-
             render(<Explorer entrypoint={libraryEntrypoint} />);
 
-            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+            const creatButton = await screen.findByRole('button', {name: 'explorer.create-one'});
+            await user.click(creatButton);
 
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
             const createButtonLibrary = screen.getByRole('button', {name: 'create-record'});
@@ -879,17 +853,12 @@ describe('Explorer', () => {
                 saveValues
             });
 
-            jest.spyOn(useExplorerData, 'useExplorerData').mockReturnValue({
-                refetch: jest.fn(),
-                loading: false,
-                data: null
-            });
-
             render(<Explorer entrypoint={linkEntrypoint} />, {
                 mocks: [ExplorerLinkAttributeQueryMock]
             });
 
-            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+            const creatButton = await screen.findByRole('button', {name: 'explorer.create-one'});
+            await user.click(creatButton);
 
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
 
