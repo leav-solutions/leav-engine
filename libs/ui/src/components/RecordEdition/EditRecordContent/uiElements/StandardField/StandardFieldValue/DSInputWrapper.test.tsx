@@ -51,6 +51,7 @@ const readonly = true;
 describe('DSInputWrapper', () => {
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
+    const mockSetActiveValue = jest.fn();
 
     let user!: ReturnType<typeof userEvent.setup>;
 
@@ -58,6 +59,7 @@ describe('DSInputWrapper', () => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
+        mockSetActiveValue.mockReset();
     });
 
     test('Should display the presentationValue', async () => {
@@ -74,6 +76,7 @@ describe('DSInputWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -96,6 +99,7 @@ describe('DSInputWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -119,6 +123,7 @@ describe('DSInputWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -143,6 +148,7 @@ describe('DSInputWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -164,6 +170,7 @@ describe('DSInputWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -179,6 +186,30 @@ describe('DSInputWrapper', () => {
         expect(mockHandleSubmit).toHaveBeenCalledWith(newValue, mockFormAttribute.id);
     });
 
+    test('Should call setActiveValue if focused', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSInputWrapper
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const input = screen.getByRole('textbox');
+        await user.click(input);
+
+        expect(mockSetActiveValue).toHaveBeenCalled();
+    });
+
     describe('Without inherited or calculated flags', () => {
         test('Should submit null on clear', async () => {
             render(
@@ -192,6 +223,7 @@ describe('DSInputWrapper', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
+                            setActiveValue={mockSetActiveValue}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -240,6 +272,7 @@ describe('DSInputWrapper', () => {
                                 }
                                 handleSubmit={mockHandleSubmit}
                                 onChange={mockOnChange}
+                                setActiveValue={mockSetActiveValue}
                             />
                         </AntForm.Item>
                     </AntForm>

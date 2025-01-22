@@ -69,6 +69,7 @@ describe('DSRangePickerWrapper', () => {
     const mockOnChange = jest.fn();
     const mockHandleSubmit = jest.fn();
     const mockHandleBlur = jest.fn();
+    const mockSetActiveValue = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
@@ -76,6 +77,7 @@ describe('DSRangePickerWrapper', () => {
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
         mockHandleBlur.mockReset();
+        mockSetActiveValue.mockReset();
     });
 
     test('Should display presentationValue By default', async () => {
@@ -92,6 +94,7 @@ describe('DSRangePickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </Form.Item>
             </Form>
@@ -114,6 +117,7 @@ describe('DSRangePickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </Form.Item>
             </Form>
@@ -140,6 +144,7 @@ describe('DSRangePickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </Form.Item>
             </Form>
@@ -160,6 +165,7 @@ describe('DSRangePickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </Form.Item>
             </Form>
@@ -197,6 +203,7 @@ describe('DSRangePickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </Form.Item>
             </Form>
@@ -220,6 +227,30 @@ describe('DSRangePickerWrapper', () => {
         expect(mockHandleSubmit).toHaveBeenCalledTimes(2);
     });
 
+    test('Should call setActiveValue if focused', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSRangePickerWrapper
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </Form.Item>
+            </Form>
+        );
+
+        const textInput = screen.getAllByRole('textbox')[0];
+        await user.click(textInput);
+
+        expect(mockSetActiveValue).toHaveBeenCalledTimes(1);
+    });
+
     describe('Inherited values', () => {
         test('Should call onChange/handleSubmit with empty value on clear', async () => {
             render(
@@ -239,6 +270,7 @@ describe('DSRangePickerWrapper', () => {
                             inheritedFlags={inheritedFlagsWithInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            setActiveValue={mockSetActiveValue}
                         />
                     </Form.Item>
                 </Form>
@@ -268,6 +300,7 @@ describe('DSRangePickerWrapper', () => {
                             inheritedFlags={inheritedFlagsWithInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            setActiveValue={mockSetActiveValue}
                         />
                     </Form.Item>
                 </Form>
@@ -296,6 +329,7 @@ describe('DSRangePickerWrapper', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            setActiveValue={mockSetActiveValue}
                         />
                     </Form.Item>
                 </Form>
@@ -325,6 +359,7 @@ describe('DSRangePickerWrapper', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            setActiveValue={mockSetActiveValue}
                         />
                     </Form.Item>
                 </Form>

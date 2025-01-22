@@ -21,7 +21,8 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
     readonly,
     handleSubmit,
     calculatedFlags,
-    inheritedFlags
+    inheritedFlags,
+    setActiveValue
 }) => {
     if (!onChange) {
         throw Error('DSRichTextWrapper should be used inside a antd Form.Item');
@@ -48,7 +49,10 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
         await handleSubmit(null, attribute.id);
     };
 
-    const _handleFocus = () => setIsFocused(true);
+    const _handleFocus = () => {
+        setIsFocused(true);
+        setActiveValue();
+    };
 
     const _handleOnBlur = async inputValue => {
         const valueToSubmit = isEmptyValue(inputValue) ? null : inputValue;

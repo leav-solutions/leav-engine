@@ -19,7 +19,8 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     readonly,
     handleSubmit,
     calculatedFlags,
-    inheritedFlags
+    inheritedFlags,
+    setActiveValue
 }) => {
     if (!onChange) {
         throw Error('DSInputWrapper should be used inside a antd Form.Item');
@@ -44,6 +45,11 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
             onChange(calculatedFlags.calculatedValue.raw_payload);
         }
         await handleSubmit(null, attribute.id);
+    };
+
+    const _handleOnFocus = () => {
+        setIsFocused(true);
+        setActiveValue();
     };
 
     const _handleOnBlur = async (event: FocusEvent<HTMLInputElement>) => {
@@ -97,7 +103,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
             value={valueToDisplay}
             allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
             onChange={_handleOnChange}
-            onFocus={() => setIsFocused(true)}
+            onFocus={_handleOnFocus}
             onBlur={_handleOnBlur}
             placeholder={t('record_edition.placeholder.enter_a_text')}
         />
