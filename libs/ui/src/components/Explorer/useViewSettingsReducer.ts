@@ -30,7 +30,8 @@ const _isValidFieldFilter = (filter: ViewDetailsFilterFragment): filter is Valid
 
 const _isLinkAttributeDetails = (
     linkAttributeData: NonNullable<ExplorerLinkAttributeQuery['attributes']>['list'][number]
-): linkAttributeData is LinkAttributeDetailsFragment & {id: string} => 'linked_library' in linkAttributeData;
+): linkAttributeData is LinkAttributeDetailsFragment & {id: string; multiple_values: boolean} =>
+    'linked_library' in linkAttributeData;
 
 export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettings: DefaultViewSettings = {}) => {
     const {lang} = useLang();
@@ -50,7 +51,6 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
             if (!attributeData) {
                 throw new Error('Unknown link attribute');
             }
-
             setLibraryId(_isLinkAttributeDetails(attributeData) ? (attributeData.linked_library?.id ?? '') : null);
         }
     });
@@ -144,7 +144,8 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                                 id: uuid(),
                                 attribute: {
                                     label: localizedTranslation(attributesDataById[filter.field].label, lang),
-                                    format: attributesDataById[filter.field].format
+                                    format: attributesDataById[filter.field].format,
+                                    multi_values: attributesDataById[filter.field].multi_values
                                 }
                             }
                         ];

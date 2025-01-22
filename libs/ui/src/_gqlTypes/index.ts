@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IPreviewScalar} from '@leav/utils';
-import {gql} from '@apollo/client';
+import {IPreviewScalar} from '@leav/utils'
+import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -283,7 +283,6 @@ export enum FormsSortableFields {
   library = 'library',
   system = 'system'
 }
-
 
 export type GlobalSettingsFileInput = {
   library: Scalars['String'];
@@ -1363,7 +1362,7 @@ export type ExplorerLinkAttributeQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<{ label?: any | null, id: string, linked_library?: { id: string } | null } | { id: string }> } | null };
+export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<{ label?: any | null, id: string, multiple_values: boolean, linked_library?: { id: string } | null } | { id: string, multiple_values: boolean }> } | null };
 
 export type ExplorerLibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -4093,6 +4092,7 @@ export const ExplorerLinkAttributeDocument = gql`
   attributes(filters: {ids: [$id]}) {
     list {
       id
+      multiple_values
       ...LinkAttributeDetails
     }
   }
