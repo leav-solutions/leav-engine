@@ -29,6 +29,7 @@ const readonly = true;
 describe('DSInputEncryptedWrapper', () => {
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
+    const mockSetActiveValue = jest.fn();
 
     let user!: ReturnType<typeof userEvent.setup>;
 
@@ -36,6 +37,7 @@ describe('DSInputEncryptedWrapper', () => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
+        mockSetActiveValue.mockReset();
     });
 
     test('Should submit the value', async () => {
@@ -50,6 +52,7 @@ describe('DSInputEncryptedWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -79,6 +82,7 @@ describe('DSInputEncryptedWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -103,6 +107,7 @@ describe('DSInputEncryptedWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -111,5 +116,31 @@ describe('DSInputEncryptedWrapper', () => {
         const input = screen.getByTestId('kit-input-password');
 
         expect(input).toBeDisabled();
+    });
+
+    test('Should call setActiveValue if focused', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSInputEncryptedWrapper
+                        value="password"
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const input = screen.getByTestId('kit-input-password');
+
+        await user.click(input);
+
+        expect(mockSetActiveValue).toHaveBeenCalled();
     });
 });

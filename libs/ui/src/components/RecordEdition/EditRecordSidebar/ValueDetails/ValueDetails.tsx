@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CloseOutlined} from '@ant-design/icons';
 import {isTypeStandard, localizedTranslation} from '@leav/utils';
 import {Collapse, Divider} from 'antd';
 import styled from 'styled-components';
@@ -14,8 +13,6 @@ import {
 } from '../../../../_gqlTypes';
 import {IRecordPropertyTree, RecordProperty} from '../../../../_queries/records/getRecordPropertiesQuery';
 import {MetadataSubmitValueFunc} from '../../EditRecordContent/_types';
-import {EditRecordReducerActionsTypes} from '../../editRecordReducer/editRecordReducer';
-import {useEditRecordReducer} from '../../editRecordReducer/useEditRecordReducer';
 import AttributeDetails from './AttributeDetails';
 import TreeValuePath from './TreeValuePath';
 import ValueInfo from './ValueInfo';
@@ -40,21 +37,9 @@ const AttributeDescription = styled.div`
     padding: 0 1rem;
 `;
 
-const CloseButton = styled(CloseOutlined)`
-    cursor: pointer;
-    position: absolute;
-    right: 1em;
-    top: 1em;
-`;
-
-const {Panel} = Collapse;
-
 function ValueDetails({attribute, value, onMetadataSubmit}: IValueDetailsProps): JSX.Element {
     const {lang} = useLang();
     const {t} = useSharedTranslation();
-    const {state, dispatch} = useEditRecordReducer();
-
-    const _handleClose = () => dispatch({type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE, value: null});
 
     const metadataFields = (attribute?.metadata_fields ?? []).filter(field => field.permissions.access_attribute);
     const hasMetadata = metadataFields.length > 0 && value !== null;
@@ -86,7 +71,6 @@ function ValueDetails({attribute, value, onMetadataSubmit}: IValueDetailsProps):
 
     return (
         <>
-            <CloseButton onClick={_handleClose} />
             <AttributeTitle>
                 {t('record_edition.attribute.info_title')}:
                 <span className="attribute-label">{localizedTranslation(attribute.label, lang)}</span>

@@ -35,6 +35,7 @@ const readonly = true;
 
 describe('<DSListSelect />', () => {
     const handleSubmitMock = jest.fn();
+    const mockSetActiveValue = jest.fn();
 
     const mockSaveAttributeMutation = jest.fn().mockReturnValue({
         data: {
@@ -69,6 +70,7 @@ describe('<DSListSelect />', () => {
 
     afterEach(() => {
         handleSubmitMock.mockClear();
+        mockSetActiveValue.mockClear();
     });
 
     describe('errors', () => {
@@ -84,6 +86,7 @@ describe('<DSListSelect />', () => {
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                            setActiveValue={mockSetActiveValue}
                         />
                     ),
                 'DSListSelect should be used inside a antd Form.Item'
@@ -104,6 +107,7 @@ describe('<DSListSelect />', () => {
                                     readonly={notReadonly}
                                     calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                                     inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                                    setActiveValue={mockSetActiveValue}
                                 />
                             </AntForm.Item>
                         </AntForm>
@@ -125,6 +129,7 @@ describe('<DSListSelect />', () => {
                         readonly={readonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -146,6 +151,7 @@ describe('<DSListSelect />', () => {
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -167,6 +173,30 @@ describe('<DSListSelect />', () => {
         expect(handleSubmitMock).toHaveBeenCalledWith('', attribute.id);
     });
 
+    it('should call setActiveValue if focused', async () => {
+        render(
+            <AntForm name="name">
+                <AntForm.Item name="chartreuse">
+                    <DSListSelect
+                        attribute={attribute}
+                        presentationValue="green"
+                        handleSubmit={handleSubmitMock}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const select = screen.getByRole('combobox');
+        await userEvent.click(select);
+
+        expect(mockSetActiveValue).toHaveBeenCalled();
+    });
+
     describe('search with result', () => {
         it('should display a specific text on search with results', async () => {
             render(
@@ -180,6 +210,7 @@ describe('<DSListSelect />', () => {
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                            setActiveValue={mockSetActiveValue}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -209,6 +240,7 @@ describe('<DSListSelect />', () => {
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                            setActiveValue={mockSetActiveValue}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -233,6 +265,7 @@ describe('<DSListSelect />', () => {
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                            setActiveValue={mockSetActiveValue}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -271,6 +304,7 @@ describe('<DSListSelect />', () => {
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                            setActiveValue={mockSetActiveValue}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -305,6 +339,7 @@ describe('<DSListSelect />', () => {
                                 readonly={notReadonly}
                                 calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                                 inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                                setActiveValue={mockSetActiveValue}
                             />
                         </AntForm.Item>
                     </AntForm>

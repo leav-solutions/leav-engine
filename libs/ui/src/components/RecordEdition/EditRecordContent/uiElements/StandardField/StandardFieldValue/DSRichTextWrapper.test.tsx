@@ -57,6 +57,7 @@ describe('DSRichTextWrapper', () => {
 
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
+    const mockSetActiveValue = jest.fn();
 
     let user!: ReturnType<typeof userEvent.setup>;
 
@@ -64,6 +65,7 @@ describe('DSRichTextWrapper', () => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
+        mockSetActiveValue.mockReset();
     });
 
     test('Should display the presentationValue', async () => {
@@ -80,6 +82,7 @@ describe('DSRichTextWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -102,6 +105,7 @@ describe('DSRichTextWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -125,6 +129,7 @@ describe('DSRichTextWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -149,6 +154,7 @@ describe('DSRichTextWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -170,6 +176,7 @@ describe('DSRichTextWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -185,6 +192,30 @@ describe('DSRichTextWrapper', () => {
         expect(mockHandleSubmit).toHaveBeenCalledWith(`<p>${newValue}</p>`, mockFormAttribute.id);
     });
 
+    test('Should call SetActiveValue if focused', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSRichTextWrapper
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const input = screen.getByRole('textbox');
+        await user.click(input);
+
+        expect(mockSetActiveValue).toHaveBeenCalled();
+    });
+
     describe('Without inherited or calculated flags', () => {
         test('Should submit empty value on clear', async () => {
             render(
@@ -198,6 +229,7 @@ describe('DSRichTextWrapper', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
+                            setActiveValue={mockSetActiveValue}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -248,6 +280,7 @@ describe('DSRichTextWrapper', () => {
                                 }
                                 handleSubmit={mockHandleSubmit}
                                 onChange={mockOnChange}
+                                setActiveValue={mockSetActiveValue}
                             />
                         </AntForm.Item>
                     </AntForm>

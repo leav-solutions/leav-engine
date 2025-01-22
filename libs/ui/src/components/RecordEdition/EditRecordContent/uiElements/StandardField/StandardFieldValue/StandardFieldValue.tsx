@@ -30,6 +30,7 @@ interface IStandardFieldValueProps {
     listField?: FormListFieldData;
     removeLastValueOfMultivalues?: () => void;
     isLastValueOfMultivalues?: boolean;
+    setActiveValue: () => void;
 }
 
 function StandardFieldValue({
@@ -43,6 +44,7 @@ function StandardFieldValue({
     inheritedFlags,
     listField,
     removeLastValueOfMultivalues,
+    setActiveValue,
     isLastValueOfMultivalues = false
 }: IStandardFieldValueProps): JSX.Element {
     const {t} = useSharedTranslation();
@@ -70,7 +72,8 @@ function StandardFieldValue({
         label,
         required,
         calculatedFlags,
-        inheritedFlags
+        inheritedFlags,
+        setActiveValue
     };
 
     let valueContent: ReactNode;

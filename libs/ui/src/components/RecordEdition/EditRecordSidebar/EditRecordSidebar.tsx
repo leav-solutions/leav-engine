@@ -12,6 +12,7 @@ import {EditRecordReducerActionsTypes, IEditRecordReducerState} from '../editRec
 import {KitSidePanel} from 'aristid-ds';
 import {KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {EDIT_RECORD_SIDEBAR_ID} from '_ui/constants';
 
 interface IEditRecordSidebarProps {
     onMetadataSubmit: MetadataSubmitValueFunc;
@@ -50,7 +51,12 @@ export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
     const sidePanelTitle = state.record?.label ?? state.record?.id ?? t('record_summary.new_record');
 
     const editRecordSidebarContent = (
-        <KitSidePanel ref={sidePanelRef} initialOpen={open} idCardProps={{title: sidePanelTitle}}>
+        <KitSidePanel
+            ref={sidePanelRef}
+            initialOpen={open}
+            idCardProps={{title: sidePanelTitle}}
+            id={EDIT_RECORD_SIDEBAR_ID}
+        >
             {_getRecordSidebarContent(state, onMetadataSubmit)}
         </KitSidePanel>
     );

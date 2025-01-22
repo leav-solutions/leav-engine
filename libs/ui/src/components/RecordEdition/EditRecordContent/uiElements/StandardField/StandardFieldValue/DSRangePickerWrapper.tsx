@@ -39,7 +39,8 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     handleSubmit,
     readonly,
     calculatedFlags,
-    inheritedFlags
+    inheritedFlags,
+    setActiveValue
 }) => {
     if (!onChange) {
         throw Error('DSRangePickerWrapper should be used inside a antd Form.Item');
@@ -121,6 +122,11 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
         }
     };
 
+    const _handleOnFocus = () => {
+        setIsFocused(true);
+        setActiveValue();
+    };
+
     const placeholderToDisplay: IKitRangePicker['placeholder'] = isFocused
         ? [t('record_edition.placeholder.start_date'), t('record_edition.placeholder.end_date')]
         : [t('record_edition.placeholder.enter_a_period'), ''];
@@ -136,7 +142,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
-            onFocus={() => setIsFocused(true)}
+            onFocus={_handleOnFocus}
             onChange={_handleDateChange}
             onOpenChange={_handleOpenChange}
             placeholder={placeholderToDisplay}
