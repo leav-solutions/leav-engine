@@ -30,7 +30,8 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
     readonly,
     handleSubmit,
     calculatedFlags,
-    inheritedFlags
+    inheritedFlags,
+    setActiveValue
 }) => {
     if (!onChange) {
         throw Error('DSColorPickerWrapper should be used inside a antd Form.Item');
@@ -59,6 +60,7 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
             setIsFocused(false);
         } else {
             setIsFocused(true);
+            setActiveValue();
         }
     };
 

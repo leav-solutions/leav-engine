@@ -20,4 +20,5 @@ export interface IStandFieldValueContentProps<T> extends IProvidedByAntFormItem<
     required: boolean;
     calculatedFlags: CalculatedFlags;
     inheritedFlags: InheritedFlags;
+    setActiveValue: () => void;
 }

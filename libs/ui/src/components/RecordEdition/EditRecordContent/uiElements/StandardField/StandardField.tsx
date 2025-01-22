@@ -20,6 +20,9 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ComputeIndicator} from './ComputeIndicator';
 import {getAntdDisplayedValue, getEmptyInitialValue} from '../../antdUtils';
 import {GetRecordColumnsValuesRecord, IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
+import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+import {EDIT_RECORD_SIDEBAR_ID, STANDARDFIELD_ID_PREFIX} from '_ui/constants';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -99,6 +102,41 @@ const StandardField: FunctionComponent<
     if (!attribute) {
         return <ErrorDisplay message={t('record_edition.missing_attribute')} />;
     }
+
+    const {state, dispatch} = useEditRecordReducer();
+
+    useEffect(() => {
+        const _handleClickOutside = (event: MouseEvent | FocusEvent) => {
+            if (state.activeValue?.attribute?.id !== attribute.id) {
+                return;
+            }
+
+            const target = event.target as HTMLElement;
+
+            const sideBarSelector = '#' + EDIT_RECORD_SIDEBAR_ID;
+            const inputWrapperSelector = '#' + STANDARDFIELD_ID_PREFIX + attribute.id;
+            const colorDropdownSelector = '.ant-popover.ant-color-picker';
+            const pickerDropdownSelector = '.ant-picker-dropdown';
+            const richTextModalSelector = '.kit-modal-wrapper.link-modal';
+
+            const allowedElementsToKeepValueDetailsDisplayed = target.closest(
+                `${sideBarSelector}, ${inputWrapperSelector}, ${colorDropdownSelector}, ${pickerDropdownSelector}, ${richTextModalSelector}`
+            );
+
+            if (!allowedElementsToKeepValueDetailsDisplayed) {
+                dispatch({
+                    type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                    value: null
+                });
+            }
+        };
+
+        document.addEventListener('mousedown', _handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', _handleClickOutside);
+        };
+    }, [state.activeValue, attribute.id, dispatch]);
 
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
 
@@ -223,6 +261,17 @@ const StandardField: FunctionComponent<
         }
     };
 
+    const setActiveValue = () => {
+        dispatch({
+            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+            value: {
+                value: null, // Value is needed for Tree or Metadata (for now it seems that we don't need it)
+                editingValue: null, // Set to null because it is only use to compute value.length but it will no longer be used (TO REMOVE IN XSTREAM-1094)
+                attribute
+            }
+        });
+    };
+
     const isMultipleValues = element.attribute.multiple_values;
     const hasValue = isMultipleValues && backendValues.length > 0;
     const canAddAnotherValue =
@@ -249,6 +298,7 @@ const StandardField: FunctionComponent<
     return (
         <Wrapper $metadataEdit={metadataEdit}>
             <KitInputWrapperStyled
+                id={STANDARDFIELD_ID_PREFIX + attribute.id}
                 label={label}
                 required={attribute.required}
                 disabled={isReadOnly}
@@ -274,6 +324,7 @@ const StandardField: FunctionComponent<
                         label={label}
                         calculatedFlags={calculatedFlags}
                         inheritedFlags={inheritedFlags}
+                        setActiveValue={setActiveValue}
                     />
                 )}
                 {attribute.multiple_values && (
@@ -307,6 +358,7 @@ const StandardField: FunctionComponent<
                                                             index === fields.length - 1 && index !== 0
                                                         }
                                                         removeLastValueOfMultivalues={() => remove(index)}
+                                                        setActiveValue={setActiveValue}
                                                     />
                                                 </StandardFieldValueWrapper>
                                                 {fields.length > 1 && (
