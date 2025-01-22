@@ -1,8 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FaEllipsisV} from 'react-icons/fa';
 import {IPrimaryAction} from './_types';
-import {KitButton, KitSpace} from 'aristid-ds';
+import {KitButton, KitDropDown, KitSpace} from 'aristid-ds';
 
 /**
  * Hook used to get the primary actions for `<DataView />` component.
@@ -18,22 +19,35 @@ export const usePrimaryActionsButton = (actions: IPrimaryAction[]) => {
     return {
         primaryButton:
             actions.length === 0 ? null : (
-                <KitButton
-                    type="primary"
-                    icon={firstAction.icon}
-                    onClick={firstAction.callback}
-                    items={dropdownActions.map((action, index) => ({
-                        key: index,
-                        label: (
-                            <KitSpace size={8}>
-                                {action.icon} {action.label}
-                            </KitSpace>
-                        ),
-                        onClick: action.callback
-                    }))}
-                >
-                    {firstAction.label}
-                </KitButton>
+                <>
+                    <KitButton
+                        type="primary"
+                        icon={firstAction.icon}
+                        disabled={firstAction.disabled}
+                        onClick={firstAction.callback}
+                    >
+                        {firstAction.label}
+                    </KitButton>
+                    {dropdownActions.length > 0 && (
+                        <KitDropDown
+                            trigger={['click']}
+                            menu={{
+                                items: dropdownActions.map((action, index) => ({
+                                    key: index,
+                                    label: (
+                                        <KitSpace size={8}>
+                                            {action.icon} {action.label}
+                                        </KitSpace>
+                                    ),
+                                    disabled: action.disabled,
+                                    onClick: action.callback
+                                }))
+                            }}
+                        >
+                            <KitButton data-testid="actions-dropdown" type="secondary" icon={<FaEllipsisV />} />
+                        </KitDropDown>
+                    )}
+                </>
             )
     };
 };

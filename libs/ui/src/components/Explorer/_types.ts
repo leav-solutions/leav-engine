@@ -43,6 +43,7 @@ export interface IItemAction {
 
 export interface IPrimaryAction {
     callback: () => void;
+    disabled?: boolean;
     icon: ReactElement;
     label: string;
 }
