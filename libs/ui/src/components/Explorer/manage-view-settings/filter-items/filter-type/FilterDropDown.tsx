@@ -5,7 +5,7 @@ import {ComponentProps, FunctionComponent} from 'react';
 import {FaClock, FaTrash} from 'react-icons/fa';
 import styled from 'styled-components';
 import {KitDivider, KitButton} from 'aristid-ds';
-import {IExplorerBaseFilter, IFilterDropDownProps} from '_ui/components/Explorer/_types';
+import {ExplorerFilter, IFilterDropDownProps} from '_ui/components/Explorer/_types';
 import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -20,7 +20,7 @@ const FilterDropDownStyledDiv = styled.div`
 export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
     const {t} = useSharedTranslation();
     const {dispatch} = useViewSettingsContext();
-    const onFilterChange = (filterData: IExplorerBaseFilter) =>
+    const onFilterChange = (filterData: ExplorerFilter) =>
         dispatch({
             type: ViewSettingsActionTypes.CHANGE_FILTER_CONFIG,
             payload: filterData

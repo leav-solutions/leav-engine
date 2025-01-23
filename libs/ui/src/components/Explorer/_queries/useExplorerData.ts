@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {Entrypoint, IEntrypointLink, IExplorerData, IExplorerBaseFilter} from '../_types';
+import {Entrypoint, IEntrypointLink, IExplorerData, ExplorerFilter, isExplorerFilterStandard} from '../_types';
 import {
     AttributeFormat,
     ExplorerLibraryDataQuery,
@@ -108,14 +108,14 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
     };
 };
 
-const _getDateRequestFilters = ({
-    field,
-    condition,
-    value
-}: Pick<IExplorerBaseFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
+const _getDateRequestFilters = (filter: ExplorerFilter): RecordFilterInput[] => {
+    const condition = filter.condition === AttributeConditionFilter.THROUGH ? filter.subCondition : filter.condition;
+    const field =
+        filter.condition === AttributeConditionFilter.THROUGH ? `${filter.field}.${filter.subField}` : filter.field;
+
     switch (condition) {
         case RecordFilterCondition.BETWEEN:
-            const [from, to] = value!.split(dateValuesSeparator);
+            const [from, to] = filter.value!.split(dateValuesSeparator);
             return [
                 {
                     field,
@@ -131,13 +131,13 @@ const _getDateRequestFilters = ({
                 {
                     field,
                     condition: RecordFilterCondition.LESS_THAN,
-                    value: dayjs.unix(Number(value)).startOf('day').unix().toString()
+                    value: dayjs.unix(Number(filter.value)).startOf('day').unix().toString()
                 },
                 {operator: RecordFilterOperator.OR},
                 {
                     field,
                     condition: RecordFilterCondition.GREATER_THAN,
-                    value: dayjs.unix(Number(value)).endOf('day').unix().toString()
+                    value: dayjs.unix(Number(filter.value)).endOf('day').unix().toString()
                 },
                 {operator: RecordFilterOperator.OR},
                 {
@@ -152,8 +152,8 @@ const _getDateRequestFilters = ({
                     field,
                     condition: RecordFilterCondition.BETWEEN,
                     value: JSON.stringify({
-                        from: dayjs.unix(Number(value)).startOf('day').unix().toString(),
-                        to: dayjs.unix(Number(value)).endOf('day').unix().toString()
+                        from: dayjs.unix(Number(filter.value)).startOf('day').unix().toString(),
+                        to: dayjs.unix(Number(filter.value)).endOf('day').unix().toString()
                     })
                 }
             ];
@@ -162,18 +162,18 @@ const _getDateRequestFilters = ({
                 {
                     field,
                     condition,
-                    value
+                    value: filter.value
                 }
             ];
     }
 };
 
-const _getBooleanRequestFilters = ({
-    field,
-    condition,
-    value
-}: Pick<IExplorerBaseFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
-    if (value === 'false') {
+const _getBooleanRequestFilters = (filter: ExplorerFilter): RecordFilterInput[] => {
+    const condition = filter.condition === AttributeConditionFilter.THROUGH ? filter.subCondition : filter.condition;
+    const field =
+        filter.condition === AttributeConditionFilter.THROUGH ? `${filter.field}.${filter.subField}` : filter.field;
+
+    if (filter.value === 'false') {
         return [
             {
                 field,
@@ -183,7 +183,7 @@ const _getBooleanRequestFilters = ({
         ];
     }
 
-    return [{field, condition, value}];
+    return [{field, condition, value: filter.value}];
 };
 
 export const useExplorerData = ({
@@ -205,7 +205,7 @@ export const useExplorerData = ({
         order: SortOrder;
     }>;
     pagination: null | {limit: number; offset: number};
-    filters: IExplorerBaseFilter[];
+    filters: ExplorerFilter[];
     skip: boolean;
 }) => {
     const {lang: availableLangs} = useLang();
@@ -213,21 +213,33 @@ export const useExplorerData = ({
     const queryFilters = interleaveElement(
         {operator: RecordFilterOperator.AND},
         filters
-            .filter(({value, condition}) => value !== null || nullValueConditions.includes(condition))
-            .map(({attribute, field, condition, value}) => {
-                switch (attribute.format) {
-                    case AttributeFormat.date:
-                        return _getDateRequestFilters({field, condition, value});
-                    case AttributeFormat.boolean:
-                        return _getBooleanRequestFilters({field, condition, value});
-                    default:
-                        return [
-                            {
-                                field,
-                                condition,
-                                value
-                            }
-                        ];
+            .filter(({value, condition}) => {
+                return value !== null || (condition && nullValueConditions.includes(condition));
+            })
+            .map(filter => {
+                if (isExplorerFilterStandard(filter)) {
+                    switch (filter.attribute.format) {
+                        case AttributeFormat.date:
+                            return _getDateRequestFilters(filter);
+                        case AttributeFormat.boolean:
+                            return _getBooleanRequestFilters(filter);
+                        default:
+                            return [
+                                {
+                                    field: filter.field,
+                                    condition: filter.condition,
+                                    value: filter.value
+                                }
+                            ] as RecordFilterInput[];
+                    }
+                } else {
+                    return [
+                        {
+                            field: filter.field,
+                            condition: filter.condition,
+                            value: filter.value
+                        }
+                    ] as RecordFilterInput[];
                 }
             })
     );

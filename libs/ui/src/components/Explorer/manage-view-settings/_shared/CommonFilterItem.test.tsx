@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
-import {IExplorerBaseFilter} from '../../_types';
+import {ExplorerFilter} from '../../_types';
 import {CommonFilterItem} from './CommonFilterItem';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {AttributeConditionFilter} from '_ui/types';
@@ -32,7 +32,7 @@ const CommonFilterItemContainer: FunctionComponent = () => {
 describe('CommonFilterItem', () => {
     describe('numeric filter', () => {
         test('should render numeric filter', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'numeric filter',
@@ -52,7 +52,7 @@ describe('CommonFilterItem', () => {
         });
 
         test('should not render numeric input if condition is IS_EMPTY', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'numeric filter',
@@ -84,7 +84,7 @@ describe('CommonFilterItem', () => {
 
     describe('text filter', () => {
         test('should render text filter', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'text filter',
@@ -109,7 +109,7 @@ describe('CommonFilterItem', () => {
         });
 
         test('should not render text input if condition is IS_EMPTY', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'text filter',
@@ -140,7 +140,7 @@ describe('CommonFilterItem', () => {
 
     describe('rich text filter', () => {
         test('should render rich text filter', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'rich text filter',
@@ -165,7 +165,7 @@ describe('CommonFilterItem', () => {
         });
 
         test('should not render rich text input if condition is IS_EMPTY', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'rich text filter',
@@ -196,7 +196,7 @@ describe('CommonFilterItem', () => {
 
     describe('boolean filter', () => {
         test('should render boolean filter', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'boolean filter',
@@ -218,7 +218,7 @@ describe('CommonFilterItem', () => {
         const date = {unix: '1730761200', formatted: dayjs.unix(1730761200).format('YYYY-MM-DD')};
 
         test('should render simple filter', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'date filter',
@@ -238,7 +238,7 @@ describe('CommonFilterItem', () => {
         });
 
         test('should render an DateRangePicker if condition is BETWEEN', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'date filter',
@@ -270,7 +270,7 @@ describe('CommonFilterItem', () => {
 
     describe('color filter', () => {
         test('should render color filter', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'color filter',
@@ -290,7 +290,7 @@ describe('CommonFilterItem', () => {
 
     describe('encrypted filter', () => {
         test('should render encrypted filter', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'encrypted filter',
@@ -310,7 +310,7 @@ describe('CommonFilterItem', () => {
 
     describe('extended filter', () => {
         test('should render extended filter', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'extended filter',
@@ -330,7 +330,7 @@ describe('CommonFilterItem', () => {
 
     describe('period filter', () => {
         test('should render period filter', async () => {
-            const filter: IExplorerBaseFilter = {
+            const filter: ExplorerFilter = {
                 id: 'test',
                 attribute: {
                     label: 'period filter',
