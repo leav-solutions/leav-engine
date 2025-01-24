@@ -64,7 +64,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                 },
                 filters: view.filters.map(filter => ({
                     //TODO: handle query for real: concatenate fields with subfield
-                    field: filter.field,
+                    field: isExplorerFilterThrough(filter) ? `${filter.field}.${filter.subField}` : filter.field,
                     value: filter.value,
                     condition: isExplorerFilterThrough(filter) ? filter.subCondition : filter.condition
                 })),

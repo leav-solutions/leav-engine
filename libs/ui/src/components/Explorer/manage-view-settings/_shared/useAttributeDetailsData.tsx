@@ -3,14 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ChangeEvent, useMemo, useState} from 'react';
 import {useDebouncedValue} from '_ui/hooks/useDebouncedValue';
-import {
-    AttributeDetailsFragment,
-    AttributesByLibAttributeFragment,
-    AttributesByLibAttributeLinkAttributeFragment,
-    AttributeType,
-    GetAttributesByLibQuery,
-    useGetAttributesByLibQuery
-} from '_ui/_gqlTypes';
+import {AttributeDetailsFragment, GetAttributesByLibQuery, useGetAttributesByLibQuery} from '_ui/_gqlTypes';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 
@@ -18,22 +11,12 @@ interface IColumnsById {
     [attributeId: string]: AttributeDetailsFragment;
 }
 
-const _isLibraryLinkAttribute = (
-    attribute: AttributesByLibAttributeFragment
-): attribute is AttributesByLibAttributeLinkAttributeFragment =>
-    [AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type) && 'linked_library' in attribute;
-
 const _mapping = (data: GetAttributesByLibQuery | undefined, availableLanguages: string[]): IColumnsById =>
-    data?.attributes?.list.reduce((acc, attribute) => {
+    data?.attributes?.list.reduce<IColumnsById>((acc, attribute) => {
         acc[attribute.id] = {
             ...attribute,
             label: localizedTranslation(attribute.label, availableLanguages)
         };
-
-        if (_isLibraryLinkAttribute(attribute)) {
-            acc[attribute.id].linkedLibrary = attribute.linked_library;
-        }
-
         return acc;
     }, {}) ?? {};
 

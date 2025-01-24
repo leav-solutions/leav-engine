@@ -4,7 +4,7 @@
 import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
 import {KitInput, KitSelect} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IFilterChildrenLinkDropDownProps} from '_ui/components/Explorer/_types';
+import {IExplorerFilterThrough, IFilterChildrenLinkDropDownProps} from '_ui/components/Explorer/_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 import {AttributeConditionFilter, ThroughConditionFilter} from '_ui/types';
 import styled from 'styled-components';
@@ -69,7 +69,12 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
     }));
 
     const _handleThroughFilterChange = filterData => {
-        console.log({filterData});
+        onFilterChange({
+            ...filter,
+            subField: filterData.field,
+            subCondition: filterData.condition,
+            value: filterData.value
+        } as IExplorerFilterThrough);
     };
 
     const linkAttributeProps = libraryLinkAttributes.find(attribute => attribute.id === selectedLinkAttribute);
@@ -101,7 +106,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
                                     ...linkAttributeProps,
                                     label: localizedTranslation(linkAttributeProps.label, lang) ?? ''
                                 },
-                                condition: AttributeConditionFilter.CONTAINS,
+                                condition: filter.subCondition,
                                 value: null
                             }}
                             onFilterChange={_handleThroughFilterChange}

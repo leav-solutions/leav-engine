@@ -63,7 +63,6 @@ export interface IExplorerFilterStandardAttribute extends IExplorerFilterBaseAtt
 export interface IExplorerFilterLinkAttribute extends IExplorerFilterBaseAttribute {
     linkedLibrary?: {
         id: string;
-        label: string;
     };
 }
 

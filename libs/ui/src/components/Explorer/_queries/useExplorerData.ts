@@ -2,7 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {Entrypoint, IEntrypointLink, IExplorerData, ExplorerFilter, isExplorerFilterStandard} from '../_types';
+import {
+    Entrypoint,
+    IEntrypointLink,
+    IExplorerData,
+    ExplorerFilter,
+    isExplorerFilterStandard,
+    IExplorerFilterStandard,
+    isExplorerFilterThrough
+} from '../_types';
 import {
     AttributeFormat,
     ExplorerLibraryDataQuery,
@@ -96,7 +104,7 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
                     (acc, {attributeId, values}) => ({...acc, [attributeId]: values}),
                     {}
                 ),
-                id_value: linkValue.id_value
+                id_value: linkValue.id_value ?? undefined
             };
         })
         .filter(Boolean);
@@ -108,18 +116,14 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
     };
 };
 
-const _getDateRequestFilters = (filter: ExplorerFilter): RecordFilterInput[] => {
-    const condition = filter.condition === AttributeConditionFilter.THROUGH ? filter.subCondition : filter.condition;
-    const field =
-        filter.condition === AttributeConditionFilter.THROUGH ? `${filter.field}.${filter.subField}` : filter.field;
-
-    switch (condition) {
+const _getDateRequestFilters = (filter: IExplorerFilterStandard): RecordFilterInput[] => {
+    switch (filter.condition) {
         case RecordFilterCondition.BETWEEN:
             const [from, to] = filter.value!.split(dateValuesSeparator);
             return [
                 {
-                    field,
-                    condition,
+                    field: filter.field,
+                    condition: filter.condition,
                     value: JSON.stringify({
                         from,
                         to
@@ -129,19 +133,19 @@ const _getDateRequestFilters = (filter: ExplorerFilter): RecordFilterInput[] => 
         case RecordFilterCondition.NOT_EQUAL:
             return [
                 {
-                    field,
+                    field: filter.field,
                     condition: RecordFilterCondition.LESS_THAN,
                     value: dayjs.unix(Number(filter.value)).startOf('day').unix().toString()
                 },
                 {operator: RecordFilterOperator.OR},
                 {
-                    field,
+                    field: filter.field,
                     condition: RecordFilterCondition.GREATER_THAN,
                     value: dayjs.unix(Number(filter.value)).endOf('day').unix().toString()
                 },
                 {operator: RecordFilterOperator.OR},
                 {
-                    field,
+                    field: filter.field,
                     condition: RecordFilterCondition.IS_EMPTY,
                     value: null
                 }
@@ -149,7 +153,7 @@ const _getDateRequestFilters = (filter: ExplorerFilter): RecordFilterInput[] => 
         case RecordFilterCondition.EQUAL:
             return [
                 {
-                    field,
+                    field: filter.field,
                     condition: RecordFilterCondition.BETWEEN,
                     value: JSON.stringify({
                         from: dayjs.unix(Number(filter.value)).startOf('day').unix().toString(),
@@ -160,30 +164,26 @@ const _getDateRequestFilters = (filter: ExplorerFilter): RecordFilterInput[] => 
         default:
             return [
                 {
-                    field,
-                    condition,
+                    field: filter.field,
+                    condition: filter.condition,
                     value: filter.value
                 }
             ];
     }
 };
 
-const _getBooleanRequestFilters = (filter: ExplorerFilter): RecordFilterInput[] => {
-    const condition = filter.condition === AttributeConditionFilter.THROUGH ? filter.subCondition : filter.condition;
-    const field =
-        filter.condition === AttributeConditionFilter.THROUGH ? `${filter.field}.${filter.subField}` : filter.field;
-
+const _getBooleanRequestFilters = (filter: IExplorerFilterStandard): RecordFilterInput[] => {
     if (filter.value === 'false') {
         return [
             {
-                field,
+                field: filter.field,
                 condition: AttributeConditionFilter.NOT_EQUAL,
                 value: 'true'
             }
         ];
     }
 
-    return [{field, condition, value: filter.value}];
+    return [{field: filter.field, condition: filter.condition, value: filter.value}];
 };
 
 export const useExplorerData = ({
@@ -213,34 +213,41 @@ export const useExplorerData = ({
     const queryFilters = interleaveElement(
         {operator: RecordFilterOperator.AND},
         filters
-            .filter(({value, condition}) => {
-                return value !== null || (condition && nullValueConditions.includes(condition));
+            .filter(filter => {
+                return (
+                    filter.value !== null ||
+                    (filter.condition && nullValueConditions.includes(filter.condition)) ||
+                    (isExplorerFilterThrough(filter) &&
+                        filter.subCondition &&
+                        nullValueConditions.includes(filter.subCondition))
+                );
             })
             .map(filter => {
-                if (isExplorerFilterStandard(filter)) {
-                    switch (filter.attribute.format) {
+                const condition =
+                    filter.condition === AttributeConditionFilter.THROUGH ? filter.subCondition : filter.condition;
+                const field =
+                    filter.condition === AttributeConditionFilter.THROUGH
+                        ? `${filter.field}.${filter.subField}`
+                        : filter.field;
+                const filterConcat: ExplorerFilter = {...filter, condition, field};
+
+                if (isExplorerFilterStandard(filterConcat)) {
+                    switch (filterConcat.attribute.format) {
                         case AttributeFormat.date:
-                            return _getDateRequestFilters(filter);
+                            return _getDateRequestFilters(filterConcat);
                         case AttributeFormat.boolean:
-                            return _getBooleanRequestFilters(filter);
+                            return _getBooleanRequestFilters(filterConcat);
                         default:
-                            return [
-                                {
-                                    field: filter.field,
-                                    condition: filter.condition,
-                                    value: filter.value
-                                }
-                            ] as RecordFilterInput[];
+                            break;
                     }
-                } else {
-                    return [
-                        {
-                            field: filter.field,
-                            condition: filter.condition,
-                            value: filter.value
-                        }
-                    ] as RecordFilterInput[];
                 }
+                return [
+                    {
+                        field: filterConcat.field,
+                        condition: filterConcat.condition,
+                        value: filterConcat.value
+                    }
+                ] as RecordFilterInput[];
             })
     );
 
@@ -252,6 +259,7 @@ export const useExplorerData = ({
         loading: linkLoading,
         refetch: linkRefetch
     } = useExplorerLinkDataQuery({
+        fetchPolicy: 'network-only',
         skip: skip || !isLink,
         variables: {
             parentLibraryId: (entrypoint as IEntrypointLink).parentLibraryId,
@@ -266,6 +274,7 @@ export const useExplorerData = ({
         loading: libraryLoading,
         refetch: libraryRefetch
     } = useExplorerLibraryDataQuery({
+        fetchPolicy: 'network-only',
         skip: skip || !isLibrary,
         variables: {
             libraryId,

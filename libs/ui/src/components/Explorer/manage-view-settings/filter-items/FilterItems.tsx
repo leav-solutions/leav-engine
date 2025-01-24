@@ -6,7 +6,12 @@ import {FaEye, FaEyeSlash, FaSearch} from 'react-icons/fa';
 import {KitFilter, KitInput, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
+import {
+    AttributeFormat,
+    AttributesByLibAttributeFragment,
+    AttributesByLibAttributeLinkAttributeFragment,
+    AttributeType
+} from '_ui/_gqlTypes';
 import {
     closestCenter,
     DndContext,
@@ -38,6 +43,11 @@ const StyledFaEye = styled(FaEye)`
     color: var(--general-utilities-neutral-deepDark);
 `;
 
+const _isLibraryLinkAttribute = (
+    attribute: AttributesByLibAttributeFragment
+): attribute is AttributesByLibAttributeLinkAttributeFragment =>
+    [AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type) && 'linked_library' in attribute;
+
 export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId}) => {
     const {t} = useSharedTranslation();
     const {
@@ -62,7 +72,10 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                 attribute: {
                     label: attributeDetailsById[attributeId].label,
                     format: attributeDetailsById[attributeId].format ?? AttributeFormat.text,
-                    type: attributeDetailsById[attributeId].type
+                    type: attributeDetailsById[attributeId].type,
+                    linkedLibrary: _isLibraryLinkAttribute(attributeDetailsById[attributeId])
+                        ? (attributeDetailsById[attributeId].linked_library ?? undefined)
+                        : undefined // TODO : clean after refacto GraphQL schema (linked_library can be null)
                 }
             }
         });

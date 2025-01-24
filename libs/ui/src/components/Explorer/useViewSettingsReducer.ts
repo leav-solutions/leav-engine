@@ -25,6 +25,11 @@ type ValidFieldFilter = Override<
     }
 >;
 
+type ValidFieldFilterThrough = ValidFieldFilter & {
+    subField: NonNullable<ViewDetailsFilterFragment['field']>;
+    subCondition?: ViewDetailsFilterFragment['condition'];
+};
+
 const _isValidFieldFilter = (filter: ViewDetailsFilterFragment): filter is ValidFieldFilter =>
     !!filter.field && !!filter.condition;
 
@@ -68,14 +73,28 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
 
     // Take the last view from the array
     const userView = viewData?.views?.list?.at(-1);
-    const userViewFilters: ValidFieldFilter[] =
-        userView?.filters
-            ?.filter(filter => _isValidFieldFilter(filter))
-            .map(filter => ({
-                field: filter.field,
-                value: filter.value ?? null,
-                condition: filter.condition
-            })) ?? [];
+
+    //TODO: not finished when saving view
+    const userViewFilters: ValidFieldFilter[] = userView?.filters?.reduce((acc, filter) => {
+        if (!_isValidFieldFilter(filter)) {
+            return acc;
+        }
+        const _isThroughFilter = filter.field.includes('.');
+        if (_isThroughFilter) {
+            return [
+                ...acc,
+                {
+                    field: filter.field.split('.')[0],
+                    subField: filter.field.split('.')[1],
+                    value: filter.value ?? null,
+                    condition: filter.condition,
+                    subCondition: filter.subCondition
+                }
+            ];
+        } else {
+            return [...acc];
+        }
+    }, []);
 
     const attributesToHydrate = [
         ...new Set(
