@@ -39,26 +39,42 @@ It can be configured with the `PLUGINS_PATH` environment variable or the `plugin
 
 #### Hot Reload
 Plugins can be developed using the [leavengine/core:develop](../../docker/DOCKERFILES/build/core.dev.Dockerfile) Docker image, which includes the nodemon library to enable hot reloading. The image runs the `watch-dev` script from the `package.json`, where nodemon watch the bound plugin folder for changes. To use this feature, bind your plugin folder to the core directory in the Docker image. Any modifications to your plugin code will automatically trigger a hot reload of the core.
-## Debugging in VS Code
 
-In VS Code, the easiest way to debug the app in its Docker container is to install the extension "Remote Development".
-Then, you will be able to open a container inside VS Code.
-Once inside the container, add this to your debugging settings in `launch.json`:
+## Debugging in your IDE
+
+### VSCode
+
+VSCode can natively handle the debugging of the core running in a Docker container. 
+Just add the following configuration in your `launch.json` or workspace settings:
 
 ```json
 {
+    "name": "Attach to LEAV Engine Core",
     "type": "node",
     "request": "attach",
-    "name": "Attach",
+    "localRoot": "${workspaceRoot}/apps/core",
+    "remoteRoot": "/app/apps/core",
+    "address": "127.0.0.1",
     "port": 9229,
-    "skipFiles": [
-        "<node_internals>/**",
-        "node_modules/**"
-    ]
+    "restart": true,
+    "sourceMaps": true,
+    "outFiles": [
+        "${workspaceRoot}/apps/core/**/*.ts"
+    ],
+    "trace": true
 }
 ```
 
-Then start your debug session and enjoy! You can set breakpoints right on your file TS files and watch it breaking when
-using your app normally.
+You might have to adjust the `localRoot` and `outFiles` depending on your local settings.
 
-More details on this: https://code.visualstudio.com/docs/remote/containers
+Then start your debug session and enjoy! 
+You can set breakpoints right on your TS files and watch it breaking when using your app normally.
+
+### JetBrains suite
+
+Just follow the doc on https://www.jetbrains.com/help/webstorm/running-and-debugging-node-js.html#ws_node_debug_remote_chrome
+
+### Troubleshooting
+
+If you stop on a breakpoint for a while, the core might crash because the connection with RabbitMQ is lost. 
+Just restart the core when you release the breakpoint.
