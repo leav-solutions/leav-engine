@@ -13,7 +13,6 @@ import {IExplorerData, IItemAction, IItemData} from './_types';
 import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
-import {MASS_SELECTION_ALL} from '_ui/components/Explorer/_constants';
 import {useColumnWidth} from './useColumnWidth';
 
 const USELESS = '';
@@ -101,7 +100,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         attributesProperties,
         paginationProps,
         itemActions,
-        selection: {onSelectionChange, selectedKeys, isMassSelectionAll}
+        selection: {onSelectionChange, selectedKeys, isMassSelectionAll},
         iconsOnlyItemActions
     }) => {
         const {t} = useSharedTranslation();
@@ -115,10 +114,11 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         ): ReactNode => {
             const isLessThanFourActions = actions.length < 4;
 
+            return (
                 <StyledActionsList ref={columnRef}>
                     {isLessThanFourActions ? (
                         <>
-                            {actions.map(({label, icon, isDanger, callback, disabled}, actionIndex) => (
+                            {actions.map(({label, icon, isDanger, iconOnly, callback, disabled}, actionIndex) => (
                                 <KitButton
                                     key={actionIndex}
                                     title={label}
@@ -127,7 +127,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     danger={isDanger}
                                     disabled={disabled}
                                 >
-                            {!iconsOnlyItemActions && !iconOnly && label}
+                                    {!iconsOnlyItemActions && !iconOnly && label}
                                 </KitButton>
                             ))}
                         </>

@@ -82,11 +82,7 @@ export interface IFilterDropDownProps {
 export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,
     {
-        filters?: Array<{
-            field: string;
-            condition: RecordFilterCondition;
-            value: string | null;
-        }>;
+        filters?: IExplorerFilter[];
     }
 >;
 
