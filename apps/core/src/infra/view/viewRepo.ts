@@ -6,6 +6,7 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {IViewRepo, IViewRepoDeps, VIEWS_COLLECTION_NAME} from './_types';
+import {IView} from '_types/views';
 
 export default function ({
     'core.infra.db.dbService': dbService = null,

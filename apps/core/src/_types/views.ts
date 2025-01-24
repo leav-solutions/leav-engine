@@ -16,43 +16,41 @@ export enum ViewSizes {
     BIG = 'BIG'
 }
 
-declare global {
-    interface IView extends ICoreEntity {
-        shared?: boolean;
-        created_by?: string;
-        created_at?: number;
-        modified_at?: number;
-        library?: string;
-        description?: ISystemTranslation;
-        color?: string;
-        display?: IViewDisplay;
-        filters?: IRecordFilterLight[];
-        sort?: IRecordSortLight[];
-        valuesVersions?: IViewValuesVersion;
-        attributes?: string[];
-    }
+interface IViewDisplay {
+    type: ViewTypes;
+    size: ViewSizes;
+}
 
-    interface IViewDisplay {
-        type: ViewTypes;
-        size: ViewSizes;
-    }
+interface IViewValuesVersion {
+    [treeId: string]: string;
+}
 
-    type ViewFromGraphQL = Omit<IView, 'valuesVersions' | 'settings'> & {
-        valuesVersions: IViewValuesVersionForGraphql[];
-    };
+export interface IView extends ICoreEntity {
+    shared?: boolean;
+    created_by?: string;
+    created_at?: number;
+    modified_at?: number;
+    library?: string;
+    description?: ISystemTranslation;
+    color?: string;
+    display?: IViewDisplay;
+    filters?: IRecordFilterLight[];
+    sort?: IRecordSortLight[];
+    valuesVersions?: IViewValuesVersion;
+    attributes?: string[];
+}
 
-    interface IViewFilterOptions extends ICoreEntityFilterOptions {
-        created_by?: string;
-        library?: string;
-        type?: ViewTypes;
-    }
+export interface IViewValuesVersionForGraphql {
+    treeId: string;
+    treeNode: {id: string};
+}
 
-    interface IViewValuesVersion {
-        [treeId: string]: string;
-    }
+export type ViewFromGraphQL = Omit<IView, 'valuesVersions' | 'settings'> & {
+    valuesVersions: IViewValuesVersionForGraphql[];
+};
 
-    interface IViewValuesVersionForGraphql {
-        treeId: string;
-        treeNode: {id: string};
-    }
+export interface IViewFilterOptions extends ICoreEntityFilterOptions {
+    created_by?: string;
+    library?: string;
+    type?: ViewTypes;
 }

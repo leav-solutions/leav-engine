@@ -13,7 +13,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {adminsGroupId, filesAdminsGroupId} from '../../../../_constants/users';
 import {SortOrder} from '../../../../_types/list';
 import {PermissionTypes, TreeNodePermissionsActions} from '../../../../_types/permissions';
-import {ViewSizes, ViewTypes} from '../../../../_types/views';
+import {IView, ViewSizes, ViewTypes} from '../../../../_types/views';
 import {IAttributeForRepo, IAttributeRepo} from '../../../attribute/attributeRepo';
 import {ILibraryRepo, LIB_COLLECTION_NAME} from '../../../library/libraryRepo';
 import {getEdgesCollectionName, getNodesCollectionName} from '../../../tree/helpers/utils';

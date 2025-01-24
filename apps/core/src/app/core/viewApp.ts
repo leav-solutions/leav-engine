@@ -9,7 +9,7 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {ViewSizes, ViewTypes} from '../../_types/views';
+import {IView, IViewValuesVersionForGraphql, ViewFromGraphQL, ViewSizes, ViewTypes} from '../../_types/views';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
 interface IDeps {
