@@ -5,14 +5,18 @@ import {FunctionComponent} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
-import {DefaultViewSettings, Entrypoint, IItemAction, IPrimaryAction} from './_types';
+import {Loading} from '_ui/components/Loading';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {DefaultViewSettings, Entrypoint, IItemAction, IMassActions, IPrimaryAction} from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
+import {ExplorerTitle} from './ExplorerTitle';
+import {ExplorerToolsBar} from './display-view-filters/ExplorerToolsBar';
 import {useRemoveAction} from './useRemoveAction';
 import {useEditAction} from './useEditAction';
 import {usePrimaryActionsButton} from './usePrimaryActions';
-import {ExplorerTitle} from './ExplorerTitle';
 import {useCreateAction} from './useCreateAction';
+import {useMassActions} from './useMassActions';
 import {
     defaultPageSizeOptions,
     SidePanel,
@@ -22,10 +26,10 @@ import {
 } from './manage-view-settings';
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
-import {Loading} from '../Loading';
-import {ExplorerToolBar} from './display-view-filters/ExplorerToolBar';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
+import {useDeactivateMassAction} from './useDeactivateMassAction';
+import {MASS_SELECTION_ALL} from '_ui/components/Explorer/_constants';
+import {useAddItemAction} from './useAddItemAction';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -38,6 +42,7 @@ const ExplorerHeaderDivStyled = styled.div`
     align-items: center;
     padding-bottom: calc(var(--general-spacing-xs) * 1px);
     padding-right: calc(var(--general-spacing-xxs) * 1px);
+    padding-top: calc(var(--general-spacing-xxs) * 1px);
 `;
 
 const ExplorerPageDivStyled = styled.div`
@@ -47,30 +52,38 @@ const ExplorerPageDivStyled = styled.div`
     overflow: hidden;
 `;
 
-interface IExplorerProps {
+export interface IExplorerProps {
     entrypoint: Entrypoint;
     noPagination?: true;
     itemActions?: IItemAction[];
+    iconsOnlyItemActions?: boolean;
     primaryActions?: IPrimaryAction[];
+    massActions?: IMassActions[];
     title?: string;
     defaultActionsForItem?: Array<'edit' | 'remove'>;
     defaultPrimaryActions?: Array<'create'>;
+    defaultMassActions?: Array<'deactivate'>;
     defaultViewSettings?: DefaultViewSettings;
+    panelElement?: () => HTMLElement;
 }
 
 export const Explorer: FunctionComponent<IExplorerProps> = ({
     entrypoint,
-    itemActions,
-    primaryActions,
+    itemActions = [],
+    primaryActions = [],
+    massActions = [],
     title,
     noPagination,
+    iconsOnlyItemActions = false,
     defaultActionsForItem = ['edit', 'remove'],
     defaultPrimaryActions = ['create'],
-    defaultViewSettings
+    defaultMassActions = ['deactivate'],
+    defaultViewSettings,
+    panelElement
 }) => {
     const {t} = useSharedTranslation();
 
-    const {panelElement} = useEditSettings();
+    const {panelElement: settingsPanelElement} = useEditSettings();
 
     const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(entrypoint, defaultViewSettings);
 
@@ -110,7 +123,31 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         refetch
     });
 
-    const {primaryButton} = usePrimaryActionsButton([createAction, ...(primaryActions ?? [])].filter(Boolean));
+    const itemsTotal = data?.totalCount ?? 0;
+    const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
+    const {addItemAction, addItemModal} = useAddItemAction({
+        isEnabled: entrypoint.type === 'link',
+        library: view.libraryId,
+        maxItemsLeft: null
+    });
+
+    const {deactivateMassAction} = useDeactivateMassAction({
+        isEnabled: isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
+        store: {view, dispatch},
+        libraryId: view.libraryId,
+        allVisibleKeys,
+        refetch
+    });
+
+    const {updateSelectedKeys, selectAllButton} = useMassActions({
+        isEnabled: itemsTotal > 0 && (isNotEmpty(defaultMassActions) || isNotEmpty(massActions)),
+        store: {view, dispatch},
+        itemsTotal,
+        allVisibleKeys,
+        massActions: [deactivateMassAction, ...massActions].filter(Boolean)
+    });
+
+    const {primaryButton} = usePrimaryActionsButton([createAction, addItemAction, ...primaryActions].filter(Boolean));
 
     const {viewSettingsButton} = useOpenViewSettings(view.libraryId);
 
@@ -122,7 +159,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         <ViewSettingsContext.Provider value={{view, dispatch}}>
             <ExplorerPageDivStyled>
                 <ExplorerHeaderDivStyled>
-                    <KitTypography.Title level="h1">
+                    <KitTypography.Title level="h3">
                         {
                             !viewSettingsLoading && (
                                 <ExplorerTitle library={view.libraryId} title={title} entrypoint={entrypoint} />
@@ -135,7 +172,9 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         {primaryButton}
                     </KitSpace>
                 </ExplorerHeaderDivStyled>
-                {!viewSettingsLoading && <ExplorerToolBar libraryId={view.libraryId} />}
+                {!viewSettingsLoading && (
+                    <ExplorerToolsBar libraryId={view.libraryId}>{selectAllButton}</ExplorerToolsBar>
+                )}
                 {loadingData || viewSettingsLoading ? (
                     <Loading />
                 ) : hasNoResults ? (
@@ -145,6 +184,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         dataGroupedFilteredSorted={data?.records ?? emptyArray}
                         attributesProperties={data?.attributes ?? emptyObject}
                         attributesToDisplay={['whoAmI', ...view.attributesIds]}
+                        iconsOnlyItemActions={iconsOnlyItemActions}
                         paginationProps={
                             entrypoint.type === 'library'
                                 ? {
@@ -153,17 +193,26 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                                       pageSize: view.pageSize,
                                       setNewPageSize,
                                       setNewPage,
-                                      totalItems: data?.totalCount ?? 0
+                                      itemsTotal
                                   }
                                 : undefined
                         }
-                        itemActions={[editAction, removeAction, ...(itemActions ?? emptyArray)].filter(Boolean)}
+                        itemActions={[editAction, removeAction, ...itemActions].filter(Boolean)}
+                        selection={{
+                            updateSelectedKeys,
+                            selectedKeys:
+                                view.massSelection === MASS_SELECTION_ALL
+                                    ? data?.records.map(({whoAmI}) => whoAmI.id)
+                                    : view.massSelection
+                        }}
                     />
                 )}
             </ExplorerPageDivStyled>
-            {panelElement && createPortal(<SidePanel />, panelElement)}
+            {(panelElement || settingsPanelElement) &&
+                createPortal(<SidePanel />, panelElement ? panelElement() : (settingsPanelElement ?? document.body))}
             {editModal}
             {createModal}
+            {addItemModal}
         </ViewSettingsContext.Provider>
     );
 };

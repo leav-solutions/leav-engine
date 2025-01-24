@@ -7,6 +7,7 @@ import {
     AttributePropertiesFragment,
     PropertyValueFragment,
     RecordFilterCondition,
+    RecordFilterInput,
     RecordIdentityFragment
 } from '_ui/_gqlTypes';
 import {ReactElement} from 'react';
@@ -38,12 +39,19 @@ export interface IItemAction {
     callback: (item: IItemData) => void;
     icon: ReactElement;
     label: string;
+    iconOnly?: boolean;
     isDanger?: boolean;
 }
 
 export interface IPrimaryAction {
     callback: () => void;
     disabled?: boolean;
+    icon: ReactElement;
+    label: string;
+}
+
+export interface IMassActions {
+    callback: (massSelectedFilter: RecordFilterInput[]) => void;
     icon: ReactElement;
     label: string;
 }
@@ -73,11 +81,7 @@ export interface IFilterDropDownProps {
 export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,
     {
-        filters?: Array<{
-            field: string;
-            condition: RecordFilterCondition;
-            value: string | null;
-        }>;
+        filters?: IExplorerFilter[];
     }
 >;
 

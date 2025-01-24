@@ -17,3 +17,5 @@ export const mapViewTypeFromLegacyToExplorer: Record<ViewTypes, ViewType> = {
     [ViewTypes.cards]: 'mosaic',
     [ViewTypes.timeline]: 'timeline'
 };
+
+export const MASS_SELECTION_ALL = 'all';

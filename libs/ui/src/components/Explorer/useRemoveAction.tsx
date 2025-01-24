@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useMemo} from 'react';
 import {FaTrash} from 'react-icons/fa';
 import {KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation, useDeleteValueMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
 import {ActionHook, Entrypoint, IEntrypointLink, IItemAction} from './_types';
-import {useMemo} from 'react';
-import {useValuesCacheUpdate} from '_ui/hooks';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -16,6 +16,7 @@ import {useValuesCacheUpdate} from '_ui/hooks';
  * from removed record.
  *
  * @param isEnabled - whether the action is present
+ * @param entrypoint - represent the current entrypoint
  */
 export const useRemoveAction = (
     {isEnabled}: ActionHook,
@@ -30,6 +31,15 @@ export const useRemoveAction = (
                 cache.evict({
                     id: cache.identify(record)
                 });
+            });
+            cache.modify({
+                fields: {
+                    records: prev => ({
+                        ...prev,
+                        totalCount: prev.totalCount - 1
+                    })
+                },
+                broadcast: false
             });
             cache.gc();
         }

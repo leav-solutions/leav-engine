@@ -1393,6 +1393,14 @@ export type ExplorerLibraryDetailsQueryVariables = Exact<{
 
 export type ExplorerLibraryDetailsQuery = { libraries?: { list: Array<{ id: string, label?: any | null }> } | null };
 
+export type ExplorerSelectionIdsQueryVariables = Exact<{
+  libraryId: Scalars['ID'];
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+}>;
+
+
+export type ExplorerSelectionIdsQuery = { records: { list: Array<{ id: string }> } };
+
 export type TreeDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID'];
 }>;
@@ -4276,6 +4284,44 @@ export function useExplorerLibraryDetailsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type ExplorerLibraryDetailsQueryHookResult = ReturnType<typeof useExplorerLibraryDetailsQuery>;
 export type ExplorerLibraryDetailsLazyQueryHookResult = ReturnType<typeof useExplorerLibraryDetailsLazyQuery>;
 export type ExplorerLibraryDetailsQueryResult = Apollo.QueryResult<ExplorerLibraryDetailsQuery, ExplorerLibraryDetailsQueryVariables>;
+export const ExplorerSelectionIdsDocument = gql`
+    query ExplorerSelectionIds($libraryId: ID!, $filters: [RecordFilterInput]) {
+  records(library: $libraryId, filters: $filters) {
+    list {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useExplorerSelectionIdsQuery__
+ *
+ * To run a query within a React component, call `useExplorerSelectionIdsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExplorerSelectionIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExplorerSelectionIdsQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useExplorerSelectionIdsQuery(baseOptions: Apollo.QueryHookOptions<ExplorerSelectionIdsQuery, ExplorerSelectionIdsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExplorerSelectionIdsQuery, ExplorerSelectionIdsQueryVariables>(ExplorerSelectionIdsDocument, options);
+      }
+export function useExplorerSelectionIdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerSelectionIdsQuery, ExplorerSelectionIdsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExplorerSelectionIdsQuery, ExplorerSelectionIdsQueryVariables>(ExplorerSelectionIdsDocument, options);
+        }
+export type ExplorerSelectionIdsQueryHookResult = ReturnType<typeof useExplorerSelectionIdsQuery>;
+export type ExplorerSelectionIdsLazyQueryHookResult = ReturnType<typeof useExplorerSelectionIdsLazyQuery>;
+export type ExplorerSelectionIdsQueryResult = Apollo.QueryResult<ExplorerSelectionIdsQuery, ExplorerSelectionIdsQueryVariables>;
 export const TreeDataQueryDocument = gql`
     query TreeDataQuery($treeId: ID!) {
   trees(filters: {id: [$treeId]}) {

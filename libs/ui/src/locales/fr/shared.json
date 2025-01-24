@@ -562,8 +562,8 @@
     "records_deactivation": {
         "title": "Désactiver les éléments",
         "title_one": "Désactiver",
-        "confirm": "Êtes-vous sûr de vouloir désactiver les éléments sélectionnés?",
-        "confirm_one": "Êtes-vous sûr de vouloir désactiver cet élément?"
+        "confirm": "Êtes-vous sûr de vouloir désactiver les éléments sélectionnés ?",
+        "confirm_one": "Êtes-vous sûr de vouloir désactiver cet élément ?"
     },
     "table-columns-selection": {
         "header": "Colonnes disponibles",
@@ -629,7 +629,7 @@
         "more-actions": "Voir plus",
         "deactivate-item": "Désactiver",
         "delete-item": "Supprimer",
-        "edit-item": "Éditer l’élément",
+        "edit-item": "Éditer",
         "settings": "Paramètres",
         "back": "Retour",
         "router-menu": "Configuration de la vue",
@@ -658,7 +658,8 @@
         "coming-soon": "À venir",
         "show": "Afficher",
         "hide": "Masquer",
-        "pagination-total-number": "{{from, number}} - {{to, number}} de {{total, number}} éléments",
+        "pagination-total-number_one": "{{from, number}} - {{to, number}} de {{count, number}} élément",
+        "pagination-total-number_other": "{{from, number}} - {{to, number}} de {{count, number}} éléments",
         "columns": "Colonnes",
         "visible-columns": "Colonnes visibles",
         "invisible-columns": "Colonnes invisibles",
@@ -670,6 +671,21 @@
         "reinit-view": "Réinitialiser",
         "select-condition": "Sélectionner une condition",
         "true": "Vrai",
-        "false": "Faux"
+        "false": "Faux",
+        "massAction": {
+            "itemsTotal_one": "{{count, number}} élément",
+            "itemsTotal_other": "{{count, number}} éléments",
+            "selectedItems_one": "{{count, number}} sélectionné",
+            "selectedItems_other": "{{count, number}} sélectionnés",
+            "deactivate": "Supprimer",
+            "add-link": "Ajouter",
+            "toggle_selection": {
+                "select_page_one": "Sélectionner l’éléments visible ({{count, number}})",
+                "select_page_other": "Sélectionner les éléments visibles ({{count, number}})",
+                "select_all": "Tout sélectionner ({{count, number}})",
+                "deselect_all": "Tout désélectionner"
+            }
+        },
+        "add-existing-item": "Ajouter un élément existant"
     }
 }
