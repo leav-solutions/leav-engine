@@ -686,6 +686,7 @@
             "selectedItems_one": "{{count, number}} selected",
             "selectedItems_other": "{{count, number}} selected",
             "deactivate": "Deactivate",
+            "add-link": "Add",
             "toggle_selection": {
                 "select_page_one": "Select visible item ({{count, number}})",
                 "select_page_other": "Select visible items ({{count, number}})",

@@ -53,8 +53,14 @@ const StyledTable = styled(KitTable)`
         .ant-table-cell {
             min-height: ${tableHeaderMinLineHeight}px;
             height: auto !important;
+            padding: 0 calc(var(--general-spacing-s) * 1px) 0 0;
         }
     }
+`;
+
+const ActionsHeaderStyledDiv = styled.div`
+    justify-self: right;
+    text-align: left;
 `;
 
 interface IDataViewProps {
@@ -100,13 +106,13 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         attributesProperties,
         paginationProps,
         itemActions,
-        selection: {onSelectionChange, selectedKeys, isMassSelectionAll}
+        selection: {onSelectionChange, selectedKeys, isMassSelectionAll},
         iconsOnlyItemActions
     }) => {
         const {t} = useSharedTranslation();
 
         const {containerRef, scrollHeight} = useTableScrollableHeight(!!paginationProps);
-        const {ref, getFieldColumnWidth, columnWidth} = useColumnWidth();
+        const {ref, getFieldColumnWidth, columnWidth, actionsColumnHeaderWidth} = useColumnWidth();
 
         const _getActionButtons = (
             actions: Array<Override<IItemAction, {callback: () => void}>>,
@@ -114,10 +120,11 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         ): ReactNode => {
             const isLessThanFourActions = actions.length < 4;
 
+            return (
                 <StyledActionsList ref={columnRef}>
                     {isLessThanFourActions ? (
                         <>
-                            {actions.map(({label, icon, isDanger, callback, disabled}, actionIndex) => (
+                            {actions.map(({label, icon, isDanger, iconOnly, callback, disabled}, actionIndex) => (
                                 <KitButton
                                     key={actionIndex}
                                     title={label}
@@ -126,7 +133,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     danger={isDanger}
                                     disabled={disabled}
                                 >
-                            {!iconsOnlyItemActions && !iconOnly && label}
+                                    {!iconsOnlyItemActions && !iconOnly && label}
                                 </KitButton>
                             ))}
                         </>
@@ -197,8 +204,14 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                     ? []
                     : [
                           {
-                              title: t('explorer.actions'),
+                              title: (
+                                  <ActionsHeaderStyledDiv style={{width: `${actionsColumnHeaderWidth}px`}}>
+                                      {t('explorer.actions')}
+                                  </ActionsHeaderStyledDiv>
+                              ),
                               dataIndex: USELESS,
+                              align: 'right',
+                              className: 'actions',
                               shouldCellUpdate: () => false,
                               width: columnWidth,
                               render: (_, item, index) =>
@@ -234,7 +247,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         // TODO: handle columns width based on attribute type/format
         return (
             <DataViewContainerDivStyled ref={containerRef}>
-                <KitTable
+                <StyledTable
                     showHeader={dataGroupedFilteredSorted.length > 0}
                     columns={columns}
                     tableLayout="fixed"

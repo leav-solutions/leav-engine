@@ -686,6 +686,7 @@
             "selectedItems_one": "{{count, number}} sélectionné",
             "selectedItems_other": "{{count, number}} sélectionnés",
             "deactivate": "Supprimer",
+            "add-link": "Ajouter",
             "toggle_selection": {
                 "select_page_one": "Sélectionner l’éléments visible ({{count, number}})",
                 "select_page_other": "Sélectionner les éléments visibles ({{count, number}})",

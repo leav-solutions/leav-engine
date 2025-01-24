@@ -2,25 +2,22 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
-import {FunctionComponent, useRef} from 'react';
-import {KitButton, KitModal, KitSpace} from 'aristid-ds';
+import {ComponentProps, FunctionComponent, ReactNode, useRef} from 'react';
+import {closeKitSnackBar, KitButton, KitSpace} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
-import {Explorer, IExplorerProps} from '../Explorer';
-import {possibleSubmitButtons} from '_ui/components/RecordEdition/_types';
-import {IEntrypointLibrary, IEntrypointLink} from '../_types';
-import {FaPlus} from 'react-icons/fa';
-import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
+import {Explorer} from '../Explorer';
+import {IEntrypointLink} from '../_types';
+import {useAddLinkMassAction} from '../useAddLinkMassAction';
+import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {EditSettingsContextProvider} from '../manage-view-settings';
 
-export interface IDisplayExplorerModalProps extends Omit<IExplorerProps, 'entrypoint'> {
+interface IAddLinkModalProps {
     open: boolean;
     library: string;
-    entrypoint: IEntrypointLink;
-    onClose: () => void;
-    submitButtons?: possibleSubmitButtons;
+    onClose?: () => void;
 }
 
 const modalWidth = 1200;
@@ -29,7 +26,7 @@ const StyledModal = styled(Modal)`
         .ant-modal-content {
             display: flex;
             flex-direction: column;
-            padding: 10px;
+            padding: calc(var(--general-spacing-xs) * 1px);
             overflow: hidden;
         }
 
@@ -46,42 +43,33 @@ const ModalMainStyledDiv = styled.div`
     position: relative;
 `;
 
-const Header = styled.div`
-    height: 3.5rem;
-    grid-area: title;
-    align-self: center;
-    font-size: 1rem;
-    padding: 10px 50px 10px 10px;
-    border-bottom: 1px solid var(--general-utilities-border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`;
-
 const ModalFooter = styled.div`
     display: flex;
     justify-content: flex-end;
-    padding: 0.5rem 1rem;
+    padding: calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-s) * 1px);
     border-top: 1px solid var(--general-utilities-border);
 `;
 
-export const DisplayExplorerModal: FunctionComponent<IDisplayExplorerModalProps> = ({
-    open,
-    library,
-    entrypoint,
-    title,
-    defaultViewSettings,
-    onClose
-}) => {
+export const AddLinkModal: FunctionComponent<IAddLinkModalProps> = ({open, library, onClose}) => {
     const {t} = useSharedTranslation();
     const explorerContainerRef = useRef<HTMLDivElement>(null);
-    const {saveValues} = useSaveValueBatchMutation();
+    const {view, dispatch} = useViewSettingsContext();
 
-    const _handleClose = () => onClose();
+    const {addLinkMassAction} = useAddLinkMassAction({
+        isEnabled: true,
+        store: {view, dispatch},
+        linkAttributeId: (view.entrypoint as IEntrypointLink).linkAttributeId,
+        libraryId: view.libraryId
+    });
 
-    const _closeButtonLabel = t('global.close');
+    const _handleClose = () => {
+        closeKitSnackBar();
+        onClose?.();
+    };
 
-    const _footerButtons = [
+    const _closeButtonLabel: string = t('global.close');
+
+    const _footerButtons: ReactNode = [
         <KitButton
             aria-label={_closeButtonLabel}
             key="close"
@@ -92,37 +80,11 @@ export const DisplayExplorerModal: FunctionComponent<IDisplayExplorerModalProps>
         </KitButton>
     ];
 
-    const _footer = (
+    const _footer: ComponentProps<typeof Modal>['footer'] = (
         <ModalFooter>
             <KitSpace>{_footerButtons}</KitSpace>
         </ModalFooter>
     );
-
-    const _internalEntrypoint: IEntrypointLibrary = {
-        type: 'library',
-        libraryId: library
-    };
-
-    const addItemAction = {
-        label: t('filters.add'),
-        icon: <FaPlus />,
-        callback: ({itemId}) =>
-            saveValues(
-                {
-                    id: entrypoint.parentRecordId,
-                    library: {
-                        id: entrypoint.parentLibraryId
-                    }
-                },
-                [
-                    {
-                        attribute: entrypoint.linkAttributeId,
-                        idValue: null,
-                        value: itemId
-                    }
-                ]
-            )
-    };
 
     return (
         <StyledModal
@@ -140,14 +102,17 @@ export const DisplayExplorerModal: FunctionComponent<IDisplayExplorerModalProps>
             <ModalMainStyledDiv ref={explorerContainerRef}>
                 <EditSettingsContextProvider>
                     <Explorer
-                        entrypoint={_internalEntrypoint}
+                        entrypoint={{
+                            type: 'library',
+                            libraryId: library
+                        }}
                         primaryActions={[]}
-                        title={title}
                         defaultActionsForItem={[]}
-                        itemActions={[addItemAction]}
+                        defaultMassActions={[]}
+                        massActions={addLinkMassAction ? [addLinkMassAction] : []}
+                        itemActions={[]}
                         defaultPrimaryActions={[]}
                         panelElement={() => explorerContainerRef.current ?? document.body}
-                        defaultViewSettings={defaultViewSettings}
                     />
                 </EditSettingsContextProvider>
             </ModalMainStyledDiv>

@@ -30,7 +30,6 @@ import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {useDeactivateMassAction} from './useDeactivateMassAction';
 import {MASS_SELECTION_ALL} from './_constants';
 import {useAddItemAction} from './useAddItemAction';
-import {concat} from '@apollo/client';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -79,7 +78,6 @@ interface IExplorerProps {
 
 export const Explorer: FunctionComponent<IExplorerProps> = ({
     entrypoint,
-    noPagination,
     itemActions = [],
     primaryActions = [],
     massActions = [],
@@ -89,8 +87,6 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     iconsOnlyItemActions = false,
     defaultActionsForItem = ['edit', 'remove'],
     defaultPrimaryActions = ['create'],
-    defaultMassActions = ['deactivate'],
-    defaultViewSettings,
     defaultMassActions = ['deactivate'],
     defaultViewSettings,
     panelElement
@@ -142,9 +138,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     const {addItemAction, addItemModal} = useAddItemAction({
         isEnabled: entrypoint.type === 'link',
         library: view.libraryId,
-        entrypoint: view.entrypoint,
-        maxItemsLeft: null,
-        refetch
+        maxItemsLeft: null
     });
 
     const {deactivateMassAction} = useDeactivateMassAction({
@@ -162,7 +156,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         massActions: [deactivateMassAction, ...massActions].filter(Boolean)
     });
 
-    const {primaryButton} = usePrimaryActionsButton([createAction, ...primaryActions].filter(Boolean));
+    const {primaryButton} = usePrimaryActionsButton([createAction, addItemAction, ...primaryActions].filter(Boolean));
 
     const {viewSettingsButton} = useOpenViewSettings(view.libraryId);
 
