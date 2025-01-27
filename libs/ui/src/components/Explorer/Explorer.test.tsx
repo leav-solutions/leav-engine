@@ -142,10 +142,10 @@ const multivalDateRangeMockAttribute = {
 describe('Explorer', () => {
     const recordId1 = '613982168';
     const enrichTextRecord1 = '<h1>This is a test enrich text<script>alert("XSS")</script></h1>';
-    const colorRecord1 = '35c441';
+    const colorRecord1 = '#35c441';
     const recordId2 = '612694174';
     const enrichTextRecord2 = '<h1>This is a test enrich text</h1>';
-    const colorRecord2 = '5510d1';
+    const colorRecord2 = '#5510d1';
     const dateRangeRecord1 = {from: '2023-11-06', to: '2023-11-07'};
     const dateRangeRecord2 = {from: '2024-11-06', to: '2024-11-07'};
     const mockRecords = [
@@ -244,7 +244,7 @@ describe('Explorer', () => {
                 {
                     attributeId: multivalColorMockAttribute.id,
                     attributeProperties: multivalColorMockAttribute,
-                    values: [{valuePayload: '00FF00'}, {valuePayload: 'FF0000'}, {valuePayload: '0000FF'}]
+                    values: [{valuePayload: '#00FF00'}, {valuePayload: '#FF0000'}, {valuePayload: '#0000FF'}]
                 },
                 {
                     attributeId: booleanMockAttribute.id,
@@ -683,7 +683,7 @@ describe('Explorer', () => {
 
         expect(simpleRichTextCell).toHaveTextContent('This is a test enrich text');
 
-        expect(simpleColorCell).toHaveTextContent(`#${colorRecord1}`);
+        expect(simpleColorCell).toHaveTextContent(colorRecord1);
 
         expect(within(multivalColorCell).getByText('#00FF00')).toBeVisible();
         expect(within(multivalColorCell).getByText('#FF0000')).toBeVisible();
