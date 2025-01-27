@@ -90,6 +90,18 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
         );
     }, []);
 
+    const _getFirstValue = useCallback(
+        (value: PropertyValueValueFragment['valuePayload'], attribute: AttributePropertiesFragment) => {
+            if (isStandardValue(value, attribute) && attribute.format === AttributeFormat.boolean) {
+                if (!value || value.valuePayload === null) {
+                    return {valuePayload: false};
+                }
+            }
+            return value;
+        },
+        []
+    );
+
     if (attributeProperties.multiple_values) {
         if (isStandardValues(values, attributeProperties)) {
             const tags = values.map<IKitTagConfig>(value => {
@@ -157,7 +169,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
             return null;
         }
     } else {
-        const value = values[0]; // Not multiple_values attribute should not have more than one value
+        const value = _getFirstValue(values[0], attributeProperties); // Not multiple_values attribute should not have more than one value
         if (!value) {
             return null;
         }

@@ -55,7 +55,7 @@ const booleanMockAttribute = {
 } satisfies gqlTypes.AttributePropertiesFragment;
 
 const multivalBooleanMockAttribute = {
-    id: 'boolean_attribute',
+    id: 'boolean_attribute_multival',
     label: {
         fr: 'Mon attribut booléen',
         en: 'My boolean attribute'
@@ -651,7 +651,7 @@ describe('Explorer', () => {
         const tableRows = screen.getAllByRole('row');
         expect(screen.getByRole('table')).toBeVisible();
         expect(tableRows).toHaveLength(mockRecords.length); // 2 records
-        const [firstRecordRow] = tableRows;
+        const [firstRecordRow, secondRecordRow] = tableRows;
         const [record1] = mockRecords;
         const [
             whoAmICell,
@@ -666,6 +666,8 @@ describe('Explorer', () => {
             simpleDateRangeCell,
             multivalDateRangeCell
         ] = within(firstRecordRow).getAllByRole('cell');
+
+        const secondRowCells = within(secondRecordRow).getAllByRole('cell');
 
         expect(within(whoAmICell).getByText(record1.whoAmI.label)).toBeInTheDocument();
 
@@ -690,6 +692,7 @@ describe('Explorer', () => {
         expect(within(multivalColorCell).getByText('#0000FF')).toBeVisible();
 
         expect(within(boolCell).getByText(/yes/)).toBeVisible();
+        expect(within(secondRowCells[7]).getByText(/no/)).toBeVisible();
 
         expect(within(multivalBoolCell).getByText(/yes/)).toBeVisible();
         expect(within(multivalBoolCell).getByText(/no/)).toBeVisible();
