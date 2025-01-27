@@ -1,6 +1,7 @@
 fragment PropertyValue on GenericValue {
     ... on Value {
         valuePayload: payload
+        valueRawPayload: raw_payload
     }
     ... on LinkValue {
         linkPayload: payload {
