@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {cloneElement, FunctionComponent, memo, ReactNode, useEffect, useRef, useState} from 'react';
+import {cloneElement, FunctionComponent, memo, ReactNode} from 'react';
 import {KitButton, KitDropDown, KitPagination, KitSpace, KitTable, useKitTheme} from 'aristid-ds';
 import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import {FaEllipsisH} from 'react-icons/fa';
-import {Override, isTypeStandard} from '@leav/utils';
+import {Override} from '@leav/utils';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IExplorerData, IItemAction, IItemData} from './_types';
@@ -13,17 +13,8 @@ import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
 import isEqual from 'lodash/isEqual';
-import {AttributeFormat} from '_ui/_gqlTypes';
 
 const USELESS = '';
-
-enum FieldColumnWidth {
-    TINY = 125,
-    SMALL = 150,
-    MEDIUM = 250,
-    LARGE = 300,
-    ACTIONS = 172
-}
 
 const DataViewContainerDivStyled = styled.div`
     flex: 1 1 min-content;
@@ -34,18 +25,12 @@ const DataViewContainerDivStyled = styled.div`
         padding-bottom: ${defaultPaginationHeight}px;
         position: relative;
     }
-
     .pagination {
         flex: 0 0 auto;
         justify-content: flex-end;
         display: flex;
         padding-top: calc(var(--general-spacing-xs) * 1px);
     }
-`;
-
-const StyledActionsList = styled.div`
-    display: inline-flex;
-    gap: calc(var(--general-spacing-xs) * 1px);
 `;
 
 interface IDataViewProps {
@@ -70,103 +55,59 @@ const arePropsEqual = (prevProps: IDataViewProps, nextProps: IDataViewProps) =>
         {attributesToDisplay: nextProps.attributesToDisplay, data: nextProps.dataGroupedFilteredSorted}
     );
 
-const _getFieldColumWidth = (field: IExplorerData['attributes'][string]): FieldColumnWidth => {
-    if (!field || !isTypeStandard(field.type) || field.multiple_values) {
-        return FieldColumnWidth.LARGE;
-    }
-
-    switch (field.format) {
-        case AttributeFormat.boolean:
-            return FieldColumnWidth.TINY;
-        case AttributeFormat.numeric:
-        case AttributeFormat.date:
-            return FieldColumnWidth.SMALL;
-        case AttributeFormat.date_range:
-            return FieldColumnWidth.LARGE;
-        default:
-            return FieldColumnWidth.MEDIUM;
-    }
-};
-
 export const DataView: FunctionComponent<IDataViewProps> = memo(
     ({dataGroupedFilteredSorted, attributesToDisplay, attributesProperties, paginationProps, itemActions}) => {
         const {t} = useSharedTranslation();
         const {theme} = useKitTheme();
 
         const {containerRef, scrollHeight} = useTableScrollableHeight(!!paginationProps);
-        const actionsRef = useRef<HTMLDivElement | null>(null);
-        const [forceReducedActions, setForceReducedActions] = useState(false);
 
-        useEffect(() => {
-            if (actionsRef.current) {
-                const actionsList = actionsRef.current;
-                const actionsListWidth = actionsList.getBoundingClientRect().width;
-
-                if (actionsListWidth > FieldColumnWidth.SMALL) {
-                    setForceReducedActions(true);
-                }
-            }
-        }, [actionsRef, forceReducedActions]);
-
-        const _getActionButtons = (
-            actions: Array<Override<IItemAction, {callback: () => void}>>,
-            index: number
-        ): ReactNode => {
+        const _getActionButtons = (actions: Array<Override<IItemAction, {callback: () => void}>>): ReactNode => {
             const isLessThanFourActions = actions.length < 4;
 
-            return (
-                <StyledActionsList ref={index === 0 ? actionsRef : null}>
-                    {isLessThanFourActions ? (
-                        <>
-                            {actions.map(({label, icon, isDanger, callback}, actionIndex) => (
-                                <KitButton
-                                    title={label}
-                                    icon={icon}
-                                    onClick={callback}
-                                    danger={isDanger}
-                                    key={actionIndex}
-                                >
-                                    {forceReducedActions ? null : label}
-                                </KitButton>
-                            ))}
-                        </>
-                    ) : (
-                        <>
-                            <KitButton
-                                type="tertiary"
-                                icon={actions[0].icon}
-                                onClick={actions[0].callback}
-                                title={actions[0].label}
-                                danger={actions[0].isDanger}
-                            />
-                            <KitButton
-                                type="tertiary"
-                                icon={actions[1].icon}
-                                onClick={actions[1].callback}
-                                title={actions[1].label}
-                                danger={actions[1].isDanger}
-                            />
-                            <KitDropDown
-                                menu={{
-                                    items: actions.slice(2).map(({callback, icon, label, isDanger}) => ({
-                                        key: label,
-                                        title: label,
-                                        danger: isDanger,
-                                        label,
-                                        icon: icon ? cloneElement(icon, {size: '2em'}) : null, // TODO: find better tuning
-                                        onClick: callback
-                                    }))
-                                }}
-                            >
-                                <KitButton
-                                    title={t('explorer.more-actions') ?? undefined}
-                                    type="tertiary"
-                                    icon={<FaEllipsisH />}
-                                />
-                            </KitDropDown>
-                        </>
-                    )}
-                </StyledActionsList>
+            return isLessThanFourActions ? (
+                <KitSpace>
+                    {actions.map(({label, icon, isDanger, callback}, index) => (
+                        <KitButton title={label} icon={icon} onClick={callback} danger={isDanger} key={index}>
+                            {label}
+                        </KitButton>
+                    ))}
+                </KitSpace>
+            ) : (
+                <>
+                    <KitButton
+                        type="tertiary"
+                        icon={actions[0].icon}
+                        onClick={actions[0].callback}
+                        title={actions[0].label}
+                        danger={actions[0].isDanger}
+                    />
+                    <KitButton
+                        type="tertiary"
+                        icon={actions[1].icon}
+                        onClick={actions[1].callback}
+                        title={actions[1].label}
+                        danger={actions[1].isDanger}
+                    />
+                    <KitDropDown
+                        menu={{
+                            items: actions.slice(2).map(({callback, icon, label, isDanger}) => ({
+                                key: label,
+                                title: label,
+                                danger: isDanger,
+                                label,
+                                icon: icon ? cloneElement(icon, {size: '2em'}) : null, // TODO: find better tuning
+                                onClick: callback
+                            }))
+                        }}
+                    >
+                        <KitButton
+                            title={t('explorer.more-actions') ?? undefined}
+                            type="tertiary"
+                            icon={<FaEllipsisH />}
+                        />
+                    </KitDropDown>
+                </>
             );
         };
 
@@ -174,7 +115,6 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
             .map<KitTableColumnType<IItemData>>(attributeName => ({
                 title: attributeName === 'whoAmI' ? '' : attributesProperties[attributeName].label,
                 dataIndex: USELESS,
-                width: _getFieldColumWidth(attributesProperties[attributeName]),
                 shouldCellUpdate: (record, prevRecord) =>
                     attributeName === 'whoAmI'
                         ? record.whoAmI !== prevRecord.whoAmI
@@ -197,15 +137,12 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                               title: t('explorer.actions'),
                               dataIndex: USELESS,
                               shouldCellUpdate: () => false,
-                              width: FieldColumnWidth.ACTIONS,
-                              className: 'actions-cell',
-                              render: (_, item, index) =>
+                              render: (_, item) =>
                                   _getActionButtons(
                                       itemActions.map(action => ({
                                           ...action,
                                           callback: () => action.callback(item)
-                                      })),
-                                      index
+                                      }))
                                   )
                           }
                       ]
@@ -220,9 +157,9 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                     backgroundColor={theme.colors.primary['50']}
                     showHeader={dataGroupedFilteredSorted.length > 0}
                     columns={columns}
-                    tableLayout="fixed"
-                    scroll={{y: scrollHeight, x: '100%'}}
+                    scroll={{y: scrollHeight}}
                     dataSource={dataGroupedFilteredSorted}
+                    tableLayout="fixed"
                     pagination={false}
                 />
                 {paginationProps && (
