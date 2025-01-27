@@ -19,6 +19,7 @@ import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types'
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
 import {multiColorTagAvatarClassName, TableTagGroup} from './TableTagGroup';
+import {ColorFactory} from 'antd/lib/color-picker/color';
 
 const isStandardValue = (
     v: PropertyValueFragment,
@@ -101,12 +102,12 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                             type: value.valuePayload ? 'primary' : ('neutral' as IKitTag['type'])
                         };
                     case AttributeFormat.color:
-                        const colorHexa = `#${value.valuePayload}`;
+                        const color = new ColorFactory(value.valueRawPayload);
                         return {
                             idCardProps: {
-                                description: colorHexa,
+                                description: value.valuePayload,
                                 avatarProps: {
-                                    color: colorHexa,
+                                    color: color.toHexString(),
                                     shape: 'square',
                                     className: multiColorTagAvatarClassName
                                 }
@@ -192,12 +193,12 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     );
                     break;
                 case AttributeFormat.color:
-                    const colorTextContent = `#${value.valuePayload}`;
+                    const color = new ColorFactory(value.valueRawPayload);
                     content = (
                         <>
-                            <StyledColorChip $colorTextContent={colorTextContent} />
-                            <KitTypography.Text key={attributeProperties.id} ellipsis={{tooltip: colorTextContent}}>
-                                {colorTextContent}
+                            <StyledColorChip $colorTextContent={color.toHexString()} />
+                            <KitTypography.Text key={attributeProperties.id} ellipsis={{tooltip: value.valuePayload}}>
+                                {value.valuePayload}
                             </KitTypography.Text>
                         </>
                     );

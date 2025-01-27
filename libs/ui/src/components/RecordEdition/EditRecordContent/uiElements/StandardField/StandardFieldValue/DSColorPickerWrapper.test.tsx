@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen} from '_ui/_tests/testUtils';
+import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import {DSColorPickerWrapper} from './DSColorPickerWrapper';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
 import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
-const pinkColor = 'ff00ff';
-const pinkColorHex = '#' + pinkColor;
-const blueColor = '0000ff';
-const blueColorHex = '#' + blueColor;
+const pinkColorHex = '#ff00ff';
+const pinkColorRgb = 'rgb(255, 0, 255)';
+const pinkColorHsb = 'hsb(300, 100%, 100%)';
+const blueColorHex = '#0000ff';
 
 const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
@@ -25,7 +25,7 @@ const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
     calculatedValue: {
-        raw_payload: pinkColor
+        raw_payload: pinkColorHex
     }
 };
 
@@ -41,7 +41,7 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     isInheritedOverrideValue: true,
     isInheritedNotOverrideValue: false,
     inheritedValue: {
-        raw_payload: pinkColor
+        raw_payload: pinkColorHex
     }
 };
 
@@ -64,57 +64,63 @@ describe('DSColorPickerWrapper', () => {
         mockSetActiveValue.mockReset();
     });
 
-    test('Should display the presentationValue value', async () => {
-        render(
-            <AntForm>
-                <AntForm.Item>
-                    <DSColorPickerWrapper
-                        value={blueColor}
-                        presentationValue={pinkColorHex}
-                        attribute={mockFormAttribute}
-                        required={notRequired}
-                        readonly={notReadonly}
-                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
-                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
-                    />
-                </AntForm.Item>
-            </AntForm>
-        );
+    test.each([pinkColorHex, pinkColorRgb, pinkColorHsb])(
+        'Should display the presentationValue (%s)',
+        async presentationValue => {
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSColorPickerWrapper
+                            value={pinkColorHex}
+                            presentationValue={presentationValue}
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                            handleSubmit={mockHandleSubmit}
+                            onChange={mockOnChange}
+                            setActiveValue={mockSetActiveValue}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
 
-        expect(screen.getByText(pinkColorHex)).toBeVisible();
-    });
+            expect(screen.getByText(presentationValue)).toBeVisible();
+        }
+    );
 
-    test('Should display the value if presentationValue is empty', async () => {
-        render(
-            <AntForm>
-                <AntForm.Item>
-                    <DSColorPickerWrapper
-                        value={blueColor}
-                        attribute={mockFormAttribute}
-                        required={notRequired}
-                        readonly={notReadonly}
-                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
-                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
-                    />
-                </AntForm.Item>
-            </AntForm>
-        );
+    test.each([pinkColorHex, pinkColorRgb, pinkColorHsb])(
+        'Should display the value (%s) if presentationValue is empty',
+        async value => {
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSColorPickerWrapper
+                            value={value}
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                            handleSubmit={mockHandleSubmit}
+                            onChange={mockOnChange}
+                            setActiveValue={mockSetActiveValue}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
 
-        expect(screen.getByText(blueColorHex)).toBeVisible();
-    });
+            expect(screen.getByText(value)).toBeVisible();
+        }
+    );
 
     test('Should display the value if focused', async () => {
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
-                        value={blueColor}
+                        value={blueColorHex}
                         presentationValue={pinkColorHex}
                         attribute={mockFormAttribute}
                         required={notRequired}
@@ -140,7 +146,7 @@ describe('DSColorPickerWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
-                        value={blueColor}
+                        value={blueColorHex}
                         presentationValue={pinkColorHex}
                         attribute={mockFormAttribute}
                         required={notRequired}
@@ -168,7 +174,7 @@ describe('DSColorPickerWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
-                        value={pinkColor}
+                        value={pinkColorHex}
                         attribute={mockFormAttribute}
                         required={notRequired}
                         readonly={notReadonly}
@@ -187,10 +193,10 @@ describe('DSColorPickerWrapper', () => {
 
         const input = screen.getByRole('textbox');
         await user.clear(input);
-        await user.type(input, pinkColor);
+        await user.type(input, pinkColorHex);
         await user.click(document.body);
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith(pinkColor, mockFormAttribute.id);
+        expect(mockHandleSubmit).toHaveBeenCalledWith(pinkColorHex, mockFormAttribute.id);
         expect(mockOnChange).toHaveBeenCalled();
     });
 
@@ -200,7 +206,7 @@ describe('DSColorPickerWrapper', () => {
                 <AntForm.Item>
                     <DSColorPickerWrapper
                         value={inheritedFlagsWithInheritedValue.inheritedValue.raw_payload}
-                        presentationValue={'#' + inheritedFlagsWithInheritedValue.inheritedValue.raw_payload}
+                        presentationValue={inheritedFlagsWithInheritedValue.inheritedValue.raw_payload}
                         attribute={mockFormAttribute}
                         required={notRequired}
                         readonly={notReadonly}
@@ -230,7 +236,7 @@ describe('DSColorPickerWrapper', () => {
                 <AntForm.Item>
                     <DSColorPickerWrapper
                         value={calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload}
-                        presentationValue={'#' + calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload}
+                        presentationValue={calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload}
                         attribute={mockFormAttribute}
                         required={notRequired}
                         readonly={notReadonly}
@@ -259,7 +265,7 @@ describe('DSColorPickerWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
-                        value={blueColor}
+                        value={blueColorHex}
                         attribute={mockFormAttribute}
                         required={notRequired}
                         readonly={notReadonly}

@@ -43,11 +43,6 @@ export const useGetPresentationValues = ({
                     presentationValue = '';
                 }
                 break;
-            case AttributeFormat.color:
-                if (presentationValue) {
-                    presentationValue = '#' + presentationValue;
-                }
-                break;
         }
 
         return presentationValue;

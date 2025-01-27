@@ -51,34 +51,83 @@ describe('validateFormatAction', () => {
         expect(res.errors.length).toBe(1);
     });
 
-    test('Should validate color format', async () => {
-        const colorValue = [{payload: 'FFFFFF'}];
-        const res = await action(colorValue, {}, ctxAttrColor);
+    describe('validateFormat COLOR', () => {
+        test('Should validate null color format', async () => {
+            const colorValue = [{payload: null}];
+            const res = await action(colorValue, {}, ctxAttrColor);
 
-        expect(res.errors.length).toBe(0);
-        expect(res.values[0]).toBe(colorValue[0]);
-    });
+            expect(res.errors.length).toBe(0);
+            expect(res.values[0]).toBe(colorValue[0]);
+        });
 
-    test('Should validate color format if payload is null', async () => {
-        const colorValue = [{payload: null}];
-        const res = await action(colorValue, {}, ctxAttrColor);
+        test.each([
+            'red',
+            'rgb(255, 255, 255, 0.75)',
+            'rgba(255, 255, 255)',
+            'hsb(255, 100%, 100%, 0.75)',
+            'hsba(255, 100%, 100%)',
+            'FFFFFFF',
+            '#FFFF'
+        ])('"%s" Should not be a valid color format', async color => {
+            const colorValue = [{payload: color}];
+            const res = await action(colorValue, {}, ctxAttrColor);
 
-        expect(res.errors.length).toBe(0);
-        expect(res.values[0]).toBe(colorValue[0]);
-    });
+            expect(res.errors.length).toBe(1);
+        });
 
-    test('Should throw if invalid color format', async () => {
-        const badColorValue = [{payload: 'AZERTY'}];
-        const res = await action(badColorValue, {}, ctxAttrColor);
+        describe('HEX format', () => {
+            test('Should validate color format', async () => {
+                const colorValue = [{payload: '#FFFFFF'}];
+                const res = await action(colorValue, {}, ctxAttrColor);
 
-        expect(res.errors.length).toBe(1);
-    });
+                expect(res.errors.length).toBe(0);
+                expect(res.values[0]).toBe(colorValue[0]);
+            });
 
-    test('Should throw if invalid color format (must be less or equal to 6 characters)', async () => {
-        const badColorValue = [{payload: 'FFFFFFFFFFFFFFFFFFF'}];
-        const res = await action(badColorValue, {}, ctxAttrColor);
+            test('Should validate color format with alpha', async () => {
+                const colorValue = [{payload: '#FFFFFFFF'}];
+                const res = await action(colorValue, {}, ctxAttrColor);
 
-        expect(res.errors.length).toBe(1);
+                expect(res.errors.length).toBe(0);
+                expect(res.values[0]).toBe(colorValue[0]);
+            });
+        });
+
+        describe('RGB format', () => {
+            test('Should validate color format', async () => {
+                const colorValue = [{payload: 'rgb(255, 255, 255)'}];
+                const res = await action(colorValue, {}, ctxAttrColor);
+
+                expect(res.errors.length).toBe(0);
+                expect(res.values[0]).toBe(colorValue[0]);
+            });
+
+            test('Should validate color format with alpha', async () => {
+                const colorValue = [{payload: 'rgba(255, 255, 255, 0.75)'}];
+                const res = await action(colorValue, {}, ctxAttrColor);
+
+                expect(res.errors.length).toBe(0);
+                expect(res.values[0]).toBe(colorValue[0]);
+            });
+        });
+
+        describe('HSB format', () => {
+            test('Should validate color format', async () => {
+                const colorValue = [{payload: 'hsb(255, 100%, 100%)'}];
+                const res = await action(colorValue, {}, ctxAttrColor);
+
+                expect(res.errors.length).toBe(0);
+                expect(res.values[0]).toBe(colorValue[0]);
+            });
+
+            test('Should validate color format with alpha', async () => {
+                const colorValue = [{payload: 'hsba(255, 100%, 100%, 0.75)'}];
+                const res = await action(colorValue, {}, ctxAttrColor);
+
+                expect(res.errors.length).toBe(0);
+                expect(res.values[0]).toBe(colorValue[0]);
+            });
+        });
     });
 
     test('validateFormat RICH TEXT', async () => {

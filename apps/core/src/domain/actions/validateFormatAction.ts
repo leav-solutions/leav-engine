@@ -72,7 +72,21 @@ export default function (): IActionsListFunction {
                         });
                         break;
                     case AttributeFormats.COLOR:
-                        schema = Joi.string().allow(null).max(6).hex();
+                        const hexPattern = /^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
+                        const rgbPattern = /^rgb\(\s?\d{1,3},\s?\d{1,3},\s?\d{1,3}\s?\)$/;
+                        const rgbaPattern = /^rgba\(\s?\d{1,3},\s?\d{1,3},\s?\d{1,3},\s?(0|1|0?\.\d+)\s?\)$/;
+                        const hsbPattern = /^hsb\(\s?\d{1,3},\s?\d{1,3}%,\s?\d{1,3}%\s?\)$/;
+                        const hsbaPattern = /^hsba\(\s?\d{1,3},\s?\d{1,3}%,\s?\d{1,3}%,\s?(0|1|0?\.\d+)\s?\)$/;
+
+                        schema = Joi.alternatives().try(
+                            Joi.string().pattern(hexPattern),
+                            Joi.string().pattern(rgbPattern),
+                            Joi.string().pattern(rgbaPattern),
+                            Joi.string().pattern(hsbPattern),
+                            Joi.string().pattern(hsbaPattern),
+                            Joi.string().valid(null)
+                        );
+
                         break;
                 }
 
