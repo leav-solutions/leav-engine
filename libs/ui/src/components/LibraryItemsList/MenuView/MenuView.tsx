@@ -9,7 +9,7 @@ import {VscLayers} from 'react-icons/vsc';
 import styled from 'styled-components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
-import useExecuteAddViewMutation from '_ui/hooks/useExecuteAddViewMutation/useExecuteAddViewMutation';
+import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation/useExecuteSaveViewMutation';
 import useLang from '_ui/hooks/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SidebarContentType} from '_ui/types/search';
@@ -19,7 +19,7 @@ import {prepareView} from '_ui/_utils';
 import {getRequestFromFilters} from '_ui/_utils/getRequestFromFilter';
 import {PREFIX_USER_VIEWS_ORDER_KEY} from '../../../constants';
 import {useUser} from '../../../hooks/useUser/useUser';
-import {defaultView, viewSettingsField} from '../constants';
+import {defaultView} from '../constants';
 import FiltersDropdown from '../FiltersDropdown';
 import useUpdateViewsOrderMutation from '../hooks/useUpdateViewsOrderMutation';
 import IconViewType from '../IconViewType';
@@ -49,7 +49,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const {userData} = useUser();
 
-    const {addView} = useExecuteAddViewMutation();
+    const {saveView: addView} = useExecuteSaveViewMutation();
     const {updateViewsOrder} = useUpdateViewsOrderMutation(library.id);
 
     const _toggleShowView = () => {
@@ -87,29 +87,24 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     };
 
     const _getNewViewFromSearchState = (): ViewInput => ({
-            library: library.id,
-            label: {
-                [defaultLang]: t('view.add-view.title', {lng: defaultLang})
-            },
-            display: searchState.display,
-            shared: false,
-            sort: searchState.sort,
-            filters: getRequestFromFilters(searchState.filters),
-            valuesVersions: searchState.valuesVersions
-                ? objectToNameValueArray(searchState.valuesVersions)
-                      .map(version => ({
-                          treeId: version?.name ?? null,
-                          treeNode: version?.value?.id ?? null
-                      }))
-                      .filter(v => v.treeId !== null && v.treeNode !== null)
-                : null,
-            settings: [
-                {
-                    name: viewSettingsField,
-                    value: searchState.display.type === ViewTypes.list ? searchState.fields.map(f => f.key) : []
-                }
-            ]
-        });
+        library: library.id,
+        label: {
+            [defaultLang]: t('view.add-view.title', {lng: defaultLang})
+        },
+        display: searchState.display,
+        shared: false,
+        sort: searchState.sort,
+        filters: getRequestFromFilters(searchState.filters),
+        valuesVersions: searchState.valuesVersions
+            ? objectToNameValueArray(searchState.valuesVersions)
+                  .map(version => ({
+                      treeId: version?.name ?? null,
+                      treeNode: version?.value?.id ?? null
+                  }))
+                  .filter(v => v.treeId !== null && v.treeNode !== null)
+            : null,
+        attributes: searchState.fields?.map(f => f.key) ?? []
+    });
 
     const _saveView = async () => {
         if (searchState.view.current.id !== defaultView.id) {

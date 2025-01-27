@@ -23,7 +23,6 @@ import {initOIDCClient} from './infra/oidc';
 
     try {
         conf = await getConfig();
-
         validateConfig(conf);
     } catch (e) {
         console.error('config error', e);

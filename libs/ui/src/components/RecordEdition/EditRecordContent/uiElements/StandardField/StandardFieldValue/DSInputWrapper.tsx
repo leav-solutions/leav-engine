@@ -2,132 +2,110 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInput} from 'aristid-ds';
-import {ChangeEvent, FocusEvent, FunctionComponent, useEffect, useRef, useState} from 'react';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form, GetRef, InputProps} from 'antd';
-import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import styled from 'styled-components';
+import {ChangeEvent, FocusEvent, FunctionComponent, useState} from 'react';
+import {Form} from 'antd';
+import {IStandFieldValueContentProps} from './_types';
+import {IKitInput} from 'aristid-ds/dist/Kit/DataEntry/Input/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
+import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 
-interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: string, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
-
-const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
-    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
-`;
-
-export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
+export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKitInput>> = ({
     value,
+    presentationValue,
+    isLastValueOfMultivalues,
+    removeLastValueOfMultivalues,
     onChange,
-    state,
     attribute,
-    fieldValue,
+    readonly,
     handleSubmit,
-    handleBlur,
-    shouldShowValueDetailsButton = false
+    calculatedFlags,
+    inheritedFlags,
+    setActiveValue
 }) => {
-    const {t} = useSharedTranslation();
-    const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
+    if (!onChange) {
+        throw Error('DSInputWrapper should be used inside a antd Form.Item');
+    }
+
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_STRING;
+    const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
+
     const [hasChanged, setHasChanged] = useState(false);
-    const {lang: availableLang} = useLang();
-    const inputRef = useRef<GetRef<typeof KitInputStyled>>(null);
+    const [isFocused, setIsFocused] = useState(focusedDefaultValue);
+    const {errors} = Form.Item.useStatus();
+    const {t} = useSharedTranslation();
 
-    useEffect(() => {
-        if (fieldValue.isEditing && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [fieldValue.isEditing]);
+    const isErrors = errors.length > 0;
+    const valueToDisplay = isFocused || isErrors || !presentationValue ? value : presentationValue;
 
-    const _resetToInheritedOrCalculatedValue = () => {
+    const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
-        if (state.isInheritedValue) {
-            onChange(state.inheritedValue.raw_value);
-        } else if (state.isCalculatedValue) {
-            onChange(state.calculatedValue.raw_value);
+        if (inheritedFlags.isInheritedValue) {
+            onChange(inheritedFlags.inheritedValue.raw_payload);
+        } else if (calculatedFlags.isCalculatedValue) {
+            onChange(calculatedFlags.calculatedValue.raw_payload);
         }
-        handleSubmit('', state.attribute.id);
+        await handleSubmit(null, attribute.id);
     };
 
-    const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
+    const _handleOnFocus = () => {
+        setIsFocused(true);
+        setActiveValue();
+    };
+
+    const _handleOnBlur = async (event: FocusEvent<HTMLInputElement>) => {
         if (!hasChanged) {
-            handleBlur();
+            onChange(event);
+            setIsFocused(false);
+
+            if (isNewValueOfMultivalues) {
+                removeLastValueOfMultivalues();
+            }
             return;
         }
 
-        const valueToSubmit = event.target.value;
-        if (valueToSubmit === '' && (state.isInheritedValue || state.isCalculatedValue)) {
-            _resetToInheritedOrCalculatedValue();
-            return;
-        }
-        if (hasChanged || (!state.isInheritedValue && !state.isCalculatedValue)) {
-            handleSubmit(valueToSubmit, state.attribute.id);
-        }
-        onChange(event);
-    };
-
-    const _handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setHasChanged(true);
         const inputValue = event.target.value;
-        if ((state.isInheritedValue || state.isCalculatedValue) && inputValue === '' && event.type === 'click') {
+        if (inputValue === '' && (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
 
-        if (inputValue === '' && event.type === 'click') {
-            handleSubmit(inputValue, state.attribute.id);
-        }
-
         onChange(event);
+        await handleSubmit(inputValue, attribute.id);
+        setIsFocused(false);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.raw_value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.raw_value
-            });
+    // TODO remove this function to use onClear Prop when ant is updated to 5.20+ (and other inputs too)
+    const _handleOnChange = async (event: ChangeEvent<HTMLInputElement>) => {
+        setHasChanged(true);
+
+        const inputValue = event.target.value;
+        if (
+            (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) &&
+            inputValue === '' &&
+            event.type === 'click'
+        ) {
+            _resetToInheritedOrCalculatedValue();
+            return;
         }
-        return;
+        onChange(event);
+        if (inputValue === '' && event.type === 'click') {
+            await handleSubmit(null, attribute.id);
+        }
     };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
 
     return (
-        <KitInputStyled
-            ref={inputRef}
-            required={state.formElement.settings.required}
-            label={label}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            status={errors.length > 0 ? 'error' : undefined}
-            helper={_getHelper()}
-            value={value}
-            disabled={state.isReadOnly}
-            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
-            onBlur={_handleOnBlur}
+        <KitInput
+            id={attribute.id}
+            autoFocus={isFocused}
+            disabled={readonly}
+            helper={isErrors ? String(errors[0]) : undefined}
+            status={isErrors ? 'error' : undefined}
+            value={valueToDisplay}
+            allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
             onChange={_handleOnChange}
-            $shouldHighlightColor={
-                !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
-            }
+            onFocus={_handleOnFocus}
+            onBlur={_handleOnBlur}
+            placeholder={t('record_edition.placeholder.enter_a_text')}
         />
     );
 };

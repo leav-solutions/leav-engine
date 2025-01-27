@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import {FaPen} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {EditRecordModal} from '_ui/components';
-import {RecordFilterCondition, useExplorerLazyQuery} from '_ui/_gqlTypes';
-import {ActionHook, DataGroupedFilteredSorted, ItemActions} from './types';
+import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
+import {RecordFilterCondition, useExplorerLibraryDataLazyQuery} from '_ui/_gqlTypes';
+import {ActionHook, IItemAction, IItemData} from './_types';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -21,22 +21,24 @@ import {ActionHook, DataGroupedFilteredSorted, ItemActions} from './types';
 export const useEditAction = ({isEnabled}: ActionHook) => {
     const {t} = useSharedTranslation();
 
-    const [refreshItem] = useExplorerLazyQuery({fetchPolicy: 'network-only'});
+    const [refreshItem] = useExplorerLibraryDataLazyQuery({fetchPolicy: 'network-only'});
 
-    const [editingItem, setEditingItem] = useState<null | DataGroupedFilteredSorted<'whoAmI'>[number]>(null);
+    const [editingItem, setEditingItem] = useState<null | IItemData>(null);
 
-    const _editAction: ItemActions<any>[number] = {
-        label: t('explorer.editItem'),
+    const _editAction: IItemAction = {
+        label: t('explorer.edit-item'),
         icon: <FaPen />,
         callback: item => {
             setEditingItem(item);
         }
     };
 
-    const _handleEditModalClose = (item: DataGroupedFilteredSorted<'whoAmI'>[number]) => {
+    const _handleEditModalClose = (item: IItemData) => {
         refreshItem({
             variables: {
                 libraryId: item.libraryId,
+                attributeIds: ['id'], // TODO: get list of displayed attributes stored in the view
+                pagination: {limit: 1},
                 filters: [
                     {
                         condition: RecordFilterCondition.EQUAL,
@@ -49,16 +51,21 @@ export const useEditAction = ({isEnabled}: ActionHook) => {
         setEditingItem(null);
     };
 
-    return {
-        editAction: isEnabled ? _editAction : null,
-        editModal:
-            isEnabled && editingItem !== null ? (
-                <EditRecordModal
-                    open
-                    record={editingItem.value}
-                    library={editingItem.libraryId}
-                    onClose={() => _handleEditModalClose(editingItem)}
-                />
-            ) : null
-    };
+    const editAction = useMemo(
+        () => ({
+            editAction: isEnabled ? _editAction : null,
+            editModal:
+                isEnabled && editingItem !== null ? (
+                    <EditRecordModal
+                        open
+                        record={editingItem.whoAmI}
+                        library={editingItem.libraryId}
+                        onClose={() => _handleEditModalClose(editingItem)}
+                    />
+                ) : null
+        }),
+        [isEnabled, editingItem]
+    );
+
+    return editAction;
 };

@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
+import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {DocumentCollection, EdgeCollection} from 'arangojs/collection';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IDbDocument, IDbEdge} from 'infra/db/_types';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {VALUES_COLLECTION, VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {IRecord, IRecordSort} from '../../_types/record';
+import {IRecord} from '../../_types/record';
 import {IValue, IValueEdge} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
@@ -250,7 +250,7 @@ export default function ({
                 created_by: valueLinks[0].created_by
             };
         },
-        sortQueryPart({attributes, order}: IRecordSort): AqlQuery {
+        sortQueryPart({attributes, order}) {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const advancedValue = aql`FIRST(
@@ -259,12 +259,9 @@ export default function ({
                 FILTER e.attribute == ${attributes[0].id} RETURN v.value
             )`;
 
-            const query =
-                attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
-                    ? aql`SORT ${_getExtendedFilterPart(attributes, advancedValue)} ${order}`
-                    : aql`SORT ${advancedValue} ${order}`;
-
-            return query;
+            return attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
+                ? aql`${_getExtendedFilterPart(attributes, advancedValue)} ${order}`
+                : aql`${advancedValue} ${order}`;
         },
         filterValueQueryPart(attributes, filter, parentIdentifier = BASE_QUERY_IDENTIFIER) {
             const vIdentifier = literal(parentIdentifier + 'v');

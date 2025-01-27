@@ -32,9 +32,13 @@ jest.mock('_ui/components/SelectTreeNode', () => ({
 }));
 
 // To skip ellipsis in RecordCard, which is not very predictable during tests (sometimes only render "...")
-jest.mock('antd/lib/typography/Paragraph', () => function Paragraph({children}) {
-        return <div>{children}</div>;
-    });
+jest.mock(
+    'antd/lib/typography/Paragraph',
+    () =>
+        function Paragraph({children}) {
+            return <div>{children}</div>;
+        }
+);
 
 describe('TreeField', () => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -206,6 +210,7 @@ describe('TreeField', () => {
             treeValuesList: {
                 enable: true,
                 allowFreeEntry: true,
+                allowListUpdate: true,
                 values: [
                     {
                         id: '123456',

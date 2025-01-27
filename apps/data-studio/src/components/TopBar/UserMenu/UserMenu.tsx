@@ -24,12 +24,7 @@ function UserMenu(): JSX.Element {
 
     return (
         <Wrapper>
-            <RecordCard
-                record={userData.userWhoAmI}
-                size={PreviewSize.tiny}
-                withLibrary={false}
-                style={{color: '#000'}}
-            />
+            <RecordCard record={userData.userWhoAmI} size={PreviewSize.tiny} withLibrary={false} />
         </Wrapper>
     );
 }

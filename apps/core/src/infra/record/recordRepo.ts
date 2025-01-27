@@ -58,7 +58,7 @@ export interface IRecordRepo {
     find(params: {
         libraryId: string;
         filters?: IRecordFilterOption[];
-        sort?: IRecordSort;
+        sort?: IRecordSort[];
         pagination?: IPaginationParams | ICursorPaginationParams;
         withCount?: boolean;
         retrieveInactive?: boolean;
@@ -90,6 +90,14 @@ export default function ({
     'core.infra.indexation.helpers.getSearchQuery': getSearchQuery,
     'core.infra.attribute': attributeRepo
 }: IRecordRepoDeps): IRecordRepo {
+    const _isOffsetPagination = (
+        pagination: IPaginationParams | ICursorPaginationParams
+    ): pagination is IPaginationParams => 'offset' in pagination;
+
+    const _isCursorPagination = (
+        pagination: IPaginationParams | ICursorPaginationParams
+    ): pagination is ICursorPaginationParams => 'cursor' in pagination;
+
     const _generateCursor = (from: number, direction: CursorDirection): string =>
         Buffer.from(`${direction}:${from}`).toString('base64');
 
@@ -230,12 +238,12 @@ export default function ({
             }
 
             // If we have a full text search query and no specific sort, sorting by relevance is already handled.
-            if (sort || !fulltextSearchQuery) {
-                const sortQueryPart = sort
-                    ? attributeTypesRepo.getTypeRepo(sort.attributes[0]).sortQueryPart(sort)
-                    : aql`SORT ${literal('TO_NUMBER(r._key) DESC')}`;
+            if (!fulltextSearchQuery && !sort?.length) {
+                queryParts.push(aql`SORT ${literal('TO_NUMBER(r._key) DESC')}`);
+            } else if (sort?.length) {
+                const sortParts = sort.map(s => attributeTypesRepo.getTypeRepo(s.attributes[0]).sortQueryPart(s));
 
-                queryParts.push(sortQueryPart as GeneratedAqlQuery);
+                queryParts.push(aql`SORT `, join(sortParts, ', '));
             }
 
             if (!retrieveInactive && !isFilteringOnActive) {
@@ -243,23 +251,21 @@ export default function ({
             }
 
             if (pagination) {
-                if (!(pagination as IPaginationParams).offset && !(pagination as ICursorPaginationParams).cursor) {
-                    (pagination as IPaginationParams).offset = 0;
-                }
-
-                if (typeof (pagination as IPaginationParams).offset !== 'undefined') {
-                    queryParts.push(aql`LIMIT ${(pagination as IPaginationParams).offset}, ${pagination.limit}`);
-                } else if ((pagination as ICursorPaginationParams).cursor) {
-                    const {direction, from} = _parseCursor((pagination as ICursorPaginationParams).cursor);
+                if (_isOffsetPagination(pagination)) {
+                    queryParts.push(aql`LIMIT ${pagination.offset}, ${pagination.limit}`);
+                } else if (_isCursorPagination(pagination)) {
+                    const {direction, from} = _parseCursor(pagination.cursor);
 
                     // When looking for previous records, first sort in reverse order to get the last records
                     if (direction === CursorDirection.PREV) {
-                        queryParts.push(aql`SORT r.created_at ASC, r._key ASC`);
+                        queryParts.push(aql`SORT ${literal('TO_NUMBER(r._key) ASC')}`);
                     }
 
                     const operator = direction === CursorDirection.NEXT ? '<' : '>';
                     queryParts.push(aql`FILTER r._key ${literal(operator)} ${from}`);
                     queryParts.push(aql`LIMIT ${pagination.limit}`);
+                } else {
+                    (pagination as IPaginationParams).offset = 0;
                 }
             }
 
@@ -284,13 +290,11 @@ export default function ({
                   }
                 : null;
 
-            const returnVal = {
+            return {
                 totalCount,
                 list: list.map(dbUtils.cleanup),
                 cursor
             };
-
-            return returnVal;
         },
         async createRecord({libraryId, recordData, ctx}): Promise<IRecord> {
             const collection = dbService.db.collection(libraryId);

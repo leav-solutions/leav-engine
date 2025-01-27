@@ -16,10 +16,12 @@ describe('View', () => {
         shared: false,
         filters: [],
         owner: true,
-        sort: {
-            field: 'id',
-            order: SortOrder.asc
-        }
+        sort: [
+            {
+                field: 'id',
+                order: SortOrder.asc
+            }
+        ]
     };
 
     test('should show view label', async () => {

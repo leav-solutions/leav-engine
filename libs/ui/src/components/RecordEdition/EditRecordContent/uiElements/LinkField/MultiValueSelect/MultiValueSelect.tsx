@@ -12,7 +12,6 @@ import {useGetOptionsQuery} from './useGetOptionsQuery';
 import {IRecordIdentity} from '_ui/types';
 import {IRecordPropertyLink} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 
 interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<string[]>, SelectProps> {
     activeValues: RecordFormElementsValueLinkValue[] | undefined;
@@ -21,7 +20,6 @@ interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<stri
     onValueDeselect: (value: IRecordPropertyLink) => void;
     onSelectChange: (values: Array<{value: IRecordIdentity; idValue: string}>) => void;
     required?: boolean;
-    shouldShowValueDetailsButton?: boolean;
 }
 
 export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
@@ -32,8 +30,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     label,
     onValueDeselect,
     onSelectChange,
-    required = false,
-    shouldShowValueDetailsButton = false
+    required = false
 }) => {
     if (!onChange) {
         throw Error('MultiValueSelect should be used inside a antd Form.Item');
@@ -48,11 +45,6 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     const {loading, selectOptions, updateLeavField} = useGetOptionsQuery({
         attribute,
         onSelectChange
-    });
-
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: null,
-        attribute
     });
 
     const _handleSelect = (optionValue: string, ...antOnChangeParams: DefaultOptionType[]) => {
@@ -119,6 +111,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
 
     return (
         <KitSelect
+            htmlFor={attribute.id}
             loading={loading}
             value={value}
             required={required}
@@ -127,14 +120,12 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
             options={selectOptions}
             showSearch
             optionFilterProp="label"
-            placeholder={t('record_edition.record_select')}
+            placeholder={t('record_edition.placeholder.record_select')}
             onSelect={_handleSelect}
             onClear={_clearValues}
             onBlur={_handleBlur}
-            // @ts-expect-error
             onDeselect={_handleDeselect}
             onChange={onChange}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
         />
     );
 };

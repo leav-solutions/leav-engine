@@ -10,14 +10,27 @@ import {render, screen} from '../../../_tests/testUtils';
 import {initialState} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext, IEditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
 import EditRecordSidebar from './EditRecordSidebar';
+import {IUseGetRecordColumnsValuesQueryHook} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 
-jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary', () => function RecordSummary() {
-        return <div>RecordSummary</div>;
-    });
+jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary/RecordInformations/RecordInformations', () => ({
+    RecordInformations: () => <div>Informations</div>
+}));
 
-jest.mock('_ui/components/RecordEdition/EditRecordContent/uiElements/StandardField', () => function StandardField() {
-        return <div>StandardField</div>;
-    });
+jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
+    useGetRecordValuesQuery: (): Partial<IUseGetRecordColumnsValuesQueryHook> => ({
+        loading: false,
+        data: {},
+        refetch: jest.fn()
+    })
+}));
+
+jest.mock(
+    '_ui/components/RecordEdition/EditRecordContent/uiElements/StandardField',
+    () =>
+        function StandardField() {
+            return <div>StandardField</div>;
+        }
+);
 
 describe('EditRecordSidebar', () => {
     const mockReducer: IEditRecordReducerContext = {
@@ -31,6 +44,15 @@ describe('EditRecordSidebar', () => {
             record: mockRecord,
             activeValue: mockRecordPropertyWithAttribute,
             sidebarContent: 'valueDetails'
+        }
+    };
+
+    const mockReducerWithoutValue: IEditRecordReducerContext = {
+        ...mockReducer,
+        state: {
+            ...mockReducer.state,
+            record: mockRecord,
+            sidebarContent: 'none'
         }
     };
 
@@ -48,24 +70,69 @@ describe('EditRecordSidebar', () => {
 
     const mockHandleMetadataSubmit = jest.fn();
 
+    it("shouldn't display sidebar content if none", async () => {
+        render(
+            <EditRecordReducerContext.Provider value={mockReducerWithoutValue}>
+                <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
+            </EditRecordReducerContext.Provider>
+        );
+
+        expect(screen.queryByText(/Informations/)).not.toBeInTheDocument();
+    });
+
+    it('should display sidebar content in portal if sidebarContainer is provided', async () => {
+        const sidebarContainer = document.createElement('div');
+        document.body.appendChild(sidebarContainer);
+
+        render(
+            <EditRecordReducerContext.Provider value={mockReducer}>
+                <EditRecordSidebar
+                    onMetadataSubmit={mockHandleMetadataSubmit}
+                    sidebarContainer={sidebarContainer}
+                    open
+                />
+            </EditRecordReducerContext.Provider>
+        );
+
+        expect(screen.getByText('Informations')).toBeInTheDocument();
+    });
+
     describe('Record summary', () => {
-        test('Display record summary', async () => {
+        it('should display record summary', async () => {
             render(
                 <EditRecordReducerContext.Provider value={mockReducer}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
 
-            expect(screen.getByText('RecordSummary')).toBeInTheDocument();
+            expect(screen.getByText('Informations')).toBeInTheDocument();
+            expect(screen.getByText('record_label')).toBeInTheDocument();
+        });
+
+        it('should display record summary with new record', async () => {
+            const mockReducerWithoutRecord = {
+                ...mockReducer,
+                state: {...mockReducer.state, record: null}
+            };
+
+            render(
+                <EditRecordReducerContext.Provider value={mockReducerWithoutRecord}>
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
+                </EditRecordReducerContext.Provider>
+            );
+
+            expect(screen.getByText('Informations')).toBeInTheDocument();
+            expect(screen.getByText(/new_record/)).toBeInTheDocument();
         });
     });
 
+    //TODO: In XSTREAM-1088, we will have to handle switch between recordSummary and valueDetails
     describe('Value details', () => {
         test('Display active value details', async () => {
             const {value, attribute} = mockReducerWithValue.state.activeValue;
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithValue}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
 
@@ -85,7 +152,7 @@ describe('EditRecordSidebar', () => {
         test("Don't display modifier if not set in value", async () => {
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithValueSimple}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
 
@@ -113,7 +180,7 @@ describe('EditRecordSidebar', () => {
             };
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithTreeValue}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
 
@@ -141,7 +208,7 @@ describe('EditRecordSidebar', () => {
 
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithValueAndMetadata}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
 

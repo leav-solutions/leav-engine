@@ -68,7 +68,6 @@ export const ListContent = styled.div`
     padding: 0 5px;
     position: relative;
     flex: 1 0 0;
-    cursor: move;
     border: 1px solid #bcbec0;
     border-radius: 3px;
     display: flex;
@@ -105,4 +104,5 @@ export const ActionRow = styled.div<IActionRow>`
     border-radius: 3px;
     opacity: ${props => props.opacity};
     margin-top: ${props => props.marginTop};
+    cursor: move;
 `;

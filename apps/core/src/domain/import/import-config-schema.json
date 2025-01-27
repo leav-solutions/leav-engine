@@ -252,6 +252,9 @@
                         "allowFreeEntry": {
                             "type": "boolean"
                         },
+                        "allowListUpdate": {
+                            "type": "boolean"
+                        },
                         "enable": {
                             "type": "boolean"
                         },

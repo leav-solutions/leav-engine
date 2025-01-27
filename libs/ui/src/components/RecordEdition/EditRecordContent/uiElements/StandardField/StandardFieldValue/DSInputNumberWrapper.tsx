@@ -2,95 +2,82 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInputNumber} from 'aristid-ds';
-import {ComponentPropsWithRef, FocusEvent, FunctionComponent, useEffect, useRef, useState} from 'react';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form, GetRef, InputNumberProps} from 'antd';
-import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {ComponentPropsWithRef, FocusEvent, FunctionComponent, useRef, useState} from 'react';
+import {Form, GetRef} from 'antd';
 import styled from 'styled-components';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {localizedTranslation} from '@leav/utils';
-import {useLang} from '_ui/hooks';
+import {IStandFieldValueContentProps} from './_types';
+import {KitInputNumberProps} from 'aristid-ds/dist/Kit/DataEntry/InputNumber/types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 
-interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputNumberProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: string, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
-
-const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: boolean}>`
-    .ant-input-number-input-wrap .ant-input-number-input {
-        color: ${({$shouldHighlightColor}) =>
-            $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial'};
-    }
+const KitInputNumberStyled = styled(KitInputNumber)`
+    width: 100%;
 `;
 
-export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
+export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProps<KitInputNumberProps>> = ({
     value,
+    presentationValue,
+    isLastValueOfMultivalues,
+    removeLastValueOfMultivalues,
     onChange,
-    state,
     attribute,
-    fieldValue,
     handleSubmit,
-    handleBlur,
-    shouldShowValueDetailsButton = false
+    readonly,
+    calculatedFlags,
+    inheritedFlags,
+    setActiveValue
 }) => {
     if (!onChange) {
         throw Error('DSInputNumberWrapper should be used inside a antd Form.Item');
     }
 
-    const {t} = useSharedTranslation();
-    const {lang} = useLang();
-    const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_STRING;
+    const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
 
     const [hasChanged, setHasChanged] = useState(false);
-
+    const [isFocused, setIsFocused] = useState(focusedDefaultValue);
     const inputRef = useRef<GetRef<typeof KitInputNumberStyled>>(null);
+    const {errors} = Form.Item.useStatus();
+    const {t} = useSharedTranslation();
 
-    useEffect(() => {
-        if (fieldValue.isEditing && inputRef.current) {
-            inputRef.current.focus(); // To automatically open the date picker
-        }
-    }, [fieldValue.isEditing]);
+    const isErrors = errors.length > 0;
 
-    const _resetToInheritedOrCalculatedValue = () => {
+    const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
-        if (state.isInheritedValue) {
-            onChange(state.inheritedValue.raw_value);
-        } else if (state.isCalculatedValue) {
-            onChange(state.calculatedValue.raw_value);
+        if (inheritedFlags.isInheritedValue) {
+            onChange(inheritedFlags.inheritedValue.raw_payload);
+        } else if (calculatedFlags.isCalculatedValue) {
+            onChange(calculatedFlags.calculatedValue.raw_payload);
         }
-        handleSubmit('', state.attribute.id);
+        await handleSubmit(null, attribute.id);
     };
 
-    const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
+    const _handleFocus = () => {
+        setIsFocused(true);
+        setActiveValue();
+    };
+
+    const _handleOnBlur = async (event: FocusEvent<HTMLInputElement>) => {
+        const valueToSubmit = event.target.value;
+
         if (!hasChanged) {
-            handleBlur();
+            onChange(valueToSubmit);
+            setIsFocused(false);
+
+            if (isNewValueOfMultivalues) {
+                removeLastValueOfMultivalues();
+            }
             return;
         }
 
-        const valueToSubmit = event.target.value;
-        if (valueToSubmit === '' && (state.isInheritedValue || state.isCalculatedValue)) {
+        if (valueToSubmit === '' && (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
 
-        if (hasChanged || (!state.isInheritedValue && !state.isCalculatedValue)) {
-            handleSubmit(valueToSubmit, state.attribute.id);
-        }
-
         onChange(valueToSubmit);
+        await handleSubmit(valueToSubmit, attribute.id);
+        setIsFocused(false);
     };
 
     const _handleOnChange: ComponentPropsWithRef<typeof KitInputNumberStyled>['onChange'] = inputValue => {
@@ -98,36 +85,20 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
         onChange(inputValue);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.raw_value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.raw_value
-            });
-        }
-        return;
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, lang);
-
     return (
         <KitInputNumberStyled
             ref={inputRef}
-            required={state.formElement.settings.required}
-            label={label}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            status={errors.length > 0 ? 'error' : undefined}
-            helper={_getHelper()}
+            id={attribute.id}
+            autoFocus={isFocused}
+            helper={isErrors ? String(errors[0]) : undefined}
+            status={isErrors ? 'error' : undefined}
             value={value}
+            formatter={v => (isFocused || isErrors || !presentationValue ? `${v}` : `${presentationValue}`)}
+            disabled={readonly}
             onChange={_handleOnChange}
-            disabled={state.isReadOnly}
+            onFocus={_handleFocus}
             onBlur={_handleOnBlur}
-            $shouldHighlightColor={
-                !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
-            }
+            placeholder={t('record_edition.placeholder.enter_a_number')}
         />
     );
 };

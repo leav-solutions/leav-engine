@@ -12,6 +12,7 @@ import {AttributeFormat} from '_ui/_gqlTypes';
 import {stringifyDateRangeValue} from '_ui/_utils';
 import {ISimpleCellProps} from '../types';
 import {getValuesToDisplayInCell} from '../utils';
+import {ColorFactory} from 'antd/lib/color-picker/color';
 
 const RichTextDisplay = React.lazy(() => import('./ElementsToDisplay/RichTextDisplay'));
 
@@ -50,7 +51,7 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
         .map(valueData => _getValueByFormat(valueData?.value))
         .join(', ');
 
-    const _getTagStyle = (value: string) => ({color: getInvertColor('#' + value)});
+    const _getTagStyle = (hexColor: string) => ({color: getInvertColor(hexColor)});
 
     const _getElementToDisplay = () => {
         switch (cellData.format) {
@@ -67,11 +68,16 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                 if (!isEmpty(values)) {
                     return (
                         <>
-                            {values.map(valueHex => (
-                                <Tag bordered={true} color={'#' + valueHex} style={_getTagStyle('#' + valueHex)}>
-                                    {'#' + valueHex}
-                                </Tag>
-                            ))}
+                            {values.map((colorData, index) => {
+                                const color = new ColorFactory(colorData.raw_value);
+                                const hexColor = color.toHexString();
+
+                                return (
+                                    <Tag key={index} bordered={true} color={hexColor} style={_getTagStyle(hexColor)}>
+                                        {colorData.value}
+                                    </Tag>
+                                );
+                            })}
                         </>
                     );
                 } else {

@@ -32,8 +32,8 @@ import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
 import {IIndexationManagerApp} from '../indexationManagerApp';
 import {ICreateRecordParams, IRecordsQueryVariables} from './_types';
-import {isLeavError} from '../../../errors/typeguards';
 import {IFindRecordParams} from 'domain/record/_types';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -45,6 +45,7 @@ interface IDeps {
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.permission': IPermissionDomain;
     'core.domain.library': ILibraryDomain;
+    'core.domain.attribute': IAttributeDomain;
     'core.utils': IUtils;
     'core.app.graphql': IGraphqlApp;
     'core.app.core.indexationManager': IIndexationManagerApp;
@@ -58,12 +59,43 @@ export default function ({
     'core.domain.eventsManager': eventsManagerDomain,
     'core.domain.permission': permissionDomain,
     'core.domain.library': libraryDomain,
+    'core.domain.attribute': attributeDomain,
     'core.utils': utils,
     'core.app.graphql': graphqlApp,
     'core.app.core.indexationManager': indexationManagerApp,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
     'core.app.core.subscriptionsHelper': subscriptionsHelper
 }: IDeps): ICoreRecordApp {
+    const _getPropertyValues = async (parent: IRecord, attributeId: string, ctx: IQueryInfos) => {
+        try {
+            return recordDomain.getRecordFieldValue({
+                library: parent.library,
+                record: parent,
+                attributeId,
+                options: {
+                    version: ctx.version,
+                    forceArray: true
+                },
+                ctx
+            });
+        } catch (error) {
+            if (error instanceof LeavError) {
+                ctx.errors = [...(ctx.errors ?? []), error];
+                return [];
+            }
+
+            const leavErr = new LeavError(ErrorTypes.INTERNAL_ERROR, error.message, {
+                fields: {[attributeId]: error.message},
+                record: {
+                    id: parent.id,
+                    library: parent.library
+                }
+            });
+            ctx.errors = [...(ctx.errors ?? []), leavErr];
+            return [];
+        }
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -81,7 +113,14 @@ export default function ({
                         library: Library!,
                         whoAmI: RecordIdentity!,
                         property(attribute: ID!): [GenericValue!]!,
+                        properties(attributeIds: [ID!]!): [RecordProperty!]!,
                         permissions: RecordPermissions!
+                    }
+
+                    type RecordProperty {
+                        attributeId: ID!,
+                        attributeProperties: Attribute!,
+                        values: [GenericValue!]!
                     }
 
                     type RecordIdentity {
@@ -211,7 +250,8 @@ export default function ({
                         records(
                             library: ID!,
                             filters: [RecordFilterInput],
-                            sort: RecordSortInput
+                            sort: RecordSortInput @deprecated(reason: "Should use multipleSort. They are both here for backward compatibility. Eventually, multipleSort will replace sort."),
+                            multipleSort: [RecordSortInput!]
                             version: [ValueVersionInput],
                             pagination: RecordsPagination,
                             retrieveInactive: Boolean,
@@ -239,6 +279,7 @@ export default function ({
                                 library,
                                 filters,
                                 sort,
+                                multipleSort,
                                 version,
                                 pagination,
                                 retrieveInactive = false,
@@ -267,7 +308,7 @@ export default function ({
                             const params: IFindRecordParams = {
                                 library,
                                 filters,
-                                sort,
+                                sort: multipleSort ?? [sort],
                                 pagination: pagination?.cursor
                                     ? (pagination as ICursorPaginationParams)
                                     : (pagination as IPaginationParams),
@@ -356,35 +397,23 @@ export default function ({
                         library: async (record: IRecord, _, ctx: IQueryInfos) =>
                             record.library ? libraryDomain.getLibraryProperties(record.library, ctx) : null,
                         whoAmI: async (rec: IRecord, _, ctx: IQueryInfos) => recordDomain.getRecordIdentity(rec, ctx),
-                        property: async (parent: IRecord, {attribute}: {attribute: string}, ctx: IQueryInfos) => {
-                            try {
-                                const values = await recordDomain.getRecordFieldValue({
-                                    library: parent.library,
-                                    record: parent,
-                                    attributeId: attribute,
-                                    options: {
-                                        version: ctx.version,
-                                        forceArray: true
-                                    },
-                                    ctx
-                                });
-                                return values;
-                            } catch (err) {
-                                const leavErr = new LeavError(
-                                    isLeavError(err) ? err.type : ErrorTypes.INTERNAL_ERROR,
-                                    err.message,
-                                    {
-                                        fields: {[attribute]: err.message},
-                                        record: {
-                                            id: parent.id,
-                                            library: parent.library
-                                        }
-                                    }
-                                );
-                                ctx.errors = [...(ctx.errors ?? []), leavErr];
-                                return [];
-                            }
-                        },
+                        property: async (parent: IRecord, {attribute}: {attribute: string}, ctx: IQueryInfos) =>
+                            _getPropertyValues(parent, attribute, ctx),
+                        properties: async (
+                            parent: IRecord,
+                            {attributeIds}: {attributeIds: string[]},
+                            ctx: IQueryInfos
+                        ) =>
+                            Promise.all(
+                                attributeIds.map(async attributeId => ({
+                                    attributeId,
+                                    attributeProperties: await attributeDomain.getAttributeProperties({
+                                        id: attributeId,
+                                        ctx
+                                    }),
+                                    values: await _getPropertyValues(parent, attributeId, ctx)
+                                }))
+                            ),
                         permissions: (
                             record: IRecord,
                             _,

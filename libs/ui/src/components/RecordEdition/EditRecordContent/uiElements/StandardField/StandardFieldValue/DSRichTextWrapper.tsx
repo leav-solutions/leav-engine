@@ -1,130 +1,102 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useRef, useState} from 'react';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form, GetRef, InputProps} from 'antd';
-import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import styled from 'styled-components';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
+import {FunctionComponent, useState} from 'react';
+import {Form} from 'antd';
 import {KitRichText} from 'aristid-ds';
-
-interface IDSRichTextWrapperProps extends IProvidedByAntFormItem<InputProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: string, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
-
-const KitRichTextStyled = styled(KitRichText)<{$shouldHighlightColor: boolean}>`
-    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
-`;
+import {IStandFieldValueContentProps} from './_types';
+import {KitRichTextProps} from 'aristid-ds/dist/Kit/DataEntry/RichText/types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 
 const isEmptyValue = value => !value || value === '<p></p>';
 
-export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
+export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<KitRichTextProps>> = ({
     value,
+    presentationValue,
+    isLastValueOfMultivalues,
+    removeLastValueOfMultivalues,
     onChange,
-    state,
     attribute,
-    fieldValue,
+    readonly,
     handleSubmit,
-    handleBlur,
-    shouldShowValueDetailsButton = false
+    calculatedFlags,
+    inheritedFlags,
+    setActiveValue
 }) => {
-    const {t} = useSharedTranslation();
-    const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
+    if (!onChange) {
+        throw Error('DSRichTextWrapper should be used inside a antd Form.Item');
+    }
+
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_STRING;
+    const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
+
     const [hasChanged, setHasChanged] = useState(false);
-    const {lang: availableLang} = useLang();
-    const inputRef = useRef<GetRef<typeof KitRichTextStyled>>(null);
+    const [isFocused, setIsFocused] = useState(focusedDefaultValue);
+    const {errors} = Form.Item.useStatus();
+    const {t} = useSharedTranslation();
 
-    useEffect(() => {
-        if (fieldValue.isEditing && inputRef.current) {
-            (inputRef.current.children[0] as HTMLElement).focus();
-        }
-    }, [fieldValue.isEditing]);
+    const isErrors = errors.length > 0;
+    const valueToDisplay = isFocused || isErrors || !presentationValue ? value : presentationValue;
 
-    const _resetToInheritedOrCalculatedValue = () => {
+    const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
-        if (state.isInheritedValue) {
-            onChange(state.inheritedValue.raw_value);
-        } else if (state.isCalculatedValue) {
-            onChange(state.calculatedValue.raw_value);
+        if (inheritedFlags.isInheritedValue) {
+            onChange(inheritedFlags.inheritedValue.raw_payload);
+        } else if (calculatedFlags.isCalculatedValue) {
+            onChange(calculatedFlags.calculatedValue.raw_payload);
         }
-        handleSubmit('', state.attribute.id);
+        await handleSubmit(null, attribute.id);
     };
 
-    const _handleOnBlur = inputValue => {
+    const _handleFocus = () => {
+        setIsFocused(true);
+        setActiveValue();
+    };
+
+    const _handleOnBlur = async inputValue => {
+        const valueToSubmit = isEmptyValue(inputValue) ? null : inputValue;
         if (!hasChanged) {
-            handleBlur();
+            onChange(valueToSubmit);
+            setIsFocused(false);
+
+            if (isNewValueOfMultivalues) {
+                removeLastValueOfMultivalues();
+            }
             return;
         }
 
-        const valueToSubmit = isEmptyValue(inputValue) ? '' : inputValue;
-
-        if (valueToSubmit === '' && (state.isInheritedValue || state.isCalculatedValue)) {
+        if (valueToSubmit === null && (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
-        if (hasChanged || (!state.isInheritedValue && !state.isCalculatedValue)) {
-            handleSubmit(valueToSubmit, state.attribute.id);
-        }
+
         onChange(valueToSubmit);
-        return;
+        await handleSubmit(valueToSubmit, attribute.id);
+        setIsFocused(false);
     };
 
     const _handleOnChange = inputValue => {
         setHasChanged(true);
-        if (state.isInheritedValue && isEmptyValue(inputValue)) {
+        if (inheritedFlags.isInheritedValue && isEmptyValue(inputValue)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
         onChange(inputValue);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.raw_value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.raw_value
-            });
-        }
-        return;
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
-
     return (
-        <KitRichTextStyled
-            ref={inputRef}
-            required={state.formElement.settings.required}
-            label={label}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            status={errors.length > 0 ? 'error' : undefined}
-            helper={_getHelper()}
-            value={value as string}
-            disabled={state.isReadOnly}
+        <KitRichText
+            id={attribute.id}
+            autoFocus={isFocused}
+            helper={isErrors ? String(errors[0]) : undefined}
+            status={isErrors ? 'error' : undefined}
+            value={valueToDisplay}
+            disabled={readonly}
             onChange={_handleOnChange}
+            onFocus={_handleFocus}
             onBlur={_handleOnBlur}
-            $shouldHighlightColor={
-                (!hasChanged && state.isInheritedNotOverrideValue) || state.isCalculatedNotOverrideValue
-            }
+            placeholder={t('record_edition.placeholder.enter_a_text')}
         />
     );
 };

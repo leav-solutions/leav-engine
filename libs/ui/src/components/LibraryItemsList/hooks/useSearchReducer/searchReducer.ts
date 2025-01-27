@@ -7,7 +7,7 @@ import {IAttribute, IField, IFilter, ISelectedRecord, SearchMode, SidebarContent
 import {IValueVersion} from '_ui/types/values';
 import {IView, IViewDisplay} from '_ui/types/views';
 import {ViewSizes, ViewTypes} from '_ui/_gqlTypes';
-import {defaultView, viewSettingsField} from '../../constants';
+import {defaultView} from '../../constants';
 import {ISearchRecord, ISearchSort, ISearchState} from './_types';
 
 export enum SearchActionTypes {
@@ -54,7 +54,7 @@ export type SearchAction =
     | {type: SearchActionTypes.SET_PAGINATION; page: number}
     | {type: SearchActionTypes.SET_OFFSET; offset: number}
     | {type: SearchActionTypes.SET_LOADING; loading: boolean}
-    | {type: SearchActionTypes.SET_SORT; sort: ISearchSort}
+    | {type: SearchActionTypes.SET_SORT; sort: ISearchSort[]}
     | {type: SearchActionTypes.CANCEL_SORT}
     | {type: SearchActionTypes.SET_ATTRIBUTES; attributes: IAttribute[]}
     | {type: SearchActionTypes.SET_FIELDS; fields: IField[]}
@@ -114,38 +114,34 @@ const checkSync = (
     state: ISearchState,
     toCheck: {sort: boolean; filters: boolean; display: boolean; fields: boolean; valuesVersions: boolean}
 ): boolean => {
-    let sync = true;
+    let isSync = true;
 
     if (toCheck.sort) {
-        sync =
-            state.sort?.field === state.view?.current?.sort?.field &&
-            state.sort?.order === state.view?.current?.sort?.order;
+        isSync = JSON.stringify(state.sort) === JSON.stringify(state.view.current?.sort);
     }
 
     if (toCheck.filters) {
-        sync = sync && JSON.stringify(state.view.current?.filters) === JSON.stringify(state.filters);
+        isSync = isSync && JSON.stringify(state.view.current?.filters) === JSON.stringify(state.filters);
     }
 
     if (toCheck.display) {
-        sync =
-            sync &&
+        isSync =
+            isSync &&
             state.display.type === state.view.current?.display?.type &&
             state.display.size === state.view.current?.display?.size;
     }
 
     if (toCheck.fields) {
-        const viewFieldsKeys: string[] = !!state.view.current?.settings?.find(s => s.name === viewSettingsField)
-            ? state.view.current?.settings.find(s => s.name === viewSettingsField).value
-            : [];
+        const viewFieldsKeys = state.view.current.attributes ?? [];
 
-        sync = sync && state.fields.map(f => f.id).join('.') === viewFieldsKeys.join('.');
+        isSync = isSync && state.fields.map(f => f.id).join('.') === viewFieldsKeys.join('.');
     }
 
-    return sync;
+    return isSync;
 };
 
 const searchReducer = (state: ISearchState, action: SearchAction): ISearchState => {
-    let sync = checkSync(state, {
+    let isSync = checkSync(state, {
         sort: action.type !== SearchActionTypes.SET_SORT,
         filters: action.type !== SearchActionTypes.SET_FILTERS,
         display: action.type !== SearchActionTypes.SET_DISPLAY,
@@ -170,33 +166,28 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
         case SearchActionTypes.SET_LOADING:
             return {...state, loading: action.loading};
         case SearchActionTypes.SET_SORT:
-            sync =
-                sync &&
-                state.view.current.sort?.field === action.sort.field &&
-                state.view.current.sort?.order === action.sort.order;
+            isSync = isSync && JSON.stringify(state.view.current.sort) === JSON.stringify(action.sort);
 
-            return {...state, sort: action.sort, view: {...state.view, sync}};
+            return {...state, sort: action.sort, view: {...state.view, sync: isSync}};
         case SearchActionTypes.CANCEL_SORT:
             const {sort, ...newState} = state;
 
-            sync = sync && typeof state.view.current.sort === 'undefined';
+            isSync = isSync && typeof state.view.current.sort === 'undefined';
 
-            return {...newState, view: {...state.view, sync}, loading: true};
+            return {...newState, view: {...state.view, sync: isSync}, loading: true};
         case SearchActionTypes.SET_ATTRIBUTES:
             return {...state, attributes: action.attributes};
         case SearchActionTypes.SET_FIELDS:
-            const viewFieldsKeys: IField[] = !!state.view.current.settings?.find(s => s.name === viewSettingsField)
-                ? state.view.current?.settings.find(s => s.name === viewSettingsField).value
-                : [];
+            const viewFieldsKeys = state.view.current.attributes ?? [];
 
-            sync = sync && action.fields.map(f => f.id).join('.') === viewFieldsKeys.join('.');
+            isSync = isSync && action.fields.map(f => f.id).join('.') === viewFieldsKeys.join('.');
 
-            return {...state, fields: action.fields, view: {...state.view, sync}, loading: true};
+            return {...state, fields: action.fields, view: {...state.view, sync: isSync}, loading: true};
         case SearchActionTypes.SET_FULLTEXT:
             return {...state, fullText: action.fullText};
         case SearchActionTypes.SET_FILTERS:
-            sync = sync && JSON.stringify(state.view.current.filters) === JSON.stringify(action.filters);
-            return {...state, filters: action.filters, view: {...state.view, sync}};
+            isSync = isSync && JSON.stringify(state.view.current.filters) === JSON.stringify(action.filters);
+            return {...state, filters: action.filters, view: {...state.view, sync: isSync}};
         case SearchActionTypes.CHANGE_VIEW:
             return {
                 ...state,
@@ -216,11 +207,11 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
         case SearchActionTypes.SET_VIEW_SYNC:
             return {...state, view: {...state.view, sync: action.sync}};
         case SearchActionTypes.SET_DISPLAY:
-            sync =
-                sync &&
+            isSync =
+                isSync &&
                 action.display.type === state.view.current.display.type &&
                 action.display.size === state.view.current.display.size;
-            return {...state, display: action.display, view: {...state.view, sync}};
+            return {...state, display: action.display, view: {...state.view, sync: isSync}};
         case SearchActionTypes.SET_USER_VIEWS_ORDER:
             return {...state, userViewsOrder: action.userViewsOrder};
         case SearchActionTypes.SET_SHARED_VIEWS_ORDER:
@@ -248,10 +239,11 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
                 loading: true
             };
         case SearchActionTypes.SET_VALUES_VERSIONS: {
-            sync = sync && JSON.stringify(state.view.current.valuesVersions) === JSON.stringify(action.valuesVersions);
+            isSync =
+                isSync && JSON.stringify(state.view.current.valuesVersions) === JSON.stringify(action.valuesVersions);
             return {
                 ...state,
-                view: {...state.view, sync},
+                view: {...state.view, sync: isSync},
                 valuesVersions: {...state.valuesVersions, ...action.valuesVersions}
             };
         }

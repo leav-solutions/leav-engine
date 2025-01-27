@@ -103,6 +103,7 @@
         "format": "Format",
         "isSystem": "Système",
         "readonly": "Lecture seule",
+        "required": "Requis",
         "unique": "Unique",
         "confirm_delete": "Êtes-vous sûr de vouloir supprimer l'attribut {{attrLabel}}?",
         "available_actions": "Actions disponibles",
@@ -162,6 +163,7 @@
         },
         "values_list_enable": "Activer",
         "allow_free_entry": "Autoriser la saisie libre",
+        "allow_list_update": "Autoriser la mise à jour de la liste",
         "values": "Valeurs",
         "values_list": "Liste de valeurs",
         "add_value": "Ajouter une valeur",
@@ -169,7 +171,8 @@
         "date_range_to": "Au",
         "linked_libraries": "Bibliothèques associées",
         "select_attributes": "Sélectionner des attributs",
-        "version_profile": "Profil de version"
+        "version_profile": "Profil de version",
+        "example": "Exemple : "
     },
     "trees": {
         "title": "Arbres",

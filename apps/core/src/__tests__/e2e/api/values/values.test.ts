@@ -11,6 +11,7 @@ describe('Values', () => {
     const treeLibName = 'tree_library_test';
 
     const attrSimpleName = 'values_attribute_test_simple';
+    const attrSimpleNameWithFormat = 'values_attribute_test_simple_with_format';
     const attrSimpleExtendedName = 'values_attribute_test_simple_extended';
     const attrSimpleLinkName = 'values_attribute_test_simple_link';
     const attrAdvancedName = 'values_attribute_test_adv';
@@ -49,6 +50,16 @@ describe('Values', () => {
                     id
                 }
             }`);
+
+        await gqlSaveAttribute({
+            id: attrSimpleNameWithFormat,
+            type: AttributeTypes.SIMPLE,
+            format: AttributeFormats.TEXT,
+            label: 'Test attr simple with format',
+            actionsList: {
+                getValue: [{id: 'toUppercase', name: 'toUppercase'}]
+            }
+        });
 
         await makeGraphQlCall(`mutation {
                 saveAttribute(
@@ -184,6 +195,7 @@ describe('Values', () => {
                         "created_by",
                         "created_at",
                         "${attrSimpleName}",
+                        "${attrSimpleNameWithFormat}",
                         "${attrAdvancedName}",
                         "${attrSimpleLinkName}",
                         "${attrAdvancedLinkName}",
@@ -596,8 +608,8 @@ describe('Values', () => {
 
             expect(res.data.errors).toBeUndefined();
             expect(res.data.data.saveValue[0].payload).toEqual({
-                from: '1/1/1970, 12:16:40 AM',
-                to: '1/1/1970, 12:33:20 AM'
+                from: 1000,
+                to: 2000
             });
         });
 
@@ -624,5 +636,30 @@ describe('Values', () => {
             expect(res.data.errors).toBeDefined();
             expect(res.data.errors[0].extensions.fields[attrDateRangeName]).toBeDefined();
         });
+    });
+
+    test('Run actions list and format on value', async () => {
+        const res = await makeGraphQlCall(`query {
+            runActionsListAndFormatOnValue(
+                library: "${testLibName}",
+                value: {
+                    attribute: "${attrSimpleNameWithFormat}",
+                    payload: "test",
+                    metadata: null
+                },
+                version: null
+            ) {
+                id_value
+                payload
+                raw_payload
+            }
+        }`);
+
+        expect(res.status).toBe(200);
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.runActionsListAndFormatOnValue[0].id_value).toBeNull();
+        expect(res.data.data.runActionsListAndFormatOnValue[0].payload).toBe('TEST');
+        expect(res.data.data.runActionsListAndFormatOnValue[0].raw_payload).toBe('test');
     });
 });

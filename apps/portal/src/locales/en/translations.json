@@ -17,7 +17,7 @@
     "error": {
         "network_error_occurred": "Network error occurred",
         "error_occurred": "Error occurred",
-        "unknown_app": "Endpoint \"{{app}}\" doesn't exist",
+        "unknown_app": "Application \"{{app}}\" doesn't exist",
         "forbidden": "You are not allowed to access the app \"{{app}}\""
     },
     "application": {

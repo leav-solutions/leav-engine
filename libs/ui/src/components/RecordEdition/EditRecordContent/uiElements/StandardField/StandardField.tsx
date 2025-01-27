@@ -1,336 +1,410 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings} from '@leav/utils';
-import {FunctionComponent, useContext, useEffect, useMemo, useReducer} from 'react';
-import {useTranslation} from 'react-i18next';
+import {AnyPrimitive, ErrorTypes, IRequiredFieldsSettings, localizedTranslation} from '@leav/utils';
+import {FunctionComponent, useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
-import CreationErrorContext from '_ui/components/RecordEdition/EditRecord/creationErrorContext';
-import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
-import {useRefreshFieldValues} from '_ui/hooks/useRefreshFieldValues';
-import {AttributeFormat, ValueDetailsValueFragment} from '_ui/_gqlTypes';
-import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
-import standardFieldReducer, {
-    computeInitialState,
-    IdValue,
-    newValueId,
-    StandardFieldReducerActionsTypes
-} from '../../reducers/standardFieldReducer/standardFieldReducer';
-import AddValueBtn from '../../shared/AddValueBtn';
-import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
-import FieldFooter from '../../shared/FieldFooter';
-import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
-import {APICallStatus, VersionFieldScope, IFormElementProps} from '../../_types';
+import {AttributeFormat, ValueDetailsFragment} from '_ui/_gqlTypes';
+import {APICallStatus, IFormElementProps, ISubmitMultipleResult} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
-import {FormInstance} from 'antd';
-import {StandardFieldReducerContext} from '../../reducers/standardFieldReducer/standardFieldReducerContext';
+import {Form, FormInstance, FormListOperation} from 'antd';
+import {KitButton, KitInputWrapper, KitTooltip} from 'aristid-ds';
+import {useLang} from '_ui/hooks';
+import {FaPlus, FaTrash} from 'react-icons/fa';
+import {DeleteAllValuesButton} from './DeleteAllValuesButton';
+import {computeCalculatedFlags, computeInheritedFlags} from './calculatedInheritedFlags';
+import {useGetPresentationValues} from './useGetPresentationValues';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {ComputeIndicator} from './ComputeIndicator';
+import {getAntdDisplayedValue, getEmptyInitialValue} from '../../antdUtils';
+import {GetRecordColumnsValuesRecord, IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
+import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+import {EDIT_RECORD_SIDEBAR_ID, STANDARDFIELD_ID_PREFIX} from '_ui/constants';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
 `;
 
-const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> & {antdForm?: FormInstance}> = ({
+const KitFieldsWrapper = styled.div`
+    max-height: 322px;
+    overflow-y: scroll;
+`;
+
+const RowValueWrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+`;
+
+const StandardFieldValueWrapper = styled.div`
+    flex: 1;
+`;
+
+const KitInputWrapperStyled = styled(KitInputWrapper)`
+    &.bordered > .kit-input-wrapper-content {
+        padding: calc((var(--general-spacing-xs) - 3) * 1px);
+
+        .kit-input-wrapper-content {
+            margin: 3px;
+        }
+    }
+`;
+
+const KitInputExtraAlignLeft = styled.div`
+    margin-right: auto;
+    line-height: 12px;
+`;
+
+const KitDeleteValueButton = styled(KitButton)`
+    margin: 3px;
+`;
+
+const KitAddValueButton = styled(KitButton)`
+    margin-top: calc((var(--general-spacing-xs) - 3) * 1px);
+    margin-bottom: 3px;
+`;
+
+const StandardField: FunctionComponent<
+    IFormElementProps<IRequiredFieldsSettings, RecordFormElementsValueStandardValue> & {
+        antdForm?: FormInstance;
+        computedValues?: GetRecordColumnsValuesRecord<IRecordColumnValueStandard>;
+    }
+> = ({
     element,
+    computedValues,
     antdForm,
+    readonly,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues,
     metadataEdit = false
 }) => {
-    const {t} = useTranslation();
+    const {t} = useSharedTranslation();
+    const {lang: availableLang} = useLang();
 
-    const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
-    const {state: editRecordState, dispatch: editRecordDispatch} = useEditRecordReducer();
+    const antdListFieldsRef = useRef<{
+        add: FormListOperation['add'];
+        remove: FormListOperation['remove'];
+        indexes: number[];
+    } | null>(null);
 
-    const {fetchValues} = useRefreshFieldValues(
-        editRecordState.record?.library?.id,
-        element.attribute?.id,
-        editRecordState.record?.id
-    );
-
-    const isMultipleValues = element.attribute.multiple_values;
     const {attribute} = element;
-    const creationErrors = useContext(CreationErrorContext);
-    const isInCreationMode = record === null;
-
-    const initialState = useMemo(
-        () =>
-            computeInitialState({
-                element,
-                record,
-                isRecordReadOnly,
-                formVersion: editRecordState.valuesVersion,
-                metadataEdit
-            }),
-        []
-    );
-
-    const [state, dispatch] = useReducer(standardFieldReducer, initialState);
 
     useEffect(() => {
-        if (creationErrors[attribute.id]) {
-            // Affect error to each invalid value to display it on form
-            for (const fieldError of creationErrors[attribute.id]) {
-                const idValue = fieldError.id_value ?? null;
+        if (computedValues && computedValues[attribute.id]) {
+            setBackendValues(computedValues[attribute.id]);
+            antdForm.setFieldValue(attribute.id, getAntdDisplayedValue(computedValues[attribute.id], attribute));
+        }
+    }, [computedValues]);
 
+    if (!attribute) {
+        return <ErrorDisplay message={t('record_edition.missing_attribute')} />;
+    }
+
+    const {state, dispatch} = useEditRecordReducer();
+
+    useEffect(() => {
+        const _handleClickOutside = (event: MouseEvent | FocusEvent) => {
+            if (state.activeValue?.attribute?.id !== attribute.id) {
+                return;
+            }
+
+            const target = event.target as HTMLElement;
+
+            const sideBarSelector = '#' + EDIT_RECORD_SIDEBAR_ID;
+            const inputWrapperSelector = '#' + STANDARDFIELD_ID_PREFIX + attribute.id;
+            const colorDropdownSelector = '.ant-popover.ant-color-picker';
+            const pickerDropdownSelector = '.ant-picker-dropdown';
+            const richTextModalSelector = '.kit-modal-wrapper.link-modal';
+
+            const allowedElementsToKeepValueDetailsDisplayed = target.closest(
+                `${sideBarSelector}, ${inputWrapperSelector}, ${colorDropdownSelector}, ${pickerDropdownSelector}, ${richTextModalSelector}`
+            );
+
+            if (!allowedElementsToKeepValueDetailsDisplayed) {
                 dispatch({
-                    type: StandardFieldReducerActionsTypes.SET_ERROR,
-                    idValue,
-                    error: fieldError.message
+                    type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                    value: null
                 });
             }
-        }
-    }, [creationErrors, attribute.id]);
+        };
 
-    const _handleSubmit = async (idValue: IdValue, valueToSave: AnyPrimitive) => {
-        const isSavingNewValue = idValue === newValueId;
-        dispatch({
-            type: StandardFieldReducerActionsTypes.CLEAR_ERROR,
-            idValue
-        });
+        document.addEventListener('mousedown', _handleClickOutside);
 
-        const valueVersion = state.values[state.activeScope].version;
-        const submitRes = await onValueSubmit(
-            [{value: valueToSave, idValue: isSavingNewValue ? null : idValue, attribute}],
-            valueVersion
-        );
+        return () => {
+            document.removeEventListener('mousedown', _handleClickOutside);
+        };
+    }, [state.activeValue, attribute.id, dispatch]);
 
-        if (submitRes.status === APICallStatus.SUCCESS) {
-            const submitResValue = submitRes.values[0] as ValueDetailsValueFragment;
+    const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
 
-            let resultValue: ValueDetailsValueFragment;
-            if (state.metadataEdit) {
-                const metadataValue =
-                    (submitResValue.metadata ?? []).find(({name}) => name === element.attribute.id)?.value ?? null;
-                resultValue = {
-                    id_value: null,
-                    created_at: null,
-                    modified_at: null,
-                    created_by: null,
-                    modified_by: null,
-                    version: null,
-                    raw_payload: metadataValue.raw_payload ?? metadataValue.payload,
-                    payload: metadataValue.payload,
-                    metadata: null,
-                    attribute
-                };
-            } else {
-                resultValue = submitResValue;
-            }
+    const calculatedFlags = computeCalculatedFlags(backendValues);
+    const inheritedFlags = computeInheritedFlags(backendValues);
+    const defaultValueToAddInAntdForm = getEmptyInitialValue(attribute);
 
-            dispatch({
-                type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
-                newValue: resultValue,
-                idValue
-            });
+    const backendWithoutCalculatedOrInheritedValues = backendValues
+        .filter(backendValue => !backendValue.isCalculated && !backendValue.isInherited)
+        .sort((a, b) => Number(a.id_value) - Number(b.id_value));
 
-            const newActiveValue = state.metadataEdit
-                ? {
-                      ...editRecordState.activeValue,
-                      value: {
-                          ...editRecordState.activeValue.value,
-                          metadata: [
-                              ...(editRecordState.activeValue?.value?.metadata ?? []),
-                              {
-                                  name: element.attribute.id,
-                                  value: {
-                                      ...resultValue,
-                                      version: null,
-                                      metadata: null
-                                  }
-                              }
-                          ]
-                      }
-                  }
-                : null;
+    const {presentationValues} = useGetPresentationValues({
+        //TODO fix type
+        values: backendWithoutCalculatedOrInheritedValues as unknown as ValueDetailsFragment[],
+        format: attribute.format,
+        calculatedValue: calculatedFlags.calculatedValue,
+        inheritedValue: inheritedFlags.inheritedValue
+    });
 
-            editRecordDispatch({
-                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                value: newActiveValue
-            });
+    const _handleSubmit =
+        (idValue?: string, fieldName?: number) =>
+        async (valueToSave: AnyPrimitive): Promise<ISubmitMultipleResult> => {
+            const submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
 
-            return;
-        }
+            const shouldSpecifyFieldName = attribute.multiple_values && fieldName !== undefined;
+            const name = shouldSpecifyFieldName ? [attribute.id, fieldName] : attribute.id;
 
-        let errorMessage = submitRes.error;
-        if (!errorMessage && submitRes.errors) {
-            const attributeError = (submitRes?.errors ?? []).filter(err => err.attribute === attribute.id)?.[0];
-
-            if (attributeError) {
-                errorMessage =
-                    attributeError.type === ErrorTypes.VALIDATION_ERROR
-                        ? attributeError.message
-                        : t(`errors.${attributeError.type}`);
-
+            if (submitRes.status === APICallStatus.SUCCESS) {
                 if (antdForm) {
                     antdForm.setFields([
                         {
-                            name: attributeError.attribute,
-                            errors: [errorMessage]
+                            name,
+                            errors: null
                         }
                     ]);
                 }
+
+                if (!attribute.multiple_values) {
+                    setBackendValues(submitRes.values as unknown as RecordFormElementsValueStandardValue[]);
+                } else {
+                    setBackendValues(previousBackendValues => {
+                        const newBackendValues = [...previousBackendValues, ...submitRes.values].reduce(
+                            (acc, backendValue) => {
+                                const existingValue = acc.find(
+                                    o =>
+                                        o.id_value === backendValue.id_value &&
+                                        o.isCalculated === backendValue.isCalculated &&
+                                        o.isInherited === backendValue.isInherited
+                                );
+
+                                if (existingValue) {
+                                    Object.assign(existingValue, backendValue);
+                                } else {
+                                    acc.push(backendValue);
+                                }
+
+                                return acc;
+                            },
+                            []
+                        );
+
+                        return newBackendValues;
+                    });
+                }
+
+                return submitRes;
             }
+
+            if (!submitRes.error && submitRes.errors) {
+                const attributeError = submitRes.errors.filter(err => err.attribute === attribute.id)?.[0];
+
+                if (attributeError) {
+                    submitRes.error =
+                        attributeError.type === ErrorTypes.VALIDATION_ERROR
+                            ? attributeError.message
+                            : t(`errors.${attributeError.type}`);
+                }
+            }
+
+            if (submitRes.error && antdForm) {
+                antdForm.setFields([
+                    {
+                        name,
+                        errors: [submitRes.error]
+                    }
+                ]);
+            }
+
+            return submitRes;
+        };
+
+    const _handleDeleteValue = async (
+        idValue: string | undefined,
+        antdRemove: FormListOperation['remove'],
+        deletedFieldIndex: number
+    ) => {
+        if (idValue) {
+            await onValueDelete({id_value: idValue}, attribute.id);
+
+            setBackendValues(previousBackendValues =>
+                previousBackendValues.filter(backendValue => backendValue.id_value !== idValue)
+            );
         }
-
-        dispatch({
-            type: StandardFieldReducerActionsTypes.SET_ERROR,
-            idValue,
-            error: errorMessage
-        });
-    };
-
-    const _handleDelete = async (idValue: IdValue) => {
-        dispatch({
-            type: StandardFieldReducerActionsTypes.UNEDIT_FIELD,
-            idValue
-        });
-
-        const deleteRes = await onValueDelete({id_value: idValue}, attribute.id);
-
-        if (deleteRes.status === APICallStatus.SUCCESS) {
-            dispatch({
-                type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
-                idValue
-            });
-
-            if (!isInCreationMode) {
-                const freshValues = await fetchValues(state.values[state.activeScope].version);
-
-                dispatch({
-                    type: StandardFieldReducerActionsTypes.REFRESH_VALUES,
-                    formVersion: editRecordState.valuesVersion,
-                    values: freshValues as RecordFormElementsValueStandardValue[]
-                });
-            }
-
-            return;
-        }
-
-        dispatch({
-            type: StandardFieldReducerActionsTypes.SET_ERROR,
-            idValue,
-            error: deleteRes.error
-        });
-    };
-
-    const _handleAddValue = () => {
-        editRecordDispatch({
-            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            value: {
-                attribute,
-                value: null
-            }
-        });
-
-        dispatch({
-            type: StandardFieldReducerActionsTypes.ADD_VALUE
-        });
-    };
-
-    const _handleScopeChange = (scope: VersionFieldScope) => {
-        dispatch({
-            type: StandardFieldReducerActionsTypes.CHANGE_VERSION_SCOPE,
-            scope
-        });
+        antdRemove(deletedFieldIndex);
     };
 
     const _handleDeleteAllValues = async () => {
         const deleteRes = await onDeleteMultipleValues(
             attribute.id,
-            Object.values(state.values[state.activeScope].values).map(v => v.value),
+            backendValues.filter(b => b.id_value),
             null
         );
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
-            dispatch({
-                type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
-                allDeleted: true
-            });
-
-            if (!isInCreationMode) {
-                const freshValues = await fetchValues(state.values[state.activeScope].version);
-
-                dispatch({
-                    type: StandardFieldReducerActionsTypes.REFRESH_VALUES,
-                    formVersion: editRecordState.valuesVersion,
-                    values: freshValues as RecordFormElementsValueStandardValue[]
-                });
-            }
+            antdListFieldsRef.current.remove(antdListFieldsRef.current.indexes);
+            antdListFieldsRef.current.add(defaultValueToAddInAntdForm);
+            setBackendValues(previousBackendValues =>
+                previousBackendValues.filter(backendValue => !backendValue.id_value)
+            );
 
             return;
         }
+    };
 
+    const setActiveValue = () => {
         dispatch({
-            type: StandardFieldReducerActionsTypes.SET_ERROR,
-            idValue: state.values[state.activeScope].values[0]?.idValue,
-            error: deleteRes.error
+            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+            value: {
+                value: null, // Value is needed for Tree or Metadata (for now it seems that we don't need it)
+                editingValue: null, // Set to null because it is only use to compute value.length but it will no longer be used (TO REMOVE IN XSTREAM-1094)
+                attribute
+            }
         });
     };
 
-    if (!element.attribute) {
-        return <ErrorDisplay message={t('record_edition.missing_attribute')} />;
+    const isMultipleValues = element.attribute.multiple_values;
+    const hasValue = isMultipleValues && backendValues.length > 0;
+    const canAddAnotherValue =
+        !readonly &&
+        isMultipleValues &&
+        attribute.format !== AttributeFormat.boolean &&
+        attribute.format !== AttributeFormat.encrypted;
+    const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1;
+
+    const label = localizedTranslation(element.settings.label, availableLang);
+
+    let isFieldInError = false;
+    if (antdForm) {
+        const hasErrorsInFormList = backendValues.some((_, index) => {
+            const errors = antdForm.getFieldError([attribute.id, index]);
+            return errors.length > 0;
+        });
+
+        isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
     }
 
-    const valuesToDisplay = Object.values(state.values[state.activeScope].values).sort(
-        (valueA, valueB) => valueA.index - valueB.index
-    );
-    const hasValue = valuesToDisplay[0].idValue !== newValueId && valuesToDisplay[0].idValue !== null;
-    const canAddAnotherValue =
-        !state.isReadOnly && isMultipleValues && hasValue && attribute.format !== AttributeFormat.boolean;
-    const canDeleteAllValues = !state.isReadOnly && hasValue && valuesToDisplay.length > 1;
-    const isAttributeVersionable = attribute?.versions_conf?.versionable;
-
-    const versions = {
-        [VersionFieldScope.CURRENT]: state.values[VersionFieldScope.CURRENT]?.version ?? null,
-        [VersionFieldScope.INHERITED]: state.values[VersionFieldScope.INHERITED]?.version ?? null
-    };
+    const isReadOnly = attribute.readonly || readonly;
 
     return (
-        <StandardFieldReducerContext.Provider value={{state, dispatch}}>
-            <Wrapper $metadataEdit={metadataEdit}>
-                {valuesToDisplay.map(value => (
+        <Wrapper $metadataEdit={metadataEdit}>
+            <KitInputWrapperStyled
+                id={STANDARDFIELD_ID_PREFIX + attribute.id}
+                label={label}
+                required={attribute.required}
+                disabled={isReadOnly}
+                bordered={attribute.multiple_values}
+                status={isFieldInError ? 'error' : undefined}
+                extra={
+                    <>
+                        <KitInputExtraAlignLeft>
+                            <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
+                        </KitInputExtraAlignLeft>
+                        {canDeleteAllValues && <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} />}
+                    </>
+                }
+                htmlFor={attribute.id}
+            >
+                {!attribute.multiple_values && (
                     <StandardFieldValue
-                        key={value.idValue}
-                        value={value}
-                        state={state}
-                        dispatch={dispatch}
-                        onSubmit={_handleSubmit}
-                        onDelete={_handleDelete}
-                        onScopeChange={_handleScopeChange}
+                        presentationValue={presentationValues[0]}
+                        handleSubmit={_handleSubmit(backendWithoutCalculatedOrInheritedValues[0]?.id_value)}
+                        attribute={attribute}
+                        required={attribute.required}
+                        readonly={isReadOnly}
+                        label={label}
+                        calculatedFlags={calculatedFlags}
+                        inheritedFlags={inheritedFlags}
+                        setActiveValue={setActiveValue}
                     />
-                ))}
-                {(canDeleteAllValues || canAddAnotherValue || attribute?.versions_conf?.versionable) && (
-                    <FieldFooter
-                        bordered
-                        style={{
-                            flexDirection:
-                                canAddAnotherValue && !canDeleteAllValues && !isAttributeVersionable
-                                    ? 'row'
-                                    : 'row-reverse'
-                        }}
-                    >
-                        <div>
-                            {isAttributeVersionable && (
-                                <ValuesVersionBtn
-                                    basic
-                                    versions={versions}
-                                    activeScope={state.activeScope}
-                                    onScopeChange={_handleScopeChange}
-                                />
-                            )}
-                            {canDeleteAllValues && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
-                        </div>
-                        {canAddAnotherValue && (
-                            <AddValueBtn activeScope={state.activeScope} onClick={_handleAddValue} />
-                        )}
-                    </FieldFooter>
                 )}
-            </Wrapper>
-        </StandardFieldReducerContext.Provider>
+                {attribute.multiple_values && (
+                    <Form.List name={attribute.id}>
+                        {(fields, {add, remove}) => {
+                            antdListFieldsRef.current = {add, remove, indexes: fields.map((_, index) => index)};
+
+                            const shouldDisabledAddValueButton =
+                                fields.length > backendWithoutCalculatedOrInheritedValues.length;
+
+                            return (
+                                <>
+                                    <KitFieldsWrapper>
+                                        {fields.map((field, index) => (
+                                            <RowValueWrapper key={field.key}>
+                                                <StandardFieldValueWrapper>
+                                                    <StandardFieldValue
+                                                        listField={field}
+                                                        presentationValue={presentationValues[index] ?? ''}
+                                                        handleSubmit={_handleSubmit(
+                                                            backendWithoutCalculatedOrInheritedValues[index]?.id_value,
+                                                            field.name
+                                                        )}
+                                                        attribute={attribute}
+                                                        label={label}
+                                                        required={attribute.required}
+                                                        readonly={isReadOnly}
+                                                        calculatedFlags={calculatedFlags}
+                                                        inheritedFlags={inheritedFlags}
+                                                        isLastValueOfMultivalues={
+                                                            index === fields.length - 1 && index !== 0
+                                                        }
+                                                        removeLastValueOfMultivalues={() => remove(index)}
+                                                        setActiveValue={setActiveValue}
+                                                    />
+                                                </StandardFieldValueWrapper>
+                                                {fields.length > 1 && (
+                                                    <KitDeleteValueButton
+                                                        type="tertiary"
+                                                        title={t('record_edition.delete_value')}
+                                                        icon={<FaTrash />}
+                                                        onClick={() =>
+                                                            _handleDeleteValue(
+                                                                backendWithoutCalculatedOrInheritedValues[index]
+                                                                    ?.id_value,
+                                                                remove,
+                                                                index
+                                                            )
+                                                        }
+                                                    />
+                                                )}
+                                            </RowValueWrapper>
+                                        ))}
+                                    </KitFieldsWrapper>
+                                    {canAddAnotherValue && (
+                                        <KitTooltip
+                                            title={
+                                                shouldDisabledAddValueButton
+                                                    ? t('record_edition.please_select_value_before_adding')
+                                                    : undefined
+                                            }
+                                        >
+                                            <KitAddValueButton
+                                                type="secondary"
+                                                size="m"
+                                                icon={<FaPlus />}
+                                                onClick={() => add(defaultValueToAddInAntdForm)}
+                                                disabled={shouldDisabledAddValueButton}
+                                            >
+                                                {t('record_edition.add_value')}
+                                            </KitAddValueButton>
+                                        </KitTooltip>
+                                    )}
+                                </>
+                            );
+                        }}
+                    </Form.List>
+                )}
+            </KitInputWrapperStyled>
+        </Wrapper>
     );
 };
 

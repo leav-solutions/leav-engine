@@ -19,10 +19,10 @@ import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {explorerQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
+import {explorerLinkQueryParamName, explorerLibraryQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useSearchParams} from 'react-router-dom';
-import {FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/all';
+import {FaBeer} from 'react-icons/all';
 import styled from 'styled-components';
 
 interface ILibraryHomeProps {
@@ -33,6 +33,7 @@ const ExplorerContainerDivStyled = styled.div`
     --headerSize: 48px;
 
     padding: calc(var(--general-spacing-l) * 1px);
+    padding-bottom: calc(var(--general-spacing-s) * 1px);
     background-color: var(--general-colors-primary-50);
     height: calc(100vh - var(--headerSize));
 `;
@@ -140,46 +141,40 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
         );
     };
 
-    return params.has(explorerQueryParamName) ? (
+    return params.has(explorerLibraryQueryParamName) ? (
         <ExplorerContainerDivStyled>
             <Explorer
-                library={library}
-                defaultActionsForItem={['edit', 'deactivate']}
-                defaultMainActions={['create']}
+                entrypoint={{
+                    type: 'library',
+                    libraryId: library
+                }}
+                defaultActionsForItem={['edit', 'remove']}
+                defaultPrimaryActions={['create']}
                 itemActions={[
                     {
                         label: 'Test 1',
                         icon: <FaBeer />,
-                        callback: item => {
-                            // eslint-disable-next-line no-restricted-syntax
-                            console.log(1, item);
-                        }
-                    },
-                    {
-                        label: 'Test 2',
-                        icon: <FaAccessibleIcon />,
-                        callback: item => {
-                            // eslint-disable-next-line no-restricted-syntax
-                            console.log(2, item);
-                        }
-                    },
-                    {
-                        label: 'Test 3',
-                        icon: <FaXbox />,
-                        callback: item => {
-                            // eslint-disable-next-line no-restricted-syntax
-                            console.log(3, item);
-                        }
-                    },
-                    {
-                        label: 'Test 4',
-                        icon: <FaJs />,
-                        callback: item => {
-                            // eslint-disable-next-line no-restricted-syntax
-                            console.log(4, item);
-                        }
+                        callback: item => console.info(1, item)
                     }
                 ]}
+                primaryActions={[
+                    {
+                        icon: <FaBeer />,
+                        label: 'Additional action 1',
+                        callback: () => console.info('Clicked action 1')
+                    }
+                ]}
+            />
+        </ExplorerContainerDivStyled>
+    ) : params.has(explorerLinkQueryParamName) ? (
+        <ExplorerContainerDivStyled>
+            <Explorer
+                entrypoint={{
+                    type: 'link',
+                    parentLibraryId: 'sebastien_s_librairy',
+                    parentRecordId: '600359434',
+                    linkAttributeId: 'multiple_link'
+                }}
             />
         </ExplorerContainerDivStyled>
     ) : (

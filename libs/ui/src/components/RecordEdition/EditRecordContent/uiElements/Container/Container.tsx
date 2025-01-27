@@ -4,14 +4,17 @@
 import {Col, FormInstance, Row} from 'antd';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import {IFormElementProps} from '../../_types';
+import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
 
 function Container({
     element,
+    computedValues,
     antdForm,
+    readonly,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues
-}: IFormElementProps<{}> & {antdForm?: FormInstance}): JSX.Element {
+}: IFormElementProps<{}> & {antdForm?: FormInstance; computedValues: GetRecordColumnsValuesRecord}): JSX.Element {
     const {elements: formElements} = useRecordEditionContext();
     const children = formElements[element.id] ?? [];
 
@@ -23,6 +26,8 @@ function Container({
                         {el.uiElement && (
                             <el.uiElement
                                 element={el}
+                                computedValues={computedValues}
+                                readonly={readonly}
                                 antdForm={antdForm}
                                 onValueSubmit={onValueSubmit}
                                 onValueDelete={onValueDelete}

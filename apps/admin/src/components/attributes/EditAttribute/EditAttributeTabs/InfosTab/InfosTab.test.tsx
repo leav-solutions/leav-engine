@@ -33,6 +33,7 @@ describe('InfosTab', () => {
                 en: mockAttrAdv.description?.en ?? ''
             },
             readonly: false,
+            required: false,
             type: mockAttrAdv.type,
             format: mockAttrAdv.format,
             multiple_values: mockAttrAdv.multiple_values,
@@ -162,7 +163,7 @@ describe('InfosTab', () => {
         let comp;
         await act(async () => {
             comp = mount(
-                <MockedProvider mocks={(mocksError as unknown) as MockedResponse[]} cache={mockCache} addTypename>
+                <MockedProvider mocks={mocksError as unknown as MockedResponse[]} cache={mockCache} addTypename>
                     <InfosTab />
                 </MockedProvider>
             );

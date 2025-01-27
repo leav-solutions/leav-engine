@@ -1029,7 +1029,7 @@ export default function ({
             const {library, sort, pagination, withCount, retrieveInactive = false} = params;
             const {filters = [] as IRecordFilterLight[], fulltextSearch} = params;
             const fullFilters: IRecordFilterOption[] = [];
-            let fullSort: IRecordSort;
+            let fullSort: IRecordSort[] = [];
 
             await validateHelper.validateLibrary(library, ctx);
 
@@ -1123,39 +1123,43 @@ export default function ({
             }
 
             // Check sort fields
-            if (sort) {
-                const sortAttributes = await getAttributesFromField({
-                    field: sort.field,
-                    condition: null,
-                    deps: {
-                        'core.domain.attribute': attributeDomain,
-                        'core.infra.library': libraryRepo,
-                        'core.infra.tree': treeRepo
-                    },
-                    ctx
-                });
+            if (sort?.length) {
+                fullSort = await Promise.all(
+                    sort.filter(Boolean).map(async s => {
+                        const sortAttributes = await getAttributesFromField({
+                            field: s.field,
+                            condition: null,
+                            deps: {
+                                'core.domain.attribute': attributeDomain,
+                                'core.infra.library': libraryRepo,
+                                'core.infra.tree': treeRepo
+                            },
+                            ctx
+                        });
 
-                const sortAttributesRepo = (await Promise.all(
-                    sortAttributes.map(async a =>
-                        !!a.reverse_link
-                            ? {
-                                  ...a,
-                                  reverse_link: await attributeDomain.getAttributeProperties({
-                                      id: a.reverse_link as string,
-                                      ctx
-                                  })
-                              }
-                            : a
-                    )
-                )) as IAttributeWithRevLink[];
+                        const sortAttributesRepo = (await Promise.all(
+                            sortAttributes.map(async a =>
+                                !!a.reverse_link
+                                    ? {
+                                          ...a,
+                                          reverse_link: await attributeDomain.getAttributeProperties({
+                                              id: a.reverse_link as string,
+                                              ctx
+                                          })
+                                      }
+                                    : a
+                            )
+                        )) as IAttributeWithRevLink[];
 
-                fullSort = {
-                    attributes: sortAttributesRepo,
-                    order: sort.order
-                };
+                        return {
+                            attributes: sortAttributesRepo,
+                            order: s.order
+                        };
+                    }, [])
+                );
             }
 
-            const records = await recordRepo.find({
+            return recordRepo.find({
                 libraryId: library,
                 filters: fullFilters,
                 sort: fullSort,
@@ -1165,8 +1169,6 @@ export default function ({
                 fulltextSearch,
                 ctx
             });
-
-            return records;
         },
         getRecordIdentity: _getRecordIdentity,
         async getRecordFieldValue({library, record, attributeId, options, ctx}) {

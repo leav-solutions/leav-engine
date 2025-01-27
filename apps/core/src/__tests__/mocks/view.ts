@@ -15,14 +15,14 @@ export const mockViewBeforeCreation: IView = {
             value: 'fake_id_filter'
         }
     ],
-    sort: {
-        field: 'id',
-        order: 'asc'
-    },
+    sort: [
+        {
+            field: 'id',
+            order: 'asc'
+        }
+    ],
     shared: true,
-    settings: {
-        columns: ['id', 'label']
-    }
+    attributes: ['id', 'label']
 };
 
 export const mockView: MandatoryId<IView> = {

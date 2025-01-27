@@ -10,7 +10,7 @@ import {
     TabsDirection
 } from '@leav/utils';
 import {IRecordForm, RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
-import {AttributeType, FormElementTypes, LibraryBehavior} from '_ui/_gqlTypes';
+import {AttributeFormat, AttributeType, FormElementTypes, LibraryBehavior} from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {FormElement, IFormElementProps} from '../../components/RecordEdition/EditRecordContent/_types';
 import {IRecordPropertyTree} from '../../_queries/records/getRecordPropertiesQuery';
@@ -55,7 +55,24 @@ export const mockFormElementInput: FormElement<{}> = {
     id: 'input_element',
     containerId: '__root',
     settings: {attribute: 'test_attribute'},
-    attribute: {...mockFormAttribute, versions_conf: {versionable: false, profile: null}},
+    attribute: {...mockFormAttribute, format: AttributeFormat.text, versions_conf: {versionable: false, profile: null}},
+    uiElement: () => <div>{FormFieldTypes.TEXT_INPUT}</div>,
+    type: FormElementTypes.field,
+    uiElementType: FormFieldTypes.TEXT_INPUT
+};
+
+export const mockFormElementMultipleInput: FormElement<{}> = {
+    ...formElementBase,
+    id: 'input_element',
+    containerId: '__root',
+    settings: {attribute: 'test_attribute'},
+    attribute: {
+        ...mockFormAttribute,
+        type: AttributeType.advanced,
+        multiple_values: true,
+        format: AttributeFormat.text,
+        versions_conf: {versionable: false, profile: null}
+    },
     uiElement: () => <div>{FormFieldTypes.TEXT_INPUT}</div>,
     type: FormElementTypes.field,
     uiElementType: FormFieldTypes.TEXT_INPUT
@@ -110,7 +127,7 @@ const mockFormAttributeLink = {
         }
     },
     system: false,
-    linkValuesList: {enable: false, allowFreeEntry: false, values: []}
+    linkValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []}
 };
 
 export const mockFormElementLink: FormElement<{}> = {
@@ -234,7 +251,7 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
                 en: 'My tree'
             }
         },
-        treeValuesList: {enable: false, allowFreeEntry: false, values: []}
+        treeValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []}
     },
     values: [
         {...(mockTreeValueA as unknown as RecordFormElementsValueTreeValue)},

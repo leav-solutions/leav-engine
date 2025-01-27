@@ -12,6 +12,7 @@ export default function (): IActionsListFunction {
         description: 'Encrypt value',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
+        compute: false,
         action: async values =>
             values.reduce(
                 async (promAcc, valueElement) => {

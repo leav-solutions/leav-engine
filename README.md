@@ -335,7 +335,7 @@ End-to-end testing needs to be run inside the container as it starts a server, a
 This can be done by either:
 
 - Running a shell in the container and executing `yarn run test:e2e`
-- Executing the command from your machine: `docker exec -i docker-compose_leav_core_1 yarn run test:e2e`
+- Executing the command from your machine: `docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e`
 
 ---
 

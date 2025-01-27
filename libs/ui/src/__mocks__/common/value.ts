@@ -43,6 +43,8 @@ export const mockRecordPropertyWithAttribute: IRecordPropertyWithAttribute = {
         },
         multiple_values: false,
         readonly: false,
-        permissions: {access_attribute: true, edit_value: true}
+        required: false,
+        permissions: {access_attribute: true, edit_value: true},
+        compute: false
     }
 };

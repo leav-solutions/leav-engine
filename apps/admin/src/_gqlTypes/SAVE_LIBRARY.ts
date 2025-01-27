@@ -79,6 +79,7 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute {
     format: AttributeFormat | null;
     system: boolean;
     readonly: boolean;
+    required: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
@@ -152,6 +153,7 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute {
     format: AttributeFormat | null;
     system: boolean;
     readonly: boolean;
+    required: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
@@ -226,6 +228,7 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute {
     format: AttributeFormat | null;
     system: boolean;
     readonly: boolean;
+    required: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;

@@ -10,7 +10,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import ExcelJS from 'exceljs';
 import {i18n} from 'i18next';
-import {pick} from 'lodash';
+import {pick, set} from 'lodash';
 import path from 'path';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
@@ -35,10 +35,17 @@ export interface IExportParams {
 export interface IExportDomain {
     exportExcel(params: IExportParams, task?: ITaskFuncParams): Promise<string>;
     exportData(
-        jsonMapping: string,
+        mapping: IExportMapping,
         elements: Array<{[libraryId: string]: string}>,
         ctx: IQueryInfos
-    ): Promise<Array<{[mappingKey: string]: string}>>;
+    ): Promise<Array<{[key: string]: any}>>;
+}
+
+export interface IExportMapping {
+    [key: string]: {
+        attribute: string;
+        rawValue?: boolean;
+    };
 }
 
 export interface IExportDomainDeps {
@@ -154,39 +161,55 @@ export default function ({
         return _getRecFieldValue(values, attributes.slice(1), ctx);
     };
 
-    const _getMappingKeysByLibrary = (mapping: Record<string, string>): Record<string, string[]> =>
+    const _getMappingKeysByLibrary = (mapping: IExportMapping): Record<string, string[]> =>
         Object.entries(mapping).reduce((acc, [key, value]) => {
-            const libraryId = value.split('.')[0];
+            const libraryId = value.attribute.split('.')[0];
             (acc[libraryId] ??= []).push(key);
             return acc;
         }, {});
 
     const _getInDepthValue = async (
         libraryId: string,
-        recordId: string,
+        recordIds: string[],
         nestedAttribute: string[],
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
+        rawValue: boolean = false
     ): Promise<string> => {
         const attributeProps = await attributeDomain.getAttributeProperties({id: nestedAttribute[0], ctx});
 
-        const recordFieldValues = await recordDomain.getRecordFieldValue({
-            library: libraryId,
-            record: {id: recordId},
-            attributeId: nestedAttribute[0],
-            ctx
-        });
+        const recordsFieldValues = await Promise.all(
+            recordIds.map(recordId =>
+                recordDomain.getRecordFieldValue({
+                    library: libraryId,
+                    record: {id: recordId},
+                    attributeId: nestedAttribute[0],
+                    ctx
+                })
+            )
+        );
 
-        let value = getValuesToDisplay(recordFieldValues)[0]?.payload;
-
-        if (typeof value === 'undefined' || value === null) {
-            return '';
-        }
+        let values = recordsFieldValues.flatMap(recordFieldValues =>
+            getValuesToDisplay(recordFieldValues).map(
+                recordFieldValue =>
+                    (rawValue && 'raw_payload' in recordFieldValue
+                        ? recordFieldValue.raw_payload
+                        : recordFieldValue.payload) ?? ''
+            )
+        );
 
         if (utils.isLinkAttribute(attributeProps)) {
-            return _getInDepthValue(attributeProps.linked_library, value.id, nestedAttribute.slice(1), ctx);
+            return _getInDepthValue(
+                attributeProps.linked_library,
+                values.map(({id}) => id),
+                nestedAttribute.slice(1),
+                ctx,
+                rawValue
+            );
         } else if (nestedAttribute.length > 1) {
             if (attributeProps.format === AttributeFormats.EXTENDED) {
-                value = nestedAttribute.slice(1).reduce((acc, attr) => acc[attr], JSON.parse(value));
+                values = values.map(value =>
+                    nestedAttribute.slice(1).reduce((acc, attr) => acc[attr], JSON.parse(value))
+                );
             } else {
                 throw new LeavError(
                     ErrorTypes.VALIDATION_ERROR,
@@ -194,26 +217,31 @@ export default function ({
                 );
             }
         } else if (attributeProps.format === AttributeFormats.DATE_RANGE) {
-            value = `${value.from} - ${value.to}`;
+            values = values.map(value => `${value.from} - ${value.to}`);
         }
 
-        return String(value);
+        return values.join(',');
     };
 
     return {
         async exportData(
-            jsonMapping: string,
+            mapping: IExportMapping,
             recordsToExport: Array<{[libraryId: string]: string}>,
             ctx: IQueryInfos
-        ): Promise<Array<{[mappingKey: string]: string}>> {
-            const mapping = JSON.parse(jsonMapping) as Record<string, string>;
+        ): Promise<Array<{[key: string]: any}>> {
             const mappingKeysByLibrary = _getMappingKeysByLibrary(mapping);
 
             const getMappingRecordValues = async (keys: string[], libraryId: string, recordId: string) =>
                 keys.reduce(async (acc, key) => {
-                    const nestedAttributes = mapping[key].split('.').slice(1); // first element is the library id, we delete it
-                    const value = await _getInDepthValue(libraryId, recordId, nestedAttributes, ctx);
-                    return {...(await acc), [key]: value};
+                    const nestedAttributes = mapping[key].attribute.split('.').slice(1); // first element is the library id, we delete it
+                    const value = await _getInDepthValue(
+                        libraryId,
+                        [recordId],
+                        nestedAttributes,
+                        ctx,
+                        mapping[key].rawValue
+                    );
+                    return set(await acc, key, value);
                 }, Promise.resolve({}));
 
             return Promise.all(
@@ -221,7 +249,8 @@ export default function ({
                     Object.entries(e).reduce(
                         async (acc, [libraryId, recordId]) => ({
                             ...(await acc),
-                            ...(await getMappingRecordValues(mappingKeysByLibrary[libraryId], libraryId, recordId))
+                            ...(mappingKeysByLibrary[libraryId] &&
+                                (await getMappingRecordValues(mappingKeysByLibrary[libraryId], libraryId, recordId)))
                         }),
                         Promise.resolve({})
                     )

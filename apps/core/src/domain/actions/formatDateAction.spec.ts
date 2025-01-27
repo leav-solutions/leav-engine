@@ -97,10 +97,9 @@ describe('formatDateAction', () => {
     });
 
     describe('edge cases', () => {
-        test('should fallback to empty localized param when neither params provided', async () => {
+        test('should fallback to timestamp when no param is provided', async () => {
             const resultWithoutParams = await action([testValue], {}, ctx);
-            const resultWithEmptyLocalizedParam = await action([testValue], {localized: '{}'}, ctx);
-            expect(resultWithoutParams).toEqual(resultWithEmptyLocalizedParam);
+            expect(resultWithoutParams.values[0].payload).toBe(2119477320);
         });
         test('should return empty string on non numerical value in DB', async () => {
             expect((await action([{payload: 'aaaa', raw_payload: 'aaa'}], {}, ctx)).values[0].payload).toBe('');

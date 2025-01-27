@@ -31,6 +31,3 @@ yarn run tscheck
 
 echo "\n Checking staged files..."
 yarn lint-staged
-
-echo "\n Running tests..."
-yarn run test:commit

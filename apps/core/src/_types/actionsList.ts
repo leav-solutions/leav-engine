@@ -38,7 +38,7 @@ export type ActionsListParamsConfig<ParamsRequired extends Record<string, boolea
         type: 'boolean' | 'string' | 'number'; // TODO: find admin type
         description: string;
         required: ParamsRequired[Name];
-        default_value: string;
+        helper_value: string;
     };
 }[keyof ParamsRequired];
 
@@ -70,6 +70,7 @@ export interface IActionsListFunction<
     output_types: ActionsListIOTypes[];
     params?: Array<ActionsListParamsConfig<ParamsRequired>>;
     error_message?: ISystemTranslation;
+    compute: boolean;
     action: (
         values: IValue[],
         params: PartialByCondition<ActionsListParams<keyof ParamsRequired>, ParamsRequired>,

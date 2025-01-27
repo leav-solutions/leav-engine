@@ -23,6 +23,7 @@ const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     format: AttributeFormat.text,
     multiple_values: false,
     system: false,
+    required: false,
     readonly: false,
     linked_tree: null,
     linked_library: null,
@@ -41,6 +42,7 @@ export const mockAttrSimpleWithValuesList = {
     values_list: {
         enable: true,
         allowFreeEntry: false,
+        allowListUpdate: false,
         values: ['value 1', 'value 2']
     },
     unique: null
@@ -60,6 +62,7 @@ export const mockAttrSimpleLinkWithValuesList = {
     values_list: {
         enable: true,
         allowFreeEntry: false,
+        allowListUpdate: false,
         values: ['132456', '987654']
     },
     unique: null
@@ -82,6 +85,7 @@ export const mockAttrAdvLinkWithValuesList: GET_ATTRIBUTES_VALUES_LIST_attribute
     values_list: {
         enable: true,
         allowFreeEntry: false,
+        allowListUpdate: false,
         linkValues: [
             {
                 whoAmI: {

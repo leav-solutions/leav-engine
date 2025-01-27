@@ -114,10 +114,12 @@ export const mockFormAttribute: RecordFormAttributeFragment = {
     },
     system: false,
     readonly: false,
+    required: false,
     multiple_values: false,
     values_list: {
         enable: false,
         allowFreeEntry: false,
+        allowListUpdate: false,
         values: []
     },
     permissions: {
@@ -133,14 +135,22 @@ export const mockFormAttribute: RecordFormAttributeFragment = {
             }
         }
     ],
-    versions_conf: null
+    versions_conf: null,
+    compute: false
+};
+
+export const mockFormAttributeCompute: RecordFormAttributeFragment = {
+    ...mockFormAttribute,
+    id: 'test_compute_attribute',
+    format: AttributeFormat.text,
+    compute: true
 };
 
 export const mockFormAttributeTree: RecordFormAttributeTreeAttributeFragment = {
     ...mockFormAttribute,
     ...mockAttributeTree,
     metadata_fields: null,
-    treeValuesList: {enable: false, allowFreeEntry: false, values: []}
+    treeValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []}
 };
 
 export const mockSelectedAttributeA: ISelectedAttribute = {

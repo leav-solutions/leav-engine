@@ -24,6 +24,7 @@ export type RecordFormElementsValueStandardValue = Override<
             name: string;
             value: Override<ValueDetailsValueFragment['metadata'][number]['value'], {version?: IValueVersion}>;
         }>;
+        attribute?: ValueDetailsValueFragment['attribute'];
     }
 >;
 
@@ -35,6 +36,7 @@ export type RecordFormElementsValueLinkValue = Override<
             name: string;
             value: Override<ValueDetailsLinkValueFragment['metadata'][number]['value'], {version?: IValueVersion}>;
         }>;
+        attribute?: ValueDetailsValueFragment['attribute'];
     }
 >;
 
@@ -46,6 +48,7 @@ export type RecordFormElementsValueTreeValue = Override<
             name: string;
             value: Override<ValueDetailsTreeValueFragment['metadata'][number]['value'], {version?: IValueVersion}>;
         }>;
+        attribute?: ValueDetailsValueFragment['attribute'];
     }
 >;
 
@@ -67,6 +70,8 @@ export type IRecordForm = Override<
         elements: RecordFormElement[];
     }
 >;
+
+export type RecordFormElementAttribute = RecordFormElement['attribute'];
 
 export interface IUseGetRecordFormHook {
     loading: boolean;

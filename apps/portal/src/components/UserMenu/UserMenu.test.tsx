@@ -7,6 +7,7 @@ import UserContext from 'context/UserContext';
 import {mockUser} from '_tests/mocks/user';
 import {act, render, screen} from '_tests/testUtils';
 import UserMenu from './UserMenu';
+import {getFlagByLang} from '@leav/utils';
 
 describe('UserMenu', () => {
     const mockLangContext: leavUi.ILangContext = {
@@ -42,12 +43,7 @@ describe('UserMenu', () => {
 
         userEvent.click(userLabel);
 
-        // Hover "more" to display flag actions
-        // FIXME: not the cleanest way to retrieve the "more" button, but on v0.8.0 of aristid-ds,
-        // the button as no accessible name we can use
-        userEvent.click(screen.getByTestId('user-panel').getElementsByClassName('kit-action-more')[0]);
-
-        userEvent.click(await screen.findByText(/en/i));
+        userEvent.click(screen.getByRole('button', {name: getFlagByLang('en')}));
         expect(mockLangContext.setLang).toHaveBeenCalled();
     });
 });

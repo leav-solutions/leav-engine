@@ -2,76 +2,100 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitColorPicker} from 'aristid-ds';
-import {FunctionComponent, useEffect, useRef, useState} from 'react';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useValueDetailsButton} from '../../../shared/ValueDetailsBtn/useValueDetailsButton';
-import {KitColor, KitColorPickerProps, KitColorPickerRef} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
+import {KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
+import {IStandFieldValueContentProps} from './_types';
+import {ColorFactory} from 'antd/lib/color-picker/color';
+import {EMPTY_INITIAL_VALUE_UNDEFINED} from '../../../antdUtils';
+import {ColorValueType} from 'antd/es/color-picker/interface';
 
-interface IDSColorPickerWrapperProps extends IProvidedByAntFormItem<KitColorPickerProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: string, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
+const KitColorPickerStyled = styled(KitColorPicker)`
+    width: 100%;
 
-const KitColorPickerStyled = styled(KitColorPicker)<{$shouldHighlightColor: boolean}>`
     .ant-color-picker-trigger-text {
-        color: ${({$shouldHighlightColor}) =>
-            $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'var(--general-utilities-text-primary)'};
-
         svg {
             color: var(--general-utilities-text-primary);
         }
     }
 `;
 
-export const DSColorPickerWrapper: FunctionComponent<IDSColorPickerWrapperProps> = ({
+const getColorFormatFromValue = (value: ColorValueType): KitColorPickerProps['format'] => {
+    if (!value) {
+        return 'hex';
+    }
+
+    const stringValue = value.toString().toLowerCase();
+
+    if (stringValue.startsWith('#')) {
+        return 'hex';
+    } else if (stringValue.startsWith('rgb')) {
+        return 'rgb';
+    } else if (stringValue.startsWith('hsb')) {
+        return 'hsb';
+    }
+
+    return 'hex';
+};
+
+const getValueToSubmit = (value: KitColorPickerProps['value'], format: KitColorPickerProps['format']) => {
+    if (typeof value === 'string') {
+        value = new ColorFactory(value);
+    }
+
+    switch (format) {
+        case 'hex':
+            return value.toHexString();
+        case 'rgb':
+            return value.toRgbString();
+        case 'hsb':
+            return value.toHsbString();
+    }
+};
+
+export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProps<KitColorPickerProps>> = ({
     value,
-    state,
-    attribute,
-    fieldValue,
+    presentationValue,
+    isLastValueOfMultivalues,
+    removeLastValueOfMultivalues,
     onChange,
+    attribute,
+    label,
+    readonly,
     handleSubmit,
-    handleBlur,
-    shouldShowValueDetailsButton = false
+    calculatedFlags,
+    inheritedFlags,
+    setActiveValue
 }) => {
-    const {t} = useSharedTranslation();
-    const {lang: availableLang} = useLang();
+    if (!onChange) {
+        throw Error('DSColorPickerWrapper should be used inside a antd Form.Item');
+    }
+
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_UNDEFINED;
+    const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
+
     const [hasChanged, setHasChanged] = useState(false);
-    const [currentColor, setCurrentColor] = useState<KitColor>();
-    const [currentHex, setCurrentHex] = useState((value as string) ?? '');
-    const colorPickerRef = useRef<KitColorPickerRef>(null);
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
+    const [isFocused, setIsFocused] = useState(focusedDefaultValue);
+    const [key, setKey] = useState(0);
+    const [format, setFormat] = useState<KitColorPickerProps['format']>(getColorFormatFromValue(value));
 
-    useEffect(() => {
-        if (fieldValue.isEditing) {
-            colorPickerRef.current.focus();
-        }
-    }, [fieldValue.isEditing]);
-
-    const _handleOnOpenChange = (open: boolean) => {
+    const _handleOnOpenChange = async (open: boolean) => {
         if (!open) {
             if (!hasChanged) {
-                handleBlur();
+                setIsFocused(false);
+
+                if (isNewValueOfMultivalues) {
+                    removeLastValueOfMultivalues();
+                }
                 return;
             }
 
-            handleSubmit(currentColor.toHex(), state.attribute.id);
-            onChange(currentColor, currentHex);
+            await handleSubmit(getValueToSubmit(value, format), attribute.id);
+            setIsFocused(false);
+            setHasChanged(false);
+        } else {
+            setIsFocused(true);
+            setActiveValue();
         }
     };
 
@@ -80,54 +104,56 @@ export const DSColorPickerWrapper: FunctionComponent<IDSColorPickerWrapperProps>
         hex: Parameters<KitColorPickerProps['onChange']>[1]
     ) => {
         setHasChanged(true);
-        setCurrentHex(hex);
-        setCurrentColor(color);
         onChange(color, hex);
     };
 
-    const _handleOnClear = () => {
+    const _handleOnClear = async () => {
         setHasChanged(false);
 
-        if (state.isInheritedValue) {
-            onChange(undefined, state.inheritedValue.raw_value);
-        } else if (state.isCalculatedValue) {
-            onChange(undefined, state.calculatedValue.raw_value);
+        if (inheritedFlags.isInheritedValue) {
+            setKey(prevKey => prevKey + 1);
+
+            const inheritedColor = new ColorFactory(inheritedFlags.inheritedValue.raw_payload);
+            onChange(inheritedColor, inheritedFlags.inheritedValue.raw_payload);
+        } else if (calculatedFlags.isCalculatedValue) {
+            setKey(prevKey => prevKey + 1);
+
+            const calculatedColor = new ColorFactory(calculatedFlags.calculatedValue.raw_payload);
+            onChange(calculatedColor, calculatedFlags.calculatedValue.raw_payload);
+        } else {
+            onChange(undefined, undefined);
         }
 
-        onChange(null, '');
-        handleSubmit('', state.attribute.id);
+        await handleSubmit(null, attribute.id);
+        setIsFocused(false);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {inheritedValue: state.inheritedValue.raw_value});
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {calculatedValue: state.calculatedValue.raw_value});
-        }
-        return;
+    const _handleFormatChange = (newFormat: KitColorPickerProps['format']) => {
+        setHasChanged(true);
+        setFormat(newFormat);
     };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
 
     return (
         <KitColorPickerStyled
-            ref={colorPickerRef}
-            value={currentHex}
+            // This is a hack to force the color picker to re-render when needed (e.g. reset to inherited value)
+            // https://react.dev/learn/preserving-and-resetting-state#option-2-resetting-state-with-a-key
+            key={key}
+            id={attribute.id} // unused until color picker is fixed in DS / antd
+            autoFocus={isFocused}
+            open={attribute.multiple_values ? isFocused : undefined}
+            data-testid={attribute.id}
+            value={value}
+            format={format}
+            showText={isFocused || !presentationValue ? true : () => `${presentationValue}`}
             aria-label={label}
-            label={label}
-            helper={_getHelper()}
-            required={state.formElement.settings.required}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            disabled={state.isReadOnly}
-            disabledAlpha
-            showText
-            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
+            disabled={readonly}
+            allowClear={
+                value && !inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue
+            }
             onOpenChange={_handleOnOpenChange}
             onChange={_handleOnChange}
             onClear={_handleOnClear}
-            $shouldHighlightColor={
-                !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
-            }
+            onFormatChange={_handleFormatChange}
         />
     );
 };

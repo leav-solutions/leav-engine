@@ -74,7 +74,7 @@ export default function ({
         const attributesToBind = [];
         for (const attributeToCheck of attributesToCheck) {
             const isAttributeBoundToLibrary = libAttributes.find(attr => attr.id === attributeToCheck);
-            const doesAttributeExist = _checkIfAttributeExist(attributeToCheck, ctx);
+            const doesAttributeExist = await _checkIfAttributeExist(attributeToCheck, ctx);
             if (doesAttributeExist && isAttributeBoundToLibrary) {
                 continue;
             }
@@ -89,6 +89,7 @@ export default function ({
                     multiple_values: false,
                     system: true,
                     readonly: false,
+                    required: false,
                     actions_list: {
                         [ActionsListEvents.GET_VALUE]: [
                             {

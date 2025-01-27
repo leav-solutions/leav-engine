@@ -93,7 +93,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
 
     //////////////////// INDEX AND OBJECT MANIPULATIONS
 
-    const getNewId = () => currentActionList ? currentActionList[currentActionListName].higherId + 1 : 0;
+    const getNewId = () => (currentActionList ? currentActionList[currentActionListName].higherId + 1 : 0);
 
     const getActionFromId = (id: string, listId: number = currentActionList[currentActionListName].higherId + 1) => {
         if (!availableActions) {
@@ -193,9 +193,9 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
     /////////////// SAVE CONFIG FUNCTIONS
 
     const extractParamConfig = (param: IParam): IParamConfig => ({
-            name: param.name,
-            value: param.value ? param.value : param.default_value
-        });
+        name: param.name,
+        value: param.value
+    });
 
     const getConfigActionFromAction = act => {
         const params = act.params && act.params.length ? act.params.map(param => extractParamConfig(param)) : null;

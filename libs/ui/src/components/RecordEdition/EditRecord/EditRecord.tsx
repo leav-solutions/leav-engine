@@ -4,7 +4,6 @@
 import isEqual from 'lodash/isEqual';
 import {FunctionComponent, useEffect, useReducer, useRef, useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {themeVars} from '../../../antdTheme';
 import {ErrorDisplayTypes} from '../../../constants';
 import {useCanEditRecord} from '../../../hooks/useCanEditRecord';
 import {IValueVersion} from '../../../types/values';
@@ -42,9 +41,10 @@ import {
 } from '../EditRecordContent/_types';
 import editRecordReducer, {EditRecordReducerActionsTypes, initialState} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
-import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext, {ICreationErrorByField} from './creationErrorContext';
 import {FormInstance} from 'antd/lib/form/Form';
+import {useRunActionsListAndFormatOnValue} from '../EditRecordContent/hooks/useRunActionsListAndFormatOnValue';
+import EditRecordSidebar from '../EditRecordSidebar';
 
 interface IEditRecordProps {
     antdForm: FormInstance;
@@ -53,6 +53,7 @@ interface IEditRecordProps {
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
     valuesVersion?: IValueVersion;
     showSidebar?: boolean;
+    sidebarContainer?: HTMLElement;
     containerStyle?: CSSObject;
     withInfoButton: boolean;
     // Here we're not in charge of buttons position. It might on a modal footer or pretty much anywhere.
@@ -67,30 +68,22 @@ interface IPendingValues {
     [attributeId: string]: {[idValue: string]: ValueDetailsFragment};
 }
 
-const sidebarWidth = 300;
+const sidebarWidth = '352px';
 
-const Container = styled.div<{$showSidebar: boolean; style: CSSObject}>`
+const Container = styled.div<{$shouldUseLayoutWithSidebar: boolean; style: CSSObject}>`
     display: grid;
-    grid-template-columns: ${props => (props.$showSidebar ? `minmax(0, auto) ${sidebarWidth}px` : '1fr')};
-    grid-template-areas: ${props => (props.$showSidebar ? '"content sidebar"' : '"content"')};
+    grid-template-columns: ${props => (props.$shouldUseLayoutWithSidebar ? `minmax(0, auto) ${sidebarWidth}` : '1fr')};
+    grid-template-areas: ${props => (props.$shouldUseLayoutWithSidebar ? '"content sidebar"' : '"content"')};
     overflow: hidden;
 `;
 
-const Content = styled.div`
+const Content = styled.div<{$shouldUseLayoutWithSidebar: boolean}>`
     grid-area: content;
     padding: 24px;
     overflow-x: hidden;
     overflow-y: scroll;
-`;
-
-const Sidebar = styled.div`
-    overflow-x: hidden;
-    overflow-y: scroll;
-    position: relative;
-    grid-area: sidebar;
-    background: ${themeVars.secondaryBg};
-    border-top-right-radius: 3px;
-    z-index: 1;
+    border-right: ${props =>
+        props.$shouldUseLayoutWithSidebar ? '1px solid var(--general-utilities-border)' : 'none'};
 `;
 
 export const EditRecord: FunctionComponent<IEditRecordProps> = ({
@@ -100,6 +93,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     onCreate,
     valuesVersion,
     showSidebar = false,
+    sidebarContainer,
     containerStyle,
     withInfoButton,
     buttonsRefs
@@ -135,8 +129,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     // We use a ref to store the latest state and access it in the callback
     const pendingValuesRef = useRef(pendingValues);
 
-    const hasPendingValues = !!Object.keys(pendingValues).length;
-
     // Update record in reducer when it changes. Might happen on record identity change (after value save)
     useEffect(() => {
         if (record && !isEqual(record, state.record)) {
@@ -165,6 +157,8 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         pendingValuesRef.current = pendingValues;
     }, [pendingValues]);
 
+    const {runActionsListAndFormatOnValue} = useRunActionsListAndFormatOnValue();
+
     const _handleValueSubmit: SubmitValueFunc = async (values, version) => {
         if (!isCreationMode) {
             // In Edition mode, submit values immediately and send result back to children
@@ -191,7 +185,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                     return savableValue as IValueToSubmit;
                 }),
                 version,
-                true // deleteEmpty
+                false // deleteEmpty
             );
         }
 
@@ -199,6 +193,29 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         const newPendingValues = {...pendingValues};
         const storedValues: ValueDetailsFragment[] = [];
         for (const value of values) {
+            const valueToProcess = {...value, attribute: value.attribute.id, metadata: value.metadata};
+
+            if (valueToProcess.value) {
+                switch (value.attribute.type) {
+                    case AttributeType.advanced_link:
+                    case AttributeType.simple_link:
+                        valueToProcess.value = (value as ISubmittedValueLink).value.id;
+                        break;
+                    case AttributeType.tree:
+                        valueToProcess.value = (value as ISubmittedValueTree).value.id;
+                        break;
+                    default:
+                        valueToProcess.value = (value as ISubmittedValueStandard).value;
+                        break;
+                }
+            }
+
+            const valueAfterActionsListAndFormat = await runActionsListAndFormatOnValue(
+                library,
+                valueToProcess as IValueToSubmit,
+                version
+            );
+
             const attributeId = value.attribute.id;
             if (!newPendingValues[attributeId]) {
                 newPendingValues[attributeId] = {};
@@ -270,8 +287,9 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                     };
                     break;
                 default:
-                    (valueToStore as ValueDetailsValueFragment).value = value.value;
-                    (valueToStore as ValueDetailsValueFragment).raw_value = value.value;
+                    (valueToStore as ValueDetailsValueFragment).payload =
+                        valueAfterActionsListAndFormat.payload ?? value.value;
+                    (valueToStore as ValueDetailsValueFragment).raw_payload = value.value;
                     break;
             }
 
@@ -344,7 +362,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 actualValue = treeValue.id;
                                 break;
                             default:
-                                actualValue = (val as ValueDetailsValueFragment).raw_value;
+                                actualValue = (val as ValueDetailsValueFragment).raw_payload;
                                 break;
                         }
                         return {
@@ -448,12 +466,14 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         }
     };
 
+    const shouldUseLayoutWithSidebar = state.sidebarContent !== 'none' && sidebarContainer === undefined && showSidebar;
+
     return (
         <ErrorBoundary>
             <EditRecordReducerContext.Provider value={{state, dispatch}}>
                 <CreationErrorContext.Provider value={creationErrors}>
-                    <Container $showSidebar={state.sidebarContent !== 'none'} style={containerStyle}>
-                        <Content className="content">
+                    <Container $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar} style={containerStyle}>
+                        <Content $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar}>
                             {permissionsLoading ? (
                                 <EditRecordSkeleton rows={5} />
                             ) : canEdit ? (
@@ -471,9 +491,11 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} showActionButton={false} />
                             )}
                         </Content>
-                        <Sidebar className="sidebar">
-                            <EditRecordSidebar onMetadataSubmit={_handleMetadataSubmit} />
-                        </Sidebar>
+                        <EditRecordSidebar
+                            onMetadataSubmit={_handleMetadataSubmit}
+                            open={showSidebar}
+                            sidebarContainer={sidebarContainer}
+                        />
                     </Container>
                 </CreationErrorContext.Provider>
             </EditRecordReducerContext.Provider>

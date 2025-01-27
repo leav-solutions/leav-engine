@@ -1,7 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DatabaseOutlined, SettingOutlined, StarFilled, StarOutlined, TableOutlined} from '@ant-design/icons';
+import {
+    DatabaseOutlined,
+    LinkOutlined,
+    SettingOutlined,
+    StarFilled,
+    StarOutlined,
+    TableOutlined
+} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {ErrorDisplay, themeVars, useLang} from '@leav/ui';
 import {Menu, Spin} from 'antd';
@@ -19,7 +26,14 @@ import {useTranslation} from 'react-i18next';
 import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
-import {explorerQueryParamName, getExplorerLibraryLink, getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
+import {
+    explorerLibraryQueryParamName,
+    getExplorerLibraryLink,
+    getLibraryLink,
+    getLinkExplorerLink,
+    getTreeLink,
+    localizedTranslation
+} from 'utils';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
@@ -70,6 +84,7 @@ const FavoriteStarSpan = styled.span<{$isFavorite: boolean}>`
 `;
 
 const explorerTabKey = 'explorer';
+const explorerLinkTabKey = 'explorer-link';
 
 const Sidebar: FunctionComponent = () => {
     const {t} = useTranslation();
@@ -162,6 +177,14 @@ const Sidebar: FunctionComponent = () => {
         }
 
         _goTo(getExplorerLibraryLink(activeLibrary.id));
+    };
+
+    const _goToLinkExplorer = () => {
+        if (!activeLibrary?.id) {
+            return;
+        }
+
+        _goTo(getLinkExplorerLink(activeLibrary.id));
     };
 
     const _goToActiveTree = () => {
@@ -309,6 +332,12 @@ const Sidebar: FunctionComponent = () => {
             icon: <TableOutlined />,
             label: t('app_settings.explorer'),
             onClick: _goToExplorerOnActiveLibrary
+        },
+        {
+            key: explorerLinkTabKey,
+            icon: <LinkOutlined />,
+            label: t('app_settings.explorer_link'),
+            onClick: _goToLinkExplorer
         }
     ];
 
@@ -330,9 +359,11 @@ const Sidebar: FunctionComponent = () => {
                 <Menu
                     style={{width: '100%'}}
                     selectedKeys={
-                        params.has(explorerQueryParamName)
+                        params.has(explorerLibraryQueryParamName)
                             ? [explorerTabKey]
-                            : [activePanel, `${activePanel}.${activeLibrary?.id || activeTree?.id}`]
+                            : params.has(explorerLibraryQueryParamName)
+                              ? [explorerLinkTabKey]
+                              : [activePanel, `${activePanel}.${activeLibrary?.id || activeTree?.id}`]
                     }
                     items={menuItems}
                 />

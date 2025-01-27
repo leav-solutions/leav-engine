@@ -27,9 +27,9 @@ declare global {
         color?: string;
         display?: IViewDisplay;
         filters?: IRecordFilterLight[];
-        sort?: IRecordSortLight;
+        sort?: IRecordSortLight[];
         valuesVersions?: IViewValuesVersion;
-        settings: IViewSettings;
+        attributes?: string[];
     }
 
     interface IViewDisplay {
@@ -37,21 +37,9 @@ declare global {
         size: ViewSizes;
     }
 
-    interface IViewSettingsNameVal {
-        name: string;
-        value: unknown;
-    }
-
     type ViewFromGraphQL = Omit<IView, 'valuesVersions' | 'settings'> & {
         valuesVersions: IViewValuesVersionForGraphql[];
-        settings: IViewSettingsNameVal[];
     };
-
-    // Settings values depends on view type. We do not validate it on server side,
-    // considering it's frontend responsibility
-    interface IViewSettings {
-        [key: string]: unknown;
-    }
 
     interface IViewFilterOptions extends ICoreEntityFilterOptions {
         created_by?: string;

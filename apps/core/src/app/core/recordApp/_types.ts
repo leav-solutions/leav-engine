@@ -38,7 +38,9 @@ export interface IRecordsQueryPagination {
 export interface IRecordsQueryVariables {
     library: string;
     filters?: IRecordFilterLight[];
+    // @deprecated Should use multipleSort. They are both here for backward compatibility. Eventually, multipleSort will replace sort.
     sort?: IRecordSortLight;
+    multipleSort?: IRecordSortLight[];
     version?: IRecordsQueryVersion[];
     pagination?: IRecordsQueryPagination;
     retrieveInactive?: boolean;

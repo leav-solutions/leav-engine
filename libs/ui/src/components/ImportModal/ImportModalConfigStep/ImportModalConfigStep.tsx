@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KeyOutlined,LinkOutlined,WarningOutlined} from '@ant-design/icons';
+import {KeyOutlined, LinkOutlined, WarningOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
-import {Space,Table,Typography} from 'antd';
+import {Space, Table, Typography} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
-import {KitSelect,KitTabs,KitTypography} from 'aristid-ds';
+import {KitSelect, KitTabs, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {useLang} from '_ui/hooks';
@@ -223,11 +223,12 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                 key: sheetData.length,
                 __root: <ImportMappingRowTitle sheet={sheet} />,
                 ...Object.keys(sheet.data[0]).reduce((allCols, col, idx) => {
-                    const attributeSelectOptions = (sheet.keyToColumnIndex === idx
-                        ? sheet?.keyToAttributes ?? []
-                        : (sheet?.attributes ?? []).filter(
-                              a => a?.type === AttributeType.simple || a?.type === AttributeType.advanced
-                          )
+                    const attributeSelectOptions = (
+                        sheet.keyToColumnIndex === idx
+                            ? (sheet?.keyToAttributes ?? [])
+                            : (sheet?.attributes ?? []).filter(
+                                  a => a?.type === AttributeType.simple || a?.type === AttributeType.advanced
+                              )
                     ).map(a => ({
                         value: a.id,
                         key: a.id,
@@ -255,17 +256,11 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
             sheetData.push(mappingRow);
         }
 
-        const tabTitle = (
-            <Space>
-                {sheet.name}
-                {!!state.settingsError[sheet.name] && <WarningOutlined style={{color: themeVars.errorColor}} />}
-            </Space>
-        );
-
         return {
-            label: tabTitle,
+            label: sheet.name,
             key: String(sheetIndex),
-            children: (
+            icon: isSheetIgnored ? <WarningOutlined style={{color: themeVars.errorColor}} /> : undefined,
+            tabContent: (
                 <SheetWrapper>
                     <ImportSheetSettings
                         sheetIndex={sheetIndex}
@@ -292,7 +287,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
         };
     });
 
-    return <KitTabs type="card" items={tabItems} />;
+    return <KitTabs items={tabItems} />;
 }
 
 export default ImportModalConfigStep;

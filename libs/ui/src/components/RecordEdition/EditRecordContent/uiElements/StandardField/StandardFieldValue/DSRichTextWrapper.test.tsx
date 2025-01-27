@@ -3,128 +3,50 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mockBrowserFunctionsForTiptap, render, screen} from '_ui/_tests/testUtils';
 import {DSRichTextWrapper} from './DSRichTextWrapper';
-import {VersionFieldScope} from '../../../_types';
-import {
-    CalculatedFlags,
-    InheritedFlags,
-    IStandardFieldReducerState,
-    StandardFieldValueState
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {mockRecord} from '_ui/__mocks__/common/record';
-import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
-const en_label = 'label';
-const fr_label = 'libellé';
-const idValue = '123';
-const mockValue = {
-    index: 0,
-    displayValue: '<p>my <strong>value</strong></p>',
-    editingValue: '<p>my <strong>my raw value</strong></p>',
-    originRawValue: '<p>my <strong>my raw value</strong></p>',
-    idValue: null,
-    isEditing: false,
-    isErrorDisplayed: false,
-    value: {
-        id_value: null,
-        value: '<p>my <strong>my value</strong></p>',
-        raw_value: '<p>my <strong>my raw value</strong></p>',
-        modified_at: null,
-        created_at: null,
-        created_by: null,
-        modified_by: null
-    },
-    version: null,
-    error: '',
-    state: StandardFieldValueState.PRISTINE
-};
+const value = 'Half-blood prince';
+const presentationValue = 'Severus Snape';
+const newValue = 'Harry Potter';
 
-const getInitialState = (required: boolean, fallbackLang = false): IStandardFieldReducerState => ({
-    record: mockRecord,
-    formElement: {
-        ...mockFormElementInput,
-        settings: {
-            label: fallbackLang ? {en: en_label} : {fr: fr_label, en: en_label},
-            required
-        }
-    },
-    attribute: mockFormAttribute,
-    isReadOnly: false,
-    activeScope: VersionFieldScope.CURRENT,
-    values: {
-        [VersionFieldScope.CURRENT]: {
-            version: null,
-            values: {[idValue]: mockValue}
-        },
-        [VersionFieldScope.INHERITED]: null
-    },
-    metadataEdit: false,
-    inheritedValue: null,
-    isInheritedNotOverrideValue: false,
-    isInheritedOverrideValue: false,
-    isInheritedValue: false,
-    calculatedValue: null,
+const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
+    isCalculatedValue: false,
+    isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: false,
-    isCalculatedOverrideValue: false,
-    isCalculatedValue: false
-});
-
-const inheritedValues = [
-    {
-        isInherited: null,
-        value: 'override value',
-        raw_value: 'override value'
-    },
-    {
-        isInherited: true,
-        value: 'inherited value',
-        raw_value: 'inherited value'
-    }
-];
-
-const inheritedNotOverrideValue: InheritedFlags = {
-    isInheritedValue: true,
-    isInheritedOverrideValue: false,
-    isInheritedNotOverrideValue: true,
-    inheritedValue: {raw_value: inheritedValues[1].raw_value}
+    calculatedValue: null
 };
 
-const inheritedOverrideValue: InheritedFlags = {
-    isInheritedValue: true,
-    isInheritedOverrideValue: true,
-    isInheritedNotOverrideValue: false,
-    inheritedValue: {raw_value: inheritedValues[1].raw_value}
-};
-
-const calculatedValues = [
-    {
-        isCalculated: null,
-        value: 'override value',
-        raw_value: 'override value'
-    },
-    {
-        isCalculated: true,
-        value: 'calculated value',
-        raw_value: 'calculated value'
-    }
-];
-
-const calculatedNotOverrideValue: CalculatedFlags = {
-    isCalculatedValue: true,
-    isCalculatedOverrideValue: false,
-    isCalculatedNotOverrideValue: true,
-    calculatedValue: {raw_value: calculatedValues[1].raw_value}
-};
-
-const calculatedOverrideValue: CalculatedFlags = {
+const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedValue: true,
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: {raw_value: calculatedValues[1].raw_value}
+    calculatedValue: {
+        raw_payload: newValue
+    }
 };
+
+const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
+    isInheritedValue: false,
+    isInheritedOverrideValue: false,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: null
+};
+
+const inheritedFlagsWithInheritedValue: InheritedFlags = {
+    isInheritedValue: true,
+    isInheritedOverrideValue: true,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: {
+        raw_payload: newValue
+    }
+};
+
+const notRequired = false;
+const notReadonly = false;
+const readonly = true;
 
 const tiptapCleanup = mockBrowserFunctionsForTiptap();
 
@@ -134,69 +56,80 @@ describe('DSRichTextWrapper', () => {
     });
 
     const mockHandleSubmit = jest.fn();
-    const mockHandleBlur = jest.fn();
     const mockOnChange = jest.fn();
+    const mockSetActiveValue = jest.fn();
+
     let user!: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
-        mockHandleBlur.mockReset();
+        mockSetActiveValue.mockReset();
     });
 
-    test('Should display input with fr label ', async () => {
-        const state = getInitialState(false, false);
+    test('Should display the presentationValue', async () => {
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSRichTextWrapper
-                        state={state}
-                        attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={mockValue}
+                        value={value}
+                        presentationValue={presentationValue}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
-                        handleBlur={mockHandleBlur}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
         );
 
-        expect(screen.getByText(fr_label)).toBeVisible();
+        const input = screen.getByRole('textbox');
+        expect(input).toContainHTML(presentationValue);
     });
 
-    test('Should display input with fallback label ', async () => {
-        const state = getInitialState(false, true);
+    test('Should display the value if presentationValue is empty', async () => {
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSRichTextWrapper
-                        state={state}
-                        attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={mockValue}
+                        value={value}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
-                        handleBlur={mockHandleBlur}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
         );
 
-        expect(screen.getByText(en_label)).toBeVisible();
+        const input = screen.getByRole('textbox');
+        expect(input).toContainHTML(value);
     });
 
-    test('Should not submit if value has not changed', async () => {
-        const state = getInitialState(false);
+    test('Should display the value if focused', async () => {
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSRichTextWrapper
-                        state={state}
-                        attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={mockValue}
+                        value={value}
+                        presentationValue={presentationValue}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
-                        handleBlur={mockHandleBlur}
                         onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -204,166 +137,163 @@ describe('DSRichTextWrapper', () => {
 
         const input = screen.getByRole('textbox');
         await user.click(input);
+        expect(input).toContainHTML(value);
+    });
+
+    test('Should be disabled when readonly', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSRichTextWrapper
+                        value={value}
+                        presentationValue={presentationValue}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={readonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const input = screen.getByRole('textbox');
+        expect(input).toHaveAttribute('contenteditable', 'false');
+    });
+
+    test('Should call handleSubmit on blur with new value', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSRichTextWrapper
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const input = screen.getByRole('textbox');
+
+        await user.click(input);
+        await user.type(input, newValue);
         await user.click(document.body);
 
-        expect(mockHandleSubmit).not.toHaveBeenCalled();
-        expect(mockOnChange).not.toHaveBeenCalled();
+        expect(mockOnChange).toHaveBeenCalled();
+        expect(mockHandleSubmit).toHaveBeenCalledWith(`<p>${newValue}</p>`, mockFormAttribute.id);
     });
 
-    describe('With required input and no inheritance', () => {
-        test('Should submit the value if field is not empty', async () => {
-            const state = getInitialState(true);
+    test('Should call SetActiveValue if focused', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSRichTextWrapper
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const input = screen.getByRole('textbox');
+        await user.click(input);
+
+        expect(mockSetActiveValue).toHaveBeenCalled();
+    });
+
+    describe('Without inherited or calculated flags', () => {
+        test('Should submit empty value on clear', async () => {
             render(
-                <AntForm>
-                    <AntForm.Item>
+                <AntForm initialValues={{inputToTest: value}}>
+                    <AntForm.Item name="inputToTest">
                         <DSRichTextWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
+                            setActiveValue={mockSetActiveValue}
                         />
                     </AntForm.Item>
                 </AntForm>
             );
 
-            const text = 'text';
             const input = screen.getByRole('textbox');
             await user.click(input);
-            await user.type(input, text);
+            await user.clear(input);
             await user.click(document.body);
 
-            expect(mockHandleSubmit).toHaveBeenCalledWith(`<p>${text}</p>`, state.attribute.id);
             expect(mockOnChange).toHaveBeenCalled();
+            expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
         });
     });
 
-    describe('With inheritance', () => {
-        test("Should display the inherited value by default and not save if we don't change it", async () => {
-            let state = getInitialState(false);
-            state = {
-                ...state,
-                ...inheritedNotOverrideValue,
-                formElement: {...state.formElement, values: inheritedValues}
-            };
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSRichTextWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                            value={inheritedValues[1].raw_value}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
+    describe('With inherited or calculated value', () => {
+        it.each`
+            calculatedValue | inheritedValue
+            ${'calculated'} | ${null}
+            ${null}         | ${'inherited'}
+            ${'calculated'} | ${'inherited'}
+        `(
+            'Should submit empty value on clear and call onChange with inherited value',
+            async ({
+                calculatedValue,
+                inheritedValue
+            }: {
+                calculatedValue: string | null;
+                inheritedValue: string | null;
+            }) => {
+                render(
+                    <AntForm initialValues={{inputTest: value}}>
+                        <AntForm.Item name="inputTest">
+                            <DSRichTextWrapper
+                                value={value}
+                                attribute={mockFormAttribute}
+                                required={notRequired}
+                                readonly={notReadonly}
+                                calculatedFlags={
+                                    calculatedValue
+                                        ? calculatedFlagsWithCalculatedValue
+                                        : calculatedFlagsWithoutCalculatedValue
+                                }
+                                inheritedFlags={
+                                    inheritedValue
+                                        ? inheritedFlagsWithInheritedValue
+                                        : inheritedFlagsWithoutInheritedValue
+                                }
+                                handleSubmit={mockHandleSubmit}
+                                onChange={mockOnChange}
+                                setActiveValue={mockSetActiveValue}
+                            />
+                        </AntForm.Item>
+                    </AntForm>
+                );
 
-            const input = screen.getByRole('textbox');
-            expect(input).toContainHTML(inheritedValues[1].raw_value);
+                const input = screen.getByRole('textbox');
+                await user.click(input);
+                await user.clear(input);
+                await user.click(document.body);
 
-            await user.click(input);
-            await user.click(document.body);
-
-            expect(mockHandleSubmit).not.toHaveBeenCalled();
-        });
-
-        test('Should display the override value in the input and inherited value under it', async () => {
-            let state = getInitialState(false);
-            state = {
-                ...state,
-                ...inheritedOverrideValue,
-                formElement: {...state.formElement, values: inheritedValues}
-            };
-
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSRichTextWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                            value={inheritedValues[0].raw_value}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            const input = screen.getByRole('textbox');
-            const helperText = screen.getByText(/inherited value/);
-            expect(input).toContainHTML(inheritedValues[0].raw_value);
-            expect(helperText).toBeInTheDocument();
-        });
-    });
-
-    describe('With calculation', () => {
-        test("Should display the calculated value by default and not save if we don't change it", async () => {
-            let state = getInitialState(false);
-            state = {
-                ...state,
-                ...calculatedNotOverrideValue,
-                formElement: {...state.formElement, values: calculatedValues}
-            };
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSRichTextWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                            value={calculatedValues[1].raw_value}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            const input = screen.getByRole('textbox');
-            expect(input).toContainHTML(calculatedValues[1].raw_value);
-
-            await user.click(input);
-            await user.click(document.body);
-
-            expect(mockHandleSubmit).not.toHaveBeenCalled();
-        });
-
-        test('Should display the override value in the input and calculated value under it', async () => {
-            let state = getInitialState(false);
-            state = {
-                ...state,
-                ...calculatedOverrideValue,
-                formElement: {...state.formElement, values: calculatedValues}
-            };
-
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSRichTextWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                            value={calculatedValues[0].raw_value}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            const input = screen.getByRole('textbox');
-            const helperText = screen.getByText(/calculated value/);
-            expect(input).toContainHTML(calculatedValues[0].raw_value);
-            expect(helperText).toBeInTheDocument();
-        });
+                expect(mockOnChange).toHaveBeenCalledWith(newValue);
+                expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
+            }
+        );
     });
 });

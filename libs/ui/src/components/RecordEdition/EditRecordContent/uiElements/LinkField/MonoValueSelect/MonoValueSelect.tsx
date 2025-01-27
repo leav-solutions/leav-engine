@@ -14,7 +14,6 @@ import {IRecordPropertyLink} from '_ui/_queries/records/getRecordPropertiesQuery
 import {useDebouncedValue} from '_ui/hooks/useDebouncedValue/useDebouncedValue';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 
 const ResultsCount = styled(KitTypography.Text)`
     margin-bottom: calc(var(--general-spacing-s) * 1px);
@@ -32,7 +31,6 @@ interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<strin
         }>
     ) => void;
     required?: boolean;
-    shouldShowValueDetailsButton?: boolean;
 }
 
 export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
@@ -43,8 +41,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     label,
     onSelectChange,
     onSelectClear,
-    required = false,
-    shouldShowValueDetailsButton = false
+    required = false
 }) => {
     if (!onChange) {
         throw Error('MonoValueSelect should be used inside a antd Form.Item');
@@ -71,11 +68,6 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         onSelectChange
     });
 
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: null,
-        attribute
-    });
-
     const handleSelect = async (optionValue: string, ...antOnChangeParams: DefaultOptionType[]) => {
         onChange(optionValue, antOnChangeParams);
         await form.validateFields([attribute.id]);
@@ -96,6 +88,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
     return (
         <KitSelect
+            htmlFor={attribute.id}
             loading={loading}
             value={value}
             required={required}
@@ -104,12 +97,11 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             status={errors.length > 0 && 'error'}
             showSearch
             optionFilterProp="label"
-            placeholder={t('record_edition.record_select')}
+            placeholder={t('record_edition.placeholder.record_select')}
             onSelect={handleSelect}
             onChange={onChange}
             onClear={required ? undefined : handleClear}
             allowClear={!required}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             onSearch={handleSearch}
             filterOption={false} // To avoid dynamic filtering when debouncing
             dropdownRender={menu => {

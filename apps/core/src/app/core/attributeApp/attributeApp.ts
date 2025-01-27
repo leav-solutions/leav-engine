@@ -11,17 +11,15 @@ import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain'
 import {GraphQLResolveInfo} from 'graphql';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {ILibrary} from '_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
-import {ITree} from '_types/tree';
-import {IVersionProfile} from '_types/versionProfile';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {
     AttributeFormats,
     AttributeTypes,
     IAttribute,
+    IAttributeFilterOptions,
     IAttributeVersionsConf,
     IGetCoreAttributesParams,
     IValuesListConf
@@ -30,7 +28,7 @@ import {AttributePermissionsActions, PermissionTypes} from '../../../_types/perm
 import {AttributeCondition, IRecord} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
-import {IIsAllowedParams} from 'domain/permission/_types';
+import {Override} from '@leav/utils';
 
 export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -70,6 +68,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
             coreApp.filterSysTranslationField(attributeData.description, args.lang || []),
         input_types: (attributeData, _, ctx) => attributeDomain.getInputTypes({attrData: attributeData, ctx}),
         output_types: (attributeData, _, ctx) => attributeDomain.getOutputTypes({attrData: attributeData, ctx}),
+        compute: (attributeData, _, ctx) => attributeDomain.doesCompute(attributeData),
         metadata_fields: async (attributeData: IAttribute, _, ctx) =>
             !!attributeData.metadata_fields
                 ? Promise.all(
@@ -126,6 +125,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                 id: ID!,
                 type: AttributeType!,
                 format: AttributeFormat,
+                required: Boolean!,
                 system: Boolean!,
                 readonly: Boolean!,
                 label(lang: [AvailableLanguage!]): SystemTranslation,
@@ -138,6 +138,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                 output_types: ActionListIOTypes!,
                 metadata_fields: [StandardAttribute!],
                 libraries: [Library!],
+                compute: Boolean!,
 
                 # Permissions for this attribute.
                 # If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
@@ -195,23 +196,23 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         maxLength: Int
                     }
 
-                    type LinkAttribute implements Attribute{
+                    type LinkAttribute implements Attribute {
                         ${attributesInterfaceSchema}
                         linked_library: Library,
                         values_list: LinkValuesListConf,
                         reverse_link: String
                     }
 
-                    type TreeAttribute implements Attribute{
+                    type TreeAttribute implements Attribute {
                         ${attributesInterfaceSchema}
                         linked_tree: Tree,
                         values_list: TreeValuesListConf
                     }
 
                     input AttributeInput {
-                        id: ID!
-                        type: AttributeType
-                        format: AttributeFormat
+                        id: ID!,
+                        type: AttributeType,
+                        format: AttributeFormat,
                         label: SystemTranslation,
                         readonly: Boolean,
                         required: Boolean,
@@ -265,42 +266,49 @@ export default function (deps: IDeps): ICoreAttributeApp {
                     type StandardStringValuesListConf {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
+                        allowListUpdate: Boolean,
                         values: [String!]
                     }
+
                     type StandardDateRangeValuesListConf {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
+                        allowListUpdate: Boolean,
                         values: [DateRangeValue!]
                     }
 
                     type LinkValuesListConf {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
+                        allowListUpdate: Boolean,
                         values: [Record!]
                     }
 
                     type TreeValuesListConf {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
+                        allowListUpdate: Boolean,
                         values: [TreeNode!]
                     }
 
                     input ValuesListConfInput {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
+                        allowListUpdate: Boolean,
                         values: [String!]
                     }
 
                     input AttributesFiltersInput {
                         id: ID,
-                        type: [AttributeType],
-                        format: [AttributeFormat],
+                        ids: [ID!],
+                        type: [AttributeType!],
+                        format: [AttributeFormat!],
                         label: String,
                         system: Boolean,
                         multiple_values: Boolean,
                         versionable: Boolean,
-                        libraries: [String],
-                        librariesExcluded: [String]
+                        libraries: [String!],
+                        librariesExcluded: [String!]
                     }
 
                     type AttributesList {
@@ -338,12 +346,25 @@ export default function (deps: IDeps): ICoreAttributeApp {
                 resolvers: {
                     Query: {
                         async attributes(
-                            parent,
-                            {filters, pagination, sort}: IGetCoreAttributesParams,
+                            _,
+                            {
+                                filters,
+                                pagination,
+                                sort
+                            }: Override<
+                                IGetCoreAttributesParams,
+                                {filters?: IAttributeFilterOptions & {ids?: string[]}}
+                            >,
                             ctx: IQueryInfos
                         ): Promise<IList<IAttribute>> {
+                            const applicableFilters = {
+                                ...filters,
+                                id: filters?.ids ?? filters?.id
+                            };
+                            delete applicableFilters.ids;
+
                             return attributeDomain.getAttributes({
-                                params: {filters, withCount: true, pagination, sort},
+                                params: {filters: applicableFilters, withCount: true, pagination, sort},
                                 ctx
                             });
                         }

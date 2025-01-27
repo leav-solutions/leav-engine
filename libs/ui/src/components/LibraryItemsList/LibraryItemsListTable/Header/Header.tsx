@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CaretDownOutlined,CaretUpOutlined} from '@ant-design/icons';
+import {CaretDownOutlined, CaretUpOutlined} from '@ant-design/icons';
 import {Dropdown} from 'antd';
-import React,{useState} from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {AttributeType,SortOrder} from '_ui/_gqlTypes';
+import {AttributeType, SortOrder} from '_ui/_gqlTypes';
 import {infosCol} from '../../constants';
 import {getSortFieldByAttributeType} from '../../helpers/getSortFieldByAttributeType';
 import ChooseTableColumns from '../ChooseTableColumns';
@@ -101,10 +101,12 @@ const Header = ({id, children, type}: IHeaderProps) => {
 
         searchDispatch({
             type: SearchActionTypes.SET_SORT,
-            sort: {
-                field: newSortField,
-                order
-            }
+            sort: [
+                {
+                    field: newSortField,
+                    order
+                }
+            ]
         });
 
         searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
@@ -177,9 +179,9 @@ const Header = ({id, children, type}: IHeaderProps) => {
                 <DropdownContent>
                     <WrapperArrow
                         className="wrapper-arrow"
-                        data-testid={`wrapper-arrow-${searchState.sort?.order}`}
-                        $filterDirection={searchState.sort?.order}
-                        $filterActive={searchState.sort?.field === id}
+                        data-testid={`wrapper-arrow-${searchState.sort?.[0]?.order}`}
+                        $filterDirection={searchState.sort?.[0]?.order}
+                        $filterActive={searchState.sort?.[0]?.field === id}
                         style={{fontSize: '130%'}}
                     >
                         <CaretUpOutlined />

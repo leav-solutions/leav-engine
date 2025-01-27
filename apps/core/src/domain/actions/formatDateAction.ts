@@ -7,7 +7,7 @@ import {Errors} from '../../_types/errors';
 import cloneDeep from 'lodash/cloneDeep';
 import {TypeGuards} from '../../utils';
 
-const defaultValueLocalizedParam = `{
+const helperValueLocalizedParam = `{
   "weekday": "long",
   "month": "long",
   "day": "numeric",
@@ -21,6 +21,7 @@ export default function (): IActionsListFunction<{localized: false; universal: f
         description: 'Convert timestamp to a date',
         input_types: [ActionsListIOTypes.NUMBER],
         output_types: [ActionsListIOTypes.STRING],
+        compute: false,
         params: [
             {
                 name: 'localized',
@@ -28,7 +29,7 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                 description:
                     'Adapt format to current language. Available options: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString#options.',
                 required: false,
-                default_value: defaultValueLocalizedParam
+                helper_value: helperValueLocalizedParam
             },
             {
                 name: 'universal',
@@ -36,7 +37,7 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                 description:
                     'Date format for every languages. If "localized" parameter is defined, this parameter is ignored. Available formats: https://momentjs.com/docs/#/displaying/format/.',
                 required: false,
-                default_value: 'DD/MM/YYYY HH:mm:ss'
+                helper_value: 'DD/MM/YYYY HH:mm:ss'
             }
         ],
         action: (values, {localized, universal}, {lang}) => {
@@ -65,8 +66,12 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                     return elementValue;
                 }
 
-                if ((localized === null || localized === undefined) && universal) {
+                if (!localized && universal) {
                     elementValue.payload = moment.unix(numberVal).format(universal); // TODO: replace moment by dayjs
+                    return elementValue;
+                }
+
+                if (!localized) {
                     return elementValue;
                 }
 

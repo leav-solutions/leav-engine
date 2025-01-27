@@ -91,6 +91,7 @@ export interface IAuth {
               clientId: string;
               postLogoutRedirectUri: string;
           };
+    testApiKey?: string;
 }
 
 export interface IMailer {

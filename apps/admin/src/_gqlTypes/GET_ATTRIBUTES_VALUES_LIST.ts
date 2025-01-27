@@ -15,6 +15,7 @@ import {AttributeType, AttributeFormat} from './globalTypes';
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list_StandardStringValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     values: string[] | null;
 }
 
@@ -26,6 +27,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_va
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list_StandardDateRangeValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     dateRangeValues:
         | GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
         | null;
@@ -64,6 +66,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     linkValues: GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues[] | null;
 }
 
@@ -128,6 +131,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     treeValues: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues[] | null;
 }
 

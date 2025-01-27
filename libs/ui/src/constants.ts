@@ -3,10 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
-
-import {TagProps} from 'antd';
-import {KitTag} from 'aristid-ds';
-import {ComponentProps} from 'react';
 import {AttributeFormat, AttributeType} from './_gqlTypes';
 
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -50,3 +46,9 @@ export const APP_ENDPOINT = window.location.pathname.split('/').filter(e => e)[1
 
 export const PREFIX_USER_VIEWS_ORDER_KEY = 'user_views_order_';
 export const PREFIX_SHARED_VIEWS_ORDER_KEY = 'shared_views_order_';
+
+export const TOOLTIP_DEFAULT_DELAY_IN_SECONDS = 0.5;
+
+export const EDIT_RECORD_SIDEBAR_ID = 'edit_record_sidebar';
+
+export const STANDARDFIELD_ID_PREFIX = 'standardfield-';

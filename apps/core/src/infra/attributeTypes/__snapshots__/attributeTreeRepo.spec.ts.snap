@@ -170,7 +170,7 @@ exports[`AttributeTreeRepo sortQueryPart Should return tree filter 1`] = `
     "value3": "linked",
     "value4": "ASC",
   },
-  "query": "SORT FIRST(
+  "query": "FIRST(
                 FOR v, e IN 1 OUTBOUND r._id
                 @@value0, @@value1
                 FILTER e.attribute == @value2

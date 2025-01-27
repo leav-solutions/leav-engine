@@ -17,13 +17,13 @@ export interface IView {
     color?: string;
     filters?: IFilter[];
     valuesVersions?: IValueVersion;
-    settings?: IGetViewListSettings[];
-    sort?: IGetViewListSort;
+    sort?: IGetViewListSort[];
+    attributes?: string[];
 }
 
 export interface IViewDisplay {
     type: ViewTypes;
-    size: ViewSizes;
+    size?: ViewSizes;
 }
 
 export interface IGetViewListSort {
@@ -37,6 +37,6 @@ export interface IGetViewListSettings {
 }
 
 export interface IGetViewListDisplay {
-    size: ViewSizes;
+    size?: ViewSizes;
     type: ViewTypes;
 }

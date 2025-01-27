@@ -12,6 +12,7 @@ import {IDateRangeValue} from './value';
 export interface IAttribute extends ICoreEntity {
     system?: boolean;
     readonly?: boolean;
+    required?: boolean;
     type: AttributeTypes;
     format?: AttributeFormats;
     linked_library?: string;
@@ -73,6 +74,7 @@ export interface IValuesListConf {
     enable: boolean;
     values?: string[] | IDateRangeValue[] | IRecord[] | ITreeElement[];
     allowFreeEntry?: boolean;
+    allowListUpdate?: boolean;
 }
 
 export type IOAllowedTypes = {

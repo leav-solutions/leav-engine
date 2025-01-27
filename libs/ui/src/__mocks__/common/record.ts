@@ -14,7 +14,7 @@ export const mockPreviews: IPreviewScalar = {
     file: null
 };
 
-export const mockRecord: IRecordIdentityWhoAmI = {
+export const mockRecord = {
     id: '123456',
     label: 'record_label',
     subLabel: 'record_subLabel',
@@ -24,4 +24,4 @@ export const mockRecord: IRecordIdentityWhoAmI = {
     },
     preview: mockPreviews,
     color: 'blue'
-};
+} satisfies IRecordIdentityWhoAmI;

@@ -31,20 +31,21 @@ export default function ({
             ActionsListIOTypes.OBJECT,
             ActionsListIOTypes.BOOLEAN
         ],
+        compute: true,
         params: [
             {
                 name: 'Description',
                 type: 'string',
                 description: 'Quick description of your calculation',
                 required: true,
-                default_value: 'Your description'
+                helper_value: 'Your description'
             },
             {
                 name: 'Formula',
                 type: 'string',
                 description: 'Variables function calls to perform. Ex: getValue(linked_products).getValue(image)',
                 required: true,
-                default_value: ''
+                helper_value: ''
             }
         ],
         action: async (values, params, ctx) => {

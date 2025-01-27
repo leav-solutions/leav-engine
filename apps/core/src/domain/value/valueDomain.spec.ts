@@ -1899,6 +1899,43 @@ describe('ValueDomain', () => {
             await expect(deleteVal).rejects.toHaveProperty('fields.recordId');
         });
 
+        test('Should throw if delete last value of required attribute', async function () {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttrSimple, required: true}),
+                getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
+            };
+
+            const mockValRepo = {
+                getValues: global.__mockPromise([{payload: 'payload'}])
+            };
+
+            const mockValidHelper: Mockify<IValidateHelper> = {
+                validateLibrary: global.__mockPromise(true),
+                validateRecord: global.__mockPromise(true)
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
+            });
+
+            const deleteVal = valDomain.deleteValue({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                value: {id_value: '123'},
+                ctx
+            });
+
+            await expect(deleteVal).rejects.toThrow(ValidationError);
+            await expect(deleteVal).rejects.toHaveProperty('fields.attribute');
+        });
+
         test('Should throw if unknown value', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
@@ -2059,6 +2096,131 @@ describe('ValueDomain', () => {
             expect(resValue.length).toBe(1);
             expect(resValue[0].payload).toBe('val2');
             expect(resValue[0].version).toMatchObject({my_tree: '8'});
+        });
+
+        test('Should return versioned values for default tree node (no version supplied)', async function () {
+            const mockGetDefaultElementHelperForRoot: Mockify<IGetDefaultElementHelper> = {
+                getDefaultElement: global.__mockPromise({id: '7'})
+            };
+
+            const mockElementAncestorsHelperForRoot: Mockify<IElementAncestorsHelper> = {
+                getCachedElementAncestors: global.__mockPromise([
+                    {
+                        id: '7',
+                        record: {
+                            id: 7,
+                            library: 'my_lib'
+                        }
+                    }
+                ])
+            };
+
+            const valueData = [
+                {
+                    payload: 'val1',
+                    attribute: 'test_attr',
+                    version: {my_tree: '7'}
+                },
+                {
+                    payload: 'val2',
+                    attribute: 'test_attr',
+                    version: {my_tree: '8'}
+                }
+            ];
+
+            const mockValRepo = {
+                getValues: global.__mockPromise(valueData)
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as any,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.tree.helpers.elementAncestors':
+                    mockElementAncestorsHelperForRoot as IElementAncestorsHelper,
+                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
+                'core.domain.tree.helpers.getDefaultElement':
+                    mockGetDefaultElementHelperForRoot as IGetDefaultElementHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
+            });
+
+            const resValue = await valDomain.getValues({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                options: {},
+                ctx
+            });
+
+            expect(mockValRepo.getValues.mock.calls.length).toBe(1);
+
+            expect(mockElementAncestorsHelperForRoot.getCachedElementAncestors).toHaveBeenCalledTimes(1);
+
+            expect(resValue.length).toBe(1);
+            expect(resValue[0].payload).toBe('val1');
+            expect(resValue[0].version).toMatchObject({my_tree: '7'});
+        });
+
+        test('Should handle versioned values for default tree node if tree has no elements', async function () {
+            const valueData = [
+                {
+                    payload: 'val1',
+                    attribute: 'test_attr',
+                    version: {my_tree: '7'}
+                },
+                {
+                    payload: 'val2',
+                    attribute: 'test_attr',
+                    version: {my_tree: '8'}
+                }
+            ];
+
+            const mockValRepo = {
+                getValues: global.__mockPromise(valueData)
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+            };
+
+            const mockGetDefaultElementHelperNoElement: Mockify<IGetDefaultElementHelper> = {
+                getDefaultElement: global.__mockPromise(undefined)
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as any,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
+                'core.domain.tree.helpers.getDefaultElement':
+                    mockGetDefaultElementHelperNoElement as IGetDefaultElementHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
+            });
+
+            const resValue = await valDomain.getValues({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                options: {},
+                ctx
+            });
+
+            expect(mockValRepo.getValues.mock.calls.length).toBe(1);
+
+            expect(mockElementAncestorsHelper.getCachedElementAncestors).toHaveBeenCalledTimes(0);
+
+            expect(resValue.length).toBe(0);
         });
 
         test('Should return versioned values with multiple trees', async function () {
@@ -2366,6 +2528,117 @@ describe('ValueDomain', () => {
 
             await expect(getVal).rejects.toThrow(ValidationError);
             await expect(getVal).rejects.toHaveProperty('fields.recordId');
+        });
+    });
+
+    describe('runActionsListAndFormatOnValue', () => {
+        test('Should return the same value if no actions list', async function () {
+            const payload = 'test val';
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as any,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
+            });
+
+            const resValue = await valDomain.runActionsListAndFormatOnValue({
+                library: 'test_lib',
+                value: {
+                    attribute: 'test_attr',
+                    payload
+                },
+                ctx
+            });
+            expect(resValue).toMatchObject([{payload, raw_payload: payload, attribute: 'test_attr'}]);
+        });
+
+        test('Should return formatted value after actions list', async function () {
+            const payload = 'test val';
+            const formattedPayload = 'TEST VAL';
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
+            };
+
+            const mockActionsListDomainUpperCase: Mockify<IActionsListDomain> = {
+                runActionsList: jest
+                    .fn()
+                    .mockImplementation((_, val) => Promise.resolve([{...val[0], payload: formattedPayload}]))
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomainUpperCase as any,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
+            });
+
+            const resValue = await valDomain.runActionsListAndFormatOnValue({
+                library: 'test_lib',
+                value: {
+                    attribute: 'test_attr',
+                    payload
+                },
+                ctx
+            });
+            expect(resValue).toMatchObject([{payload: formattedPayload, raw_payload: payload, attribute: 'test_attr'}]);
+        });
+
+        test('Should return fomatted value after actions list if attribute format is date range', async function () {
+            const dateRangePayload = JSON.stringify({from: '1727733600', to: '1729548000'});
+            const dateRangeFormattedPayload = {
+                from: 'Monday, Septembre 30, 2024',
+                to: 'Tuesday, October 1, 2024'
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
+            };
+
+            const mockActionsListDomainDateRange: Mockify<IActionsListDomain> = {
+                runActionsList: jest.fn().mockImplementation((_, val) =>
+                    Promise.resolve([
+                        {
+                            ...val[0],
+                            payload: dateRangeFormattedPayload
+                        }
+                    ])
+                )
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomainDateRange as any,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
+            });
+
+            const resValue = await valDomain.runActionsListAndFormatOnValue({
+                library: 'test_lib',
+                value: {
+                    attribute: 'test_attr',
+                    payload: dateRangePayload
+                },
+                ctx
+            });
+            expect(resValue).toMatchObject([
+                {
+                    payload: dateRangeFormattedPayload,
+                    raw_payload: dateRangePayload,
+                    attribute: 'test_attr'
+                }
+            ]);
         });
     });
 });

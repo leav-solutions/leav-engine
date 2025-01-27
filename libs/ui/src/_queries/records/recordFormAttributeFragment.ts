@@ -12,7 +12,9 @@ export const recordFormAttributeFragment = gql`
         format
         system
         readonly
+        required
         multiple_values
+        compute
         permissions(record: {id: $recordId, library: $libraryId}) {
             access_attribute
             edit_value
@@ -66,6 +68,7 @@ export const recordFormAttributeFragment = gql`
             linkValuesList: values_list {
                 enable
                 allowFreeEntry
+                allowListUpdate
                 values {
                     ...RecordIdentity
                 }
@@ -80,6 +83,7 @@ export const recordFormAttributeFragment = gql`
             treeValuesList: values_list {
                 enable
                 allowFreeEntry
+                allowListUpdate
                 values {
                     id
                     record {

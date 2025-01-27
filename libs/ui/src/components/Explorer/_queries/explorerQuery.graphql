@@ -1,0 +1,95 @@
+fragment PropertyValue on GenericValue {
+    ... on Value {
+        valuePayload: payload
+        valueRawPayload: raw_payload
+    }
+    ... on LinkValue {
+        linkPayload: payload {
+            ...RecordIdentity
+        }
+    }
+    ... on TreeValue {
+        treePayload: payload {
+            record {
+                ...RecordIdentity
+            }
+        }
+    }
+}
+
+fragment AttributeProperties on Attribute {
+    id
+    label
+    type
+    format
+    multiple_values
+}
+
+query ExplorerLibraryData(
+    $libraryId: ID!,
+    $attributeIds: [ID!]!,
+    $pagination: RecordsPagination,
+    $filters: [RecordFilterInput],
+    $multipleSort: [RecordSortInput!],
+    $searchQuery: String
+) {
+    records(library: $libraryId, filters: $filters, pagination: $pagination, multipleSort: $multipleSort, searchQuery: $searchQuery) {
+        totalCount
+        list {
+            ...RecordIdentity
+            properties(attributeIds: $attributeIds) {
+                attributeId
+                attributeProperties {
+                    ...AttributeProperties
+                }
+                values {
+                    ...PropertyValue
+                }
+            }
+        }
+    }
+}
+
+fragment LinkProperty on GenericValue {
+    id_value
+    ... on LinkValue {
+        payload {
+        ...RecordIdentity
+        properties(attributeIds: $attributeIds) {
+            attributeId
+            attributeProperties {
+                ...AttributeProperties
+            }
+            values {
+                ...PropertyValue
+            }
+        }
+        }
+    }
+}
+
+query ExplorerLinkData(
+    $attributeIds: [ID!]!,
+    $parentLibraryId: ID!,
+    $parentRecordId: String,
+    $linkAttributeId: ID!,
+) {
+  records(library: $parentLibraryId, filters: [{
+      field: "id",
+      condition: EQUAL,
+      value: $parentRecordId
+    }]) {
+    list {
+      id
+      whoAmI {
+        id
+        library {
+          id
+        }
+      }
+      property(attribute: $linkAttributeId) {
+        ...LinkProperty
+      }
+    }
+  }
+}

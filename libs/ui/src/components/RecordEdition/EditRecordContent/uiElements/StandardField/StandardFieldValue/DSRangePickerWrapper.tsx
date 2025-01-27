@@ -2,150 +2,151 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDatePicker} from 'aristid-ds';
-import {FunctionComponent, useEffect, useRef} from 'react';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
+import {FunctionComponent, useEffect, useRef, useState} from 'react';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
-import {RangePickerProps} from 'antd/lib/date-picker';
+import {StandardValueTypes} from '../../../_types';
+import {setDateToUTCNoon} from '_ui/_utils';
+import {IStandFieldValueContentProps} from './_types';
+import {IKitRangePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
+import {EMPTY_INITIAL_VALUE_UNDEFINED} from '../../../antdUtils';
 
-interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: StandardValueTypes, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
+const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{
+    $shouldUsePresentationLayout: boolean;
+}>`
+    ${({$shouldUsePresentationLayout}) =>
+        $shouldUsePresentationLayout &&
+        `   &.ant-picker.ant-picker-range {
+                grid-template-columns: 28px 1fr 0px 0px 12px;
 
-const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{$shouldHighlightColor: boolean}>`
-    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
+                .ant-picker-range-separator,
+                .ant-picker-input:nth-of-type(0) {
+                    display: none;
+                }
+            }
+        `}
 `;
 
-export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps> = ({
+export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProps<IKitRangePicker>> = ({
     value,
+    presentationValue,
+    isLastValueOfMultivalues,
+    removeLastValueOfMultivalues,
     onChange,
-    state,
     attribute,
-    fieldValue,
     handleSubmit,
-    handleBlur,
-    shouldShowValueDetailsButton = false
+    readonly,
+    calculatedFlags,
+    inheritedFlags,
+    setActiveValue
 }) => {
-    const {t} = useSharedTranslation();
-    const {lang: availableLangs} = useLang();
+    if (!onChange) {
+        throw Error('DSRangePickerWrapper should be used inside a antd Form.Item');
+    }
+
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_UNDEFINED;
+    const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
+
+    const hasChangedRef = useRef(false);
+    const [isFocused, setIsFocused] = useState(focusedDefaultValue);
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
+    const {t} = useSharedTranslation();
 
-    const inputRef = useRef<any>();
+    const isErrors = errors.length > 0;
 
-    useEffect(() => {
-        if (fieldValue.isEditing && inputRef.current) {
-            inputRef.current.nativeElement.click(); // To automatically open the date picker
-        }
-    }, [fieldValue.isEditing]);
+    // we slow down the css so that presentationValue does not flash before being hidden
+    const [usePresentationLayout, setUsePresentationLayout] = useState(false);
+    useEffect(() => setUsePresentationLayout(!isFocused && !isErrors), [isFocused, isErrors]);
 
-    const _resetToInheritedOrCalculatedValue = () => {
-        if (state.isInheritedValue) {
+    const _resetToInheritedOrCalculatedValue = async () => {
+        hasChangedRef.current = false;
+
+        if (inheritedFlags.isInheritedValue) {
             onChange(
                 [
-                    dayjs.unix(Number(state.inheritedValue.raw_value.from)),
-                    dayjs.unix(Number(state.inheritedValue.raw_value.to))
+                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload.from)),
+                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload.to))
                 ],
-                state.inheritedValue.raw_value
+                inheritedFlags.inheritedValue.raw_payload
             );
-        } else if (state.isCalculatedValue) {
+        } else if (calculatedFlags.isCalculatedValue) {
             onChange(
                 [
-                    dayjs.unix(Number(state.calculatedValue.raw_value.from)),
-                    dayjs.unix(Number(state.calculatedValue.raw_value.to))
+                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload.from)),
+                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload.to))
                 ],
-                state.calculatedValue.raw_value
+                calculatedFlags.calculatedValue.raw_payload
             );
         }
-        handleSubmit('', state.attribute.id);
+        await handleSubmit(null, attribute.id);
     };
 
     const _handleDateChange: (
         rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
         antOnChangeParams: [from: string, to: string] | null
-    ) => void = (rangePickerDates, ...antOnChangeParams) => {
-        if ((state.isInheritedValue || state.isCalculatedValue) && rangePickerDates === null) {
+    ) => void = async (rangePickerDates, ...antOnChangeParams) => {
+        hasChangedRef.current = true;
+
+        if ((inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) && rangePickerDates === null) {
             _resetToInheritedOrCalculatedValue();
             return;
+        }
+
+        if (rangePickerDates) {
+            rangePickerDates = [setDateToUTCNoon(rangePickerDates[0]), setDateToUTCNoon(rangePickerDates[1])];
         }
 
         onChange(rangePickerDates, ...antOnChangeParams);
 
         // TODO : validate form with await form.validateFields(state.attribute.id)
-        if (state.formElement.settings.required && rangePickerDates === null) {
-            return;
-        }
 
-        const datesToSave = {from: null, to: null};
+        let datesToSave: StandardValueTypes = null;
+
         if (rangePickerDates !== null) {
             const [dateFrom, dateTo] = rangePickerDates;
-            datesToSave.from = String(dateFrom.unix());
-            datesToSave.to = String(dateTo.unix());
+            datesToSave = JSON.stringify({from: dateFrom.unix(), to: dateTo.unix()});
         }
 
-        handleSubmit(datesToSave, state.attribute.id);
+        await handleSubmit(datesToSave, attribute.id);
     };
 
     const _handleOpenChange = (open: boolean) => {
         if (!open) {
-            handleBlur();
+            setIsFocused(false);
+
+            if (!hasChangedRef.current && isNewValueOfMultivalues) {
+                removeLastValueOfMultivalues();
+            }
         }
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: t('record_edition.date_range_from_to', {
-                    from: state.inheritedValue.value.from,
-                    to: state.inheritedValue.value.to
-                })
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: t('record_edition.date_range_from_to', {
-                    from: state.calculatedValue.value.from,
-                    to: state.calculatedValue.value.to
-                })
-            });
-        }
-        return;
+    const _handleOnFocus = () => {
+        setIsFocused(true);
+        setActiveValue();
     };
 
-    const label = localizedTranslation(state.formElement.settings.label, availableLangs);
+    const placeholderToDisplay: IKitRangePicker['placeholder'] = isFocused
+        ? [t('record_edition.placeholder.start_date'), t('record_edition.placeholder.end_date')]
+        : [t('record_edition.placeholder.enter_a_period'), ''];
 
     return (
         <KitDatePickerRangePickerStyled
-            // @ts-expect-error - ref is not a valid prop for RangePicker but works at runtime
-            ref={inputRef}
+            id={attribute.id}
+            autoFocus={isFocused}
+            open={attribute.multiple_values ? isFocused : undefined}
             value={value}
+            format={!isFocused && !isErrors && !!presentationValue ? () => presentationValue : undefined}
+            disabled={readonly}
+            allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
+            helper={isErrors ? String(errors[0]) : undefined}
+            status={isErrors ? 'error' : undefined}
+            onFocus={_handleOnFocus}
             onChange={_handleDateChange}
-            label={label}
-            required={state.formElement.settings.required}
-            disabled={state.isReadOnly}
-            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
-            status={errors.length > 0 ? 'error' : undefined}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             onOpenChange={_handleOpenChange}
-            helper={_getHelper()}
-            $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
+            placeholder={placeholderToDisplay}
+            $shouldUsePresentationLayout={usePresentationLayout}
         />
     );
 };

@@ -6,12 +6,10 @@ import {
     FormFieldTypes,
     FormUIElementTypes,
     IRequiredFieldsSettings,
-    IDateRangeValue,
     IKeyValue,
     Override
 } from '@leav/utils';
 import {Checkbox, DatePicker, InputRef} from 'antd';
-import {MutableRefObject} from 'react';
 import {RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
 import {IRecordIdentity, IRecordIdentityWhoAmI} from '_ui/types/records';
 import {ITreeNodeWithRecord} from '_ui/types/trees';
@@ -19,13 +17,14 @@ import {IValueVersion} from '_ui/types/values';
 import {RecordFormAttributeFragment, SaveValueBatchMutation, ValueDetailsFragment, ValueInput} from '_ui/_gqlTypes';
 import {RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {RecordFormElementFragment} from '../../../_gqlTypes';
-import {IStandardFieldReducerState, IStandardFieldValue} from './reducers/standardFieldReducer/standardFieldReducer';
 import {FormInstance} from 'antd/lib/form/Form';
+import {IColumnsValuesByRecord} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
+import {GetRecordColumnsValuesRecord, RecordColumnValue} from '_ui/_queries/records/getRecordColumnsValues';
 
 export interface IValueToSubmit {
     attribute: string;
     value: AnyPrimitive | null;
-    idValue: string;
+    idValue: string | null;
     metadata?: IKeyValue<AnyPrimitive>;
 }
 
@@ -97,53 +96,46 @@ export interface ISubmittedValueBase {
     metadata?: IKeyValue<AnyPrimitive>;
 }
 
-export interface IFormElementProps<SettingsType> {
-    element: FormElement<SettingsType>;
+export interface IFormElementProps<SettingsType, RecordFormElements = RecordFormElementsValue> {
+    element: FormElement<SettingsType, RecordFormElements>;
+    readonly?: boolean;
     onValueSubmit?: SubmitValueFunc;
     onValueDelete?: DeleteValueFunc;
     onDeleteMultipleValues?: DeleteMultipleValuesFunc;
     metadataEdit?: boolean;
 }
 
-export type FormElement<SettingsType> = Override<
+export type FormElement<SettingsType, RecordFormElements = RecordFormElementsValue> = Override<
     RecordFormElementFragment,
     {
         settings: SettingsType;
         uiElementType: FormUIElementTypes | FormFieldTypes;
-        values: RecordFormElementsValue[];
+        values: RecordFormElements[];
     }
 > & {
-    uiElement: (props: IFormElementProps<unknown> & {antdForm?: FormInstance}) => JSX.Element;
+    uiElement: (
+        props: IFormElementProps<unknown> & {
+            antdForm?: FormInstance;
+            computedValues?: GetRecordColumnsValuesRecord;
+        }
+    ) => JSX.Element;
 };
 
 export interface IDependencyValues {
     [attributeId: string]: Array<{id: string; library: string}>;
 }
 
-export interface IStandardInputProps {
-    state: IStandardFieldReducerState;
-    fieldValue: IStandardFieldValue;
-    onFocus: () => void;
-    onChange: (value: string) => void;
-    onSubmit: (valueToSave: StandardValueTypes) => void;
-    onPressEnter?: () => void;
-    settings: IRequiredFieldsSettings;
-    inputRef: MutableRefObject<InputRefPossibleTypes>;
-}
-
-export type InputRefPossibleTypes = InputRef | typeof DatePicker | typeof Checkbox;
-
-export type StandardValueTypes = AnyPrimitive | IDateRangeValue;
+export type StandardValueTypes = AnyPrimitive;
 
 export enum VersionFieldScope {
     INHERITED = 'INHERITED', // inherited values
     CURRENT = 'CURRENT' // values of "current" version, eg. the version selected in the form
 }
 
-export interface ICommonFieldsReducerState<ValuesType> {
+export interface ICommonFieldsReducerState<ValuesType, RecordFormAttributeFragmentType = RecordFormAttributeFragment> {
     record: IRecordIdentityWhoAmI;
     formElement: FormElement<IRequiredFieldsSettings>;
-    attribute: RecordFormAttributeFragment;
+    attribute: RecordFormAttributeFragmentType;
     isReadOnly: boolean;
     activeScope: VersionFieldScope;
     values: {

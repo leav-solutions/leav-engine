@@ -13,6 +13,7 @@
 export interface AttributeValuesListDetails_StandardAttribute_values_list_StandardStringValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     values: string[] | null;
 }
 
@@ -24,6 +25,7 @@ export interface AttributeValuesListDetails_StandardAttribute_values_list_Standa
 export interface AttributeValuesListDetails_StandardAttribute_values_list_StandardDateRangeValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     dateRangeValues:
         | AttributeValuesListDetails_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
         | null;
@@ -58,6 +60,7 @@ export interface AttributeValuesListDetails_LinkAttribute_values_list_linkValues
 export interface AttributeValuesListDetails_LinkAttribute_values_list {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     linkValues: AttributeValuesListDetails_LinkAttribute_values_list_linkValues[] | null;
 }
 
@@ -112,6 +115,7 @@ export interface AttributeValuesListDetails_TreeAttribute_values_list_treeValues
 export interface AttributeValuesListDetails_TreeAttribute_values_list {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     treeValues: AttributeValuesListDetails_TreeAttribute_values_list_treeValues[] | null;
 }
 

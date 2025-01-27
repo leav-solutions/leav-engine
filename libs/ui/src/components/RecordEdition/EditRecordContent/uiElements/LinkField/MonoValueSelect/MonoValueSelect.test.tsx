@@ -156,7 +156,7 @@ describe('<MonoValueSelect />', () => {
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label.en}
-                        required={state.formElement.settings.required}
+                        required={state.formElement.attribute.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
                     />
@@ -208,7 +208,7 @@ describe('<MonoValueSelect />', () => {
                         }}
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label.en}
-                        required={state.formElement.settings.required}
+                        required={state.formElement.attribute.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
                     />
@@ -293,7 +293,7 @@ describe('<MonoValueSelect />', () => {
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label.en}
-                        required={state.formElement.settings.required}
+                        required={state.formElement.attribute.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
                     />
@@ -342,7 +342,7 @@ describe('<MonoValueSelect />', () => {
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label.en}
-                        required={state.formElement.settings.required}
+                        required={state.formElement.attribute.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
                     />

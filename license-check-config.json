@@ -13,6 +13,7 @@
         "apps/core/src/plugins",
         "imports",
         ".git",
+        "**/.gitkeep",
         ".*",
         "config",
         "public",
@@ -48,6 +49,7 @@
         "**/*.svg",
         "**/*tsconfig*",
         "**/*.tsbuildinfo",
-        ".idea"
+        ".idea",
+        "**/docs/adr/*.md"
     ]
 }

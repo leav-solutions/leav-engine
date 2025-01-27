@@ -6,6 +6,17 @@ import {recordIdentityFragment} from '_ui/gqlFragments';
 
 const viewDetailsFragment = gql`
     ${recordIdentityFragment}
+    fragment ViewDetailsFilter on RecordFilter {
+        field
+        value
+        tree {
+            id
+            label
+        }
+        condition
+        operator
+    }
+
     fragment ViewDetails on View {
         id
         display {
@@ -27,14 +38,7 @@ const viewDetailsFragment = gql`
         description
         color
         filters {
-            field
-            value
-            tree {
-                id
-                label
-            }
-            condition
-            operator
+            ...ViewDetailsFilter
         }
         sort {
             field
@@ -49,9 +53,8 @@ const viewDetailsFragment = gql`
                 }
             }
         }
-        settings {
-            name
-            value
+        attributes {
+            id
         }
     }
 `;
