@@ -35,6 +35,7 @@ const _handleType = (field: IField): string => {
             typePart = `
                 ...on Value {
                     value
+                    raw_value
                 }
             `;
             break;

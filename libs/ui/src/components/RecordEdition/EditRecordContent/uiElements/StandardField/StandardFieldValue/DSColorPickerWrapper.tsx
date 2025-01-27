@@ -8,6 +8,7 @@ import {KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/typ
 import {IStandFieldValueContentProps} from './_types';
 import {ColorFactory} from 'antd/lib/color-picker/color';
 import {EMPTY_INITIAL_VALUE_UNDEFINED} from '../../../antdUtils';
+import {ColorValueType} from 'antd/es/color-picker/interface';
 
 const KitColorPickerStyled = styled(KitColorPicker)`
     width: 100%;
@@ -18,6 +19,39 @@ const KitColorPickerStyled = styled(KitColorPicker)`
         }
     }
 `;
+
+const getColorFormatFromValue = (value: ColorValueType): KitColorPickerProps['format'] => {
+    if (!value) {
+        return 'hex';
+    }
+
+    const stringValue = value.toString().toLowerCase();
+
+    if (stringValue.startsWith('#')) {
+        return 'hex';
+    } else if (stringValue.startsWith('rgb')) {
+        return 'rgb';
+    } else if (stringValue.startsWith('hsb')) {
+        return 'hsb';
+    }
+
+    return 'hex';
+};
+
+const getValueToSubmit = (value: KitColorPickerProps['value'], format: KitColorPickerProps['format']) => {
+    if (typeof value === 'string') {
+        value = new ColorFactory(value);
+    }
+
+    switch (format) {
+        case 'hex':
+            return value.toHexString();
+        case 'rgb':
+            return value.toRgbString();
+        case 'hsb':
+            return value.toHsbString();
+    }
+};
 
 export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProps<KitColorPickerProps>> = ({
     value,
@@ -43,6 +77,7 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
     const [hasChanged, setHasChanged] = useState(false);
     const [isFocused, setIsFocused] = useState(focusedDefaultValue);
     const [key, setKey] = useState(0);
+    const [format, setFormat] = useState<KitColorPickerProps['format']>(getColorFormatFromValue(value));
 
     const _handleOnOpenChange = async (open: boolean) => {
         if (!open) {
@@ -55,9 +90,9 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
                 return;
             }
 
-            const valueToSubmit = typeof value !== 'string' && value !== null ? value.toHex() : value?.toString();
-            await handleSubmit(valueToSubmit, attribute.id);
+            await handleSubmit(getValueToSubmit(value, format), attribute.id);
             setIsFocused(false);
+            setHasChanged(false);
         } else {
             setIsFocused(true);
             setActiveValue();
@@ -93,6 +128,11 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
         setIsFocused(false);
     };
 
+    const _handleFormatChange = (newFormat: KitColorPickerProps['format']) => {
+        setHasChanged(true);
+        setFormat(newFormat);
+    };
+
     return (
         <KitColorPickerStyled
             // This is a hack to force the color picker to re-render when needed (e.g. reset to inherited value)
@@ -103,16 +143,17 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
             open={attribute.multiple_values ? isFocused : undefined}
             data-testid={attribute.id}
             value={value}
+            format={format}
             showText={isFocused || !presentationValue ? true : () => `${presentationValue}`}
             aria-label={label}
             disabled={readonly}
-            disabledAlpha
             allowClear={
                 value && !inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue
             }
             onOpenChange={_handleOnOpenChange}
             onChange={_handleOnChange}
             onClear={_handleOnClear}
+            onFormatChange={_handleFormatChange}
         />
     );
 };
