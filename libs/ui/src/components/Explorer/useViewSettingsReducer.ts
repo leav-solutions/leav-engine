@@ -16,6 +16,7 @@ import {DefaultViewSettings, Entrypoint, ExplorerFilter, IEntrypointLink} from '
 import {v4 as uuid} from 'uuid';
 import {IViewSettingsState, viewSettingsInitialState, viewSettingsReducer} from './manage-view-settings';
 import {mapViewTypeFromLegacyToExplorer} from './_constants';
+import {ThroughConditionFilter} from '_ui/types';
 
 type ValidFieldFilter = Override<
     ViewDetailsFilterFragment,
@@ -25,7 +26,12 @@ type ValidFieldFilter = Override<
     }
 >;
 
-type ValidFieldFilterThrough = ValidFieldFilter & {
+type ValidFieldFilterThrough = Override<
+    ValidFieldFilter,
+    {
+        condition: ThroughConditionFilter.THROUGH;
+    }
+> & {
     subField: NonNullable<ViewDetailsFilterFragment['field']>;
     subCondition?: ViewDetailsFilterFragment['condition'];
 };
@@ -74,27 +80,29 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
     // Take the last view from the array
     const userView = viewData?.views?.list?.at(-1);
 
-    //TODO: not finished when saving view
-    const userViewFilters: ValidFieldFilter[] = userView?.filters?.reduce((acc, filter) => {
-        if (!_isValidFieldFilter(filter)) {
-            return acc;
-        }
-        const _isThroughFilter = filter.field.includes('.');
-        if (_isThroughFilter) {
-            return [
-                ...acc,
-                {
-                    field: filter.field.split('.')[0],
-                    subField: filter.field.split('.')[1],
+    const userViewFilters =
+        userView?.filters?.reduce<Array<ValidFieldFilter | ValidFieldFilterThrough>>((acc, filter) => {
+            if (!_isValidFieldFilter(filter)) {
+                return acc;
+            }
+
+            const _isThroughFilter = filter.field.includes('.');
+            const [field, subField] = filter.field.split('.');
+            if (_isThroughFilter) {
+                const throughFilter: ValidFieldFilterThrough = {
+                    field,
+                    subField,
                     value: filter.value ?? null,
-                    condition: filter.condition,
-                    subCondition: filter.subCondition
-                }
-            ];
-        } else {
-            return [...acc];
-        }
-    }, []);
+                    condition: ThroughConditionFilter.THROUGH,
+                    subCondition: filter.condition
+                };
+                acc.push(throughFilter);
+            } else {
+                acc.push(filter);
+            }
+
+            return acc;
+        }, []) ?? [];
 
     const attributesToHydrate = [
         ...new Set(

@@ -214,13 +214,15 @@ export const useExplorerData = ({
         {operator: RecordFilterOperator.AND},
         filters
             .filter(filter => {
-                return (
-                    filter.value !== null ||
-                    (filter.condition && nullValueConditions.includes(filter.condition)) ||
-                    (isExplorerFilterThrough(filter) &&
+                if (isExplorerFilterThrough(filter)) {
+                    return (
+                        filter.subField &&
                         filter.subCondition &&
-                        nullValueConditions.includes(filter.subCondition))
-                );
+                        (filter.value !== null || nullValueConditions.includes(filter.subCondition))
+                    );
+                }
+
+                return filter.value !== null || (filter.condition && nullValueConditions.includes(filter.condition));
             })
             .map(filter => {
                 const condition =

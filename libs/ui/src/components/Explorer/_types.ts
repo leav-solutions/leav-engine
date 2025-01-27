@@ -120,8 +120,7 @@ export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,
     {
         filters?: Array<
-            | Pick<IExplorerFilterStandard, 'field' | 'condition' | 'value'>
-            | Pick<IExplorerFilterLink, 'field' | 'condition' | 'value'>
+            | Pick<ExplorerFilter, 'field' | 'condition' | 'value'>
             | Pick<IExplorerFilterThrough, 'field' | 'condition' | 'value' | 'subCondition' | 'subField'>
         >;
     }

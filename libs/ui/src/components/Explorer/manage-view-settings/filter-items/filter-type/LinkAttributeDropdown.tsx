@@ -4,7 +4,11 @@
 import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
 import {KitInput, KitSelect} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IExplorerFilterThrough, IFilterChildrenLinkDropDownProps} from '_ui/components/Explorer/_types';
+import {
+    IExplorerFilterThrough,
+    IFilterChildrenLinkDropDownProps,
+    isExplorerFilterThrough
+} from '_ui/components/Explorer/_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 import {AttributeConditionFilter, ThroughConditionFilter} from '_ui/types';
 import styled from 'styled-components';
@@ -12,6 +16,8 @@ import {useGetLibraryAttributesLazyQuery} from '_ui/_gqlTypes';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {FilterDropdownContent} from './FilterDropdownContent';
+
+const subFilterSuffix = '_THROUGH_SUB_FILTER';
 
 const InputStyled = styled(KitInput)`
     width: 100%;
@@ -25,17 +31,22 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
     const {lang} = useLang();
 
     const {conditionOptionsByType} = useConditionsOptionsByType(filter);
+    const availableConditionsOptions = filter.id.includes(subFilterSuffix)
+        ? conditionOptionsByType.filter(f => f.value !== ThroughConditionFilter.THROUGH)
+        : conditionOptionsByType;
 
     const [fetchLibraryAttributes, {loading: libraryAttributesLoading, data: libraryAttributesData}] =
         useGetLibraryAttributesLazyQuery();
 
-    const [selectedLinkAttribute, setSelectedLinkAttribute] = useState<string | null>(null);
+    const [selectedSubField, setSelectedSubField] = useState<string | null>(
+        isExplorerFilterThrough(filter) ? filter.subField : null
+    );
 
     const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition =>
         onFilterChange({...filter, condition});
 
-    const _onLinkAttributeChange: ComponentProps<typeof KitSelect>['onChange'] = attributeId =>
-        setSelectedLinkAttribute(attributeId);
+    const _onSubFieldAttributeChange: ComponentProps<typeof KitSelect>['onChange'] = attributeId =>
+        setSelectedSubField(attributeId);
 
     const _onInputChanged: ComponentProps<typeof KitInput>['onChange'] = event => {
         const shouldIgnoreInputChange =
@@ -77,11 +88,11 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
         } as IExplorerFilterThrough);
     };
 
-    const linkAttributeProps = libraryLinkAttributes.find(attribute => attribute.id === selectedLinkAttribute);
+    const linkAttributeProps = libraryLinkAttributes.find(attribute => attribute.id === selectedSubField);
 
     return (
         <>
-            <KitSelect options={conditionOptionsByType} onChange={_onConditionChanged} value={filter.condition} />
+            <KitSelect options={availableConditionsOptions} onChange={_onConditionChanged} value={filter.condition} />
             {showSearch && (
                 <InputStyled
                     placeholder={String(t('explorer.type-a-value'))}
@@ -93,21 +104,21 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
                 <>
                     <KitSelect
                         options={linkAttributesOptions}
-                        onChange={_onLinkAttributeChange}
-                        value={selectedLinkAttribute}
+                        onChange={_onSubFieldAttributeChange}
+                        value={selectedSubField}
                         loading={libraryAttributesLoading}
                     />
-                    {selectedLinkAttribute && linkAttributeProps && (
+                    {selectedSubField && linkAttributeProps && (
                         <FilterDropdownContent
                             filter={{
-                                id: filter.id + '_through_condition',
-                                field: selectedLinkAttribute ?? '',
+                                id: filter.id + subFilterSuffix,
+                                field: selectedSubField ?? '',
                                 attribute: {
                                     ...linkAttributeProps,
                                     label: localizedTranslation(linkAttributeProps.label, lang) ?? ''
                                 },
                                 condition: filter.subCondition,
-                                value: null
+                                value: filter.value
                             }}
                             onFilterChange={_handleThroughFilterChange}
                         />
