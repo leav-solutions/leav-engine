@@ -6,6 +6,7 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IQueryInfos} from '_types/queryInfos';
 import {mockView} from '../../__tests__/mocks/view';
 import viewRepo from './viewRepo';
+import {IViewFilterOptions} from '_types/views';
 
 describe('viewRepo', () => {
     const docViewData = {

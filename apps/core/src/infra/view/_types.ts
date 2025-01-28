@@ -6,6 +6,7 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IList} from '_types/list';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {IQueryInfos} from '../../_types/queryInfos';
+import {IView} from '_types/views';
 
 export const VIEWS_COLLECTION_NAME = 'core_views';
 

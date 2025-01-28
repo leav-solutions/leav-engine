@@ -10,6 +10,7 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
+import {IView, IViewFilterOptions} from '_types/views';
 
 export interface IViewDomain {
     saveView(view: IView, ctx: IQueryInfos): Promise<IView>;
