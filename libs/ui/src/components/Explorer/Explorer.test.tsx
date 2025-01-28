@@ -620,11 +620,21 @@ describe('Explorer', () => {
         expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
     });
 
-    test('Should display message on empty data', async () => {
+    test('Should display message on empty data (default)', async () => {
         spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
         render(<Explorer entrypoint={libraryEntrypoint} />);
 
         expect(screen.getByText(/empty-data/)).toBeVisible();
+    });
+
+    test('Should display message on empty data (custom)', async () => {
+        spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+
+        const emptyCustomMessage = 'EmptyCustomMessage';
+
+        render(<Explorer entrypoint={libraryEntrypoint} emptyPlaceholder={emptyCustomMessage} />);
+
+        expect(screen.getByText(emptyCustomMessage)).toBeVisible();
     });
 
     test('Should display the list of records in a table with attributes values', async () => {

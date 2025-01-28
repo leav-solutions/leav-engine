@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
+import {FunctionComponent, ReactNode} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
@@ -53,6 +53,7 @@ interface IExplorerProps {
     itemActions?: IItemAction[];
     primaryActions?: IPrimaryAction[];
     title?: string;
+    emptyPlaceholder?: ReactNode;
     defaultActionsForItem?: Array<'edit' | 'remove'>;
     defaultPrimaryActions?: Array<'create'>;
     defaultViewSettings?: DefaultViewSettings;
@@ -60,10 +61,11 @@ interface IExplorerProps {
 
 export const Explorer: FunctionComponent<IExplorerProps> = ({
     entrypoint,
+    noPagination,
     itemActions,
     primaryActions,
     title,
-    noPagination,
+    emptyPlaceholder,
     defaultActionsForItem = ['edit', 'remove'],
     defaultPrimaryActions = ['create'],
     defaultViewSettings
@@ -139,7 +141,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                 {loadingData || viewSettingsLoading ? (
                     <Loading />
                 ) : hasNoResults ? (
-                    <KitEmpty title={t('explorer.empty-data')} />
+                    <>{emptyPlaceholder || <KitEmpty title={t('explorer.empty-data')} />}</>
                 ) : (
                     <DataView
                         dataGroupedFilteredSorted={data?.records ?? emptyArray}
