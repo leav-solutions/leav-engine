@@ -22,6 +22,11 @@ import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReduce
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {SortListItem} from './SortListItem';
 
+const StyledListContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
 const StyledList = styled.ul`
     padding: calc(var(--general-spacing-s) * 1px) 0;
     margin: 0;
@@ -97,7 +102,7 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
     );
 
     return (
-        <>
+        <StyledListContainer>
             {activeFilters.length > 0 && (
                 <StyledList aria-label={t('explorer.sort-list.active')}>
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={_handleDragEnd}>
@@ -173,6 +178,6 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                     />
                 ))}
             </StyledList>
-        </>
+        </StyledListContainer>
     );
 };
