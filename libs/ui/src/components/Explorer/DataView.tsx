@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {cloneElement, FunctionComponent, memo, ReactNode} from 'react';
-import {KitButton, KitDropDown, KitPagination, KitSpace, KitTable, useKitTheme} from 'aristid-ds';
+import {KitButton, KitDropDown, KitPagination, KitTable, useKitTheme} from 'aristid-ds';
 import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import {FaEllipsisH} from 'react-icons/fa';
 import {Override} from '@leav/utils';
@@ -13,8 +13,12 @@ import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
 import isEqual from 'lodash/isEqual';
+import {useColumnWidth} from './useColumnWidth';
 
 const USELESS = '';
+
+const tableHeaderHeight = 56;
+const tableHeaderMinLineHeight = 22;
 
 const DataViewContainerDivStyled = styled.div`
     flex: 1 1 min-content;
@@ -25,11 +29,31 @@ const DataViewContainerDivStyled = styled.div`
         padding-bottom: ${defaultPaginationHeight}px;
         position: relative;
     }
+
     .pagination {
         flex: 0 0 auto;
         justify-content: flex-end;
         display: flex;
         padding-top: calc(var(--general-spacing-xs) * 1px);
+    }
+`;
+
+const StyledActionsList = styled.div`
+    display: inline-flex;
+    gap: calc(var(--general-spacing-xs) * 1px);
+`;
+
+// TODO: Table component should be updated fix header display
+const StyledTable = styled(KitTable)`
+    .ant-table-thead > tr > th {
+        padding-top: calc(var(--general-spacing-xxs) * 1px) !important;
+        padding-bottom: calc(var(--general-spacing-xxs) * 1px) !important;
+        height: ${tableHeaderHeight}px;
+
+        .ant-table-cell {
+            min-height: ${tableHeaderMinLineHeight}px;
+            height: auto !important;
+        }
     }
 `;
 
@@ -61,53 +85,67 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         const {theme} = useKitTheme();
 
         const {containerRef, scrollHeight} = useTableScrollableHeight(!!paginationProps);
+        const {ref, getFieldColumnWidth, columnWidth} = useColumnWidth();
 
-        const _getActionButtons = (actions: Array<Override<IItemAction, {callback: () => void}>>): ReactNode => {
+        const _getActionButtons = (
+            actions: Array<Override<IItemAction, {callback: () => void}>>,
+            columnRef: typeof ref | null
+        ): ReactNode => {
             const isLessThanFourActions = actions.length < 4;
 
-            return isLessThanFourActions ? (
-                <KitSpace>
-                    {actions.map(({label, icon, isDanger, callback}, index) => (
-                        <KitButton title={label} icon={icon} onClick={callback} danger={isDanger} key={index}>
-                            {label}
-                        </KitButton>
-                    ))}
-                </KitSpace>
-            ) : (
-                <>
-                    <KitButton
-                        type="tertiary"
-                        icon={actions[0].icon}
-                        onClick={actions[0].callback}
-                        title={actions[0].label}
-                        danger={actions[0].isDanger}
-                    />
-                    <KitButton
-                        type="tertiary"
-                        icon={actions[1].icon}
-                        onClick={actions[1].callback}
-                        title={actions[1].label}
-                        danger={actions[1].isDanger}
-                    />
-                    <KitDropDown
-                        menu={{
-                            items: actions.slice(2).map(({callback, icon, label, isDanger}) => ({
-                                key: label,
-                                title: label,
-                                danger: isDanger,
-                                label,
-                                icon: icon ? cloneElement(icon, {size: '2em'}) : null, // TODO: find better tuning
-                                onClick: callback
-                            }))
-                        }}
-                    >
-                        <KitButton
-                            title={t('explorer.more-actions') ?? undefined}
-                            type="tertiary"
-                            icon={<FaEllipsisH />}
-                        />
-                    </KitDropDown>
-                </>
+            return (
+                <StyledActionsList ref={columnRef}>
+                    {isLessThanFourActions ? (
+                        <>
+                            {actions.map(({label, icon, isDanger, callback}, actionIndex) => (
+                                <KitButton
+                                    title={label}
+                                    icon={icon}
+                                    onClick={callback}
+                                    danger={isDanger}
+                                    key={actionIndex}
+                                >
+                                    {label}
+                                </KitButton>
+                            ))}
+                        </>
+                    ) : (
+                        <>
+                            <KitButton
+                                type="tertiary"
+                                icon={actions[0].icon}
+                                onClick={actions[0].callback}
+                                title={actions[0].label}
+                                danger={actions[0].isDanger}
+                            />
+                            <KitButton
+                                type="tertiary"
+                                icon={actions[1].icon}
+                                onClick={actions[1].callback}
+                                title={actions[1].label}
+                                danger={actions[1].isDanger}
+                            />
+                            <KitDropDown
+                                menu={{
+                                    items: actions.slice(2).map(({callback, icon, label, isDanger}) => ({
+                                        key: label,
+                                        title: label,
+                                        danger: isDanger,
+                                        label,
+                                        icon: icon ? cloneElement(icon, {size: '2em'}) : null, // TODO: find better tuning
+                                        onClick: callback
+                                    }))
+                                }}
+                            >
+                                <KitButton
+                                    title={t('explorer.more-actions') ?? undefined}
+                                    type="tertiary"
+                                    icon={<FaEllipsisH />}
+                                />
+                            </KitDropDown>
+                        </>
+                    )}
+                </StyledActionsList>
             );
         };
 
@@ -115,6 +153,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
             .map<KitTableColumnType<IItemData>>(attributeName => ({
                 title: attributeName === 'whoAmI' ? '' : attributesProperties[attributeName].label,
                 dataIndex: USELESS,
+                width: getFieldColumnWidth(attributesProperties[attributeName]),
                 shouldCellUpdate: (record, prevRecord) =>
                     attributeName === 'whoAmI'
                         ? record.whoAmI !== prevRecord.whoAmI
@@ -137,12 +176,14 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                               title: t('explorer.actions'),
                               dataIndex: USELESS,
                               shouldCellUpdate: () => false,
-                              render: (_, item) =>
+                              width: columnWidth,
+                              render: (_, item, index) =>
                                   _getActionButtons(
                                       itemActions.map(action => ({
                                           ...action,
                                           callback: () => action.callback(item)
-                                      }))
+                                      })),
+                                      index === 0 ? ref : null
                                   )
                           }
                       ]
@@ -151,15 +192,15 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         // TODO: handle columns width based on attribute type/format
         return (
             <DataViewContainerDivStyled ref={containerRef}>
-                <KitTable
+                <StyledTable
                     borderedRows
                     cellsBackgroundColor={theme.utilities.light}
                     backgroundColor={theme.colors.primary['50']}
                     showHeader={dataGroupedFilteredSorted.length > 0}
                     columns={columns}
-                    scroll={{y: scrollHeight}}
-                    dataSource={dataGroupedFilteredSorted}
                     tableLayout="fixed"
+                    scroll={{y: scrollHeight, x: '100%'}}
+                    dataSource={dataGroupedFilteredSorted}
                     pagination={false}
                 />
                 {paginationProps && (
