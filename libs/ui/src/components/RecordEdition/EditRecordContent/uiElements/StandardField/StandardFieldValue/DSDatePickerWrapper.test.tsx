@@ -9,12 +9,12 @@ import dayjs from 'dayjs';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
-const todayDate = dayjs();
-const todayDateFormatted = todayDate.format('YYYY-MM-DD');
-const todayDateTimestamp = todayDate.unix().toString();
-const todayDateAtNoon = todayDate
+const firstDayOfMonthDate = dayjs().startOf('month');
+const firstDayOfMonthDateFormatted = firstDayOfMonthDate.format('YYYY-MM-DD');
+const firstDayOfMonthDateTimestamp = firstDayOfMonthDate.unix().toString();
+const firstDayOfMonthDateAtNoon = firstDayOfMonthDate
     .utc()
-    .set('date', todayDate.date())
+    .set('date', firstDayOfMonthDate.date())
     .set('hour', 12)
     .set('minute', 0)
     .set('second', 0)
@@ -33,7 +33,7 @@ const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
     calculatedValue: {
-        raw_payload: todayDateTimestamp
+        raw_payload: firstDayOfMonthDateTimestamp
     }
 };
 
@@ -49,7 +49,7 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     isInheritedOverrideValue: true,
     isInheritedNotOverrideValue: false,
     inheritedValue: {
-        raw_payload: todayDateTimestamp
+        raw_payload: firstDayOfMonthDateTimestamp
     }
 };
 
@@ -77,7 +77,7 @@ describe('DSDatePickerWrapper', () => {
             <Form>
                 <Form.Item>
                     <DSDatePickerWrapper
-                        value={todayDate}
+                        value={firstDayOfMonthDate}
                         presentationValue={presentationDate}
                         attribute={mockFormAttribute}
                         required={notRequired}
@@ -100,7 +100,7 @@ describe('DSDatePickerWrapper', () => {
             <Form>
                 <Form.Item>
                     <DSDatePickerWrapper
-                        value={todayDate}
+                        value={firstDayOfMonthDate}
                         attribute={mockFormAttribute}
                         required={notRequired}
                         readonly={notReadonly}
@@ -114,7 +114,7 @@ describe('DSDatePickerWrapper', () => {
             </Form>
         );
 
-        expect(screen.getByRole('textbox')).toHaveValue(todayDateFormatted);
+        expect(screen.getByRole('textbox')).toHaveValue(firstDayOfMonthDateFormatted);
     });
 
     test('Should display the value if focused', async () => {
@@ -122,7 +122,7 @@ describe('DSDatePickerWrapper', () => {
             <Form>
                 <Form.Item>
                     <DSDatePickerWrapper
-                        value={todayDate}
+                        value={firstDayOfMonthDate}
                         presentationValue={presentationDate}
                         attribute={mockFormAttribute}
                         required={notRequired}
@@ -139,7 +139,7 @@ describe('DSDatePickerWrapper', () => {
 
         await user.click(screen.getByRole('textbox'));
 
-        expect(screen.getByRole('textbox')).toHaveValue(todayDateFormatted);
+        expect(screen.getByRole('textbox')).toHaveValue(firstDayOfMonthDateFormatted);
     });
 
     test('Should be disabled when readonly', async () => {
@@ -147,7 +147,7 @@ describe('DSDatePickerWrapper', () => {
             <Form>
                 <Form.Item>
                     <DSDatePickerWrapper
-                        value={todayDate}
+                        value={firstDayOfMonthDate}
                         presentationValue={presentationDate}
                         attribute={mockFormAttribute}
                         required={notRequired}
@@ -186,11 +186,14 @@ describe('DSDatePickerWrapper', () => {
         const datePicker = screen.getByRole('textbox');
 
         await user.click(datePicker);
-        const dayToSelect = await screen.findAllByText(todayDate.date());
+        const dayToSelect = await screen.findAllByText(firstDayOfMonthDate.date());
         await user.click(dayToSelect[0]);
 
-        expect(mockOnChange).toHaveBeenCalledWith(todayDateAtNoon, todayDateFormatted);
-        expect(mockHandleSubmit).toHaveBeenCalledWith(todayDateAtNoon.unix().toString(), mockFormAttribute.id);
+        expect(mockOnChange).toHaveBeenCalledWith(firstDayOfMonthDateAtNoon, firstDayOfMonthDateFormatted);
+        expect(mockHandleSubmit).toHaveBeenCalledWith(
+            firstDayOfMonthDateAtNoon.unix().toString(),
+            mockFormAttribute.id
+        );
     });
 
     test('Should call setActiveValue if focused', async () => {
@@ -235,7 +238,7 @@ describe('DSDatePickerWrapper', () => {
         );
 
         await user.click(screen.getByRole('textbox'));
-        const dayToSelect = await screen.findAllByText(todayDate.date());
+        const dayToSelect = await screen.findAllByText(firstDayOfMonthDate.date());
         await user.click(dayToSelect[0]);
 
         expect(mockOnChange).toHaveBeenCalledTimes(1);
@@ -253,12 +256,12 @@ describe('DSDatePickerWrapper', () => {
             render(
                 <Form
                     initialValues={{
-                        datePickerTest: todayDate
+                        datePickerTest: firstDayOfMonthDate
                     }}
                 >
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
-                            value={todayDate}
+                            value={firstDayOfMonthDate}
                             presentationValue={presentationDate}
                             attribute={mockFormAttribute}
                             required={notRequired}
@@ -312,12 +315,12 @@ describe('DSDatePickerWrapper', () => {
             render(
                 <Form
                     initialValues={{
-                        datePickerTest: todayDate
+                        datePickerTest: firstDayOfMonthDate
                     }}
                 >
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
-                            value={todayDate}
+                            value={firstDayOfMonthDate}
                             presentationValue={presentationDate}
                             attribute={mockFormAttribute}
                             required={notRequired}
