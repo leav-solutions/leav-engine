@@ -46,7 +46,6 @@ describe('DSInputEncryptedWrapper', () => {
                 <AntForm.Item>
                     <DSInputEncryptedWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -76,7 +75,6 @@ describe('DSInputEncryptedWrapper', () => {
                     <DSInputEncryptedWrapper
                         value="password"
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -101,7 +99,6 @@ describe('DSInputEncryptedWrapper', () => {
                     <DSInputEncryptedWrapper
                         value="password"
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={readonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -125,7 +122,6 @@ describe('DSInputEncryptedWrapper', () => {
                     <DSInputEncryptedWrapper
                         value="password"
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}

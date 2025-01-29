@@ -59,6 +59,7 @@
         "PREVIEWS_SETTINGS_NOT_ALLOWED": "Impossible de configurer des aperçus sur une bibliothèque de comportement autre que 'fichiers'",
         "PROTECTED_ENDPOINT": "Ce chemin n'est pas autorisé: {{endpoint}}",
         "READONLY_ATTRIBUTE": "L'attribut {{attribute}} est en lecture seule",
+        "REQUIRED_ATTRIBUTE": "L'attribut est requis",
         "REQUIRED_ATTRIBUTE_FORMAT": "Format d'attribut non spécifié",
         "REQUIRED_ATTRIBUTE_LABEL": "Libellé pour la langue par défaut ({{lang}}) non spécifié",
         "REQUIRED_ATTRIBUTE_LINKED_LIBRARY": "Librairie liée non spécifiée",

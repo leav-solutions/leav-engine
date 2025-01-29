@@ -306,7 +306,6 @@
         "save_success": "Form has been saved successfully",
         "settings": {
             "label": "Label",
-            "required": "Mandatory",
             "attribute": "Attribute",
             "content": "Content",
             "withTime": "Time entry",

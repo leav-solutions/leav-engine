@@ -100,8 +100,6 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
         onChange(rangePickerDates, ...antOnChangeParams);
 
-        // TODO : validate form with await form.validateFields(state.attribute.id)
-
         let datesToSave: StandardValueTypes = null;
 
         if (rangePickerDates !== null) {
@@ -139,7 +137,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             value={value}
             format={!isFocused && !isErrors && !!presentationValue ? () => presentationValue : undefined}
             disabled={readonly}
-            allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
+            allowClear={!!value && !attribute.multiple_values}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             onFocus={_handleOnFocus}

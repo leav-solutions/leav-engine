@@ -382,9 +382,9 @@ const valueDomain = function ({
                 })));
 
         if (attributeProps.readonly) {
-            throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
+            throw new ValidationError<IValue>({[attribute]: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
         } else if (isRequired) {
-            throw new ValidationError<IValue>({attribute: {msg: Errors.REQUIRED_ATTRIBUTE, vars: {attribute}}});
+            throw new ValidationError<IValue>({[attribute]: {msg: Errors.REQUIRED_ATTRIBUTE, vars: {attribute}}});
         }
 
         const existingValue: IValue = await _getExistingValue({

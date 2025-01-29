@@ -23,7 +23,6 @@ interface IStandardFieldValueProps {
     handleSubmit: (value: AnyPrimitive | null) => Promise<void | ISubmitMultipleResult>;
     attribute: RecordFormAttributeStandardAttributeFragment;
     label: string;
-    required: boolean;
     readonly: boolean;
     calculatedFlags: CalculatedFlags;
     inheritedFlags: InheritedFlags;
@@ -38,7 +37,6 @@ function StandardFieldValue({
     handleSubmit,
     attribute,
     label,
-    required,
     readonly,
     calculatedFlags,
     inheritedFlags,
@@ -70,7 +68,6 @@ function StandardFieldValue({
         removeLastValueOfMultivalues,
         readonly,
         label,
-        required,
         calculatedFlags,
         inheritedFlags,
         setActiveValue
@@ -109,22 +106,7 @@ function StandardFieldValue({
 
     return (
         attributeFormatsWithDS.includes(attribute.format) && (
-            <Form.Item
-                name={attribute.id}
-                {...listField}
-                rules={
-                    //TODO: Remove this rule when required is implemented in the backend
-                    !attribute.multiple_values
-                        ? [
-                              {
-                                  required,
-                                  message: t('errors.standard_field_required')
-                              }
-                          ]
-                        : undefined
-                }
-                noStyle
-            >
+            <Form.Item name={attribute.id} {...listField} noStyle>
                 {valueContent}
             </Form.Item>
         )

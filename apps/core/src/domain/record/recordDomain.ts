@@ -847,6 +847,22 @@ export default function ({
                             id: attributeId,
                             ctx
                         });
+
+                        if (attributeValues.every(value => value.payload === null || value.payload === undefined)) {
+                            if (attributeProps.required) {
+                                return Promise.reject({
+                                    type: Errors.REQUIRED_ATTRIBUTE,
+                                    context: {
+                                        attributeId,
+                                        values: [{}]
+                                    },
+                                    fields: {[attributeId]: Errors.REQUIRED_ATTRIBUTE}
+                                });
+                            } else {
+                                return Promise.resolve();
+                            }
+                        }
+
                         return valueDomain.runActionsList({
                             listName: ActionsListEvents.SAVE_VALUE,
                             values: attributeValues,
@@ -882,7 +898,9 @@ export default function ({
             let valuesErrors = null;
             if (values?.length) {
                 // Make sure we don't have any id_value hanging on as we're on creation here
-                const cleanValues = values.map(v => ({...v, id_value: null}));
+                const cleanValues = values
+                    .filter(value => value.payload !== null && value.payload !== undefined)
+                    .map(v => ({...v, id_value: null}));
 
                 const {errors} = await valueDomain.saveValueBatch({
                     library,

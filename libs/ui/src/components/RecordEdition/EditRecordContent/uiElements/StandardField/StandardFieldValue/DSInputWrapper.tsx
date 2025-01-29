@@ -38,7 +38,6 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     const valueToDisplay = isFocused || isErrors || !presentationValue ? value : presentationValue;
 
     const _resetToInheritedOrCalculatedValue = async () => {
-        setHasChanged(false);
         if (inheritedFlags.isInheritedValue) {
             onChange(inheritedFlags.inheritedValue.raw_payload);
         } else if (calculatedFlags.isCalculatedValue) {
@@ -53,6 +52,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     };
 
     const _handleOnBlur = async (event: FocusEvent<HTMLInputElement>) => {
+        setHasChanged(false);
         if (!hasChanged) {
             onChange(event);
             setIsFocused(false);
@@ -74,23 +74,9 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
         setIsFocused(false);
     };
 
-    // TODO remove this function to use onClear Prop when ant is updated to 5.20+ (and other inputs too)
     const _handleOnChange = async (event: ChangeEvent<HTMLInputElement>) => {
         setHasChanged(true);
-
-        const inputValue = event.target.value;
-        if (
-            (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) &&
-            inputValue === '' &&
-            event.type === 'click'
-        ) {
-            _resetToInheritedOrCalculatedValue();
-            return;
-        }
         onChange(event);
-        if (inputValue === '' && event.type === 'click') {
-            await handleSubmit(null, attribute.id);
-        }
     };
 
     return (
@@ -101,7 +87,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={valueToDisplay}
-            allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
+            allowClear={!!value && !attribute.multiple_values}
             onChange={_handleOnChange}
             onFocus={_handleOnFocus}
             onBlur={_handleOnBlur}

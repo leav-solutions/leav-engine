@@ -185,7 +185,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                     return savableValue as IValueToSubmit;
                 }),
                 version,
-                false // deleteEmpty
+                true // deleteEmpty
             );
         }
 
@@ -339,18 +339,18 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     /**
      * Submit the whole record: create record and batch save all stored values
      */
-    const _handleRecordSubmit = async () => {
+    const _handleRecordSubmit = async antValues => {
         const currentPendingValues = pendingValuesRef.current ?? {};
-        if (!!!Object.keys(currentPendingValues).length) {
+
+        if (state.record) {
             return;
         }
 
-        // Create Record
-        let newRecord: RecordIdentityFragment['whoAmI'] = state.record ?? null;
-        if (!newRecord) {
-            const valuesToSave: ValueBatchInput[] = Object.values(currentPendingValues).reduce(
-                (allValues: ValueBatchInput[], valuesById) => {
-                    const attributeValues: ValueBatchInput[] = Object.values(valuesById).map(val => {
+        const valuesToSave: ValueBatchInput[] = Object.keys(antValues).reduce(
+            (allValues: ValueBatchInput[], attributeId) => {
+                let attributeValues: ValueBatchInput[];
+                if (currentPendingValues[attributeId]) {
+                    attributeValues = Object.values(currentPendingValues[attributeId]).map(val => {
                         let actualValue;
                         switch (val.attribute.type) {
                             case AttributeType.advanced_link:
@@ -366,7 +366,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 break;
                         }
                         return {
-                            value: actualValue,
+                            payload: actualValue,
                             id_value: val.id_value ?? null,
                             attribute: val.attribute.id,
                             metadata: val.metadata
@@ -377,42 +377,50 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 : null
                         };
                     });
+                } else {
+                    attributeValues = [
+                        {
+                            payload: null,
+                            id_value: null,
+                            attribute: attributeId,
+                            metadata: null
+                        }
+                    ];
+                }
+                return [...allValues, ...attributeValues];
+            },
+            []
+        );
 
-                    return [...allValues, ...attributeValues];
-                },
-                []
+        const creationResult = await createRecord({variables: {library, data: {values: valuesToSave}}});
+
+        if (creationResult.data.createRecord.valuesErrors?.length) {
+            // Extract errors by field
+            const errorsByField = creationResult.data.createRecord.valuesErrors.reduce((errors, error) => {
+                if (!errors[error.attributeId]) {
+                    errors[error.attributeId] = [];
+                }
+
+                errors[error.attributeId].push(error);
+
+                return errors;
+            }, {});
+            setCreationErrors(errorsByField);
+
+            antdForm.setFields(
+                creationResult.data.createRecord.valuesErrors.map(error => ({
+                    name: error.attributeId,
+                    errors: [error.message]
+                }))
             );
 
-            const creationResult = await createRecord({variables: {library, data: {values: valuesToSave}}});
+            return;
+        }
 
-            if (creationResult.data.createRecord.valuesErrors?.length) {
-                // Extract errors by field
-                const errorsByField = creationResult.data.createRecord.valuesErrors.reduce((errors, error) => {
-                    if (!errors[error.attributeId]) {
-                        errors[error.attributeId] = [];
-                    }
+        const newRecord: RecordIdentityFragment['whoAmI'] = creationResult.data.createRecord.record.whoAmI;
 
-                    errors[error.attributeId].push(error);
-
-                    return errors;
-                }, {});
-                setCreationErrors(errorsByField);
-
-                antdForm.setFields(
-                    creationResult.data.createRecord.valuesErrors.map(error => ({
-                        name: error.attributeId,
-                        errors: [error.message]
-                    }))
-                );
-
-                return;
-            }
-
-            newRecord = creationResult.data.createRecord.record.whoAmI;
-
-            if (onCreate) {
-                onCreate(newRecord);
-            }
+        if (onCreate) {
+            onCreate(newRecord);
         }
     };
 
@@ -439,7 +447,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                 value: null
             }));
 
-            return saveValues(record, valuesToSave, version, true);
+            return saveValues(record, valuesToSave, version, false);
         }
 
         const newPendingValues = {...pendingValues};

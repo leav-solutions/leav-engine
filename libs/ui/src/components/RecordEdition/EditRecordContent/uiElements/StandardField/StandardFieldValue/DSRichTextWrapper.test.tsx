@@ -76,7 +76,6 @@ describe('DSRichTextWrapper', () => {
                         value={value}
                         presentationValue={presentationValue}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -99,7 +98,6 @@ describe('DSRichTextWrapper', () => {
                     <DSRichTextWrapper
                         value={value}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -123,7 +121,6 @@ describe('DSRichTextWrapper', () => {
                         value={value}
                         presentationValue={presentationValue}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -148,7 +145,6 @@ describe('DSRichTextWrapper', () => {
                         value={value}
                         presentationValue={presentationValue}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={readonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -170,7 +166,6 @@ describe('DSRichTextWrapper', () => {
                 <AntForm.Item>
                     <DSRichTextWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -198,7 +193,6 @@ describe('DSRichTextWrapper', () => {
                 <AntForm.Item>
                     <DSRichTextWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -223,7 +217,6 @@ describe('DSRichTextWrapper', () => {
                     <AntForm.Item name="inputToTest">
                         <DSRichTextWrapper
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -266,7 +259,6 @@ describe('DSRichTextWrapper', () => {
                             <DSRichTextWrapper
                                 value={value}
                                 attribute={mockFormAttribute}
-                                required={notRequired}
                                 readonly={notReadonly}
                                 calculatedFlags={
                                     calculatedValue
