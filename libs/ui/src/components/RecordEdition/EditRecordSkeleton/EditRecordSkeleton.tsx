@@ -2,13 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Divider, Skeleton} from 'antd';
-import React from 'react';
 
 interface IEditRecordSkeletonProps {
     rows: number;
 }
 
-function EditRecordSkeleton({rows}: IEditRecordSkeletonProps): JSX.Element {
+const EditRecordSkeleton = ({rows}: IEditRecordSkeletonProps): JSX.Element => {
     const rowsArray = Array(rows)
         .fill('')
         .map((_, i) => i);
@@ -24,6 +23,6 @@ function EditRecordSkeleton({rows}: IEditRecordSkeletonProps): JSX.Element {
             ))}
         </>
     );
-}
+};
 
 export default EditRecordSkeleton;

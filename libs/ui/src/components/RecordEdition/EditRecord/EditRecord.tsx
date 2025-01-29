@@ -25,7 +25,6 @@ import {
 import {ErrorBoundary} from '../../ErrorBoundary';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import EditRecordContent from '../EditRecordContent';
-import EditRecordSkeleton from '../EditRecordContent/EditRecordSkeleton';
 import useExecuteDeleteValueMutation from '../EditRecordContent/hooks/useExecuteDeleteValueMutation';
 import useSaveValueBatchMutation from '../EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {
@@ -45,6 +44,7 @@ import CreationErrorContext, {ICreationErrorByField} from './creationErrorContex
 import {FormInstance} from 'antd/lib/form/Form';
 import {useRunActionsListAndFormatOnValue} from '../EditRecordContent/hooks/useRunActionsListAndFormatOnValue';
 import EditRecordSidebar from '../EditRecordSidebar';
+import EditRecordSkeleton from '../EditRecordSkeleton';
 
 interface IEditRecordProps {
     antdForm: FormInstance;
