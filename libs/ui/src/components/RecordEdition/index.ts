@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export {default as EditRecordContent} from './EditRecordContent';
+export {default as EditRecordSkeleton} from './EditRecordSkeleton';
 export {default as EditRecordBtn} from './EditRecordBtn';
 export {EditRecord} from './EditRecord';
 export {EditRecordModal} from './EditRecordModal';
