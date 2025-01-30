@@ -16,6 +16,8 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
 import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
+import * as useColumnWidth from './useColumnWidth';
+import {MutableRefObject} from 'react';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -727,6 +729,12 @@ describe('Explorer', () => {
             mockDeleteValueMutation,
             {loading: false, called: false, client: {} as any, reset: jest.fn()}
         ]);
+
+        jest.spyOn(useColumnWidth, 'useColumnWidth').mockReturnValueOnce({
+            ref: {current: null},
+            getFieldColumnWidth: () => 500,
+            columnWidth: 500
+        });
 
         render(<Explorer entrypoint={linkEntrypoint} />, {
             mocks: [ExplorerLinkAttributeQueryMock]
