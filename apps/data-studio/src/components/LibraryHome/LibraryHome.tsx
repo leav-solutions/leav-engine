@@ -152,9 +152,6 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 defaultActionsForItem={['edit', 'remove']}
                 defaultPrimaryActions={['create']}
                 defaultMassActions={['deactivate']}
-                defaultViewSettings={{
-                    pageSize: 3
-                }}
                 itemActions={[
                     {
                         label: 'Test 1',
