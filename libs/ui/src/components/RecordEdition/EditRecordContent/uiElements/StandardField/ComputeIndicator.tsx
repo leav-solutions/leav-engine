@@ -28,11 +28,7 @@ export const ComputeIndicator: FunctionComponent<{
         <ComputeIndicatorWrapper>
             {shouldDisplayComputedIcon && (
                 <KitTooltip
-                    title={
-                        calculatedFlags.isCalculatedValue
-                            ? t('record_edition.calculated_value')
-                            : t('record_edition.inherited_value')
-                    }
+                    title={t('record_edition.calculated_value')}
                     mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
                 >
                     <FaSquareRootAlt />
