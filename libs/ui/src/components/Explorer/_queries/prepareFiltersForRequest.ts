@@ -10,6 +10,8 @@ import {nullValueConditions} from '../conditionsHelper';
 
 export const dateValuesSeparator = '\n';
 
+const _getDateAtNoon = (date: number): string => dayjs.unix(Number(date)).add(12, 'hour').unix().toString();
+
 const _getDateRequestFilters = ({
     field,
     condition,
@@ -28,37 +30,22 @@ const _getDateRequestFilters = ({
                     })
                 }
             ];
-        case RecordFilterCondition.NOT_EQUAL:
-            return [
-                {
-                    field,
-                    condition: RecordFilterCondition.LESS_THAN,
-                    value: dayjs.unix(Number(value)).startOf('day').unix().toString()
-                },
-                {operator: RecordFilterOperator.OR},
-                {
-                    field,
-                    condition: RecordFilterCondition.GREATER_THAN,
-                    value: dayjs.unix(Number(value)).endOf('day').unix().toString()
-                },
-                {operator: RecordFilterOperator.OR},
-                {
-                    field,
-                    condition: RecordFilterCondition.IS_EMPTY,
-                    value: null
-                }
-            ];
-        case RecordFilterCondition.EQUAL:
-            return [
-                {
-                    field,
-                    condition: RecordFilterCondition.BETWEEN,
-                    value: JSON.stringify({
-                        from: dayjs.unix(Number(value)).startOf('day').unix().toString(),
-                        to: dayjs.unix(Number(value)).endOf('day').unix().toString()
-                    })
-                }
-            ];
+            case RecordFilterCondition.NOT_EQUAL:
+                return [
+                    {
+                        field,
+                        condition: RecordFilterCondition.NOT_EQUAL,
+                        value: _getDateAtNoon(Number(value))
+                    }
+                ];
+            case RecordFilterCondition.EQUAL:
+                return [
+                    {
+                        field,
+                        condition,
+                        value: _getDateAtNoon(Number(value))
+                    }
+                ];
         default:
             return [
                 {

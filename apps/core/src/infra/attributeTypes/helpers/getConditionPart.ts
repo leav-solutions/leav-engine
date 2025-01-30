@@ -10,7 +10,8 @@ export type GetConditionPart = (
     valueIdentifier: string | AqlLiteral,
     condition: AttributeCondition,
     value: string | number | boolean,
-    attribute: IAttribute
+    attribute: IAttribute,
+    isCountFilter: boolean
 ) => GeneratedAqlQuery;
 
 export default function (): GetConditionPart {
@@ -18,21 +19,22 @@ export default function (): GetConditionPart {
         valueIdentifier: string | AqlLiteral,
         condition: AttributeCondition,
         value: string | number | boolean | IDateFilterValue,
-        attribute: IAttribute
+        attribute: IAttribute,
+        isCountFilter: boolean
     ): GeneratedAqlQuery => {
         const valueField = typeof valueIdentifier === 'string' ? literal(valueIdentifier) : valueIdentifier;
 
         switch (condition) {
             case AttributeCondition.EQUAL: {
                 const cond =
-                    attribute.format === AttributeFormats.DATE
+                    attribute.format === AttributeFormats.DATE && !isCountFilter
                         ? aql`DATE_COMPARE(${valueField} * 1000, ${Number(value) * 1000}, "years", "days") == true`
                         : aql`${valueField} == ${value}`;
 
                 return cond;
             }
             case AttributeCondition.NOT_EQUAL:
-                return attribute.format === AttributeFormats.DATE
+                return attribute.format === AttributeFormats.DATE && !isCountFilter
                     ? aql`DATE_COMPARE(${valueField} * 1000, ${Number(value) * 1000}, "years", "days") == false`
                     : aql`${valueField} != ${value}`;
             case AttributeCondition.BEGIN_WITH:
