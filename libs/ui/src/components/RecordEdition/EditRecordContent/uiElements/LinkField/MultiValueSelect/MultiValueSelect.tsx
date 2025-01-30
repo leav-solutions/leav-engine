@@ -12,6 +12,9 @@ import {useGetOptionsQuery} from './useGetOptionsQuery';
 import {IRecordIdentity} from '_ui/types';
 import {IRecordPropertyLink} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import {IEntrypointLink} from '_ui/components/Explorer/_types';
+import {Explorer} from '_ui/components/Explorer';
 
 interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<string[]>, SelectProps> {
     activeValues: RecordFormElementsValueLinkValue[] | undefined;
@@ -109,23 +112,39 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
         }
     };
 
+    //------
+    const {state} = useEditRecordReducer();
+
+    const linkEntrypoint: IEntrypointLink = {
+        type: 'link',
+        parentLibraryId: state.libraryId,
+        parentRecordId: state.record.id,
+        linkAttributeId: attribute.id
+    };
+
+    console.log({linkEntrypoint});
+    //------
+
     return (
-        <KitSelect
-            htmlFor={attribute.id}
-            loading={loading}
-            value={value}
-            required={required}
-            mode="multiple"
-            label={label}
-            options={selectOptions}
-            showSearch
-            optionFilterProp="label"
-            placeholder={t('record_edition.placeholder.record_select')}
-            onSelect={_handleSelect}
-            onClear={_clearValues}
-            onBlur={_handleBlur}
-            onDeselect={_handleDeselect}
-            onChange={onChange}
-        />
+        <>
+            <KitSelect
+                htmlFor={attribute.id}
+                loading={loading}
+                value={value}
+                required={required}
+                mode="multiple"
+                label={label}
+                options={selectOptions}
+                showSearch
+                optionFilterProp="label"
+                placeholder={t('record_edition.placeholder.record_select')}
+                onSelect={_handleSelect}
+                onClear={_clearValues}
+                onBlur={_handleBlur}
+                onDeselect={_handleDeselect}
+                onChange={onChange}
+            />
+            <Explorer entrypoint={linkEntrypoint} />
+        </>
     );
 };

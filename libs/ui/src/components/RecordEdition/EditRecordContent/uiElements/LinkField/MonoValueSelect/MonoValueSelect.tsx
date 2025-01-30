@@ -14,6 +14,9 @@ import {IRecordPropertyLink} from '_ui/_queries/records/getRecordPropertiesQuery
 import {useDebouncedValue} from '_ui/hooks/useDebouncedValue/useDebouncedValue';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {Explorer} from '_ui/components/Explorer';
+import {IEntrypointLink} from '_ui/components/Explorer/_types';
+import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 
 const ResultsCount = styled(KitTypography.Text)`
     margin-bottom: calc(var(--general-spacing-s) * 1px);
@@ -86,44 +89,62 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         runFullTextSearch(debouncedSearchInput);
     }, [debouncedSearchInput]);
 
-    return (
-        <KitSelect
-            htmlFor={attribute.id}
-            loading={loading}
-            value={value}
-            required={required}
-            label={label}
-            options={selectOptions}
-            status={errors.length > 0 && 'error'}
-            showSearch
-            optionFilterProp="label"
-            placeholder={t('record_edition.placeholder.record_select')}
-            onSelect={handleSelect}
-            onChange={onChange}
-            onClear={required ? undefined : handleClear}
-            allowClear={!required}
-            onSearch={handleSearch}
-            filterOption={false} // To avoid dynamic filtering when debouncing
-            dropdownRender={menu => {
-                if (loading) {
-                    return menu;
-                }
+    //------
+    const {state} = useEditRecordReducer();
 
-                return (
-                    <>
-                        <ResultsCount weight="bold">
-                            {optionsType === 'search'
-                                ? t('record_edition.link_search_result_count', {
-                                      count:
-                                          searchResultCount > suggestionsCount ? suggestionsCount : searchResultCount,
-                                      total: searchResultCount
-                                  })
-                                : t('record_edition.suggestions_count', {count: suggestionsCount})}
-                        </ResultsCount>
-                        {menu}
-                    </>
-                );
-            }}
-        />
+    const linkEntrypoint: IEntrypointLink = {
+        type: 'link',
+        parentLibraryId: state.libraryId,
+        parentRecordId: state.record.id,
+        linkAttributeId: attribute.id
+    };
+
+    console.log({linkEntrypoint});
+    //------
+
+    return (
+        <>
+            <KitSelect
+                htmlFor={attribute.id}
+                loading={loading}
+                value={value}
+                required={required}
+                label={label}
+                options={selectOptions}
+                status={errors.length > 0 && 'error'}
+                showSearch
+                optionFilterProp="label"
+                placeholder={t('record_edition.placeholder.record_select')}
+                onSelect={handleSelect}
+                onChange={onChange}
+                onClear={required ? undefined : handleClear}
+                allowClear={!required}
+                onSearch={handleSearch}
+                filterOption={false} // To avoid dynamic filtering when debouncing
+                dropdownRender={menu => {
+                    if (loading) {
+                        return menu;
+                    }
+
+                    return (
+                        <>
+                            <ResultsCount weight="bold">
+                                {optionsType === 'search'
+                                    ? t('record_edition.link_search_result_count', {
+                                          count:
+                                              searchResultCount > suggestionsCount
+                                                  ? suggestionsCount
+                                                  : searchResultCount,
+                                          total: searchResultCount
+                                      })
+                                    : t('record_edition.suggestions_count', {count: suggestionsCount})}
+                            </ResultsCount>
+                            {menu}
+                        </>
+                    );
+                }}
+            />
+            <Explorer entrypoint={linkEntrypoint} />
+        </>
     );
 };
