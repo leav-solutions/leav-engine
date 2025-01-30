@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import {screen, render} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {EditRecordPage} from './EditRecordPage';
-import {mockFormElementInput, mockRecordForm} from '_ui/__mocks__/common/form';
+import {mockFormElementInput, mockFormElementRequiredInput, mockRecordForm} from '_ui/__mocks__/common/form';
 import {mockAttributeSimple, mockFormAttributeCompute} from '_ui/__mocks__/common/attribute';
 
 let user!: ReturnType<typeof userEvent.setup>;
@@ -14,6 +14,11 @@ jest.mock('_ui/hooks/useGetRecordForm', () => () => useGetRecordFormMock());
 
 jest.mock('_ui/hooks/useCanEditRecord', () => ({
     useCanEditRecord: () => ({loading: false, canEdit: true, isReadOnly: false})
+}));
+
+const deleteValueMock = jest.fn();
+jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteDeleteValueMutation.ts', () => () => ({
+    deleteValue: deleteValueMock
 }));
 
 const useGetRecordValuesQueryMock = jest.fn();
@@ -26,6 +31,7 @@ describe('EditRecordPage', () => {
         user = userEvent.setup();
         useGetRecordFormMock.mockClear();
         useGetRecordValuesQueryMock.mockClear();
+        deleteValueMock.mockClear();
     });
 
     test('Should render an input component', () => {
@@ -171,5 +177,42 @@ describe('EditRecordPage', () => {
 
         expect(refetchMock).toHaveBeenCalledTimes(1);
         expect(screen.getAllByRole('textbox')).toHaveLength(2);
+    });
+
+    test('Should update the field in error if the field is required and empty', async () => {
+        const simpleElementInput = {
+            ...mockFormElementRequiredInput,
+            settings: [{key: 'label', value: {fr: 'simple attribute'}}]
+        };
+
+        useGetRecordFormMock.mockReturnValue({
+            loading: false,
+            recordForm: {...mockRecordForm, elements: [simpleElementInput]}
+        });
+
+        useGetRecordValuesQueryMock.mockReturnValue({
+            loading: false,
+            data: {},
+            refetch: jest.fn()
+        });
+
+        deleteValueMock.mockReturnValue({
+            status: 'ERROR',
+            error: 'Attribute is required'
+        });
+
+        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />);
+
+        const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
+
+        await user.click(simpleInput);
+        await userEvent.type(simpleInput, 'some value');
+        await userEvent.tab();
+        expect(screen.queryByText('Attribute is required')).not.toBeInTheDocument();
+
+        await userEvent.clear(simpleInput);
+        await userEvent.tab();
+
+        expect(screen.getByText('Attribute is required')).toBeVisible();
     });
 });

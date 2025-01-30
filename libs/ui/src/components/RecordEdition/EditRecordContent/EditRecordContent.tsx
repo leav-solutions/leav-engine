@@ -26,7 +26,7 @@ interface IEditRecordContentProps {
     antdForm: FormInstance;
     record: IRecordIdentityWhoAmI | null;
     library: string;
-    onRecordSubmit: () => void;
+    onRecordSubmit: (values: any) => void;
     onValueSubmit: SubmitValueFunc;
     onValueDelete: DeleteValueFunc;
     onDeleteMultipleValues: DeleteMultipleValuesFunc;

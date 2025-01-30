@@ -82,8 +82,14 @@ interface INotCalculated {
 export type CalculatedFlags = INotCalculated | ICalculatedOverride | ICalculatedNotOverride;
 
 export const computeCalculatedFlags = (fieldValues: RecordFormElementsValueStandardValue[]): CalculatedFlags => {
-    const calculatedValue = fieldValues.find(fieldValue => fieldValue.isCalculated);
-    const overrideValue = fieldValues.find(fieldValue => !fieldValue.isCalculated && !fieldValue.isInherited);
+    const calculatedValue = fieldValues.find(
+        fieldValue => fieldValue.isCalculated !== null && fieldValue.isCalculated !== undefined
+    );
+    const overrideValue = fieldValues.find(
+        fieldValue =>
+            (fieldValue.isCalculated === null || fieldValue.isCalculated === undefined) &&
+            (fieldValue.isInherited === null || fieldValue.isInherited === undefined)
+    );
 
     if (calculatedValue === undefined) {
         return {

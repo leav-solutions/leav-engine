@@ -27,17 +27,5 @@ describe('LinkField', () => {
         );
 
         expect(screen.getByText(label.en)).toBeVisible();
-        expect(screen.getByText(label.en)).not.toHaveClass('required');
-    });
-
-    it('should display input with required class if specified', async () => {
-        const label = {en: 'tata'};
-        render(
-            <MockedLangContextProvider>
-                <LinkField settings={{label, required: true}} />
-            </MockedLangContextProvider>
-        );
-
-        expect(screen.getByText(label.en)).toHaveClass('required');
     });
 });

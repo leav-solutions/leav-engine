@@ -55,6 +55,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
     };
 
     const _handleOnBlur = async inputValue => {
+        setHasChanged(false);
         const valueToSubmit = isEmptyValue(inputValue) ? null : inputValue;
         if (!hasChanged) {
             onChange(valueToSubmit);
@@ -78,10 +79,6 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
 
     const _handleOnChange = inputValue => {
         setHasChanged(true);
-        if (inheritedFlags.isInheritedValue && isEmptyValue(inputValue)) {
-            _resetToInheritedOrCalculatedValue();
-            return;
-        }
         onChange(inputValue);
     };
 

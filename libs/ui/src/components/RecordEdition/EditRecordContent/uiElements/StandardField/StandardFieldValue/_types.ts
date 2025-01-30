@@ -17,7 +17,6 @@ export interface IStandFieldValueContentProps<T> extends IProvidedByAntFormItem<
     removeLastValueOfMultivalues?: () => void;
     handleSubmit: (value: StandardValueTypes, id?: string) => Promise<void | ISubmitMultipleResult>;
     readonly: boolean;
-    required: boolean;
     calculatedFlags: CalculatedFlags;
     inheritedFlags: InheritedFlags;
     setActiveValue: () => void;

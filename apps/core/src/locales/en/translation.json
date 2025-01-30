@@ -59,6 +59,7 @@
         "PREVIEWS_SETTINGS_NOT_ALLOWED": "Cannot define previews settings on a library of behavior different than 'files'",
         "PROTECTED_ENDPOINT": "This endpoint is not allowed: {{endpoint}}",
         "READONLY_ATTRIBUTE": "Attribute {{attribute}} is readonly",
+        "REQUIRED_ATTRIBUTE": "Attribute is required",
         "REQUIRED_ATTRIBUTE_FORMAT": "Attribute's format must be specified",
         "REQUIRED_ATTRIBUTE_LABEL": "Attribute's label for default language ({{lang}}) must be specified",
         "REQUIRED_ATTRIBUTE_LINKED_LIBRARY": "Attribute's linked library must be specified",

@@ -93,7 +93,9 @@ export default function ({
             `;
             const res = await dbService.execute({query, ctx});
 
-            return res[0] ? [{payload: res[0], attribute: attribute.id, modified_by: null, created_by: null}] : [];
+            return res[0] !== null && res[0] !== undefined
+                ? [{payload: res[0], attribute: attribute.id, modified_by: null, created_by: null}]
+                : [];
         },
         sortQueryPart({attributes, order}) {
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;

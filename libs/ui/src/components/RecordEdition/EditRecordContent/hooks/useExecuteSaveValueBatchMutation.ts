@@ -51,8 +51,8 @@ export default function useExecuteSaveValueBatchMutation(): ISaveValueBatchHook 
                     errors?.length && savedValues.length
                         ? APICallStatus.PARTIAL
                         : errors?.length && !savedValues.length
-                        ? APICallStatus.ERROR
-                        : APICallStatus.SUCCESS;
+                          ? APICallStatus.ERROR
+                          : APICallStatus.SUCCESS;
 
                 return {
                     status,

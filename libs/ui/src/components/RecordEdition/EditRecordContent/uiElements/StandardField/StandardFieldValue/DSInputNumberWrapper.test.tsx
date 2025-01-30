@@ -70,7 +70,6 @@ describe('DSInputNumberWrapper', () => {
                         value={value}
                         presentationValue={presentationValue}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -93,7 +92,6 @@ describe('DSInputNumberWrapper', () => {
                     <DSInputNumberWrapper
                         value={value}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -117,7 +115,6 @@ describe('DSInputNumberWrapper', () => {
                         value={value}
                         presentationValue={presentationValue}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -142,7 +139,6 @@ describe('DSInputNumberWrapper', () => {
                         value={value}
                         presentationValue={presentationValue}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={readonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -164,7 +160,6 @@ describe('DSInputNumberWrapper', () => {
                 <AntForm.Item>
                     <DSInputNumberWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -193,7 +188,6 @@ describe('DSInputNumberWrapper', () => {
                     <DSInputNumberWrapper
                         value={value}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -219,7 +213,6 @@ describe('DSInputNumberWrapper', () => {
                     <AntForm.Item name="inputNumberTest">
                         <DSInputNumberWrapper
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -263,7 +256,6 @@ describe('DSInputNumberWrapper', () => {
                             <DSInputNumberWrapper
                                 value={value}
                                 attribute={mockFormAttribute}
-                                required={notRequired}
                                 readonly={notReadonly}
                                 calculatedFlags={
                                     calculatedValue

@@ -41,7 +41,6 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
     removeLastValueOfMultivalues,
     onChange,
     attribute,
-    required,
     readonly,
     handleSubmit,
     inheritedFlags,
@@ -192,7 +191,7 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
             autoFocus={isFocused}
             open={isFocused}
             value={isValueEmpty ? undefined : valueToDisplay}
-            allowClear={!required && value}
+            allowClear={!!value && !attribute.multiple_values}
             disabled={readonly}
             options={options}
             status={errors.length > 0 && 'error'}
