@@ -125,10 +125,6 @@ export interface IFilterDropDownProps {
     filter: ExplorerFilter;
 }
 
-// export type DefaultViewSettingsFilter =
-//     | Pick<ExplorerFilter, 'field' | 'condition' | 'value'>
-//     | Pick<IExplorerFilterThrough, 'field' | 'condition' | 'value' | 'subCondition' | 'subField'>;
-
 export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,
     {

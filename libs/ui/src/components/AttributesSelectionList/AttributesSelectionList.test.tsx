@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
-import {getAttributesByLibQuery} from '_ui/_queries/attributes/getAttributesByLib';
+import {AttributeFormat, AttributeType, GetAttributesByLibDocument} from '_ui/_gqlTypes';
 import {act, render, screen, within} from '_ui/_tests/testUtils';
 import AttributesSelectionList from './AttributesSelectionList';
 
@@ -12,7 +11,7 @@ describe('AttributesSelectionList', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesByLibQuery,
+                    query: GetAttributesByLibDocument,
                     variables: {
                         library: 'test_lib'
                     }
@@ -60,7 +59,7 @@ describe('AttributesSelectionList', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesByLibQuery,
+                    query: GetAttributesByLibDocument,
                     variables: {
                         library: 'test_lib'
                     }
