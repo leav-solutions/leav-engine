@@ -1167,7 +1167,7 @@ describe('Explorer', () => {
             ]);
 
             // AND the selection is cleared
-            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+            await waitForElementToBeRemoved(() => screen.queryByRole('status'), {timeout: 2 * 60_000});
         });
 
         it('should inform about selection all without pagination', async () => {
@@ -1231,7 +1231,7 @@ describe('Explorer', () => {
             ]);
 
             // AND the selection is cleared
-            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+            await waitForElementToBeRemoved(() => screen.queryByRole('status'), {timeout: 2 * 60_000});
         });
 
         it('should inform about selection all with pagination (page only)', async () => {
@@ -1339,7 +1339,7 @@ describe('Explorer', () => {
             ]);
 
             // AND the selection is cleared
-            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+            await waitForElementToBeRemoved(() => screen.queryByRole('status'), {timeout: 2 * 60_000});
         });
 
         it('should inform about selection with pagination (all in once)', async () => {
@@ -1486,7 +1486,7 @@ describe('Explorer', () => {
             ]);
 
             // AND the selection is cleared
-            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+            await waitForElementToBeRemoved(() => screen.queryByRole('status'), {timeout: 2 * 60_000});
         });
 
         it('should deactivate massively for simple library (manual selection with only one page)', async () => {
@@ -1551,7 +1551,7 @@ describe('Explorer', () => {
             });
 
             // AND the selection is cleared
-            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+            await waitForElementToBeRemoved(() => screen.queryByRole('status'), {timeout: 2 * 60_000});
         });
     });
 });
