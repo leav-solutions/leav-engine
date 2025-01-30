@@ -241,7 +241,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
