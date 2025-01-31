@@ -11,9 +11,13 @@ const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
 `;
 
-export const CommonFilterItem: FunctionComponent<{filter: IExplorerFilter}> = ({filter}) => (
+export const CommonFilterItem: FunctionComponent<{filter: IExplorerFilter; disabled?: boolean}> = ({
+    filter,
+    disabled
+}) => (
     <FilterStyled
         expandable
+        disabled={disabled}
         label={filter.attribute.label}
         values={filter.value === null ? [] : [filter.value]}
         dropDownProps={{

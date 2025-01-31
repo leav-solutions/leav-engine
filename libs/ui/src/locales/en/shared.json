@@ -647,10 +647,7 @@
             "active": "Active sorts",
             "inactive": "Inactive sorts"
         },
-        "toolbar": {
-            "active": "Active filters",
-            "inactive": "Inactive filters"
-        },
+        "toolbar": "Toolbar",
         "reset-filter": "Reset filter",
         "reset-view": "Reset view",
         "empty-data": "No items found.",
@@ -661,7 +658,8 @@
         "columns": "Columns",
         "visible-columns": "Visible columns",
         "invisible-columns": "Invisible columns",
-        "pagination-total-number": "{{from, number}} - {{to, number}} of {{total, number}} items",
+        "pagination-total-number_one": "{{from, number}} - {{to, number}} of {{count, number}} item",
+        "pagination-total-number_other": "{{from, number}} - {{to, number}} of {{count, number}} items",
         "active-items-number": "{{count, number}} active",
         "active-items-number_zero": "None",
         "invalid-value": "Invalid value",
@@ -670,6 +668,19 @@
         "reinit-view": "Reset",
         "select-condition": "Select condition",
         "true": "True",
-        "false": "False"
+        "false": "False",
+        "massAction": {
+            "itemsTotal_one": "{{count, number}} item",
+            "itemsTotal_other": "{{count, number}} items",
+            "selectedItems_one": "{{count, number}} selected",
+            "selectedItems_other": "{{count, number}} selected",
+            "deactivate": "Deactivate",
+            "toggle_selection": {
+                "select_page_one": "Select visible item ({{count, number}})",
+                "select_page_other": "Select visible items ({{count, number}})",
+                "select_all": "Select all items ({{count, number}})",
+                "deselect_all": "Deselect all items"
+            }
+        }
     }
 }
