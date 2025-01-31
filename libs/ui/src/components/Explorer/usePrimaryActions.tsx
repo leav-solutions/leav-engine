@@ -44,7 +44,11 @@ export const usePrimaryActionsButton = (actions: IPrimaryAction[]) => {
                                 }))
                             }}
                         >
-                            <KitButton data-testid="actions-dropdown" type="secondary" icon={<FaEllipsisV />} />
+                            <KitButton
+                                data-testid="actions-dropdown"
+                                type="secondary"
+                                icon={<FaEllipsisV />}
+                            ></KitButton>
                         </KitDropDown>
                     )}
                 </>

@@ -18,7 +18,10 @@ import {Explorer} from '_ui/index';
 import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import * as useColumnWidth from './useColumnWidth';
-import {MutableRefObject} from 'react';
+import {AddLinkModal} from './link-item/AddLinkModal';
+import {FunctionComponent} from 'react';
+import {IViewSettingsState, ViewSettingsContext, viewSettingsInitialState} from './manage-view-settings';
+import {useViewSettingsReducer} from './useViewSettingsReducer';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -541,6 +544,31 @@ describe('Explorer', () => {
 
     let user: ReturnType<typeof userEvent.setup>;
 
+    const ExplorerLinkAttributeMonoValueQueryMock = {
+        request: {
+            query: gqlTypes.ExplorerLinkAttributeDocument,
+            variables: {
+                id: linkEntrypoint.linkAttributeId
+            }
+        },
+        result: {
+            data: {
+                attributes: {
+                    list: [explorerLinkAttribute],
+                    __typename: 'AttributesList'
+                }
+            }
+        }
+    };
+
+    const MockViewSettingsContextProvider: FunctionComponent<{viewMock: IViewSettingsState}> = ({
+        viewMock,
+        children
+    }) => {
+        const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, viewMock);
+        return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
+    };
+
     beforeEach(() => {
         spyUseExplorerLibraryDataQuery = jest
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
@@ -567,6 +595,11 @@ describe('Explorer', () => {
         );
         jest.clearAllMocks();
         user = userEvent.setup();
+    });
+
+    afterEach(() => {
+        // restore the spy created with spyOn
+        jest.restoreAllMocks();
     });
 
     describe('props title', () => {
@@ -1012,6 +1045,8 @@ describe('Explorer', () => {
                     defaultViewSettings={{
                         filters: [
                             {
+                                id: '',
+                                attribute: {format: simpleMockAttribute.format, label: simpleMockAttribute.label.fr},
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas'
@@ -1263,6 +1298,8 @@ describe('Explorer', () => {
                         pageSize: 1, // configuration to be in multi-pages (2 pages of 1 record)
                         filters: [
                             {
+                                id: '',
+                                attribute: {format: simpleMockAttribute.format, label: simpleMockAttribute.label.fr},
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas'
@@ -1371,6 +1408,8 @@ describe('Explorer', () => {
                         pageSize: 1, // configuration to be in multi-pages (2 pages of 1 record)
                         filters: [
                             {
+                                id: '',
+                                attribute: {format: simpleMockAttribute.format, label: simpleMockAttribute.label.fr},
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas'
@@ -1552,6 +1591,63 @@ describe('Explorer', () => {
 
             // AND the selection is cleared
             await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+        });
+    });
+
+    describe('Add link modal', () => {
+        test('Should be able to add existing item to atribute', async () => {
+            const viewInitialState = {
+                ...viewSettingsInitialState,
+                entrypoint: linkEntrypoint
+            };
+
+            const fetch = jest.fn();
+            const selecionIdsImplementation = [
+                fetch,
+                {
+                    loading: false,
+                    data: undefined
+                }
+            ];
+
+            jest.spyOn(gqlTypes, 'useExplorerSelectionIdsLazyQuery').mockImplementation(
+                () => selecionIdsImplementation as gqlTypes.ExplorerSelectionIdsLazyQueryHookResult
+            );
+
+            render(
+                <MockViewSettingsContextProvider viewMock={viewInitialState}>
+                    <AddLinkModal open library={explorerLinkAttribute.linked_library.id} />
+                </MockViewSettingsContextProvider>,
+                {
+                    mocks: [ExplorerLinkAttributeQueryMock]
+                }
+            );
+
+            const rows = await screen.findAllByRole('row');
+            expect(rows.length).toBe(mockRecords.length);
+            const checkbox = within(rows[0]).getByRole('checkbox');
+
+            expect(checkbox).toBeInTheDocument();
+            await user.click(checkbox);
+
+            const snackbar = screen.getByRole('status');
+            expect(snackbar).toHaveTextContent('selectedItems|1');
+            const addButton = screen.getByRole('button', {name: /add-link/});
+            expect(addButton).toBeInTheDocument();
+            await user.click(addButton);
+
+            expect(fetch).toHaveBeenCalledWith({
+                variables: {
+                    filters: [
+                        {
+                            condition: gqlTypes.RecordFilterCondition.EQUAL,
+                            field: 'id',
+                            value: mockRecords[0].id
+                        }
+                    ],
+                    libraryId: ''
+                }
+            });
         });
     });
 });
