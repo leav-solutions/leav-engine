@@ -3,11 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IViewSettingsState, ViewSettingsActionTypes, viewSettingsReducer, ViewType} from './viewSettingsReducer';
 import {defaultPageSizeOptions, viewSettingsInitialState} from './viewSettingsInitialState';
-import {AttributeFormat, RecordFilterCondition, SortOrder} from '_ui/_gqlTypes';
+import {AttributeFormat, AttributeType, RecordFilterCondition, SortOrder} from '_ui/_gqlTypes';
 
 const attributeData = {
     label: 'first',
-    format: AttributeFormat.text
+    format: AttributeFormat.text,
+    type: AttributeType.simple
 };
 
 describe('ViewSettings Reducer', () => {
@@ -704,7 +705,8 @@ describe('ViewSettings Reducer', () => {
                         value: 'test',
                         attribute: {
                             label: 'My Field',
-                            format: AttributeFormat.text
+                            format: AttributeFormat.text,
+                            type: AttributeType.simple
                         }
                     }
                 ],

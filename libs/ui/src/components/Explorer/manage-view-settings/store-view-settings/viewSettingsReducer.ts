@@ -2,11 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {v4 as uuid} from 'uuid';
-import {SortOrder, RecordFilterCondition} from '_ui/_gqlTypes';
-import {Entrypoint, IExplorerFilter} from '../../_types';
+import {SortOrder, RecordFilterCondition, AttributeFormat} from '_ui/_gqlTypes';
+import {
+    Entrypoint,
+    ExplorerFilter,
+    IExplorerFilterStandard,
+    isExplorerFilterLink,
+    isExplorerFilterStandard,
+    isExplorerFilterThrough
+} from '../../_types';
 import {hasOnlyNoValueConditions} from '../../conditionsHelper';
 import {MASS_SELECTION_ALL} from '../../_constants';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
+import {ThroughConditionFilter} from '_ui/types';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 export type MassSelection = string[] | typeof MASS_SELECTION_ALL;
@@ -46,7 +54,7 @@ export interface IViewSettingsState {
         order: SortOrder;
     }>;
     pageSize: number;
-    filters: IExplorerFilter[];
+    filters: ExplorerFilter[];
     maxFilters: number;
     initialViewSettings: Pick<IViewSettingsState, 'viewType' | 'attributesIds' | 'sort' | 'pageSize' | 'filters'>;
     massSelection: MassSelection;
@@ -118,22 +126,22 @@ interface IViewSettingsActionClearFulltextSearch {
 
 interface IViewSettingsActionAddFilter {
     type: typeof ViewSettingsActionTypes.ADD_FILTER;
-    payload: Omit<IExplorerFilter, 'id' | 'value' | 'condition'>;
+    payload: Omit<ExplorerFilter, 'id' | 'value' | 'condition'>;
 }
 
 interface IViewSettingsActionResetFilter {
     type: typeof ViewSettingsActionTypes.RESET_FILTER;
-    payload: Pick<IExplorerFilter, 'id'>;
+    payload: Pick<ExplorerFilter, 'id'>;
 }
 
 interface IViewSettingsActionRemoveFilter {
     type: typeof ViewSettingsActionTypes.REMOVE_FILTER;
-    payload: Pick<IExplorerFilter, 'id'>;
+    payload: Pick<ExplorerFilter, 'id'>;
 }
 
 interface IViewSettingsActionChangeFilterConfig {
     type: typeof ViewSettingsActionTypes.CHANGE_FILTER_CONFIG;
-    payload: IExplorerFilter;
+    payload: ExplorerFilter;
 }
 
 interface IViewSettingsActionMoveFilter {
@@ -245,9 +253,10 @@ const addFilter: Reducer<IViewSettingsActionAddFilter> = (state, payload) => ({
         {
             ...payload,
             id: uuid(),
-            condition: hasOnlyNoValueConditions(payload.attribute.format)
+            condition: hasOnlyNoValueConditions((payload as IExplorerFilterStandard).attribute.format) //TODO: remove the cast?
                 ? null
-                : ((conditionsByFormat[payload.attribute.format][0] ?? null) as RecordFilterCondition),
+                : ((conditionsByFormat[(payload as IExplorerFilterStandard).attribute.format][0] ??
+                      null) as RecordFilterCondition),
             value: null
         }
     ]
@@ -258,15 +267,35 @@ const resetFilter: Reducer<IViewSettingsActionResetFilter> = (state, payload) =>
     filters: state.filters.map(filter => {
         if (filter.id === payload.id) {
             const initialViewFilter = state.initialViewSettings.filters.find(({id}) => id === payload.id);
-            return (
-                initialViewFilter ?? {
+            if (initialViewFilter) {
+                return initialViewFilter;
+            }
+
+            if (isExplorerFilterStandard(filter)) {
+                return {
                     ...filter,
                     condition: hasOnlyNoValueConditions(filter.attribute.format)
                         ? null
-                        : ((conditionsByFormat[filter.attribute.format][0] ?? null) as RecordFilterCondition),
+                        : conditionsByFormat[filter.attribute.format][0],
                     value: null
-                }
-            );
+                };
+            }
+
+            if (isExplorerFilterThrough(filter)) {
+                return {
+                    ...filter,
+                    condition: ThroughConditionFilter.THROUGH,
+                    value: null
+                };
+            }
+
+            if (isExplorerFilterLink(filter)) {
+                return {
+                    ...filter,
+                    condition: conditionsByFormat[AttributeFormat.text][0],
+                    value: null
+                };
+            }
         }
         return filter;
     })

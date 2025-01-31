@@ -18,7 +18,7 @@ const sanitize = (str: string) =>
         .toLowerCase();
 
 const _mapping = (data: GetAttributesByLibQuery | undefined, availableLanguages: string[]): IColumnsById =>
-    data?.attributes?.list.reduce((acc, attribute) => {
+    data?.attributes?.list.reduce<IColumnsById>((acc, attribute) => {
         const label = localizedTranslation(attribute.label, availableLanguages);
         acc[attribute.id] = {
             ...attribute,

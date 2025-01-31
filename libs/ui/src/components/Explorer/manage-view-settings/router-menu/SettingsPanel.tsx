@@ -17,6 +17,7 @@ import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {SettingsPanelPages} from '../open-view-settings/EditSettingsContext';
 import {useOpenViewSettings} from '../open-view-settings/useOpenViewSettings';
+import {isExplorerFilterThrough} from '../../_types';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -52,6 +53,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
     const {saveView} = useExecuteSaveViewMutation();
 
     const _handleSaveView = () => {
+        //TODO: handle "through" filters
         saveView({
             view: {
                 id: view.viewId,
@@ -61,9 +63,9 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                     type: mapViewTypeFromExplorerToLegacy[view.viewType]
                 },
                 filters: view.filters.map(filter => ({
-                    field: filter.field,
+                    field: isExplorerFilterThrough(filter) ? `${filter.field}.${filter.subField}` : filter.field,
                     value: filter.value,
-                    condition: filter.condition
+                    condition: isExplorerFilterThrough(filter) ? filter.subCondition : filter.condition
                 })),
                 sort: view.sort.map(({field: attributeId, order}) => ({field: attributeId, order})),
                 attributes: view.attributesIds,
