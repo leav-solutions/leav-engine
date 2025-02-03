@@ -1,6 +1,6 @@
 {
   "name": "portal",
-  "version": "1.0.0-beta14",
+  "version": "1.0.0-beta16",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "5.2.6",

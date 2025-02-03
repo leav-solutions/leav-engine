@@ -30,22 +30,22 @@ const _getDateRequestFilters = ({
                     })
                 }
             ];
-            case RecordFilterCondition.NOT_EQUAL:
-                return [
-                    {
-                        field,
-                        condition: RecordFilterCondition.NOT_EQUAL,
-                        value: _getDateAtNoon(Number(value))
-                    }
-                ];
-            case RecordFilterCondition.EQUAL:
-                return [
-                    {
-                        field,
-                        condition,
-                        value: _getDateAtNoon(Number(value))
-                    }
-                ];
+        case RecordFilterCondition.NOT_EQUAL:
+            return [
+                {
+                    field,
+                    condition: RecordFilterCondition.NOT_EQUAL,
+                    value: _getDateAtNoon(Number(value))
+                }
+            ];
+        case RecordFilterCondition.EQUAL:
+            return [
+                {
+                    field,
+                    condition,
+                    value: _getDateAtNoon(Number(value))
+                }
+            ];
         default:
             return [
                 {
