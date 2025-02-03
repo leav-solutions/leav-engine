@@ -26,6 +26,8 @@ export const SidePanel: FunctionComponent = () => {
             initialOpen
             floating
             closable
+            closeOnEsc
+            closeOnOutsideClick
             idCardProps={{title: activeSettings.title}}
             leftActionProps={
                 activeSettings.onClickLeftButton
