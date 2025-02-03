@@ -14,21 +14,20 @@ import {useLang} from '_ui/hooks';
 import {FilterDropdownContent} from './FilterDropdownContent';
 import {IFilterChildrenLinkDropDownProps} from './_types';
 
-const subFilterSuffix = '_THROUGH_SUB_FILTER';
-
 const InputStyled = styled(KitInput)`
     width: 100%;
 `;
 
 export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDownProps> = ({
     filter,
-    onFilterChange
+    onFilterChange,
+    removeThroughCondition = false
 }) => {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
 
     const {conditionOptionsByType} = useConditionsOptionsByType(filter);
-    const availableConditionsOptions = filter.id.includes(subFilterSuffix)
+    const availableConditionsOptions = removeThroughCondition
         ? conditionOptionsByType.filter(f => f.value !== ThroughConditionFilter.THROUGH)
         : conditionOptionsByType;
 
@@ -116,8 +115,9 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
                     />
                     {selectedSubField && linkAttributeProps && (
                         <FilterDropdownContent
+                            removeThroughCondition={true}
                             filter={{
-                                id: filter.id + subFilterSuffix,
+                                id: filter.id,
                                 field: selectedSubField ?? '',
                                 attribute: {
                                     ...linkAttributeProps,

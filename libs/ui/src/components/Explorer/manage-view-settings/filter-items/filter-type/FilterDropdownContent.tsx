@@ -17,7 +17,8 @@ import {ExplorerFilter, isExplorerFilterLink, isExplorerFilterThrough, isExplore
 export const FilterDropdownContent: FunctionComponent<{
     filter: ExplorerFilter;
     onFilterChange: (filterData: ExplorerFilter) => void;
-}> = ({filter, onFilterChange}) => {
+    removeThroughCondition?: boolean;
+}> = ({filter, onFilterChange, removeThroughCondition = false}) => {
     if (isExplorerFilterStandard(filter)) {
         const commonDropDownProps = {
             filter,
@@ -38,7 +39,13 @@ export const FilterDropdownContent: FunctionComponent<{
     }
 
     if (isExplorerFilterLink(filter) || isExplorerFilterThrough(filter)) {
-        return <LinkAttributeDropDown filter={filter} onFilterChange={onFilterChange} />;
+        return (
+            <LinkAttributeDropDown
+                filter={filter}
+                onFilterChange={onFilterChange}
+                removeThroughCondition={removeThroughCondition}
+            />
+        );
     }
 
     return <></>;

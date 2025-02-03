@@ -11,4 +11,5 @@ export interface IFilterChildrenDropDownProps {
 export interface IFilterChildrenLinkDropDownProps {
     filter: IExplorerFilterLink | IExplorerFilterThrough;
     onFilterChange: (filterData: IExplorerFilterLink | IExplorerFilterThrough) => void;
+    removeThroughCondition: boolean;
 }
