@@ -198,7 +198,8 @@ export default function ({
                                 variableName,
                                 conditionApplied,
                                 valueToCheck,
-                                lastFilterAttribute
+                                lastFilterAttribute,
+                                true
                             );
                             statement = aql`${countConditionPart}`;
                         } else {
@@ -208,14 +209,16 @@ export default function ({
                                 'CURRENT',
                                 filter.condition as AttributeCondition,
                                 filter.value,
-                                lastFilterAttribute
+                                lastFilterAttribute,
+                                false
                             );
 
                             const standardConditionPart = getConditionPart(
                                 variableName,
                                 filter.condition as AttributeCondition,
                                 filter.value,
-                                lastFilterAttribute
+                                lastFilterAttribute,
+                                false
                             );
 
                             statement = aql`IS_ARRAY(${variableNameAql}) ? LENGTH(${literal(

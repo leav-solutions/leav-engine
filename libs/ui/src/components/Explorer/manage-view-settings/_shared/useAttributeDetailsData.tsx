@@ -8,14 +8,22 @@ import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 
 interface IColumnsById {
-    [attributeId: string]: AttributeDetailsFragment;
+    [attributeId: string]: AttributeDetailsFragment & {index: string};
 }
+
+const sanitize = (str: string) =>
+    str
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '')
+        .toLowerCase();
 
 const _mapping = (data: GetAttributesByLibQuery | undefined, availableLanguages: string[]): IColumnsById =>
     data?.attributes?.list.reduce((acc, attribute) => {
+        const label = localizedTranslation(attribute.label, availableLanguages);
         acc[attribute.id] = {
             ...attribute,
-            label: localizedTranslation(attribute.label, availableLanguages)
+            label,
+            index: `${sanitize(attribute.id)} ${sanitize(label)}`
         };
         return acc;
     }, {}) ?? {};
@@ -41,11 +49,10 @@ export const useAttributeDetailsData = (libraryId: string) => {
             return attributeDetailsById;
         }
 
+        const searchString = sanitize(debouncedSearchInput);
+
         return columnIds.reduce((acc, columnId) => {
-            if (
-                attributeDetailsById[columnId].label.includes(debouncedSearchInput) ||
-                columnId.includes(debouncedSearchInput)
-            ) {
+            if (attributeDetailsById[columnId].index.includes(searchString)) {
                 acc[columnId] = attributeDetailsById[columnId];
             }
             return acc;

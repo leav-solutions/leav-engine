@@ -24,6 +24,7 @@ import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_t
 import {useSearchParams} from 'react-router-dom';
 import {FaBeer} from 'react-icons/all';
 import styled from 'styled-components';
+import {Empty} from 'antd';
 
 interface ILibraryHomeProps {
     library?: string;
@@ -150,11 +151,19 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 }}
                 defaultActionsForItem={['edit', 'remove']}
                 defaultPrimaryActions={['create']}
+                defaultMassActions={['deactivate']}
                 itemActions={[
                     {
                         label: 'Test 1',
                         icon: <FaBeer />,
                         callback: item => console.info(1, item)
+                    }
+                ]}
+                massActions={[
+                    {
+                        icon: null,
+                        label: 'test',
+                        callback: console.log
                     }
                 ]}
                 primaryActions={[
@@ -164,6 +173,15 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                         callback: () => console.info('Clicked action 1')
                     }
                 ]}
+                emptyPlaceholder={
+                    <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        imageStyle={{
+                            height: 60
+                        }}
+                        description={<span>{t('global.element_not_found')}.</span>}
+                    />
+                }
             />
         </ExplorerContainerDivStyled>
     ) : params.has(explorerLinkQueryParamName) ? (
