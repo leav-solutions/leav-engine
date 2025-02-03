@@ -33,13 +33,15 @@ const _isLinkAttributeDetails = (
 ): linkAttributeData is LinkAttributeDetailsFragment & {id: string; multiple_values: boolean} =>
     'linked_library' in linkAttributeData;
 
+const _entrypointsAreEqual = (entrypoint1, entrypoint2) =>
+    Object.keys(entrypoint1).every(key => entrypoint1[key] === entrypoint2[key]);
+
 export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettings: DefaultViewSettings = {}) => {
     const {lang} = useLang();
     const [loading, setLoading] = useState(true);
-    const [libraryId, setLibraryId] = useState<null | string>(
-        entrypoint.type === 'library' ? entrypoint.libraryId : null
-    );
+    const [libraryId, setLibraryId] = useState(entrypoint.type === 'library' ? entrypoint.libraryId : null);
     const [view, dispatch] = useReducer(viewSettingsReducer, viewSettingsInitialState);
+    const entrypointsAreEqual = _entrypointsAreEqual(entrypoint, view.entrypoint);
 
     useExplorerLinkAttributeQuery({
         skip: entrypoint.type !== 'link',
@@ -60,12 +62,12 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
         loading: viewsLoading,
         error: viewError
     } = useGetViewsListQuery({
-        skip: libraryId === null,
+        skip: entrypointsAreEqual || libraryId === null,
+        fetchPolicy: 'network-only',
         variables: {
             libraryId: libraryId as string
         }
     });
-
     // Take the last view from the array
     const userView = viewData?.views?.list?.at(-1);
     const userViewFilters: ValidFieldFilter[] =
@@ -107,6 +109,11 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
             }, {}),
         [attributesData]
     );
+
+    useEffect(() => {
+        setLoading(true);
+        setLibraryId(entrypoint.type === 'library' ? entrypoint.libraryId : null);
+    }, [entrypoint]);
 
     useEffect(() => {
         if (libraryId !== null && !viewsLoading && !attributesLoading) {

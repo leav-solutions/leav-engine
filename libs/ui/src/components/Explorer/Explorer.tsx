@@ -99,7 +99,6 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         filters: view.filters,
         skip: viewSettingsLoading
     }); // TODO: refresh when go back on page
-
     const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
 
     const {removeAction} = useRemoveAction({

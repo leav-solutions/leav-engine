@@ -13,7 +13,6 @@ import {IExplorerData, IItemAction, IItemData} from './_types';
 import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
-import {MASS_SELECTION_ALL} from '_ui/components/Explorer/_constants';
 import {useColumnWidth} from './useColumnWidth';
 
 const USELESS = '';
