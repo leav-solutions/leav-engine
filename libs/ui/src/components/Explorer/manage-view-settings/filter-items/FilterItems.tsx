@@ -81,7 +81,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                     type: attributeDetailsById[attributeId].type,
                     linkedLibrary: _isLibraryLinkAttribute(attributeDetailsById[attributeId])
                         ? (attributeDetailsById[attributeId].linked_library ?? undefined)
-                        : undefined // TODO : clean after refacto GraphQL schema (linked_library can be null)
+                        : undefined // TODO : https://aristid.atlassian.net/browse/XSTREAM-1155
                 }
             }
         });
