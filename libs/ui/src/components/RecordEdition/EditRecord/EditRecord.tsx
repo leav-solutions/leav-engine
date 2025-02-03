@@ -339,54 +339,42 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     /**
      * Submit the whole record: create record and batch save all stored values
      */
-    const _handleRecordSubmit = async antValues => {
+    const _handleRecordSubmit = async () => {
         const currentPendingValues = pendingValuesRef.current ?? {};
 
         if (state.record) {
             return;
         }
 
-        const valuesToSave: ValueBatchInput[] = Object.keys(antValues).reduce(
-            (allValues: ValueBatchInput[], attributeId) => {
-                let attributeValues: ValueBatchInput[];
-                if (currentPendingValues[attributeId]) {
-                    attributeValues = Object.values(currentPendingValues[attributeId]).map(val => {
-                        let actualValue;
-                        switch (val.attribute.type) {
-                            case AttributeType.advanced_link:
-                            case AttributeType.simple_link:
-                                actualValue = (val as ValueDetailsLinkValueFragment).linkValue.id;
-                                break;
-                            case AttributeType.tree:
-                                const treeValue = (val as ValueDetailsTreeValueFragment).treeValue;
-                                actualValue = treeValue.id;
-                                break;
-                            default:
-                                actualValue = (val as ValueDetailsValueFragment).raw_payload;
-                                break;
-                        }
-                        return {
-                            payload: actualValue,
-                            id_value: val.id_value ?? null,
-                            attribute: val.attribute.id,
-                            metadata: val.metadata
-                                ? val.metadata.map(metadataValue => ({
-                                      name: metadataValue.name,
-                                      value: metadataValue.value.raw_payload
-                                  }))
-                                : null
-                        };
-                    });
-                } else {
-                    attributeValues = [
-                        {
-                            payload: null,
-                            id_value: null,
-                            attribute: attributeId,
-                            metadata: null
-                        }
-                    ];
-                }
+        const valuesToSave: ValueBatchInput[] = Object.values(currentPendingValues).reduce(
+            (allValues: ValueBatchInput[], valuesById) => {
+                const attributeValues: ValueBatchInput[] = Object.values(valuesById).map(val => {
+                    let actualValue;
+                    switch (val.attribute.type) {
+                        case AttributeType.advanced_link:
+                        case AttributeType.simple_link:
+                            actualValue = (val as ValueDetailsLinkValueFragment).linkValue.id;
+                            break;
+                        case AttributeType.tree:
+                            const treeValue = (val as ValueDetailsTreeValueFragment).treeValue;
+                            actualValue = treeValue.id;
+                            break;
+                        default:
+                            actualValue = (val as ValueDetailsValueFragment).raw_payload;
+                            break;
+                    }
+                    return {
+                        payload: actualValue,
+                        id_value: val.id_value ?? null,
+                        attribute: val.attribute.id,
+                        metadata: val.metadata
+                            ? val.metadata.map(metadataValue => ({
+                                  name: metadataValue.name,
+                                  value: metadataValue.value.raw_payload
+                              }))
+                            : null
+                    };
+                });
                 return [...allValues, ...attributeValues];
             },
             []
@@ -417,7 +405,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             return;
         }
 
-        const newRecord: RecordIdentityFragment['whoAmI'] = creationResult.data.createRecord.record.whoAmI;
+        const newRecord = creationResult.data.createRecord.record.whoAmI;
 
         if (onCreate) {
             onCreate(newRecord);
@@ -447,7 +435,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                 value: null
             }));
 
-            return saveValues(record, valuesToSave, version, false);
+            return saveValues(record, valuesToSave, version, true);
         }
 
         const newPendingValues = {...pendingValues};

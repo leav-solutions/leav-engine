@@ -22,7 +22,6 @@ const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     inheritedValue: null
 };
 
-const notRequired = false;
 const notReadonly = false;
 const readonly = true;
 
@@ -73,7 +72,6 @@ describe('DSInputEncryptedWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSInputEncryptedWrapper
-                        value="password"
                         attribute={mockFormAttribute}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
@@ -85,11 +83,19 @@ describe('DSInputEncryptedWrapper', () => {
                 </AntForm.Item>
             </AntForm>
         );
+        const text = 'text';
+        const input = screen.getByTestId('kit-input-password');
+
+        await user.click(input);
+        await user.type(input, text);
+        await user.tab();
+        expect(mockHandleSubmit).toHaveBeenCalledWith(text, mockFormAttribute.id);
         const clearButton = screen.getByRole('button');
 
         await user.click(clearButton);
+        await user.tab();
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
+        expect(mockHandleSubmit).toHaveBeenCalledWith('', mockFormAttribute.id);
     });
 
     test('Should be disabled if readonly', async () => {

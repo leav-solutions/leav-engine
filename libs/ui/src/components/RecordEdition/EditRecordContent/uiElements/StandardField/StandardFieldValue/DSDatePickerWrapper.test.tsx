@@ -213,7 +213,7 @@ describe('DSDatePickerWrapper', () => {
     test('Should save to LEAV if field becomes empty', async () => {
         render(
             <Form>
-                <Form.Item>
+                <Form.Item name="datePickerTest">
                     <DSDatePickerWrapper
                         attribute={mockFormAttribute}
                         readonly={notReadonly}

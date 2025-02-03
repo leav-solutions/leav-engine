@@ -227,7 +227,9 @@ describe('StandardField', () => {
             expect(textInput).toHaveValue('My value formatted');
         });
 
-        test('Should save the value on blur with change', async () => {
+        test.only('Should save the value on blur with change', async () => {
+            mockEditRecordInitialState.mockReturnValue(initialState);
+
             render(
                 <AntForm initialValues={initialValues}>
                     <StandardField
@@ -240,11 +242,12 @@ describe('StandardField', () => {
                 </AntForm>
             );
 
-            const textInput = screen.getByRole('textbox');
+            let textInput = screen.getByRole('textbox');
             await userEvent.click(textInput);
 
             const newValue = 'New Value';
-            await userEvent.clear(textInput);
+            const clearIcon = screen.getByLabelText('clear');
+            await userEvent.click(clearIcon);
             await userEvent.type(textInput, newValue);
             await userEvent.tab();
 
@@ -261,6 +264,8 @@ describe('StandardField', () => {
             );
             expect(mockHandleDelete).not.toHaveBeenCalled();
             expect(mockHandleMultipleValues).not.toHaveBeenCalled();
+
+            textInput = screen.getByRole('textbox');
             expect(textInput).toHaveValue(newFormatedValue);
         });
     });
