@@ -22,8 +22,6 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     inheritedFlags,
     setActiveValue
 }) => {
-    console.log('renal - value : ', value);
-    console.log('renal - presentationValue : ', presentationValue);
     if (!onChange) {
         throw Error('DSInputWrapper should be used inside a antd Form.Item');
     }
