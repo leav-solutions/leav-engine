@@ -2,25 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {Entrypoint, IEntrypointLink, IExplorerData, IExplorerFilter} from '../_types';
+import {useMemo} from 'react';
+import {useLang} from '_ui/hooks';
 import {
-    AttributeFormat,
     ExplorerLibraryDataQuery,
     ExplorerLinkDataQuery,
     LinkPropertyLinkValueFragment,
-    RecordFilterCondition,
-    RecordFilterInput,
-    RecordFilterOperator,
     SortOrder,
     useExplorerLibraryDataQuery,
     useExplorerLinkDataQuery
 } from '_ui/_gqlTypes';
-import {useLang} from '_ui/hooks';
-import {useMemo} from 'react';
-import {interleaveElement} from '_ui/_utils/interleaveElement';
-import dayjs from 'dayjs';
-import {nullValueConditions} from '../conditionsHelper';
-import {AttributeConditionFilter} from '_ui/types';
+import {Entrypoint, IEntrypointLink, IExplorerData, IExplorerFilter, IItemData} from '../_types';
+import {prepareFiltersForRequest} from './prepareFiltersForRequest';
 
 export const dateValuesSeparator = '\n';
 
@@ -60,6 +53,7 @@ const _mappingLibrary = (
         records
     };
 };
+
 const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
     const attributes = data.records.list.length
         ? ((data.records.list[0].property[0] as LinkPropertyLinkValueFragment)?.payload?.properties ?? []).reduce(
@@ -96,7 +90,7 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
                     (acc, {attributeId, values}) => ({...acc, [attributeId]: values}),
                     {}
                 ),
-                id_value: linkValue.id_value
+                id_value: linkValue.id_value ?? undefined
             };
         })
         .filter(Boolean);
@@ -106,84 +100,6 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
         attributes,
         records
     };
-};
-
-const _getDateRequestFilters = ({
-    field,
-    condition,
-    value
-}: Pick<IExplorerFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
-    switch (condition) {
-        case RecordFilterCondition.BETWEEN:
-            const [from, to] = value!.split(dateValuesSeparator);
-            return [
-                {
-                    field,
-                    condition,
-                    value: JSON.stringify({
-                        from,
-                        to
-                    })
-                }
-            ];
-        case RecordFilterCondition.NOT_EQUAL:
-            return [
-                {
-                    field,
-                    condition: RecordFilterCondition.LESS_THAN,
-                    value: dayjs.unix(Number(value)).startOf('day').unix().toString()
-                },
-                {operator: RecordFilterOperator.OR},
-                {
-                    field,
-                    condition: RecordFilterCondition.GREATER_THAN,
-                    value: dayjs.unix(Number(value)).endOf('day').unix().toString()
-                },
-                {operator: RecordFilterOperator.OR},
-                {
-                    field,
-                    condition: RecordFilterCondition.IS_EMPTY,
-                    value: null
-                }
-            ];
-        case RecordFilterCondition.EQUAL:
-            return [
-                {
-                    field,
-                    condition: RecordFilterCondition.BETWEEN,
-                    value: JSON.stringify({
-                        from: dayjs.unix(Number(value)).startOf('day').unix().toString(),
-                        to: dayjs.unix(Number(value)).endOf('day').unix().toString()
-                    })
-                }
-            ];
-        default:
-            return [
-                {
-                    field,
-                    condition,
-                    value
-                }
-            ];
-    }
-};
-
-const _getBooleanRequestFilters = ({
-    field,
-    condition,
-    value
-}: Pick<IExplorerFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
-    if (value === 'false') {
-        return [
-            {
-                field,
-                condition: AttributeConditionFilter.NOT_EQUAL,
-                value: 'true'
-            }
-        ];
-    }
-
-    return [{field, condition, value}];
 };
 
 export const useExplorerData = ({
@@ -209,28 +125,6 @@ export const useExplorerData = ({
     skip: boolean;
 }) => {
     const {lang: availableLangs} = useLang();
-
-    const queryFilters = interleaveElement(
-        {operator: RecordFilterOperator.AND},
-        filters
-            .filter(({value, condition}) => value !== null || nullValueConditions.includes(condition))
-            .map(({attribute, field, condition, value}) => {
-                switch (attribute.format) {
-                    case AttributeFormat.date:
-                        return _getDateRequestFilters({field, condition, value});
-                    case AttributeFormat.boolean:
-                        return _getBooleanRequestFilters({field, condition, value});
-                    default:
-                        return [
-                            {
-                                field,
-                                condition,
-                                value
-                            }
-                        ];
-                }
-            })
-    );
 
     const isLibrary = entrypoint.type === 'library';
     const isLink = entrypoint.type === 'link';
@@ -261,7 +155,7 @@ export const useExplorerData = ({
             pagination,
             searchQuery: fulltextSearch,
             multipleSort: sorts,
-            filters: queryFilters
+            filters: prepareFiltersForRequest(filters)
         }
     });
 

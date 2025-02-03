@@ -6,9 +6,9 @@ import dayjs from 'dayjs';
 import styled from 'styled-components';
 import {KitDatePicker, KitSelect} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
-import {IFilterChildrenDropDownProps} from '_ui/components/Explorer/_types';
-import {nullValueConditions} from '_ui/components/Explorer/conditionsHelper';
-import {dateValuesSeparator} from '_ui/components/Explorer/_queries/useExplorerData';
+import {IFilterChildrenDropDownProps} from '../../../_types';
+import {nullValueConditions} from '../../../conditionsHelper';
+import {dateValuesSeparator} from '../../../_queries/useExplorerData';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 
 const DatePickerContainerStyledDiv = styled.div`

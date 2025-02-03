@@ -23,6 +23,12 @@ import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReduce
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {FilterListItem} from './FilterListItem';
 
+const StyledListContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-l) * 1px);
+`;
+
 const StyledList = styled.ul`
     padding: calc(var(--general-spacing-s) * 1px) 0;
     margin: 0;
@@ -98,7 +104,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
     const canAddFilter = activeFilters.length < maxFilters;
 
     return (
-        <>
+        <StyledListContainer>
             {activeFilters.length > 0 && (
                 <StyledList aria-label={t('explorer.filter-list.active')}>
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={_handleDragEnd}>
@@ -150,6 +156,6 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                     </FilterListItem>
                 ))}
             </StyledList>
-        </>
+        </StyledListContainer>
     );
 };

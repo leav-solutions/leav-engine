@@ -33,7 +33,7 @@ export const CORE_INDEX_FIELD = 'core_index';
 
 const _getCoreIndexView = libraryId => `${CORE_INDEX_VIEW}_${libraryId}`;
 
-export default function({
+export default function ({
     config = null,
     'core.infra.db.dbService': dbService = null,
     'core.infra.record': recordRepo = null,

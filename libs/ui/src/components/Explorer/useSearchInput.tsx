@@ -12,12 +12,21 @@ import {
     ViewSettingsActionTypes
 } from './manage-view-settings/store-view-settings/viewSettingsReducer';
 
-interface IUseSearchInputParams {
+/**
+ * Hook used to handle a full search text in a library
+ *
+ * > The feature is hidden on a link entrypoint.
+ *
+ * @param view - represent the current view
+ * @param dispatch - method to change the current view
+ */
+export const useSearchInput = ({
+    view,
+    dispatch
+}: {
     view: IViewSettingsState;
     dispatch: Dispatch<IViewSettingsAction>;
-}
-
-export const useSearchInput = ({view, dispatch}: IUseSearchInputParams) => {
+}) => {
     const {t} = useSharedTranslation();
     const [search, setSearch] = useState<string>(view.fulltextSearch);
 

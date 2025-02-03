@@ -8,14 +8,17 @@
 //
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
-import {waitFor} from '@testing-library/react';
+import {waitFor, waitForElementToBeRemoved} from '@testing-library/react';
 import {Mockify} from '@leav/utils';
 import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
+import {closeKitSnackBar} from 'aristid-ds';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
 import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
+import * as useColumnWidth from './useColumnWidth';
+import {MutableRefObject} from 'react';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -52,17 +55,6 @@ const booleanMockAttribute = {
     type: gqlTypes.AttributeType.simple,
     format: gqlTypes.AttributeFormat.boolean,
     multiple_values: false
-} satisfies gqlTypes.AttributePropertiesFragment;
-
-const multivalBooleanMockAttribute = {
-    id: 'boolean_attribute',
-    label: {
-        fr: 'Mon attribut booléen',
-        en: 'My boolean attribute'
-    },
-    type: gqlTypes.AttributeType.simple,
-    format: gqlTypes.AttributeFormat.boolean,
-    multiple_values: true
 } satisfies gqlTypes.AttributePropertiesFragment;
 
 const linkMockAttribute = {
@@ -256,18 +248,6 @@ describe('Explorer', () => {
                     ]
                 },
                 {
-                    attributeId: multivalBooleanMockAttribute.id,
-                    attributeProperties: multivalBooleanMockAttribute,
-                    values: [
-                        {
-                            valuePayload: true
-                        },
-                        {
-                            valuePayload: false
-                        }
-                    ]
-                },
-                {
                     attributeId: simpleDateRangeMockAttribute.id,
                     attributeProperties: simpleDateRangeMockAttribute,
                     values: [
@@ -356,11 +336,6 @@ describe('Explorer', () => {
                 {
                     attributeId: booleanMockAttribute.id,
                     attributeProperties: booleanMockAttribute,
-                    values: []
-                },
-                {
-                    attributeId: multivalBooleanMockAttribute.id,
-                    attributeProperties: multivalBooleanMockAttribute,
                     values: []
                 },
                 {
@@ -564,6 +539,8 @@ describe('Explorer', () => {
         }
     };
 
+    let user: ReturnType<typeof userEvent.setup>;
+
     beforeEach(() => {
         spyUseExplorerLibraryDataQuery = jest
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
@@ -588,10 +565,6 @@ describe('Explorer', () => {
         jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
             mockAttributesByLibResult as gqlTypes.GetAttributesByLibQueryResult
         );
-    });
-
-    let user: ReturnType<typeof userEvent.setup>;
-    beforeEach(() => {
         jest.clearAllMocks();
         user = userEvent.setup();
     });
@@ -620,11 +593,21 @@ describe('Explorer', () => {
         expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
     });
 
-    test('Should display message on empty data', async () => {
+    test('Should display message on empty data (default)', async () => {
         spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
         render(<Explorer entrypoint={libraryEntrypoint} />);
 
         expect(screen.getByText(/empty-data/)).toBeVisible();
+    });
+
+    test('Should display message on empty data (custom)', async () => {
+        spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+
+        const emptyCustomMessage = 'EmptyCustomMessage';
+
+        render(<Explorer entrypoint={libraryEntrypoint} emptyPlaceholder={emptyCustomMessage} />);
+
+        expect(screen.getByText(emptyCustomMessage)).toBeVisible();
     });
 
     test('Should display the list of records in a table with attributes values', async () => {
@@ -640,7 +623,6 @@ describe('Explorer', () => {
                         simpleColorMockAttribute.id,
                         multivalColorMockAttribute.id,
                         booleanMockAttribute.id,
-                        multivalBooleanMockAttribute.id,
                         simpleDateRangeMockAttribute.id,
                         multivalDateRangeMockAttribute.id
                     ]
@@ -651,9 +633,10 @@ describe('Explorer', () => {
         const tableRows = screen.getAllByRole('row');
         expect(screen.getByRole('table')).toBeVisible();
         expect(tableRows).toHaveLength(mockRecords.length); // 2 records
-        const [firstRecordRow] = tableRows;
+        const [firstRecordRow, secondRecordRow] = tableRows;
         const [record1] = mockRecords;
         const [
+            selectRowCell,
             whoAmICell,
             simpleAttributeCell,
             linkCell,
@@ -662,10 +645,11 @@ describe('Explorer', () => {
             simpleColorCell,
             multivalColorCell,
             boolCell,
-            multivalBoolCell,
             simpleDateRangeCell,
             multivalDateRangeCell
         ] = within(firstRecordRow).getAllByRole('cell');
+
+        const secondRowCells = within(secondRecordRow).getAllByRole('cell');
 
         expect(within(whoAmICell).getByText(record1.whoAmI.label)).toBeInTheDocument();
 
@@ -690,9 +674,7 @@ describe('Explorer', () => {
         expect(within(multivalColorCell).getByText('#0000FF')).toBeVisible();
 
         expect(within(boolCell).getByText(/yes/)).toBeVisible();
-
-        expect(within(multivalBoolCell).getByText(/yes/)).toBeVisible();
-        expect(within(multivalBoolCell).getByText(/no/)).toBeVisible();
+        expect(within(secondRowCells[8]).getByText(/no/)).toBeVisible();
 
         expect(within(simpleDateRangeCell).getByText(new RegExp(dateRangeRecord1.from))).toBeVisible();
         expect(within(simpleDateRangeCell).getByText(new RegExp(dateRangeRecord1.to))).toBeVisible();
@@ -747,6 +729,12 @@ describe('Explorer', () => {
             mockDeleteValueMutation,
             {loading: false, called: false, client: {} as any, reset: jest.fn()}
         ]);
+
+        jest.spyOn(useColumnWidth, 'useColumnWidth').mockReturnValueOnce({
+            ref: {current: null},
+            getFieldColumnWidth: () => 500,
+            columnWidth: 500
+        });
 
         render(<Explorer entrypoint={linkEntrypoint} />, {
             mocks: [ExplorerLinkAttributeQueryMock]
@@ -1105,7 +1093,465 @@ describe('Explorer', () => {
                 }
             );
 
-            expect(await screen.findByText(explorerLinkAttribute.label.fr)).toBeInTheDocument();
+            expect(await screen.findByText(explorerLinkAttribute.label.fr)).toBeVisible();
+        });
+    });
+
+    describe('massActions', () => {
+        beforeEach(() => {
+            closeKitSnackBar();
+        });
+
+        it('should inform about selection (manual)', async () => {
+            // GIVEN a simple mass action
+            const testMassAction = {
+                label: 'test mass action',
+                icon: <FaBeer />,
+                callback: jest.fn()
+            };
+            // WHEN the component is rendered
+            render(<Explorer entrypoint={libraryEntrypoint} defaultMassActions={[]} massActions={[testMassAction]} />);
+
+            // THEN the toolbar should be present
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(within(toolbar).getByRole('checkbox')).not.toHaveAttribute('checked');
+            // AND the snackbar is hidden
+            expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+            // GIVEN there is a checkbox on the first record
+            const tableRows = screen.getAllByRole('row');
+            expect(screen.getByRole('table')).toBeVisible();
+            expect(tableRows).toHaveLength(mockRecords.length); // 2 records
+            const [firstRecordRow] = tableRows;
+            const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
+
+            // WHEN the user clicks on it
+            await user.click(within(firstSelectRowCell).getByRole('checkbox'));
+
+            // THEN the toolbar is partially checked
+            expect(within(toolbar).getByRole('checkbox')).toHaveAttribute('aria-checked', 'mixed');
+            // AND the snackbar appears with the count of selected items
+            expect(screen.getByRole('status').textContent).toContain('massAction.selectedItems|1');
+
+            // GIVEN there is a second checkbox on the second record
+            // note: The table re-render, not the same ref as before
+            const [, secondRecordRow] = screen.getAllByRole('row');
+            const [secondSelectRowCell] = within(secondRecordRow).getAllByRole('cell');
+            // WHEN the user clicks on it
+            await user.click(within(secondSelectRowCell).getByRole('checkbox'));
+
+            // THEN the toolbar is totally checked
+            expect(within(toolbar).getByRole('checkbox')).toBeChecked();
+            // AND the snackbar is updated
+            await waitFor(() => expect(screen.getByRole('status').textContent).toContain('massAction.selectedItems|2'));
+
+            // WHEN the user clicks on the test mass action
+            await user.click(within(screen.getByRole('status')).getByRole('button', {name: testMassAction.label}));
+
+            // THEN the test mass action is called with the ids
+            expect(testMassAction.callback).toHaveBeenCalled();
+            expect(testMassAction.callback).toHaveBeenCalledWith([
+                {
+                    condition: 'EQUAL',
+                    field: 'id',
+                    value: '613982168'
+                },
+                {
+                    operator: 'OR'
+                },
+                {
+                    condition: 'EQUAL',
+                    field: 'id',
+                    value: '612694174'
+                }
+            ]);
+
+            // AND the selection is cleared
+            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+        });
+
+        it('should inform about selection all without pagination', async () => {
+            // GIVEN a simple mass action
+            const testMassAction = {
+                label: 'test mass action',
+                icon: <FaBeer />,
+                callback: jest.fn()
+            };
+            // WHEN the component is rendered without pagination (20 items default page size > 2 mock records)
+            render(<Explorer entrypoint={libraryEntrypoint} defaultMassActions={[]} massActions={[testMassAction]} />);
+
+            // THEN the toolbar should be ready
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(within(toolbar).getByRole('checkbox')).not.toHaveAttribute('checked');
+            // AND the snackbar is hidden
+            expect(screen.queryByRole('status')).not.toBeInTheDocument();
+            // AND there is 2 records on screen
+            const tableRows = screen.getAllByRole('row');
+            expect(screen.getByRole('table')).toBeVisible();
+            expect(tableRows).toHaveLength(mockRecords.length); // 2 records
+
+            // WHEN the user clicks select all
+            await user.click(within(toolbar).getByRole('checkbox'));
+
+            // THEN the checkbox is totally checked
+            expect(within(toolbar).getByRole('checkbox')).toBeChecked();
+
+            // AND the first record is selected
+            const [firstRecordRow] = screen.getAllByRole('row');
+            const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
+            expect(within(firstSelectRowCell).getByRole('checkbox')).toBeChecked();
+
+            // AND the second record is selected too
+            const [, secondRecordRow] = screen.getAllByRole('row');
+            const [secondSelectRowCell] = within(secondRecordRow).getAllByRole('cell');
+            expect(within(secondSelectRowCell).getByRole('checkbox')).toBeChecked();
+
+            // AND the snackbar is updated with the cunt of selected items
+            expect(screen.getByRole('status').textContent).toContain('massAction.selectedItems|2');
+
+            // WHEN the user clicks on the test mass action
+            await user.click(within(screen.getByRole('status')).getByRole('button', {name: testMassAction.label}));
+
+            // THEN the test callback is call with all ids of the selection
+            expect(testMassAction.callback).toHaveBeenCalled();
+            expect(testMassAction.callback).toHaveBeenCalledWith([
+                {
+                    condition: 'EQUAL',
+                    field: 'id',
+                    value: '613982168'
+                },
+                {
+                    operator: 'OR'
+                },
+                {
+                    condition: 'EQUAL',
+                    field: 'id',
+                    value: '612694174'
+                }
+            ]);
+
+            // AND the selection is cleared
+            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+        });
+
+        it('should inform about selection all with pagination (page only)', async () => {
+            // GIVEN a fake response data with only the first record
+            const [firstRecord, secondRecord] = mockRecords;
+            spyUseExplorerLibraryDataQuery.mockReturnValue({
+                ...mockExplorerLibraryDataQueryResult,
+                data: {
+                    records: {
+                        totalCount: mockRecords.length,
+                        list: [firstRecord]
+                    }
+                }
+            } as gqlTypes.ExplorerLibraryDataQueryResult);
+
+            // AND a simple mass test action
+            const testMassAction = {
+                label: 'test mass action',
+                icon: <FaBeer />,
+                callback: jest.fn()
+            };
+            // WHEN the component is rendered with some filter and sort and pagination (1 item on 2 pages)
+            render(
+                <Explorer
+                    entrypoint={libraryEntrypoint}
+                    defaultMassActions={[]}
+                    massActions={[testMassAction]}
+                    defaultViewSettings={{
+                        pageSize: 1, // configuration to be in multi-pages (2 pages of 1 record)
+                        filters: [
+                            {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas'
+                            }
+                        ],
+                        sort: [
+                            {
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc
+                            }
+                        ]
+                    }}
+                />
+            );
+
+            // THEN the toolbar is ready and clean
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(within(toolbar).getByRole('checkbox')).not.toHaveAttribute('checked');
+            // AND the snackbar is hidden
+            expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+            // AND there is only the first record in the table
+            const tableRows = screen.getAllByRole('row');
+            expect(screen.getByRole('table')).toBeVisible();
+            expect(tableRows).toHaveLength(1);
+
+            // WHEN the user clicks on selection all page only
+            await user.click(within(toolbar).getByLabelText(/massAction.itemsTotal\|2/));
+            await user.click(
+                within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.select_page/})
+            );
+
+            // THEN the checkbox in the toolbar should be partially checked because there is 2 items
+            expect(within(toolbar).getByRole('checkbox')).toHaveAttribute('aria-checked', 'mixed');
+
+            // AND the checkbox of the first record is checked
+            const [firstRecordRow] = screen.getAllByRole('row');
+            const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
+            expect(within(firstSelectRowCell).getByRole('checkbox')).toBeChecked();
+
+            // GIVEN the second call to data on second page return the second record
+            spyUseExplorerLibraryDataQuery.mockReturnValue({
+                ...mockExplorerLibraryDataQueryResult,
+                data: {
+                    records: {
+                        totalCount: mockRecords.length,
+                        list: [secondRecord]
+                    }
+                }
+            } as gqlTypes.ExplorerLibraryDataQueryResult);
+            // WHEN the user goes on the second page
+            const nextPageElement = screen.getByTitle<HTMLLIElement>('Next Page');
+            await user.click(within(nextPageElement).getByRole<HTMLButtonElement>('button'));
+
+            // THEN the second record is not selected
+            const [secondRecordRow] = screen.getAllByRole('row');
+            const [secondSelectRowCell] = within(secondRecordRow).getAllByRole('cell');
+            expect(within(secondSelectRowCell).getByRole('checkbox')).not.toBeChecked();
+
+            // AND the snackbar continues to say 1 selected item (first record)
+            expect(screen.getByRole('status').textContent).toContain('massAction.selectedItems|1');
+
+            // WHEN the user clicks on the test mass action
+            await user.click(within(screen.getByRole('status')).getByRole('button', {name: testMassAction.label}));
+
+            // THEN the callback is called with id of the first record only
+            expect(testMassAction.callback).toHaveBeenCalled();
+            expect(testMassAction.callback).toHaveBeenCalledWith([
+                {
+                    condition: 'EQUAL',
+                    field: 'id',
+                    value: firstRecord.id
+                }
+            ]);
+
+            // AND the selection is cleared
+            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+        });
+
+        it('should inform about selection with pagination (all in once)', async () => {
+            // GIVEN the first call to data return only the first record
+            const [firstRecord, secondRecord] = mockRecords;
+            spyUseExplorerLibraryDataQuery.mockReturnValue({
+                ...mockExplorerLibraryDataQueryResult,
+                data: {
+                    records: {
+                        totalCount: mockRecords.length,
+                        list: [firstRecord]
+                    }
+                }
+            } as gqlTypes.ExplorerLibraryDataQueryResult);
+
+            // AND a simple mass test action is set
+            const testMassAction = {
+                label: 'test mass action',
+                icon: <FaBeer />,
+                callback: jest.fn()
+            };
+            // WHEN the component renders with 2 pages of one record, with filter and sort
+            render(
+                <Explorer
+                    entrypoint={libraryEntrypoint}
+                    defaultMassActions={[]}
+                    massActions={[testMassAction]}
+                    defaultViewSettings={{
+                        pageSize: 1, // configuration to be in multi-pages (2 pages of 1 record)
+                        filters: [
+                            {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas'
+                            }
+                        ],
+                        sort: [
+                            {
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc
+                            }
+                        ]
+                    }}
+                />
+            );
+
+            // THEN the select all checkbox is clear
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(within(toolbar).getByRole('checkbox')).not.toHaveAttribute('checked');
+            // AND the snackbar is hidden
+            expect(screen.queryByRole('status')).not.toBeInTheDocument();
+            // AND every feature is available
+            expect(screen.getByRole('button', {name: /create-one/})).toBeVisible();
+            expect(screen.getByRole('textbox', {name: /search/})).toBeVisible();
+            expect(screen.getByRole('button', {name: /settings/})).toBeVisible();
+            expect(
+                within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)})
+            ).not.toHaveClass('kit-filter-disabled');
+            expect(within(toolbar).getByRole('button', {name: /sort-items/})).not.toHaveClass('kit-filter-disabled');
+
+            // AND only the first record is displayed
+            const tableRows = screen.getAllByRole('row');
+            expect(screen.getByRole('table')).toBeVisible();
+            expect(tableRows).toHaveLength(1);
+
+            // WHEN the user clicks on the select all checkbox (all pages)
+            await user.click(within(toolbar).getByLabelText(/massAction.itemsTotal\|2/));
+            await user.click(
+                within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.select_all/})
+            );
+
+            // THEN the select all checkbox is totally checked
+            expect(within(toolbar).getByRole('checkbox')).toBeChecked();
+            // AND some features are hidden (creation, search, view setting)
+            expect(screen.queryByRole('button', {name: /create-one/})).not.toBeInTheDocument();
+            expect(screen.queryByRole('textbox', {name: /search/})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: /settings/})).not.toBeInTheDocument();
+            // AND the rest of toolbar: sort and filter are disabled only
+            expect(within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)})).toHaveClass(
+                'kit-filter-disabled'
+            );
+            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toHaveClass('kit-filter-disabled');
+
+            // AND the first record is selected
+            const [firstRecordRow] = screen.getAllByRole('row');
+            const [firstSelectRowCell, firstWhoAmICell] = within(firstRecordRow).getAllByRole('cell');
+            expect(within(firstWhoAmICell).getByText(firstRecord.whoAmI.label)).toBeVisible();
+            expect(within(firstSelectRowCell).getByRole('checkbox')).toBeChecked();
+            // AND the first record is locked (cannot be de-selected manually, cannot be deactivated or edited)
+            expect(within(firstSelectRowCell).getByRole('checkbox')).toBeDisabled();
+            expect(within(firstRecordRow).getByRole('button', {name: /deactivate-item/})).toBeDisabled();
+            expect(within(firstRecordRow).getByRole('button', {name: /edit-item/})).toBeDisabled();
+
+            // GIVEN the second call about data is mocked to return the second record
+            spyUseExplorerLibraryDataQuery.mockReturnValue({
+                ...mockExplorerLibraryDataQueryResult,
+                data: {
+                    records: {
+                        totalCount: mockRecords.length,
+                        list: [secondRecord]
+                    }
+                }
+            } as gqlTypes.ExplorerLibraryDataQueryResult);
+            // WHEN the user clicks on the next page to get the second record
+            const nextPageElement = screen.getByTitle<HTMLLIElement>('Next Page');
+            await user.click(within(nextPageElement).getByRole<HTMLButtonElement>('button'));
+
+            // THEN the second record is displayed and selected
+            const [secondRecordRow] = screen.getAllByRole('row');
+            const [secondSelectRowCell, secondWhoAmICell] = within(secondRecordRow).getAllByRole('cell');
+            expect(within(secondWhoAmICell).getByText(secondRecord.whoAmI.label)).toBeVisible();
+            expect(within(secondSelectRowCell).getByRole('checkbox')).toBeChecked();
+            // AND the second record is locked
+            expect(within(secondSelectRowCell).getByRole('checkbox')).toBeDisabled();
+            expect(within(secondRecordRow).getByRole('button', {name: /deactivate-item/})).toBeDisabled();
+            expect(within(secondRecordRow).getByRole('button', {name: /edit-item/})).toBeDisabled();
+            // AND the toolbar: sort and filters stay disabled but displayed
+            expect(within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)})).toHaveClass(
+                'kit-filter-disabled'
+            );
+            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toHaveClass('kit-filter-disabled');
+
+            // AND the snackbar is up to date with the count of selected items
+            expect(screen.getByRole('status').textContent).toContain('massAction.selectedItems|2');
+
+            // WHEN the user clicks on the select all checkbox
+            await user.click(within(toolbar).getByLabelText(/massAction.itemsTotal\|2/));
+            // THEN there is a possibility to de-select all items
+            expect(
+                within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.deselect_all/})
+            ).toBeVisible();
+
+            // WHEN the user clicks on the simple mass test action
+            await user.click(within(screen.getByRole('status')).getByRole('button', {name: testMassAction.label}));
+
+            // THEN the callback is called with the filters
+            expect(testMassAction.callback).toHaveBeenCalled();
+            expect(testMassAction.callback).toHaveBeenCalledWith([
+                {
+                    field: 'simple_attribute',
+                    condition: 'CONTAINS',
+                    value: 'Christmas'
+                }
+            ]);
+
+            // AND the selection is cleared
+            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+        });
+
+        it('should deactivate massively for simple library (manual selection with only one page)', async () => {
+            // GIVEN a mocked deactivate record mutation
+            const mockOnUseDeactivateRecordsMutation = jest.fn();
+            jest.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(
+                () => [mockOnUseDeactivateRecordsMutation, {}] as any
+            );
+
+            // WHEN the component is rendered
+            render(<Explorer entrypoint={libraryEntrypoint} />);
+
+            // WHEN the toolbar is cleared
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(within(toolbar).getByRole('checkbox')).not.toHaveAttribute('checked');
+            // AND the snackbar is hidden
+            expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+            // AND the records are displayed
+            const tableRows = screen.getAllByRole('row');
+            expect(screen.getByRole('table')).toBeVisible();
+            expect(tableRows).toHaveLength(mockRecords.length); // 2 records
+
+            // WHEN ths user clicks on the select all checkbox (no pagination)
+            await user.click(within(toolbar).getByRole('checkbox'));
+
+            // THEN the toolbar select all checkbox is checked
+            expect(within(toolbar).getByRole('checkbox')).toBeChecked();
+
+            // AND the first record is selected
+            const [firstRecordRow] = screen.getAllByRole('row');
+            const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
+            expect(within(firstSelectRowCell).getByRole('checkbox')).toBeChecked();
+            // AND the second record is selected too
+            const [, secondRecordRow] = screen.getAllByRole('row');
+            const [secondSelectRowCell] = within(secondRecordRow).getAllByRole('cell');
+            expect(within(secondSelectRowCell).getByRole('checkbox')).toBeChecked();
+
+            // AND the snackbar is up to date with the count of selected items
+            expect(screen.getByRole('status').textContent).toContain('massAction.selectedItems|2');
+
+            // WHEN the user clicks on the mass deactivate action
+            await user.click(within(screen.getByRole('status')).getByRole('button', {name: /massAction.deactivate/}));
+
+            // THEN a confirmation modal is displayed
+            expect(screen.getByText(/records_deactivation.confirm/)).toBeVisible();
+            // WHEN the user confirms the deactivation
+            await user.click(screen.getByText(/submit/));
+
+            // THEN the mock mutation is called with the ids of selected items
+            expect(mockOnUseDeactivateRecordsMutation).toHaveBeenCalledTimes(1);
+            const [firstRecord, secondRecord] = mockRecords;
+            expect(mockOnUseDeactivateRecordsMutation).toHaveBeenCalledWith({
+                variables: {
+                    libraryId: 'campaigns',
+                    filters: [
+                        {field: 'id', condition: 'EQUAL', value: firstRecord.id},
+                        {operator: 'OR'},
+                        {field: 'id', condition: 'EQUAL', value: secondRecord.id}
+                    ]
+                }
+            });
+
+            // AND the selection is cleared
+            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
         });
     });
 });

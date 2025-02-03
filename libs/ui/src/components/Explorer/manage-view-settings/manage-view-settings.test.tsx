@@ -13,7 +13,7 @@ import {useOpenViewSettings} from './open-view-settings/useOpenViewSettings';
 import {ViewSettingsContext} from './store-view-settings/ViewSettingsContext';
 import {IViewSettingsState} from './store-view-settings/viewSettingsReducer';
 import {viewSettingsInitialState} from './store-view-settings/viewSettingsInitialState';
-import {waitFor} from '@testing-library/react';
+import {act, waitFor} from '@testing-library/react';
 import {useViewSettingsReducer} from '../useViewSettingsReducer';
 
 const MockOpenEditSettings: FunctionComponent = () => {
@@ -30,7 +30,10 @@ const MockViewSettingsContextProvider: FunctionComponent<{viewMock: IViewSetting
 describe('Integration tests about managing view settings feature', () => {
     const attributesList = [
         {...mockAttributeSimple, id: 'simple_attribute', label: {fr: 'Attribut simple'}},
-        {...mockAttributeLink, id: 'link_attribute', label: {fr: 'Attribut lien'}}
+        {...mockAttributeLink, id: 'link_attribute', label: {fr: 'Attribut lien'}},
+        {...mockAttributeSimple, id: 'simple_attribute_allemand', label: {fr: 'Fußballer Märchenkönig'}},
+        {...mockAttributeSimple, id: 'simple_attribute_polonais', label: {fr: 'zdawał się być pogrążonym wnętrzności'}},
+        {...mockAttributeSimple, id: 'simple_attribute_français', label: {fr: 'éssai français Noël'}}
     ];
     const mockAttributesByLibResult: Mockify<typeof gqlTypes.useGetAttributesByLibQuery> = {
         data: {attributes: {list: attributesList}},
@@ -229,6 +232,62 @@ describe('Integration tests about managing view settings feature', () => {
 
             expect(firstInactiveAttribute).toHaveTextContent(attributesList[0].label.fr);
             expect(firstInactiveAttribute).toBeVisible();
+        });
+
+        test('should be able to search attributes with special characters', async () => {
+            const timeout = r => setTimeout(r, 350);
+
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
+
+            const inactiveSorts = screen.getByRole('list', {name: /inactive/});
+            const searchInput = screen.getByRole('textbox');
+
+            await act(async () => {
+                // search german text with special chars
+                await userEvent.type(searchInput, 'konig{Enter}');
+                await new Promise(timeout);
+            });
+            const germanAttributes = within(inactiveSorts).getAllByRole('listitem');
+            expect(germanAttributes).toHaveLength(1);
+            // sort chip only display 20 first characters
+            expect(germanAttributes[0]).toHaveTextContent(attributesList[2].label.fr.slice(0, 19));
+            expect(germanAttributes[0]).toBeVisible();
+            let clearButton = screen.getByLabelText('clear');
+            await userEvent.click(clearButton);
+
+            // search polish text with special chars
+            await act(async () => {
+                await userEvent.type(searchInput, 'sie{Enter}');
+                await new Promise(timeout);
+            });
+            const polishAttributes = within(inactiveSorts).getAllByRole('listitem');
+            await waitFor(() => expect(polishAttributes).toHaveLength(1));
+            expect(polishAttributes[0]).toHaveTextContent(attributesList[3].label.fr.slice(0, 19));
+            expect(polishAttributes[0]).toBeVisible();
+            clearButton = screen.getByLabelText('clear');
+            await userEvent.click(clearButton);
+
+            // search french text with special chars
+            await act(async () => {
+                await userEvent.type(searchInput, 'noel{Enter}');
+                await new Promise(timeout);
+            });
+            const frenchAttributes = within(inactiveSorts).getAllByRole('listitem');
+            await waitFor(() => expect(frenchAttributes).toHaveLength(1));
+            expect(frenchAttributes[0]).toHaveTextContent(attributesList[4].label.fr.slice(0, 19));
+            expect(frenchAttributes[0]).toBeVisible();
+            clearButton = screen.getByLabelText('clear');
+            await userEvent.click(clearButton);
         });
     });
 

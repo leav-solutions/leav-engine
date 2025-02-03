@@ -12,7 +12,6 @@ import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {FormElementTypes} from '_ui/_gqlTypes';
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
-import EditRecordSkeleton from './EditRecordSkeleton';
 import extractFormElements from './helpers/extractFormElements';
 import {RecordEditionContext} from './hooks/useRecordEditionContext';
 import {formComponents} from './uiElements';
@@ -21,6 +20,7 @@ import {Form, FormInstance} from 'antd';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
+import EditRecordSkeleton from '../EditRecordSkeleton';
 
 interface IEditRecordContentProps {
     antdForm: FormInstance;
