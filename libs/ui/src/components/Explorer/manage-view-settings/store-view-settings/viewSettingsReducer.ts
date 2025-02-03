@@ -255,8 +255,7 @@ const addFilter: Reducer<IViewSettingsActionAddFilter> = (state, payload) => ({
             id: uuid(),
             condition: hasOnlyNoValueConditions((payload as IExplorerFilterStandard).attribute.format) //TODO: remove the cast?
                 ? null
-                : ((conditionsByFormat[(payload as IExplorerFilterStandard).attribute.format][0] ??
-                      null) as RecordFilterCondition),
+                : (conditionsByFormat[(payload as IExplorerFilterStandard).attribute.format][0] ?? null),
             value: null
         }
     ]

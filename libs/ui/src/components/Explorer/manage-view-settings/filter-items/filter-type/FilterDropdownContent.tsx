@@ -12,12 +12,7 @@ import {ExtendedAttributeDropDown} from './ExtendedAttributeDropDown';
 import {LinkAttributeDropDown} from './LinkAttributeDropdown';
 import {NumericAttributeDropDown} from './NumericAttributeDropDown';
 import {TextAttributeDropDown} from './TextAttributeDropDown';
-import {
-    ExplorerFilter,
-    isExplorerFilterLink,
-    isExplorerFilterThrough,
-    isExplorerFilterStandard
-} from '_ui/components/Explorer/_types';
+import {ExplorerFilter, isExplorerFilterLink, isExplorerFilterThrough, isExplorerFilterStandard} from '../../../_types';
 
 export const FilterDropdownContent: FunctionComponent<{
     filter: ExplorerFilter;

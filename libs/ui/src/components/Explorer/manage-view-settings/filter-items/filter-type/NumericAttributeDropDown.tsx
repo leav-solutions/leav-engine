@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import {KitInputNumber, KitSelect} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IFilterChildrenDropDownProps} from '_ui/components/Explorer/_types';
+import {IFilterChildrenDropDownProps} from './_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 
 const InputNumberStyled = styled(KitInputNumber)`

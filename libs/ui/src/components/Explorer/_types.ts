@@ -60,16 +60,16 @@ export interface IMassActions {
 
 export type ActionHook<T = {}> = {isEnabled: boolean} & T;
 
-export interface IExplorerFilterBaseAttribute {
+interface IExplorerFilterBaseAttribute {
     type: AttributeType;
     label: string;
 }
 
-export interface IExplorerFilterStandardAttribute extends IExplorerFilterBaseAttribute {
+interface IExplorerFilterStandardAttribute extends IExplorerFilterBaseAttribute {
     format: AttributeFormat;
 }
 
-export interface IExplorerFilterLinkAttribute extends IExplorerFilterBaseAttribute {
+interface IExplorerFilterLinkAttribute extends IExplorerFilterBaseAttribute {
     linkedLibrary?: {
         id: string;
     };
@@ -110,16 +110,6 @@ export const isExplorerFilterLink = (filter: ExplorerFilter): filter is IExplore
 export const isExplorerFilterThrough = (filter: ExplorerFilter): filter is IExplorerFilterThrough =>
     [AttributeType.simple_link, AttributeType.advanced_link].includes(filter.attribute.type) &&
     filter.condition === ThroughConditionFilter.THROUGH;
-
-export interface IFilterChildrenDropDownProps {
-    filter: IExplorerFilterStandard;
-    onFilterChange: (filterData: IExplorerFilterStandard) => void;
-}
-
-export interface IFilterChildrenLinkDropDownProps {
-    filter: IExplorerFilterLink | IExplorerFilterThrough;
-    onFilterChange: (filterData: IExplorerFilterLink | IExplorerFilterThrough) => void;
-}
 
 export interface IFilterDropDownProps {
     filter: ExplorerFilter;

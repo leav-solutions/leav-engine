@@ -53,7 +53,6 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
     const {saveView} = useExecuteSaveViewMutation();
 
     const _handleSaveView = () => {
-        //TODO: handle "through" filters
         saveView({
             view: {
                 id: view.viewId,
@@ -62,11 +61,19 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                 display: {
                     type: mapViewTypeFromExplorerToLegacy[view.viewType]
                 },
-                filters: view.filters.map(filter => ({
-                    field: isExplorerFilterThrough(filter) ? `${filter.field}.${filter.subField}` : filter.field,
-                    value: filter.value,
-                    condition: isExplorerFilterThrough(filter) ? filter.subCondition : filter.condition
-                })),
+                filters: view.filters.map(filter =>
+                    isExplorerFilterThrough(filter)
+                        ? {
+                              field: `${filter.field}.${filter.subField}`,
+                              value: filter.value,
+                              condition: filter.subCondition
+                          }
+                        : {
+                              field: filter.field,
+                              value: filter.value,
+                              condition: filter.condition
+                          }
+                ),
                 sort: view.sort.map(({field: attributeId, order}) => ({field: attributeId, order})),
                 attributes: view.attributesIds,
                 label: {

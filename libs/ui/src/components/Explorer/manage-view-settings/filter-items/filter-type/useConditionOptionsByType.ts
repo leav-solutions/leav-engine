@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormat, RecordFilterCondition} from '_ui/_gqlTypes';
-import {ExplorerFilter, isExplorerFilterStandard} from '_ui/components/Explorer/_types';
-import {AttributeConditionFilter, AttributeConditionType} from '_ui/types';
+import {ExplorerFilter, isExplorerFilterStandard} from '../../../_types';
+import {AttributeConditionFilter, AttributeConditionType, ThroughConditionFilter} from '_ui/types';
 import {TFunction} from 'i18next';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
@@ -53,7 +53,10 @@ export const conditionsByFormat: Record<AttributeFormat, RecordFilterCondition[]
     ]
 };
 
-export const linkFilterConditions = [...conditionsByFormat[AttributeFormat.text], AttributeConditionFilter.THROUGH];
+export const linkFilterConditions: Array<RecordFilterCondition | ThroughConditionFilter> = [
+    ...conditionsByFormat[AttributeFormat.text],
+    AttributeConditionFilter.THROUGH
+];
 
 interface IExplorerFilterConditionOption<T> {
     label: string;

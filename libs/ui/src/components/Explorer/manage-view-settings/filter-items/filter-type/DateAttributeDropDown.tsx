@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import styled from 'styled-components';
 import {KitDatePicker, KitSelect} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
-import {IFilterChildrenDropDownProps} from '../../../_types';
+import {IFilterChildrenDropDownProps} from './_types';
 import {nullValueConditions} from '../../../conditionsHelper';
 import {dateValuesSeparator} from '../../../_queries/useExplorerData';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';

@@ -107,6 +107,6 @@ export const prepareFiltersForRequest = (filters: ExplorerFilter[]): RecordFilte
                         condition: filterConcat.condition,
                         value: filterConcat.value
                     }
-                ] as RecordFilterInput[];
+                ];
             })
     );

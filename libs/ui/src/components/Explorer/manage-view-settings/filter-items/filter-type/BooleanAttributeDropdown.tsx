@@ -4,8 +4,8 @@
 import {ComponentProps, FunctionComponent} from 'react';
 import {KitSelect} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
-import {IFilterChildrenDropDownProps} from '_ui/components/Explorer/_types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {IFilterChildrenDropDownProps} from './_types';
 
 export const BooleanAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({filter, onFilterChange}) => {
     const {t} = useSharedTranslation();

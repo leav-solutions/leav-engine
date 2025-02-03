@@ -23,8 +23,8 @@ fragment LibraryAttribute on Attribute {
     ...LibraryAttributeLink
 }
 
-query GetLibraryAttributes($id: ID!) {
-  libraries(filters: {id: [$id]}) {
+query GetLibraryAttributes($libraryId: ID!) {
+  libraries(filters: {id: [$libraryId]}) {
     list {
         id
         attributes {

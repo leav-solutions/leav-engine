@@ -4,11 +4,7 @@
 import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
 import {KitInput, KitSelect} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {
-    IExplorerFilterThrough,
-    IFilterChildrenLinkDropDownProps,
-    isExplorerFilterThrough
-} from '_ui/components/Explorer/_types';
+import {ExplorerFilter, IExplorerFilterThrough, isExplorerFilterThrough} from '../../../_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 import {AttributeConditionFilter, ThroughConditionFilter} from '_ui/types';
 import styled from 'styled-components';
@@ -16,6 +12,7 @@ import {useGetLibraryAttributesLazyQuery} from '_ui/_gqlTypes';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {FilterDropdownContent} from './FilterDropdownContent';
+import {IFilterChildrenLinkDropDownProps} from './_types';
 
 const subFilterSuffix = '_THROUGH_SUB_FILTER';
 
@@ -60,7 +57,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
     };
 
     useEffect(() => {
-        if (filter.condition === ThroughConditionFilter.THROUGH && filter.attribute?.linkedLibrary?.id) {
+        if (filter.condition === ThroughConditionFilter.THROUGH && filter.attribute.linkedLibrary?.id) {
             fetchLibraryAttributes({
                 variables: {id: filter.attribute.linkedLibrary.id}
             });
@@ -81,7 +78,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
         value: attribute.id
     }));
 
-    const _handleThroughFilterChange = filterData => {
+    const _handleThroughFilterChange = (filterData: ExplorerFilter) => {
         onFilterChange({
             ...filter,
             subField: filterData.field,
