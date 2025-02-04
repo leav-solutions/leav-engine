@@ -340,7 +340,12 @@ export default function ({
                                   }))
                                 : null;
 
-                            return recordDomain.createRecord({library, values: valuesToSave, ctx});
+                            return recordDomain.createRecord({
+                                library,
+                                values: valuesToSave,
+                                verifyRequiredAttributes: true,
+                                ctx
+                            });
                         },
                         async deleteRecord(
                             parent,

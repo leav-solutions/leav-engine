@@ -57,6 +57,8 @@ export interface IAttributeDomain {
      */
     getAttributeLibraries(params: {attributeId: string; ctx: IQueryInfos}): Promise<ILibrary[]>;
 
+    getFormAttributes(libraryId: string, formId: string, ctx: IQueryInfos): Promise<IAttribute[]>;
+
     doesCompute(attrData: IAttribute): boolean;
 }
 
@@ -114,6 +116,24 @@ export default function ({
         );
     };
 
+    const _getLibraryAttributes = async (libraryId: string, ctx: IQueryInfos): Promise<IAttribute[]> => {
+        const _execute = async () => {
+            const libs = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});
+
+            if (!libs.list.length) {
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+            }
+
+            return attributeRepo.getLibraryAttributes({libraryId, ctx});
+        };
+
+        const cacheKey = `${utils.getCoreEntityCacheKey('library', libraryId)}:attributes`;
+
+        // Due to race conditions, we sometimes get null when retrieving a newly created core entity. Thus, we don't
+        // want to keep this "false" null in cache
+        return cacheService.memoize({key: cacheKey, func: _execute, storeNulls: false, ctx});
+    };
+
     return {
         doesCompute(attrData): boolean {
             const availableActions = actionsListDomain.getAvailableActions();
@@ -122,22 +142,30 @@ export default function ({
                 action => availableActions.find(availableAction => availableAction.id === action.id)?.compute
             );
         },
-        async getLibraryAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
-            const _execute = async () => {
-                const libs = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});
+        getLibraryAttributes: _getLibraryAttributes,
+        async getFormAttributes(libraryId: string, formId: string, ctx): Promise<IAttribute[]> {
+            const library = await getCoreEntityById('library', libraryId, ctx);
+            if (!library) {
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+            }
 
-                if (!libs.list.length) {
-                    throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
-                }
+            const form = (
+                await formRepo.getForms({
+                    params: {filters: {library: libraryId, id: formId}, strictFilters: true, withCount: false},
+                    ctx
+                })
+            ).list[0];
+            if (!form) {
+                throw new ValidationError({id: Errors.UNKNOWN_FORM});
+            }
 
-                return attributeRepo.getLibraryAttributes({libraryId, ctx});
-            };
+            const libraryAttributes = await _getLibraryAttributes(libraryId, ctx);
 
-            const cacheKey = `${utils.getCoreEntityCacheKey('library', libraryId)}:attributes`;
+            const formAttributes = form.elements.flatMap(formDependentElement =>
+                formDependentElement.elements.map(element => element.settings.attribute ?? [])
+            );
 
-            // Due to race conditions, we sometimes get null when retrieving a newly created core entity. Thus, we don't
-            // want to keep this "false" null in cache
-            return cacheService.memoize({key: cacheKey, func: _execute, storeNulls: false, ctx});
+            return libraryAttributes.filter(attribute => formAttributes.includes(attribute.id));
         },
         async getAttributeLibraries({attributeId, ctx}): Promise<ILibrary[]> {
             // Validate attribute
