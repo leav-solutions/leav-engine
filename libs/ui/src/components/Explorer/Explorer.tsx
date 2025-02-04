@@ -133,13 +133,14 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         refetch
     });
 
-    const totalCount = data?.totalCount ?? 0;
-    const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
     const {addItemAction, addItemModal} = useAddItemAction({
         isEnabled: entrypoint.type === 'link',
         library: view.libraryId,
         maxItemsLeft: null
     });
+    
+    const totalCount = data?.totalCount ?? 0;
+    const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
 
     const {deactivateMassAction} = useDeactivateMassAction({
         isEnabled: isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
