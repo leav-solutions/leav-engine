@@ -20,14 +20,23 @@ interface IAddLinkModalProps {
     onClose?: () => void;
 }
 
-const modalWidth = 1200;
+const modalMaxWidth = 1200;
 const StyledModal = styled(Modal)`
     && {
+        width: 90vw;
+        max-width: ${modalMaxWidth}px;
+
+        .ant-modal-body {
+            height: 80vh;
+            overflow-y: auto;
+        }
+
         .ant-modal-content {
             display: flex;
             flex-direction: column;
             padding: calc(var(--general-spacing-xs) * 1px);
             overflow: hidden;
+            padding: 0;
         }
 
         .ant-modal-footer {
@@ -69,20 +78,18 @@ export const AddLinkModal: FunctionComponent<IAddLinkModalProps> = ({open, libra
 
     const _closeButtonLabel: string = t('global.close');
 
-    const _footerButtons: ReactNode = [
-        <KitButton
-            aria-label={_closeButtonLabel}
-            key="close"
-            icon={<FontAwesomeIcon icon={faXmark} />}
-            onClick={_handleClose}
-        >
-            {_closeButtonLabel}
-        </KitButton>
-    ];
-
     const _footer: ComponentProps<typeof Modal>['footer'] = (
         <ModalFooter>
-            <KitSpace>{_footerButtons}</KitSpace>
+            <KitSpace>
+                <KitButton
+                    aria-label={_closeButtonLabel}
+                    key="close"
+                    icon={<FontAwesomeIcon icon={faXmark} />}
+                    onClick={_handleClose}
+                >
+                    {_closeButtonLabel}
+                </KitButton>
+            </KitSpace>
         </ModalFooter>
     );
 
@@ -91,16 +98,15 @@ export const AddLinkModal: FunctionComponent<IAddLinkModalProps> = ({open, libra
             open={open}
             onCancel={_handleClose}
             destroyOnClose
+            className="add-link-modal"
             closable={false}
             cancelText={t('global.cancel')}
             width="90vw"
             centered
-            style={{maxWidth: `${modalWidth}px`}}
-            styles={{body: {height: 'calc(100vh - 12rem)', overflowY: 'auto'}, content: {padding: 0}}}
             footer={_footer}
         >
             <ModalMainStyledDiv ref={explorerContainerRef}>
-                <EditSettingsContextProvider>
+                <EditSettingsContextProvider panelElement={() => explorerContainerRef.current ?? document.body}>
                     <Explorer
                         entrypoint={{
                             type: 'library',
@@ -112,7 +118,6 @@ export const AddLinkModal: FunctionComponent<IAddLinkModalProps> = ({open, libra
                         massActions={addLinkMassAction ? [addLinkMassAction] : []}
                         itemActions={[]}
                         defaultPrimaryActions={[]}
-                        panelElement={() => explorerContainerRef.current ?? document.body}
                     />
                 </EditSettingsContextProvider>
             </ModalMainStyledDiv>

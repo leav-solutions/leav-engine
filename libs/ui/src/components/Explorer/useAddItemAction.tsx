@@ -28,27 +28,27 @@ export const useAddItemAction = ({
 }>) => {
     const {t} = useSharedTranslation();
 
-    const [isAddItemModalVisible, setIsAddItemModalVisible] = useState(false);
+    const [isLinkItemsModalVisible, setIsLinkItemsModalVisible] = useState(false);
 
-    const canAddItem = !maxItemsLeft || maxItemsLeft > 0;
+    const disableAddItemAction = maxItemsLeft === 0;
 
-    const addItemAction: IPrimaryAction = {
+    const linkItemsAction: IPrimaryAction = {
         callback: () => {
-            setIsAddItemModalVisible(true);
+            setIsLinkItemsModalVisible(true);
         },
         icon: <FaPlus />,
-        disabled: !canAddItem,
+        disabled: disableAddItemAction,
         label: t('explorer.add-existing-item')
     };
 
     return {
-        addItemAction: isEnabled ? addItemAction : null,
-        addItemModal: isAddItemModalVisible ? (
+        linkItemsAction: isEnabled ? linkItemsAction : null,
+        linkItemsModal: isLinkItemsModalVisible ? (
             <AddLinkModal
                 open
                 library={library}
                 onClose={() => {
-                    setIsAddItemModalVisible(false);
+                    setIsLinkItemsModalVisible(false);
                 }}
             />
         ) : null

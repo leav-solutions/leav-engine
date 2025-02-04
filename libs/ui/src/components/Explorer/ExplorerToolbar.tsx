@@ -75,20 +75,14 @@ export const ExplorerToolbar: FunctionComponent<{
                     {filters.length !== 0 && <DividerStyled type="vertical" />}
                 </>
             )}
-            {filters.length > 0 && (
-                <>
-                    <KitSpace size="s">
-                        {filters.map(filter => (
-                            <li key={filter.id}>
-                                <CommonFilterItem key={filter.id} filter={filter} disabled={isMassSelectionAll} />
-                            </li>
-                        ))}
-                    </KitSpace>
-                    {sort.length > 0 && <DividerStyled type="vertical" />}
-                </>
-            )}
-            {sort.length > 0 && (
-                <>
+            <KitSpace size="s">
+                {filters.length > 0 &&
+                    filters.map(filter => (
+                        <li key={filter.id}>
+                            <CommonFilterItem key={filter.id} filter={filter} disabled={isMassSelectionAll} />
+                        </li>
+                    ))}
+                {sort.length > 0 && (
                     <li>
                         <FilterStyled
                             label={t('explorer.sort-items')}
@@ -97,21 +91,8 @@ export const ExplorerToolbar: FunctionComponent<{
                             onClick={_handleClickOnSort}
                         />
                     </li>
-                    <DividerStyled type="vertical" />
-                </>
-            )}
-            <li>
-                <FilterStyled
-                    as={KitButton}
-                    type="secondary"
-                    size="s"
-                    danger
-                    icon={<FaTrash />}
-                    disabled={true /* TODO: why? */}
-                >
-                    {t('explorer.reset-view')}
-                </FilterStyled>
-            </li>
+                )}
+            </KitSpace>
         </ExplorerToolbarListStyled>
     );
 };

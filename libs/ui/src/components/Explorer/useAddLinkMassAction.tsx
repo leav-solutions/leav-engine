@@ -10,9 +10,7 @@ import {IViewSettingsAction, IViewSettingsState} from './manage-view-settings';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 
 /**
- * Hook used to get the action for mass actions only available on selection.
- *
- * When the mutation for adding item is done, the Apollo cache will be clean (`Record` and `RecordIdentity`)
+ * Hook used to link records
  *
  * @param isEnabled - whether the action is present
  * @param view - represent the current view

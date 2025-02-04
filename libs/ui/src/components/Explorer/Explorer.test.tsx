@@ -555,23 +555,6 @@ describe('Explorer', () => {
 
     let user: ReturnType<typeof userEvent.setup>;
 
-    const ExplorerLinkAttributeMonoValueQueryMock = {
-        request: {
-            query: gqlTypes.ExplorerLinkAttributeDocument,
-            variables: {
-                id: linkEntrypoint.linkAttributeId
-            }
-        },
-        result: {
-            data: {
-                attributes: {
-                    list: [explorerLinkAttribute],
-                    __typename: 'AttributesList'
-                }
-            }
-        }
-    };
-
     const MockViewSettingsContextProvider: FunctionComponent<{viewMock: IViewSettingsState}> = ({
         viewMock,
         children
@@ -612,11 +595,6 @@ describe('Explorer', () => {
 
         jest.clearAllMocks();
         user = userEvent.setup();
-    });
-
-    afterEach(() => {
-        // restore the spy created with spyOn
-        jest.restoreAllMocks();
     });
 
     describe('props title', () => {
@@ -1104,7 +1082,6 @@ describe('Explorer', () => {
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
             expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
-            expect(within(toolbar).getByRole('button', {name: /reset-view/})).toBeVisible();
             expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
 
             expect(spy).toHaveBeenCalledWith(
@@ -1683,6 +1660,8 @@ describe('Explorer', () => {
                     libraryId: ''
                 }
             });
+
+            jest.restoreAllMocks();
         });
     });
 });

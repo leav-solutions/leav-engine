@@ -73,7 +73,6 @@ interface IExplorerProps {
     defaultPrimaryActions?: Array<'create'>;
     defaultMassActions?: Array<'deactivate'>;
     defaultViewSettings?: DefaultViewSettings;
-    panelElement?: () => HTMLElement;
 }
 
 export const Explorer: FunctionComponent<IExplorerProps> = ({
@@ -88,8 +87,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     defaultActionsForItem = ['edit', 'remove'],
     defaultPrimaryActions = ['create'],
     defaultMassActions = ['deactivate'],
-    defaultViewSettings,
-    panelElement
+    defaultViewSettings
 }) => {
     const {t} = useSharedTranslation();
 
@@ -133,12 +131,12 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         refetch
     });
 
-    const {addItemAction, addItemModal} = useAddItemAction({
+    const {linkItemsAction, linkItemsModal} = useAddItemAction({
         isEnabled: entrypoint.type === 'link',
         library: view.libraryId,
         maxItemsLeft: null
     });
-    
+
     const totalCount = data?.totalCount ?? 0;
     const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
 
@@ -157,7 +155,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         massActions: [deactivateMassAction, ...massActions].filter(Boolean)
     });
 
-    const {primaryButton} = usePrimaryActionsButton([createAction, addItemAction, ...primaryActions].filter(Boolean));
+    const {primaryButton} = usePrimaryActionsButton([createAction, linkItemsAction, ...primaryActions].filter(Boolean));
 
     const {viewSettingsButton} = useOpenViewSettings(view.libraryId);
 
@@ -227,11 +225,10 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     />
                 )}
             </ExplorerPageDivStyled>
-            {(panelElement || settingsPanelElement) &&
-                createPortal(<SidePanel />, panelElement ? panelElement() : (settingsPanelElement ?? document.body))}
+            {settingsPanelElement && createPortal(<SidePanel />, settingsPanelElement?.() ?? document.body)}
             {editModal}
             {createModal}
-            {addItemModal}
+            {linkItemsModal}
         </ViewSettingsContext.Provider>
     );
 };
