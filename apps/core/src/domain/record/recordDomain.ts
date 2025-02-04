@@ -877,7 +877,7 @@ export default function ({
                 }
             }
 
-r            if (Object.keys(valuesByAttribute).length) {
+            if (Object.keys(valuesByAttribute).length) {
                 // First, check if values are ok. If not, we won't create the record at all
                 const res = await Promise.allSettled(
                     Object.entries(valuesByAttribute).map(async ([attributeId, attributeValues]) => {
