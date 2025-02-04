@@ -190,7 +190,7 @@ describe('DSRangePickerWrapper', () => {
     test('Should save to LEAV if field becomes empty', async () => {
         render(
             <Form>
-                <Form.Item>
+                <Form.Item name="datePickerTest">
                     <DSRangePickerWrapper
                         attribute={mockFormAttribute}
                         readonly={notReadonly}
