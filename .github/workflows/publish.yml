@@ -1,7 +1,4 @@
 on:
-    push:
-        tags:
-            - '**'
     workflow_dispatch:
 
 # These jobs will generate docker images for all services
@@ -29,7 +26,7 @@ jobs:
                         LEAV Engine
                         Core
                     tags: |
-                        "leavengine/core:latest"
+                        "leavengine/core:dmg"
                         "leavengine/core:${{ github.ref_name }}"
 
     preview-generator:
@@ -58,7 +55,7 @@ jobs:
                         LEAV Engine
                         Preview Generator
                     tags: |
-                        "leavengine/preview-generator:latest"
+                        "leavengine/preview-generator:dmg"
                         "leavengine/preview-generator:${{ github.ref_name }}"
 
     automate-scan:
@@ -87,7 +84,7 @@ jobs:
                         LEAV Engine
                         Automate Scan
                     tags: |
-                        "leavengine/automate-scan:latest"
+                        "leavengine/automate-scan:dmg"
                         "leavengine/automate-scan:${{ github.ref_name }}"
 
     sync-scan:
@@ -116,7 +113,7 @@ jobs:
                         LEAV Engine
                         Sync scan
                     tags: |
-                        "leavengine/sync-scan:latest"
+                        "leavengine/sync-scan:dmg"
                         "leavengine/sync-scan:${{ github.ref_name }}"
 
     logs-collector:
@@ -145,5 +142,5 @@ jobs:
                         LEAV Engine
                         Logs Collector
                     tags: |
-                        "leavengine/logs-collector:latest"
+                        "leavengine/logs-collector:dmg"
                         "leavengine/logs-collector:${{ github.ref_name }}"
