@@ -5,7 +5,6 @@ import {AnyPrimitive} from '@leav/utils';
 import {Form, FormListFieldData} from 'antd';
 import {ReactNode} from 'react';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {AttributeFormat, RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
 import {DSListSelect} from './ValuesList/DSListSelect';
 import {DSInputWrapper} from './DSInputWrapper';
@@ -45,8 +44,6 @@ function StandardFieldValue({
     setActiveValue,
     isLastValueOfMultivalues = false
 }: IStandardFieldValueProps): JSX.Element {
-    const {t} = useSharedTranslation();
-
     const isValuesListEnabled = !!attribute?.values_list?.enable;
 
     const attributeFormatsWithDS = [

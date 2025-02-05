@@ -211,6 +211,7 @@ const StandardField: FunctionComponent<
                 } else {
                     if (backendWithoutCalculatedOrInheritedValues.length > 0) {
                         submitRes = await onValueDelete({id_value: idValue, payload: null}, attribute.id);
+
                         if (submitRes.status === APICallStatus.SUCCESS) {
                             setBackendValues(previousBackendValues =>
                                 previousBackendValues.filter(
@@ -292,17 +293,6 @@ const StandardField: FunctionComponent<
         });
     };
 
-    const isMultipleValues = element.attribute.multiple_values;
-    const hasValue = isMultipleValues && backendValues.length > 0;
-    const canAddAnotherValue =
-        !readonly &&
-        isMultipleValues &&
-        attribute.format !== AttributeFormat.boolean &&
-        attribute.format !== AttributeFormat.encrypted;
-    const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1;
-
-    const label = localizedTranslation(element.settings.label, availableLang);
-
     let isFieldInError = false;
     if (antdForm) {
         const hasErrorsInFormList = backendValues.some((_, index) => {
@@ -312,6 +302,18 @@ const StandardField: FunctionComponent<
 
         isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
     }
+
+    const isMultipleValues = element.attribute.multiple_values;
+    const hasValue = isMultipleValues && backendValues.length > 0;
+    const canAddAnotherValue =
+        !readonly &&
+        isMultipleValues &&
+        !isFieldInError &&
+        attribute.format !== AttributeFormat.boolean &&
+        attribute.format !== AttributeFormat.encrypted;
+    const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1 && !attribute.required;
+
+    const label = localizedTranslation(element.settings.label, availableLang);
 
     const isReadOnly = attribute.readonly || readonly;
 

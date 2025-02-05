@@ -110,7 +110,12 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
             value={value}
             format={isFocused || isErrors || !presentationValue ? undefined : () => presentationValue}
             disabled={readonly}
-            allowClear={!!value && !attribute.multiple_values}
+            allowClear={
+                !!value &&
+                !attribute.multiple_values &&
+                !inheritedFlags.isInheritedNotOverrideValue &&
+                !calculatedFlags.isCalculatedNotOverrideValue
+            }
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             onChange={_handleDateChange}
