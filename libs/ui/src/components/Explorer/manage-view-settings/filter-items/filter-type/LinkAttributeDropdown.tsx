@@ -28,10 +28,10 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
 
     const {conditionOptionsByType} = useConditionsOptionsByType(filter);
     const availableConditionsOptions = removeThroughCondition
-        ? conditionOptionsByType.filter(f => f.value !== ThroughConditionFilter.THROUGH)
+        ? conditionOptionsByType.filter(({value}) => value !== ThroughConditionFilter.THROUGH)
         : conditionOptionsByType;
 
-    const [fetchLibraryAttributes, {loading: libraryAttributesLoading, data: libraryAttributesData}] =
+    const [getLibraryAttributes, {loading: libraryAttributesLoading, data: libraryAttributesData}] =
         useGetLibraryAttributesLazyQuery();
 
     const [selectedSubField, setSelectedSubField] = useState<string | null>(
@@ -57,7 +57,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
 
     useEffect(() => {
         if (filter.condition === ThroughConditionFilter.THROUGH && filter.attribute.linkedLibrary?.id) {
-            fetchLibraryAttributes({
+            getLibraryAttributes({
                 variables: {id: filter.attribute.linkedLibrary.id}
             });
         }
@@ -118,7 +118,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
                             removeThroughCondition={true}
                             filter={{
                                 id: filter.id,
-                                field: selectedSubField ?? '',
+                                field: selectedSubField,
                                 attribute: {
                                     ...linkAttributeProps,
                                     label: localizedTranslation(linkAttributeProps.label, lang) ?? ''

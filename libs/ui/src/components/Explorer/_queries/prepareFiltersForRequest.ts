@@ -89,23 +89,23 @@ export const prepareFiltersForRequest = (filters: ExplorerFilter[]): RecordFilte
                     filter.condition === AttributeConditionFilter.THROUGH
                         ? `${filter.field}.${filter.subField}`
                         : filter.field;
-                const filterConcat: ExplorerFilter = {...filter, condition, field};
+                const filterWithSubAttributes: ExplorerFilter = {...filter, condition, field};
 
-                if (isExplorerFilterStandard(filterConcat)) {
-                    switch (filterConcat.attribute.format) {
+                if (isExplorerFilterStandard(filterWithSubAttributes)) {
+                    switch (filterWithSubAttributes.attribute.format) {
                         case AttributeFormat.date:
-                            return _getDateRequestFilters(filterConcat);
+                            return _getDateRequestFilters(filterWithSubAttributes);
                         case AttributeFormat.boolean:
-                            return _getBooleanRequestFilters(filterConcat);
+                            return _getBooleanRequestFilters(filterWithSubAttributes);
                         default:
                             break;
                     }
                 }
                 return [
                     {
-                        field: filterConcat.field,
-                        condition: filterConcat.condition,
-                        value: filterConcat.value
+                        field: filterWithSubAttributes.field,
+                        condition: filterWithSubAttributes.condition,
+                        value: filterWithSubAttributes.value
                     }
                 ];
             })

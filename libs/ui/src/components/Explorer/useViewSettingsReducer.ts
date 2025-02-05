@@ -101,8 +101,8 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
             }
 
             const _isThroughFilter = filter.field.includes('.');
-            const [field, subField] = filter.field.split('.');
             if (_isThroughFilter) {
+                const [field, subField] = filter.field.split('.');
                 const throughFilter: ValidFieldFilterThrough = {
                     field,
                     subField,
