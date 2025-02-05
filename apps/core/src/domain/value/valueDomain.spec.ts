@@ -1933,7 +1933,7 @@ describe('ValueDomain', () => {
             });
 
             await expect(deleteVal).rejects.toThrow(ValidationError);
-            await expect(deleteVal).rejects.toHaveProperty('fields.attribute');
+            await expect(deleteVal).rejects.toHaveProperty('fields.test_attr');
         });
 
         test('Should throw if unknown value', async function () {

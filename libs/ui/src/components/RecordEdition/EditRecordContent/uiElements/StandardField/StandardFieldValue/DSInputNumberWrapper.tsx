@@ -58,8 +58,8 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
     };
 
     const _handleOnBlur = async (event: FocusEvent<HTMLInputElement>) => {
+        setHasChanged(false);
         const valueToSubmit = event.target.value;
-
         if (!hasChanged) {
             onChange(valueToSubmit);
             setIsFocused(false);

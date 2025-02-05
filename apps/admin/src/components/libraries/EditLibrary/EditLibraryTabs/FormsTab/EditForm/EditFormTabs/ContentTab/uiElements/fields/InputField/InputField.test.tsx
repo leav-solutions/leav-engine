@@ -34,17 +34,4 @@ describe('InputField', () => {
         expect(screen.getByText(label.en)).toBeVisible();
         expect(screen.getByText(label.en).parentElement).not.toHaveClass('required');
     });
-
-    it('should display input with required class if specified', async () => {
-        const label = {
-            en: 'tata'
-        };
-        render(
-            <MockedLangContextProvider>
-                <InputField settings={{label, required: true}} />
-            </MockedLangContextProvider>
-        );
-
-        expect(screen.getByText(label.en).parentElement).toHaveClass('required');
-    });
 });

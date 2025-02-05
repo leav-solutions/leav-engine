@@ -48,6 +48,7 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
 import {isRecordWithId, SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
+import {IFormRepo} from 'infra/form/formRepo';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -100,7 +101,12 @@ const allowedTypeOperator = {
 };
 
 export interface IRecordDomain {
-    createRecord(params: {library: string; values?: IValue[]; ctx: IQueryInfos}): Promise<ICreateRecordResult>;
+    createRecord(params: {
+        library: string;
+        values?: IValue[];
+        verifyRequiredAttributes?: boolean;
+        ctx: IQueryInfos;
+    }): Promise<ICreateRecordResult>;
 
     /**
      * Update record
@@ -180,6 +186,7 @@ export interface IRecordDomainDeps {
     'core.infra.library': ILibraryRepo;
     'core.infra.tree': ITreeRepo;
     'core.infra.value': IValueRepo;
+    'core.infra.form': IFormRepo;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.cache.cacheService': ICachesService;
     'core.utils': IUtils;
@@ -199,6 +206,7 @@ export default function ({
     'core.infra.library': libraryRepo,
     'core.infra.tree': treeRepo,
     'core.infra.value': valueRepo,
+    'core.infra.form': formRepo,
     'core.domain.eventsManager': eventsManager,
     'core.infra.cache.cacheService': cacheService,
     'core.utils': utils,
@@ -811,7 +819,7 @@ export default function ({
     };
 
     const ret: IRecordDomain = {
-        async createRecord({library, values, ctx}) {
+        async createRecord({library, values, ctx, verifyRequiredAttributes}) {
             const recordData = {
                 created_at: moment().unix(),
                 created_by: String(ctx.userId),
@@ -831,22 +839,53 @@ export default function ({
                 throw new PermissionError(LibraryPermissionsActions.CREATE_RECORD);
             }
 
-            if (values?.length) {
-                // First, check if values are ok. If not, we won't create the record at all
-                const valuesByAttribute = values.reduce<Record<string, IValue[]>>((acc, value) => {
-                    if (!acc[value.attribute]) {
-                        acc[value.attribute] = [];
-                    }
-                    acc[value.attribute].push(value);
-                    return acc;
-                }, {});
+            const valuesByAttribute = (values ??= []).reduce<Record<string, IValue[]>>((acc, value) => {
+                if (!acc[value.attribute]) {
+                    acc[value.attribute] = [];
+                }
+                acc[value.attribute].push(value);
+                return acc;
+            }, {});
 
+            if (verifyRequiredAttributes) {
+                const creationForm = (
+                    await formRepo.getForms({
+                        params: {filters: {id: 'creation', library}, strictFilters: true, withCount: false},
+                        ctx
+                    })
+                ).list[0];
+
+                const requiredAttributes = (
+                    creationForm
+                        ? await attributeDomain.getFormAttributes(library, 'creation', ctx)
+                        : await attributeDomain.getLibraryAttributes(library, ctx)
+                ).flatMap(attribute => (attribute.required ? attribute.id : []));
+
+                const missingAttributes = requiredAttributes.filter(
+                    attributeId => !Object.keys(valuesByAttribute).includes(attributeId)
+                );
+
+                if (missingAttributes.length) {
+                    return {
+                        record: null,
+                        valuesErrors: missingAttributes.map(attributeId => ({
+                            type: Errors.REQUIRED_ATTRIBUTE,
+                            attributeId,
+                            message: utils.translateError(Errors.REQUIRED_ATTRIBUTE, ctx.lang)
+                        }))
+                    };
+                }
+            }
+
+            if (Object.keys(valuesByAttribute).length) {
+                // First, check if values are ok. If not, we won't create the record at all
                 const res = await Promise.allSettled(
                     Object.entries(valuesByAttribute).map(async ([attributeId, attributeValues]) => {
                         const attributeProps = await attributeDomain.getAttributeProperties({
                             id: attributeId,
                             ctx
                         });
+
                         return valueDomain.runActionsList({
                             listName: ActionsListEvents.SAVE_VALUE,
                             values: attributeValues,

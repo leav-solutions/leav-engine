@@ -68,6 +68,7 @@ const depsBase: ToAny<IRecordDomainDeps> = {
     'core.domain.eventsManager': jest.fn(),
     'core.infra.cache.cacheService': jest.fn(),
     'core.utils': jest.fn(),
+    'core.infra.form': jest.fn(),
     translator: {}
 };
 

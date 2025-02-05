@@ -159,24 +159,21 @@ const StandardField: FunctionComponent<
     const _handleSubmit =
         (idValue?: string, fieldName?: number) =>
         async (valueToSave: AnyPrimitive): Promise<ISubmitMultipleResult> => {
-            const submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
-
             const shouldSpecifyFieldName = attribute.multiple_values && fieldName !== undefined;
             const name = shouldSpecifyFieldName ? [attribute.id, fieldName] : attribute.id;
+            if (antdForm) {
+                antdForm.setFields([
+                    {
+                        name,
+                        errors: null
+                    }
+                ]);
+            }
 
-            if (submitRes.status === APICallStatus.SUCCESS) {
-                if (antdForm) {
-                    antdForm.setFields([
-                        {
-                            name,
-                            errors: null
-                        }
-                    ]);
-                }
-
-                if (!attribute.multiple_values) {
-                    setBackendValues(submitRes.values as unknown as RecordFormElementsValueStandardValue[]);
-                } else {
+            let submitRes;
+            if (attribute.multiple_values) {
+                submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
+                if (submitRes.status === APICallStatus.SUCCESS) {
                     setBackendValues(previousBackendValues => {
                         const newBackendValues = [...previousBackendValues, ...submitRes.values].reduce(
                             (acc, backendValue) => {
@@ -200,9 +197,33 @@ const StandardField: FunctionComponent<
 
                         return newBackendValues;
                     });
-                }
 
-                return submitRes;
+                    return submitRes;
+                }
+            } else {
+                if (valueToSave) {
+                    submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
+                    if (submitRes.status === APICallStatus.SUCCESS) {
+                        setBackendValues((submitRes.values as unknown as RecordFormElementsValueStandardValue[]) ?? []);
+
+                        return submitRes;
+                    }
+                } else {
+                    if (backendWithoutCalculatedOrInheritedValues.length > 0) {
+                        submitRes = await onValueDelete({id_value: idValue, payload: null}, attribute.id);
+
+                        if (submitRes.status === APICallStatus.SUCCESS) {
+                            setBackendValues(previousBackendValues =>
+                                previousBackendValues.filter(
+                                    value =>
+                                        (value.isCalculated !== null && value.isCalculated !== undefined) ||
+                                        (value.isInherited !== null && value.isInherited !== undefined)
+                                )
+                            );
+                            return submitRes;
+                        }
+                    }
+                }
             }
 
             if (!submitRes.error && submitRes.errors) {
@@ -272,17 +293,6 @@ const StandardField: FunctionComponent<
         });
     };
 
-    const isMultipleValues = element.attribute.multiple_values;
-    const hasValue = isMultipleValues && backendValues.length > 0;
-    const canAddAnotherValue =
-        !readonly &&
-        isMultipleValues &&
-        attribute.format !== AttributeFormat.boolean &&
-        attribute.format !== AttributeFormat.encrypted;
-    const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1;
-
-    const label = localizedTranslation(element.settings.label, availableLang);
-
     let isFieldInError = false;
     if (antdForm) {
         const hasErrorsInFormList = backendValues.some((_, index) => {
@@ -292,6 +302,18 @@ const StandardField: FunctionComponent<
 
         isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
     }
+
+    const isMultipleValues = element.attribute.multiple_values;
+    const hasValue = isMultipleValues && backendValues.length > 0;
+    const canAddAnotherValue =
+        !readonly &&
+        isMultipleValues &&
+        !isFieldInError &&
+        attribute.format !== AttributeFormat.boolean &&
+        attribute.format !== AttributeFormat.encrypted;
+    const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1 && !attribute.required;
+
+    const label = localizedTranslation(element.settings.label, availableLang);
 
     const isReadOnly = attribute.readonly || readonly;
 
@@ -319,7 +341,6 @@ const StandardField: FunctionComponent<
                         presentationValue={presentationValues[0]}
                         handleSubmit={_handleSubmit(backendWithoutCalculatedOrInheritedValues[0]?.id_value)}
                         attribute={attribute}
-                        required={attribute.required}
                         readonly={isReadOnly}
                         label={label}
                         calculatedFlags={calculatedFlags}
@@ -350,7 +371,6 @@ const StandardField: FunctionComponent<
                                                         )}
                                                         attribute={attribute}
                                                         label={label}
-                                                        required={attribute.required}
                                                         readonly={isReadOnly}
                                                         calculatedFlags={calculatedFlags}
                                                         inheritedFlags={inheritedFlags}
