@@ -61,7 +61,8 @@ export default function ({
             return {
                 name: settings.name,
                 icon: settings.icon,
-                favicon: settings.favicon
+                favicon: settings.favicon,
+                defaultApp: settings.defaultApp
             };
         }
     };

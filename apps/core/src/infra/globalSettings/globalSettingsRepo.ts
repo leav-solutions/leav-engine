@@ -37,7 +37,8 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
             return {
                 name: savedSettings?.[0]?.name ?? null,
                 icon: savedSettings?.[0]?.icon ?? null,
-                favicon: savedSettings?.[0]?.favicon ?? null
+                favicon: savedSettings?.[0]?.favicon ?? null,
+                defaultApp: savedSettings?.[0]?.defaultApp ?? null
             };
         },
         async getSettings(ctx) {
@@ -55,7 +56,8 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
             return {
                 name: settings?.[0]?.name ?? null,
                 icon: settings?.[0]?.icon ?? null,
-                favicon: settings?.[0]?.favicon ?? null
+                favicon: settings?.[0]?.favicon ?? null,
+                defaultApp: settings?.[0]?.defaultApp ?? null
             };
         }
     };

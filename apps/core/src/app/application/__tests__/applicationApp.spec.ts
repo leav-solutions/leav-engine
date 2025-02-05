@@ -20,6 +20,7 @@ const depsBase: ToAny<IApplicationAppDeps> = {
     'core.domain.permission': jest.fn(),
     'core.domain.record': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
+    'core.domain.globalSettings': jest.fn(),
     'core.utils.logger': jest.fn(),
     'core.utils': jest.fn()
 };

@@ -4,6 +4,7 @@
 import {IGlobalSettings} from '_types/globalSettings';
 
 export const mockGlobalSettings: IGlobalSettings = {
+    defaultApp: 'portal',
     name: 'My app name',
     icon: {
         library: 'myLibraryId',
