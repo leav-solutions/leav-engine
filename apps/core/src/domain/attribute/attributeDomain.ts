@@ -162,7 +162,7 @@ export default function ({
             const libraryAttributes = await _getLibraryAttributes(libraryId, ctx);
 
             const formAttributes = form.elements.flatMap(formDependentElement =>
-                formDependentElement.elements.map(element => element.settings.attribute ?? [])
+                formDependentElement.elements.flatMap(element => element.settings.attribute ?? [])
             );
 
             return libraryAttributes.filter(attribute => formAttributes.includes(attribute.id));
