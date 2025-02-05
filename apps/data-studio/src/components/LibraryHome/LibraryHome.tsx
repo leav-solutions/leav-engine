@@ -173,15 +173,6 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                         callback: () => console.info('Clicked action 1')
                     }
                 ]}
-                emptyPlaceholder={
-                    <Empty
-                        image={Empty.PRESENTED_IMAGE_SIMPLE}
-                        imageStyle={{
-                            height: 60
-                        }}
-                        description={<span>{t('global.element_not_found')}.</span>}
-                    />
-                }
             />
         </ExplorerContainerDivStyled>
     ) : params.has(explorerLinkQueryParamName) ? (

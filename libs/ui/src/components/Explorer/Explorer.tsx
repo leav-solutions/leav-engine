@@ -50,6 +50,14 @@ const ExplorerPageDivStyled = styled.div`
     overflow: hidden;
 `;
 
+const ExplorerEmptyDataStyled = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+`;
+
 interface IExplorerProps {
     entrypoint: Entrypoint;
     noPagination?: true;
@@ -173,7 +181,9 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                 {loadingData || viewSettingsLoading ? (
                     <Loading />
                 ) : hasNoResults ? (
-                    <>{emptyPlaceholder || <KitEmpty title={t('explorer.empty-data')} />}</>
+                    <ExplorerEmptyDataStyled>
+                        {emptyPlaceholder || <KitEmpty title={t('explorer.empty-data')} />}
+                    </ExplorerEmptyDataStyled>
                 ) : (
                     <DataView
                         dataGroupedFilteredSorted={data?.records ?? emptyArray}
