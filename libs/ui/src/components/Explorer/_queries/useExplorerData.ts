@@ -173,8 +173,8 @@ export const useExplorerData = ({
         return null;
     }, [libraryData, linkData]);
 
-    const ids = memoizedData?.records.map(record => record.itemId); // map memoized
-    useGetRecordUpdatesSubscription({libraries: [libraryId], records: ids});
+    const ids = memoizedData?.records.map(record => record.itemId);
+    useGetRecordUpdatesSubscription({libraries: [libraryId], records: ids}, !libraryId);
 
     return {
         data: memoizedData,
