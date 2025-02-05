@@ -8,11 +8,17 @@ import RecordSummary from './RecordSummary';
 import ValueDetails from './ValueDetails';
 import ValuesVersions from './ValuesVersions';
 import {createPortal} from 'react-dom';
-import {EditRecordReducerActionsTypes, IEditRecordReducerState} from '../editRecordReducer/editRecordReducer';
-import {KitSidePanel} from 'aristid-ds';
+import {
+    EditRecordReducerActionsTypes,
+    IEditRecordReducerActions,
+    IEditRecordReducerState
+} from '../editRecordReducer/editRecordReducer';
+import {KitBreadcrumb, KitSidePanel} from 'aristid-ds';
 import {KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EDIT_RECORD_SIDEBAR_ID} from '_ui/constants';
+import Breadcrumb from './Breacrumb';
+import AttributeSummary from './AttributeSummary';
 
 interface IEditRecordSidebarProps {
     onMetadataSubmit: MetadataSubmitValueFunc;
@@ -21,18 +27,12 @@ interface IEditRecordSidebarProps {
 }
 
 const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubmit: MetadataSubmitValueFunc) => {
-    // TODO: ValueDetails and ValuesVersions should be removed or refactored later
+    // TODO: ValuesVersions should be removed or refactored later
     switch (state.sidebarContent) {
         case 'none':
             return null;
         case 'valueDetails':
-            return (
-                <ValueDetails
-                    value={state.activeValue.value}
-                    attribute={state.activeValue.attribute}
-                    onMetadataSubmit={onMetadataSubmit}
-                />
-            );
+            return <AttributeSummary attribute={state.activeValue.attribute} />;
         case 'valuesVersions':
             return <ValuesVersions />;
         default:
@@ -56,6 +56,7 @@ export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
             initialOpen={open}
             idCardProps={{title: sidePanelTitle}}
             id={EDIT_RECORD_SIDEBAR_ID}
+            headerExtra={<Breadcrumb />}
         >
             {_getRecordSidebarContent(state, onMetadataSubmit)}
         </KitSidePanel>

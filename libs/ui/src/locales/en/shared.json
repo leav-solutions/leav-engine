@@ -498,7 +498,11 @@
         "open_preview_modal": "Open preview modal",
         "informations": "Informations",
         "chat": "Chat",
-        "history": "History"
+        "history": "History",
+        "offer_overview": "Offer overview",
+        "attribute": "Attribute",
+        "attribute_format": "Attribute format",
+        "descriptive": "Descriptive"
     },
     "view": {
         "views": "Views",
