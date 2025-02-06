@@ -8,6 +8,7 @@ export const getGlobalSettingsQuery = gql`
     ${recordIdentityFragment}
     query GET_GLOBAL_SETTINGS {
         globalSettings {
+            defaultApp
             name
             icon {
                 id

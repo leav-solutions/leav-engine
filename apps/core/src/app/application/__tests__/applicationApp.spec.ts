@@ -8,6 +8,7 @@ import {ValidateRequestTokenFunc} from '../../helpers/validateRequestToken';
 import {IAuthApp} from '../../auth/authApp';
 import {IApplicationDomain} from '../../../domain/application/applicationDomain';
 import {IUtils, ToAny} from '../../../utils/utils';
+import {IGlobalSettingsDomain} from '../../../domain/globalSettings/globalSettingsDomain';
 
 const depsBase: ToAny<IApplicationAppDeps> = {
     config: {},
@@ -20,6 +21,7 @@ const depsBase: ToAny<IApplicationAppDeps> = {
     'core.domain.permission': jest.fn(),
     'core.domain.record': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
+    'core.domain.globalSettings': jest.fn(),
     'core.utils.logger': jest.fn(),
     'core.utils': jest.fn()
 };
@@ -134,10 +136,18 @@ describe('ApplicationApp', () => {
     });
 
     describe('when login is asked', () => {
-        it('Should redirect to portal if oidc service enable because we cannot log directly to leav', async () => {
+        it('Should redirect to default app if oidc service enable because we cannot log directly to leav', async () => {
+            const globalSettingsMock: Mockify<IGlobalSettingsDomain> = {
+                getSettings: jest.fn().mockResolvedValueOnce({
+                    name: 'My App',
+                    icon: null,
+                    defaultApp: 'admin'
+                })
+            };
             const applicationApp = createApplicationApp({
                 ...depsBase,
                 'core.app.helpers.initQueryContext': initQueryContext({}),
+                'core.domain.globalSettings': globalSettingsMock as IGlobalSettingsDomain,
                 config: {applications: {rootFolder: 'applications/rootFolder'}, auth: {oidc: {enable: true}}}
             });
 
@@ -163,7 +173,7 @@ describe('ApplicationApp', () => {
 
             expect(next).not.toHaveBeenCalled();
             expect(res.redirect).toHaveBeenCalled();
-            expect(res.redirect).toHaveBeenCalledWith('/app/portal/');
+            expect(res.redirect).toHaveBeenCalledWith('/app/admin/');
         });
 
         it('Should not verify token and continue handlers, login is public when oidc not enable', async () => {

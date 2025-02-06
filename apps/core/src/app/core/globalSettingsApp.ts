@@ -15,7 +15,7 @@ import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IAppModule} from '_types/shared';
 import {IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
-import {APP_DEFAULT_NAME} from '../../_constants/globalSettings';
+import {APP_DEFAULT_NAME, DEFAULT_APPLICATION} from '../../_constants/globalSettings';
 import {AttributeCondition} from '../../_types/record';
 
 export interface ICoreApp extends IAppModule {
@@ -71,6 +71,7 @@ export default function ({
             const baseSchema = {
                 typeDefs: `
                     type GlobalSettings {
+                        defaultApp: String!,
                         name: String!,
                         icon: Record,
                         favicon: Record
@@ -82,6 +83,7 @@ export default function ({
                     }
 
                     input GlobalSettingsInput {
+                        defaultApp: String,
                         name: String,
                         icon: GlobalSettingsFileInput
                         favicon: GlobalSettingsFileInput
