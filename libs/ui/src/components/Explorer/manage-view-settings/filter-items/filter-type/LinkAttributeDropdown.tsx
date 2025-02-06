@@ -61,7 +61,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
                 variables: {id: filter.attribute.linkedLibrary.id}
             });
         }
-    }, [filter.condition]);
+    }, [filter.condition, filter.attribute, getLibraryAttributes]);
 
     const showSearch =
         filter.condition &&
@@ -86,7 +86,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
         } as IExplorerFilterThrough);
     };
 
-    const linkAttributeProps = libraryLinkAttributes.find(attribute => attribute.id === selectedSubField);
+    const linkedAttribute = libraryLinkAttributes.find(attribute => attribute.id === selectedSubField);
 
     return (
         <>
@@ -113,15 +113,15 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
                         loading={libraryAttributesLoading}
                         aria-label={String(t('explorer.filter-link-attribute'))}
                     />
-                    {selectedSubField && linkAttributeProps && (
+                    {selectedSubField && linkedAttribute && (
                         <FilterDropdownContent
                             removeThroughCondition={true}
                             filter={{
                                 id: filter.id,
                                 field: selectedSubField,
                                 attribute: {
-                                    ...linkAttributeProps,
-                                    label: localizedTranslation(linkAttributeProps.label, lang) ?? ''
+                                    ...linkedAttribute,
+                                    label: localizedTranslation(linkedAttribute.label, lang) ?? ''
                                 },
                                 condition: filter.subCondition,
                                 value: filter.value
