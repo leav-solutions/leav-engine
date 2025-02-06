@@ -8,6 +8,7 @@ export const saveGlobalSettingsQuery = gql`
     ${recordIdentityFragment}
     mutation SAVE_GLOBAL_SETTINGS($settings: GlobalSettingsInput!) {
         saveGlobalSettings(settings: $settings) {
+            defaultApp
             name
             icon {
                 id
