@@ -21,7 +21,7 @@ describe('Breadcrumb', () => {
         state: {
             ...mockReducer.state,
             record: mockRecord,
-            activeValue: mockRecordPropertyWithAttribute,
+            activeAttribute: mockRecordPropertyWithAttribute,
             sidebarContent: 'valueDetails'
         }
     };

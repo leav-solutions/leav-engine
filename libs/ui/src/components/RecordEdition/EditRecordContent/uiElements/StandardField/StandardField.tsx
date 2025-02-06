@@ -107,7 +107,7 @@ const StandardField: FunctionComponent<
 
     useEffect(() => {
         const _handleClickOutside = (event: MouseEvent | FocusEvent) => {
-            if (state.activeValue?.attribute?.id !== attribute.id) {
+            if (state.activeAttribute?.attribute?.id !== attribute.id) {
                 return;
             }
 
@@ -126,7 +126,7 @@ const StandardField: FunctionComponent<
             if (!allowedElementsToKeepValueDetailsDisplayed) {
                 dispatch({
                     type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                    value: null
+                    attribute: null
                 });
             }
         };
@@ -136,7 +136,7 @@ const StandardField: FunctionComponent<
         return () => {
             document.removeEventListener('mousedown', _handleClickOutside);
         };
-    }, [state.activeValue, attribute.id, dispatch]);
+    }, [state.activeAttribute, attribute.id, dispatch]);
 
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
 
@@ -147,6 +147,15 @@ const StandardField: FunctionComponent<
     const backendWithoutCalculatedOrInheritedValues = backendValues
         .filter(backendValue => !backendValue.isCalculated && !backendValue.isInherited)
         .sort((a, b) => Number(a.id_value) - Number(b.id_value));
+
+    useEffect(() => {
+        if (state.activeAttribute?.attribute.id === attribute.id) {
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                values: backendValues
+            });
+        }
+    }, [backendValues]);
 
     const {presentationValues} = useGetPresentationValues({
         //TODO fix type
@@ -285,11 +294,8 @@ const StandardField: FunctionComponent<
     const setActiveValue = () => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            value: {
-                value: null, // Value is needed for Tree or Metadata (for now it seems that we don't need it)
-                editingValue: null, // Set to null because it is only use to compute value.length but it will no longer be used (TO REMOVE IN XSTREAM-1094)
-                attribute
-            }
+            attribute,
+            values: backendValues
         });
     };
 

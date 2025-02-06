@@ -7,6 +7,7 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {EditRecordPage} from './EditRecordPage';
 import {mockFormElementInput, mockFormElementRequiredInput, mockRecordForm} from '_ui/__mocks__/common/form';
 import {mockAttributeSimple, mockFormAttributeCompute} from '_ui/__mocks__/common/attribute';
+import {APICallStatus} from '../EditRecordContent/_types';
 
 let user!: ReturnType<typeof userEvent.setup>;
 const useGetRecordFormMock = jest.fn();
@@ -14,6 +15,11 @@ jest.mock('_ui/hooks/useGetRecordForm', () => () => useGetRecordFormMock());
 
 jest.mock('_ui/hooks/useCanEditRecord', () => ({
     useCanEditRecord: () => ({loading: false, canEdit: true, isReadOnly: false})
+}));
+
+const saveValuesMock = jest.fn();
+jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation.ts', () => () => ({
+    saveValues: saveValuesMock
 }));
 
 const deleteValueMock = jest.fn();
@@ -26,12 +32,57 @@ jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
     useGetRecordValuesQuery: () => useGetRecordValuesQueryMock()
 }));
 
+const calculatedValues = (value: string) => [
+    {
+        isCalculated: false,
+        payload: null,
+        raw_payload: null,
+        created_at: 123456789,
+        modified_at: 123456789,
+        id_value: null,
+        attribute: mockAttributeSimple,
+        metadata: null,
+        version: null
+    },
+    {
+        isCalculated: true,
+        payload: value,
+        raw_payload: value,
+        created_at: 123456789,
+        modified_at: 123456789,
+        id_value: null,
+        attribute: mockAttributeSimple,
+        metadata: null,
+        version: null
+    }
+];
+
 describe('EditRecordPage', () => {
     beforeEach(() => {
         user = userEvent.setup();
+        saveValuesMock.mockReturnValue({
+            status: APICallStatus.SUCCESS,
+            values: [
+                {
+                    isCalculated: false,
+                    payload: 'some value',
+                    raw_payload: 'some value',
+                    created_at: 123456789,
+                    modified_at: 123456789,
+                    id_value: 'id_value',
+                    attribute: mockAttributeSimple,
+                    metadata: null,
+                    version: null
+                }
+            ]
+        });
+    });
+
+    afterEach(() => {
+        saveValuesMock.mockClear();
+        deleteValueMock.mockClear();
         useGetRecordFormMock.mockClear();
         useGetRecordValuesQueryMock.mockClear();
-        deleteValueMock.mockClear();
     });
 
     test('Should render an input component', () => {
@@ -47,30 +98,7 @@ describe('EditRecordPage', () => {
             ...mockFormElementInput,
             settings: [{key: 'label', value: {fr: 'simple attribute'}}]
         };
-        const calculatedValues = (value: string) => [
-            {
-                isCalculated: false,
-                payload: null,
-                raw_payload: null,
-                created_at: 123456789,
-                modified_at: 123456789,
-                id_value: null,
-                attribute: mockAttributeSimple,
-                metadata: null,
-                version: null
-            },
-            {
-                isCalculated: true,
-                payload: value,
-                raw_payload: value,
-                created_at: 123456789,
-                modified_at: 123456789,
-                id_value: null,
-                attribute: mockAttributeSimple,
-                metadata: null,
-                version: null
-            }
-        ];
+
         const calculatedElementInput = {
             ...mockFormElementInput,
             id: 'input_calculated_element',
@@ -113,30 +141,7 @@ describe('EditRecordPage', () => {
             ...mockFormElementInput,
             settings: [{key: 'label', value: {fr: 'simple attribute'}}]
         };
-        const calculatedValues = (value: string) => [
-            {
-                isCalculated: false,
-                payload: null,
-                raw_payload: null,
-                created_at: 123456789,
-                modified_at: 123456789,
-                id_value: null,
-                attribute: mockAttributeSimple,
-                metadata: null,
-                version: null
-            },
-            {
-                isCalculated: true,
-                payload: value,
-                raw_payload: value,
-                created_at: 123456789,
-                modified_at: 123456789,
-                id_value: null,
-                attribute: mockAttributeSimple,
-                metadata: null,
-                version: null
-            }
-        ];
+
         const calculatedElementInput = {
             ...mockFormElementInput,
             id: 'input_calculated_element',
@@ -214,5 +219,32 @@ describe('EditRecordPage', () => {
         await userEvent.tab();
 
         expect(screen.getByText('Attribute is required')).toBeVisible();
+    });
+
+    test('Should update sidebar when focus on an input', async () => {
+        const simpleElementInput = {
+            ...mockFormElementRequiredInput,
+            settings: [{key: 'label', value: {fr: 'simple attribute'}}]
+        };
+
+        useGetRecordFormMock.mockReturnValue({
+            loading: false,
+            recordForm: {...mockRecordForm, elements: [simpleElementInput]}
+        });
+
+        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} showSidebar record={mockRecord} />);
+
+        const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
+
+        await user.click(simpleInput);
+        await userEvent.type(simpleInput, 'some value');
+        await userEvent.tab();
+
+        expect(saveValuesMock).toHaveBeenCalled();
+        expect(screen.queryByText('some value')).not.toBeInTheDocument();
+
+        await user.click(simpleInput);
+
+        expect(screen.getByText('some value')).toBeVisible();
     });
 });

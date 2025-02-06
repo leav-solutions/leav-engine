@@ -503,7 +503,11 @@
         "entity_overview": "{{entity}} overview",
         "attribute": "Attribute",
         "attribute_format": "Attribute format",
-        "descriptive": "Descriptive"
+        "descriptive": "Descriptive",
+        "values_version": "Values version",
+        "no_value": "No value",
+        "calculated_value": "Calculated value",
+        "global": "Global"
     },
     "view": {
         "views": "Views",

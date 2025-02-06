@@ -5,20 +5,16 @@ import {FunctionComponent, useEffect, useRef} from 'react';
 import {MetadataSubmitValueFunc} from '../EditRecordContent/_types';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import RecordSummary from './RecordSummary';
-import ValueDetails from './ValueDetails';
 import ValuesVersions from './ValuesVersions';
 import {createPortal} from 'react-dom';
-import {
-    EditRecordReducerActionsTypes,
-    IEditRecordReducerActions,
-    IEditRecordReducerState
-} from '../editRecordReducer/editRecordReducer';
-import {KitBreadcrumb, KitSidePanel} from 'aristid-ds';
+import {EditRecordReducerActionsTypes, IEditRecordReducerState} from '../editRecordReducer/editRecordReducer';
+import {KitSidePanel, KitSpace} from 'aristid-ds';
 import {KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EDIT_RECORD_SIDEBAR_ID} from '_ui/constants';
 import Breadcrumb from './Breacrumb';
 import AttributeSummary from './AttributeSummary';
+import ValuesSummary from './ValuesSummary';
 
 interface IEditRecordSidebarProps {
     onMetadataSubmit: MetadataSubmitValueFunc;
@@ -32,7 +28,15 @@ const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubm
         case 'none':
             return null;
         case 'valueDetails':
-            return <AttributeSummary attribute={state.activeValue.attribute} />;
+            return (
+                <KitSpace direction="vertical" size="s" style={{width: '100%'}}>
+                    <AttributeSummary attribute={state.activeAttribute.attribute} />
+                    <ValuesSummary
+                        globalValues={state.activeAttribute.globalValues}
+                        calculatedValue={state.activeAttribute.calculatedValue}
+                    />
+                </KitSpace>
+            );
         case 'valuesVersions':
             return <ValuesVersions />;
         default:

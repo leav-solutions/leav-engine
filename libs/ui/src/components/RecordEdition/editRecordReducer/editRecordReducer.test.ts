@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mockAttributeSimple} from '_ui/__mocks__/common/attribute';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {mockRecordPropertyWithAttribute} from '_ui/__mocks__/common/value';
+import {mockRecordProperty, mockRecordPropertyWithAttribute} from '_ui/__mocks__/common/value';
 import editRecordReducer, {
     EditRecordReducerActionsTypes,
     IEditRecordReducerState,
@@ -19,14 +19,42 @@ describe('editRecordReducer', () => {
     test('SET_ACTIVE_VALUE', async () => {
         const newState = editRecordReducer(mockInitialState, {
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            value: mockRecordPropertyWithAttribute
+            attribute: mockRecordPropertyWithAttribute.attribute,
+            values: [
+                {
+                    isCalculated: false,
+                    payload: 'simple',
+                    raw_payload: 'simple',
+                    created_at: 123456789,
+                    modified_at: 123456789,
+                    id_value: null,
+                    attribute: mockAttributeSimple,
+                    metadata: null,
+                    version: null
+                },
+                {
+                    isCalculated: true,
+                    payload: 'calculated',
+                    raw_payload: 'calculated',
+                    created_at: 123456789,
+                    modified_at: 123456789,
+                    id_value: null,
+                    attribute: mockAttributeSimple,
+                    metadata: null,
+                    version: null
+                }
+            ]
         });
-        expect(newState.activeValue).toEqual(mockRecordPropertyWithAttribute);
+        expect(newState.activeAttribute).toEqual({
+            ...mockRecordPropertyWithAttribute,
+            globalValues: ['simple'],
+            calculatedValue: 'calculated'
+        });
         expect(newState.sidebarContent).toBe('valueDetails');
 
         const newState2 = editRecordReducer(mockInitialState, {
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            value: null
+            attribute: null
         });
         expect(newState2.sidebarContent).toBe('summary');
     });

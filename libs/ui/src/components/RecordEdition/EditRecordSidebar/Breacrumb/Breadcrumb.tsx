@@ -16,6 +16,7 @@ export const Breadcrumb: FunctionComponent = () => {
     const {state, dispatch} = useEditRecordReducer();
 
     let items: IKitBreadcrumbItem[] = [];
+
     switch (state.sidebarContent) {
         case 'none':
         case 'valuesVersions':
@@ -24,7 +25,7 @@ export const Breadcrumb: FunctionComponent = () => {
             items = [
                 {
                     title: t('record_summary.entity_overview', {
-                        entity: localizedTranslation(state.record.library.label, lang)
+                        entity: localizedTranslation(state.libraryLabel, lang)
                     }),
                     href: '',
                     onClick: e => {
@@ -44,7 +45,7 @@ export const Breadcrumb: FunctionComponent = () => {
             items = [
                 {
                     title: t('record_summary.entity_overview', {
-                        entity: localizedTranslation(state.record.library.label, lang)
+                        entity: localizedTranslation(state.libraryLabel, lang)
                     })
                 }
             ];

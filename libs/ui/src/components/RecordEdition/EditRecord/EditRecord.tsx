@@ -45,6 +45,8 @@ import {FormInstance} from 'antd/lib/form/Form';
 import {useRunActionsListAndFormatOnValue} from '../EditRecordContent/hooks/useRunActionsListAndFormatOnValue';
 import EditRecordSidebar from '../EditRecordSidebar';
 import EditRecordSkeleton from '../EditRecordSkeleton';
+import {useQuery} from '@apollo/client';
+import {getLibraryByIdQuery} from '_ui/_queries/libraries/getLibraryByIdQuery';
 
 interface IEditRecordProps {
     antdForm: FormInstance;
@@ -89,7 +91,7 @@ const Content = styled.div<{$shouldUseLayoutWithSidebar: boolean}>`
 export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     antdForm,
     record,
-    library,
+    library: libraryId,
     onCreate,
     valuesVersion,
     showSidebar = false,
@@ -103,7 +105,8 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     const [state, dispatch] = useReducer(editRecordReducer, {
         ...initialState,
         record,
-        libraryId: library,
+        libraryId,
+        libraryLabel: null,
         valuesVersion,
         originValuesVersion: valuesVersion,
         sidebarContent: showSidebar ? 'summary' : 'none',
@@ -115,7 +118,11 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         loading: permissionsLoading,
         canEdit,
         isReadOnly
-    } = useCanEditRecord({...record?.library, id: library}, record?.id);
+    } = useCanEditRecord({...record?.library, id: libraryId}, record?.id);
+
+    const {data: libraryData} = useQuery(getLibraryByIdQuery, {
+        variables: {id: [libraryId]}
+    });
 
     const {saveValues} = useSaveValueBatchMutation();
     const {deleteValue} = useExecuteDeleteValueMutation(record);
@@ -130,6 +137,15 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     const pendingValuesRef = useRef(pendingValues);
 
     // Update record in reducer when it changes. Might happen on record identity change (after value save)
+    useEffect(() => {
+        if (libraryData) {
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_LIBRARY_LABEL,
+                label: libraryData.libraries.list[0].label
+            });
+        }
+    }, [libraryData]);
+
     useEffect(() => {
         if (record && !isEqual(record, state.record)) {
             dispatch({
@@ -211,7 +227,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             }
 
             const valueAfterActionsListAndFormat = await runActionsListAndFormatOnValue(
-                library,
+                libraryId,
                 valueToProcess as IValueToSubmit,
                 version
             );
@@ -380,7 +396,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             []
         );
 
-        const creationResult = await createRecord({variables: {library, data: {values: valuesToSave}}});
+        const creationResult = await createRecord({variables: {library: libraryId, data: {values: valuesToSave}}});
 
         if (creationResult.data.createRecord.valuesErrors?.length) {
             // Extract errors by field
@@ -476,7 +492,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 <EditRecordContent
                                     antdForm={antdForm}
                                     record={record}
-                                    library={library}
+                                    library={libraryId}
                                     onRecordSubmit={_handleRecordSubmit}
                                     onValueSubmit={_handleValueSubmit}
                                     onValueDelete={_handleDeleteValue}

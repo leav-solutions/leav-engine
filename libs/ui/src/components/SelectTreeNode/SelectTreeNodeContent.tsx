@@ -198,9 +198,6 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             loadData={_handleLoadData}
             checkStrictly
             checkable={multiple}
-            showLine={{
-                showLeafIcon: false
-            }}
         />
     );
 };
