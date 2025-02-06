@@ -233,17 +233,9 @@ export default function ({
                         values: [ValueBatchInput!]
                     }
 
-                    type CreateRecordValueSaveError {
-                        type: String!,
-                        attributeId: String!,
-                        id_value: String,
-                        input: String,
-                        message: String
-                    }
-
                     type CreateRecordResult {
                         record: Record,
-                        valuesErrors: [CreateRecordValueSaveError!]
+                        valuesErrors: [ValueBatchError!]
                     }
 
                     extend type Query {

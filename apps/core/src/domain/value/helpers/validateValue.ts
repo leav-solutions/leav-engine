@@ -6,7 +6,7 @@ import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {difference} from 'lodash';
-import {AttributeTypes, IAttribute} from '../../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {ErrorFieldDetail, Errors, IExtendedErrorMsg} from '../../../_types/errors';
 import {IQueryInfos} from '../../../_types/queryInfos';
 import {AttributeCondition} from '../../../_types/record';
@@ -161,6 +161,21 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
     let errors: ErrorFieldDetail<IValue> = {};
     const {attributeProps, value, library, recordId, deps, ctx} = params;
     const valueExists = doesValueExist(value, attributeProps);
+
+    // Verify character limit
+    if (
+        [AttributeFormats.TEXT, AttributeFormats.RICH_TEXT].includes(attributeProps.format) &&
+        attributeProps.characterLimit
+    ) {
+        const text =
+            attributeProps.format === AttributeFormats.RICH_TEXT
+                ? value.payload.replace(/<\/?[^>]+(>|$)/g, '') // to delete html tags
+                : value.payload;
+
+        if (text.length > attributeProps.characterLimit) {
+            errors[attributeProps.id] = Errors.VALUE_EXCEEDS_CHARACTER_LIMIT;
+        }
+    }
 
     // Check if this value has already been registered for this attribute in this library
     if (typeof attributeProps.unique !== 'undefined' && attributeProps.unique) {

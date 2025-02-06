@@ -38,7 +38,6 @@ export const attributeDetailsFragment = gql`
 
         ... on StandardAttribute {
             unique
-            maxLength
         }
 
         ... on LinkAttribute {

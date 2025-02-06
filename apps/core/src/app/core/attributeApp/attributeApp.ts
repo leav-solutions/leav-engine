@@ -193,7 +193,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         embedded_fields: [EmbeddedAttribute],
                         values_list: StandardValuesListConf,
                         unique: Boolean,
-                        maxLength: Int
+                        characterLimit: Int
                     }
 
                     type LinkAttribute implements Attribute {
@@ -228,7 +228,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         values_list: ValuesListConfInput,
                         reverse_link: String,
                         unique: Boolean,
-                        maxLength: Int
+                        characterLimit: Int
                     }
 
                     type EmbeddedAttribute {
