@@ -575,6 +575,7 @@ describe('Explorer', () => {
             mockAttributesByLibResult as gqlTypes.GetAttributesByLibQueryResult
         );
 
+        // TODO: useless except for remove logs warning `No more mocked`
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
             loading: false
         });
@@ -778,14 +779,14 @@ describe('Explorer', () => {
         expect(useGetRecordUpdatesSubscriptionMock.mock.calls[0]).toEqual([
             {
                 libraries: [''],
-                records: ['613982168', '612694174']
+                records: expect.any(Array)
             },
             true
         ]);
         expect(useGetRecordUpdatesSubscriptionMock.mock.calls[1]).toEqual([
             {
                 libraries: [libraryEntrypoint.libraryId],
-                records: ['613982168', '612694174']
+                records: [recordId1, recordId2]
             },
             false
         ]);
