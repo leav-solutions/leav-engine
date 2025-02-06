@@ -61,6 +61,22 @@ export const mockFormElementInput: FormElement<{}> = {
     uiElementType: FormFieldTypes.TEXT_INPUT
 };
 
+export const mockFormElementRequiredInput: FormElement<{}> = {
+    ...formElementBase,
+    id: 'input_element_required',
+    containerId: '__root',
+    settings: {attribute: 'test_attribute_required'},
+    attribute: {
+        ...mockFormAttribute,
+        format: AttributeFormat.text,
+        versions_conf: {versionable: false, profile: null},
+        required: true
+    },
+    uiElement: () => <div>{FormFieldTypes.TEXT_INPUT}</div>,
+    type: FormElementTypes.field,
+    uiElementType: FormFieldTypes.TEXT_INPUT
+};
+
 export const mockFormElementMultipleInput: FormElement<{}> = {
     ...formElementBase,
     id: 'input_element',

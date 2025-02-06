@@ -147,20 +147,19 @@ function EditAttributeInfoForm({
         _handleFieldSubmit(field, e.target.value);
     };
 
-    const _handleSubmitOnEnter = (field: string) => (
-        e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        // If shift is pressed, don't submit
-        if (e.shiftKey || !isEditing) {
-            return;
-        }
+    const _handleSubmitOnEnter =
+        (field: string) => (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            // If shift is pressed, don't submit
+            if (e.shiftKey || !isEditing) {
+                return;
+            }
 
-        if (e.key === 'Enter') {
-            e.preventDefault();
+            if (e.key === 'Enter') {
+                e.preventDefault();
 
-            _handleFieldSubmit(field, e.currentTarget.value);
-        }
-    };
+                _handleFieldSubmit(field, e.currentTarget.value);
+            }
+        };
 
     const {label: attributeLabel, description: attributeDescription, ...attributeSettings} = attribute ?? {};
     const label = attributeLabel
@@ -185,7 +184,6 @@ function EditAttributeInfoForm({
         type: AttributeType.simple,
         format: AttributeFormat.text,
         readonly: false,
-        maxLength: null,
         unique: false,
         ...attributeSettings,
         ...label,
@@ -357,22 +355,6 @@ function EditAttributeInfoForm({
                 >
                     <Switch disabled={isReadOnly} onChange={_handleCheckboxChange('unique')} />
                 </SwitchFormItem>
-            )}
-            {[AttributeType.simple, AttributeType.advanced].includes(form.getFieldValue('type')) && (
-                <Form.Item
-                    name="maxLength"
-                    label={t('global.max_length')}
-                    validateTrigger={['onBlur', 'onChange', 'onSubmit']}
-                >
-                    <InputNumber
-                        min={1}
-                        disabled={isReadOnly}
-                        onChange={_handleNumberChange('maxLength')}
-                        onBlur={() => {
-                            _handleFieldSubmit('maxLength', form.getFieldValue('maxLength'));
-                        }}
-                    />
-                </Form.Item>
             )}
             {isTypeNotSimple && (
                 <SwitchFormItem

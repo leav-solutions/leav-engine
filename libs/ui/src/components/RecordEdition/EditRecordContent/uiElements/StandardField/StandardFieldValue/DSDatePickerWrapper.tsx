@@ -79,8 +79,6 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
 
         onChange(datePickerDate, ...antOnChangeParams);
 
-        // TODO : validate form with await form.validateFields(attribute.id)
-
         let dateToSave = '';
         if (!!datePickerDate) {
             dateToSave = String(datePickerDate.unix());
@@ -112,7 +110,12 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
             value={value}
             format={isFocused || isErrors || !presentationValue ? undefined : () => presentationValue}
             disabled={readonly}
-            allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
+            allowClear={
+                !!value &&
+                !attribute.multiple_values &&
+                !inheritedFlags.isInheritedNotOverrideValue &&
+                !calculatedFlags.isCalculatedNotOverrideValue
+            }
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             onChange={_handleDateChange}

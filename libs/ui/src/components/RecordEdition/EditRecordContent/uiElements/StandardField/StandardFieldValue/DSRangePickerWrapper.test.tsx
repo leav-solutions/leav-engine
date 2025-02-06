@@ -88,7 +88,6 @@ describe('DSRangePickerWrapper', () => {
                         value={[todayDate, tomorrowDate]}
                         presentationValue={presentationDate}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -111,7 +110,6 @@ describe('DSRangePickerWrapper', () => {
                         value={[todayDate, tomorrowDate]}
                         presentationValue={presentationDate}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -138,7 +136,6 @@ describe('DSRangePickerWrapper', () => {
                         value={[todayDate, tomorrowDate]}
                         presentationValue={presentationDate}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={readonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -159,7 +156,6 @@ describe('DSRangePickerWrapper', () => {
                 <Form.Item>
                     <DSRangePickerWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -194,10 +190,9 @@ describe('DSRangePickerWrapper', () => {
     test('Should save to LEAV if field becomes empty', async () => {
         render(
             <Form>
-                <Form.Item>
+                <Form.Item name="datePickerTest">
                     <DSRangePickerWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -233,7 +228,6 @@ describe('DSRangePickerWrapper', () => {
                 <Form.Item>
                     <DSRangePickerWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -264,7 +258,6 @@ describe('DSRangePickerWrapper', () => {
                             value={[todayDate, tomorrowDate]}
                             presentationValue={presentationDate}
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithInheritedValue}
@@ -294,7 +287,6 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item name="rangePickerTest">
                         <DSRangePickerWrapper
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithInheritedValue}
@@ -323,7 +315,6 @@ describe('DSRangePickerWrapper', () => {
                             value={[todayDate, tomorrowDate]}
                             presentationValue={presentationDate}
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -353,7 +344,6 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item name="rangePickerTest">
                         <DSRangePickerWrapper
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}

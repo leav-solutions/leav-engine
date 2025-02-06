@@ -5,7 +5,6 @@ import {AnyPrimitive} from '@leav/utils';
 import {Form, FormListFieldData} from 'antd';
 import {ReactNode} from 'react';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {AttributeFormat, RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
 import {DSListSelect} from './ValuesList/DSListSelect';
 import {DSInputWrapper} from './DSInputWrapper';
@@ -23,7 +22,6 @@ interface IStandardFieldValueProps {
     handleSubmit: (value: AnyPrimitive | null) => Promise<void | ISubmitMultipleResult>;
     attribute: RecordFormAttributeStandardAttributeFragment;
     label: string;
-    required: boolean;
     readonly: boolean;
     calculatedFlags: CalculatedFlags;
     inheritedFlags: InheritedFlags;
@@ -38,7 +36,6 @@ function StandardFieldValue({
     handleSubmit,
     attribute,
     label,
-    required,
     readonly,
     calculatedFlags,
     inheritedFlags,
@@ -47,8 +44,6 @@ function StandardFieldValue({
     setActiveValue,
     isLastValueOfMultivalues = false
 }: IStandardFieldValueProps): JSX.Element {
-    const {t} = useSharedTranslation();
-
     const isValuesListEnabled = !!attribute?.values_list?.enable;
 
     const attributeFormatsWithDS = [
@@ -70,7 +65,6 @@ function StandardFieldValue({
         removeLastValueOfMultivalues,
         readonly,
         label,
-        required,
         calculatedFlags,
         inheritedFlags,
         setActiveValue
@@ -109,22 +103,7 @@ function StandardFieldValue({
 
     return (
         attributeFormatsWithDS.includes(attribute.format) && (
-            <Form.Item
-                name={attribute.id}
-                {...listField}
-                rules={
-                    //TODO: Remove this rule when required is implemented in the backend
-                    !attribute.multiple_values
-                        ? [
-                              {
-                                  required,
-                                  message: t('errors.standard_field_required')
-                              }
-                          ]
-                        : undefined
-                }
-                noStyle
-            >
+            <Form.Item name={attribute.id} {...listField} noStyle>
                 {valueContent}
             </Form.Item>
         )

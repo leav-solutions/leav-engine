@@ -185,7 +185,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                     return savableValue as IValueToSubmit;
                 }),
                 version,
-                false // deleteEmpty
+                true // deleteEmpty
             );
         }
 
@@ -341,78 +341,74 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
      */
     const _handleRecordSubmit = async () => {
         const currentPendingValues = pendingValuesRef.current ?? {};
-        if (!!!Object.keys(currentPendingValues).length) {
+
+        if (state.record) {
             return;
         }
 
-        // Create Record
-        let newRecord: RecordIdentityFragment['whoAmI'] = state.record ?? null;
-        if (!newRecord) {
-            const valuesToSave: ValueBatchInput[] = Object.values(currentPendingValues).reduce(
-                (allValues: ValueBatchInput[], valuesById) => {
-                    const attributeValues: ValueBatchInput[] = Object.values(valuesById).map(val => {
-                        let actualValue;
-                        switch (val.attribute.type) {
-                            case AttributeType.advanced_link:
-                            case AttributeType.simple_link:
-                                actualValue = (val as ValueDetailsLinkValueFragment).linkValue.id;
-                                break;
-                            case AttributeType.tree:
-                                const treeValue = (val as ValueDetailsTreeValueFragment).treeValue;
-                                actualValue = treeValue.id;
-                                break;
-                            default:
-                                actualValue = (val as ValueDetailsValueFragment).raw_payload;
-                                break;
-                        }
-                        return {
-                            value: actualValue,
-                            id_value: val.id_value ?? null,
-                            attribute: val.attribute.id,
-                            metadata: val.metadata
-                                ? val.metadata.map(metadataValue => ({
-                                      name: metadataValue.name,
-                                      value: metadataValue.value.raw_payload
-                                  }))
-                                : null
-                        };
-                    });
+        const valuesToSave: ValueBatchInput[] = Object.values(currentPendingValues).reduce(
+            (allValues: ValueBatchInput[], valuesById) => {
+                const attributeValues: ValueBatchInput[] = Object.values(valuesById).map(val => {
+                    let actualValue;
+                    switch (val.attribute.type) {
+                        case AttributeType.advanced_link:
+                        case AttributeType.simple_link:
+                            actualValue = (val as ValueDetailsLinkValueFragment).linkValue.id;
+                            break;
+                        case AttributeType.tree:
+                            const treeValue = (val as ValueDetailsTreeValueFragment).treeValue;
+                            actualValue = treeValue.id;
+                            break;
+                        default:
+                            actualValue = (val as ValueDetailsValueFragment).raw_payload;
+                            break;
+                    }
+                    return {
+                        payload: actualValue,
+                        id_value: val.id_value ?? null,
+                        attribute: val.attribute.id,
+                        metadata: val.metadata
+                            ? val.metadata.map(metadataValue => ({
+                                  name: metadataValue.name,
+                                  value: metadataValue.value.raw_payload
+                              }))
+                            : null
+                    };
+                });
+                return [...allValues, ...attributeValues];
+            },
+            []
+        );
 
-                    return [...allValues, ...attributeValues];
-                },
-                []
+        const creationResult = await createRecord({variables: {library, data: {values: valuesToSave}}});
+
+        if (creationResult.data.createRecord.valuesErrors?.length) {
+            // Extract errors by field
+            const errorsByField = creationResult.data.createRecord.valuesErrors.reduce((errors, error) => {
+                if (!errors[error.attribute]) {
+                    errors[error.attribute] = [];
+                }
+
+                errors[error.attribute].push(error);
+
+                return errors;
+            }, {});
+            setCreationErrors(errorsByField);
+
+            antdForm.setFields(
+                creationResult.data.createRecord.valuesErrors.map(error => ({
+                    name: error.attribute,
+                    errors: [error.message]
+                }))
             );
 
-            const creationResult = await createRecord({variables: {library, data: {values: valuesToSave}}});
+            return;
+        }
 
-            if (creationResult.data.createRecord.valuesErrors?.length) {
-                // Extract errors by field
-                const errorsByField = creationResult.data.createRecord.valuesErrors.reduce((errors, error) => {
-                    if (!errors[error.attribute]) {
-                        errors[error.attribute] = [];
-                    }
+        const newRecord = creationResult.data.createRecord.record.whoAmI;
 
-                    errors[error.attribute].push(error);
-
-                    return errors;
-                }, {});
-                setCreationErrors(errorsByField);
-
-                antdForm.setFields(
-                    creationResult.data.createRecord.valuesErrors.map(error => ({
-                        name: error.attribute,
-                        errors: [error.message]
-                    }))
-                );
-
-                return;
-            }
-
-            newRecord = creationResult.data.createRecord.record.whoAmI;
-
-            if (onCreate) {
-                onCreate(newRecord);
-            }
+        if (onCreate) {
+            onCreate(newRecord);
         }
     };
 

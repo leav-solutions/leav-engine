@@ -22,7 +22,6 @@ const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     inheritedValue: null
 };
 
-const notRequired = false;
 const notReadonly = false;
 const readonly = true;
 
@@ -46,7 +45,6 @@ describe('DSInputEncryptedWrapper', () => {
                 <AntForm.Item>
                     <DSInputEncryptedWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -74,9 +72,7 @@ describe('DSInputEncryptedWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSInputEncryptedWrapper
-                        value="password"
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -87,11 +83,19 @@ describe('DSInputEncryptedWrapper', () => {
                 </AntForm.Item>
             </AntForm>
         );
+        const text = 'text';
+        const input = screen.getByTestId('kit-input-password');
+
+        await user.click(input);
+        await user.type(input, text);
+        await user.tab();
+        expect(mockHandleSubmit).toHaveBeenCalledWith(text, mockFormAttribute.id);
         const clearButton = screen.getByRole('button');
 
         await user.click(clearButton);
+        await user.tab();
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
+        expect(mockHandleSubmit).toHaveBeenCalledWith('', mockFormAttribute.id);
     });
 
     test('Should be disabled if readonly', async () => {
@@ -101,7 +105,6 @@ describe('DSInputEncryptedWrapper', () => {
                     <DSInputEncryptedWrapper
                         value="password"
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={readonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -125,7 +128,6 @@ describe('DSInputEncryptedWrapper', () => {
                     <DSInputEncryptedWrapper
                         value="password"
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
