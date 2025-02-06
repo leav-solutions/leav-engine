@@ -83,8 +83,6 @@ describe('EditAttributeModal', () => {
             await user.type(screen.getByRole('textbox', {name: 'label_fr'}), 'label fr');
             await user.type(screen.getByRole('textbox', {name: 'label_en'}), 'label_en');
 
-            await user.type(screen.getByRole('spinbutton', {name: 'global.max_length'}), '5');
-
             await waitFor(() => {
                 expect(idField).toHaveValue('label_fr');
             });
