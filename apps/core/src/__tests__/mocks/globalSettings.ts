@@ -2,9 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IGlobalSettings} from '_types/globalSettings';
+import {DEFAULT_APPLICATION} from '../../_constants/globalSettings';
 
 export const mockGlobalSettings: IGlobalSettings = {
-    defaultApp: 'portal',
+    defaultApp: DEFAULT_APPLICATION,
     name: 'My app name',
     icon: {
         library: 'myLibraryId',

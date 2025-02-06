@@ -99,7 +99,6 @@ export default function ({
                 `,
                 resolvers: {
                     GlobalSettings: {
-                        defaultApp: async (settings: IGlobalSettings) => settings.defaultApp ?? DEFAULT_APPLICATION,
                         name: async (settings: IGlobalSettings) => {
                             if (!settings.name) {
                                 return APP_DEFAULT_NAME;

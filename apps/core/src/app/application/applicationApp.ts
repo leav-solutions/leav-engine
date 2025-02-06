@@ -434,7 +434,7 @@ export default function ({
 
             app.get('/', async (req, res) => {
                 const {defaultApp} = await globalSettings.getSettings({userId: config.userId});
-                res.redirect(`/${APPS_URL_PREFIX}/${config.auth.oidc.enable ? defaultApp : 'portal'}/`);
+                res.redirect(`/${APPS_URL_PREFIX}/${defaultApp}/`);
             });
         }
     };
