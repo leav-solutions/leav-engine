@@ -498,7 +498,11 @@
         "open_preview_modal": "Ouvrir la modale d'aperçu",
         "informations": "Informations",
         "chat": "Chat",
-        "history": "Historique"
+        "history": "Historique",
+        "entity_overview": "Fiche {{entity}}",
+        "attribute": "Attribut",
+        "attribute_format": "Format de l'attribut",
+        "descriptive": "Descriptif"
     },
     "view": {
         "views": "Vues",
