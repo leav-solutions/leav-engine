@@ -871,7 +871,10 @@ export default function ({
                         valuesErrors: missingAttributes.map(attributeId => ({
                             type: Errors.REQUIRED_ATTRIBUTE,
                             attributeId,
-                            message: utils.translateError(Errors.REQUIRED_ATTRIBUTE, ctx.lang)
+                            message: utils.translateError(
+                                {msg: Errors.REQUIRED_ATTRIBUTE, vars: {attribute: attributeId}},
+                                ctx.lang
+                            )
                         }))
                     };
                 }
