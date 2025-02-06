@@ -51,7 +51,7 @@ describe('Breadcrumb', () => {
             </EditRecordReducerContext.Provider>
         );
 
-        expect(screen.queryByText(/record_summary.offer_overview/)).not.toBeInTheDocument();
+        expect(screen.queryByText(/record_summary.entity_overview|Test Lib/)).not.toBeInTheDocument();
     });
 
     describe('sidebarContent is valueDetails', () => {
@@ -62,7 +62,7 @@ describe('Breadcrumb', () => {
                 </EditRecordReducerContext.Provider>
             );
 
-            expect(screen.getByText(/record_summary.offer_overview/)).toBeVisible();
+            expect(screen.getByText(/record_summary.entity_overview|Test Lib/)).toBeVisible();
             expect(screen.queryByText(/record_summary.attribute/)).toBeVisible();
         });
 
@@ -73,7 +73,7 @@ describe('Breadcrumb', () => {
                 </EditRecordReducerContext.Provider>
             );
 
-            await userEvent.click(screen.getByText(/record_summary.offer_overview/));
+            await userEvent.click(screen.getByText(/record_summary.entity_overview|Test Lib/));
             expect(dispatchMock).toHaveBeenCalledWith({
                 type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
                 content: 'summary'
@@ -89,7 +89,7 @@ describe('Breadcrumb', () => {
                 </EditRecordReducerContext.Provider>
             );
 
-            expect(screen.getByText(/record_summary.offer_overview/)).toBeVisible();
+            expect(screen.getByText(/record_summary.entity_overview|Test Lib/)).toBeVisible();
             expect(screen.queryByText(/record_summary.attribute/)).not.toBeInTheDocument();
         });
     });

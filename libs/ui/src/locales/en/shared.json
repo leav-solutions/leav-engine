@@ -499,7 +499,7 @@
         "informations": "Informations",
         "chat": "Chat",
         "history": "History",
-        "offer_overview": "Offer overview",
+        "entity_overview": "{{entity}} overview",
         "attribute": "Attribute",
         "attribute_format": "Attribute format",
         "descriptive": "Descriptive"

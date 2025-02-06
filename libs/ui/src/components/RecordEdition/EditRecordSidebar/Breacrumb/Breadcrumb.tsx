@@ -7,9 +7,12 @@ import {IKitBreadcrumbItem} from 'aristid-ds/dist/Kit/Navigation/Breadcrumb/type
 import {FunctionComponent} from 'react';
 import {useEditRecordReducer} from '../../editRecordReducer/useEditRecordReducer';
 import {EditRecordReducerActionsTypes} from '../../editRecordReducer/editRecordReducer';
+import {localizedTranslation} from '@leav/utils';
+import {useLang} from '_ui/hooks';
 
 export const Breadcrumb: FunctionComponent = () => {
     const {t} = useSharedTranslation();
+    const {lang} = useLang();
     const {state, dispatch} = useEditRecordReducer();
 
     let items: IKitBreadcrumbItem[] = [];
@@ -20,7 +23,9 @@ export const Breadcrumb: FunctionComponent = () => {
         case 'valueDetails':
             items = [
                 {
-                    title: t('record_summary.offer_overview'),
+                    title: t('record_summary.entity_overview', {
+                        entity: localizedTranslation(state.record.library.label, lang)
+                    }),
                     href: '',
                     onClick: e => {
                         e.preventDefault();
@@ -38,7 +43,9 @@ export const Breadcrumb: FunctionComponent = () => {
         default:
             items = [
                 {
-                    title: t('record_summary.offer_overview')
+                    title: t('record_summary.entity_overview', {
+                        entity: localizedTranslation(state.record.library.label, lang)
+                    })
                 }
             ];
             break;
