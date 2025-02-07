@@ -20,5 +20,6 @@ export type AttributeInfosFormValues = Override<
         reverse_link?: string;
         versions_conf: AttributeInfosFormValuesVersionsConf;
         unique: boolean;
+        character_limit: number;
     }
 >;

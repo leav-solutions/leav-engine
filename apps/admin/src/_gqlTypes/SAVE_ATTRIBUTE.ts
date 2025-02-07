@@ -105,6 +105,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf | null;
     libraries: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_libraries[] | null;
     unique: boolean | null;
+    character_limit: number | null;
     values_list: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list | null;
 }
 

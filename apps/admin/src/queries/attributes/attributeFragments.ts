@@ -52,6 +52,7 @@ export const attributeDetailsFragment = gql`
 
         ... on StandardAttribute {
             unique
+            character_limit
         }
 
         ... on LinkAttribute {
@@ -73,6 +74,7 @@ export const attributeValuesListDetailsFragment = gql`
     fragment AttributeValuesListDetails on Attribute {
         ... on StandardAttribute {
             unique
+            character_limit
             values_list {
                 ... on StandardStringValuesListConf {
                     enable

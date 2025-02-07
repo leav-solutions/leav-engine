@@ -54,6 +54,7 @@ const defaultAttributeData: AttributeInfosFormValues = {
     linked_library: null,
     reverse_link: null,
     unique: null,
+    character_limit: null,
     permissions_conf: null,
     multiple_values: false,
     metadata_fields: null,
@@ -101,7 +102,9 @@ function InfosForm({
                       ...attribute.versions_conf,
                       profile: attribute.versions_conf?.profile?.id ?? null
                   },
-                  unique: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute).unique ?? null
+                  unique: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute).unique ?? null,
+                  character_limit:
+                      (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute).character_limit ?? null
               }
             : defaultAttributeData;
 
@@ -142,6 +145,7 @@ function InfosForm({
         format: yup.string().nullable(),
         multiple_values: yup.boolean(),
         unique: yup.boolean().nullable(),
+        character_limit: yup.number(),
         versions_conf: yup
             .object()
             .shape({
@@ -206,6 +210,7 @@ function InfosForm({
         );
         const isVersionable = !!values.versions_conf && values.versions_conf.versionable;
         const isLinkAttribute = [AttributeType.advanced_link, AttributeType.simple_link].includes(values.type);
+        const isStandardAttribute = [AttributeType.advanced, AttributeType.simple].includes(values.type);
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<GET_ATTRIBUTES_attributes_list>(
@@ -326,6 +331,21 @@ function InfosForm({
                             aria-label="linked_library"
                             onChange={_handleLinkedLibraryChange}
                             value={values.linked_library || ''}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {isStandardAttribute && values.format === AttributeFormat.text && (
+                    <FormFieldWrapper error={_getErrorByField('character_limit')}>
+                        <Form.Input
+                            label={t('attributes.character_limit')}
+                            width="4"
+                            type="number"
+                            disabled={readonly}
+                            name="character_limit"
+                            aria-label="character_limit"
+                            onChange={_handleChange}
+                            onBlur={_handleBlur}
+                            value={values.character_limit}
                         />
                     </FormFieldWrapper>
                 )}

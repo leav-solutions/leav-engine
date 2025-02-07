@@ -13,7 +13,7 @@ export interface IAttribute extends ICoreEntity {
     system?: boolean;
     readonly?: boolean;
     required?: boolean;
-    characterLimit?: number;
+    character_limit?: number;
     type: AttributeTypes;
     format?: AttributeFormats;
     linked_library?: string;

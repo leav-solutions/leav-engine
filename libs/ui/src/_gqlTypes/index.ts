@@ -140,7 +140,7 @@ export enum AttributeFormat {
 
 export type AttributeInput = {
   actions_list?: InputMaybe<ActionsListConfigurationInput>;
-  characterLimit?: InputMaybe<Scalars['Int']>;
+  character_limit?: InputMaybe<Scalars['Int']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']>;
   embedded_fields?: InputMaybe<Array<InputMaybe<EmbeddedAttributeInput>>>;
   format?: InputMaybe<AttributeFormat>;

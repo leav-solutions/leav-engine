@@ -68,6 +68,7 @@ function InfosTab({attribute, onPostSave, forcedType, redirectAfterCreate = true
                           },
                 type: dataToSave.type,
                 format: dataToSave.format,
+                character_limit: Number(dataToSave.character_limit) || null,
                 readonly: dataToSave.readonly,
                 required: dataToSave.required,
                 linked_tree: dataToSave.linked_tree,

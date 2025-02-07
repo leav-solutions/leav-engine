@@ -167,14 +167,14 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
     // Verify character limit
     if (
         [AttributeFormats.TEXT, AttributeFormats.RICH_TEXT].includes(attributeProps.format) &&
-        attributeProps.characterLimit
+        attributeProps.character_limit
     ) {
         const text =
             attributeProps.format === AttributeFormats.RICH_TEXT
                 ? value.payload.replace(DELETE_HTML_TAGS_REGEX, '')
                 : value.payload;
 
-        if (text.length > attributeProps.characterLimit) {
+        if (text.length > attributeProps.character_limit) {
             errors[attributeProps.id] = Errors.VALUE_EXCEEDS_CHARACTER_LIMIT;
         }
     }

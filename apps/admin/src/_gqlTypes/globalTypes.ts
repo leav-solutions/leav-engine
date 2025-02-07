@@ -268,6 +268,7 @@ export interface AttributeInput {
     values_list?: ValuesListConfInput | null;
     reverse_link?: string | null;
     unique?: boolean | null;
+    character_limit?: number | null;
     maxLength?: number | null;
 }
 
