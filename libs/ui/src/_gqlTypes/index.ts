@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IPreviewScalar} from '@leav/utils';
-import {gql} from '@apollo/client';
+import {IPreviewScalar} from '@leav/utils'
+import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -290,6 +290,7 @@ export type GlobalSettingsFileInput = {
 };
 
 export type GlobalSettingsInput = {
+  defaultApp?: InputMaybe<Scalars['String']>;
   favicon?: InputMaybe<GlobalSettingsFileInput>;
   icon?: InputMaybe<GlobalSettingsFileInput>;
   name?: InputMaybe<Scalars['String']>;
@@ -1400,6 +1401,13 @@ export type ExplorerLinkDataQueryVariables = Exact<{
 
 
 export type ExplorerLinkDataQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, library: { id: string } }, property: Array<{ id_value?: string | null, payload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null, valueRawPayload?: any | null }> }> } | null } | { id_value?: string | null }> }> } };
+
+export type GetLibraryAttributesQueryVariables = Exact<{
+  libraryId: Scalars['ID'];
+}>;
+
+
+export type GetLibraryAttributesQuery = { libraries?: { list: Array<{ id: string, attributes?: Array<{ id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null, attributes?: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> | null } | null } | { format?: AttributeFormat | null, id: string, type: AttributeType, label?: any | null } | { id: string, type: AttributeType, label?: any | null }> | null }> } | null };
 
 export type ExplorerLibraryDetailsQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -4292,6 +4300,46 @@ export function useExplorerLinkDataLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type ExplorerLinkDataQueryHookResult = ReturnType<typeof useExplorerLinkDataQuery>;
 export type ExplorerLinkDataLazyQueryHookResult = ReturnType<typeof useExplorerLinkDataLazyQuery>;
 export type ExplorerLinkDataQueryResult = Apollo.QueryResult<ExplorerLinkDataQuery, ExplorerLinkDataQueryVariables>;
+export const GetLibraryAttributesDocument = gql`
+    query GetLibraryAttributes($libraryId: ID!) {
+  libraries(filters: {id: [$libraryId]}) {
+    list {
+      id
+      attributes {
+        ...LibraryAttribute
+      }
+    }
+  }
+}
+    ${LibraryAttributeFragmentDoc}`;
+
+/**
+ * __useGetLibraryAttributesQuery__
+ *
+ * To run a query within a React component, call `useGetLibraryAttributesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLibraryAttributesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLibraryAttributesQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *   },
+ * });
+ */
+export function useGetLibraryAttributesQuery(baseOptions: Apollo.QueryHookOptions<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>(GetLibraryAttributesDocument, options);
+      }
+export function useGetLibraryAttributesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>(GetLibraryAttributesDocument, options);
+        }
+export type GetLibraryAttributesQueryHookResult = ReturnType<typeof useGetLibraryAttributesQuery>;
+export type GetLibraryAttributesLazyQueryHookResult = ReturnType<typeof useGetLibraryAttributesLazyQuery>;
+export type GetLibraryAttributesQueryResult = Apollo.QueryResult<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>;
 export const ExplorerLibraryDetailsDocument = gql`
     query ExplorerLibraryDetails($libraryId: ID!) {
   libraries(filters: {id: [$libraryId]}) {

@@ -1,27 +1,27 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Modal} from 'antd';
-import {ComponentProps, FunctionComponent, ReactNode, useRef} from 'react';
-import {closeKitSnackBar, KitButton, KitSpace} from 'aristid-ds';
+import {ComponentProps, FunctionComponent, useRef} from 'react';
+import {closeKitSnackBar, KitButton, KitSpace, AntModal} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {Explorer} from '../Explorer';
 import {IEntrypointLink} from '../_types';
-import {useAddLinkMassAction} from '../useAddLinkMassAction';
+import {useLinkMassAction} from './useLinkMassAction';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {EditSettingsContextProvider} from '../manage-view-settings';
 
 interface IAddLinkModalProps {
     open: boolean;
-    library: string;
-    onClose?: () => void;
+    onClose: () => void;
 }
 
 const modalMaxWidth = 1200;
-const StyledModal = styled(Modal)`
+
+// TODO: use KitModal instead for explorer first
+const StyledModal = styled(AntModal)`
     && {
         width: 90vw;
         max-width: ${modalMaxWidth}px;
@@ -34,7 +34,6 @@ const StyledModal = styled(Modal)`
         .ant-modal-content {
             display: flex;
             flex-direction: column;
-            padding: calc(var(--general-spacing-xs) * 1px);
             overflow: hidden;
             padding: 0;
         }
@@ -52,34 +51,34 @@ const ModalMainStyledDiv = styled.div`
     position: relative;
 `;
 
-const ModalFooter = styled.div`
+const ModalFooterStyledDiv = styled.div`
     display: flex;
     justify-content: flex-end;
     padding: calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-s) * 1px);
     border-top: 1px solid var(--general-utilities-border);
 `;
 
-export const AddLinkModal: FunctionComponent<IAddLinkModalProps> = ({open, library, onClose}) => {
+export const LinkModal: FunctionComponent<IAddLinkModalProps> = ({open, onClose}) => {
     const {t} = useSharedTranslation();
     const explorerContainerRef = useRef<HTMLDivElement>(null);
     const {view, dispatch} = useViewSettingsContext();
 
-    const {addLinkMassAction} = useAddLinkMassAction({
+    const {addLinkMassAction} = useLinkMassAction({
         isEnabled: true,
         store: {view, dispatch},
         linkAttributeId: (view.entrypoint as IEntrypointLink).linkAttributeId,
         libraryId: view.libraryId
     });
 
-    const _handleClose = () => {
+    const _handleClose: ComponentProps<typeof KitButton>['onClick'] = () => {
         closeKitSnackBar();
-        onClose?.();
+        onClose();
     };
 
-    const _closeButtonLabel: string = t('global.close');
+    const _closeButtonLabel: ComponentProps<typeof KitButton>['aria-label'] = String(t('global.close'));
 
-    const _footer: ComponentProps<typeof Modal>['footer'] = (
-        <ModalFooter>
+    const _footer: ComponentProps<typeof AntModal>['footer'] = (
+        <ModalFooterStyledDiv>
             <KitSpace>
                 <KitButton
                     aria-label={_closeButtonLabel}
@@ -90,7 +89,7 @@ export const AddLinkModal: FunctionComponent<IAddLinkModalProps> = ({open, libra
                     {_closeButtonLabel}
                 </KitButton>
             </KitSpace>
-        </ModalFooter>
+        </ModalFooterStyledDiv>
     );
 
     return (
@@ -98,7 +97,6 @@ export const AddLinkModal: FunctionComponent<IAddLinkModalProps> = ({open, libra
             open={open}
             onCancel={_handleClose}
             destroyOnClose
-            className="add-link-modal"
             closable={false}
             cancelText={t('global.cancel')}
             width="90vw"
@@ -110,7 +108,7 @@ export const AddLinkModal: FunctionComponent<IAddLinkModalProps> = ({open, libra
                     <Explorer
                         entrypoint={{
                             type: 'library',
-                            libraryId: library
+                            libraryId: view.libraryId
                         }}
                         primaryActions={[]}
                         defaultActionsForItem={[]}
@@ -119,6 +117,7 @@ export const AddLinkModal: FunctionComponent<IAddLinkModalProps> = ({open, libra
                         itemActions={[]}
                         defaultPrimaryActions={[]}
                     />
+                    {/* TODO: avoid getting last view for user */}
                 </EditSettingsContextProvider>
             </ModalMainStyledDiv>
         </StyledModal>

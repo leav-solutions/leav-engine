@@ -58,7 +58,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
     useEffect(() => {
         if (filter.condition === ThroughConditionFilter.THROUGH && filter.attribute.linkedLibrary?.id) {
             getLibraryAttributes({
-                variables: {id: filter.attribute.linkedLibrary.id}
+                variables: {libraryId: filter.attribute.linkedLibrary.id}
             });
         }
     }, [filter.condition, filter.attribute, getLibraryAttributes]);

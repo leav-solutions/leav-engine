@@ -12,11 +12,13 @@ import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
 import {ExplorerTitle} from './ExplorerTitle';
 import {ExplorerToolbar} from './ExplorerToolbar';
-import {useRemoveAction} from './useRemoveAction';
-import {useEditAction} from './useEditAction';
-import {usePrimaryActionsButton} from './usePrimaryActions';
-import {useCreateAction} from './useCreateAction';
-import {useMassActions} from './useMassActions';
+import {useRemoveItemAction} from './actions-item/useRemoveItemAction';
+import {useEditItemAction} from './actions-item/useEditItemAction';
+import {usePrimaryActionsButton} from './actions-primary/usePrimaryActions';
+import {useCreatePrimaryAction} from './actions-primary/useCreatePrimaryAction';
+import {useLinkPrimaryAction} from './actions-primary/useLinkPrimaryAction';
+import {useMassActions} from './actions-mass/useMassActions';
+import {useDeactivateMassAction} from './actions-mass/useDeactivateMassAction';
 import {
     defaultPageSizeOptions,
     SidePanel,
@@ -27,9 +29,7 @@ import {
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
-import {useDeactivateMassAction} from './useDeactivateMassAction';
 import {MASS_SELECTION_ALL} from './_constants';
-import {useAddItemAction} from './useAddItemAction';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -113,31 +113,31 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     }); // TODO: refresh when go back on page
     const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
 
-    const {removeAction} = useRemoveAction({
+    const {removeItemAction} = useRemoveItemAction({
         isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('remove'),
         store: {view, dispatch},
         entrypoint
     });
 
-    const {editAction, editModal} = useEditAction({
+    const {editItemAction, editItemModal} = useEditItemAction({
         isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit')
     });
 
-    const {createAction, createModal} = useCreateAction({
+    const totalCount = data?.totalCount ?? 0;
+
+    const {createPrimaryAction, createModal} = useCreatePrimaryAction({
         isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
-        library: view.libraryId,
+        libraryId: view.libraryId,
         entrypoint: view.entrypoint,
-        itemsCount: data?.totalCount ?? 0,
+        totalCount,
         refetch
     });
 
-    const {linkItemsAction, linkItemsModal} = useAddItemAction({
+    const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
         isEnabled: entrypoint.type === 'link',
-        library: view.libraryId,
-        maxItemsLeft: null
+        maxItemsLeft: null // TODO: use KitTable.row
     });
 
-    const totalCount = data?.totalCount ?? 0;
     const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
 
     const {deactivateMassAction} = useDeactivateMassAction({
@@ -155,7 +155,9 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         massActions: [deactivateMassAction, ...massActions].filter(Boolean)
     });
 
-    const {primaryButton} = usePrimaryActionsButton([createAction, linkItemsAction, ...primaryActions].filter(Boolean));
+    const {primaryButton} = usePrimaryActionsButton(
+        [createPrimaryAction, linkPrimaryAction, ...primaryActions].filter(Boolean)
+    );
 
     const {viewSettingsButton} = useOpenViewSettings(view.libraryId);
 
@@ -211,7 +213,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                                   }
                                 : undefined
                         }
-                        itemActions={[editAction, removeAction, ...itemActions].filter(Boolean).map(action => ({
+                        itemActions={[editItemAction, removeItemAction, ...itemActions].filter(Boolean).map(action => ({
                             ...action,
                             disabled: isMassSelectionAll
                         }))}
@@ -226,9 +228,9 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                 )}
             </ExplorerPageDivStyled>
             {settingsPanelElement && createPortal(<SidePanel />, settingsPanelElement?.() ?? document.body)}
-            {editModal}
+            {editItemModal}
             {createModal}
-            {linkItemsModal}
+            {linkModal}
         </ViewSettingsContext.Provider>
     );
 };

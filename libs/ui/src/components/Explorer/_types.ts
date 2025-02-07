@@ -119,7 +119,7 @@ export interface IFilterDropDownProps {
 export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,
     {
-        filters?: IExplorerFilter[];
+        filters?: ExplorerFilter[];
     }
 >;
 

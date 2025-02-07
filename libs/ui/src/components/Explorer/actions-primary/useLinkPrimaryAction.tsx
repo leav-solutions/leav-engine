@@ -4,8 +4,8 @@
 import {useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ActionHook, IPrimaryAction} from './_types';
-import {AddLinkModal} from './link-item/AddLinkModal';
+import {ActionHook, IPrimaryAction} from '../_types';
+import {LinkModal} from '../link-item/LinkModal';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -15,26 +15,23 @@ import {AddLinkModal} from './link-item/AddLinkModal';
  * It returns also two parts : one for the call action button - one for displaying the modal required by the action.
  *
  * @param isEnabled - whether the action is present
- * @param library - the library's id to add new item
  * @param maxItemsLeft - the number of items that can be added
  */
-export const useAddItemAction = ({
+export const useLinkPrimaryAction = ({
     isEnabled,
-    library,
     maxItemsLeft
 }: ActionHook<{
-    library: string;
     maxItemsLeft: number | null;
 }>) => {
     const {t} = useSharedTranslation();
 
-    const [isLinkItemsModalVisible, setIsLinkItemsModalVisible] = useState(false);
+    const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
 
     const disableAddItemAction = maxItemsLeft === 0;
 
-    const linkItemsAction: IPrimaryAction = {
+    const _linkPrimaryAction: IPrimaryAction = {
         callback: () => {
-            setIsLinkItemsModalVisible(true);
+            setIsLinkModalVisible(true);
         },
         icon: <FaPlus />,
         disabled: disableAddItemAction,
@@ -42,13 +39,12 @@ export const useAddItemAction = ({
     };
 
     return {
-        linkItemsAction: isEnabled ? linkItemsAction : null,
-        linkItemsModal: isLinkItemsModalVisible ? (
-            <AddLinkModal
+        linkPrimaryAction: isEnabled ? _linkPrimaryAction : null,
+        linkModal: isLinkModalVisible ? (
+            <LinkModal
                 open
-                library={library}
                 onClose={() => {
-                    setIsLinkItemsModalVisible(false);
+                    setIsLinkModalVisible(false);
                 }}
             />
         ) : null

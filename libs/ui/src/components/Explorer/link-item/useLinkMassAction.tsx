@@ -5,9 +5,9 @@ import {Dispatch, useMemo} from 'react';
 import {FaTrash} from 'react-icons/fa';
 import {useExplorerSelectionIdsLazyQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ActionHook, IEntrypointLink, IMassActions} from './_types';
-import {IViewSettingsAction, IViewSettingsState} from './manage-view-settings';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
+import {ActionHook, IEntrypointLink, IMassActions} from '../_types';
+import {IViewSettingsAction, IViewSettingsState} from '../manage-view-settings';
 
 /**
  * Hook used to link records
@@ -16,8 +16,9 @@ import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordCo
  * @param view - represent the current view
  * @param dispatch - method to change the current view
  * @param libraryId - concerned library
+ * @param linkAttributeId
  */
-export const useAddLinkMassAction = ({
+export const useLinkMassAction = ({
     isEnabled,
     store: {view, dispatch},
     libraryId,

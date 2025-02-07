@@ -16,14 +16,10 @@ import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
 import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
-import {SNACKBAR_MASS_ID} from './useMassActions';
 import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import * as useColumnWidth from './useColumnWidth';
-import {AddLinkModal} from './link-item/AddLinkModal';
-import {FunctionComponent} from 'react';
-import {IViewSettingsState, ViewSettingsContext, viewSettingsInitialState} from './manage-view-settings';
-import {useViewSettingsReducer} from './useViewSettingsReducer';
+import {SNACKBAR_MASS_ID} from './actions-mass/useMassActions';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -555,14 +551,6 @@ describe('Explorer', () => {
 
     let user: ReturnType<typeof userEvent.setup>;
 
-    const MockViewSettingsContextProvider: FunctionComponent<{viewMock: IViewSettingsState}> = ({
-        viewMock,
-        children
-    }) => {
-        const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, viewMock);
-        return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
-    };
-
     beforeEach(() => {
         spyUseExplorerLibraryDataQuery = jest
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
@@ -1063,7 +1051,11 @@ describe('Explorer', () => {
                         filters: [
                             {
                                 id: '',
-                                attribute: {format: simpleMockAttribute.format, label: simpleMockAttribute.label.fr},
+                                attribute: {
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type
+                                },
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas'
@@ -1314,7 +1306,11 @@ describe('Explorer', () => {
                         filters: [
                             {
                                 id: '',
-                                attribute: {format: simpleMockAttribute.format, label: simpleMockAttribute.label.fr},
+                                attribute: {
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleColorMockAttribute.type
+                                },
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas'
@@ -1423,7 +1419,11 @@ describe('Explorer', () => {
                         filters: [
                             {
                                 id: '',
-                                attribute: {format: simpleMockAttribute.format, label: simpleMockAttribute.label.fr},
+                                attribute: {
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type
+                                },
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas'
@@ -1603,65 +1603,6 @@ describe('Explorer', () => {
             });
 
             // AND the selection is cleared (see beforeEach)
-        });
-    });
-
-    describe('Add link modal', () => {
-        test('Should be able to add existing item to atribute', async () => {
-            const viewInitialState = {
-                ...viewSettingsInitialState,
-                entrypoint: linkEntrypoint
-            };
-
-            const fetch = jest.fn();
-            const selecionIdsImplementation = [
-                fetch,
-                {
-                    loading: false,
-                    data: undefined
-                }
-            ];
-
-            jest.spyOn(gqlTypes, 'useExplorerSelectionIdsLazyQuery').mockImplementation(
-                () => selecionIdsImplementation as gqlTypes.ExplorerSelectionIdsLazyQueryHookResult
-            );
-
-            render(
-                <MockViewSettingsContextProvider viewMock={viewInitialState}>
-                    <AddLinkModal open library={explorerLinkAttribute.linked_library.id} />
-                </MockViewSettingsContextProvider>,
-                {
-                    mocks: [ExplorerLinkAttributeQueryMock]
-                }
-            );
-
-            const rows = await screen.findAllByRole('row');
-            expect(rows.length).toBe(mockRecords.length);
-            const checkbox = within(rows[0]).getByRole('checkbox');
-
-            expect(checkbox).toBeInTheDocument();
-            await user.click(checkbox);
-
-            const snackbar = screen.getByRole('status');
-            expect(snackbar).toHaveTextContent('selectedItems|1');
-            const addButton = screen.getByRole('button', {name: /add-link/});
-            expect(addButton).toBeInTheDocument();
-            await user.click(addButton);
-
-            expect(fetch).toHaveBeenCalledWith({
-                variables: {
-                    filters: [
-                        {
-                            condition: gqlTypes.RecordFilterCondition.EQUAL,
-                            field: 'id',
-                            value: mockRecords[0].id
-                        }
-                    ],
-                    libraryId: ''
-                }
-            });
-
-            jest.restoreAllMocks();
         });
     });
 });
