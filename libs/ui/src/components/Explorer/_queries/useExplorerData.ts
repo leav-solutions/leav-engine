@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
 import {useMemo} from 'react';
-import {useLang} from '_ui/hooks';
+import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
 import {Entrypoint, IEntrypointLink, IExplorerData, ExplorerFilter} from '../_types';
 import {
     ExplorerLibraryDataQuery,
@@ -172,6 +172,9 @@ export const useExplorerData = ({
 
         return null;
     }, [libraryData, linkData]);
+
+    const ids = memoizedData?.records.map(record => record.itemId);
+    useGetRecordUpdatesSubscription({libraries: [libraryId], records: ids}, !libraryId);
 
     return {
         data: memoizedData,

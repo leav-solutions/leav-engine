@@ -15,10 +15,10 @@ import {closeKitSnackBar} from 'aristid-ds';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
+import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
 import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import * as useColumnWidth from './useColumnWidth';
-import {MutableRefObject} from 'react';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -543,6 +543,11 @@ describe('Explorer', () => {
         }
     };
 
+    const useGetRecordUpdatesSubscriptionMock = jest.spyOn(
+        useGetRecordUpdatesSubscription,
+        'useGetRecordUpdatesSubscription'
+    );
+
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
@@ -569,6 +574,12 @@ describe('Explorer', () => {
         jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
             mockAttributesByLibResult as gqlTypes.GetAttributesByLibQueryResult
         );
+
+        // TODO: useless except for remove logs warning `No more mocked`
+        useGetRecordUpdatesSubscriptionMock.mockReturnValue({
+            loading: false
+        });
+
         jest.clearAllMocks();
         user = userEvent.setup();
     });
@@ -759,6 +770,26 @@ describe('Explorer', () => {
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.edit-item'}));
         expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+    });
+
+    test('Should call the useGetRecordUpdatesSubscription', async () => {
+        render(<Explorer entrypoint={libraryEntrypoint} />);
+
+        expect(useGetRecordUpdatesSubscriptionMock).toHaveBeenCalledTimes(2);
+        expect(useGetRecordUpdatesSubscriptionMock.mock.calls[0]).toEqual([
+            {
+                libraries: [''],
+                records: expect.any(Array)
+            },
+            true
+        ]);
+        expect(useGetRecordUpdatesSubscriptionMock.mock.calls[1]).toEqual([
+            {
+                libraries: [libraryEntrypoint.libraryId],
+                records: [recordId1, recordId2]
+            },
+            false
+        ]);
     });
 
     describe('Item actions', () => {
