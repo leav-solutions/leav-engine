@@ -436,6 +436,7 @@ describe('Explorer', () => {
                     {
                         id: simpleMockAttribute.id,
                         label: simpleMockAttribute.label,
+                        type: simpleMockAttribute.type,
                         format: simpleMockAttribute.format
                     }
                 ]
@@ -508,6 +509,9 @@ describe('Explorer', () => {
         },
         linked_library: {
             id: 'delivery_platforms',
+            label: {
+                fr: 'Plateformes de diffusion'
+            },
             __typename: 'Library'
         },
         __typename: 'LinkAttribute'
@@ -856,16 +860,16 @@ describe('Explorer', () => {
             });
 
             render(<Explorer entrypoint={linkEntrypoint} />, {
-                mocks: [ExplorerLinkAttributeQueryMock]
+                mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
             });
 
-            const creatButton = await screen.findByRole('button', {name: 'explorer.create-one'});
-            await user.click(creatButton);
+            const createOneButton = await screen.findByRole('button', {name: 'explorer.create-one'});
+            await user.click(createOneButton);
 
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
 
-            const createButton = screen.getByRole('button', {name: 'create-record'});
-            await user.click(createButton);
+            const createRecordButton = screen.getByRole('button', {name: 'create-record'});
+            await user.click(createRecordButton);
 
             expect(saveValues).toHaveBeenCalled();
         });
@@ -1089,7 +1093,8 @@ describe('Explorer', () => {
                     defaultPrimaryActions={[]}
                 />,
                 {
-                    mocks: [ExplorerLinkAttributeQueryMock]
+                    // Query called twice : in run time, the cache is effective, but not in tests, so we use the mock twice
+                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
                 }
             );
 

@@ -12,6 +12,12 @@ export const getAttributesByLibQuery = gql`
         }
     }
 
+    fragment AttributesByLibLinkAttribute on LinkAttribute {
+        linked_library {
+            id
+        }
+    }
+
     fragment AttributesByLibAttribute on Attribute {
         id
         type
@@ -20,11 +26,7 @@ export const getAttributesByLibQuery = gql`
         multiple_values
         system
         readonly
-        ... on LinkAttribute {
-            linked_library {
-                id
-            }
-        }
+        ...AttributesByLibLinkAttribute
         ... on TreeAttribute {
             linked_tree {
                 id
