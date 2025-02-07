@@ -157,6 +157,8 @@ const _validateMetadata = (attribute: IAttribute, value: IValue): ErrorFieldDeta
     return errors;
 };
 
+const DELETE_HTML_TAGS_REGEX = /<\/?[^>]+(>|$)/g;
+
 export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IValue>> => {
     let errors: ErrorFieldDetail<IValue> = {};
     const {attributeProps, value, library, recordId, deps, ctx} = params;
@@ -169,7 +171,7 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
     ) {
         const text =
             attributeProps.format === AttributeFormats.RICH_TEXT
-                ? value.payload.replace(/<\/?[^>]+(>|$)/g, '') // to delete html tags
+                ? value.payload.replace(DELETE_HTML_TAGS_REGEX, '')
                 : value.payload;
 
         if (text.length > attributeProps.characterLimit) {
