@@ -8,15 +8,16 @@
 //
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
-import {waitFor, waitForElementToBeRemoved} from '@testing-library/react';
+import {waitFor} from '@testing-library/react';
+import {toast} from 'react-hot-toast';
 import {Mockify} from '@leav/utils';
 import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
-import {closeKitSnackBar} from 'aristid-ds';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
-import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
 import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
+import {SNACKBAR_MASS_ID} from './useMassActions';
+import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import * as useColumnWidth from './useColumnWidth';
 
@@ -1133,10 +1134,9 @@ describe('Explorer', () => {
         });
     });
 
-    // TODO: avoid flaky test on `await waitForElementToBeRemoved(() => screen.queryByRole('status'));`
-    describe.skip('massActions', () => {
+    describe('massActions', () => {
         beforeEach(() => {
-            closeKitSnackBar();
+            toast.remove(SNACKBAR_MASS_ID); // TODO: check issue https://github.com/timolins/react-hot-toast/issues/101
         });
 
         it('should inform about selection (manual)', async () => {
@@ -1203,8 +1203,7 @@ describe('Explorer', () => {
                 }
             ]);
 
-            // AND the selection is cleared
-            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+            // AND the selection is cleared (see beforeEach)
         });
 
         it('should inform about selection all without pagination', async () => {
@@ -1267,8 +1266,7 @@ describe('Explorer', () => {
                 }
             ]);
 
-            // AND the selection is cleared
-            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+            // AND the selection is cleared (see beforeEach)
         });
 
         it('should inform about selection all with pagination (page only)', async () => {
@@ -1375,8 +1373,7 @@ describe('Explorer', () => {
                 }
             ]);
 
-            // AND the selection is cleared
-            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+            // AND the selection is cleared (see beforeEach)
         });
 
         it('should inform about selection with pagination (all in once)', async () => {
@@ -1522,8 +1519,7 @@ describe('Explorer', () => {
                 }
             ]);
 
-            // AND the selection is cleared
-            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+            // AND the selection is cleared (see beforeEach)
         });
 
         it('should deactivate massively for simple library (manual selection with only one page)', async () => {
@@ -1587,8 +1583,7 @@ describe('Explorer', () => {
                 }
             });
 
-            // AND the selection is cleared
-            await waitForElementToBeRemoved(() => screen.queryByRole('status'));
+            // AND the selection is cleared (see beforeEach)
         });
     });
 });
