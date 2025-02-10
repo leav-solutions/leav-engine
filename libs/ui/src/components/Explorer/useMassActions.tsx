@@ -13,6 +13,8 @@ import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '
 import {prepareFiltersForRequest} from './_queries/prepareFiltersForRequest';
 import {MassSelection} from './manage-view-settings/store-view-settings/viewSettingsReducer';
 
+export const SNACKBAR_MASS_ID = 'SNACKBAR_MASS_ID';
+
 /**
  * Hook used to manage mass selection as the snackbar and all kind of selection (manual, all in page, all in filters)
  *
@@ -46,6 +48,7 @@ export const useMassActions = ({
             openKitSnackBar({
                 duration: 0,
                 closable: true,
+                snackbarId: SNACKBAR_MASS_ID,
                 onClose: () => _setSelectedKeys([]),
                 message: t('explorer.massAction.selectedItems', {
                     count: view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length
@@ -77,7 +80,7 @@ export const useMassActions = ({
                 }))
             });
         } else {
-            closeKitSnackBar();
+            closeKitSnackBar(SNACKBAR_MASS_ID);
         }
     }, [view.massSelection, view.filters, totalCount]);
 
