@@ -112,10 +112,10 @@ function TreeField({
 
     // Cancel value editing if value details panel is closed
     useEffect(() => {
-        if (editRecordState.activeValue === null && state.isValuesAddVisible) {
+        if (editRecordState.activeAttribute === null && state.isValuesAddVisible) {
             _handleCloseValuesAdd();
         }
-    }, [editRecordState.activeValue]);
+    }, [editRecordState.activeAttribute]);
 
     useEffect(() => {
         if (creationErrors[attribute.id]) {
@@ -163,10 +163,7 @@ function TreeField({
     const _handleAddValue = () => {
         editRecordDispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            value: {
-                attribute,
-                value: null
-            }
+            attribute
         });
 
         dispatch({
@@ -299,7 +296,7 @@ function TreeField({
 
         editRecordDispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            value: null
+            attribute: null
         });
     };
 

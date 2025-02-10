@@ -503,7 +503,11 @@
         "entity_overview": "Fiche {{entity}}",
         "attribute": "Attribut",
         "attribute_format": "Format de l'attribut",
-        "descriptive": "Descriptif"
+        "descriptive": "Descriptif",
+        "values_version": "Version de valeurs",
+        "no_value": "Aucune valeur",
+        "calculated_value": "Valeur calculée",
+        "global": "Globale"
     },
     "view": {
         "views": "Vues",

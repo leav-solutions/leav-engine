@@ -68,8 +68,6 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
     inheritedFlags,
     setActiveValue
 }) => {
-    // console.log('renal - value : ', value);
-    // console.log('renal - presentationValue : ', presentationValue);
     if (!onChange) {
         throw Error('DSColorPickerWrapper should be used inside a antd Form.Item');
     }

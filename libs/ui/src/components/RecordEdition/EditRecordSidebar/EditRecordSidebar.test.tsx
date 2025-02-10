@@ -42,7 +42,7 @@ describe('EditRecordSidebar', () => {
         state: {
             ...mockReducer.state,
             record: mockRecord,
-            activeValue: mockRecordPropertyWithAttribute,
+            activeAttribute: mockRecordPropertyWithAttribute,
             sidebarContent: 'valueDetails'
         }
     };
@@ -61,9 +61,9 @@ describe('EditRecordSidebar', () => {
         state: {
             ...mockReducerWithValue.state,
             record: mockRecord,
-            activeValue: {
+            activeAttribute: {
                 ...mockRecordPropertyWithAttribute,
-                value: {...mockRecordPropertyWithAttribute.value, modified_at: null, modified_by: null}
+                attribute: mockRecordPropertyWithAttribute.attribute
             }
         }
     };
@@ -128,7 +128,7 @@ describe('EditRecordSidebar', () => {
 
     describe('Value details', () => {
         test('Display active value details', async () => {
-            const {value, attribute} = mockReducerWithValue.state.activeValue;
+            const {attribute} = mockReducerWithValue.state.activeAttribute;
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithValueSimple}>
                     <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
