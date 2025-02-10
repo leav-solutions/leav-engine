@@ -101,9 +101,7 @@ function InfosForm({
                       ...attribute.versions_conf,
                       profile: attribute.versions_conf?.profile?.id ?? null
                   },
-                  unique: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute).unique ?? null,
-                  character_limit:
-                      (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute).character_limit ?? null
+                  unique: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute).unique ?? null
               }
             : defaultAttributeData;
 
