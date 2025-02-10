@@ -198,7 +198,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
 
                     type LinkAttribute implements Attribute {
                         ${attributesInterfaceSchema}
-                        linked_library: Library,
+                        linked_library: Library, # TODO : https://aristid.atlassian.net/browse/XSTREAM-1155
                         values_list: LinkValuesListConf,
                         reverse_link: String
                     }

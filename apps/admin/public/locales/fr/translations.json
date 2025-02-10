@@ -44,7 +44,8 @@
             "title": "Personnalisation",
             "name": "Nom",
             "icon": "Icône",
-            "favicon": "Favicon"
+            "favicon": "Favicon",
+            "default_application": "Application par défaut"
         }
     },
     "errors": {

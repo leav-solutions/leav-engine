@@ -9,6 +9,7 @@ import {IGlobalSettings} from '_types/globalSettings';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions} from '../../_types/permissions';
+import {DEFAULT_APPLICATION} from '../../_constants/globalSettings';
 
 export interface IGlobalSettingsDomain {
     saveSettings({settings, ctx}: {settings: IGlobalSettings; ctx: IQueryInfos}): Promise<IGlobalSettings>;
@@ -61,7 +62,8 @@ export default function ({
             return {
                 name: settings.name,
                 icon: settings.icon,
-                favicon: settings.favicon
+                favicon: settings.favicon,
+                defaultApp: settings.defaultApp ?? DEFAULT_APPLICATION
             };
         }
     };

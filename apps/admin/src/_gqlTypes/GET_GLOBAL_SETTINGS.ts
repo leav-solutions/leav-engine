@@ -46,6 +46,7 @@ export interface GET_GLOBAL_SETTINGS_globalSettings_favicon {
 }
 
 export interface GET_GLOBAL_SETTINGS_globalSettings {
+    defaultApp: string;
     name: string;
     icon: GET_GLOBAL_SETTINGS_globalSettings_icon | null;
     favicon: GET_GLOBAL_SETTINGS_globalSettings_favicon | null;

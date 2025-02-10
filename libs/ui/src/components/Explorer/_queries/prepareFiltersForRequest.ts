@@ -5,18 +5,14 @@ import dayjs from 'dayjs';
 import {AttributeFormat, RecordFilterCondition, RecordFilterInput, RecordFilterOperator} from '_ui/_gqlTypes';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
 import {AttributeConditionFilter} from '_ui/types';
-import {IExplorerFilter} from '../_types';
+import {ExplorerFilter, IExplorerFilterStandard, isExplorerFilterStandard, isExplorerFilterThrough} from '../_types';
 import {nullValueConditions} from '../conditionsHelper';
 
 export const dateValuesSeparator = '\n';
 
 const _getDateAtNoon = (date: number): string => dayjs.unix(Number(date)).add(12, 'hour').unix().toString();
 
-const _getDateRequestFilters = ({
-    field,
-    condition,
-    value
-}: Pick<IExplorerFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
+const _getDateRequestFilters = ({field, condition, value}: IExplorerFilterStandard): RecordFilterInput[] => {
     switch (condition) {
         case RecordFilterCondition.BETWEEN:
             const [from, to] = value!.split(dateValuesSeparator);
@@ -57,43 +53,61 @@ const _getDateRequestFilters = ({
     }
 };
 
-const _getBooleanRequestFilters = ({
-    field,
-    condition,
-    value
-}: Pick<IExplorerFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
-    if (value === 'false') {
+const _getBooleanRequestFilters = (filter: IExplorerFilterStandard): RecordFilterInput[] => {
+    if (filter.value === 'false') {
         return [
             {
-                field,
+                field: filter.field,
                 condition: AttributeConditionFilter.NOT_EQUAL,
                 value: 'true'
             }
         ];
     }
 
-    return [{field, condition, value}];
+    return [{field: filter.field, condition: filter.condition, value: filter.value}];
 };
 
-export const prepareFiltersForRequest = (filters: IExplorerFilter[]): RecordFilterInput[] =>
+export const prepareFiltersForRequest = (filters: ExplorerFilter[]): RecordFilterInput[] =>
     interleaveElement(
         {operator: RecordFilterOperator.AND},
         filters
-            .filter(({value, condition}) => value !== null || nullValueConditions.includes(condition ?? ''))
-            .map(({attribute, field, condition, value}) => {
-                switch (attribute.format) {
-                    case AttributeFormat.date:
-                        return _getDateRequestFilters({field, condition, value});
-                    case AttributeFormat.boolean:
-                        return _getBooleanRequestFilters({field, condition, value});
-                    default:
-                        return [
-                            {
-                                field,
-                                condition,
-                                value
-                            }
-                        ];
+            .filter(filter => {
+                if (isExplorerFilterThrough(filter)) {
+                    return (
+                        filter.subField &&
+                        filter.subCondition &&
+                        (filter.value !== null || nullValueConditions.includes(filter.subCondition))
+                    );
                 }
+
+                return filter.value !== null || (filter.condition && nullValueConditions.includes(filter.condition));
+            })
+            .map(filter => {
+                const condition =
+                    filter.condition === AttributeConditionFilter.THROUGH ? filter.subCondition : filter.condition;
+                const field =
+                    filter.condition === AttributeConditionFilter.THROUGH
+                        ? `${filter.field}.${filter.subField}`
+                        : filter.field;
+                return {...filter, condition, field};
+            })
+            .map(filter => {
+                if (isExplorerFilterStandard(filter)) {
+                    switch (filter.attribute.format) {
+                        case AttributeFormat.date:
+                            return _getDateRequestFilters(filter);
+                        case AttributeFormat.boolean:
+                            return _getBooleanRequestFilters(filter);
+                        default:
+                            break;
+                    }
+                }
+                return [
+                    {
+                        field: filter.field,
+                        condition: filter.condition,
+                        value: filter.value
+                    }
+                ];
             })
     );

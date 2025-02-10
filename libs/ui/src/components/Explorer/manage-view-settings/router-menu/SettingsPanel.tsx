@@ -17,6 +17,7 @@ import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {SettingsPanelPages} from '../open-view-settings/EditSettingsContext';
 import {useOpenViewSettings} from '../open-view-settings/useOpenViewSettings';
+import {isExplorerFilterThrough} from '../../_types';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -60,11 +61,19 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                 display: {
                     type: mapViewTypeFromExplorerToLegacy[view.viewType]
                 },
-                filters: view.filters.map(filter => ({
-                    field: filter.field,
-                    value: filter.value,
-                    condition: filter.condition
-                })),
+                filters: view.filters.map(filter =>
+                    isExplorerFilterThrough(filter)
+                        ? {
+                              field: `${filter.field}.${filter.subField}`,
+                              value: filter.value,
+                              condition: filter.subCondition
+                          }
+                        : {
+                              field: filter.field,
+                              value: filter.value,
+                              condition: filter.condition
+                          }
+                ),
                 sort: view.sort.map(({field: attributeId, order}) => ({field: attributeId, order})),
                 attributes: view.attributesIds,
                 label: {

@@ -1,0 +1,35 @@
+fragment LibraryAttributeLink on LinkAttribute {
+    linked_library {
+        id
+        label
+        attributes {
+            id
+            type
+            format
+            label
+        }
+    }
+}
+
+fragment LibraryAttribute on Attribute {
+    id
+    type
+    label
+
+    ... on StandardAttribute {
+        format
+    }
+
+    ...LibraryAttributeLink
+}
+
+query GetLibraryAttributes($libraryId: ID!) {
+  libraries(filters: {id: [$libraryId]}) {
+    list {
+        id
+        attributes {
+            ...LibraryAttribute
+        }
+    }
+  }
+}

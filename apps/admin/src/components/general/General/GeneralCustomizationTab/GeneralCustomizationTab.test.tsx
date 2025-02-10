@@ -7,6 +7,7 @@ import {saveGlobalSettingsQuery} from 'queries/globalSettings/saveGlobalSettings
 import React from 'react';
 import {render, screen, waitFor} from '_tests/testUtils';
 import GeneralCustomizationTab from './GeneralCustomizationTab';
+import {getApplicationsQuery} from '../../../../queries/applications/getApplicationsQuery';
 
 jest.mock(
     'components/shared/FileSelector',
@@ -29,7 +30,31 @@ describe('GeneralCustomizationTab', () => {
                     data: {
                         globalSettings: {
                             name: 'My App',
-                            icon: null
+                            icon: null,
+                            defaultApp: 'admin'
+                        }
+                    }
+                }
+            },
+            {
+                request: {
+                    query: getApplicationsQuery,
+                    variables: {}
+                },
+                result: {
+                    data: {
+                        applications: {
+                            list: [
+                                {
+                                    endpoint: 'admin'
+                                },
+                                {
+                                    endpoint: 'data-studio'
+                                },
+                                {
+                                    endpoint: 'portal'
+                                }
+                            ]
                         }
                     }
                 }
@@ -63,6 +88,8 @@ describe('GeneralCustomizationTab', () => {
 
         expect(screen.getByRole('textbox', {name: 'name'})).toHaveValue('My App');
         expect(screen.getAllByText('FileSelector')).toHaveLength(2);
+
+        expect(await screen.findAllByRole('option')).toHaveLength(3);
 
         //Edit name and submit
         userEvent.type(screen.getByRole('textbox', {name: 'name'}), ' Modified{Enter}');

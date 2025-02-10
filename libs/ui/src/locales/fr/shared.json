@@ -30,7 +30,8 @@
         "create": "Créer",
         "ok": "Ok",
         "max_length": "Longueur maximale",
-        "confirm": "Confirmer"
+        "confirm": "Confirmer",
+        "loading": "Chargement"
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",
@@ -249,7 +250,7 @@
         "not-contains": "Ne contient pas",
         "equal": "Est égal",
         "not-equal": "N'est pas égal",
-        "through": "Au travers",
+        "through": "Dont l’attribut",
         "begin-with": "Commence par",
         "end-with": "Fini Par",
         "is-empty": "Est Vide",
@@ -498,7 +499,11 @@
         "open_preview_modal": "Ouvrir la modale d'aperçu",
         "informations": "Informations",
         "chat": "Chat",
-        "history": "Historique"
+        "history": "Historique",
+        "entity_overview": "Fiche {{entity}}",
+        "attribute": "Attribut",
+        "attribute_format": "Format de l'attribut",
+        "descriptive": "Descriptif"
     },
     "view": {
         "views": "Vues",
@@ -669,6 +674,8 @@
         "select-condition": "Sélectionner une condition",
         "true": "Vrai",
         "false": "Faux",
+        "filter-condition": "Condition",
+        "filter-link-attribute": "Attribut de liaison",
         "massAction": {
             "itemsTotal_one": "{{count, number}} élément",
             "itemsTotal_other": "{{count, number}} éléments",
