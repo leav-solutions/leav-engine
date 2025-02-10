@@ -19,13 +19,11 @@ const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{
     ${({$shouldUsePresentationLayout}) =>
         $shouldUsePresentationLayout &&
         `   &.ant-picker.ant-picker-range {
-                grid-template-columns: 28px 1fr 0px 0px 12px;
-
-                .ant-picker-range-separator,
-                .ant-picker-input:nth-of-type(0) {
-                    display: none;
-                }
+            .ant-picker-range-separator,
+            div:nth-child(2) {
+                display: none;
             }
+        }
         `}
 `;
 
