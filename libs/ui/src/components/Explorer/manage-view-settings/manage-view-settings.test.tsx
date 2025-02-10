@@ -344,7 +344,7 @@ describe('Integration tests about managing view settings feature', () => {
             );
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
-            await userEvent.click(screen.getByRole('button', {name: /save/}));
+            await userEvent.click(screen.getByRole('link', {name: /save/}));
 
             expect(mockSaveViewMutation).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -410,7 +410,7 @@ describe('Integration tests about managing view settings feature', () => {
             expect(within(activeSorts).getAllByRole('listitem')).toHaveLength(2);
 
             await userEvent.click(screen.getByRole('button', {name: /back/}));
-            await userEvent.click(screen.getByRole('button', {name: /reinit/}));
+            await userEvent.click(screen.getByRole('link', {name: /reinit/}));
 
             await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
             activeSorts = screen.getByRole('list', {name: 'explorer.sort-list.active'});
