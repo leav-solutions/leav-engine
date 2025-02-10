@@ -20,7 +20,6 @@ export interface GET_ATTRIBUTES_attributes_list_StandardAttribute {
     system: boolean;
     multiple_values: boolean;
     unique: boolean | null;
-    character_limit: number | null;
 }
 
 export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_linked_library {

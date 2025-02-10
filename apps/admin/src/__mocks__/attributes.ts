@@ -45,8 +45,7 @@ export const mockAttrSimpleWithValuesList = {
         allowListUpdate: false,
         values: ['value 1', 'value 2']
     },
-    unique: null,
-    character_limit: null
+    unique: null
 };
 
 export const mockAttrAdv = {...base, id: 'advanced_attribute', type: AttributeType.advanced};

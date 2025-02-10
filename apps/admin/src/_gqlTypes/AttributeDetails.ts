@@ -80,7 +80,6 @@ export interface AttributeDetails_StandardAttribute {
     versions_conf: AttributeDetails_StandardAttribute_versions_conf | null;
     libraries: AttributeDetails_StandardAttribute_libraries[] | null;
     unique: boolean | null;
-    character_limit: number | null;
 }
 
 export interface AttributeDetails_LinkAttribute_metadata_fields {

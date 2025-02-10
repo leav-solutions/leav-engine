@@ -36,7 +36,6 @@ export const getAttributesQuery = gql`
                 multiple_values
                 ... on StandardAttribute {
                     unique
-                    character_limit
                 }
                 ... on LinkAttribute {
                     linked_library {

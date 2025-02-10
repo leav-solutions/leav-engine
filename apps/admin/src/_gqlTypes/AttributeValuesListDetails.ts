@@ -37,7 +37,6 @@ export type AttributeValuesListDetails_StandardAttribute_values_list =
 
 export interface AttributeValuesListDetails_StandardAttribute {
     unique: boolean | null;
-    character_limit: number | null;
     values_list: AttributeValuesListDetails_StandardAttribute_values_list | null;
 }
 

@@ -87,7 +87,6 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute {
     versions_conf: GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_versions_conf | null;
     libraries: GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_libraries[] | null;
     unique: boolean | null;
-    character_limit: number | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_metadata_fields {

@@ -25,8 +25,7 @@ describe('StandardValuesList', () => {
             allowListUpdate: false,
             values: ['valueA', 'valueB']
         },
-        unique: null,
-        character_limit: null
+        unique: null
     };
 
     test('Render existing list', async () => {

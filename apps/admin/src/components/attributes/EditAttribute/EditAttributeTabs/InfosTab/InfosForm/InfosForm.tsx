@@ -54,7 +54,6 @@ const defaultAttributeData: AttributeInfosFormValues = {
     linked_library: null,
     reverse_link: null,
     unique: null,
-    character_limit: null,
     permissions_conf: null,
     multiple_values: false,
     metadata_fields: null,
@@ -211,6 +210,7 @@ function InfosForm({
         const isVersionable = !!values.versions_conf && values.versions_conf.versionable;
         const isLinkAttribute = [AttributeType.advanced_link, AttributeType.simple_link].includes(values.type);
         const isStandardAttribute = [AttributeType.advanced, AttributeType.simple].includes(values.type);
+        const isTextAttribute = [AttributeFormat.text, AttributeFormat.rich_text].includes(values.format);
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<GET_ATTRIBUTES_attributes_list>(
@@ -334,7 +334,7 @@ function InfosForm({
                         />
                     </FormFieldWrapper>
                 )}
-                {isStandardAttribute && values.format === AttributeFormat.text && (
+                {isStandardAttribute && isTextAttribute && (
                     <FormFieldWrapper error={_getErrorByField('character_limit')}>
                         <Form.Input
                             label={t('attributes.character_limit')}

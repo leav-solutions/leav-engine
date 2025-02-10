@@ -74,7 +74,6 @@ export const attributeValuesListDetailsFragment = gql`
     fragment AttributeValuesListDetails on Attribute {
         ... on StandardAttribute {
             unique
-            character_limit
             values_list {
                 ... on StandardStringValuesListConf {
                     enable

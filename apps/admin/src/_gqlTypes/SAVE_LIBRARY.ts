@@ -88,7 +88,6 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute {
     versions_conf: SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_versions_conf | null;
     libraries: SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_libraries[] | null;
     unique: boolean | null;
-    character_limit: number | null;
 }
 
 export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_metadata_fields {
