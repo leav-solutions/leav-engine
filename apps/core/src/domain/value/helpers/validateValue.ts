@@ -157,7 +157,7 @@ const _validateMetadata = (attribute: IAttribute, value: IValue): ErrorFieldDeta
     return errors;
 };
 
-const DELETE_HTML_TAGS_REGEX = /<\/?[^>]+(>|$)/g;
+const DELETE_HTML_TAGS_REGEX = /<\/?[^<>]+>/g;
 
 export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IValue>> => {
     let errors: ErrorFieldDetail<IValue> = {};
