@@ -46,7 +46,8 @@ type ValidFieldFilterThrough = Override<
     subCondition?: ViewDetailsFilterFragment['condition'];
 };
 
-const _isValidFieldFilter = (filter: ViewDetailsFilterFragment): filter is ValidFieldFilter => !!filter.field;
+const _isValidFieldFilter = (filter: ViewDetailsFilterFragment | ExplorerFilter): filter is ValidFieldFilter =>
+    !!filter.field;
 
 const _isValidFieldFilterThrough = (
     filter: ValidFieldFilter | ValidFieldFilterThrough

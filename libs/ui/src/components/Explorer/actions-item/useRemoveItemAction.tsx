@@ -7,13 +7,9 @@ import {KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation, useDeleteValueMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
-import {ActionHook, Entrypoint, IEntrypointLink, IItemAction} from './_types';
-import {
-    IViewSettingsAction,
-    IViewSettingsState,
-    ViewSettingsActionTypes
-} from '_ui/components/Explorer/manage-view-settings';
-import {MASS_SELECTION_ALL} from '_ui/components/Explorer/_constants';
+import {ActionHook, Entrypoint, IEntrypointLink, IItemAction} from '../_types';
+import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
+import {MASS_SELECTION_ALL} from '../_constants';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -26,7 +22,7 @@ import {MASS_SELECTION_ALL} from '_ui/components/Explorer/_constants';
  * @param dispatch - method to change the current view
  * @param entrypoint - represent the current entrypoint
  */
-export const useRemoveAction = ({
+export const useRemoveItemAction = ({
     isEnabled,
     store: {view, dispatch},
     entrypoint
@@ -72,7 +68,7 @@ export const useRemoveAction = ({
         }
     });
 
-    const _removeAction: IItemAction = useMemo(
+    const _removeItemAction: IItemAction = useMemo(
         () => ({
             label: entrypoint.type === 'library' ? t('explorer.deactivate-item') : t('explorer.delete-item'),
             icon: <FaTrash />,
@@ -126,6 +122,6 @@ export const useRemoveAction = ({
     );
 
     return {
-        removeAction: isEnabled ? _removeAction : null
+        removeItemAction: isEnabled ? _removeItemAction : null
     };
 };

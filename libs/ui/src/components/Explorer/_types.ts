@@ -41,6 +41,7 @@ export interface IItemAction {
     callback: (item: IItemData) => void;
     icon: ReactElement;
     label: string;
+    iconOnly?: boolean;
     isDanger?: boolean;
     disabled?: boolean;
 }
@@ -118,11 +119,7 @@ export interface IFilterDropDownProps {
 export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,
     {
-        filters?: Array<{
-            field: string;
-            condition: RecordFilterCondition;
-            value: string | null;
-        }>;
+        filters?: ExplorerFilter[];
     }
 >;
 

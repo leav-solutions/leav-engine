@@ -48,8 +48,7 @@ export const useOpenViewSettings = (library: string) => {
         openSettingsPanel: _openSettingsPanel,
         viewSettingsButton: (
             <KitButton
-                type="tertiary"
-                color="neutral"
+                type="secondary"
                 icon={<FaSlidersH />}
                 onClick={() => _openSettingsPanel()}
                 title={String(t('explorer.settings')) /* TODO: avoid transform null to 'null' */}

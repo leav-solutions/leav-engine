@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {cloneElement, ComponentProps, FunctionComponent, memo, ReactNode} from 'react';
-import {KitButton, KitDropDown, KitPagination, KitTable, useKitTheme} from 'aristid-ds';
+import {KitButton, KitDropDown, KitPagination, KitTable} from 'aristid-ds';
 import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import {FaEllipsisH} from 'react-icons/fa';
 import {Override} from '@leav/utils';
@@ -32,7 +32,7 @@ const DataViewContainerDivStyled = styled.div`
 
     .pagination {
         flex: 0 0 auto;
-        justify-content: flex-end;
+        justify-content: center;
         display: flex;
         padding-top: calc(var(--general-spacing-xs) * 1px);
     }
@@ -53,13 +53,20 @@ const StyledTable = styled(KitTable)`
         .ant-table-cell {
             min-height: ${tableHeaderMinLineHeight}px;
             height: auto !important;
+            padding: 0 calc(var(--general-spacing-s) * 1px) 0 0;
         }
     }
+`;
+
+const ActionsHeaderStyledDiv = styled.div`
+    justify-self: right;
+    text-align: left;
 `;
 
 interface IDataViewProps {
     dataGroupedFilteredSorted: IItemData[];
     itemActions: IItemAction[];
+    iconsOnlyItemActions: boolean;
     attributesProperties: IExplorerData['attributes'];
     attributesToDisplay: string[];
     paginationProps?: {
@@ -99,13 +106,13 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         attributesProperties,
         paginationProps,
         itemActions,
-        selection: {onSelectionChange, selectedKeys, isMassSelectionAll}
+        selection: {onSelectionChange, selectedKeys, isMassSelectionAll},
+        iconsOnlyItemActions
     }) => {
         const {t} = useSharedTranslation();
-        const {theme} = useKitTheme();
 
         const {containerRef, scrollHeight} = useTableScrollableHeight(!!paginationProps);
-        const {ref, getFieldColumnWidth, columnWidth} = useColumnWidth();
+        const {ref, getFieldColumnWidth, columnWidth, actionsColumnHeaderWidth} = useColumnWidth();
 
         const _getActionButtons = (
             actions: Array<Override<IItemAction, {callback: () => void}>>,
@@ -117,7 +124,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                 <StyledActionsList ref={columnRef}>
                     {isLessThanFourActions ? (
                         <>
-                            {actions.map(({label, icon, isDanger, callback, disabled}, actionIndex) => (
+                            {actions.map(({label, icon, isDanger, iconOnly, callback, disabled}, actionIndex) => (
                                 <KitButton
                                     key={actionIndex}
                                     title={label}
@@ -126,7 +133,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     danger={isDanger}
                                     disabled={disabled}
                                 >
-                                    {label}
+                                    {!iconsOnlyItemActions && !iconOnly && label}
                                 </KitButton>
                             ))}
                         </>
@@ -135,8 +142,8 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                             <KitButton
                                 type="tertiary"
                                 icon={actions[0].icon}
-                                onClick={actions[0].callback}
                                 title={actions[0].label}
+                                onClick={actions[0].callback}
                                 danger={actions[0].isDanger}
                                 disabled={actions[0].disabled}
                             />
@@ -197,8 +204,14 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                     ? []
                     : [
                           {
-                              title: t('explorer.actions'),
+                              title: (
+                                  <ActionsHeaderStyledDiv style={{width: `${actionsColumnHeaderWidth}px`}}>
+                                      {t('explorer.actions')}
+                                  </ActionsHeaderStyledDiv>
+                              ),
                               dataIndex: USELESS,
+                              align: 'right',
+                              className: 'actions',
                               shouldCellUpdate: () => false,
                               width: columnWidth,
                               render: (_, item, index) =>
@@ -235,9 +248,6 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         return (
             <DataViewContainerDivStyled ref={containerRef}>
                 <StyledTable
-                    borderedRows
-                    cellsBackgroundColor={theme.utilities.light}
-                    backgroundColor={theme.colors.primary['50']}
                     showHeader={dataGroupedFilteredSorted.length > 0}
                     columns={columns}
                     tableLayout="fixed"

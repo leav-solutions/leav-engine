@@ -638,7 +638,7 @@
         "more-actions": "Voir plus",
         "deactivate-item": "Désactiver",
         "delete-item": "Supprimer",
-        "edit-item": "Éditer l’élément",
+        "edit-item": "Éditer",
         "settings": "Paramètres",
         "back": "Retour",
         "router-menu": "Configuration de la vue",
@@ -686,12 +686,14 @@
             "selectedItems_one": "{{count, number}} sélectionné",
             "selectedItems_other": "{{count, number}} sélectionnés",
             "deactivate": "Supprimer",
+            "add-link": "Ajouter",
             "toggle_selection": {
                 "select_page_one": "Sélectionner l’éléments visible ({{count, number}})",
                 "select_page_other": "Sélectionner les éléments visibles ({{count, number}})",
                 "select_all": "Tout sélectionner ({{count, number}})",
                 "deselect_all": "Tout désélectionner"
             }
-        }
+        },
+        "add-existing-item": "Ajouter un élément existant"
     }
 }

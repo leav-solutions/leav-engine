@@ -6,10 +6,10 @@ import {FaTrash} from 'react-icons/fa';
 import {KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ActionHook, IMassActions} from './_types';
-import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from './manage-view-settings';
-import {MASS_SELECTION_ALL} from './_constants';
-import type {useExplorerData} from './_queries/useExplorerData';
+import {ActionHook, IMassActions} from '../_types';
+import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
+import {MASS_SELECTION_ALL} from '../_constants';
+import type {useExplorerData} from '../_queries/useExplorerData';
 
 /**
  * Hook used to get the action for mass actions only available on selection.

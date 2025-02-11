@@ -14,7 +14,7 @@ export type SettingsPanelPages = 'router-menu' | 'configure-display' | 'sort-ite
 export interface IEditSettingsContext {
     setActiveSettings: (params: IActiveSettings) => void;
     activeSettings: null | IActiveSettings;
-    panelElement: Element | DocumentFragment | null;
+    panelElement: (() => Element | DocumentFragment) | null;
     onClose: () => void;
 }
 

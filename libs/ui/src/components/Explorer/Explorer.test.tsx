@@ -16,10 +16,10 @@ import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
 import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
-import {SNACKBAR_MASS_ID} from './useMassActions';
 import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import * as useColumnWidth from './useColumnWidth';
+import {SNACKBAR_MASS_ID} from './actions-mass/useMassActions';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -749,7 +749,8 @@ describe('Explorer', () => {
         jest.spyOn(useColumnWidth, 'useColumnWidth').mockReturnValueOnce({
             ref: {current: null},
             getFieldColumnWidth: () => 500,
-            columnWidth: 500
+            columnWidth: 500,
+            actionsColumnHeaderWidth: 464
         });
 
         render(<Explorer entrypoint={linkEntrypoint} />, {
@@ -909,7 +910,8 @@ describe('Explorer', () => {
         test('Should be able to display custom primary actions', async () => {
             render(<Explorer entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} />);
 
-            const dropdownButton = screen.getByTestId('actions-dropdown');
+            const firstActionButton = screen.queryByRole('button', {name: 'explorer.create-one'});
+            const dropdownButton = firstActionButton?.nextElementSibling;
             expect(screen.queryByText(customPrimaryAction1.label)).not.toBeInTheDocument();
             expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
 
@@ -938,7 +940,7 @@ describe('Explorer', () => {
             await user.click(firstActionButton);
             expect(customPrimaryActions[0].callback).toHaveBeenCalled();
 
-            const dropdownButton = screen.getByTestId('actions-dropdown');
+            const dropdownButton = firstActionButton?.nextElementSibling;
             expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
 
             await user.click(dropdownButton!);
@@ -1048,6 +1050,12 @@ describe('Explorer', () => {
                     defaultViewSettings={{
                         filters: [
                             {
+                                id: '',
+                                attribute: {
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type
+                                },
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas'
@@ -1066,7 +1074,6 @@ describe('Explorer', () => {
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
             expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
-            expect(within(toolbar).getByRole('button', {name: /reset-view/})).toBeVisible();
             expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
 
             expect(spy).toHaveBeenCalledWith(
@@ -1298,6 +1305,12 @@ describe('Explorer', () => {
                         pageSize: 1, // configuration to be in multi-pages (2 pages of 1 record)
                         filters: [
                             {
+                                id: '',
+                                attribute: {
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleColorMockAttribute.type
+                                },
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas'
@@ -1405,6 +1418,12 @@ describe('Explorer', () => {
                         pageSize: 1, // configuration to be in multi-pages (2 pages of 1 record)
                         filters: [
                             {
+                                id: '',
+                                attribute: {
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type
+                                },
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas'

@@ -23,10 +23,11 @@ function Settings(): JSX.Element {
     const urlParams = useParams<{tabId?: string}>();
     const location = useLocation();
 
-    const {loading: permissionsLoading, error: permissionsError, data: permissionsData} = useQuery<
-        IS_ALLOWED,
-        IS_ALLOWEDVariables
-    >(isAllowedQuery, {
+    const {
+        loading: permissionsLoading,
+        error: permissionsError,
+        data: permissionsData
+    } = useQuery<IS_ALLOWED, IS_ALLOWEDVariables>(isAllowedQuery, {
         variables: {
             type: PermissionTypes.admin,
             actions: [PermissionsActions.admin_access_libraries, PermissionsActions.admin_access_trees]

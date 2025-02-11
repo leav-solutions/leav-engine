@@ -638,7 +638,7 @@
         "more-actions": "Show more",
         "deactivate-item": "Deactivate",
         "delete-item": "Delete",
-        "edit-item": "Edit item",
+        "edit-item": "Edit",
         "settings": "Settings",
         "back": "Back",
         "router-menu": "View Configuration",
@@ -686,12 +686,14 @@
             "selectedItems_one": "{{count, number}} selected",
             "selectedItems_other": "{{count, number}} selected",
             "deactivate": "Deactivate",
+            "add-link": "Add",
             "toggle_selection": {
                 "select_page_one": "Select visible item ({{count, number}})",
                 "select_page_other": "Select visible items ({{count, number}})",
                 "select_all": "Select all items ({{count, number}})",
                 "deselect_all": "Deselect all items"
             }
-        }
+        },
+        "add-existing-item": "Add existing item"
     }
 }
