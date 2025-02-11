@@ -17,7 +17,7 @@ const FilterStyled = styled(KitFilter)`
 `;
 
 const ExplorerToolbarListStyled = styled.ul`
-    padding: calc(var(--general-spacing-xs) * 1px)
+    padding: calc(var(--general-spacing-xs) * 1px);
     margin: 0;
     margin-bottom: calc(var(--general-spacing-s) * 1px);
     background: var(--general-colors-neutral-grey-100);
@@ -29,6 +29,7 @@ const ExplorerToolbarListStyled = styled.ul`
     align-items: center;
     gap: 0;
     white-space: nowrap;
+    min-height: 26px; // height of the filter chip
 `;
 
 const DividerStyled = styled(KitDivider)`
