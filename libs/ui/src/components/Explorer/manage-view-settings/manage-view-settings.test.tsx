@@ -14,9 +14,10 @@ import {ViewSettingsContext} from './store-view-settings/ViewSettingsContext';
 import {act, waitFor} from '@testing-library/react';
 import {useViewSettingsReducer} from '../useViewSettingsReducer';
 import {DefaultViewSettings} from '../_types';
+import {IViewSettingsState} from './store-view-settings/viewSettingsReducer';
 
 const MockOpenEditSettings: FunctionComponent = () => {
-    const {viewSettingsButton} = useOpenViewSettings('');
+    const {viewSettingsButton} = useOpenViewSettings({} as IViewSettingsState);
 
     return <>{viewSettingsButton}</>;
 };
@@ -128,7 +129,7 @@ describe('Integration tests about managing view settings feature', () => {
             </EditSettingsContextProvider>
         );
 
-        await userEvent.click(screen.getByRole('button', {name: /settings/}));
+        await userEvent.click(screen.getByRole('button', {name: /default-view/}));
 
         expect(screen.getByRole('heading', {name: /router-menu/})).toBeVisible();
 
@@ -152,7 +153,7 @@ describe('Integration tests about managing view settings feature', () => {
                 </EditSettingsContextProvider>
             );
 
-            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /default-view/}));
             await userEvent.click(screen.getByRole('button', {name: /configure-display/}));
 
             const [visibleAttributesList, hiddenAttributesList] = screen.getAllByRole('list');
@@ -201,7 +202,7 @@ describe('Integration tests about managing view settings feature', () => {
                 </EditSettingsContextProvider>
             );
 
-            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /default-view/}));
             await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
 
             const inactiveSorts = screen.getByRole('list', {name: /inactive/});
@@ -248,7 +249,7 @@ describe('Integration tests about managing view settings feature', () => {
                 </EditSettingsContextProvider>
             );
 
-            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /default-view/}));
             await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
 
             const inactiveSorts = screen.getByRole('list', {name: /inactive/});
@@ -304,7 +305,7 @@ describe('Integration tests about managing view settings feature', () => {
                 </EditSettingsContextProvider>
             );
 
-            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /default-view/}));
             await userEvent.click(screen.getByRole('button', {name: /filters/}));
 
             const inactiveFilters = screen.getByRole('list', {name: /inactive/});
@@ -343,8 +344,29 @@ describe('Integration tests about managing view settings feature', () => {
                 </EditSettingsContextProvider>
             );
 
-            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /default-view/}));
+
             await userEvent.click(screen.getByRole('link', {name: /save/}));
+            const closeButton = screen.getByRole('button', {name: 'global.close', hidden: true});
+            expect(closeButton).toBeVisible();
+            await userEvent.click(closeButton);
+            expect(closeButton).not.toBeVisible();
+
+            await userEvent.click(screen.getByRole('link', {name: /save/}));
+            const saveButton = screen.getByRole('button', {name: 'global.save', hidden: true});
+            expect(saveButton).toBeVisible();
+            await userEvent.click(saveButton);
+            expect(mockSaveViewMutation).not.toHaveBeenCalled();
+            await waitFor(() => expect(screen.getByText('errors.standard_field_required')).toBeVisible());
+
+            const [requiredInput] = screen
+                .getAllByRole('textbox', {hidden: true})
+                .filter(r => r.getAttribute('aria-required') === 'true');
+
+            await userEvent.type(requiredInput, 'View Name Required{Enter}');
+
+            // Timeout for secureClick
+            await userEvent.click(saveButton, {delay: 1000});
 
             expect(mockSaveViewMutation).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -354,8 +376,8 @@ describe('Integration tests about managing view settings feature', () => {
                             display: {type: 'list'},
                             filters: [],
                             id: '42',
-                            label: {fr: 'user view'},
-                            library: '',
+                            label: {fr: 'View Name Required', en: 'My view'},
+                            library: 'my_lib',
                             shared: false,
                             sort: []
                         }
@@ -376,7 +398,7 @@ describe('Integration tests about managing view settings feature', () => {
                 </EditSettingsContextProvider>
             );
 
-            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /default-view/}));
             await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
 
             const activeSorts = screen.getByRole('list', {name: 'explorer.sort-list.active'});
@@ -395,7 +417,7 @@ describe('Integration tests about managing view settings feature', () => {
                 </EditSettingsContextProvider>
             );
 
-            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /default-view/}));
             await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
 
             let activeSorts = screen.getByRole('list', {name: 'explorer.sort-list.active'});

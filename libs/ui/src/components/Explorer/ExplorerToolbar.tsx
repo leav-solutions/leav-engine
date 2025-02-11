@@ -42,11 +42,10 @@ export const ExplorerToolbar: FunctionComponent<{
 }> = ({libraryId, isMassSelectionAll, children}) => {
     const {t} = useSharedTranslation();
 
-    const {
-        view: {filters, sort}
-    } = useViewSettingsContext();
+    const {view} = useViewSettingsContext();
+    const {filters, sort} = view;
 
-    const {openSettingsPanel} = useOpenViewSettings(libraryId);
+    const {openSettingsPanel} = useOpenViewSettings(view);
 
     const {attributeDetailsById} = useAttributeDetailsData(libraryId);
 

@@ -159,7 +159,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         [createPrimaryAction, linkPrimaryAction, ...primaryActions].filter(Boolean)
     );
 
-    const {viewSettingsButton} = useOpenViewSettings(view.libraryId);
+    const {viewSettingsButton} = useOpenViewSettings(view);
 
     const {searchInput} = useSearchInput({view, dispatch});
 

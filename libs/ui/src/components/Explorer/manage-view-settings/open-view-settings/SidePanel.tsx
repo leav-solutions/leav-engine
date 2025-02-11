@@ -27,7 +27,8 @@ export const SidePanel: FunctionComponent = () => {
             floating
             closable
             closeOnEsc
-            closeOnOutsideClick
+            // TODO: à remettre en prenant en compte la Modal de Save As...
+            // closeOnOutsideClick
             idCardProps={{title: activeSettings.title}}
             leftActionProps={
                 activeSettings.onClickLeftButton

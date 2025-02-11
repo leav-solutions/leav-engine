@@ -190,6 +190,7 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                 entrypoint,
                 libraryId,
                 viewId: userView?.id,
+                viewLabel: userView?.label ?? {},
                 viewType: userView?.display
                     ? mapViewTypeFromLegacyToExplorer[userView.display.type]
                     : viewSettingsInitialState.viewType,
