@@ -87,13 +87,13 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                     </nav>
                     {saveViewModal}
                     <FooterStyledDiv>
-                        <KitButton type="redirect" icon={<FaSave />} onClick={toggleModal}>
+                        <KitButton type="redirect" icon={<FaSave />} onClick={_toggleModal}>
                             {t('explorer.save-view')}
                         </KitButton>
-                        <KitButton type="action" icon={<FaShare />} onClick={() => null}>
+                        <KitButton type="redirect" icon={<FaShare />} onClick={() => null}>
                             {t('explorer.share-view')}
                         </KitButton>
-                        <KitButton type="action" icon={<FaUndo />} onClick={_handleReinitView}>
+                        <KitButton type="redirect" icon={<FaUndo />} onClick={_handleReinitView}>
                             {t('explorer.reinit-view')}
                         </KitButton>
                     </FooterStyledDiv>
