@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import styled from 'styled-components';
-import {FunctionComponent} from 'react';
+import {FunctionComponent, useState} from 'react';
 import {KitButton, KitInput, KitTypography} from 'aristid-ds';
 import {FaFilter, FaList, FaSave, FaShare, FaSortAlphaDown, FaUndo} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -14,6 +14,7 @@ import {useViewSettingsContext} from '../store-view-settings/useViewSettingsCont
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {SettingsPanelPages} from '../open-view-settings/EditSettingsContext';
 import {useOpenViewSettings} from '../open-view-settings/useOpenViewSettings';
+import {SaveViewModal} from '../save-view/SaveViewModal';
 import {useSaveView} from '../save-view/useSaveView';
 
 const ContentWrapperStyledDiv = styled.div`
@@ -89,10 +90,10 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                         <KitButton type="redirect" icon={<FaSave />} onClick={toggleModal}>
                             {t('explorer.save-view')}
                         </KitButton>
-                        <KitButton type="redirect" icon={<FaShare />} onClick={() => null}>
+                        <KitButton type="action" icon={<FaShare />} onClick={() => null}>
                             {t('explorer.share-view')}
                         </KitButton>
-                        <KitButton type="redirect" icon={<FaUndo />} onClick={_handleReinitView}>
+                        <KitButton type="action" icon={<FaUndo />} onClick={_handleReinitView}>
                             {t('explorer.reinit-view')}
                         </KitButton>
                     </FooterStyledDiv>

@@ -70,7 +70,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettin
                 {viewName}
             </KitButton>
         );
-    }, [viewName]);
+    }, [viewName, view?.viewLabel]);
 
     return {
         openSettingsPanel: _openSettingsPanel,
