@@ -4,7 +4,7 @@
 import styled from 'styled-components';
 import {FunctionComponent} from 'react';
 import {KitButton, KitTypography} from 'aristid-ds';
-import {FaFilter, FaList, FaSave, FaSortAlphaDown, FaUndo} from 'react-icons/fa';
+import {FaFilter, FaList, FaSave, FaShare, FaSortAlphaDown, FaUndo} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ConfigureDisplay} from '../configure-display/ConfigureDisplay';
 import {SortItems} from '../sort-items/SortItems';
@@ -29,9 +29,8 @@ const ContentWrapperStyledDiv = styled.div`
 
 const FooterStyledDiv = styled.footer`
     display: flex;
-    justify-content: center;
-    gap: calc(var(--general-spacing-xs) * 1px);
-    padding: calc(var(--general-spacing-xxs) * 1px) 0;
+    flex-direction: column;
+    padding-bottom: calc(var(--general-spacing-xs) * 1px);
 `;
 
 const ConfigurationStyledMenu = styled.menu`
@@ -118,12 +117,16 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                             )}
                         </ConfigurationStyledMenu>
                     </nav>
+                    {/* TODO: Rename "redirect" buttons to "action" */}
                     <FooterStyledDiv>
-                        <KitButton type="secondary" danger icon={<FaUndo />} onClick={_handleReinitView}>
-                            {t('explorer.reinit-view')}
-                        </KitButton>
-                        <KitButton type="primary" icon={<FaSave />} onClick={_handleSaveView}>
+                        <KitButton type="redirect" icon={<FaSave />} onClick={_handleSaveView}>
                             {t('explorer.save-view')}
+                        </KitButton>
+                        <KitButton type="redirect" icon={<FaShare />} onClick={() => null}>
+                            {t('explorer.share-view')}
+                        </KitButton>
+                        <KitButton type="redirect" icon={<FaUndo />} onClick={_handleReinitView}>
+                            {t('explorer.reinit-view')}
                         </KitButton>
                     </FooterStyledDiv>
                 </>
