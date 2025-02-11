@@ -140,6 +140,7 @@ export enum AttributeFormat {
 
 export type AttributeInput = {
   actions_list?: InputMaybe<ActionsListConfigurationInput>;
+  character_limit?: InputMaybe<Scalars['Int']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']>;
   embedded_fields?: InputMaybe<Array<InputMaybe<EmbeddedAttributeInput>>>;
   format?: InputMaybe<AttributeFormat>;
@@ -147,7 +148,6 @@ export type AttributeInput = {
   label?: InputMaybe<Scalars['SystemTranslation']>;
   linked_library?: InputMaybe<Scalars['String']>;
   linked_tree?: InputMaybe<Scalars['String']>;
-  maxLength?: InputMaybe<Scalars['Int']>;
   metadata_fields?: InputMaybe<Array<Scalars['String']>>;
   multiple_values?: InputMaybe<Scalars['Boolean']>;
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
@@ -871,7 +871,7 @@ export type RecordIdentityFragment = { id: string, whoAmI: { id: string, label?:
 
 export type AttributeDetailsLinkAttributeFragment = { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
-export type AttributeDetailsStandardAttributeFragment = { unique?: boolean | null, maxLength?: number | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
+export type AttributeDetailsStandardAttributeFragment = { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
 export type AttributeDetailsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
@@ -1011,7 +1011,7 @@ export type GetAttributeByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetAttributeByIdQuery = { attributes?: { list: Array<{ reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { unique?: boolean | null, maxLength?: number | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }> } | null };
+export type GetAttributeByIdQuery = { attributes?: { list: Array<{ reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }> } | null };
 
 export type GetAttributesByLibQueryVariables = Exact<{
   library: Scalars['String'];
@@ -1049,7 +1049,7 @@ export type SaveAttributeMutationVariables = Exact<{
 }>;
 
 
-export type SaveAttributeMutation = { saveAttribute: { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { unique?: boolean | null, maxLength?: number | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } };
+export type SaveAttributeMutation = { saveAttribute: { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } };
 
 export type ExportQueryVariables = Exact<{
   library: Scalars['ID'];
@@ -1176,7 +1176,7 @@ export type CreateRecordMutationVariables = Exact<{
 }>;
 
 
-export type CreateRecordMutation = { createRecord: { record?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, valuesErrors?: Array<{ attributeId: string, id_value?: string | null, input?: string | null, message?: string | null, type: string }> | null } };
+export type CreateRecordMutation = { createRecord: { record?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, valuesErrors?: Array<{ type: string, attribute: string, input?: string | null, message: string }> | null } };
 
 export type DeactivateRecordsMutationVariables = Exact<{
   libraryId: Scalars['String'];
@@ -1489,7 +1489,6 @@ export const AttributeDetailsFragmentDoc = gql`
   }
   ... on StandardAttribute {
     unique
-    maxLength
   }
   ... on LinkAttribute {
     linked_library {
@@ -3121,11 +3120,10 @@ export const CreateRecordDocument = gql`
       ...RecordIdentity
     }
     valuesErrors {
-      attributeId
-      id_value
+      type
+      attribute
       input
       message
-      type
     }
   }
 }

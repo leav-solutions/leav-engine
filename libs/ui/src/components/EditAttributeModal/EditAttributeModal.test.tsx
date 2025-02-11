@@ -83,8 +83,6 @@ describe('EditAttributeModal', () => {
             await user.type(screen.getByRole('textbox', {name: 'label_fr'}), 'label fr');
             await user.type(screen.getByRole('textbox', {name: 'label_en'}), 'label_en');
 
-            await user.type(screen.getByRole('spinbutton', {name: 'global.max_length'}), '5');
-
             await waitFor(() => {
                 expect(idField).toHaveValue('label_fr');
             });
@@ -121,7 +119,6 @@ describe('EditAttributeModal', () => {
                             readonly: false,
                             linked_library: null,
                             linked_tree: null,
-                            maxLength: 5,
                             multiple_values: false,
                             versions_conf: null
                         }
@@ -244,43 +241,6 @@ describe('EditAttributeModal', () => {
                     attribute: {
                         id: mockAttributeWithDetails.id,
                         readonly: true
-                    }
-                }
-            });
-        });
-
-        test('Submit maxLength field on change', async () => {
-            const user = userEvent.setup();
-            jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockReturnValue(mockResultGetAttributeById as QueryResult);
-            const mockSaveAttributeMutation = jest.fn().mockReturnValue({
-                data: {
-                    saveAttribute: {
-                        ...mockAttributeWithDetails
-                    }
-                }
-            });
-            jest.spyOn(gqlTypes, 'useSaveAttributeMutation').mockReturnValue([
-                mockSaveAttributeMutation,
-                {loading: false, called: false, client: null, reset: null, error: null}
-            ]);
-
-            render(<EditAttributeModal attributeId={mockAttributeWithDetails.id} open onClose={jest.fn()} />);
-
-            const maxLengthField = screen.getByRole('spinbutton', {name: /max_length/i});
-            expect(maxLengthField).not.toBeDisabled();
-
-            const maxLength = 5;
-
-            await user.type(maxLengthField, maxLength.toString());
-
-            // move the focus away
-            await userEvent.click(document.body);
-
-            expect(mockSaveAttributeMutation).toBeCalledWith({
-                variables: {
-                    attribute: {
-                        id: mockAttributeWithDetails.id,
-                        maxLength
                     }
                 }
             });

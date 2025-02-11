@@ -13,6 +13,7 @@ export interface IAttribute extends ICoreEntity {
     system?: boolean;
     readonly?: boolean;
     required?: boolean;
+    character_limit?: number;
     type: AttributeTypes;
     format?: AttributeFormats;
     linked_library?: string;
@@ -26,7 +27,6 @@ export interface IAttribute extends ICoreEntity {
     values_list?: IValuesListConf;
     reverse_link?: string | IAttribute; // linked attribute
     unique?: boolean; // only on simple attribute
-    maxLength?: number; //only on text attribute
     description?: ISystemTranslation;
 }
 

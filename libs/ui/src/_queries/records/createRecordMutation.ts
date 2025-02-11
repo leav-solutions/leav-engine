@@ -13,11 +13,10 @@ const createRecordMutation = gql`
                 ...RecordIdentity
             }
             valuesErrors {
-                attributeId
-                id_value
+                type
+                attribute
                 input
                 message
-                type
             }
         }
     }

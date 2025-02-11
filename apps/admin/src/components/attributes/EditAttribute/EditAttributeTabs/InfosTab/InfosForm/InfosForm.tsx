@@ -142,6 +142,7 @@ function InfosForm({
         format: yup.string().nullable(),
         multiple_values: yup.boolean(),
         unique: yup.boolean().nullable(),
+        character_limit: yup.number(),
         versions_conf: yup
             .object()
             .shape({
@@ -206,6 +207,8 @@ function InfosForm({
         );
         const isVersionable = !!values.versions_conf && values.versions_conf.versionable;
         const isLinkAttribute = [AttributeType.advanced_link, AttributeType.simple_link].includes(values.type);
+        const isStandardAttribute = [AttributeType.advanced, AttributeType.simple].includes(values.type);
+        const isTextAttribute = [AttributeFormat.text, AttributeFormat.rich_text].includes(values.format);
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<GET_ATTRIBUTES_attributes_list>(
@@ -326,6 +329,21 @@ function InfosForm({
                             aria-label="linked_library"
                             onChange={_handleLinkedLibraryChange}
                             value={values.linked_library || ''}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {isStandardAttribute && isTextAttribute && (
+                    <FormFieldWrapper error={_getErrorByField('character_limit')}>
+                        <Form.Input
+                            label={t('attributes.character_limit')}
+                            width="4"
+                            type="number"
+                            disabled={readonly}
+                            name="character_limit"
+                            aria-label="character_limit"
+                            onChange={_handleChange}
+                            onBlur={_handleBlur}
+                            value={values.character_limit}
                         />
                     </FormFieldWrapper>
                 )}

@@ -401,11 +401,11 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         if (creationResult.data.createRecord.valuesErrors?.length) {
             // Extract errors by field
             const errorsByField = creationResult.data.createRecord.valuesErrors.reduce((errors, error) => {
-                if (!errors[error.attributeId]) {
-                    errors[error.attributeId] = [];
+                if (!errors[error.attribute]) {
+                    errors[error.attribute] = [];
                 }
 
-                errors[error.attributeId].push(error);
+                errors[error.attribute].push(error);
 
                 return errors;
             }, {});
@@ -413,7 +413,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
 
             antdForm.setFields(
                 creationResult.data.createRecord.valuesErrors.map(error => ({
-                    name: error.attributeId,
+                    name: error.attribute,
                     errors: [error.message]
                 }))
             );

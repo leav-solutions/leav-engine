@@ -20,9 +20,13 @@ jest.mock('../../../../../../utils', () => ({
 
 jest.mock('../../../../../../hooks/useLang');
 
-jest.mock('components/versionProfiles/VersionProfilesSelector', () => function VersionProfilesSelector() {
-        return <div>VersionProfilesSelector</div>;
-    });
+jest.mock(
+    'components/versionProfiles/VersionProfilesSelector',
+    () =>
+        function VersionProfilesSelector() {
+            return <div>VersionProfilesSelector</div>;
+        }
+);
 
 describe('InfosForm', () => {
     const attribute = {
