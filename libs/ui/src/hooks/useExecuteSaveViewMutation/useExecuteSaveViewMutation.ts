@@ -10,13 +10,23 @@ import {
     useSaveViewMutation
 } from '_ui/_gqlTypes';
 import {getViewsListQuery} from '_ui/_queries/views/getViewsListQuery';
+import {ViewSettingsActionTypes} from '_ui/components/Explorer/manage-view-settings';
+import {useViewSettingsContext} from '_ui/components/Explorer/manage-view-settings/store-view-settings/useViewSettingsContext';
 
 export interface IUseSaveViewMutationHook {
     saveView: (variables: SaveViewMutationVariables) => Promise<FetchResult<SaveViewMutation>>;
 }
 
 export default function useExecuteSaveViewMutation(): IUseSaveViewMutationHook {
-    const [executeSaveView] = useSaveViewMutation();
+    const {dispatch} = useViewSettingsContext();
+    const [executeSaveView] = useSaveViewMutation({
+        onCompleted(data) {
+            dispatch({
+                type: ViewSettingsActionTypes.UPDATE_VIEW_NAME,
+                payload: data.saveView.label
+            });
+        }
+    });
 
     return {
         saveView(variables) {
