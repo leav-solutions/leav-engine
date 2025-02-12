@@ -868,10 +868,10 @@ export default function ({
                 if (missingAttributes.length) {
                     return {
                         record: null,
-                        valuesErrors: missingAttributes.map(attributeId => ({
+                        valuesErrors: missingAttributes.map(attribute => ({
                             type: Errors.REQUIRED_ATTRIBUTE,
-                            attributeId,
-                            message: utils.translateError(Errors.REQUIRED_ATTRIBUTE, ctx.lang)
+                            attribute,
+                            message: utils.translateError({msg: Errors.REQUIRED_ATTRIBUTE, vars: {attribute}}, ctx.lang)
                         }))
                     };
                 }
@@ -904,9 +904,8 @@ export default function ({
 
                         return {
                             type: rejection.reason.type,
-                            attributeId: errorAttribute,
-                            id_value: rejection.reason.context?.values[0].id_value,
-                            input: rejection.reason.context?.values[0].value,
+                            attribute: errorAttribute,
+                            input: rejection.reason.context?.values[0].payload,
                             message: utils.translateError(rejection.reason.fields?.[errorAttribute], ctx.lang)
                         };
                     });
