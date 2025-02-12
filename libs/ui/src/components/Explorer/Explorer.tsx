@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, ReactNode, useEffect} from 'react';
+import {FunctionComponent, ReactNode} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
@@ -91,18 +91,11 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 }) => {
     const {t} = useSharedTranslation();
 
-    const {panelElement: settingsPanelElement, onClose} = useEditSettings();
+    const {panelElement: settingsPanelElement} = useEditSettings();
 
     const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(entrypoint, defaultViewSettings);
 
     const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
-
-    useEffect(
-        () => () => {
-            onClose();
-        },
-        [entrypoint]
-    );
 
     const {
         data,
@@ -166,7 +159,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         [createPrimaryAction, linkPrimaryAction, ...primaryActions].filter(Boolean)
     );
 
-    const {viewSettingsButton} = useOpenViewSettings(view);
+    const {viewSettingsButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
 
     const {searchInput} = useSearchInput({view, dispatch});
 
@@ -192,9 +185,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     )}
                 </ExplorerHeaderDivStyled>
                 {!viewSettingsLoading && (
-                    <ExplorerToolbar libraryId={view.libraryId} isMassSelectionAll={isMassSelectionAll}>
-                        {selectAllButton}
-                    </ExplorerToolbar>
+                    <ExplorerToolbar isMassSelectionAll={isMassSelectionAll}>{selectAllButton}</ExplorerToolbar>
                 )}
                 {loadingData || viewSettingsLoading ? (
                     <Loading />

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import styled from 'styled-components';
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent} from 'react';
 import {KitButton, KitInput, KitTypography} from 'aristid-ds';
 import {FaFilter, FaList, FaSave, FaShare, FaSortAlphaDown, FaUndo} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -14,7 +14,7 @@ import {useViewSettingsContext} from '../store-view-settings/useViewSettingsCont
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {SettingsPanelPages} from '../open-view-settings/EditSettingsContext';
 import {useOpenViewSettings} from '../open-view-settings/useOpenViewSettings';
-import {SaveViewModal} from '../save-view/SaveViewModal';
+import {useSaveView} from '../save-view/useSaveView';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -44,14 +44,10 @@ interface ISettingsPanelProps {
 
 export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, page = 'router-menu'}) => {
     const {t} = useSharedTranslation();
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const {view, dispatch} = useViewSettingsContext();
-    const {openSettingsPanel, viewName} = useOpenViewSettings(view);
-
-    const _toggleModal = () => {
-        setIsModalOpen(!isModalOpen);
-    };
+    const {openSettingsPanel, viewName} = useOpenViewSettings({view});
+    const {saveViewModal, toggleModal} = useSaveView();
 
     const _handleReinitView = () => {
         dispatch({type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS});
@@ -88,9 +84,9 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                             )}
                         </ConfigurationStyledMenu>
                     </nav>
-                    <SaveViewModal isOpen={isModalOpen} onClose={_toggleModal} />
+                    {saveViewModal}
                     <FooterStyledDiv>
-                        <KitButton type="redirect" icon={<FaSave />} onClick={_toggleModal}>
+                        <KitButton type="redirect" icon={<FaSave />} onClick={toggleModal}>
                             {t('explorer.save-view')}
                         </KitButton>
                         <KitButton type="redirect" icon={<FaShare />} onClick={() => null}>

@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ComponentProps, FunctionComponent} from 'react';
-import {KitButton, KitDivider, KitFilter, KitSpace} from 'aristid-ds';
-import {FaTrash} from 'react-icons/fa';
+import {KitDivider, KitFilter, KitSpace} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SortOrder} from '_ui/_gqlTypes';
@@ -37,17 +36,16 @@ const DividerStyled = styled(KitDivider)`
 `;
 
 export const ExplorerToolbar: FunctionComponent<{
-    libraryId: string;
     isMassSelectionAll: boolean;
-}> = ({libraryId, isMassSelectionAll, children}) => {
+}> = ({isMassSelectionAll, children}) => {
     const {t} = useSharedTranslation();
 
     const {view} = useViewSettingsContext();
     const {filters, sort} = view;
 
-    const {openSettingsPanel} = useOpenViewSettings(view);
+    const {openSettingsPanel} = useOpenViewSettings({view});
 
-    const {attributeDetailsById} = useAttributeDetailsData(libraryId);
+    const {attributeDetailsById} = useAttributeDetailsData(view.libraryId);
 
     if (filters.length === 0 && sort.length === 0 && children === null) {
         return null;

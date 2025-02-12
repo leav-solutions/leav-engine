@@ -15,7 +15,7 @@ export interface IEditSettingsContext {
     setActiveSettings: (params: IActiveSettings) => void;
     activeSettings: null | IActiveSettings;
     panelElement: (() => Element | DocumentFragment) | null;
-    onClose: () => void;
+    closeSettingsPanel: () => void;
 }
 
 export const EditSettingsContext = createContext<IEditSettingsContext>({
@@ -24,7 +24,7 @@ export const EditSettingsContext = createContext<IEditSettingsContext>({
     },
     activeSettings: null,
     panelElement: null,
-    onClose: () => {
-        throw new Error('Not implemented');
+    closeSettingsPanel: () => {
+        throw new Error('Element must be wrapped into EditSettingsContextProvider');
     }
 });

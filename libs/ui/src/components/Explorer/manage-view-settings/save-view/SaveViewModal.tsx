@@ -19,7 +19,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
     const {defaultLang, availableLangs} = useLang();
 
     const {view} = useViewSettingsContext();
-    const {handleSaveView} = useManageViews(view.libraryId);
+    const {handleSaveView} = useManageViews();
 
     const [form] = AntForm.useForm();
 
@@ -67,7 +67,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
                 </>
             }
         >
-            <AntForm name="label" form={form} initialValues={{...view.viewLabel}}>
+            <AntForm name="label" form={form} initialValues={{...view.viewLabels}}>
                 <KitInputWrapper label={String(t('explorer.view-name'))}>
                     {availableLangs.map((lang, index) => (
                         <AntForm.Item

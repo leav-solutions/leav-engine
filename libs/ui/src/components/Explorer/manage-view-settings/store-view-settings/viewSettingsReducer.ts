@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {v4 as uuid} from 'uuid';
-import {SortOrder, RecordFilterCondition, AttributeFormat} from '_ui/_gqlTypes';
+import {SortOrder, AttributeFormat} from '_ui/_gqlTypes';
 import {
     Entrypoint,
     ExplorerFilter,
@@ -46,7 +46,7 @@ export const ViewSettingsActionTypes = {
 export interface IViewSettingsState {
     libraryId: string;
     viewId?: string;
-    viewLabel?: Record<string, string>;
+    viewLabels?: Record<string, string>;
     entrypoint: Entrypoint;
     viewType: ViewType;
     attributesIds: string[];
@@ -341,7 +341,7 @@ const restoreInitialViewSettings: Reducer = state => ({
 
 const updateViewName: Reducer<IViewSettingsActionUpdateViewName> = (state, payload) => ({
     ...state,
-    viewLabel: payload
+    viewLabels: payload
 });
 
 export type IViewSettingsAction =

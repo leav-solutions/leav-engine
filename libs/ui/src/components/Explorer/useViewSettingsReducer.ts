@@ -23,7 +23,12 @@ import {
     IExplorerFilterThrough
 } from './_types';
 import {v4 as uuid} from 'uuid';
-import {IViewSettingsState, viewSettingsInitialState, viewSettingsReducer} from './manage-view-settings';
+import {
+    IViewSettingsState,
+    useEditSettings,
+    viewSettingsInitialState,
+    viewSettingsReducer
+} from './manage-view-settings';
 import {mapViewTypeFromLegacyToExplorer} from './_constants';
 import {ThroughConditionFilter} from '_ui/types';
 import {isLinkAttribute, isStandardAttribute} from '_ui/_utils/attributeType';
@@ -67,6 +72,7 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
     const [loading, setLoading] = useState(true);
     const [libraryId, setLibraryId] = useState(entrypoint.type === 'library' ? entrypoint.libraryId : null);
     const [view, dispatch] = useReducer(viewSettingsReducer, viewSettingsInitialState);
+    const {closeSettingsPanel} = useEditSettings();
     const entrypointsAreEqual = _entrypointsAreEqual(entrypoint, view.entrypoint);
 
     useExplorerLinkAttributeQuery({
@@ -182,6 +188,12 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
     }, [entrypoint]);
 
     useEffect(() => {
+        if (!entrypointsAreEqual) {
+            closeSettingsPanel();
+        }
+    }, [entrypointsAreEqual]);
+
+    useEffect(() => {
         if (libraryId !== null && !viewsLoading && !attributesLoading) {
             const allFilters = [...preparedDefaultFilters, ...userViewFilters];
 
@@ -190,7 +202,7 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                 entrypoint,
                 libraryId,
                 viewId: userView?.id,
-                viewLabel: userView?.label ?? {},
+                viewLabels: userView?.label ?? {},
                 viewType: userView?.display
                     ? mapViewTypeFromLegacyToExplorer[userView.display.type]
                     : viewSettingsInitialState.viewType,

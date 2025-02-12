@@ -17,7 +17,7 @@ import {DefaultViewSettings} from '../_types';
 import {IViewSettingsState} from './store-view-settings/viewSettingsReducer';
 
 const MockOpenEditSettings: FunctionComponent = () => {
-    const {viewSettingsButton} = useOpenViewSettings({} as IViewSettingsState);
+    const {viewSettingsButton} = useOpenViewSettings({view: {}} as {view: IViewSettingsState});
 
     return <>{viewSettingsButton}</>;
 };
@@ -241,7 +241,7 @@ describe('Integration tests about managing view settings feature', () => {
             const timeout = r => setTimeout(r, 350);
 
             render(
-                <EditSettingsContextProvider>
+                <EditSettingsContextProvider panelElement={() => document.body}>
                     <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
@@ -347,10 +347,12 @@ describe('Integration tests about managing view settings feature', () => {
             await userEvent.click(screen.getByRole('button', {name: /default-view/}));
 
             await userEvent.click(screen.getByRole('link', {name: /save/}));
+            // hidden: true car l'ouverture de la Modal met un aria-label: hidden sur le body
             const closeButton = screen.getByRole('button', {name: 'global.close', hidden: true});
             expect(closeButton).toBeVisible();
             await userEvent.click(closeButton);
             expect(closeButton).not.toBeVisible();
+            expect(mockSaveViewMutation).not.toHaveBeenCalled();
 
             await userEvent.click(screen.getByRole('link', {name: /save/}));
             const saveButton = screen.getByRole('button', {name: 'global.save', hidden: true});
@@ -363,7 +365,7 @@ describe('Integration tests about managing view settings feature', () => {
                 .getAllByRole('textbox', {hidden: true})
                 .filter(r => r.getAttribute('aria-required') === 'true');
 
-            await userEvent.type(requiredInput, 'View Name Required{Enter}');
+            await userEvent.type(requiredInput, 'Nom de ma vue requis{Enter}');
 
             // Timeout for secureClick
             await userEvent.click(saveButton, {delay: 1000});
@@ -376,7 +378,7 @@ describe('Integration tests about managing view settings feature', () => {
                             display: {type: 'list'},
                             filters: [],
                             id: '42',
-                            label: {fr: 'View Name Required', en: 'My view'},
+                            label: {fr: 'Nom de ma vue requis', en: 'My view'},
                             library: 'my_lib',
                             shared: false,
                             sort: []

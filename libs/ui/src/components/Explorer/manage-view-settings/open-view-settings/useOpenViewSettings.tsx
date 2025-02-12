@@ -9,7 +9,7 @@ import {useEditSettings} from './useEditSettings';
 import {SettingsPanelPages} from './EditSettingsContext';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
-import {useEffect, useState} from 'react';
+import {ReactElement, useEffect, useState} from 'react';
 import {IViewSettingsState} from '../store-view-settings/viewSettingsReducer';
 
 interface IChangePanelPage {
@@ -18,12 +18,18 @@ interface IChangePanelPage {
     onClickLeftButton?: () => void;
 }
 
-export const useOpenViewSettings = (view: IViewSettingsState) => {
-    const {activeSettings, setActiveSettings} = useEditSettings();
-    const [button, setButton] = useState<any>(null);
+export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettingsState; isEnabled?: boolean}) => {
+    const {activeSettings, setActiveSettings, closeSettingsPanel} = useEditSettings();
+    const [button, setButton] = useState<ReactElement | null>(null);
 
     const {t} = useSharedTranslation();
     const {lang} = useLang();
+
+    useEffect(() => {
+        if (!isEnabled) {
+            closeSettingsPanel();
+        }
+    }, [isEnabled]);
 
     const rootPanel = {pageName: 'router-menu', title: t('explorer.settings')} as const;
 
@@ -50,8 +56,8 @@ export const useOpenViewSettings = (view: IViewSettingsState) => {
         _changePanelPage(chanelPageParams);
     };
 
-    let viewName = localizedTranslation(view?.viewLabel ?? {}, lang);
-    viewName = viewName !== '' ? viewName : t('explorer.default-view');
+    let viewName = localizedTranslation(view?.viewLabels ?? {}, lang);
+    viewName = viewName === '' ? t('explorer.default-view') : viewName;
 
     useEffect(() => {
         setButton(
@@ -64,7 +70,7 @@ export const useOpenViewSettings = (view: IViewSettingsState) => {
                 {viewName}
             </KitButton>
         );
-    }, [viewName, view?.viewLabel]);
+    }, [viewName]);
 
     return {
         openSettingsPanel: _openSettingsPanel,
