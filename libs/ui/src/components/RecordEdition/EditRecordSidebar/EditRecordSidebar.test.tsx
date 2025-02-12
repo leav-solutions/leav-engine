@@ -135,7 +135,7 @@ describe('EditRecordSidebar', () => {
                 </EditRecordReducerContext.Provider>
             );
 
-            expect(screen.getByText(attribute.format)).toBeInTheDocument();
+            expect(screen.getByText('attributes.format_text')).toBeInTheDocument();
             expect(screen.getByText(attribute.description.fr)).toBeInTheDocument();
         });
     });

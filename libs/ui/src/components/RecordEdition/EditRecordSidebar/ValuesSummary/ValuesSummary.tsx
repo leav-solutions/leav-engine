@@ -20,8 +20,17 @@ interface IValuesSummaryProps {
 const calculatedValueKey = '0';
 const globalValueKey = '1';
 
+// https://stackoverflow.com/questions/822452/strip-html-tags-from-text-using-plain-javascript
+const stripHtml = (html: string): string => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+};
+
 export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({globalValues = [], calculatedValue}) => {
     const {t} = useSharedTranslation();
+
+    const stripedGlobalValues = globalValues.map(value => (typeof value === 'string' ? stripHtml(value) : value));
+    const stripedCalculatedValue = typeof calculatedValue === 'string' ? stripHtml(calculatedValue) : calculatedValue;
 
     return (
         <KitTabs
@@ -52,13 +61,16 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({globalVal
                                                 <span>
                                                     <FaSquareRootAlt /> {t('record_summary.calculated_value')}
                                                 </span>
-                                                <KitBadge count={calculatedValue ? 1 : undefined} color="primary" />
+                                                <KitBadge
+                                                    count={stripedCalculatedValue ? 1 : undefined}
+                                                    color="primary"
+                                                />
                                             </div>
                                         ),
                                         children: [
                                             {
                                                 key: `${calculatedValueKey}-0`,
-                                                title: calculatedValue ?? <i>{t('record_summary.no_value')}</i>
+                                                title: stripedCalculatedValue ?? <i>{t('record_summary.no_value')}</i>
                                             }
                                         ]
                                     },
@@ -75,12 +87,12 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({globalVal
                                                 <span>
                                                     <FaLayerGroup /> {t('record_summary.global')}
                                                 </span>
-                                                <KitBadge count={globalValues.length} color="primary" />
+                                                <KitBadge count={stripedGlobalValues.length} color="primary" />
                                             </div>
                                         ),
                                         children:
-                                            globalValues.length > 0
-                                                ? globalValues.map((value, index) => ({
+                                            stripedGlobalValues.length > 0
+                                                ? stripedGlobalValues.map((value, index) => ({
                                                       key: `${globalValueKey}-${index}`,
                                                       title:
                                                           value && value.from
