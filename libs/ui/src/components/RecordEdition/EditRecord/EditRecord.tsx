@@ -9,8 +9,8 @@ import {useCanEditRecord} from '../../../hooks/useCanEditRecord';
 import {IValueVersion} from '../../../types/values';
 import {
     AttributeType,
+    RecordFormAttributeStandardAttributeFragment,
     RecordIdentityFragment,
-    useCreateRecordMutation,
     ValueBatchInput,
     ValueDetailsFragment,
     ValueDetailsLinkValueFragment,
@@ -47,6 +47,7 @@ import EditRecordSidebar from '../EditRecordSidebar';
 import EditRecordSkeleton from '../EditRecordSkeleton';
 import {useQuery} from '@apollo/client';
 import {getLibraryByIdQuery} from '_ui/_queries/libraries/getLibraryByIdQuery';
+import useExecuteCreateRecordMutation from '../EditRecordContent/hooks/useCreateRecordMutation';
 
 interface IEditRecordProps {
     antdForm: FormInstance;
@@ -126,7 +127,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
 
     const {saveValues} = useSaveValueBatchMutation();
     const {deleteValue} = useExecuteDeleteValueMutation(record);
-    const [createRecord] = useCreateRecordMutation();
+    const {createRecord} = useExecuteCreateRecordMutation();
 
     const [creationErrors, setCreationErrors] = useState<ICreationErrorByField>({});
 
@@ -355,7 +356,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     /**
      * Submit the whole record: create record and batch save all stored values
      */
-    const _handleRecordSubmit = async () => {
+    const _handleRecordSubmit = async (attributes: RecordFormAttributeStandardAttributeFragment[]) => {
         const currentPendingValues = pendingValuesRef.current ?? {};
 
         if (state.record) {
@@ -396,36 +397,38 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             []
         );
 
-        const creationResult = await createRecord({variables: {library: libraryId, data: {values: valuesToSave}}});
-
-        if (creationResult.data.createRecord.valuesErrors?.length) {
-            // Extract errors by field
-            const errorsByField = creationResult.data.createRecord.valuesErrors.reduce((errors, error) => {
-                if (!errors[error.attribute]) {
-                    errors[error.attribute] = [];
-                }
-
-                errors[error.attribute].push(error);
-
-                return errors;
-            }, {});
-            setCreationErrors(errorsByField);
-
-            antdForm.setFields(
-                creationResult.data.createRecord.valuesErrors.map(error => ({
-                    name: error.attribute,
-                    errors: [error.message]
-                }))
-            );
-
+        const creationResult = await createRecord(libraryId, valuesToSave);
+        if (creationResult.status === APICallStatus.SUCCESS) {
+            if (onCreate) {
+                onCreate(creationResult.record);
+            }
             return;
         }
 
-        const newRecord = creationResult.data.createRecord.record.whoAmI;
+        // Extract errors by field
+        const errorsByField = creationResult.errors.reduce((errors, error) => {
+            if (!errors[error.attribute]) {
+                errors[error.attribute] = [];
+            }
 
-        if (onCreate) {
-            onCreate(newRecord);
-        }
+            errors[error.attribute].push(error);
+
+            return errors;
+        }, {});
+        setCreationErrors(errorsByField);
+
+        antdForm.setFields(
+            creationResult.errors.map(error => ({
+                name:
+                    attributes.find(attribute => attribute.id === error.attribute)?.multiple_values &&
+                    error.type === 'REQUIRED_ATTRIBUTE'
+                        ? [error.attribute, 0]
+                        : error.attribute,
+                errors: [error.message]
+            }))
+        );
+
+        return;
     };
 
     const _handleDeleteValue: DeleteValueFunc = async (value, attribute) => {
