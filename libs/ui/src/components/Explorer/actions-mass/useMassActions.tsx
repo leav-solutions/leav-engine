@@ -9,12 +9,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
 import {IMassActions} from '../_types';
 import {MASS_SELECTION_ALL} from '../_constants';
-import {
-    IViewSettingsAction,
-    IViewSettingsState,
-    useEditSettings,
-    ViewSettingsActionTypes
-} from '../manage-view-settings';
+import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {prepareFiltersForRequest} from '../_queries/prepareFiltersForRequest';
 import {MassSelection} from '../manage-view-settings/store-view-settings/viewSettingsReducer';
 
@@ -47,7 +42,6 @@ export const useMassActions = ({
     massActions: IMassActions[];
 }) => {
     const {t} = useSharedTranslation();
-    const {onClose} = useEditSettings();
 
     useEffect(() => {
         if (view.massSelection === MASS_SELECTION_ALL || view.massSelection.length !== 0) {
@@ -135,7 +129,6 @@ export const useMassActions = ({
                             if (hasSelectedAllAvailableItems) {
                                 _setSelectedKeys([]);
                             } else {
-                                onClose();
                                 _setSelectedKeys(MASS_SELECTION_ALL);
                             }
                         }
