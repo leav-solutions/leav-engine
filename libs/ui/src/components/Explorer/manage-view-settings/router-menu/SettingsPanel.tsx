@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import styled from 'styled-components';
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent} from 'react';
 import {KitButton, KitInput, KitTypography} from 'aristid-ds';
 import {FaFilter, FaList, FaSave, FaShare, FaSortAlphaDown, FaUndo} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -87,7 +87,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                     </nav>
                     {saveViewModal}
                     <FooterStyledDiv>
-                        <KitButton type="redirect" icon={<FaSave />} onClick={_toggleModal}>
+                        <KitButton type="redirect" icon={<FaSave />} onClick={toggleModal}>
                             {t('explorer.save-view')}
                         </KitButton>
                         <KitButton type="redirect" icon={<FaShare />} onClick={() => null}>

@@ -5,21 +5,17 @@ import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
 import {isExplorerFilterThrough} from '../_types';
 import {mapViewTypeFromExplorerToLegacy} from '../_constants';
 import {useViewSettingsContext} from './store-view-settings/useViewSettingsContext';
+import {ViewSettingsActionTypes} from './store-view-settings/viewSettingsReducer';
 
-/**
- * Hook used to manage the views : load save and reset
- *
- * @param libraryId - library Id
- */
-export const useManageViews = (libraryId: string) => {
-    const {view} = useViewSettingsContext();
+export const useManageViews = () => {
+    const {view, dispatch} = useViewSettingsContext();
     const {saveView} = useExecuteSaveViewMutation();
 
-    const _handleSaveView = (label: Record<string, string>) => {
-        saveView({
+    const _handleSaveView = async (label: Record<string, string>) => {
+        const res = await saveView({
             view: {
                 id: view.viewId,
-                library: libraryId,
+                library: view.libraryId,
                 shared: false,
                 display: {
                     type: mapViewTypeFromExplorerToLegacy[view.viewType]
@@ -42,6 +38,13 @@ export const useManageViews = (libraryId: string) => {
                 label
             }
         });
+
+        if (res.data) {
+            dispatch({
+                type: ViewSettingsActionTypes.UPDATE_VIEW_NAME,
+                payload: res.data?.saveView.label
+            });
+        }
     };
 
     return {
