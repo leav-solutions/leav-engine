@@ -6,6 +6,7 @@ import {IVariableValue} from 'domain/helpers/calculationVariable';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IActionsListContext} from '_types/actionsList';
 import {TypeGuards} from '../../../utils';
+import {IDateRangeValue} from '../../../_types/value';
 
 interface IDeps {
     'core.domain.record': IRecordDomain;
@@ -36,6 +37,21 @@ export default function ({
             ...inputValue[inputValue.length - 1]
         }
     ];
+
+    const firstDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
+        {
+            ...inputValue[0],
+            payload: (inputValue[0].payload as IDateRangeValue).from
+        }
+    ];
+
+    const lastDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
+        {
+            ...inputValue[0],
+            payload: (inputValue[0].payload as IDateRangeValue).to
+        }
+    ];
+
     const sum = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
             ...inputValue[0],
@@ -45,6 +61,7 @@ export default function ({
             }, 0)
         }
     ];
+
     const avg = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
             ...inputValue[0],
@@ -55,6 +72,7 @@ export default function ({
                 }, 0) / inputValue.length
         }
     ];
+
     const concat = async (
         context: IActionsListContext,
         inputValue: IVariableValue[],
@@ -162,6 +180,14 @@ export default function ({
         },
         getValue: {
             run: getValue,
+            after: []
+        },
+        firstDate: {
+            run: firstDate,
+            after: []
+        },
+        lastDate: {
+            run: lastDate,
             after: []
         }
     };

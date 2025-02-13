@@ -60,6 +60,30 @@ describe('calculationsVariableFunctions', () => {
         expect(res[0].payload).toBe('meh');
     });
 
+    test('test get first date', async () => {
+        const res = await calculationFunctions.firstDate.run(
+            ctx,
+            [{payload: {from: 17438843200, to: 1742472000}}],
+            ['attributeKey']
+        );
+
+        expect(res).toHaveLength(1);
+        expect(res[0]).toHaveProperty('payload');
+        expect(res[0].payload).toBe(17438843200);
+    });
+
+    test('test get last date', async () => {
+        const res = await calculationFunctions.lastDate.run(
+            ctx,
+            [{payload: {from: 17438843200, to: 1742472000}}],
+            ['attributeKey']
+        );
+
+        expect(res).toHaveLength(1);
+        expect(res[0]).toHaveProperty('payload');
+        expect(res[0].payload).toBe(1742472000);
+    });
+
     test('test first', async () => {
         const res = await calculationFunctions.first.run(ctx, [{payload: 'meh'}, {payload: 'meh2'}], ['toto']);
         expect(res).toHaveLength(1);
