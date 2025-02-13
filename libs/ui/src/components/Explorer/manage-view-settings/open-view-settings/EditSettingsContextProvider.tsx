@@ -13,7 +13,7 @@ export const EditSettingsContextProvider: FunctionComponent<IEditSettingsContext
     panelElement
 }) => {
     const [activeSettings, setActiveSettings] = useState<IEditSettingsContext['activeSettings']>(null);
-    const onClose = () => setActiveSettings(null);
+    const closeSettingsPanel = () => setActiveSettings(null);
 
     return (
         <EditSettingsContext.Provider
@@ -21,7 +21,7 @@ export const EditSettingsContextProvider: FunctionComponent<IEditSettingsContext
                 activeSettings,
                 setActiveSettings,
                 panelElement: panelElement ?? null,
-                onClose
+                closeSettingsPanel
             }}
         >
             {children}

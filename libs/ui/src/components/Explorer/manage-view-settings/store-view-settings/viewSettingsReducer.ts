@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {v4 as uuid} from 'uuid';
-import {SortOrder, RecordFilterCondition, AttributeFormat} from '_ui/_gqlTypes';
+import {SortOrder, AttributeFormat} from '_ui/_gqlTypes';
 import {
     Entrypoint,
     ExplorerFilter,
@@ -39,12 +39,14 @@ export const ViewSettingsActionTypes = {
     MOVE_FILTER: 'MOVE_FILTER',
     CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG',
     SET_SELECTED_KEYS: 'SET_SELECTED_KEYS',
-    RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS'
+    RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS',
+    UPDATE_VIEW_NAME: 'UPDATE_VIEW_NAME'
 } as const;
 
 export interface IViewSettingsState {
     libraryId: string;
     viewId?: string;
+    viewLabels?: Record<string, string>;
     entrypoint: Entrypoint;
     viewType: ViewType;
     attributesIds: string[];
@@ -164,6 +166,11 @@ interface IViewSettingsActionSetSelectedKeys {
 
 interface IViewSettingsActionRestoreInitialViewSettings {
     type: typeof ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS;
+}
+
+interface IViewSettingsActionUpdateViewName {
+    type: typeof ViewSettingsActionTypes.UPDATE_VIEW_NAME;
+    payload: Record<string, string>;
 }
 
 type Reducer<
@@ -332,6 +339,11 @@ const restoreInitialViewSettings: Reducer = state => ({
     ...state.initialViewSettings
 });
 
+const updateViewName: Reducer<IViewSettingsActionUpdateViewName> = (state, payload) => ({
+    ...state,
+    viewLabels: payload
+});
+
 export type IViewSettingsAction =
     | IViewSettingsActionResetAttributes
     | IViewSettingsActionAddAttribute
@@ -352,7 +364,8 @@ export type IViewSettingsAction =
     | IViewSettingsActionMoveFilter
     | IViewSettingsActionReset
     | IViewSettingsActionSetSelectedKeys
-    | IViewSettingsActionRestoreInitialViewSettings;
+    | IViewSettingsActionRestoreInitialViewSettings
+    | IViewSettingsActionUpdateViewName;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -415,6 +428,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS: {
             return restoreInitialViewSettings(state);
+        }
+        case ViewSettingsActionTypes.UPDATE_VIEW_NAME: {
+            return updateViewName(state, action.payload);
         }
         default:
             return state;

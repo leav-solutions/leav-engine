@@ -7,6 +7,10 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SettingsPanel} from '../router-menu/SettingsPanel';
 import {useEditSettings} from './useEditSettings';
 import {SettingsPanelPages} from './EditSettingsContext';
+import {localizedTranslation} from '@leav/utils';
+import {useLang} from '_ui/hooks';
+import {ReactElement, useEffect, useState} from 'react';
+import {IViewSettingsState} from '../store-view-settings/viewSettingsReducer';
 
 interface IChangePanelPage {
     pageName: SettingsPanelPages;
@@ -14,17 +18,25 @@ interface IChangePanelPage {
     onClickLeftButton?: () => void;
 }
 
-export const useOpenViewSettings = (library: string) => {
-    const {activeSettings, setActiveSettings} = useEditSettings();
+export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettingsState; isEnabled?: boolean}) => {
+    const {activeSettings, setActiveSettings, closeSettingsPanel} = useEditSettings();
+    const [button, setButton] = useState<ReactElement | null>(null);
 
     const {t} = useSharedTranslation();
+    const {lang} = useLang();
+
+    useEffect(() => {
+        if (!isEnabled) {
+            closeSettingsPanel();
+        }
+    }, [isEnabled]);
 
     const rootPanel = {pageName: 'router-menu', title: t('explorer.settings')} as const;
 
     const _changePanelPage = ({pageName, title, onClickLeftButton}: IChangePanelPage) => {
         setActiveSettings({
             ...activeSettings!,
-            content: <SettingsPanel library={library} page={pageName} />,
+            content: <SettingsPanel library={view.libraryId} page={pageName} />,
             title,
             onClickLeftButton
         });
@@ -44,15 +56,25 @@ export const useOpenViewSettings = (library: string) => {
         _changePanelPage(chanelPageParams);
     };
 
-    return {
-        openSettingsPanel: _openSettingsPanel,
-        viewSettingsButton: (
+    let viewName = localizedTranslation(view?.viewLabels ?? {}, lang);
+    viewName = viewName === '' ? t('explorer.default-view') : viewName;
+
+    useEffect(() => {
+        setButton(
             <KitButton
                 type="secondary"
                 icon={<FaSlidersH />}
                 onClick={() => _openSettingsPanel()}
                 title={String(t('explorer.settings')) /* TODO: avoid transform null to 'null' */}
-            />
-        )
+            >
+                {viewName}
+            </KitButton>
+        );
+    }, [viewName]);
+
+    return {
+        openSettingsPanel: _openSettingsPanel,
+        viewSettingsButton: button,
+        viewName
     };
 };

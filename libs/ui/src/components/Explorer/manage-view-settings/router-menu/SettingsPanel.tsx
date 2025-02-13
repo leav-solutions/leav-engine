@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import styled from 'styled-components';
 import {FunctionComponent} from 'react';
-import {KitButton, KitTypography} from 'aristid-ds';
+import {KitButton, KitInput, KitTypography} from 'aristid-ds';
 import {FaFilter, FaList, FaSave, FaShare, FaSortAlphaDown, FaUndo} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ConfigureDisplay} from '../configure-display/ConfigureDisplay';
@@ -11,20 +11,20 @@ import {SortItems} from '../sort-items/SortItems';
 import {SettingItem} from './SettingItem';
 import {FilterItems} from '../filter-items/FilterItems';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
-import {useLang} from '_ui/hooks';
-import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {SettingsPanelPages} from '../open-view-settings/EditSettingsContext';
 import {useOpenViewSettings} from '../open-view-settings/useOpenViewSettings';
-import {isExplorerFilterThrough} from '../../_types';
+import {useSaveView} from '../save-view/useSaveView';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
     flex-direction: column;
-    gap: calc(var(--general-spacing-s) * 1px);
     justify-content: space-between;
     height: 100%;
+`;
+
+const ViewNameStyledKitInput = styled(KitInput)`
+    margin-bottom: calc(var(--general-spacing-s) * 1px);
 `;
 
 const FooterStyledDiv = styled.footer`
@@ -44,44 +44,10 @@ interface ISettingsPanelProps {
 
 export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, page = 'router-menu'}) => {
     const {t} = useSharedTranslation();
-    const {defaultLang} = useLang();
 
-    const {openSettingsPanel} = useOpenViewSettings(library);
     const {view, dispatch} = useViewSettingsContext();
-
-    const {saveView} = useExecuteSaveViewMutation();
-
-    const _handleSaveView = () => {
-        saveView({
-            view: {
-                id: view.viewId,
-                library,
-                shared: false,
-                display: {
-                    type: mapViewTypeFromExplorerToLegacy[view.viewType]
-                },
-                filters: view.filters.map(filter =>
-                    isExplorerFilterThrough(filter)
-                        ? {
-                              field: `${filter.field}.${filter.subField}`,
-                              value: filter.value,
-                              condition: filter.subCondition
-                          }
-                        : {
-                              field: filter.field,
-                              value: filter.value,
-                              condition: filter.condition
-                          }
-                ),
-                sort: view.sort.map(({field: attributeId, order}) => ({field: attributeId, order})),
-                attributes: view.attributesIds,
-                label: {
-                    //TODO: add a better label when view management is more advanced
-                    [defaultLang]: 'user view'
-                }
-            }
-        });
-    };
+    const {openSettingsPanel, viewName} = useOpenViewSettings({view});
+    const {saveViewModal, toggleModal} = useSaveView();
 
     const _handleReinitView = () => {
         dispatch({type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS});
@@ -93,6 +59,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
             {page === 'router-menu' && (
                 <>
                     <nav>
+                        <ViewNameStyledKitInput disabled value={viewName} />
                         <KitTypography.Title level="h4">{t('explorer.router-menu')}</KitTypography.Title>
                         <ConfigurationStyledMenu>
                             <SettingItem
@@ -117,9 +84,9 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                             )}
                         </ConfigurationStyledMenu>
                     </nav>
-                    {/* TODO: Rename "redirect" buttons to "action" */}
+                    {saveViewModal}
                     <FooterStyledDiv>
-                        <KitButton type="redirect" icon={<FaSave />} onClick={_handleSaveView}>
+                        <KitButton type="redirect" icon={<FaSave />} onClick={toggleModal}>
                             {t('explorer.save-view')}
                         </KitButton>
                         <KitButton type="redirect" icon={<FaShare />} onClick={() => null}>

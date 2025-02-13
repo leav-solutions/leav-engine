@@ -9,7 +9,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 export const SidePanel: FunctionComponent = () => {
     const {t} = useSharedTranslation();
 
-    const {activeSettings, onClose} = useEditSettings();
+    const {activeSettings, closeSettingsPanel} = useEditSettings();
 
     if (!activeSettings) {
         return null;
@@ -27,14 +27,13 @@ export const SidePanel: FunctionComponent = () => {
             floating
             closable
             closeOnEsc
-            closeOnOutsideClick
             idCardProps={{title: activeSettings.title}}
             leftActionProps={
                 activeSettings.onClickLeftButton
                     ? {onClick: activeSettings.onClickLeftButton, ...makeA11yBackButton}
                     : undefined
             }
-            onClose={onClose}
+            onClose={closeSettingsPanel}
         >
             {activeSettings.content}
         </KitSidePanel>

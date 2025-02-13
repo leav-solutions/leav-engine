@@ -159,7 +159,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         [createPrimaryAction, linkPrimaryAction, ...primaryActions].filter(Boolean)
     );
 
-    const {viewSettingsButton} = useOpenViewSettings(view.libraryId);
+    const {viewSettingsButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
 
     const {searchInput} = useSearchInput({view, dispatch});
 
@@ -185,9 +185,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     )}
                 </ExplorerHeaderDivStyled>
                 {!viewSettingsLoading && (
-                    <ExplorerToolbar libraryId={view.libraryId} isMassSelectionAll={isMassSelectionAll}>
-                        {selectAllButton}
-                    </ExplorerToolbar>
+                    <ExplorerToolbar isMassSelectionAll={isMassSelectionAll}>{selectAllButton}</ExplorerToolbar>
                 )}
                 {loadingData || viewSettingsLoading ? (
                     <Loading />
