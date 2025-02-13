@@ -47,7 +47,7 @@ export const ViewSettingsActionTypes = {
 export interface IViewSettingsState {
     libraryId: string;
     viewId?: string;
-    viewLabels?: Record<string, string>;
+    viewLabels?: SystemTranslation;
     entrypoint: Entrypoint;
     viewType: ViewType;
     savedViews: IUserView[];
