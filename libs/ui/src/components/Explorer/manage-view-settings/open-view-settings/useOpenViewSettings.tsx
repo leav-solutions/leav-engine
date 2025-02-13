@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitButton} from 'aristid-ds';
-import {FaSlidersH} from 'react-icons/fa';
+import {FaBars, FaSlidersH} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SettingsPanel} from '../router-menu/SettingsPanel';
 import {useEditSettings} from './useEditSettings';
@@ -21,6 +21,7 @@ interface IChangePanelPage {
 export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettingsState; isEnabled?: boolean}) => {
     const {activeSettings, setActiveSettings, closeSettingsPanel} = useEditSettings();
     const [button, setButton] = useState<ReactElement | null>(null);
+    const [viewListButton, setViewListButton] = useState<any>(null);
 
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -56,8 +57,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettin
         _changePanelPage(chanelPageParams);
     };
 
-    let viewName = localizedTranslation(view?.viewLabels ?? {}, lang);
-    viewName = viewName === '' ? t('explorer.default-view') : viewName;
+    const viewName = localizedTranslation(view?.viewLabels ?? {}, lang);
 
     useEffect(() => {
         setButton(
@@ -66,8 +66,16 @@ export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettin
                 icon={<FaSlidersH />}
                 onClick={() => _openSettingsPanel()}
                 title={String(t('explorer.settings')) /* TODO: avoid transform null to 'null' */}
+            ></KitButton>
+        );
+        setViewListButton(
+            <KitButton
+                type="secondary"
+                icon={<FaBars />}
+                onClick={() => _openSettingsPanel('my-views')}
+                title={String(t('explorer.manage-views')) /* TODO: avoid transform null to 'null' */}
             >
-                {viewName}
+                {viewName !== '' ? viewName : t('explorer.manage-views')}
             </KitButton>
         );
     }, [viewName]);
@@ -75,6 +83,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettin
     return {
         openSettingsPanel: _openSettingsPanel,
         viewSettingsButton: button,
-        viewName
+        viewListButton,
+        viewName: viewName !== '' ? viewName : t('explorer.default-view')
     };
 };

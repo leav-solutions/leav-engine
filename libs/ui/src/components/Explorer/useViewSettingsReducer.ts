@@ -20,7 +20,8 @@ import {
     IEntrypointLink,
     IExplorerFilterLink,
     IExplorerFilterStandard,
-    IExplorerFilterThrough
+    IExplorerFilterThrough,
+    IUserView
 } from './_types';
 import {v4 as uuid} from 'uuid';
 import {
@@ -102,6 +103,12 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
     });
     // Take the last view from the array
     const userView = viewData?.views?.list?.at(-1);
+
+    const savedViews: IUserView[] = (viewData?.views.list ?? []).map(({id, label, shared}) => ({
+        id,
+        label,
+        shared
+    }));
 
     const userViewFilters =
         userView?.filters?.reduce<Array<ValidFieldFilter | ValidFieldFilterThrough>>((acc, filter) => {
@@ -206,6 +213,7 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                 viewType: userView?.display
                     ? mapViewTypeFromLegacyToExplorer[userView.display.type]
                     : viewSettingsInitialState.viewType,
+                savedViews,
                 ...defaultViewSettings,
                 attributesIds: [
                     ...(userView?.attributes ?? []).map(attr => attr.id),

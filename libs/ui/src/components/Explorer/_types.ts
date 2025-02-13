@@ -14,6 +14,7 @@ import {
 import {ReactElement} from 'react';
 import {IViewSettingsState} from './manage-view-settings';
 import {ThroughConditionFilter} from '_ui/types/search';
+import {IView} from '_ui/types';
 
 export interface IExplorerData {
     totalCount: number;
@@ -142,3 +143,9 @@ export interface IEntrypointLink {
 }
 
 export type Entrypoint = IEntrypointTree | IEntrypointLibrary | IEntrypointLink;
+
+export interface IUserView {
+    id: IView['id'];
+    label: Record<string, string>;
+    shared: IView['shared'];
+}

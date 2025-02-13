@@ -10,6 +10,7 @@ export const defaultMaxFilters = 3;
 export const viewSettingsInitialState: IViewSettingsState = {
     libraryId: '',
     viewType: 'table',
+    savedViews: [],
     entrypoint: {
         type: 'library',
         libraryId: ''

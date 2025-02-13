@@ -1541,7 +1541,7 @@ describe('Explorer', () => {
             // AND every feature is available
             expect(screen.getByRole('button', {name: /create-one/})).toBeVisible();
             expect(screen.getByRole('textbox', {name: /search/})).toBeVisible();
-            expect(screen.getByRole('button', {name: 'My view'})).toBeVisible(); // TODO: restore to default view
+            expect(screen.getByRole('button', {name: /settings/})).toBeVisible(); // TODO: restore to default view
             expect(
                 within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)})
             ).not.toHaveClass('kit-filter-disabled');

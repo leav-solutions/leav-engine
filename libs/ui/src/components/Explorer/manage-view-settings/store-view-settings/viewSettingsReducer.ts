@@ -9,12 +9,13 @@ import {
     IExplorerFilterStandard,
     isExplorerFilterLink,
     isExplorerFilterStandard,
-    isExplorerFilterThrough
+    isExplorerFilterThrough,
+    IUserView
 } from '../../_types';
 import {hasOnlyNoValueConditions} from '../../conditionsHelper';
 import {MASS_SELECTION_ALL} from '../../_constants';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
-import {ThroughConditionFilter} from '_ui/types';
+import {SystemTranslation, ThroughConditionFilter} from '_ui/types';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 export type MassSelection = string[] | typeof MASS_SELECTION_ALL;
@@ -40,7 +41,7 @@ export const ViewSettingsActionTypes = {
     CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG',
     SET_SELECTED_KEYS: 'SET_SELECTED_KEYS',
     RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS',
-    UPDATE_VIEW_NAME: 'UPDATE_VIEW_NAME'
+    UPDATE_VIEWS: 'UPDATE_VIEWS'
 } as const;
 
 export interface IViewSettingsState {
@@ -49,6 +50,7 @@ export interface IViewSettingsState {
     viewLabels?: Record<string, string>;
     entrypoint: Entrypoint;
     viewType: ViewType;
+    savedViews: IUserView[];
     attributesIds: string[];
     fulltextSearch: string;
     sort: Array<{
@@ -168,9 +170,9 @@ interface IViewSettingsActionRestoreInitialViewSettings {
     type: typeof ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS;
 }
 
-interface IViewSettingsActionUpdateViewName {
-    type: typeof ViewSettingsActionTypes.UPDATE_VIEW_NAME;
-    payload: Record<string, string>;
+interface IViewSettingsActionUpdateViewListAndCurrentViewName {
+    type: typeof ViewSettingsActionTypes.UPDATE_VIEWS;
+    payload: IUserView;
 }
 
 type Reducer<
@@ -339,9 +341,17 @@ const restoreInitialViewSettings: Reducer = state => ({
     ...state.initialViewSettings
 });
 
-const updateViewName: Reducer<IViewSettingsActionUpdateViewName> = (state, payload) => ({
+const updateViewListAndCurrentViewName: Reducer<IViewSettingsActionUpdateViewListAndCurrentViewName> = (
+    state,
+    payload
+) => ({
     ...state,
-    viewLabels: payload
+    viewId: payload.id,
+    viewLabels: payload.label,
+    savedViews:
+        state.savedViews.filter(({id}) => id === payload.id).length > 0
+            ? state.savedViews.map(view => (view.id === payload.id ? payload : view))
+            : state.savedViews.concat([payload])
 });
 
 export type IViewSettingsAction =
@@ -365,7 +375,7 @@ export type IViewSettingsAction =
     | IViewSettingsActionReset
     | IViewSettingsActionSetSelectedKeys
     | IViewSettingsActionRestoreInitialViewSettings
-    | IViewSettingsActionUpdateViewName;
+    | IViewSettingsActionUpdateViewListAndCurrentViewName;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -429,8 +439,8 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         case ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS: {
             return restoreInitialViewSettings(state);
         }
-        case ViewSettingsActionTypes.UPDATE_VIEW_NAME: {
-            return updateViewName(state, action.payload);
+        case ViewSettingsActionTypes.UPDATE_VIEWS: {
+            return updateViewListAndCurrentViewName(state, action.payload);
         }
         default:
             return state;

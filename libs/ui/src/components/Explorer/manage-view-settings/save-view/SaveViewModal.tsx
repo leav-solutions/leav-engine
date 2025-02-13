@@ -38,7 +38,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
         if (hasError || hasOnlyEmptyField) {
             return;
         }
-        handleSaveView(form.getFieldsValue());
+        handleSaveView(form.getFieldsValue(), true);
         onClose();
     };
 
