@@ -8,6 +8,7 @@ import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useManageViews} from '../useManageViews';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
+import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 
 interface ISaveViewProps {
     isOpen: boolean;
@@ -18,7 +19,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
     const {t} = useSharedTranslation();
     const {defaultLang, availableLangs} = useLang();
 
-    const {view} = useViewSettingsContext();
+    const {view, dispatch} = useViewSettingsContext();
     const {handleSaveView} = useManageViews();
 
     const [form] = AntForm.useForm();
@@ -38,6 +39,8 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
         if (hasError || hasOnlyEmptyField) {
             return;
         }
+
+        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: false});
         handleSaveView(form.getFieldsValue(), true);
         onClose();
     };

@@ -15,7 +15,7 @@ import {
 import {hasOnlyNoValueConditions} from '../../conditionsHelper';
 import {MASS_SELECTION_ALL} from '../../_constants';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
-import {SystemTranslation, ThroughConditionFilter} from '_ui/types';
+import {ThroughConditionFilter} from '_ui/types';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 export type MassSelection = string[] | typeof MASS_SELECTION_ALL;
@@ -41,13 +41,15 @@ export const ViewSettingsActionTypes = {
     CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG',
     SET_SELECTED_KEYS: 'SET_SELECTED_KEYS',
     RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS',
-    UPDATE_VIEWS: 'UPDATE_VIEWS'
+    UPDATE_VIEWS: 'UPDATE_VIEWS',
+    UPDATE_VIEW_LIST_BUTTON_LABEL: 'UPDATE_VIEW_LIST_BUTTON_LABEL'
 } as const;
 
 export interface IViewSettingsState {
     libraryId: string;
     viewId?: string;
-    viewLabels?: SystemTranslation;
+    viewLabels?: Record<string, string>;
+    viewModified: boolean;
     entrypoint: Entrypoint;
     viewType: ViewType;
     savedViews: IUserView[];
@@ -173,6 +175,11 @@ interface IViewSettingsActionRestoreInitialViewSettings {
 interface IViewSettingsActionUpdateViewListAndCurrentViewName {
     type: typeof ViewSettingsActionTypes.UPDATE_VIEWS;
     payload: IUserView;
+}
+
+interface IViewSettingsActionUpdateViewListButtonLabel {
+    type: typeof ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL;
+    payload: boolean;
 }
 
 type Reducer<
@@ -354,6 +361,11 @@ const updateViewListAndCurrentViewName: Reducer<IViewSettingsActionUpdateViewLis
             : state.savedViews.concat([payload])
 });
 
+const updateViewListButtonLabel: Reducer<IViewSettingsActionUpdateViewListButtonLabel> = (state, payload) => ({
+    ...state,
+    viewModified: payload
+});
+
 export type IViewSettingsAction =
     | IViewSettingsActionResetAttributes
     | IViewSettingsActionAddAttribute
@@ -375,7 +387,8 @@ export type IViewSettingsAction =
     | IViewSettingsActionReset
     | IViewSettingsActionSetSelectedKeys
     | IViewSettingsActionRestoreInitialViewSettings
-    | IViewSettingsActionUpdateViewListAndCurrentViewName;
+    | IViewSettingsActionUpdateViewListAndCurrentViewName
+    | IViewSettingsActionUpdateViewListButtonLabel;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -441,6 +454,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.UPDATE_VIEWS: {
             return updateViewListAndCurrentViewName(state, action.payload);
+        }
+        case ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL: {
+            return updateViewListButtonLabel(state, action.payload);
         }
         default:
             return state;

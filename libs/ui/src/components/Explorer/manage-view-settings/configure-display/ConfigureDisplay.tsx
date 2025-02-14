@@ -27,6 +27,7 @@ export const ConfigureDisplay: FunctionComponent<IConfigureDisplayProps> = ({lib
     const {view, dispatch} = useViewSettingsContext();
 
     const _handleViewTypeChange: RadioGroupProps['onChange'] = event => {
+        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
         dispatch({
             type: ViewSettingsActionTypes.CHANGE_VIEW_TYPE,
             payload: {

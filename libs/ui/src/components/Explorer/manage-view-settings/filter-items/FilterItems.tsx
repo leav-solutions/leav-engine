@@ -71,6 +71,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
     );
 
     const addFilter = (attributeId: string) => () => {
+        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
         dispatch({
             type: ViewSettingsActionTypes.ADD_FILTER,
             payload: {
@@ -88,6 +89,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
     };
 
     const removeFilter = (filterId: string) => () => {
+        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
         dispatch({
             type: ViewSettingsActionTypes.REMOVE_FILTER,
             payload: {
@@ -104,6 +106,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
             return;
         }
 
+        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
         dispatch({type: ViewSettingsActionTypes.MOVE_FILTER, payload: {indexFrom, indexTo}});
     };
 

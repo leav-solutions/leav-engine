@@ -50,9 +50,11 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
         })
     );
 
-    const {view, dispatch} = useViewSettingsContext();
     // TODO: make naming great again
-    const {attributesIds: orderedVisibleColumns} = view;
+    const {
+        view: {attributesIds: orderedVisibleColumns},
+        dispatch
+    } = useViewSettingsContext();
 
     const {attributeDetailsById, searchFilteredColumnsIds, onSearchChanged} = useAttributeDetailsData(libraryId);
 
@@ -60,6 +62,8 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
         const actionType = orderedVisibleColumns.includes(columnId)
             ? ViewSettingsActionTypes.REMOVE_ATTRIBUTE
             : ViewSettingsActionTypes.ADD_ATTRIBUTE;
+
+        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
         dispatch({type: actionType, payload: {attributeId: columnId}});
     };
 
@@ -71,6 +75,7 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
             return;
         }
 
+        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
         dispatch({type: ViewSettingsActionTypes.MOVE_ATTRIBUTE, payload: {indexFrom, indexTo}});
     };
 
