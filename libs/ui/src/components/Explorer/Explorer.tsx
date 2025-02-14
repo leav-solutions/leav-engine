@@ -73,6 +73,8 @@ interface IExplorerProps {
     defaultPrimaryActions?: Array<'create'>;
     defaultMassActions?: Array<'deactivate'>;
     defaultViewSettings?: DefaultViewSettings;
+    showFiltersAndSorts?: boolean;
+    enableConfigureView?: boolean;
 }
 
 export const Explorer: FunctionComponent<IExplorerProps> = ({
@@ -83,6 +85,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     title,
     emptyPlaceholder,
     noPagination,
+    showFiltersAndSorts = false,
+    enableConfigureView = false,
     iconsOnlyItemActions = false,
     defaultActionsForItem = ['edit', 'remove'],
     defaultPrimaryActions = ['create'],
@@ -128,7 +132,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     const {createPrimaryAction, createModal} = useCreatePrimaryAction({
         isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
         libraryId: view.libraryId,
-        entrypoint: view.entrypoint,
+        entrypoint,
         totalCount,
         refetch
     });
@@ -179,13 +183,15 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     {!isMassSelectionAll && (
                         <KitSpace size="xs">
                             {searchInput}
-                            {viewSettingsButton}
+                            {enableConfigureView && viewSettingsButton}
                             {primaryButton}
                         </KitSpace>
                     )}
                 </ExplorerHeaderDivStyled>
                 {!viewSettingsLoading && (
-                    <ExplorerToolbar isMassSelectionAll={isMassSelectionAll}>{selectAllButton}</ExplorerToolbar>
+                    <ExplorerToolbar showFiltersAndSort={showFiltersAndSorts} isMassSelectionAll={isMassSelectionAll}>
+                        {selectAllButton}
+                    </ExplorerToolbar>
                 )}
                 {loadingData || viewSettingsLoading ? (
                     <Loading />
