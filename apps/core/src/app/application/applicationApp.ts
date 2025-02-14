@@ -408,7 +408,7 @@ export default function ({
 
                     return next();
                 },
-                async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
+                async (req: IRequestWithContext) => {
                     try {
                         await applicationDomain.updateConsultationHistory({
                             applicationId: req.ctx.applicationId,
@@ -424,8 +424,10 @@ export default function ({
                     res: Response<unknown>,
                     next: NextFunction
                 ) => {
-                    if (err instanceof ApplicationError && err.appEndpoint !== 'portal') {
-                        res.redirect(`/${APPS_URL_PREFIX}/portal/?err=${err.type}&app=${err.appEndpoint}`);
+                    const {defaultApp} = await globalSettings.getSettings({userId: config.userId});
+
+                    if (err instanceof ApplicationError && err.appEndpoint !== defaultApp) {
+                        res.redirect(`/${APPS_URL_PREFIX}/${defaultApp}/?err=${err.type}&app=${err.appEndpoint}`);
                     } else {
                         return next(err);
                     }
