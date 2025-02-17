@@ -47,6 +47,7 @@ export const useCreatePrimaryAction = ({
         },
         onCompleted: data => {
             const attributeData = data?.attributes?.list?.[0];
+            console.log({attributeData});
             if (!attributeData) {
                 throw new Error('Unknown link attribute');
             }
@@ -54,10 +55,26 @@ export const useCreatePrimaryAction = ({
         }
     });
 
-    const canCreateRecord = entrypoint.type === 'library' ? true : multipleValues || totalCount === 0;
+    // const canCreateRecord = entrypoint.type === 'library' ? true : (multipleValues || totalCount === 0);
+    let canCreateRecord = false;
+    if (entrypoint.type === 'library') {
+        canCreateRecord = true;
+    } else {
+        canCreateRecord = multipleValues || totalCount === 0;
+    }
+    // console.log({multipleValues, totalCount});
+    console.log({
+        entry: entrypoint,
+        isLibrary: entrypoint.type === 'library',
+        multipleValues,
+        totalCount,
+        result: multipleValues || totalCount === 0,
+        canCreateRecord
+    });
 
     const _createPrimaryAction: IPrimaryAction = {
         callback: () => {
+            console.log('CALLBACK');
             setRecordCreationVisible(true);
         },
         icon: <FaPlus />,

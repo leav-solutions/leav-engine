@@ -921,7 +921,7 @@ describe('Explorer', () => {
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
         });
 
-        test('should not try to link created record if entrypoint is not a link', async () => {
+        test.only('should not try to link created record if entrypoint is not a link', async () => {
             const saveValues = jest.fn();
             jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
                 loading: false,
@@ -934,6 +934,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>
             );
 
+            console.log('===============LIBRARY==============');
             const creatButton = await screen.findByRole('button', {name: 'explorer.create-one'});
             await user.click(creatButton);
 
@@ -944,7 +945,7 @@ describe('Explorer', () => {
             expect(saveValues).not.toHaveBeenCalled();
         });
 
-        test('Should be able to link a new record', async () => {
+        test.only('Should be able to link a new record', async () => {
             const saveValues = jest.fn();
             jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
                 loading: false,
@@ -959,9 +960,12 @@ describe('Explorer', () => {
                     mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
                 }
             );
+            console.log('==============LINK================');
 
             const createOneButton = await screen.findByRole('button', {name: 'explorer.create-one'});
             await user.click(createOneButton);
+
+            console.log({createOneButton});
 
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
 
