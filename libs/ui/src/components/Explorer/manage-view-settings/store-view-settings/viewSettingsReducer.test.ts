@@ -45,6 +45,7 @@ describe('ViewSettings Reducer', () => {
             payload: {attributeId: 'test'}
         });
         expect(state.attributesIds).toEqual(['test']);
+        expect(state.viewModified).toEqual(true);
     });
 
     test(`Action ${ViewSettingsActionTypes.REMOVE_ATTRIBUTE} test`, () => {
@@ -59,6 +60,7 @@ describe('ViewSettings Reducer', () => {
             }
         );
         expect(state.attributesIds).toEqual(['active', 'created_at']);
+        expect(state.viewModified).toEqual(true);
     });
 
     describe(`Action ${ViewSettingsActionTypes.MOVE_ATTRIBUTE} test`, () => {
@@ -96,6 +98,7 @@ describe('ViewSettings Reducer', () => {
                 payload: {indexFrom, indexTo}
             });
             expect(state.attributesIds).toEqual(expected);
+            expect(state.viewModified).toEqual(true);
         });
     });
 
@@ -110,6 +113,7 @@ describe('ViewSettings Reducer', () => {
             }
         );
         expect(state.attributesIds).toEqual([]);
+        expect(state.viewModified).toEqual(false);
     });
 
     test.each(['table', 'list', 'mosaic', 'timeline'])(
@@ -120,6 +124,7 @@ describe('ViewSettings Reducer', () => {
                 payload: {viewType: viewType as ViewType}
             });
             expect(state.viewType).toEqual(viewType);
+            expect(state.viewModified).toEqual(true);
         }
     );
 
@@ -153,6 +158,7 @@ describe('ViewSettings Reducer', () => {
                 order: 'desc'
             }
         ]);
+        expect(state.viewModified).toEqual(true);
     });
 
     test(`Action ${ViewSettingsActionTypes.REMOVE_SORT} test`, () => {
@@ -192,6 +198,7 @@ describe('ViewSettings Reducer', () => {
                 order: 'desc'
             }
         ]);
+        expect(state.viewModified).toEqual(true);
     });
 
     test(`Action ${ViewSettingsActionTypes.CHANGE_SORT_ORDER} test`, () => {
@@ -228,6 +235,7 @@ describe('ViewSettings Reducer', () => {
                 order: SortOrder.asc
             }
         ]);
+        expect(state.viewModified).toEqual(true);
     });
 
     describe(`Action ${ViewSettingsActionTypes.MOVE_SORT} test`, () => {
@@ -281,6 +289,7 @@ describe('ViewSettings Reducer', () => {
                 payload: {indexFrom, indexTo}
             });
             expect(state.sort).toEqual(expected);
+            expect(state.viewModified).toEqual(true);
         });
     });
 
@@ -357,6 +366,7 @@ describe('ViewSettings Reducer', () => {
                         value: null
                     }
                 ]);
+                expect(state.viewModified).toEqual(true);
             });
         });
     });
@@ -425,6 +435,7 @@ describe('ViewSettings Reducer', () => {
                     value: null
                 }
             ]);
+            expect(state.viewModified).toEqual(false);
         });
 
         test('Reset filter to initial view settings', async () => {
@@ -472,6 +483,7 @@ describe('ViewSettings Reducer', () => {
                     value: initialViewFilterValue
                 }
             ]);
+            expect(state.viewModified).toEqual(false);
         });
     });
 
@@ -531,6 +543,7 @@ describe('ViewSettings Reducer', () => {
                 value: null
             }
         ]);
+        expect(state.viewModified).toEqual(true);
     });
 
     test(`Action ${ViewSettingsActionTypes.CHANGE_FILTER_CONFIG} test`, () => {
@@ -582,6 +595,7 @@ describe('ViewSettings Reducer', () => {
                 value: null
             }
         ]);
+        expect(state.viewModified).toEqual(true);
     });
 
     describe(`Action ${ViewSettingsActionTypes.MOVE_FILTER} test`, () => {
@@ -715,6 +729,7 @@ describe('ViewSettings Reducer', () => {
                 payload: {indexFrom, indexTo}
             });
             expect(state.filters).toEqual(expected);
+            expect(state.viewModified).toEqual(true);
         });
     });
 
@@ -749,6 +764,7 @@ describe('ViewSettings Reducer', () => {
         });
 
         expect(state).toEqual(newState);
+        expect(state.viewModified).toEqual(false);
     });
 
     test(`Action ${ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS} test`, async () => {
@@ -802,6 +818,7 @@ describe('ViewSettings Reducer', () => {
         );
 
         expect(state).toEqual(viewSettingsInitialState);
+        expect(state.viewModified).toEqual(false);
     });
 
     test(`Action ${ViewSettingsActionTypes.SET_SELECTED_KEYS} test`, async () => {
@@ -818,5 +835,6 @@ describe('ViewSettings Reducer', () => {
         );
 
         expect(state.massSelection).toEqual(newSelectedKeys);
+        expect(state.viewModified).toEqual(false);
     });
 });

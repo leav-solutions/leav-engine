@@ -316,8 +316,7 @@ const resetFilter: Reducer<IViewSettingsActionResetFilter> = (state, payload) =>
             }
         }
         return filter;
-    }),
-    viewModified: true
+    })
 });
 
 const removeFilter: Reducer<IViewSettingsActionRemoveFilter> = (state, payload) => ({
@@ -366,6 +365,13 @@ const updateViewListAndCurrentViewName: Reducer<IViewSettingsActionUpdateViewLis
     savedViews: state.savedViews.find(({id}) => id === payload.id)
         ? state.savedViews.map(view => (view.id === payload.id ? payload : view))
         : state.savedViews.concat([payload]),
+    initialViewSettings: {
+        viewType: state.viewType,
+        attributesIds: state.attributesIds,
+        sort: state.sort,
+        pageSize: state.pageSize,
+        filters: state.filters
+    },
     viewModified: false
 });
 
