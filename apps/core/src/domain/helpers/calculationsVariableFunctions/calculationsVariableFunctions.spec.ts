@@ -60,8 +60,8 @@ describe('calculationsVariableFunctions', () => {
         expect(res[0].payload).toBe('meh');
     });
 
-    test('should get first date', async () => {
-        const res = await calculationFunctions.firstDate.run(
+    test('should get the "from" date on period attribute', async () => {
+        const res = await calculationFunctions.fromDate.run(
             ctx,
             [{payload: {from: 17438843200, to: 1742472000}}],
             ['attributeKey']
@@ -72,8 +72,8 @@ describe('calculationsVariableFunctions', () => {
         expect(res[0].payload).toBe(17438843200);
     });
 
-    test('test get last date', async () => {
-        const res = await calculationFunctions.lastDate.run(
+    test('should get the "to" date on period attribute', async () => {
+        const res = await calculationFunctions.toDate.run(
             ctx,
             [{payload: {from: 17438843200, to: 1742472000}}],
             ['attributeKey']

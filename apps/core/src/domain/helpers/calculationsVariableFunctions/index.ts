@@ -38,19 +38,17 @@ export default function ({
         }
     ];
 
-    const firstDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
-        {
-            ...inputValue[0],
-            payload: (inputValue[0].payload as IDateRangeValue).from
-        }
-    ];
+    const fromDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> =>
+        inputValue.map(variableValue => ({
+            ...variableValue,
+            payload: (variableValue.payload as IDateRangeValue).from
+        }));
 
-    const lastDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
-        {
-            ...inputValue[0],
-            payload: (inputValue[0].payload as IDateRangeValue).to
-        }
-    ];
+    const toDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> =>
+        inputValue.map(variableValue => ({
+            ...variableValue,
+            payload: (variableValue.payload as IDateRangeValue).to
+        }));
 
     const sum = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
@@ -182,12 +180,12 @@ export default function ({
             run: getValue,
             after: []
         },
-        firstDate: {
-            run: firstDate,
+        fromDate: {
+            run: fromDate,
             after: []
         },
-        lastDate: {
-            run: lastDate,
+        toDate: {
+            run: toDate,
             after: []
         }
     };
