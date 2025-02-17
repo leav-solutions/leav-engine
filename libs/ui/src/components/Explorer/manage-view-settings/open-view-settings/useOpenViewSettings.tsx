@@ -26,7 +26,7 @@ interface IChangePanelPage {
 export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettingsState; isEnabled?: boolean}) => {
     const {activeSettings, setActiveSettings, closeSettingsPanel} = useEditSettings();
     const [button, setButton] = useState<ReactElement | null>(null);
-    const [viewListButton, setViewListButton] = useState<any>(null);
+    const [viewListButton, setViewListButton] = useState<ReactElement | null>(null);
 
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -71,7 +71,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettin
                 icon={<FaSlidersH />}
                 onClick={() => _openSettingsPanel()}
                 title={String(t('explorer.settings')) /* TODO: avoid transform null to 'null' */}
-            ></KitButton>
+            />
         );
         setViewListButton(
             <KitButton
@@ -81,10 +81,8 @@ export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettin
                 title={String(t('explorer.manage-views')) /* TODO: avoid transform null to 'null' */}
             >
                 {viewName !== '' ? viewName : t('explorer.manage-views')}
-                {view.viewModified ? (
+                {view.viewModified && (
                     <ModifiedStyledKitTag type="error" idCardProps={{description: String(t('explorer.modified'))}} />
-                ) : (
-                    ''
                 )}
             </KitButton>
         );
@@ -94,6 +92,6 @@ export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettin
         openSettingsPanel: _openSettingsPanel,
         viewSettingsButton: button,
         viewListButton,
-        viewName: viewName !== '' ? viewName : t('explorer.default-view')
+        viewName: viewName === '' ? t('explorer.default-view') : viewName
     };
 };

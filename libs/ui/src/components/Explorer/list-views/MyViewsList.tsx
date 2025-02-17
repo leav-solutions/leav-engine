@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useRef} from 'react';
+import {FunctionComponent} from 'react';
 import styled from 'styled-components';
-import {KitDropDown, KitFilter, KitTypography} from 'aristid-ds';
+import {KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
-import {useViewSettingsReducer} from '../useViewSettingsReducer';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {FaCheck} from 'react-icons/fa';
@@ -66,8 +65,8 @@ export const MyViewsList: FunctionComponent<{}> = ({}) => {
     const {viewName} = useOpenViewSettings({view});
     const {defaultLang} = useLang();
 
-    const sharedViews = view.userViewsList.filter(viewItem => viewItem.shared);
-    const myViews = view.userViewsList.filter(viewItem => !viewItem.shared);
+    const sharedViews = view.savedViews.filter(viewItem => viewItem.shared);
+    const myViews = view.savedViews.filter(viewItem => !viewItem.shared);
 
     return (
         <StyledListContainer>

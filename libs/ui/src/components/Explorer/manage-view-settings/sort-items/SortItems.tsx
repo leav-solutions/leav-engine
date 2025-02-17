@@ -56,7 +56,6 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
     );
 
     const _toggleColumnVisibility = (field: string) => () => {
-        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
         const isAttributeAlreadySorting = view.sort.some(sortItem => sortItem.field === field);
         if (isAttributeAlreadySorting) {
             dispatch({
@@ -76,8 +75,7 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
         }
     };
 
-    const _changeOrderActiveFilterTo = (field: string) => (order: SortOrder) => {
-        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
+    const _changeOrderActiveFilterTo = (field: string) => (order: SortOrder) =>
         dispatch({
             type: ViewSettingsActionTypes.CHANGE_SORT_ORDER,
             payload: {
@@ -85,7 +83,6 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                 order
             }
         });
-    };
 
     const _handleDragEnd = ({active: draggedElement, over: dropTarget}: DragEndEvent) => {
         const indexFrom = activeFilters.findIndex(({field}) => field === String(draggedElement.id));
@@ -95,7 +92,6 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
             return;
         }
 
-        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
         dispatch({type: ViewSettingsActionTypes.MOVE_SORT, payload: {indexFrom, indexTo}});
     };
 

@@ -33,14 +33,14 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
 
     const _handleSaveView = () => {
         form.validateFields();
-        const hasError = form.getFieldsError().filter(field => field.errors.length > 0).length > 0;
-        const hasOnlyEmptyField =
-            Object.entries(form.getFieldsValue()).filter(field => field[0] === defaultLang && !!field[1]).length === 0;
+        const hasError = form.getFieldsError().some(field => field.errors.length > 0);
+        const hasOnlyEmptyField = Object.entries(form.getFieldsValue()).some(
+            ([language, value]) => language === defaultLang && !!value
+        );
         if (hasError || hasOnlyEmptyField) {
             return;
         }
 
-        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: false});
         handleSaveView(form.getFieldsValue(), true);
         onClose();
     };

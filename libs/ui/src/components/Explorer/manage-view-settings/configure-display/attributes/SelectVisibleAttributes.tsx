@@ -63,7 +63,6 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
             ? ViewSettingsActionTypes.REMOVE_ATTRIBUTE
             : ViewSettingsActionTypes.ADD_ATTRIBUTE;
 
-        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
         dispatch({type: actionType, payload: {attributeId: columnId}});
     };
 
@@ -75,7 +74,6 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
             return;
         }
 
-        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
         dispatch({type: ViewSettingsActionTypes.MOVE_ATTRIBUTE, payload: {indexFrom, indexTo}});
     };
 

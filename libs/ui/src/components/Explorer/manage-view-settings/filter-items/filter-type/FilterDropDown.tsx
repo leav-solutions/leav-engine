@@ -23,33 +23,27 @@ export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}
 
     const onFilterChange: ComponentProps<typeof FilterDropdownContent>['onFilterChange'] = (
         filterData: ExplorerFilter
-    ) => {
-        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
+    ) =>
         dispatch({
             type: ViewSettingsActionTypes.CHANGE_FILTER_CONFIG,
             payload: filterData
         });
-    };
 
-    const _onResetFilter: ComponentProps<typeof KitButton>['onClick'] = () => {
-        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
+    const _onResetFilter: ComponentProps<typeof KitButton>['onClick'] = () =>
         dispatch({
             type: ViewSettingsActionTypes.RESET_FILTER,
             payload: {
                 id: filter.id
             }
         });
-    };
 
-    const _onDeleteFilter: ComponentProps<typeof KitButton>['onClick'] = () => {
-        dispatch({type: ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL, payload: true});
+    const _onDeleteFilter: ComponentProps<typeof KitButton>['onClick'] = () =>
         dispatch({
             type: ViewSettingsActionTypes.REMOVE_FILTER,
             payload: {
                 id: filter.id
             }
         });
-    };
 
     return (
         <FilterDropDownStyledDiv>

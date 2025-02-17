@@ -41,8 +41,7 @@ export const ViewSettingsActionTypes = {
     CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG',
     SET_SELECTED_KEYS: 'SET_SELECTED_KEYS',
     RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS',
-    UPDATE_VIEWS: 'UPDATE_VIEWS',
-    UPDATE_VIEW_LIST_BUTTON_LABEL: 'UPDATE_VIEW_LIST_BUTTON_LABEL'
+    UPDATE_VIEWS: 'UPDATE_VIEWS'
 } as const;
 
 export interface IViewSettingsState {
@@ -177,11 +176,6 @@ interface IViewSettingsActionUpdateViewListAndCurrentViewName {
     payload: IUserView;
 }
 
-interface IViewSettingsActionUpdateViewListButtonLabel {
-    type: typeof ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL;
-    payload: boolean;
-}
-
 type Reducer<
     PAYLOAD extends {
         type: keyof typeof ViewSettingsActionTypes;
@@ -198,12 +192,14 @@ const changePageSize: Reducer<IViewSettingsActionChangePageSize> = (state, paylo
 
 const addAttribute: Reducer<IViewSettingsActionAddAttribute> = (state, payload) => ({
     ...state,
-    attributesIds: [...state.attributesIds, payload.attributeId]
+    attributesIds: [...state.attributesIds, payload.attributeId],
+    viewModified: true
 });
 
 const removeAttribute: Reducer<IViewSettingsActionRemoveAttribute> = (state, payload) => ({
     ...state,
-    attributesIds: state.attributesIds.filter(attributesId => attributesId !== payload.attributeId)
+    attributesIds: state.attributesIds.filter(attributesId => attributesId !== payload.attributeId),
+    viewModified: true
 });
 
 const moveAttribute: Reducer<IViewSettingsActionMoveAttribute> = (state, payload) => {
@@ -213,7 +209,8 @@ const moveAttribute: Reducer<IViewSettingsActionMoveAttribute> = (state, payload
     attributesIds.splice(payload.indexTo, 0, attributeIdToMove);
     return {
         ...state,
-        attributesIds
+        attributesIds,
+        viewModified: true
     };
 };
 
@@ -224,22 +221,26 @@ const resetAttributes: Reducer = state => ({
 
 const changeViewType: Reducer<IViewSettingsActionChangeViewType> = (state, payload) => ({
     ...state,
-    viewType: payload.viewType
+    viewType: payload.viewType,
+    viewModified: true
 });
 
 const addSort: Reducer<IViewSettingsActionAddSort> = (state, payload) => ({
     ...state,
-    sort: [...state.sort, {field: payload.field, order: payload.order}]
+    sort: [...state.sort, {field: payload.field, order: payload.order}],
+    viewModified: true
 });
 
 const removeSort: Reducer<IViewSettingsActionRemoveSort> = (state, payload) => ({
     ...state,
-    sort: state.sort.filter(({field: attributeId}) => attributeId !== payload.field)
+    sort: state.sort.filter(({field: attributeId}) => attributeId !== payload.field),
+    viewModified: true
 });
 
 const changeSortOrder: Reducer<IViewSettingsActionChangeSortOrder> = (state, payload) => ({
     ...state,
-    sort: state.sort.map(sort => (sort.field === payload.field ? {...sort, order: payload.order} : sort))
+    sort: state.sort.map(sort => (sort.field === payload.field ? {...sort, order: payload.order} : sort)),
+    viewModified: true
 });
 
 const moveSort: Reducer<IViewSettingsActionMoveSort> = (state, payload) => {
@@ -248,7 +249,8 @@ const moveSort: Reducer<IViewSettingsActionMoveSort> = (state, payload) => {
     attributesUsedToSort.splice(payload.indexTo, 0, sortToMove);
     return {
         ...state,
-        sort: attributesUsedToSort
+        sort: attributesUsedToSort,
+        viewModified: true
     };
 };
 
@@ -274,7 +276,8 @@ const addFilter: Reducer<IViewSettingsActionAddFilter> = (state, payload) => ({
                 : (conditionsByFormat[(payload as IExplorerFilterStandard).attribute.format][0] ?? null),
             value: null
         }
-    ]
+    ],
+    viewModified: true
 });
 
 const resetFilter: Reducer<IViewSettingsActionResetFilter> = (state, payload) => ({
@@ -313,17 +316,20 @@ const resetFilter: Reducer<IViewSettingsActionResetFilter> = (state, payload) =>
             }
         }
         return filter;
-    })
+    }),
+    viewModified: true
 });
 
 const removeFilter: Reducer<IViewSettingsActionRemoveFilter> = (state, payload) => ({
     ...state,
-    filters: state.filters.filter(({id}) => id !== payload.id)
+    filters: state.filters.filter(({id}) => id !== payload.id),
+    viewModified: true
 });
 
 const changeFilterConfig: Reducer<IViewSettingsActionChangeFilterConfig> = (state, payload) => ({
     ...state,
-    filters: state.filters.map(filter => (filter.id === payload.id ? {...filter, ...payload} : filter))
+    filters: state.filters.map(filter => (filter.id === payload.id ? {...filter, ...payload} : filter)),
+    viewModified: true
 });
 
 const moveFilter: Reducer<IViewSettingsActionMoveFilter> = (state, payload) => {
@@ -332,7 +338,8 @@ const moveFilter: Reducer<IViewSettingsActionMoveFilter> = (state, payload) => {
     attributesUsedToFilter.splice(payload.indexTo, 0, filterToMove);
     return {
         ...state,
-        filters: attributesUsedToFilter
+        filters: attributesUsedToFilter,
+        viewModified: true
     };
 };
 
@@ -345,7 +352,8 @@ const setSelectedKeys: Reducer<IViewSettingsActionSetSelectedKeys> = (state, pay
 
 const restoreInitialViewSettings: Reducer = state => ({
     ...state,
-    ...state.initialViewSettings
+    ...state.initialViewSettings,
+    viewModified: false
 });
 
 const updateViewListAndCurrentViewName: Reducer<IViewSettingsActionUpdateViewListAndCurrentViewName> = (
@@ -358,12 +366,8 @@ const updateViewListAndCurrentViewName: Reducer<IViewSettingsActionUpdateViewLis
     savedViews:
         state.savedViews.filter(({id}) => id === payload.id).length > 0
             ? state.savedViews.map(view => (view.id === payload.id ? payload : view))
-            : state.savedViews.concat([payload])
-});
-
-const updateViewListButtonLabel: Reducer<IViewSettingsActionUpdateViewListButtonLabel> = (state, payload) => ({
-    ...state,
-    viewModified: payload
+            : state.savedViews.concat([payload]),
+    viewModified: false
 });
 
 export type IViewSettingsAction =
@@ -387,8 +391,7 @@ export type IViewSettingsAction =
     | IViewSettingsActionReset
     | IViewSettingsActionSetSelectedKeys
     | IViewSettingsActionRestoreInitialViewSettings
-    | IViewSettingsActionUpdateViewListAndCurrentViewName
-    | IViewSettingsActionUpdateViewListButtonLabel;
+    | IViewSettingsActionUpdateViewListAndCurrentViewName;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -454,9 +457,6 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.UPDATE_VIEWS: {
             return updateViewListAndCurrentViewName(state, action.payload);
-        }
-        case ViewSettingsActionTypes.UPDATE_VIEW_LIST_BUTTON_LABEL: {
-            return updateViewListButtonLabel(state, action.payload);
         }
         default:
             return state;
