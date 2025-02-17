@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton} from 'aristid-ds';
-import {FaSave, FaShare, FaUndo} from 'react-icons/fa';
+import {FaShare, FaUndo} from 'react-icons/fa';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {useSaveView} from './useSaveView';
@@ -18,18 +18,15 @@ const FooterStyledDiv = styled.footer`
 export const ViewActions = () => {
     const {t} = useSharedTranslation();
 
-    const {view, dispatch} = useViewSettingsContext();
-    const {saveViewModal, toggleModal} = useSaveView();
+    const {dispatch} = useViewSettingsContext();
+    const {saveViewButton} = useSaveView();
 
     const _handleReinitView = () => {
         dispatch({type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS});
     };
     return (
         <FooterStyledDiv>
-            {saveViewModal}
-            <KitButton type="redirect" icon={<FaSave />} onClick={toggleModal}>
-                {t('explorer.save-view')}
-            </KitButton>
+            {saveViewButton}
             <KitButton type="redirect" icon={<FaShare />} onClick={() => null}>
                 {t('explorer.share-view')}
             </KitButton>

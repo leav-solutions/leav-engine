@@ -47,7 +47,7 @@ export const ViewSettingsActionTypes = {
 export interface IViewSettingsState {
     libraryId: string;
     viewId?: string;
-    viewLabels?: Record<string, string>;
+    viewLabels: Record<string, string>;
     viewModified: boolean;
     entrypoint: Entrypoint;
     viewType: ViewType;
@@ -363,10 +363,9 @@ const updateViewListAndCurrentViewName: Reducer<IViewSettingsActionUpdateViewLis
     ...state,
     viewId: payload.id,
     viewLabels: payload.label,
-    savedViews:
-        state.savedViews.filter(({id}) => id === payload.id).length > 0
-            ? state.savedViews.map(view => (view.id === payload.id ? payload : view))
-            : state.savedViews.concat([payload]),
+    savedViews: state.savedViews.find(({id}) => id === payload.id)
+        ? state.savedViews.map(view => (view.id === payload.id ? payload : view))
+        : state.savedViews.concat([payload]),
     viewModified: false
 });
 

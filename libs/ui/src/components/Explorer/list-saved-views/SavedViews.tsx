@@ -11,7 +11,7 @@ import {useLang} from '_ui/hooks';
 import {FaCheck} from 'react-icons/fa';
 import {ViewActions} from '../manage-view-settings/save-view/ViewActions';
 
-const StyledListContainer = styled.div`
+const StyledListUlContainer = styled.div`
     display: flex;
     flex-direction: column;
 `;
@@ -23,7 +23,7 @@ const ContentWrapperStyledDiv = styled.div`
     height: 100%;
 `;
 
-const StyledList = styled.ul`
+const StyledListUl = styled.ul`
     padding: calc(var(--general-spacing-s) * 1px) 0;
     margin: 0 0 calc(var(--general-spacing-xs) * 1px) 0;
     list-style: none;
@@ -77,9 +77,9 @@ export const SavedViews: FunctionComponent<{}> = ({}) => {
 
     return (
         <ContentWrapperStyledDiv>
-            <StyledListContainer>
+            <StyledListUlContainer>
                 <KitTypography.Title level="h4">{t('explorer.my-views')}</KitTypography.Title>
-                <StyledList aria-label={t('explorer.my-views')}>
+                <StyledListUl aria-label={t('explorer.my-views')}>
                     <StyleViewItemLi className={_getViewClassName()}>
                         <KitTypography.Text size="fontSize5" weight="medium" ellipsis>
                             {t('explorer.default-view')}
@@ -94,12 +94,12 @@ export const SavedViews: FunctionComponent<{}> = ({}) => {
                             <FaCheck className="check" />
                         </StyleViewItemLi>
                     ))}
-                </StyledList>
+                </StyledListUl>
                 <KitTypography.Title level="h4">{t('explorer.shared-views')}</KitTypography.Title>
                 {sharedViews.length === 0 ? (
                     <KitTypography.Text size="fontSize5">{t('explorer.no-shared-views')}</KitTypography.Text>
                 ) : (
-                    <StyledList aria-label={t('explorer.shared-view')}>
+                    <StyledListUl aria-label={t('explorer.shared-view')}>
                         {sharedViews.map(viewItem => (
                             <StyleViewItemLi key={viewItem.id} className={_getViewClassName(viewItem.id)}>
                                 <KitTypography.Text size="fontSize5" weight="medium" ellipsis>
@@ -108,9 +108,9 @@ export const SavedViews: FunctionComponent<{}> = ({}) => {
                                 <FaCheck className="check" />
                             </StyleViewItemLi>
                         ))}
-                    </StyledList>
+                    </StyledListUl>
                 )}
-            </StyledListContainer>
+            </StyledListUlContainer>
             <ViewActions />
         </ContentWrapperStyledDiv>
     );

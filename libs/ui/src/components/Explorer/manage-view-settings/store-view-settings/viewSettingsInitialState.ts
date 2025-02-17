@@ -11,6 +11,7 @@ export const viewSettingsInitialState: IViewSettingsState = {
     libraryId: '',
     viewType: 'table',
     viewModified: false,
+    viewLabels: {},
     savedViews: [],
     entrypoint: {
         type: 'library',

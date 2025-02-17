@@ -12,6 +12,7 @@ import {useLang} from '_ui/hooks';
 import {ReactElement, useEffect, useState} from 'react';
 import {IViewSettingsState} from '../store-view-settings/viewSettingsReducer';
 import styled from 'styled-components';
+import {ActionHook} from '../../_types';
 
 const ModifiedStyledKitTag = styled(KitTag)`
     margin: 0;
@@ -23,7 +24,7 @@ interface IChangePanelPage {
     onClickLeftButton?: () => void;
 }
 
-export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettingsState; isEnabled?: boolean}) => {
+export const useOpenViewSettings = ({view, isEnabled = true}: ActionHook<{view: IViewSettingsState}>) => {
     const {activeSettings, setActiveSettings, closeSettingsPanel} = useEditSettings();
     const [button, setButton] = useState<ReactElement | null>(null);
     const [viewListButton, setViewListButton] = useState<ReactElement | null>(null);
@@ -35,6 +36,9 @@ export const useOpenViewSettings = ({view, isEnabled = true}: {view: IViewSettin
         if (!isEnabled) {
             closeSettingsPanel();
         }
+        return () => {
+            closeSettingsPanel();
+        };
     }, [isEnabled]);
 
     const rootPanel = {pageName: 'router-menu', title: t('explorer.settings')} as const;

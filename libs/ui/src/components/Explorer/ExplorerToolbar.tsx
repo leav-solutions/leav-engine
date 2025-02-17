@@ -43,7 +43,7 @@ export const ExplorerToolbar: FunctionComponent<{
     const {view} = useViewSettingsContext();
     const {filters, sort} = view;
 
-    const {openSettingsPanel} = useOpenViewSettings({view});
+    const {openSettingsPanel} = useOpenViewSettings({view, isEnabled: true});
 
     const {attributeDetailsById} = useAttributeDetailsData(view.libraryId);
 

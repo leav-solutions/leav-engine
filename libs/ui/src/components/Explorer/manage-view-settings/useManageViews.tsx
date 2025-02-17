@@ -6,15 +6,11 @@ import {isExplorerFilterThrough} from '../_types';
 import {mapViewTypeFromExplorerToLegacy} from '../_constants';
 import {useViewSettingsContext} from './store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from './store-view-settings/viewSettingsReducer';
-import {ViewInput, ViewSizes, ViewTypes} from '_ui/_gqlTypes';
-import {useLang} from '_ui/hooks';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {ViewInput} from '_ui/_gqlTypes';
 
 export const useManageViews = () => {
     const {view, dispatch} = useViewSettingsContext();
     const {saveView} = useExecuteSaveViewMutation();
-    const {defaultLang} = useLang();
-    const {t} = useSharedTranslation();
 
     const _handleSaveView = async (label: Record<string, string>, saveAs: boolean = false) => {
         const newView: ViewInput = {
@@ -36,7 +32,7 @@ export const useManageViews = () => {
                           condition: filter.condition
                       }
             ),
-            sort: view.sort.map(({field: attributeId, order}) => ({field: attributeId, order})),
+            sort: view.sort.map(({field, order}) => ({field, order})),
             attributes: view.attributesIds,
             label
         };
@@ -45,17 +41,17 @@ export const useManageViews = () => {
             newView.id = view.viewId;
         }
 
-        const newViewRes = await saveView({
+        const {data} = await saveView({
             view: newView
         });
 
-        if (newViewRes.data) {
+        if (data) {
             dispatch({
                 type: ViewSettingsActionTypes.UPDATE_VIEWS,
                 payload: {
-                    id: newViewRes.data.saveView.id,
-                    label: newViewRes.data.saveView.label,
-                    shared: newViewRes.data.saveView.shared
+                    id: data.saveView.id,
+                    label: data.saveView.label,
+                    shared: data.saveView.shared
                 }
             });
         }

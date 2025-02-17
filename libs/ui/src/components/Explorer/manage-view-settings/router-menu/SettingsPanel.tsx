@@ -40,7 +40,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
     const {t} = useSharedTranslation();
 
     const {view} = useViewSettingsContext();
-    const {openSettingsPanel, viewName} = useOpenViewSettings({view});
+    const {openSettingsPanel, viewName} = useOpenViewSettings({view, isEnabled: true});
 
     // TODO: look for MemoryRouter
     return (

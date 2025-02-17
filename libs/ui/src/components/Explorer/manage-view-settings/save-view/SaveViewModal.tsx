@@ -8,7 +8,6 @@ import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useManageViews} from '../useManageViews';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 
 interface ISaveViewProps {
     isOpen: boolean;
@@ -19,7 +18,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
     const {t} = useSharedTranslation();
     const {defaultLang, availableLangs} = useLang();
 
-    const {view, dispatch} = useViewSettingsContext();
+    const {view} = useViewSettingsContext();
     const {handleSaveView} = useManageViews();
 
     const [form] = AntForm.useForm();
@@ -72,9 +71,9 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
         >
             <AntForm name="label" form={form} initialValues={{...view.viewLabels}}>
                 <KitInputWrapper label={String(t('explorer.view-name'))}>
-                    {availableLangs.map((lang, index) => (
+                    {availableLangs.map(lang => (
                         <AntForm.Item
-                            key={index}
+                            key={lang}
                             name={lang}
                             rules={[
                                 {required: lang === defaultLang, message: String(t('errors.standard_field_required'))}

@@ -3,8 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
 import {SaveViewModal} from './SaveViewModal';
+import {KitButton} from 'aristid-ds';
+import {FaSave} from 'react-icons/fa';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 export const useSaveView = () => {
+    const {t} = useSharedTranslation();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const _toggleModal = () => {
@@ -12,7 +16,13 @@ export const useSaveView = () => {
     };
 
     return {
-        saveViewModal: <SaveViewModal isOpen={isModalOpen} onClose={_toggleModal} />,
-        toggleModal: _toggleModal
+        saveViewButton: (
+            <>
+                <SaveViewModal isOpen={isModalOpen} onClose={_toggleModal} />
+                <KitButton type="redirect" icon={<FaSave />} onClick={_toggleModal}>
+                    {t('explorer.save-view')}
+                </KitButton>
+            </>
+        )
     };
 };
