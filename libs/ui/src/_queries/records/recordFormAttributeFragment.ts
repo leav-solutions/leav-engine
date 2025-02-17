@@ -54,6 +54,7 @@ export const recordFormAttributeFragment = gql`
             values_list {
                 ...StandardValuesListFragment
             }
+            character_limit
         }
 
         ... on LinkAttribute {

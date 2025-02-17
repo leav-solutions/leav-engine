@@ -300,6 +300,7 @@ const StandardField: FunctionComponent<
     };
 
     let isFieldInError = false;
+
     if (antdForm) {
         const hasErrorsInFormList = backendValues.some((_, index) => {
             const errors = antdForm.getFieldError([attribute.id, index]);

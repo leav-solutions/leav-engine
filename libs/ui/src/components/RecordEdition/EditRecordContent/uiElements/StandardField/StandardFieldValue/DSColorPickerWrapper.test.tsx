@@ -45,7 +45,6 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     }
 };
 
-const notRequired = false;
 const notReadonly = false;
 
 describe('DSColorPickerWrapper', () => {

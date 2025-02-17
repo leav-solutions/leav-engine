@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {screen, render} from '_ui/_tests/testUtils';
+import {screen, render, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {EditRecordPage} from './EditRecordPage';
 import {mockFormElementInput, mockFormElementRequiredInput, mockRecordForm} from '_ui/__mocks__/common/form';
@@ -76,13 +76,13 @@ describe('EditRecordPage', () => {
                 }
             ]
         });
+        deleteValueMock.mockClear();
+        useGetRecordFormMock.mockClear();
+        useGetRecordValuesQueryMock.mockClear();
     });
 
     afterEach(() => {
         saveValuesMock.mockClear();
-        deleteValueMock.mockClear();
-        useGetRecordFormMock.mockClear();
-        useGetRecordValuesQueryMock.mockClear();
     });
 
     test('Should render an input component', () => {
@@ -184,7 +184,7 @@ describe('EditRecordPage', () => {
         expect(screen.getAllByRole('textbox')).toHaveLength(2);
     });
 
-    test('Should update the field in error if the field is required and empty', async () => {
+    test('Should mark the field in error if the field is required and value is empty', async () => {
         const simpleElementInput = {
             ...mockFormElementRequiredInput,
             settings: [{key: 'label', value: {fr: 'simple attribute'}}]
@@ -232,6 +232,12 @@ describe('EditRecordPage', () => {
             recordForm: {...mockRecordForm, elements: [simpleElementInput]}
         });
 
+        useGetRecordValuesQueryMock.mockReturnValue({
+            loading: false,
+            data: null,
+            refetch: jest.fn()
+        });
+
         render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} showSidebar record={mockRecord} />);
 
         const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
@@ -240,8 +246,10 @@ describe('EditRecordPage', () => {
         await userEvent.type(simpleInput, 'some value');
         await userEvent.tab();
 
-        expect(saveValuesMock).toHaveBeenCalled();
-        expect(screen.queryByText('some value')).not.toBeInTheDocument();
+        waitFor(() => {
+            expect(screen.queryByText('some value')).not.toBeInTheDocument();
+            expect(saveValuesMock).toHaveBeenCalled();
+        });
 
         await user.click(simpleInput);
 
