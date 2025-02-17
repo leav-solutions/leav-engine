@@ -128,7 +128,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     const {createPrimaryAction, createModal} = useCreatePrimaryAction({
         isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
         libraryId: view.libraryId,
-        entrypoint: view.entrypoint,
+        entrypoint,
         totalCount,
         refetch
     });

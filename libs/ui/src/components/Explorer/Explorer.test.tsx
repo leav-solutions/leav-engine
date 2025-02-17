@@ -438,7 +438,8 @@ describe('Explorer', () => {
                         id: simpleMockAttribute.id,
                         label: simpleMockAttribute.label,
                         type: simpleMockAttribute.type,
-                        format: simpleMockAttribute.format
+                        format: simpleMockAttribute.format,
+                        multiple_values: true
                     }
                 ]
             }
