@@ -12,7 +12,7 @@ import {useLang} from '_ui/hooks';
 import {ReactElement, useEffect, useState} from 'react';
 import {IViewSettingsState} from '../store-view-settings/viewSettingsReducer';
 import styled from 'styled-components';
-import {ActionHook} from '../../_types';
+import {FeatureHook} from '../../_types';
 
 const ModifiedStyledKitTag = styled(KitTag)`
     margin: 0;
@@ -24,7 +24,7 @@ interface IChangePanelPage {
     onClickLeftButton?: () => void;
 }
 
-export const useOpenViewSettings = ({view, isEnabled = true}: ActionHook<{view: IViewSettingsState}>) => {
+export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view: IViewSettingsState}>) => {
     const {activeSettings, setActiveSettings, closeSettingsPanel} = useEditSettings();
     const [button, setButton] = useState<ReactElement | null>(null);
     const [viewListButton, setViewListButton] = useState<ReactElement | null>(null);
@@ -84,7 +84,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: ActionHook<{view: 
                 onClick={() => _openSettingsPanel('my-views')}
                 title={String(t('explorer.manage-views')) /* TODO: avoid transform null to 'null' */}
             >
-                {viewName !== '' ? viewName : t('explorer.manage-views')}
+                {viewName === '' ? t('explorer.manage-views') : viewName}
                 {view.viewModified && (
                     <ModifiedStyledKitTag type="error" idCardProps={{description: String(t('explorer.modified'))}} />
                 )}

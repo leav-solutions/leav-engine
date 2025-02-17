@@ -7,7 +7,7 @@ import {KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation, useDeleteValueMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
-import {ActionHook, Entrypoint, IEntrypointLink, IItemAction} from '../_types';
+import {FeatureHook, Entrypoint, IEntrypointLink, IItemAction} from '../_types';
 import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {MASS_SELECTION_ALL} from '../_constants';
 
@@ -26,7 +26,7 @@ export const useRemoveItemAction = ({
     isEnabled,
     store: {view, dispatch},
     entrypoint
-}: ActionHook<{
+}: FeatureHook<{
     store: {
         view: IViewSettingsState;
         dispatch: Dispatch<IViewSettingsAction>;

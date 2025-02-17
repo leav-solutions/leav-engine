@@ -6,7 +6,7 @@ import {FaTrash} from 'react-icons/fa';
 import {useExplorerSelectionIdsLazyQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
-import {ActionHook, IEntrypointLink, IMassActions} from '../_types';
+import {FeatureHook, IEntrypointLink, IMassActions} from '../_types';
 import {IViewSettingsAction, IViewSettingsState} from '../manage-view-settings';
 
 /**
@@ -23,7 +23,7 @@ export const useLinkMassAction = ({
     store: {view, dispatch},
     libraryId,
     linkAttributeId
-}: ActionHook<{
+}: FeatureHook<{
     store: {
         view: IViewSettingsState;
         dispatch: Dispatch<IViewSettingsAction>;

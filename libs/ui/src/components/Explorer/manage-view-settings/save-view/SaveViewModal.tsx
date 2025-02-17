@@ -34,7 +34,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
         form.validateFields();
         const hasError = form.getFieldsError().some(field => field.errors.length > 0);
         const hasOnlyEmptyField = Object.entries(form.getFieldsValue()).some(
-            ([language, value]) => language === defaultLang && !!value
+            ([language, value]) => language === defaultLang && !value
         );
         if (hasError || hasOnlyEmptyField) {
             return;

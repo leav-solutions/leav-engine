@@ -9,7 +9,7 @@ import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReduce
 import {useSaveView} from './useSaveView';
 import styled from 'styled-components';
 
-const FooterStyledDiv = styled.footer`
+const StyledFooter = styled.footer`
     display: flex;
     flex-direction: column;
     padding-bottom: calc(var(--general-spacing-xs) * 1px);
@@ -25,7 +25,7 @@ export const ViewActions = () => {
         dispatch({type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS});
     };
     return (
-        <FooterStyledDiv>
+        <StyledFooter>
             {saveViewButton}
             <KitButton type="redirect" icon={<FaShare />} onClick={() => null}>
                 {t('explorer.share-view')}
@@ -33,6 +33,6 @@ export const ViewActions = () => {
             <KitButton type="redirect" icon={<FaUndo />} onClick={_handleReinitView}>
                 {t('explorer.reinit-view')}
             </KitButton>
-        </FooterStyledDiv>
+        </StyledFooter>
     );
 };

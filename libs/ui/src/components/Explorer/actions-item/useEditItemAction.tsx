@@ -6,7 +6,7 @@ import {FaPen} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
 import {RecordFilterCondition, useExplorerLibraryDataLazyQuery} from '_ui/_gqlTypes';
-import {ActionHook, IItemAction, IItemData} from '../_types';
+import {FeatureHook, IItemAction, IItemData} from '../_types';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -18,7 +18,7 @@ import {ActionHook, IItemAction, IItemData} from '../_types';
  *
  * @param isEnabled - whether the action is present
  */
-export const useEditItemAction = ({isEnabled}: ActionHook) => {
+export const useEditItemAction = ({isEnabled}: FeatureHook) => {
     const {t} = useSharedTranslation();
 
     const [refreshItem] = useExplorerLibraryDataLazyQuery({fetchPolicy: 'network-only'});

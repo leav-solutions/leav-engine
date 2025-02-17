@@ -65,7 +65,7 @@ const StyleViewItemLi = styled.li`
     }
 `;
 
-export const SavedViews: FunctionComponent<{}> = ({}) => {
+export const SavedViews: FunctionComponent = () => {
     const {t} = useSharedTranslation();
     const {view} = useViewSettingsContext();
     const {availableLangs} = useLang();
@@ -89,7 +89,7 @@ export const SavedViews: FunctionComponent<{}> = ({}) => {
                     {myViews.map(viewItem => (
                         <StyleViewItemLi key={viewItem.id} className={_getViewClassName(viewItem.id)}>
                             <KitTypography.Text size="fontSize5" weight="medium" ellipsis>
-                                {localizedTranslation(viewItem.label as Record<string, string>, availableLangs)}
+                                {localizedTranslation(viewItem.label, availableLangs)}
                             </KitTypography.Text>
                             <FaCheck className="check" />
                         </StyleViewItemLi>
@@ -103,7 +103,7 @@ export const SavedViews: FunctionComponent<{}> = ({}) => {
                         {sharedViews.map(viewItem => (
                             <StyleViewItemLi key={viewItem.id} className={_getViewClassName(viewItem.id)}>
                                 <KitTypography.Text size="fontSize5" weight="medium" ellipsis>
-                                    {localizedTranslation(viewItem.label as Record<string, string>, availableLangs)}
+                                    {localizedTranslation(viewItem.label, availableLangs)}
                                 </KitTypography.Text>
                                 <FaCheck className="check" />
                             </StyleViewItemLi>
