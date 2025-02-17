@@ -61,7 +61,6 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     }
 };
 
-const notRequired = false;
 const notReadonly = false;
 const readonly = true;
 

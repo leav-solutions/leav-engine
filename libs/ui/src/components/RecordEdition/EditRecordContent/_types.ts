@@ -14,7 +14,13 @@ import {RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
 import {IRecordIdentity, IRecordIdentityWhoAmI} from '_ui/types/records';
 import {ITreeNodeWithRecord} from '_ui/types/trees';
 import {IValueVersion} from '_ui/types/values';
-import {RecordFormAttributeFragment, SaveValueBatchMutation, ValueDetailsFragment, ValueInput} from '_ui/_gqlTypes';
+import {
+    RecordFormAttributeFragment,
+    RecordFormAttributeStandardAttributeFragment,
+    SaveValueBatchMutation,
+    ValueDetailsFragment,
+    ValueInput
+} from '_ui/_gqlTypes';
 import {RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {RecordFormElementFragment} from '../../../_gqlTypes';
 import {FormInstance} from 'antd/lib/form/Form';

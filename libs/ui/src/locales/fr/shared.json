@@ -481,6 +481,9 @@
             "start_date": "Date de début",
             "end_date": "Date de fin",
             "select_an_option": "Sélectionner une option"
+        },
+        "error": {
+            "character_limit_exceeded": "Limite de caractères dépassée : merci de respecter le nombre de caractères maximum indiqué"
         }
     },
     "record_summary": {

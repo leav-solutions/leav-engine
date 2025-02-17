@@ -44,7 +44,6 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     }
 };
 
-const notRequired = false;
 const notReadonly = false;
 const readonly = true;
 
@@ -208,6 +207,28 @@ describe('DSRichTextWrapper', () => {
         await user.click(input);
 
         expect(mockSetActiveValue).toHaveBeenCalled();
+    });
+
+    test('Should display the maximum number of characters', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSRichTextWrapper
+                        value={value}
+                        presentationValue={presentationValue}
+                        attribute={{...mockFormAttribute, character_limit: 15}}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        expect(screen.getByText('13 / 15')).toBeInTheDocument();
     });
 
     describe('Without inherited or calculated flags', () => {
