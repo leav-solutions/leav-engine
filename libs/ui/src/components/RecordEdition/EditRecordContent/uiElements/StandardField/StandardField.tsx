@@ -307,7 +307,11 @@ const StandardField: FunctionComponent<
             return errors.length > 0;
         });
 
-        isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
+        const multipleFieldRequiredInError =
+            attribute.multiple_values && attribute.required && antdForm.getFieldError([attribute.id, 0])?.length > 0;
+
+        isFieldInError =
+            antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList || multipleFieldRequiredInError;
     }
 
     const isMultipleValues = element.attribute.multiple_values;
