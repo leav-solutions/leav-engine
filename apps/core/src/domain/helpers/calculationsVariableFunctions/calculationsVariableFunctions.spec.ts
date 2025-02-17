@@ -60,7 +60,7 @@ describe('calculationsVariableFunctions', () => {
         expect(res[0].payload).toBe('meh');
     });
 
-    test('test get first date', async () => {
+    test('should get first date', async () => {
         const res = await calculationFunctions.firstDate.run(
             ctx,
             [{payload: {from: 17438843200, to: 1742472000}}],
