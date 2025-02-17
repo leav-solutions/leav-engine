@@ -37,4 +37,11 @@ describe('ValuesSummary', () => {
         expect(screen.getByText(calculatedValue)).toBeVisible();
         expect(screen.getByTitle('1')).toBeVisible();
     });
+
+    it('Should strip global and calculated values', async () => {
+        render(<ValuesSummary globalValues={['<div>12</div>']} calculatedValue="<p><span>23</span></p>" />);
+
+        expect(screen.getByText('12')).toBeVisible();
+        expect(screen.getByText('23')).toBeVisible();
+    });
 });

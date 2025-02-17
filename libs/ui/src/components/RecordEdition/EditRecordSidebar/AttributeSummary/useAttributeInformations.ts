@@ -14,7 +14,7 @@ export const useAttributeInformations = (attribute: RecordFormAttributeFragment)
     if (attribute.format) {
         attributeInformations.push({
             title: t('record_summary.attribute_format'),
-            value: attribute.format
+            value: t(`attributes.format_${attribute.format}`)
         });
     }
 
