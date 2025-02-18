@@ -677,7 +677,7 @@
         "active-items-number_zero": "Aucun",
         "invalid-value": "Valeur invalide",
         "type-a-value": "Saisissez une valeur",
-        "save-view": "Enregistrer sous...",
+        "save-view-as": "Enregistrer sous...",
         "share-view": "Partager",
         "reinit-view": "Réinitialiser",
         "view-name": "Nom de la vue",

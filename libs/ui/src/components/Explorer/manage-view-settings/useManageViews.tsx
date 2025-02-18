@@ -12,7 +12,7 @@ export const useManageViews = () => {
     const {view, dispatch} = useViewSettingsContext();
     const {saveView} = useExecuteSaveViewMutation();
 
-    const _handleSaveView = async (label: Record<string, string>, saveAs: boolean = false) => {
+    const prepareSaveView = async (label: Record<string, string>, saveAs: boolean = false) => {
         const newView: ViewInput = {
             library: view.libraryId,
             shared: false,
@@ -58,6 +58,6 @@ export const useManageViews = () => {
     };
 
     return {
-        handleSaveView: _handleSaveView
+        prepareSaveView
     };
 };

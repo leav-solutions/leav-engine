@@ -19,7 +19,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
     const {defaultLang, availableLangs} = useLang();
 
     const {view} = useViewSettingsContext();
-    const {handleSaveView} = useManageViews();
+    const {prepareSaveView} = useManageViews();
 
     const [form] = AntForm.useForm();
 
@@ -40,7 +40,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
             return;
         }
 
-        handleSaveView(form.getFieldsValue(), true);
+        prepareSaveView(form.getFieldsValue(), true);
         onClose();
     };
 
@@ -54,7 +54,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
         <KitModal
             // TODO: remove appElement and put in the test : "KitModal.setAppElement(document.body) once exposed"
             appElement={document.body}
-            title={t('explorer.save-view')}
+            title={t('explorer.save-view-as')}
             showCloseIcon={false}
             close={_toggleModal}
             isOpen={isOpen}
