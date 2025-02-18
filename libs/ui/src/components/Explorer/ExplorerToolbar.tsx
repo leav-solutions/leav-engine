@@ -37,7 +37,8 @@ const DividerStyled = styled(KitDivider)`
 
 export const ExplorerToolbar: FunctionComponent<{
     isMassSelectionAll: boolean;
-}> = ({isMassSelectionAll, children}) => {
+    showFiltersAndSort: boolean;
+}> = ({isMassSelectionAll, showFiltersAndSort, children}) => {
     const {t} = useSharedTranslation();
 
     const {view} = useViewSettingsContext();
@@ -69,27 +70,29 @@ export const ExplorerToolbar: FunctionComponent<{
             {children !== null && (
                 <>
                     <li>{children}</li>
-                    {filters.length !== 0 && <DividerStyled type="vertical" />}
+                    {showFiltersAndSort && filters.length !== 0 && <DividerStyled type="vertical" />}
                 </>
             )}
-            <KitSpace size="s">
-                {filters.length > 0 &&
-                    filters.map(filter => (
-                        <li key={filter.id}>
-                            <CommonFilterItem key={filter.id} filter={filter} disabled={isMassSelectionAll} />
+            {showFiltersAndSort && (
+                <KitSpace size="s">
+                    {filters.length > 0 &&
+                        filters.map(filter => (
+                            <li key={filter.id}>
+                                <CommonFilterItem key={filter.id} filter={filter} disabled={isMassSelectionAll} />
+                            </li>
+                        ))}
+                    {sort.length > 0 && (
+                        <li>
+                            <FilterStyled
+                                label={t('explorer.sort-items')}
+                                values={sortValues}
+                                disabled={isMassSelectionAll}
+                                onClick={_handleClickOnSort}
+                            />
                         </li>
-                    ))}
-                {sort.length > 0 && (
-                    <li>
-                        <FilterStyled
-                            label={t('explorer.sort-items')}
-                            values={sortValues}
-                            disabled={isMassSelectionAll}
-                            onClick={_handleClickOnSort}
-                        />
-                    </li>
-                )}
-            </KitSpace>
+                    )}
+                </KitSpace>
+            )}
         </ExplorerToolbarListStyled>
     );
 };

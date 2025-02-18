@@ -586,6 +586,93 @@ describe('Explorer', () => {
         user = userEvent.setup();
     });
 
+    describe('element visibility props', () => {
+        test('should not display primary actions', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} defaultPrimaryActions={[]} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+        });
+
+        test('should not display filters in the toolbar', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        defaultViewSettings={{
+                            filters: [
+                                {
+                                    id: '',
+                                    attribute: {
+                                        format: simpleMockAttribute.format,
+                                        label: simpleMockAttribute.label.fr,
+                                        type: simpleMockAttribute.type
+                                    },
+                                    field: simpleMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                    value: 'Christmas'
+                                }
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(screen.queryByText(simpleMockAttribute.label.fr)).not.toBeInTheDocument();
+        });
+
+        test('should display filters in the toolbar', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        showFiltersAndSorts
+                        defaultViewSettings={{
+                            filters: [
+                                {
+                                    id: '',
+                                    attribute: {
+                                        format: simpleMockAttribute.format,
+                                        label: simpleMockAttribute.label.fr,
+                                        type: simpleMockAttribute.type
+                                    },
+                                    field: simpleMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                    value: 'Christmas'
+                                }
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+            expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
+        });
+
+        test('should not display the settings button', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByRole('button', {name: /settings/})).not.toBeInTheDocument();
+        });
+
+        test('should display the settings button', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} enableConfigureView />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.getByTitle(/settings/)).toBeInTheDocument();
+        });
+    });
+
     describe('props title', () => {
         test('Should display library label as title', () => {
             render(
@@ -1125,6 +1212,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                        showFiltersAndSorts
+                        enableConfigureView
                         defaultViewSettings={{
                             filters: [
                                 {
@@ -1391,6 +1480,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         entrypoint={libraryEntrypoint}
+                        showFiltersAndSorts
+                        enableConfigureView
                         defaultMassActions={[]}
                         massActions={[testMassAction]}
                         defaultViewSettings={{
@@ -1506,6 +1597,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         entrypoint={libraryEntrypoint}
+                        enableConfigureView
+                        showFiltersAndSorts
                         defaultMassActions={[]}
                         massActions={[testMassAction]}
                         defaultViewSettings={{
