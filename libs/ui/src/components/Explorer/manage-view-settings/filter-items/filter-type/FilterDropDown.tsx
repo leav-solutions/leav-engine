@@ -20,6 +20,7 @@ const FilterDropDownStyledDiv = styled.div`
 export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
     const {t} = useSharedTranslation();
     const {dispatch} = useViewSettingsContext();
+
     const onFilterChange: ComponentProps<typeof FilterDropdownContent>['onFilterChange'] = (
         filterData: ExplorerFilter
     ) =>

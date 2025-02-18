@@ -67,7 +67,8 @@ export const LinkModal: FunctionComponent<IAddLinkModalProps> = ({open, onClose}
         isEnabled: true,
         store: {view, dispatch},
         linkAttributeId: (view.entrypoint as IEntrypointLink).linkAttributeId,
-        libraryId: view.libraryId
+        libraryId: view.libraryId,
+        closeModal: onClose
     });
 
     const _handleClose: ComponentProps<typeof KitButton>['onClick'] = () => {

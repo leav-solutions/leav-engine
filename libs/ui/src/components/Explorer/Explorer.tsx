@@ -163,7 +163,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         [createPrimaryAction, linkPrimaryAction, ...primaryActions].filter(Boolean)
     );
 
-    const {viewSettingsButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
+    const {viewSettingsButton, viewListButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
 
     const {searchInput} = useSearchInput({view, dispatch});
 
@@ -183,6 +183,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     {!isMassSelectionAll && (
                         <KitSpace size="xs">
                             {searchInput}
+                            {enableConfigureView && viewListButton}
                             {enableConfigureView && viewSettingsButton}
                             {primaryButton}
                         </KitSpace>

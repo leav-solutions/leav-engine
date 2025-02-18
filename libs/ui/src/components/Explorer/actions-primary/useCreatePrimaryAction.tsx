@@ -7,7 +7,7 @@ import {EditRecordModal} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
-import {ActionHook, Entrypoint, IEntrypointLink, IPrimaryAction} from '../_types';
+import {FeatureHook, Entrypoint, IEntrypointLink, IPrimaryAction} from '../_types';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -28,7 +28,7 @@ export const useCreatePrimaryAction = ({
     entrypoint,
     totalCount,
     refetch
-}: ActionHook<{
+}: FeatureHook<{
     libraryId: string;
     entrypoint: Entrypoint;
     totalCount: number;

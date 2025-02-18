@@ -9,7 +9,7 @@ interface IActiveSettings {
     onClickLeftButton?: () => void;
 }
 
-export type SettingsPanelPages = 'router-menu' | 'configure-display' | 'sort-items' | 'filter-items';
+export type SettingsPanelPages = 'router-menu' | 'configure-display' | 'sort-items' | 'filter-items' | 'my-views';
 
 export interface IEditSettingsContext {
     setActiveSettings: (params: IActiveSettings) => void;

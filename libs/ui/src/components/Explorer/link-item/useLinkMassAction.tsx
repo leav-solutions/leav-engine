@@ -6,7 +6,7 @@ import {FaTrash} from 'react-icons/fa';
 import {useExplorerSelectionIdsLazyQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
-import {ActionHook, IEntrypointLink, IMassActions} from '../_types';
+import {FeatureHook, IEntrypointLink, IMassActions} from '../_types';
 import {IViewSettingsAction, IViewSettingsState} from '../manage-view-settings';
 
 /**
@@ -17,19 +17,22 @@ import {IViewSettingsAction, IViewSettingsState} from '../manage-view-settings';
  * @param dispatch - method to change the current view
  * @param libraryId - concerned library
  * @param linkAttributeId
+ * @param closeModal
  */
 export const useLinkMassAction = ({
     isEnabled,
     store: {view, dispatch},
     libraryId,
-    linkAttributeId
-}: ActionHook<{
+    linkAttributeId,
+    closeModal
+}: FeatureHook<{
     store: {
         view: IViewSettingsState;
         dispatch: Dispatch<IViewSettingsAction>;
     };
     libraryId: string;
     linkAttributeId: string;
+    closeModal: () => void;
 }>) => {
     const {t} = useSharedTranslation();
 
@@ -54,6 +57,7 @@ export const useLinkMassAction = ({
                 },
                 values
             );
+            closeModal();
         }
     });
 

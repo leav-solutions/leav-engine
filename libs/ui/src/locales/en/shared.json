@@ -481,6 +481,9 @@
             "start_date": "Start date",
             "end_date": "End date",
             "select_an_option": "Select an option"
+        },
+        "error": {
+            "character_limit_exceeded": "Character limit exceeded: please respect the maximum number of characters indicated."
         }
     },
     "record_summary": {
@@ -679,6 +682,11 @@
         "reinit-view": "Reset",
         "view-name": "View name",
         "default-view": "Default view",
+        "manage-views": "Manage views",
+        "modified": "Modified",
+        "my-views": "My views",
+        "shared-views": "Shared views",
+        "no-shared-views": "No shared views",
         "select-condition": "Select condition",
         "true": "True",
         "false": "False",
