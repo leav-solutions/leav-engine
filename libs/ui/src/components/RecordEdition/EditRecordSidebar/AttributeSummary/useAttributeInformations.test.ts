@@ -6,7 +6,6 @@ import {useAttributeInformations} from './useAttributeInformations';
 import {renderHook} from '@testing-library/react-hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useLang} from '_ui/hooks';
 
 jest.mock('_ui/hooks/useSharedTranslation', () => ({
     useSharedTranslation: jest.fn()
@@ -31,7 +30,7 @@ describe('useAttributeInformations', () => {
         expect(result.current).toEqual([
             {
                 title: 'record_summary.attribute_format',
-                value: mockFormAttribute.format
+                value: 'attributes.format_extended'
             }
         ]);
     });
@@ -42,7 +41,7 @@ describe('useAttributeInformations', () => {
         expect(result.current).toEqual([
             {
                 title: 'record_summary.attribute_format',
-                value: mockFormAttribute.format
+                value: 'attributes.format_extended'
             },
             {
                 title: 'record_summary.descriptive',

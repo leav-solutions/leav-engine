@@ -9,17 +9,23 @@ import {
     IKeyValue,
     Override
 } from '@leav/utils';
-import {Checkbox, DatePicker, InputRef} from 'antd';
 import {RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
 import {IRecordIdentity, IRecordIdentityWhoAmI} from '_ui/types/records';
 import {ITreeNodeWithRecord} from '_ui/types/trees';
 import {IValueVersion} from '_ui/types/values';
-import {RecordFormAttributeFragment, SaveValueBatchMutation, ValueDetailsFragment, ValueInput} from '_ui/_gqlTypes';
+import {
+    RecordFormAttributeFragment,
+    SaveValueBatchMutation,
+    CreateRecordMutation,
+    RecordIdentityFragment,
+    ValueBatchInput,
+    ValueDetailsFragment,
+    ValueInput
+} from '_ui/_gqlTypes';
 import {RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {RecordFormElementFragment} from '../../../_gqlTypes';
 import {FormInstance} from 'antd/lib/form/Form';
-import {IColumnsValuesByRecord} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
-import {GetRecordColumnsValuesRecord, RecordColumnValue} from '_ui/_queries/records/getRecordColumnsValues';
+import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
 
 export interface IValueToSubmit {
     attribute: string;
@@ -40,6 +46,7 @@ export type FieldSubmitMultipleFunc = (
     version?: IValueVersion,
     deleteEmpty?: boolean
 ) => Promise<ISubmitMultipleResult>;
+
 export interface ISubmitMultipleResult {
     status: APICallStatus;
     error?: string;
@@ -50,6 +57,12 @@ export interface ISubmitMultipleResult {
 export interface IDeleteValueResult {
     status: APICallStatus;
     error?: string;
+}
+
+export interface ICreateRecordResult {
+    status: APICallStatus;
+    record?: RecordIdentityFragment['whoAmI'];
+    errors?: CreateRecordMutation['createRecord']['valuesErrors'];
 }
 
 export interface IRecordEditionContext {
@@ -78,6 +91,7 @@ export type SubmittedValue = ISubmittedValueStandard | ISubmittedValueLink | ISu
 
 export type SubmitValueFunc = (values: SubmittedValue[], version: IValueVersion) => Promise<ISubmitMultipleResult>;
 export type DeleteValueFunc = (value: ValueInput | null, attribute: string) => Promise<IDeleteValueResult>;
+export type CreateRecordFunc = (library: string, values: ValueBatchInput[]) => Promise<ICreateRecordResult>;
 export type DeleteMultipleValuesFunc = (
     attribute: string,
     values: RecordProperty[],

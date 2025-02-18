@@ -810,7 +810,8 @@ describe('ViewSettings Reducer', () => {
                     sort: viewSettingsInitialState.sort,
                     attributesIds: viewSettingsInitialState.attributesIds,
                     pageSize: viewSettingsInitialState.pageSize
-                }
+                },
+                viewModified: true
             },
             {
                 type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS
@@ -835,6 +836,31 @@ describe('ViewSettings Reducer', () => {
         );
 
         expect(state.massSelection).toEqual(newSelectedKeys);
+        expect(state.viewModified).toEqual(false);
+    });
+
+    test(`Action ${ViewSettingsActionTypes.UPDATE_VIEWS} test`, async () => {
+        const view = {
+            id: 'viewId',
+            label: {
+                fr: 'Ma vue'
+            },
+            shared: false
+        };
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                viewModified: true
+            },
+            {
+                type: ViewSettingsActionTypes.UPDATE_VIEWS,
+                payload: view
+            }
+        );
+
+        expect(state.viewId).toEqual(view.id);
+        expect(state.viewLabels).toEqual(view.label);
+        expect(state.savedViews.length).toEqual(1);
         expect(state.viewModified).toEqual(false);
     });
 });

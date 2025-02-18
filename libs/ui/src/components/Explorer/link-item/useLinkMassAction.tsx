@@ -17,12 +17,14 @@ import {IViewSettingsAction, IViewSettingsState} from '../manage-view-settings';
  * @param dispatch - method to change the current view
  * @param libraryId - concerned library
  * @param linkAttributeId
+ * @param closeModal
  */
 export const useLinkMassAction = ({
     isEnabled,
     store: {view, dispatch},
     libraryId,
-    linkAttributeId
+    linkAttributeId,
+    closeModal
 }: FeatureHook<{
     store: {
         view: IViewSettingsState;
@@ -30,6 +32,7 @@ export const useLinkMassAction = ({
     };
     libraryId: string;
     linkAttributeId: string;
+    closeModal: () => void;
 }>) => {
     const {t} = useSharedTranslation();
 
@@ -54,6 +57,7 @@ export const useLinkMassAction = ({
                 },
                 values
             );
+            closeModal();
         }
     });
 

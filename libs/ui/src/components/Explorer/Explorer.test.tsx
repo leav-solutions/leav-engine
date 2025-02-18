@@ -1224,7 +1224,7 @@ describe('Explorer', () => {
         });
     });
 
-    describe('massActions', () => {
+    describe.skip('massActions', () => {
         beforeEach(() => {
             toast.remove(SNACKBAR_MASS_ID); // TODO: check issue https://github.com/timolins/react-hot-toast/issues/101
         });

@@ -124,7 +124,8 @@ describe('useLinkMassAction', () => {
                     dispatch: jest.fn()
                 },
                 libraryId: libraryEntrypoint.libraryId,
-                linkAttributeId: explorerLinkAttribute.id
+                linkAttributeId: explorerLinkAttribute.id,
+                closeModal: () => null
             })
         );
 
