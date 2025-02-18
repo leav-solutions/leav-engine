@@ -80,7 +80,8 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         recordForm
             ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
             : [],
-        [record?.id]
+        [record?.id],
+        true
     );
 
     // Generate a hash of recordForm to detect changes
