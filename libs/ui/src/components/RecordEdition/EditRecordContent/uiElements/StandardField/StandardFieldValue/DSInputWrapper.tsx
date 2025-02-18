@@ -92,8 +92,8 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
             onFocus={_handleOnFocus}
             onBlur={_handleOnBlur}
             placeholder={t('record_edition.placeholder.enter_a_text')}
-            showCount={Boolean(attribute.character_limit)}
             maxLength={attribute.character_limit}
+            showCount
         />
     );
 };
