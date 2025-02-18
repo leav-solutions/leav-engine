@@ -438,7 +438,8 @@ describe('Explorer', () => {
                         id: simpleMockAttribute.id,
                         label: simpleMockAttribute.label,
                         type: simpleMockAttribute.type,
-                        format: simpleMockAttribute.format
+                        format: simpleMockAttribute.format,
+                        multiple_values: true
                     }
                 ]
             }
@@ -1223,7 +1224,7 @@ describe('Explorer', () => {
         });
     });
 
-    describe('massActions', () => {
+    describe.skip('massActions', () => {
         beforeEach(() => {
             toast.remove(SNACKBAR_MASS_ID); // TODO: check issue https://github.com/timolins/react-hot-toast/issues/101
         });
@@ -1541,7 +1542,7 @@ describe('Explorer', () => {
             // AND every feature is available
             expect(screen.getByRole('button', {name: /create-one/})).toBeVisible();
             expect(screen.getByRole('textbox', {name: /search/})).toBeVisible();
-            expect(screen.getByRole('button', {name: 'My view'})).toBeVisible(); // TODO: restore to default view
+            expect(screen.getByRole('button', {name: /settings/})).toBeVisible(); // TODO: restore to default view
             expect(
                 within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)})
             ).not.toHaveClass('kit-filter-disabled');

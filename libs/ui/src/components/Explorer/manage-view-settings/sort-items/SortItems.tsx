@@ -75,7 +75,7 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
         }
     };
 
-    const _changeOrderActiveFilterTo = (field: string) => (order: SortOrder) => {
+    const _changeOrderActiveFilterTo = (field: string) => (order: SortOrder) =>
         dispatch({
             type: ViewSettingsActionTypes.CHANGE_SORT_ORDER,
             payload: {
@@ -83,7 +83,6 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                 order
             }
         });
-    };
 
     const _handleDragEnd = ({active: draggedElement, over: dropTarget}: DragEndEvent) => {
         const indexFrom = activeFilters.findIndex(({field}) => field === String(draggedElement.id));

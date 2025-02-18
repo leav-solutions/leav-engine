@@ -4,7 +4,7 @@
 import {useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ActionHook, IPrimaryAction} from '../_types';
+import {FeatureHook, IPrimaryAction} from '../_types';
 import {LinkModal} from '../link-item/LinkModal';
 
 /**
@@ -20,7 +20,7 @@ import {LinkModal} from '../link-item/LinkModal';
 export const useLinkPrimaryAction = ({
     isEnabled,
     maxItemsLeft
-}: ActionHook<{
+}: FeatureHook<{
     maxItemsLeft: number | null;
 }>) => {
     const {t} = useSharedTranslation();

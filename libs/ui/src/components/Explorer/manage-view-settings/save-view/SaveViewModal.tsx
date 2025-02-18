@@ -32,13 +32,15 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
 
     const _handleSaveView = () => {
         form.validateFields();
-        const hasError = form.getFieldsError().filter(field => field.errors.length > 0).length > 0;
-        const hasOnlyEmptyField =
-            Object.entries(form.getFieldsValue()).filter(field => field[0] === defaultLang && !!field[1]).length === 0;
+        const hasError = form.getFieldsError().some(field => field.errors.length > 0);
+        const hasOnlyEmptyField = Object.entries(form.getFieldsValue()).some(
+            ([language, value]) => language === defaultLang && !value
+        );
         if (hasError || hasOnlyEmptyField) {
             return;
         }
-        handleSaveView(form.getFieldsValue());
+
+        handleSaveView(form.getFieldsValue(), true);
         onClose();
     };
 
@@ -69,9 +71,9 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
         >
             <AntForm name="label" form={form} initialValues={{...view.viewLabels}}>
                 <KitInputWrapper label={String(t('explorer.view-name'))}>
-                    {availableLangs.map((lang, index) => (
+                    {availableLangs.map(lang => (
                         <AntForm.Item
-                            key={index}
+                            key={lang}
                             name={lang}
                             rules={[
                                 {required: lang === defaultLang, message: String(t('errors.standard_field_required'))}
