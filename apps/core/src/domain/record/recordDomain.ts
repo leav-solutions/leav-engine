@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {EventAction} from '@leav/utils';
+import {EventAction, localizedTranslation} from '@leav/utils';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IValidateHelper} from 'domain/helpers/validate';
@@ -859,19 +859,25 @@ export default function ({
                     creationForm
                         ? await attributeDomain.getFormAttributes(library, 'creation', ctx)
                         : await attributeDomain.getLibraryAttributes(library, ctx)
-                ).flatMap(attribute => (attribute.required ? attribute.id : []));
+                ).flatMap(attribute => (attribute.required ? attribute : []));
 
                 const missingAttributes = requiredAttributes.filter(
-                    attributeId => !Object.keys(valuesByAttribute).includes(attributeId)
+                    attribute => !Object.keys(valuesByAttribute).includes(attribute.id)
                 );
+
+                const attributeLabel = label =>
+                    typeof label === 'string' ? label : localizedTranslation(label, [ctx.lang]);
 
                 if (missingAttributes.length) {
                     return {
                         record: null,
                         valuesErrors: missingAttributes.map(attribute => ({
                             type: Errors.REQUIRED_ATTRIBUTE,
-                            attribute,
-                            message: utils.translateError({msg: Errors.REQUIRED_ATTRIBUTE, vars: {attribute}}, ctx.lang)
+                            attribute: attribute.id,
+                            message: utils.translateError(
+                                {msg: Errors.REQUIRED_ATTRIBUTE, vars: {attribute: attributeLabel(attribute.label)}},
+                                ctx.lang
+                            )
                         }))
                     };
                 }
