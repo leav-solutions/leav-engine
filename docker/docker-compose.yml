@@ -414,7 +414,7 @@ services:
     depends_on:
       core:
         condition: service_healthy
-    command: [sh, -c, "yarn run ./start.sh"]
+    command: [sh, -c, "./start.sh"]
 
   # At creation, we just install deps and exit.
   # Run "docker-compose run --rm sync-scan yarn start" to make the scan

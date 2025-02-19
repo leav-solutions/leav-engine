@@ -485,7 +485,7 @@ export default function ({
             ctx
         });
 
-        if (!TypeGuards.isIStandardValue(filePreviewsValue[0])) {
+        if (!filePreviewsValue[0] || !TypeGuards.isIStandardValue(filePreviewsValue[0])) {
             return null;
         }
 
