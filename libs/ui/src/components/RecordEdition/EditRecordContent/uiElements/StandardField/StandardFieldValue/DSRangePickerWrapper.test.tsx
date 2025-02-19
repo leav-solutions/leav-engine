@@ -14,15 +14,8 @@ const tomorrowDate = dayjs().add(1, 'day');
 const formatedDates = (date: dayjs.Dayjs) => ({
     formated: date.format('YYYY-MM-DD'),
     timestamp: date.unix().toString(),
-    atNoon: date.utc().set('date', date.date()).set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0),
-    atNoonTimestamp: date
-        .utc()
-        .set('date', date.date())
-        .set('hour', 12)
-        .set('minute', 0)
-        .set('second', 0)
-        .set('millisecond', 0)
-        .unix()
+    atNoon: date.set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0),
+    atNoonTimestamp: date.set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0).unix()
 });
 const todayDateFormated = formatedDates(todayDate);
 const tomorrowDateFormated = formatedDates(tomorrowDate);
