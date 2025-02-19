@@ -94,8 +94,8 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
             onFocus={_handleFocus}
             onBlur={_handleOnBlur}
             placeholder={t('record_edition.placeholder.enter_a_text')}
-            showCount={Boolean(attribute.character_limit)}
-            maxLength={attribute.character_limit}
+            maxLength={attribute.character_limit ?? undefined}
+            showCount
         />
     );
 };

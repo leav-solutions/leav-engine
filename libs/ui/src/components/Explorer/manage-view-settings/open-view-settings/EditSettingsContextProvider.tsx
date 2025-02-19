@@ -6,6 +6,7 @@ import {EditSettingsContext, IEditSettingsContext} from './EditSettingsContext';
 
 interface IEditSettingsContextProviderProps {
     panelElement?: IEditSettingsContext['panelElement'];
+    children: React.ReactNode;
 }
 
 export const EditSettingsContextProvider: FunctionComponent<IEditSettingsContextProviderProps> = ({

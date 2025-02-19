@@ -36,7 +36,8 @@ const _recordIdsToQueryFilters = (recordIds: string[]): RecordFilterInput[] =>
 export const useGetRecordValuesQuery = (
     libraryId: string,
     columns: string[],
-    recordIds: string[]
+    recordIds: string[],
+    skip?: boolean
 ): IUseGetRecordColumnsValuesQueryHook => {
     const [queryData, setQueryData] = useState<IColumnsValuesByRecord>();
 
@@ -52,7 +53,7 @@ export const useGetRecordValuesQuery = (
             // Turn records ids into filters with OR operators
             filters: _recordIdsToQueryFilters(recordIds)
         },
-        skip: !libraryId || !columns.length || !recordIds.length,
+        skip: skip || !libraryId || !columns.length || !recordIds.length,
         onCompleted: data => {
             const cleanData: IColumnsValuesByRecord = _convertQueryResult(data);
             setQueryData(cleanData);
