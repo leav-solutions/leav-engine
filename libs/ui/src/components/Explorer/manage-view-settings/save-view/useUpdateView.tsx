@@ -5,44 +5,20 @@ import {KitButton} from 'aristid-ds';
 import {FaSave} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-import {ViewInput} from '_ui/_gqlTypes';
-import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
-import {isExplorerFilterThrough} from '../../_types';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
+import {prepareViewForRequest} from './prepareViewForRequest';
 
 export const useUpdateView = () => {
     const {t} = useSharedTranslation();
     const {view, dispatch} = useViewSettingsContext();
     const {saveView} = useExecuteSaveViewMutation();
 
-    const _mappingViewForUpdate = (label: Record<string, string>): ViewInput => ({
-        id: view.viewId,
-        library: view.libraryId,
-        shared: false,
-        display: {
-            type: mapViewTypeFromExplorerToLegacy[view.viewType]
-        },
-        filters: view.filters.map(filter =>
-            isExplorerFilterThrough(filter)
-                ? {
-                      field: `${filter.field}.${filter.subField}`,
-                      value: filter.value,
-                      condition: filter.subCondition
-                  }
-                : {
-                      field: filter.field,
-                      value: filter.value,
-                      condition: filter.condition
-                  }
-        ),
-        sort: view.sort.map(({field, order}) => ({field, order})),
-        attributes: view.attributesIds,
-        label
-    });
-
     const _updateView = async () => {
-        const mappedView = _mappingViewForUpdate(view.viewLabels);
+        const mappedView = {
+            ...prepareViewForRequest(view, view.viewLabels),
+            id: view.viewId
+        };
 
         const {data} = await saveView({
             view: mappedView

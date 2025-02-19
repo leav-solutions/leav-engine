@@ -4,7 +4,6 @@
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton} from 'aristid-ds';
 import {FaShare} from 'react-icons/fa';
-import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {useCreateNewView} from './useCreateNewView';
 import styled from 'styled-components';
 import {useUpdateView} from './useUpdateView';
@@ -16,7 +15,7 @@ const StyledFooter = styled.footer`
     padding-bottom: calc(var(--general-spacing-xs) * 1px);
 `;
 
-export const ViewActions = () => {
+export const ViewActionsButton = () => {
     const {t} = useSharedTranslation();
     const {updateViewButton} = useUpdateView();
     const {createNewViewButton} = useCreateNewView();

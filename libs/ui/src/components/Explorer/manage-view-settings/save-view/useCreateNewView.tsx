@@ -7,10 +7,9 @@ import {KitButton} from 'aristid-ds';
 import {FaSdCard} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
-import {isExplorerFilterThrough} from '../../_types';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
+import {prepareViewForRequest} from './prepareViewForRequest';
 
 export const useCreateNewView = () => {
     const {t} = useSharedTranslation();
@@ -22,32 +21,8 @@ export const useCreateNewView = () => {
         setIsModalOpen(!isModalOpen);
     };
 
-    const _mappingViewForCreation = (label: Record<string, string>) => ({
-        library: view.libraryId,
-        shared: false,
-        display: {
-            type: mapViewTypeFromExplorerToLegacy[view.viewType]
-        },
-        filters: view.filters.map(filter =>
-            isExplorerFilterThrough(filter)
-                ? {
-                      field: `${filter.field}.${filter.subField}`,
-                      value: filter.value,
-                      condition: filter.subCondition
-                  }
-                : {
-                      field: filter.field,
-                      value: filter.value,
-                      condition: filter.condition
-                  }
-        ),
-        sort: view.sort.map(({field, order}) => ({field, order})),
-        attributes: view.attributesIds,
-        label
-    });
-
     const _createView = async (label: Record<string, string>) => {
-        const mappedView = _mappingViewForCreation(label);
+        const mappedView = prepareViewForRequest(view, label);
 
         const {data} = await saveView({
             view: mappedView
