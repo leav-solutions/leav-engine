@@ -149,6 +149,8 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                     type: 'library',
                     libraryId: library
                 }}
+                enableConfigureView
+                showFiltersAndSorts
                 defaultActionsForItem={['edit', 'remove']}
                 defaultPrimaryActions={['create']}
                 defaultMassActions={['deactivate']}
@@ -178,6 +180,8 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
     ) : params.has(explorerLinkQueryParamName) ? (
         <ExplorerContainerDivStyled>
             <Explorer
+                enableConfigureView
+                showFiltersAndSorts
                 entrypoint={{
                     type: 'link',
                     parentLibraryId: 'sebastien_s_librairy',

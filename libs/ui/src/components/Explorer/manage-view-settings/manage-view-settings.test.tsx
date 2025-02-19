@@ -14,11 +14,19 @@ import {ViewSettingsContext} from './store-view-settings/ViewSettingsContext';
 import {act, waitFor} from '@testing-library/react';
 import {useViewSettingsReducer} from '../useViewSettingsReducer';
 import {DefaultViewSettings} from '../_types';
+import {IViewSettingsState} from './store-view-settings/viewSettingsReducer';
 
 const MockOpenEditSettings: FunctionComponent = () => {
-    const {viewSettingsButton} = useOpenViewSettings('');
+    const {viewSettingsButton, viewListButton} = useOpenViewSettings({view: {}, isEnabled: true} as {
+        view: IViewSettingsState;
+        isEnabled: boolean;
+    });
 
-    return <>{viewSettingsButton}</>;
+    return (
+        <>
+            {viewListButton} {viewSettingsButton}
+        </>
+    );
 };
 
 const MockViewSettingsContextProvider: FunctionComponent<{defaultSettings?: DefaultViewSettings}> = ({
@@ -60,6 +68,7 @@ describe('Integration tests about managing view settings feature', () => {
                     {
                         id: '42',
                         label: {en: 'My view'},
+                        shared: false,
                         filters: [],
                         sort: []
                     }
@@ -77,6 +86,7 @@ describe('Integration tests about managing view settings feature', () => {
                     {
                         id: '42',
                         label: {en: 'My view'},
+                        shared: false,
                         filters: [],
                         sort: [
                             {
@@ -240,7 +250,7 @@ describe('Integration tests about managing view settings feature', () => {
             const timeout = r => setTimeout(r, 350);
 
             render(
-                <EditSettingsContextProvider>
+                <EditSettingsContextProvider panelElement={() => document.body}>
                     <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
@@ -344,7 +354,30 @@ describe('Integration tests about managing view settings feature', () => {
             );
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
-            await userEvent.click(screen.getByRole('button', {name: /save/}));
+
+            await userEvent.click(screen.getByRole('link', {name: /save/}));
+            // hidden: true car l'ouverture de la Modal met un aria-label: hidden sur le body
+            const closeButton = screen.getByRole('button', {name: 'global.close', hidden: true});
+            expect(closeButton).toBeVisible();
+            await userEvent.click(closeButton);
+            expect(closeButton).not.toBeVisible();
+            expect(mockSaveViewMutation).not.toHaveBeenCalled();
+
+            await userEvent.click(screen.getByRole('link', {name: /save/}));
+            const saveButton = screen.getByRole('button', {name: 'global.save', hidden: true});
+            expect(saveButton).toBeVisible();
+            await userEvent.click(saveButton);
+            expect(mockSaveViewMutation).not.toHaveBeenCalled();
+            await waitFor(() => expect(screen.getByText('errors.standard_field_required')).toBeVisible());
+
+            const [requiredInput] = screen
+                .getAllByRole('textbox', {hidden: true})
+                .filter(r => r.getAttribute('aria-required') === 'true');
+
+            await userEvent.type(requiredInput, 'Nom de ma vue requis{Enter}');
+
+            // Timeout for secureClick
+            await userEvent.click(saveButton, {delay: 1000});
 
             expect(mockSaveViewMutation).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -353,9 +386,8 @@ describe('Integration tests about managing view settings feature', () => {
                             attributes: [],
                             display: {type: 'list'},
                             filters: [],
-                            id: '42',
-                            label: {fr: 'user view'},
-                            library: '',
+                            label: {fr: 'Nom de ma vue requis', en: 'My view'},
+                            library: 'my_lib',
                             shared: false,
                             sort: []
                         }
@@ -410,11 +442,54 @@ describe('Integration tests about managing view settings feature', () => {
             expect(within(activeSorts).getAllByRole('listitem')).toHaveLength(2);
 
             await userEvent.click(screen.getByRole('button', {name: /back/}));
-            await userEvent.click(screen.getByRole('button', {name: /reinit/}));
+            await userEvent.click(screen.getByRole('link', {name: /reinit/}));
 
             await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
             activeSorts = screen.getByRole('list', {name: 'explorer.sort-list.active'});
             expect(within(activeSorts).getAllByRole('listitem')).toHaveLength(1);
+        });
+
+        test('Should display views list', async () => {
+            const mockViewsListResult: Mockify<typeof gqlTypes.useGetViewsListQuery> = {
+                data: {
+                    views: {
+                        list: [
+                            {
+                                id: '42',
+                                label: {en: 'My view'},
+                                shared: false
+                            },
+                            {
+                                id: '43',
+                                label: {en: 'My second View'},
+                                shared: false
+                            },
+                            {
+                                id: '44',
+                                label: {en: 'My third view'},
+                                shared: false
+                            }
+                        ]
+                    }
+                },
+                loading: false,
+                called: true
+            };
+            getViewsListSpy.mockReturnValue(mockViewsListResult as gqlTypes.GetViewsListQueryResult);
+
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
+
+            const viewsList = screen.getByRole('list', {name: /explorer.my-views/});
+            expect(within(viewsList).getAllByRole('listitem')).toHaveLength(4);
         });
     });
 });

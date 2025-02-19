@@ -5,9 +5,9 @@ import {useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
 import {EditRecordModal} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ActionHook, Entrypoint, IEntrypointLink, IPrimaryAction} from './_types';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
+import {FeatureHook, Entrypoint, IEntrypointLink, IPrimaryAction} from '../_types';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -17,19 +17,21 @@ import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
  * It returns also two parts : one for the call action button - one for displayed the modal required by the action.
  *
  * @param isEnabled - whether the action is present
- * @param library - the library's id to add new item
+ * @param libraryId - the library's id to add new item
+ * @param entrypoint - represent the current entrypoint
+ * @param totalCount - used for display purpose only
  * @param refetch - method to call to refresh the list. New item will be visible if it matches filters and sorts
  */
-export const useCreateAction = ({
+export const useCreatePrimaryAction = ({
     isEnabled,
-    library,
+    libraryId,
     entrypoint,
-    itemsCount,
+    totalCount,
     refetch
-}: ActionHook<{
-    library: string;
+}: FeatureHook<{
+    libraryId: string;
     entrypoint: Entrypoint;
-    itemsCount: number;
+    totalCount: number;
     refetch: () => void;
 }>) => {
     const {t} = useSharedTranslation();
@@ -52,9 +54,9 @@ export const useCreateAction = ({
         }
     });
 
-    const canCreateRecord = entrypoint.type === 'library' ? true : multipleValues || itemsCount === 0;
+    const canCreateRecord = entrypoint.type === 'library' ? true : multipleValues || totalCount === 0;
 
-    const createAction: IPrimaryAction = {
+    const _createPrimaryAction: IPrimaryAction = {
         callback: () => {
             setRecordCreationVisible(true);
         },
@@ -64,12 +66,12 @@ export const useCreateAction = ({
     };
 
     return {
-        createAction: isEnabled ? createAction : null,
+        createPrimaryAction: isEnabled ? _createPrimaryAction : null,
         createModal: isRecordCreationVisible ? (
             <EditRecordModal
                 open
                 record={null}
-                library={library}
+                library={libraryId}
                 onClose={() => {
                     setRecordCreationVisible(false);
                 }}

@@ -19,15 +19,6 @@ const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     calculatedValue: null
 };
 
-const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
-    isCalculatedValue: true,
-    isCalculatedOverrideValue: true,
-    isCalculatedNotOverrideValue: false,
-    calculatedValue: {
-        raw_payload: newValue
-    }
-};
-
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
     isInheritedOverrideValue: false,
@@ -35,16 +26,6 @@ const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     inheritedValue: null
 };
 
-const inheritedFlagsWithInheritedValue: InheritedFlags = {
-    isInheritedValue: true,
-    isInheritedOverrideValue: true,
-    isInheritedNotOverrideValue: false,
-    inheritedValue: {
-        raw_payload: newValue
-    }
-};
-
-const notRequired = false;
 const notReadonly = false;
 const readonly = true;
 
@@ -227,5 +208,29 @@ describe('DSInputWrapper', () => {
 
         expect(mockOnChange).toHaveBeenCalled();
         expect(mockHandleSubmit).toHaveBeenCalledWith('', mockFormAttribute.id);
+    });
+
+    test('Should display the maximum number of characters', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSInputWrapper
+                        value={value}
+                        presentationValue={presentationValue}
+                        attribute={{...mockFormAttribute, character_limit: 15}}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const input = screen.getByRole('textbox');
+        expect(input).toHaveAttribute('maxlength', '15');
+        expect(screen.getByText('13 / 15')).toBeInTheDocument();
     });
 });

@@ -14,6 +14,7 @@ import {
 import {ReactElement} from 'react';
 import {IViewSettingsState} from './manage-view-settings';
 import {ThroughConditionFilter} from '_ui/types/search';
+import {IView} from '_ui/types';
 
 export interface IExplorerData {
     totalCount: number;
@@ -41,6 +42,7 @@ export interface IItemAction {
     callback: (item: IItemData) => void;
     icon: ReactElement;
     label: string;
+    iconOnly?: boolean;
     isDanger?: boolean;
     disabled?: boolean;
 }
@@ -58,7 +60,7 @@ export interface IMassActions {
     label: string;
 }
 
-export type ActionHook<T = {}> = {isEnabled: boolean} & T;
+export type FeatureHook<T = {}> = {isEnabled: boolean} & T;
 
 interface IExplorerFilterBaseAttribute {
     type: AttributeType;
@@ -118,11 +120,7 @@ export interface IFilterDropDownProps {
 export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,
     {
-        filters?: Array<{
-            field: string;
-            condition: RecordFilterCondition;
-            value: string | null;
-        }>;
+        filters?: ExplorerFilter[];
     }
 >;
 
@@ -145,3 +143,9 @@ export interface IEntrypointLink {
 }
 
 export type Entrypoint = IEntrypointTree | IEntrypointLibrary | IEntrypointLink;
+
+export interface IUserView {
+    id: IView['id'];
+    label: Record<string, string>;
+    shared: IView['shared'];
+}

@@ -300,13 +300,18 @@ const StandardField: FunctionComponent<
     };
 
     let isFieldInError = false;
+
     if (antdForm) {
         const hasErrorsInFormList = backendValues.some((_, index) => {
             const errors = antdForm.getFieldError([attribute.id, index]);
             return errors.length > 0;
         });
 
-        isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
+        const multipleFieldRequiredInError =
+            attribute.multiple_values && attribute.required && antdForm.getFieldError([attribute.id, 0])?.length > 0;
+
+        isFieldInError =
+            antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList || multipleFieldRequiredInError;
     }
 
     const isMultipleValues = element.attribute.multiple_values;

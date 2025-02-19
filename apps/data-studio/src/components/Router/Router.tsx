@@ -46,7 +46,7 @@ const Router: FunctionComponent = () => {
                         />
                     </Header>
                     <Layout style={{overflow: 'hidden', position: 'relative'}} ref={explorerContainerRef}>
-                        <Explorer.EditSettingsContextProvider panelElement={explorerContainerRef.current}>
+                        <Explorer.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
                             <Content style={{background: themeVars.defaultBg, overflow: 'hidden'}}>
                                 <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
                                 <NotifsPanel setNbNotifs={_setNbNotifs} />

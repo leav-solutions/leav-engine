@@ -44,7 +44,8 @@ export default function useExecuteSaveViewMutation(): IUseSaveViewMutationHook {
                                     list: [...cacheData.views.list, mutationResult.data.saveView],
                                     totalCount: cacheData.views.totalCount + 1
                                 }
-                            }
+                            },
+                            overwrite: true
                         });
                     }
                 }

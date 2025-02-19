@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ComponentProps, FunctionComponent} from 'react';
-import {KitButton, KitDivider, KitFilter, KitSpace} from 'aristid-ds';
-import {FaTrash} from 'react-icons/fa';
+import {KitDivider, KitFilter, KitSpace} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SortOrder} from '_ui/_gqlTypes';
@@ -17,9 +16,11 @@ const FilterStyled = styled(KitFilter)`
 `;
 
 const ExplorerToolbarListStyled = styled.ul`
-    padding: calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-xxs) * 1px)
-        calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-xxs) * 1px);
+    padding: calc(var(--general-spacing-xs) * 1px);
     margin: 0;
+    margin-bottom: calc(var(--general-spacing-s) * 1px);
+    background: var(--general-colors-neutral-grey-100);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
     list-style: none;
     display: flex;
     overflow: auto;
@@ -27,6 +28,7 @@ const ExplorerToolbarListStyled = styled.ul`
     align-items: center;
     gap: 0;
     white-space: nowrap;
+    min-height: 26px; // height of the filter chip
 `;
 
 const DividerStyled = styled(KitDivider)`
@@ -34,18 +36,17 @@ const DividerStyled = styled(KitDivider)`
 `;
 
 export const ExplorerToolbar: FunctionComponent<{
-    libraryId: string;
     isMassSelectionAll: boolean;
-}> = ({libraryId, isMassSelectionAll, children}) => {
+    showFiltersAndSort: boolean;
+}> = ({isMassSelectionAll, showFiltersAndSort, children}) => {
     const {t} = useSharedTranslation();
 
-    const {
-        view: {filters, sort}
-    } = useViewSettingsContext();
+    const {view} = useViewSettingsContext();
+    const {filters, sort} = view;
 
-    const {openSettingsPanel} = useOpenViewSettings(libraryId);
+    const {openSettingsPanel} = useOpenViewSettings({view, isEnabled: true});
 
-    const {attributeDetailsById} = useAttributeDetailsData(libraryId);
+    const {attributeDetailsById} = useAttributeDetailsData(view.libraryId);
 
     if (filters.length === 0 && sort.length === 0 && children === null) {
         return null;
@@ -69,46 +70,29 @@ export const ExplorerToolbar: FunctionComponent<{
             {children !== null && (
                 <>
                     <li>{children}</li>
-                    {filters.length !== 0 && <DividerStyled type="vertical" />}
+                    {showFiltersAndSort && filters.length !== 0 && <DividerStyled type="vertical" />}
                 </>
             )}
-            {filters.length > 0 && (
-                <>
-                    <KitSpace size="s">
-                        {filters.map(filter => (
+            {showFiltersAndSort && (
+                <KitSpace size="s">
+                    {filters.length > 0 &&
+                        filters.map(filter => (
                             <li key={filter.id}>
                                 <CommonFilterItem key={filter.id} filter={filter} disabled={isMassSelectionAll} />
                             </li>
                         ))}
-                    </KitSpace>
-                    {sort.length > 0 && <DividerStyled type="vertical" />}
-                </>
+                    {sort.length > 0 && (
+                        <li>
+                            <FilterStyled
+                                label={t('explorer.sort-items')}
+                                values={sortValues}
+                                disabled={isMassSelectionAll}
+                                onClick={_handleClickOnSort}
+                            />
+                        </li>
+                    )}
+                </KitSpace>
             )}
-            {sort.length > 0 && (
-                <>
-                    <li>
-                        <FilterStyled
-                            label={t('explorer.sort-items')}
-                            values={sortValues}
-                            disabled={isMassSelectionAll}
-                            onClick={_handleClickOnSort}
-                        />
-                    </li>
-                    <DividerStyled type="vertical" />
-                </>
-            )}
-            <li>
-                <FilterStyled
-                    as={KitButton}
-                    type="secondary"
-                    size="s"
-                    danger
-                    icon={<FaTrash />}
-                    disabled={true /* TODO: why? */}
-                >
-                    {t('explorer.reset-view')}
-                </FilterStyled>
-            </li>
         </ExplorerToolbarListStyled>
     );
 };
