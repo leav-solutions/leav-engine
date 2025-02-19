@@ -6,20 +6,17 @@ import {FaTimes, FaSave} from 'react-icons/fa';
 import {KitModal, KitButton, AntForm, KitInputWrapper, KitInput} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useManageViews} from '../useManageViews';
-import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 
 interface ISaveViewProps {
     isOpen: boolean;
+    labels: Record<string, string>;
+    onSave: (label: Record<string, string>) => void;
     onClose: () => void;
 }
 
-export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClose}) => {
+export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, labels, onSave, onClose}) => {
     const {t} = useSharedTranslation();
     const {defaultLang, availableLangs} = useLang();
-
-    const {view} = useViewSettingsContext();
-    const {prepareSaveView} = useManageViews();
 
     const [form] = AntForm.useForm();
 
@@ -40,7 +37,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
             return;
         }
 
-        prepareSaveView(form.getFieldsValue(), true);
+        onSave(form.getFieldsValue());
         onClose();
     };
 
@@ -69,7 +66,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
                 </>
             }
         >
-            <AntForm name="label" form={form} initialValues={{...view.viewLabels}}>
+            <AntForm name="label" form={form} initialValues={{...labels}}>
                 <KitInputWrapper label={String(t('explorer.view-name'))}>
                     {availableLangs.map(lang => (
                         <AntForm.Item

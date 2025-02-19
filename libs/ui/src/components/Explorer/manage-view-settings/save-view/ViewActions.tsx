@@ -3,11 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton} from 'aristid-ds';
-import {FaShare, FaUndo} from 'react-icons/fa';
+import {FaShare} from 'react-icons/fa';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
-import {useSaveView} from './useSaveView';
+import {useCreateNewView} from './useCreateNewView';
 import styled from 'styled-components';
+import {useUpdateView} from './useUpdateView';
+import {useResetView} from './useResetView';
 
 const StyledFooter = styled.footer`
     display: flex;
@@ -17,22 +18,18 @@ const StyledFooter = styled.footer`
 
 export const ViewActions = () => {
     const {t} = useSharedTranslation();
+    const {updateViewButton} = useUpdateView();
+    const {createNewViewButton} = useCreateNewView();
+    const {resetViewButton} = useResetView();
 
-    const {dispatch} = useViewSettingsContext();
-    const {saveViewButton} = useSaveView();
-
-    const _handleReinitView = () => {
-        dispatch({type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS});
-    };
     return (
         <StyledFooter>
-            {saveViewButton}
+            {updateViewButton}
+            {createNewViewButton}
             <KitButton type="redirect" icon={<FaShare />} onClick={() => null}>
                 {t('explorer.share-view')}
             </KitButton>
-            <KitButton type="redirect" icon={<FaUndo />} onClick={_handleReinitView}>
-                {t('explorer.reinit-view')}
-            </KitButton>
+            {resetViewButton}
         </StyledFooter>
     );
 };
