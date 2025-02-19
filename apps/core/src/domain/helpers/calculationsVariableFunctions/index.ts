@@ -41,13 +41,13 @@ export default function ({
     const fromDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> =>
         inputValue.map(variableValue => ({
             ...variableValue,
-            payload: (variableValue.payload as IDateRangeValue).from
+            payload: (variableValue.raw_payload as IDateRangeValue).from
         }));
 
     const toDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> =>
         inputValue.map(variableValue => ({
             ...variableValue,
-            payload: (variableValue.payload as IDateRangeValue).to
+            payload: (variableValue.raw_payload as IDateRangeValue).to
         }));
 
     const sum = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
