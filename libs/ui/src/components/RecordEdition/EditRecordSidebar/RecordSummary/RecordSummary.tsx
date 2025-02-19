@@ -3,33 +3,57 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useGetRecordValuesQuery} from '../../../../hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import {IRecordIdentityWhoAmI} from '../../../../types/records';
-import {ErrorDisplay} from '../../../ErrorDisplay';
-import {Loading} from '../../../Loading';
-import {KitTabs} from 'aristid-ds';
+import {KitAlert, KitButton, KitEmpty, KitError, KitSkeleton, KitTabs} from 'aristid-ds';
 import {RecordInformations} from './RecordInformations/RecordInformations';
 import {FunctionComponent} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faRotateRight} from '@fortawesome/free-solid-svg-icons';
 
 interface IRecordSummaryProps {
-    record: IRecordIdentityWhoAmI;
+    record: IRecordIdentityWhoAmI | null;
 }
 
 export const RecordSummary: FunctionComponent<IRecordSummaryProps> = ({record}) => {
     const {t} = useSharedTranslation();
-    const {loading, error, data} = useGetRecordValuesQuery(
+    const {loading, error, data, refetch} = useGetRecordValuesQuery(
         record?.library?.id,
         ['created_at', 'created_by', 'modified_at', 'modified_by'],
         [record?.id]
     );
 
     if (loading) {
-        //TODO: In XSTREAM-1134, we will have to handle the loading state
-        return <Loading />;
+        return (
+            <span data-testid="record-summary-skeleton">
+                <KitSkeleton.KitItemCardSkeleton />
+            </span>
+        );
     }
 
     if (error) {
-        //TODO: In XSTREAM-1134, we will have to handle the error state
-        return <ErrorDisplay message={error.message} />;
+        return (
+            <>
+                <KitAlert
+                    type="error"
+                    message={t('record_summary.error.title')}
+                    description={t('record_summary.error.description')}
+                    details={error.message}
+                    customContent={
+                        record?.id && (
+                            <KitButton
+                                onClick={() => refetch([record?.id])}
+                                type="action"
+                                icon={<FontAwesomeIcon icon={faRotateRight} />}
+                                danger
+                            >
+                                {t('record_summary.error.refresh')}
+                            </KitButton>
+                        )
+                    }
+                />
+                <KitEmpty image={KitEmpty.ASSET_TASKS_ERROR} />
+            </>
+        );
     }
 
     const recordData = data?.[record?.id];
