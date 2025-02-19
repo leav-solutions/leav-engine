@@ -13,8 +13,6 @@ const firstDayOfMonthDate = dayjs().startOf('month');
 const firstDayOfMonthDateFormatted = firstDayOfMonthDate.format('YYYY-MM-DD');
 const firstDayOfMonthDateTimestamp = firstDayOfMonthDate.unix().toString();
 const firstDayOfMonthDateAtNoon = firstDayOfMonthDate
-    .utc()
-    .set('date', firstDayOfMonthDate.date())
     .set('hour', 12)
     .set('minute', 0)
     .set('second', 0)

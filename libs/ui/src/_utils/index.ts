@@ -73,7 +73,7 @@ export const getPreviewSize = (size?: PreviewSize, simplistic = false) => {
 };
 
 export const setDateToUTCNoon = (date: dayjs.Dayjs): dayjs.Dayjs =>
-    date.utc().set('date', date.date()).set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0);
+    date.set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0);
 
 export const getTreeRecordKey = (record: RecordIdentityFragment): string => `${record.whoAmI.library.id}/${record.id}`;
 
