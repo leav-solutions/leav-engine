@@ -859,7 +859,7 @@ export default function ({
                     creationForm
                         ? await attributeDomain.getFormAttributes(library, 'creation', ctx)
                         : await attributeDomain.getLibraryAttributes(library, ctx)
-                ).flatMap(attribute => (attribute.required ? attribute : []));
+                ).filter(attribute => attribute.required);
 
                 const missingAttributes = requiredAttributes.filter(
                     attribute => !Object.keys(valuesByAttribute).includes(attribute.id)
