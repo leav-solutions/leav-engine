@@ -9,7 +9,7 @@ import {useViewSettingsContext} from '../manage-view-settings/store-view-setting
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {FaCheck} from 'react-icons/fa';
-import {ViewActionsButton} from '../manage-view-settings/save-view/ViewActionsButton';
+import {ViewActionsButtons} from '../manage-view-settings/save-view/ViewActionsButtons';
 
 const StyledListUlContainer = styled.div`
     display: flex;
@@ -111,7 +111,7 @@ export const SavedViews: FunctionComponent = () => {
                     </StyledListUl>
                 )}
             </StyledListUlContainer>
-            <ViewActionsButton />
+            <ViewActionsButtons />
         </ContentWrapperStyledDiv>
     );
 };

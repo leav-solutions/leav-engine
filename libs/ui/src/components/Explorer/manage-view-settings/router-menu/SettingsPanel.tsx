@@ -14,7 +14,7 @@ import {useViewSettingsContext} from '../store-view-settings/useViewSettingsCont
 import {SettingsPanelPages} from '../open-view-settings/EditSettingsContext';
 import {useOpenViewSettings} from '../open-view-settings/useOpenViewSettings';
 import {SavedViews} from '../../list-saved-views/SavedViews';
-import {ViewActionsButton} from '../save-view/ViewActionsButton';
+import {ViewActionsButtons} from '../save-view/ViewActionsButtons';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -73,7 +73,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                             )}
                         </ConfigurationStyledMenu>
                     </nav>
-                    <ViewActionsButton />
+                    <ViewActionsButtons />
                 </>
             )}
             {page === 'configure-display' && <ConfigureDisplay libraryId={library} />}

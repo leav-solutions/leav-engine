@@ -6,17 +6,18 @@ import {FaTimes, FaSave} from 'react-icons/fa';
 import {KitModal, KitButton, AntForm, KitInputWrapper, KitInput} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 
 interface ISaveViewProps {
     isOpen: boolean;
-    labels: Record<string, string>;
     onSave: (label: Record<string, string>) => void;
     onClose: () => void;
 }
 
-export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, labels, onSave, onClose}) => {
+export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onSave, onClose}) => {
     const {t} = useSharedTranslation();
     const {defaultLang, availableLangs} = useLang();
+    const {view} = useViewSettingsContext();
 
     const [form] = AntForm.useForm();
 
@@ -66,7 +67,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, labels
                 </>
             }
         >
-            <AntForm name="label" form={form} initialValues={{...labels}}>
+            <AntForm name="label" form={form} initialValues={{...view.viewLabels}}>
                 <KitInputWrapper label={String(t('explorer.view-name'))}>
                     {availableLangs.map(lang => (
                         <AntForm.Item

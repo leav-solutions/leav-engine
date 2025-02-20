@@ -43,12 +43,7 @@ export const useCreateNewView = () => {
     return {
         createNewViewButton: (
             <>
-                <SaveViewModal
-                    isOpen={isModalOpen}
-                    labels={view.viewLabels}
-                    onSave={_createView}
-                    onClose={_toggleModal}
-                />
+                <SaveViewModal isOpen={isModalOpen} onSave={_createView} onClose={_toggleModal} />
                 <KitButton type="redirect" icon={<FaSdCard />} onClick={_toggleModal}>
                     {t('explorer.save-view-as')}
                 </KitButton>

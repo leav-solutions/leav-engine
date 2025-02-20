@@ -15,7 +15,7 @@ const StyledFooter = styled.footer`
     padding-bottom: calc(var(--general-spacing-xs) * 1px);
 `;
 
-export const ViewActionsButton = () => {
+export const ViewActionsButtons = () => {
     const {t} = useSharedTranslation();
     const {updateViewButton} = useUpdateView();
     const {createNewViewButton} = useCreateNewView();
