@@ -343,7 +343,7 @@ describe('Integration tests about managing view settings feature', () => {
     });
 
     describe('Views', () => {
-        test('Should be able to save view (update)', async () => {
+        test('Should be able to update view', async () => {
             render(
                 <EditSettingsContextProvider>
                     <MockViewSettingsContextProvider>
