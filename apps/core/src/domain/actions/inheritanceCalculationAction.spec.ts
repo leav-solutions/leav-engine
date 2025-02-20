@@ -48,7 +48,7 @@ describe('inheritanceCalculationAction', () => {
         );
 
         expect(res.values[0].payload).toBe('42Value');
-        expect((res.values[0] as any).raw_payload).toBe('42Value');
+        expect((res.values[0] as any).raw_payload).toBe('testRawValue');
     });
 
     test('No formula', async () => {
