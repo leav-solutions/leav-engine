@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IViewSettingsState, ViewSettingsActionTypes, viewSettingsReducer, ViewType} from './viewSettingsReducer';
 import {defaultPageSizeOptions, viewSettingsInitialState} from './viewSettingsInitialState';
-import {AttributeFormat, AttributeType, RecordFilterCondition, SortOrder} from '_ui/_gqlTypes';
+import {AttributeFormat, AttributeType, RecordFilterCondition, SortOrder, ViewTypes} from '_ui/_gqlTypes';
 import {ThroughConditionFilter} from '_ui/types';
+import {mapViewTypeFromLegacyToExplorer} from '../../_constants';
 
 const attributeDataStandard = {
     label: 'first',
@@ -845,7 +846,9 @@ describe('ViewSettings Reducer', () => {
             label: {
                 fr: 'Ma vue'
             },
-            shared: false
+            shared: false,
+            filters: [],
+            display: {type: ViewTypes.list}
         };
         const state = viewSettingsReducer(
             {
@@ -861,6 +864,42 @@ describe('ViewSettings Reducer', () => {
         expect(state.viewId).toEqual(view.id);
         expect(state.viewLabels).toEqual(view.label);
         expect(state.savedViews.length).toEqual(1);
+        expect(state.viewModified).toEqual(false);
+    });
+
+    test(`Action ${ViewSettingsActionTypes.LOAD_VIEW} test`, async () => {
+        const view = {
+            viewId: 'viewId',
+            viewLabels: {
+                fr: 'Ma vue'
+            },
+            shared: false,
+            filters: [],
+            sort: [],
+            display: {type: ViewTypes.list},
+            viewType: mapViewTypeFromLegacyToExplorer.list,
+            attributesIds: [],
+            initialViewSettings: {
+                sort: [],
+                attributesIds: [],
+                filters: [],
+                viewType: mapViewTypeFromLegacyToExplorer.list,
+                pageSize: defaultPageSizeOptions[0]
+            }
+        };
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                viewModified: true
+            },
+            {
+                type: ViewSettingsActionTypes.LOAD_VIEW,
+                payload: view
+            }
+        );
+
+        expect(state.viewId).toEqual(view.viewId);
+        expect(state.viewLabels).toEqual(view.viewLabels);
         expect(state.viewModified).toEqual(false);
     });
 });

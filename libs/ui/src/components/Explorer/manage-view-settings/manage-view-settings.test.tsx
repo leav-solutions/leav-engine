@@ -67,8 +67,21 @@ describe('Integration tests about managing view settings feature', () => {
                 list: [
                     {
                         id: '42',
-                        label: {en: 'My view'},
                         shared: false,
+                        display: {
+                            type: gqlTypes.ViewTypes.list
+                        },
+                        created_by: {
+                            id: '1',
+                            whoAmI: {
+                                id: '1',
+                                label: 'Admin',
+                                library: {
+                                    id: 'users'
+                                }
+                            }
+                        },
+                        label: {en: 'My view'},
                         filters: [],
                         sort: []
                     }
@@ -85,8 +98,21 @@ describe('Integration tests about managing view settings feature', () => {
                 list: [
                     {
                         id: '42',
-                        label: {en: 'My view'},
                         shared: false,
+                        display: {
+                            type: gqlTypes.ViewTypes.list
+                        },
+                        created_by: {
+                            id: '1',
+                            whoAmI: {
+                                id: '1',
+                                label: 'Admin',
+                                library: {
+                                    id: 'users'
+                                }
+                            }
+                        },
+                        label: {en: 'My view'},
                         filters: [],
                         sort: [
                             {
@@ -489,18 +515,63 @@ describe('Integration tests about managing view settings feature', () => {
                         list: [
                             {
                                 id: '42',
+                                shared: false,
+                                display: {
+                                    type: gqlTypes.ViewTypes.list
+                                },
+                                created_by: {
+                                    id: '1',
+                                    whoAmI: {
+                                        id: '1',
+                                        label: 'Admin',
+                                        library: {
+                                            id: 'users'
+                                        }
+                                    }
+                                },
                                 label: {en: 'My view'},
-                                shared: false
+                                filters: [],
+                                sort: []
                             },
                             {
                                 id: '43',
-                                label: {en: 'My second View'},
-                                shared: false
+                                shared: false,
+                                display: {
+                                    type: gqlTypes.ViewTypes.list
+                                },
+                                created_by: {
+                                    id: '1',
+                                    whoAmI: {
+                                        id: '1',
+                                        label: 'Admin',
+                                        library: {
+                                            id: 'users'
+                                        }
+                                    }
+                                },
+                                label: {en: 'My second view'},
+                                filters: [],
+                                sort: []
                             },
                             {
                                 id: '44',
+                                shared: false,
+                                display: {
+                                    type: gqlTypes.ViewTypes.list
+                                },
+                                created_by: {
+                                    id: '1',
+                                    whoAmI: {
+                                        id: '1',
+                                        label: 'Admin',
+                                        library: {
+                                            id: 'users'
+                                        }
+                                    }
+                                },
                                 label: {en: 'My third view'},
-                                shared: false
+                                filters: [],
+                                sort: []
                             }
                         ]
                     }

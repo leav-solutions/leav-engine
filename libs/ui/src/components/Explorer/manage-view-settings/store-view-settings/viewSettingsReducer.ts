@@ -4,6 +4,7 @@
 import {v4 as uuid} from 'uuid';
 import {SortOrder, AttributeFormat} from '_ui/_gqlTypes';
 import {
+    DefaultViewSettings,
     Entrypoint,
     ExplorerFilter,
     IExplorerFilterStandard,
@@ -41,12 +42,13 @@ export const ViewSettingsActionTypes = {
     CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG',
     SET_SELECTED_KEYS: 'SET_SELECTED_KEYS',
     RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS',
-    UPDATE_VIEWS: 'UPDATE_VIEWS'
+    UPDATE_VIEWS: 'UPDATE_VIEWS',
+    LOAD_VIEW: 'LOAD_VIEW'
 } as const;
 
 export interface IViewSettingsState {
     libraryId: string;
-    viewId?: string;
+    viewId: string | null;
     viewLabels: Record<string, string>;
     viewModified: boolean;
     entrypoint: Entrypoint;
@@ -62,6 +64,7 @@ export interface IViewSettingsState {
     filters: ExplorerFilter[];
     maxFilters: number;
     initialViewSettings: Pick<IViewSettingsState, 'viewType' | 'attributesIds' | 'sort' | 'pageSize' | 'filters'>;
+    defaultViewSettings: DefaultViewSettings;
     massSelection: MassSelection;
 }
 
@@ -174,6 +177,16 @@ interface IViewSettingsActionRestoreInitialViewSettings {
 interface IViewSettingsActionUpdateViewListAndCurrentViewName {
     type: typeof ViewSettingsActionTypes.UPDATE_VIEWS;
     payload: IUserView;
+}
+
+export type IViewSettingsActionLoadViewPayload = Pick<
+    IViewSettingsState,
+    'viewId' | 'viewLabels' | 'viewType' | 'attributesIds' | 'sort' | 'filters'
+>;
+
+interface IViewSettingsActionLoadView {
+    type: typeof ViewSettingsActionTypes.LOAD_VIEW;
+    payload: IViewSettingsActionLoadViewPayload;
 }
 
 type Reducer<
@@ -360,7 +373,7 @@ const updateViewListAndCurrentViewName: Reducer<IViewSettingsActionUpdateViewLis
     payload
 ) => ({
     ...state,
-    viewId: payload.id,
+    viewId: payload.id ?? null,
     viewLabels: payload.label,
     savedViews: state.savedViews.find(({id}) => id === payload.id)
         ? state.savedViews.map(view => (view.id === payload.id ? payload : view))
@@ -371,6 +384,19 @@ const updateViewListAndCurrentViewName: Reducer<IViewSettingsActionUpdateViewLis
         sort: state.sort,
         pageSize: state.pageSize,
         filters: state.filters
+    },
+    viewModified: false
+});
+
+const loadView: Reducer<IViewSettingsActionLoadView> = (state, payload) => ({
+    ...state,
+    ...payload,
+    initialViewSettings: {
+        viewType: payload.viewType,
+        attributesIds: payload.attributesIds,
+        sort: payload.sort,
+        pageSize: state.pageSize,
+        filters: payload.filters
     },
     viewModified: false
 });
@@ -396,7 +422,8 @@ export type IViewSettingsAction =
     | IViewSettingsActionReset
     | IViewSettingsActionSetSelectedKeys
     | IViewSettingsActionRestoreInitialViewSettings
-    | IViewSettingsActionUpdateViewListAndCurrentViewName;
+    | IViewSettingsActionUpdateViewListAndCurrentViewName
+    | IViewSettingsActionLoadView;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -462,6 +489,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.UPDATE_VIEWS: {
             return updateViewListAndCurrentViewName(state, action.payload);
+        }
+        case ViewSettingsActionTypes.LOAD_VIEW: {
+            return loadView(state, action.payload);
         }
         default:
             return state;

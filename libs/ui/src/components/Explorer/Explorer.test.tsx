@@ -465,7 +465,41 @@ describe('Explorer', () => {
             views: {
                 list: [
                     {
+                        id: '43',
+                        shared: false,
+                        display: {
+                            type: gqlTypes.ViewTypes.list
+                        },
+                        created_by: {
+                            id: '1',
+                            whoAmI: {
+                                id: '1',
+                                label: 'Admin',
+                                library: {
+                                    id: 'users'
+                                }
+                            }
+                        },
+                        label: {en: 'Second view'},
+                        filters: [],
+                        sort: []
+                    },
+                    {
                         id: '42',
+                        shared: false,
+                        display: {
+                            type: gqlTypes.ViewTypes.list
+                        },
+                        created_by: {
+                            id: '1',
+                            whoAmI: {
+                                id: '1',
+                                label: 'Admin',
+                                library: {
+                                    id: 'users'
+                                }
+                            }
+                        },
                         label: {en: 'My view'},
                         filters: [],
                         sort: []
@@ -1795,6 +1829,32 @@ describe('Explorer', () => {
             });
 
             // AND the selection is cleared (see beforeEach)
+        });
+    });
+
+    describe('Saved views', () => {
+        test('should load a view', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        enableConfigureView
+                        showFiltersAndSorts
+                        entrypoint={libraryEntrypoint}
+                        defaultPrimaryActions={[]}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const manageViewsButton = screen.getByRole('button', {name: /My view/});
+            expect(manageViewsButton).toBeVisible();
+            expect(manageViewsButton).toHaveTextContent('My view');
+
+            await user.click(manageViewsButton);
+            const viewItem = screen.getByRole('listitem', {name: /Second view/});
+            expect(viewItem).toBeVisible();
+            await user.click(viewItem);
+
+            waitFor(() => expect(manageViewsButton).toHaveTextContent('Second view'));
         });
     });
 });

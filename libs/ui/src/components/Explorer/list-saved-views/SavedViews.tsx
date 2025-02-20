@@ -10,6 +10,7 @@ import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {FaCheck} from 'react-icons/fa';
 import {ViewActionsButtons} from '../manage-view-settings/save-view/ViewActionsButtons';
+import {useLoadView} from '../useLoadView';
 
 const StyledListUlContainer = styled.div`
     display: flex;
@@ -69,25 +70,39 @@ export const SavedViews: FunctionComponent = () => {
     const {t} = useSharedTranslation();
     const {view} = useViewSettingsContext();
     const {availableLangs} = useLang();
+    const {loadView} = useLoadView();
 
     const sharedViews = view.savedViews.filter(viewItem => viewItem.shared);
     const myViews = view.savedViews.filter(viewItem => !viewItem.shared);
 
-    const _getViewClassName = (viewId?: string) => (view.viewId === viewId ? 'selected' : '');
+    const _getViewClassName = (viewId: string | null) => (view.viewId === viewId ? 'selected' : '');
+
+    const _handleViewClick = (id: string | null) => () => {
+        loadView(id);
+    };
 
     return (
         <ContentWrapperStyledDiv>
             <StyledListUlContainer>
                 <KitTypography.Title level="h4">{t('explorer.my-views')}</KitTypography.Title>
                 <StyledListUl aria-label={t('explorer.my-views')}>
-                    <StyleViewItemLi className={_getViewClassName()}>
+                    <StyleViewItemLi
+                        className={_getViewClassName(null)}
+                        onClick={_handleViewClick(null)}
+                        aria-label={t('explorer.default-view')}
+                    >
                         <KitTypography.Text size="fontSize5" weight="medium" ellipsis>
                             {t('explorer.default-view')}
                         </KitTypography.Text>
                         <FaCheck className="check" />
                     </StyleViewItemLi>
                     {myViews.map(viewItem => (
-                        <StyleViewItemLi key={viewItem.id} className={_getViewClassName(viewItem.id)}>
+                        <StyleViewItemLi
+                            key={viewItem.id}
+                            className={_getViewClassName(viewItem.id)}
+                            onClick={_handleViewClick(viewItem.id)}
+                            aria-label={localizedTranslation(viewItem.label, availableLangs)}
+                        >
                             <KitTypography.Text size="fontSize5" weight="medium" ellipsis>
                                 {localizedTranslation(viewItem.label, availableLangs)}
                             </KitTypography.Text>
@@ -101,7 +116,12 @@ export const SavedViews: FunctionComponent = () => {
                 ) : (
                     <StyledListUl aria-label={t('explorer.shared-view')}>
                         {sharedViews.map(viewItem => (
-                            <StyleViewItemLi key={viewItem.id} className={_getViewClassName(viewItem.id)}>
+                            <StyleViewItemLi
+                                key={viewItem.id}
+                                className={_getViewClassName(viewItem.id)}
+                                onClick={_handleViewClick(viewItem.id)}
+                                aria-label={localizedTranslation(viewItem.label, availableLangs)}
+                            >
                                 <KitTypography.Text size="fontSize5" weight="medium" ellipsis>
                                     {localizedTranslation(viewItem.label, availableLangs)}
                                 </KitTypography.Text>
