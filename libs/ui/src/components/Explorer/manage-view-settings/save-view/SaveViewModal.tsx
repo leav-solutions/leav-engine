@@ -6,20 +6,18 @@ import {FaTimes, FaSave} from 'react-icons/fa';
 import {KitModal, KitButton, AntForm, KitInputWrapper, KitInput} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useManageViews} from '../useManageViews';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 
 interface ISaveViewProps {
     isOpen: boolean;
+    onSave: (label: Record<string, string>) => void;
     onClose: () => void;
 }
 
-export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClose}) => {
+export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onSave, onClose}) => {
     const {t} = useSharedTranslation();
     const {defaultLang, availableLangs} = useLang();
-
     const {view} = useViewSettingsContext();
-    const {handleSaveView} = useManageViews();
 
     const [form] = AntForm.useForm();
 
@@ -40,7 +38,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
             return;
         }
 
-        handleSaveView(form.getFieldsValue(), true);
+        onSave(form.getFieldsValue());
         onClose();
     };
 
@@ -54,7 +52,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onClos
         <KitModal
             // TODO: remove appElement and put in the test : "KitModal.setAppElement(document.body) once exposed"
             appElement={document.body}
-            title={t('explorer.save-view')}
+            title={t('explorer.save-view-as')}
             showCloseIcon={false}
             close={_toggleModal}
             isOpen={isOpen}
