@@ -8,9 +8,13 @@ import {useViewSettingsContext} from '../store-view-settings/useViewSettingsCont
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
 import {prepareViewForRequest} from './prepareViewForRequest';
+import {IViewDisplay} from '_ui/types';
+import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
+import {useTransformFilters} from '../_shared/useTransformFilters';
 
 export const useUpdateView = () => {
     const {t} = useSharedTranslation();
+    const {toValidFilters} = useTransformFilters();
     const {view, dispatch} = useViewSettingsContext();
     const {saveView} = useExecuteSaveViewMutation();
 
@@ -30,7 +34,13 @@ export const useUpdateView = () => {
                 payload: {
                     id: data.saveView.id,
                     label: data.saveView.label,
-                    shared: data.saveView.shared
+                    shared: data.saveView.shared,
+                    filters: toValidFilters(data.saveView.filters),
+                    sort: data.saveView.sort ?? [],
+                    display: (data.saveView.display as IViewDisplay) ?? {
+                        type: mapViewTypeFromExplorerToLegacy[view.viewType]
+                    },
+                    attributes: data.saveView?.attributes?.map(({id}) => id) ?? []
                 }
             });
         }

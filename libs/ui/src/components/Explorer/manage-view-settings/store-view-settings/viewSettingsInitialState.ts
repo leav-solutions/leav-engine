@@ -10,6 +10,7 @@ export const defaultMaxFilters = 3;
 export const viewSettingsInitialState: IViewSettingsState = {
     libraryId: '',
     viewType: 'table',
+    viewId: null,
     viewModified: false,
     viewLabels: {},
     savedViews: [],
@@ -29,6 +30,12 @@ export const viewSettingsInitialState: IViewSettingsState = {
         attributesIds: [],
         sort: [],
         pageSize: defaultPageSizeOptions[0],
+        filters: []
+    },
+    defaultViewSettings: {
+        viewType: 'table',
+        attributesIds: [],
+        sort: [],
         filters: []
     }
 };
