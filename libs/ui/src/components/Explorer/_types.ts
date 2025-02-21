@@ -9,7 +9,8 @@ import {
     PropertyValueFragment,
     RecordFilterCondition,
     RecordFilterInput,
-    RecordIdentityFragment
+    RecordIdentityFragment,
+    ViewDetailsFilterFragment
 } from '_ui/_gqlTypes';
 import {ReactElement} from 'react';
 import {IViewSettingsState} from './manage-view-settings';
@@ -142,10 +143,30 @@ export interface IEntrypointLink {
     linkAttributeId: string;
 }
 
+export type ValidFieldFilter = Override<
+    ViewDetailsFilterFragment,
+    {
+        field: NonNullable<ViewDetailsFilterFragment['field']>;
+        condition: NonNullable<ViewDetailsFilterFragment['condition']>;
+    }
+>;
+
+export type ValidFieldFilterThrough = Override<
+    ValidFieldFilter,
+    {
+        condition: ThroughConditionFilter.THROUGH;
+    }
+> & {
+    subField: NonNullable<ViewDetailsFilterFragment['field']>;
+    subCondition?: ViewDetailsFilterFragment['condition'];
+};
+
+export type validFilter = ValidFieldFilter | ValidFieldFilterThrough;
+
 export type Entrypoint = IEntrypointTree | IEntrypointLibrary | IEntrypointLink;
 
-export interface IUserView {
-    id: IView['id'];
+export interface IUserView extends Pick<IView, 'shared' | 'display' | 'sort' | 'attributes'> {
     label: Record<string, string>;
-    shared: IView['shared'];
+    id: IView['id'] | null;
+    filters: validFilter[];
 }

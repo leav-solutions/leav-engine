@@ -24,7 +24,6 @@ import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_t
 import {useSearchParams} from 'react-router-dom';
 import {FaBeer} from 'react-icons/all';
 import styled from 'styled-components';
-import {Empty} from 'antd';
 
 interface ILibraryHomeProps {
     library?: string;

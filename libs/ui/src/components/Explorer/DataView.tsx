@@ -182,7 +182,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
 
         const columns = attributesToDisplay
             .map<KitTableColumnType<IItemData>>(attributeName => ({
-                title: attributeName === 'whoAmI' ? '' : attributesProperties[attributeName].label,
+                title: attributeName === 'whoAmI' ? t('explorer.name') : attributesProperties[attributeName].label,
                 dataIndex: USELESS,
                 width: getFieldColumnWidth(attributesProperties[attributeName]),
                 shouldCellUpdate: (record, prevRecord) =>

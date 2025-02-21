@@ -634,6 +634,7 @@
         "unselect-all": "Unselect All"
     },
     "explorer": {
+        "name": "Name",
         "create-one": "Create",
         "actions": "Actions",
         "more-actions": "Show more",
