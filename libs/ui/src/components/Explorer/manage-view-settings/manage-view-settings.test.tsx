@@ -343,7 +343,7 @@ describe('Integration tests about managing view settings feature', () => {
     });
 
     describe('Views', () => {
-        test('Should be able to save view', async () => {
+        test('Should be able to update view', async () => {
             render(
                 <EditSettingsContextProvider>
                     <MockViewSettingsContextProvider>
@@ -355,7 +355,40 @@ describe('Integration tests about managing view settings feature', () => {
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
 
-            await userEvent.click(screen.getByRole('link', {name: /save/}));
+            await userEvent.click(screen.getByRole('link', {name: 'global.save'}));
+
+            expect(mockSaveViewMutation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {
+                        view: {
+                            attributes: [],
+                            display: {type: 'list'},
+                            filters: [],
+                            id: '42',
+                            label: {en: 'My view'},
+                            library: 'my_lib',
+                            shared: false,
+                            sort: []
+                        }
+                    }
+                })
+            );
+        });
+
+        test('Should be able to save view as', async () => {
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+            mockSaveViewMutation.mockClear();
+
+            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+
+            await userEvent.click(screen.getByRole('link', {name: /save-view-as/}));
             // hidden: true car l'ouverture de la Modal met un aria-label: hidden sur le body
             const closeButton = screen.getByRole('button', {name: 'global.close', hidden: true});
             expect(closeButton).toBeVisible();
@@ -363,7 +396,7 @@ describe('Integration tests about managing view settings feature', () => {
             expect(closeButton).not.toBeVisible();
             expect(mockSaveViewMutation).not.toHaveBeenCalled();
 
-            await userEvent.click(screen.getByRole('link', {name: /save/}));
+            await userEvent.click(screen.getByRole('link', {name: /save-view-as/}));
             const saveButton = screen.getByRole('button', {name: 'global.save', hidden: true});
             expect(saveButton).toBeVisible();
             await userEvent.click(saveButton);
