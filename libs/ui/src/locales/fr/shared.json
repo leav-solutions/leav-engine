@@ -677,6 +677,7 @@
         "type-a-value": "Saisissez une valeur",
         "save-view-as": "Enregistrer sous...",
         "share-view": "Partager",
+        "unshare-view": "Retirer le partage",
         "reinit-view": "Réinitialiser",
         "view-name": "Nom de la vue",
         "default-view": "Vue par défaut",

@@ -843,6 +843,7 @@ describe('ViewSettings Reducer', () => {
     test(`Action ${ViewSettingsActionTypes.UPDATE_VIEWS} test`, async () => {
         const view = {
             id: 'viewId',
+            ownerId: 'Admin',
             label: {
                 fr: 'Ma vue'
             },

@@ -1,18 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useExplorerAttributesLazyQuery} from '_ui/_gqlTypes';
+import {useExplorerAttributesLazyQuery, useMeQuery} from '_ui/_gqlTypes';
 import {useEffect, useRef} from 'react';
 import {useViewSettingsContext} from './manage-view-settings/store-view-settings/useViewSettingsContext';
 import {IUserView, validFilter} from './_types';
-import {useEditSettings, ViewSettingsActionTypes} from './manage-view-settings';
+import {ViewSettingsActionTypes} from './manage-view-settings';
 import {useTransformFilters, validFiltersArgument} from './manage-view-settings/_shared/useTransformFilters';
 import {mapViewTypeFromExplorerToLegacy, mapViewTypeFromLegacyToExplorer} from './_constants';
 import {IViewSettingsActionLoadViewPayload} from './manage-view-settings/store-view-settings/viewSettingsReducer';
 
 export const useLoadView = () => {
     const {view, dispatch} = useViewSettingsContext();
-    const {closeSettingsPanel} = useEditSettings();
     const {toExplorerFilters, toValidFilters} = useTransformFilters();
     const curentView = useRef<IUserView | null>(null);
 
@@ -46,9 +45,10 @@ export const useLoadView = () => {
                 type: ViewSettingsActionTypes.LOAD_VIEW,
                 payload: viewSettings
             });
-            closeSettingsPanel();
         }
     }, [attributesData, attributesLoading]);
+
+    const {data} = useMeQuery();
 
     const loadView = (viewId: string | null) => {
         let viewData: IUserView | null;
@@ -56,6 +56,7 @@ export const useLoadView = () => {
             viewData = {
                 ...view.defaultViewSettings,
                 id: null,
+                ownerId: data?.me?.whoAmI?.id ?? null,
                 display: {type: mapViewTypeFromExplorerToLegacy[view.viewType]},
                 label: {},
                 shared: false,

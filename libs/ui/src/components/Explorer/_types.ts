@@ -169,4 +169,5 @@ export interface IUserView extends Pick<IView, 'shared' | 'display' | 'sort' | '
     label: Record<string, string>;
     id: IView['id'] | null;
     filters: validFilter[];
+    ownerId: string | null;
 }

@@ -522,6 +522,17 @@ describe('Explorer', () => {
         called: true
     };
 
+    const mockMeResult: Mockify<typeof gqlTypes.useMeQuery> = {
+        data: {
+            me: {
+                id: 'admin',
+                whoAmI: {
+                    id: 'admin'
+                }
+            }
+        }
+    };
+
     let spyUseExplorerLibraryDataQuery: jest.SpyInstance;
 
     const libraryEntrypoint: IEntrypointLibrary = {
@@ -610,6 +621,8 @@ describe('Explorer', () => {
         jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
             mockAttributesByLibResult as gqlTypes.GetAttributesByLibQueryResult
         );
+
+        jest.spyOn(gqlTypes, 'useMeQuery').mockReturnValue(mockMeResult as gqlTypes.MeQueryResult);
 
         // TODO: useless except for remove logs warning `No more mocked`
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({

@@ -174,7 +174,7 @@ interface IViewSettingsActionRestoreInitialViewSettings {
     type: typeof ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS;
 }
 
-interface IViewSettingsActionUpdateViewListAndCurrentViewName {
+interface IViewSettingsActionUpdateViewListAndCurrentView {
     type: typeof ViewSettingsActionTypes.UPDATE_VIEWS;
     payload: IUserView;
 }
@@ -368,10 +368,7 @@ const restoreInitialViewSettings: Reducer = state => ({
     viewModified: false
 });
 
-const updateViewListAndCurrentViewName: Reducer<IViewSettingsActionUpdateViewListAndCurrentViewName> = (
-    state,
-    payload
-) => ({
+const updateViewListAndCurrentView: Reducer<IViewSettingsActionUpdateViewListAndCurrentView> = (state, payload) => ({
     ...state,
     viewId: payload.id ?? null,
     viewLabels: payload.label,
@@ -422,7 +419,7 @@ export type IViewSettingsAction =
     | IViewSettingsActionReset
     | IViewSettingsActionSetSelectedKeys
     | IViewSettingsActionRestoreInitialViewSettings
-    | IViewSettingsActionUpdateViewListAndCurrentViewName
+    | IViewSettingsActionUpdateViewListAndCurrentView
     | IViewSettingsActionLoadView;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
@@ -488,7 +485,7 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
             return restoreInitialViewSettings(state);
         }
         case ViewSettingsActionTypes.UPDATE_VIEWS: {
-            return updateViewListAndCurrentViewName(state, action.payload);
+            return updateViewListAndCurrentView(state, action.payload);
         }
         case ViewSettingsActionTypes.LOAD_VIEW: {
             return loadView(state, action.payload);

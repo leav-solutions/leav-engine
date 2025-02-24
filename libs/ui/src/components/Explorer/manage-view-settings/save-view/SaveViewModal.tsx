@@ -14,6 +14,8 @@ interface ISaveViewProps {
     onClose: () => void;
 }
 
+const sortWithDefaultAtFirst = defaultLang => (a, b) => (b === defaultLang ? 1 : 0) - (a === defaultLang ? 1 : 0);
+
 export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onSave, onClose}) => {
     const {t} = useSharedTranslation();
     const {defaultLang, availableLangs} = useLang();
@@ -67,14 +69,17 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onSave
                 </>
             }
         >
-            <AntForm name="label" form={form} initialValues={{...view.viewLabels}}>
+            <AntForm name="label" form={form} initialValues={view.viewId ? {...view.viewLabels} : {}}>
                 <KitInputWrapper label={String(t('explorer.view-name'))}>
-                    {availableLangs.map(lang => (
+                    {availableLangs.toSorted(sortWithDefaultAtFirst(defaultLang)).map(lang => (
                         <AntForm.Item
                             key={lang}
                             name={lang}
                             rules={[
-                                {required: lang === defaultLang, message: String(t('errors.standard_field_required'))}
+                                {
+                                    required: lang === defaultLang,
+                                    message: String(t('errors.standard_field_required'))
+                                }
                             ]}
                         >
                             <KitInput

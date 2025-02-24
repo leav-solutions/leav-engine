@@ -1,26 +1,38 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitButton} from 'aristid-ds';
-import {FaSave} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {KitButton} from 'aristid-ds';
+import {FaShare} from 'react-icons/fa';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
+import {useEffect, useState} from 'react';
 import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
+import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {prepareViewForRequest} from './prepareViewForRequest';
 import {IViewDisplay} from '_ui/types';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
 import {useTransformFilters} from '../_shared/useTransformFilters';
+import {useMeQuery} from '_ui/_gqlTypes';
 
-export const useUpdateView = () => {
+export const useShareView = () => {
     const {t} = useSharedTranslation();
-    const {toValidFilters} = useTransformFilters();
     const {view, dispatch} = useViewSettingsContext();
     const {saveView} = useExecuteSaveViewMutation();
+    const {toValidFilters} = useTransformFilters();
+    const [isSharedView, setIsSharedView] = useState<boolean>(false);
+    const [isOwnerView, setIsOwnerView] = useState<boolean>(false);
 
-    const _updateView = async () => {
+    const {data: userData} = useMeQuery();
+
+    useEffect(() => {
+        setIsSharedView(view.savedViews.find(v => v.id === view.viewId)?.shared ?? false);
+        setIsOwnerView(view.savedViews.find(v => v.id === view.viewId)?.ownerId === userData?.me?.whoAmI?.id);
+    }, [view.viewId]);
+
+    const _toggleShareView = async () => {
         const mappedView = {
             ...prepareViewForRequest(view, view.viewLabels),
+            shared: !isSharedView,
             id: view.viewId
         };
 
@@ -28,6 +40,7 @@ export const useUpdateView = () => {
             view: mappedView
         });
 
+        setIsSharedView(!isSharedView);
         if (data) {
             dispatch({
                 type: ViewSettingsActionTypes.UPDATE_VIEWS,
@@ -48,15 +61,18 @@ export const useUpdateView = () => {
     };
 
     return {
-        updateViewButton:
-            !view.savedViews.length || !view.viewId ? (
-                ''
-            ) : (
-                <>
-                    <KitButton type="redirect" icon={<FaSave />} onClick={_updateView}>
-                        {t('global.save')}
+        shareViewButton: (
+            <>
+                {!isSharedView && view.viewId ? (
+                    <KitButton type="redirect" icon={<FaShare />} onClick={_toggleShareView}>
+                        {t('explorer.share-view')}
                     </KitButton>
-                </>
-            )
+                ) : isOwnerView ? (
+                    <KitButton type="redirect" icon={<FaShare />} onClick={_toggleShareView}>
+                        {t('explorer.unshare-view')}
+                    </KitButton>
+                ) : null}
+            </>
+        )
     };
 };
