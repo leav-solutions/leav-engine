@@ -13,6 +13,7 @@ import {ReactElement, useEffect, useState} from 'react';
 import {IViewSettingsState} from '../store-view-settings/viewSettingsReducer';
 import styled from 'styled-components';
 import {FeatureHook} from '../../_types';
+import {MASS_SELECTION_ALL} from '../../_constants';
 
 const ModifiedStyledKitTag = styled(KitTag)`
     margin: 0;
@@ -67,6 +68,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
     };
 
     const viewName = localizedTranslation(view?.viewLabels ?? {}, lang);
+    const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
 
     useEffect(() => {
         setButton(
@@ -74,6 +76,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
                 type="secondary"
                 icon={<FaSlidersH />}
                 onClick={() => _openSettingsPanel()}
+                disabled={isMassSelectionAll}
                 title={String(t('explorer.settings')) /* TODO: avoid transform null to 'null' */}
             />
         );
@@ -82,6 +85,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
                 type="secondary"
                 icon={<FaBars />}
                 onClick={() => _openSettingsPanel('my-views')}
+                disabled={isMassSelectionAll}
                 title={String(t('explorer.manage-views')) /* TODO: avoid transform null to 'null' */}
             >
                 {viewName === '' ? t('explorer.manage-views') : viewName}
@@ -90,7 +94,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
                 )}
             </KitButton>
         );
-    }, [view.viewModified, viewName]);
+    }, [view.viewModified, viewName, isMassSelectionAll]);
 
     return {
         openSettingsPanel: _openSettingsPanel,

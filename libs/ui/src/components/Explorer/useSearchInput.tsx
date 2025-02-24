@@ -11,6 +11,7 @@ import {
     IViewSettingsState,
     ViewSettingsActionTypes
 } from './manage-view-settings/store-view-settings/viewSettingsReducer';
+import {MASS_SELECTION_ALL} from './_constants';
 
 /**
  * Hook used to handle a full search text in a library
@@ -53,6 +54,7 @@ export const useSearchInput = ({
                         title={String(t('global.search'))}
                         placeholder={String(t('global.search'))}
                         value={search ?? ''}
+                        disabled={view.massSelection === MASS_SELECTION_ALL}
                         onChange={_handleChange}
                     />
                 </form>
