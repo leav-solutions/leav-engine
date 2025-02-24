@@ -408,6 +408,7 @@
         "delete_value": "Delete value",
         "delete_value_confirm": "Do you really want to delete this value?",
         "delete_link_confirm": "Do you really want to delete this link?",
+        "delete_links_confirm": "Do you really want to delete these links?",
         "whoAmI": "Information",
         "no_value": "No value",
         "value_details": "Value details",
