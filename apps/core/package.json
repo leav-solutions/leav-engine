@@ -88,7 +88,7 @@
         "cookie-parser": "1.4.6",
         "cors": "2.8.5",
         "exceljs": "4.2.0",
-        "exiftool-vendored": "22.0.0",
+        "exiftool-vendored": "29.1.0",
         "express": "4.20.0",
         "express-useragent": "1.0.15",
         "glob": "7.1.6",
