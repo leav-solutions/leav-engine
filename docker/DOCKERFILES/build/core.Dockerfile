@@ -6,9 +6,6 @@ FROM node:18-alpine3.18 AS builder
 WORKDIR /app
 ENV YARN_ENABLE_INLINE_BUILDS=1
 
-# Dependencies needed to retrieve metadata
-RUN apk --update --no-cache add perl pkgconfig
-
 # Copy required files for builds
 COPY .yarn ./.yarn
 COPY *.json yarn.lock .yarnrc.yml vite-config-common.js ./
@@ -44,6 +41,9 @@ COPY apps/core/config ./apps/core/config
 COPY --from=prod-dep-install app/ ./
 COPY --from=builder /app/apps/core/applications ./apps/core/applications
 COPY --from=builder /app/apps/core/dist ./apps/core/dist
+
+# Dependencies needed to retrieve metadata
+RUN apk --update add perl pkgconfig
 
 # Get ready for runtime
 WORKDIR /app/apps/core
