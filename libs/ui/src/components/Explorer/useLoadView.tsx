@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useExplorerAttributesLazyQuery} from '_ui/_gqlTypes';
+import {useExplorerAttributesLazyQuery, useMeQuery} from '_ui/_gqlTypes';
 import {useEffect, useRef} from 'react';
 import {useViewSettingsContext} from './manage-view-settings/store-view-settings/useViewSettingsContext';
 import {IUserView, validFilter} from './_types';
@@ -50,12 +50,15 @@ export const useLoadView = () => {
         }
     }, [attributesData, attributesLoading]);
 
+    const {data} = useMeQuery();
+
     const loadView = (viewId: string | null) => {
         let viewData: IUserView | null;
         if (!viewId) {
             viewData = {
                 ...view.defaultViewSettings,
                 id: null,
+                ownerId: data?.me?.whoAmI?.id ?? null,
                 display: {type: mapViewTypeFromExplorerToLegacy[view.viewType]},
                 label: {},
                 shared: false,

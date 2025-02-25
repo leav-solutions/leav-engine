@@ -37,6 +37,7 @@ export const useCreateNewView = () => {
                 type: ViewSettingsActionTypes.UPDATE_VIEWS,
                 payload: {
                     id: data.saveView.id,
+                    ownerId: data.saveView.created_by.id,
                     label: data.saveView.label,
                     shared: data.saveView.shared,
                     filters: toValidFilters(data.saveView.filters),

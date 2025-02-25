@@ -387,9 +387,7 @@ export enum LogAction {
   VALUE_DELETE = 'VALUE_DELETE',
   VALUE_SAVE = 'VALUE_SAVE',
   VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
-  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE',
-  fakeplugin_FAKE_PLUGIN_ACTION = 'fakeplugin_FAKE_PLUGIN_ACTION',
-  fakeplugin_FAKE_PLUGIN_ACTION2 = 'fakeplugin_FAKE_PLUGIN_ACTION2'
+  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
 }
 
 export type LogFilterInput = {
@@ -523,8 +521,7 @@ export enum PermissionsActions {
   detach = 'detach',
   edit_children = 'edit_children',
   edit_record = 'edit_record',
-  edit_value = 'edit_value',
-  fake_plugin_permission = 'fake_plugin_permission'
+  edit_value = 'edit_value'
 }
 
 export enum PermissionsRelation {
@@ -1423,6 +1420,11 @@ export type ExplorerSelectionIdsQueryVariables = Exact<{
 
 
 export type ExplorerSelectionIdsQuery = { records: { list: Array<{ id: string }> } };
+
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = { me?: { id: string, whoAmI: { id: string, library: { id: string } } } | null };
 
 export type TreeDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID'];
@@ -4415,6 +4417,46 @@ export function useExplorerSelectionIdsLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type ExplorerSelectionIdsQueryHookResult = ReturnType<typeof useExplorerSelectionIdsQuery>;
 export type ExplorerSelectionIdsLazyQueryHookResult = ReturnType<typeof useExplorerSelectionIdsLazyQuery>;
 export type ExplorerSelectionIdsQueryResult = Apollo.QueryResult<ExplorerSelectionIdsQuery, ExplorerSelectionIdsQueryVariables>;
+export const MeDocument = gql`
+    query Me {
+  me {
+    id
+    whoAmI {
+      id
+      library {
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+      }
+export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+        }
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const TreeDataQueryDocument = gql`
     query TreeDataQuery($treeId: ID!) {
   trees(filters: {id: [$treeId]}) {

@@ -51,22 +51,25 @@ describe('Integration tests about managing view settings feature', () => {
         called: true
     };
 
-    const mockSaveViewMutation = jest.fn().mockReturnValue({
+    const mockSaveViewMutation = jest.fn().mockImplementation(data => ({
         data: {
-            saveView: [
-                {
-                    id: 42
-                }
-            ]
+            saveView: {
+                id: '42',
+                created_by: {
+                    id: '1'
+                },
+                shared: !data?.shared,
+                label: {en: 'My view'}
+            }
         }
-    });
+    }));
 
     const mockViewsResult: Mockify<typeof gqlTypes.useGetViewsListQuery> = {
         data: {
             views: {
                 list: [
                     {
-                        id: '42',
+                        id: '43',
                         shared: false,
                         display: {
                             type: gqlTypes.ViewTypes.list
@@ -97,7 +100,7 @@ describe('Integration tests about managing view settings feature', () => {
             views: {
                 list: [
                     {
-                        id: '42',
+                        id: '44',
                         shared: false,
                         display: {
                             type: gqlTypes.ViewTypes.list
@@ -134,6 +137,17 @@ describe('Integration tests about managing view settings feature', () => {
         called: true
     };
 
+    const mockMeResult: Mockify<typeof gqlTypes.useMeQuery> = {
+        data: {
+            me: {
+                id: '1',
+                whoAmI: {
+                    id: '1'
+                }
+            }
+        }
+    };
+
     let getViewsListSpy: jest.SpyInstance;
     beforeAll(() => {
         jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
@@ -152,6 +166,8 @@ describe('Integration tests about managing view settings feature', () => {
             mockSaveViewMutation,
             {loading: false, called: false, client: {} as any, reset: jest.fn()}
         ]);
+
+        jest.spyOn(gqlTypes, 'useMeQuery').mockImplementation(() => mockMeResult as gqlTypes.MeQueryResult);
     });
 
     test('should be able to open panel and navigate inside to advanced setting and go back', async () => {
@@ -390,6 +406,66 @@ describe('Integration tests about managing view settings feature', () => {
                             attributes: [],
                             display: {type: 'list'},
                             filters: [],
+                            id: '43',
+                            label: {en: 'My view'},
+                            library: 'my_lib',
+                            shared: false,
+                            sort: []
+                        }
+                    }
+                })
+            );
+        });
+
+        test('Should be able to share view', async () => {
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
+            let myViewsElement = screen.getByRole('list', {name: /my-views/});
+            expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
+
+            await userEvent.click(screen.getByRole('link', {name: /share-view/}));
+
+            expect(mockSaveViewMutation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {
+                        view: {
+                            attributes: [],
+                            display: {type: 'list'},
+                            filters: [],
+                            id: '43',
+                            label: {en: 'My view'},
+                            library: 'my_lib',
+                            shared: true,
+                            sort: []
+                        }
+                    }
+                })
+            );
+
+            mockSaveViewMutation.mockClear();
+
+            expect(screen.queryByRole('link', {name: 'explorer.share-view'})).not.toBeInTheDocument();
+
+            const sharedViewsElement = screen.getByRole('list', {name: /shared-view/});
+            expect(within(sharedViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
+
+            await userEvent.click(screen.getByRole('link', {name: /unshare-view/}));
+
+            expect(mockSaveViewMutation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {
+                        view: {
+                            attributes: [],
+                            display: {type: 'list'},
+                            filters: [],
                             id: '42',
                             label: {en: 'My view'},
                             library: 'my_lib',
@@ -399,6 +475,10 @@ describe('Integration tests about managing view settings feature', () => {
                     }
                 })
             );
+
+            expect(screen.queryByRole('link', {name: /unshare-view/})).not.toBeInTheDocument();
+            myViewsElement = screen.getByRole('list', {name: /my-views/});
+            expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
         });
 
         test('Should be able to save view as', async () => {

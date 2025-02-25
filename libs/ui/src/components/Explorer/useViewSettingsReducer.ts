@@ -110,8 +110,9 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
     useEffect(() => {
         if (libraryId !== null && !viewsLoading && !attributesLoading) {
             const savedViews = (viewData?.views.list ?? []).map(
-                ({id, label, shared, display, filters, sort, attributes}) => ({
+                ({id, label, shared, display, filters, sort, attributes, created_by}) => ({
                     id,
+                    ownerId: created_by.id,
                     label,
                     shared,
                     display: {type: display.type, size: display.size || ViewSizes.MEDIUM},
