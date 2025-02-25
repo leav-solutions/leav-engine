@@ -5,13 +5,14 @@ import {useExplorerAttributesLazyQuery, useMeQuery} from '_ui/_gqlTypes';
 import {useEffect, useRef} from 'react';
 import {useViewSettingsContext} from './manage-view-settings/store-view-settings/useViewSettingsContext';
 import {IUserView, validFilter} from './_types';
-import {ViewSettingsActionTypes} from './manage-view-settings';
+import {useEditSettings, ViewSettingsActionTypes} from './manage-view-settings';
 import {useTransformFilters, validFiltersArgument} from './manage-view-settings/_shared/useTransformFilters';
 import {mapViewTypeFromExplorerToLegacy, mapViewTypeFromLegacyToExplorer} from './_constants';
 import {IViewSettingsActionLoadViewPayload} from './manage-view-settings/store-view-settings/viewSettingsReducer';
 
 export const useLoadView = () => {
     const {view, dispatch} = useViewSettingsContext();
+    const {closeSettingsPanel} = useEditSettings();
     const {toExplorerFilters, toValidFilters} = useTransformFilters();
     const curentView = useRef<IUserView | null>(null);
 
@@ -45,6 +46,7 @@ export const useLoadView = () => {
                 type: ViewSettingsActionTypes.LOAD_VIEW,
                 payload: viewSettings
             });
+            closeSettingsPanel();
         }
     }, [attributesData, attributesLoading]);
 

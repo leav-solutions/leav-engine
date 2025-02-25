@@ -19,14 +19,18 @@ export const useShareView = () => {
     const {view, dispatch} = useViewSettingsContext();
     const {saveView} = useExecuteSaveViewMutation();
     const {toValidFilters} = useTransformFilters();
-    const [isSharedView, setIsSharedView] = useState<boolean>(false);
-    const [isOwnerView, setIsOwnerView] = useState<boolean>(false);
+    const [isSharedView, setIsSharedView] = useState(false);
+    const [isOwnerView, setIsOwnerView] = useState(false);
 
     const {data: userData} = useMeQuery();
 
     useEffect(() => {
-        setIsSharedView(view.savedViews.find(v => v.id === view.viewId)?.shared ?? false);
-        setIsOwnerView(view.savedViews.find(v => v.id === view.viewId)?.ownerId === userData?.me?.whoAmI?.id);
+        const currentView = view.savedViews.find(v => v.id === view.viewId);
+        if (currentView === undefined) {
+            return;
+        }
+        setIsSharedView(currentView.shared ?? false);
+        setIsOwnerView(currentView.ownerId === userData?.me?.whoAmI?.id);
     }, [view.viewId]);
 
     const _toggleShareView = async () => {
@@ -61,18 +65,11 @@ export const useShareView = () => {
     };
 
     return {
-        shareViewButton: (
-            <>
-                {!isSharedView && view.viewId ? (
-                    <KitButton type="redirect" icon={<FaShare />} onClick={_toggleShareView}>
-                        {t('explorer.share-view')}
-                    </KitButton>
-                ) : isOwnerView ? (
-                    <KitButton type="redirect" icon={<FaShare />} onClick={_toggleShareView}>
-                        {t('explorer.unshare-view')}
-                    </KitButton>
-                ) : null}
-            </>
-        )
+        shareViewButton:
+            !view.viewId || (isSharedView && !isOwnerView) ? null : (
+                <KitButton type="redirect" icon={<FaShare />} onClick={_toggleShareView}>
+                    {isSharedView ? t('explorer.unshare-view') : t('explorer.share-view')}
+                </KitButton>
+            )
     };
 };

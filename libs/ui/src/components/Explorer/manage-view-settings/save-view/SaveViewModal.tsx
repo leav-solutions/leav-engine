@@ -69,9 +69,9 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onSave
                 </>
             }
         >
-            <AntForm name="label" form={form} initialValues={view.viewId ? {...view.viewLabels} : {}}>
+            <AntForm name="label" form={form} initialValues={view.viewId ? view.viewLabels : {}}>
                 <KitInputWrapper label={String(t('explorer.view-name'))}>
-                    {availableLangs.toSorted(sortWithDefaultAtFirst(defaultLang)).map(lang => (
+                    {[...availableLangs].sort(sortWithDefaultAtFirst(defaultLang)).map(lang => (
                         <AntForm.Item
                             key={lang}
                             name={lang}

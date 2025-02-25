@@ -54,7 +54,7 @@ describe('Integration tests about managing view settings feature', () => {
     const mockSaveViewMutation = jest.fn().mockImplementation(data => ({
         data: {
             saveView: {
-                id: 42,
+                id: '42',
                 created_by: {
                     id: '1'
                 },
@@ -432,12 +432,50 @@ describe('Integration tests about managing view settings feature', () => {
             expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
 
             await userEvent.click(screen.getByRole('link', {name: /share-view/}));
+
+            expect(mockSaveViewMutation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {
+                        view: {
+                            attributes: [],
+                            display: {type: 'list'},
+                            filters: [],
+                            id: '43',
+                            label: {en: 'My view'},
+                            library: 'my_lib',
+                            shared: true,
+                            sort: []
+                        }
+                    }
+                })
+            );
+
+            mockSaveViewMutation.mockClear();
+
             expect(screen.queryByRole('link', {name: 'explorer.share-view'})).not.toBeInTheDocument();
 
             const sharedViewsElement = screen.getByRole('list', {name: /shared-view/});
             expect(within(sharedViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
 
             await userEvent.click(screen.getByRole('link', {name: /unshare-view/}));
+
+            expect(mockSaveViewMutation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {
+                        view: {
+                            attributes: [],
+                            display: {type: 'list'},
+                            filters: [],
+                            id: '42',
+                            label: {en: 'My view'},
+                            library: 'my_lib',
+                            shared: false,
+                            sort: []
+                        }
+                    }
+                })
+            );
+
             expect(screen.queryByRole('link', {name: /unshare-view/})).not.toBeInTheDocument();
             myViewsElement = screen.getByRole('list', {name: /my-views/});
             expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
