@@ -9,7 +9,8 @@ import {useConditionsOptionsByType} from './useConditionOptionsByType';
 
 export const DateRangeAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
     filter,
-    onFilterChange
+    onFilterChange,
+    selectDropDownRef
 }) => {
     const {t} = useSharedTranslation();
 
@@ -23,6 +24,7 @@ export const DateRangeAttributeDropDown: FunctionComponent<IFilterChildrenDropDo
             options={conditionOptionsByType}
             onChange={_onConditionChanged}
             value={filter.condition}
+            getPopupContainer={() => selectDropDownRef?.current ?? document.body}
             placeholder={t('explorer.select-condition')}
         />
     );

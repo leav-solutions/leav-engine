@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, FunctionComponent} from 'react';
+import {ComponentProps, FunctionComponent, useRef} from 'react';
 import {FaClock, FaTrash} from 'react-icons/fa';
 import styled from 'styled-components';
 import {KitDivider, KitButton} from 'aristid-ds';
@@ -20,6 +20,7 @@ const FilterDropDownStyledDiv = styled.div`
 export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
     const {t} = useSharedTranslation();
     const {dispatch} = useViewSettingsContext();
+    const selectDropDownRef = useRef<HTMLDivElement>(null);
 
     const onFilterChange: ComponentProps<typeof FilterDropdownContent>['onFilterChange'] = (
         filterData: ExplorerFilter
@@ -47,7 +48,12 @@ export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}
 
     return (
         <FilterDropDownStyledDiv>
-            <FilterDropdownContent filter={filter} onFilterChange={onFilterChange} />
+            <FilterDropdownContent
+                filter={filter}
+                onFilterChange={onFilterChange}
+                selectDropDownRef={selectDropDownRef}
+            />
+            <div ref={selectDropDownRef} />
             <KitDivider noMargin />
             <KitButton type="redirect" icon={<FaClock />} onClick={_onResetFilter}>
                 {t('explorer.reset-filter')}

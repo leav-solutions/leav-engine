@@ -67,7 +67,7 @@ export const useMassActions = ({
                                           {
                                               field: 'id',
                                               condition: RecordFilterCondition.EQUAL,
-                                              value: key
+                                              value: String(key)
                                           }
                                       ])
                                   )

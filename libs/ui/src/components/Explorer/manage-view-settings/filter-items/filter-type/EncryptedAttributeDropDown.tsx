@@ -9,7 +9,8 @@ import {useConditionsOptionsByType} from './useConditionOptionsByType';
 
 export const EncryptedAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
     filter,
-    onFilterChange
+    onFilterChange,
+    selectDropDownRef
 }) => {
     const {t} = useSharedTranslation();
 
@@ -23,6 +24,7 @@ export const EncryptedAttributeDropDown: FunctionComponent<IFilterChildrenDropDo
             options={conditionOptionsByType}
             onChange={_onConditionChanged}
             value={filter.condition}
+            getPopupContainer={() => selectDropDownRef?.current ?? document.body}
             placeholder={t('explorer.select-condition')}
         />
     );

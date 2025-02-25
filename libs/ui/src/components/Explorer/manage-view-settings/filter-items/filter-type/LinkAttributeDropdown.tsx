@@ -21,6 +21,7 @@ const InputStyled = styled(KitInput)`
 export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDownProps> = ({
     filter,
     onFilterChange,
+    selectDropDownRef,
     removeThroughCondition = false
 }) => {
     const {t} = useSharedTranslation();
@@ -94,6 +95,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
                 options={availableConditionsOptions}
                 onChange={_onConditionChanged}
                 value={filter.condition}
+                getPopupContainer={() => selectDropDownRef?.current ?? document.body}
                 aria-label={String(t('explorer.filter-link-condition'))}
             />
             {showSearch && (
@@ -111,6 +113,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
                         value={libraryAttributesLoading ? null : selectedSubField}
                         placeholder={libraryAttributesLoading ? t('global.loading') : null}
                         loading={libraryAttributesLoading}
+                        getPopupContainer={() => selectDropDownRef?.current ?? document.body}
                         aria-label={String(t('explorer.filter-link-attribute'))}
                     />
                     {selectedSubField && linkedAttribute && (
@@ -127,6 +130,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
                                 value: filter.value
                             }}
                             onFilterChange={_handleThroughFilterChange}
+                            selectDropDownRef={selectDropDownRef}
                         />
                     )}
                 </>

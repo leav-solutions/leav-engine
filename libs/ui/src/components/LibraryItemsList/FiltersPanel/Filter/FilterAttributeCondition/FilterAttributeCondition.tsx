@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {isTypeLink} from '@leav/utils';
 import {Dropdown} from 'antd';
-import {ItemType} from 'antd/lib/menu/hooks/useItems';
+import {ItemType} from 'antd/es/menu/interface';
 import styled from 'styled-components';
 import {formatNotUsingCondition} from '_ui/components/LibraryItemsList/constants';
 import BooleanFilter from '_ui/components/LibraryItemsList/FiltersPanel/Filter/FilterInput/BooleanFilter';

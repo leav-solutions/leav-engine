@@ -12,7 +12,7 @@ import {
 import {useMutation, useQuery} from '@apollo/client';
 import {ErrorDisplay, themeVars, useLang} from '@leav/ui';
 import {Menu, Spin} from 'antd';
-import {ItemType} from 'antd/lib/menu/hooks/useItems';
+import {ItemType} from 'antd/es/menu/interface';
 import LibraryIcon from 'components/Home/LibrariesList/LibraryIcon';
 import AppIcon from 'components/shared/AppIcon';
 import TreeIcon from 'components/shared/TreeIcon';

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {cloneElement, ComponentProps, FunctionComponent, memo, ReactNode} from 'react';
+import {cloneElement, ComponentProps, FunctionComponent, Key, memo, ReactNode} from 'react';
 import {KitButton, KitDropDown, KitPagination, KitTable} from 'aristid-ds';
 import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import {FaEllipsisH} from 'react-icons/fa';
@@ -78,9 +78,9 @@ interface IDataViewProps {
         setNewPageSize: (page: number, pageSize: number) => void;
     };
     selection: {
-        onSelectionChange: null | ((keys: string[]) => void);
+        onSelectionChange: null | ((keys: Key[]) => void);
         isMassSelectionAll: boolean;
-        selectedKeys: string[];
+        selectedKeys: Key[];
     };
 }
 
@@ -235,8 +235,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                       selectedRowKeys: selectedKeys,
                       preserveSelectedRowKeys: true,
                       // TODO: review types from antd directly
-                      onChange: (selectedRowKeys: string[], _selectedRows: IItemData[], _info: {type: string}) =>
-                          onSelectionChange(selectedRowKeys),
+                      onChange: (selectedRowKeys: Key[]) => onSelectionChange(selectedRowKeys),
                       getCheckboxProps: isMassSelectionAll
                           ? () => ({
                                 disabled: true

@@ -6,7 +6,7 @@ import {useQuery} from '@apollo/client';
 import {EntityPreview, ErrorDisplay, themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
-import {ItemType} from 'antd/lib/menu/hooks/useItems';
+import {ItemType} from 'antd/es/menu/interface';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getApplicationsQuery} from 'graphQL/queries/applications/getApplicationsQuery';
 import {useState} from 'react';

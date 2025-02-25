@@ -4,7 +4,7 @@
 import {BranchesOutlined, NumberOutlined} from '@ant-design/icons';
 import {isTypeLink, localizedTranslation} from '@leav/utils';
 import {Badge, Dropdown, Input, Menu} from 'antd';
-import {ItemType} from 'antd/lib/menu/hooks/useItems';
+import {ItemType} from 'antd/es/menu/interface';
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
