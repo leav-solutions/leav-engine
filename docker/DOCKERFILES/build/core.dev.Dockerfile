@@ -7,7 +7,7 @@ WORKDIR /app
 ENV YARN_ENABLE_INLINE_BUILDS=1
 
 # Dependencies needed to retrieve metadata
-RUN apk --update add perl pkgconfig
+RUN apk --update --no-cache add perl pkgconfig
 
 # Copy required files for builds
 COPY .yarn ./.yarn
