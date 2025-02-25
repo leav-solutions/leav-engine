@@ -19,7 +19,7 @@ const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{
     ${({$shouldUsePresentationLayout}) =>
         $shouldUsePresentationLayout &&
         `   &.ant-picker.ant-picker-range {
-            div:nth-child(n+2) {
+            div:nth-child(n+3) {
                 display: none;
             }
         }
