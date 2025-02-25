@@ -82,6 +82,7 @@ interface IDataViewProps {
         isMassSelectionAll: boolean;
         selectedKeys: Key[];
     };
+    hideTableHeader: boolean;
 }
 
 // TODO: tests will fail if we don't check attributeToDisplay because we have a render with no attributes but data is present. We should check why there's this behavior
@@ -107,7 +108,8 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         paginationProps,
         itemActions,
         selection: {onSelectionChange, selectedKeys, isMassSelectionAll},
-        iconsOnlyItemActions
+        iconsOnlyItemActions,
+        hideTableHeader = false
     }) => {
         const {t} = useSharedTranslation();
 
@@ -247,7 +249,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         return (
             <DataViewContainerDivStyled ref={containerRef}>
                 <StyledTable
-                    showHeader={dataGroupedFilteredSorted.length > 0}
+                    showHeader={dataGroupedFilteredSorted.length > 0 && !hideTableHeader}
                     columns={columns}
                     tableLayout="fixed"
                     scroll={{y: scrollHeight, x: '100%'}}
