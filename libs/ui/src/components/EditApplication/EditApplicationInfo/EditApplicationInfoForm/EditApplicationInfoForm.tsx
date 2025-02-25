@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {endpointFormatRegex, getFlagByLang, idFormatRegex, slugifyString} from '@leav/utils';
 import {ColorPicker, Form, FormInstance} from 'antd';
-import {Color} from 'antd/lib/color-picker';
+import {Color} from 'antd/es/color-picker';
 import {KitInput, KitSelect} from 'aristid-ds';
 import React, {useState} from 'react';
 import styled from 'styled-components';
@@ -113,20 +113,19 @@ function EditApplicationInfoForm({
         }
     };
 
-    const _handleSubmitOnEnter = (field: string) => (
-        e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        // If shift is pressed, don't submit
-        if (e.shiftKey || !isEditing) {
-            return;
-        }
+    const _handleSubmitOnEnter =
+        (field: string) => (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            // If shift is pressed, don't submit
+            if (e.shiftKey || !isEditing) {
+                return;
+            }
 
-        if (e.key === 'Enter') {
-            e.preventDefault();
+            if (e.key === 'Enter') {
+                e.preventDefault();
 
-            _handleFieldSubmit(field, e.currentTarget.value);
-        }
-    };
+                _handleFieldSubmit(field, e.currentTarget.value);
+            }
+        };
 
     const label = application?.label
         ? {

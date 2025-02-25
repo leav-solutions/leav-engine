@@ -14,7 +14,7 @@ import {TreeLibrariesForm} from './TreeLibrariesForm';
 export type FormValues = Partial<TreeDetailsFragment>;
 
 interface IEditTreeInfoFormProps {
-    form: FormInstance<FormValues>;
+    form: FormInstance;
     tree: TreeDetailsFragment;
     loading: boolean;
     onSubmitField: (field: string, value: any) => Promise<void>;
@@ -91,12 +91,11 @@ function EditTreeInfoForm({
         _handleFieldSubmit(field, e.target.value);
     };
 
-    const _handleSubmitOnEnter = (field: string) => (
-        e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        // If shift is pressed, don't submit
-        if (e.shiftKey || !isEditing) {
-            return;
+    const _handleSubmitOnEnter =
+        (field: string) => (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            // If shift is pressed, don't submit
+            if (e.shiftKey || !isEditing) {
+                return;
         }
 
         if (e.key === 'Enter') {

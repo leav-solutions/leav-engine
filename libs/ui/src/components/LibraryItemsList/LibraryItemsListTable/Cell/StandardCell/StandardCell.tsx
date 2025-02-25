@@ -12,7 +12,7 @@ import {AttributeFormat} from '_ui/_gqlTypes';
 import {stringifyDateRangeValue} from '_ui/_utils';
 import {ISimpleCellProps} from '../types';
 import {getValuesToDisplayInCell} from '../utils';
-import {ColorFactory} from 'antd/lib/color-picker/color';
+import {AggregationColor} from 'antd/es/color-picker/color';
 
 const RichTextDisplay = React.lazy(() => import('./ElementsToDisplay/RichTextDisplay'));
 
@@ -69,7 +69,7 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                     return (
                         <>
                             {values.map((colorData, index) => {
-                                const color = new ColorFactory(colorData.raw_value);
+                                const color = new AggregationColor(colorData.raw_value);
                                 const hexColor = color.toHexString();
 
                                 return (

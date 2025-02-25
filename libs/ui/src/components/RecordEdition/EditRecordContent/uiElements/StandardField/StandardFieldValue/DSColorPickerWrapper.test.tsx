@@ -9,7 +9,7 @@ import {AntForm} from 'aristid-ds';
 import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
 const pinkColorHex = '#ff00ff';
-const pinkColorRgb = 'rgb(255, 0, 255)';
+const pinkColorRgb = 'rgb(255,0,255)';
 const pinkColorHsb = 'hsb(300, 100%, 100%)';
 const blueColorHex = '#0000ff';
 

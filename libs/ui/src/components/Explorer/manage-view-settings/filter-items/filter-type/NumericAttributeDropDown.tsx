@@ -13,7 +13,11 @@ const InputNumberStyled = styled(KitInputNumber)`
     width: 100%;
 `;
 
-export const NumericAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({filter, onFilterChange}) => {
+export const NumericAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
+    filter,
+    onFilterChange,
+    selectDropDownRef
+}) => {
     const {t} = useSharedTranslation();
 
     const {conditionOptionsByType} = useConditionsOptionsByType(filter);
@@ -30,7 +34,12 @@ export const NumericAttributeDropDown: FunctionComponent<IFilterChildrenDropDown
 
     return (
         <>
-            <KitSelect options={conditionOptionsByType} onChange={_onConditionChanged} value={filter.condition} />
+            <KitSelect
+                options={conditionOptionsByType}
+                onChange={_onConditionChanged}
+                value={filter.condition}
+                getPopupContainer={() => selectDropDownRef?.current ?? document.body}
+            />
             {showInput && (
                 <InputNumberStyled
                     placeholder={String(t('explorer.type-a-value'))}

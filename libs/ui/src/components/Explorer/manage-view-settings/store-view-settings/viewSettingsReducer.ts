@@ -17,9 +17,10 @@ import {hasOnlyNoValueConditions} from '../../conditionsHelper';
 import {MASS_SELECTION_ALL} from '../../_constants';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
 import {ThroughConditionFilter} from '_ui/types';
+import {Key} from 'react';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
-export type MassSelection = string[] | typeof MASS_SELECTION_ALL;
+export type MassSelection = Key[] | typeof MASS_SELECTION_ALL;
 
 export const ViewSettingsActionTypes = {
     RESET: 'RESET',

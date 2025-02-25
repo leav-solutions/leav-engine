@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormat} from '_ui/_gqlTypes';
-import {FunctionComponent} from 'react';
+import {FunctionComponent, RefObject} from 'react';
 import {BooleanAttributeDropDown} from './BooleanAttributeDropdown';
 import {ColorAttributeDropDown} from './ColorAttributeDropDown';
 import {DateAttributeDropDown} from './DateAttributeDropDown';
@@ -17,12 +17,14 @@ import {ExplorerFilter, isExplorerFilterLink, isExplorerFilterThrough, isExplore
 export const FilterDropdownContent: FunctionComponent<{
     filter: ExplorerFilter;
     onFilterChange: (filterData: ExplorerFilter) => void;
+    selectDropDownRef?: RefObject<HTMLDivElement>;
     removeThroughCondition?: boolean;
-}> = ({filter, onFilterChange, removeThroughCondition = false}) => {
+}> = ({filter, onFilterChange, selectDropDownRef, removeThroughCondition = false}) => {
     if (isExplorerFilterStandard(filter)) {
         const commonDropDownProps = {
             filter,
-            onFilterChange
+            onFilterChange,
+            selectDropDownRef
         };
         const standardFormatDropdown: Record<AttributeFormat, JSX.Element> = {
             [AttributeFormat.text]: <TextAttributeDropDown {...commonDropDownProps} />,
@@ -44,6 +46,7 @@ export const FilterDropdownContent: FunctionComponent<{
                 filter={filter}
                 onFilterChange={onFilterChange}
                 removeThroughCondition={removeThroughCondition}
+                selectDropDownRef={selectDropDownRef}
             />
         );
     }

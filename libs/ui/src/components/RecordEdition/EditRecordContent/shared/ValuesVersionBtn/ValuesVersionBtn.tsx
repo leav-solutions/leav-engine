@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, ButtonProps, Dropdown, Space} from 'antd';
-import {ItemType} from 'antd/lib/menu/hooks/useItems';
+import {ItemType} from 'antd/es/menu/interface';
 import {MenuItemType} from 'rc-menu/lib/interface';
 import {VscLayers, VscLayersActive} from 'react-icons/vsc';
 import {themeVars} from '_ui/antdTheme';

@@ -19,7 +19,7 @@ import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types'
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
 import {multiColorTagAvatarClassName, TableTagGroup} from './TableTagGroup';
-import {ColorFactory} from 'antd/lib/color-picker/color';
+import {AggregationColor} from 'antd/es/color-picker/color';
 
 const isStandardValue = (
     v: PropertyValueFragment,
@@ -114,7 +114,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                             type: value.valuePayload ? 'primary' : ('neutral' as IKitTag['type'])
                         };
                     case AttributeFormat.color:
-                        const color = new ColorFactory(value.valueRawPayload);
+                        const color = new AggregationColor(value.valueRawPayload);
                         return {
                             idCardProps: {
                                 description: value.valuePayload,
@@ -205,7 +205,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     );
                     break;
                 case AttributeFormat.color:
-                    const color = new ColorFactory(value.valueRawPayload);
+                    const color = new AggregationColor(value.valueRawPayload);
                     content = (
                         <>
                             <StyledColorChip $colorTextContent={color.toHexString()} />

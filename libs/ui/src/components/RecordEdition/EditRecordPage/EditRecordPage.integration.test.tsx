@@ -196,6 +196,7 @@ describe('EditRecordPage', () => {
         await user.click(simpleInput);
         await userEvent.type(simpleInput, 'some value');
         await userEvent.tab();
+        await userEvent.click(document.body);
 
         expect(refetchMock).toHaveBeenCalledTimes(1);
         expect(screen.getAllByRole('textbox')).toHaveLength(2);

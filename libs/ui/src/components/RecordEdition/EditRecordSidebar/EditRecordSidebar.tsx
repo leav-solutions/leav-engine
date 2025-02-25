@@ -15,6 +15,7 @@ import {EDIT_RECORD_SIDEBAR_ID} from '_ui/constants';
 import Breadcrumb from './Breacrumb';
 import AttributeSummary from './AttributeSummary';
 import ValuesSummary from './ValuesSummary';
+import styled from 'styled-components';
 
 interface IEditRecordSidebarProps {
     onMetadataSubmit: MetadataSubmitValueFunc;
@@ -44,6 +45,14 @@ const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubm
     }
 };
 
+const StyledKitSidePanel = styled(KitSidePanel)<{$hideBoxShadow: boolean}>`
+    ${({$hideBoxShadow}) =>
+        $hideBoxShadow &&
+        `&&& section {
+            box-shadow: none;
+        }`}
+`;
+
 export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
     onMetadataSubmit,
     open,
@@ -55,15 +64,16 @@ export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
     const sidePanelTitle = state.record?.label ?? state.record?.id ?? t('record_summary.new_record');
 
     const editRecordSidebarContent = (
-        <KitSidePanel
+        <StyledKitSidePanel
             ref={sidePanelRef}
             initialOpen={open}
             idCardProps={{title: sidePanelTitle}}
             id={EDIT_RECORD_SIDEBAR_ID}
             headerExtra={<Breadcrumb />}
+            $hideBoxShadow={!sidebarContainer}
         >
             {_getRecordSidebarContent(state, onMetadataSubmit)}
-        </KitSidePanel>
+        </StyledKitSidePanel>
     );
 
     useEffect(() => {

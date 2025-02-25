@@ -13,7 +13,11 @@ const InputStyled = styled(KitInput)`
     width: 100%;
 `;
 
-export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({filter, onFilterChange}) => {
+export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
+    filter,
+    onFilterChange,
+    selectDropDownRef
+}) => {
     const {t} = useSharedTranslation();
 
     const {conditionOptionsByType} = useConditionsOptionsByType(filter);
@@ -42,6 +46,7 @@ export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
                 options={conditionOptionsByType}
                 onChange={_onConditionChanged}
                 value={filter.condition}
+                getPopupContainer={() => selectDropDownRef?.current ?? document.body}
                 aria-label={String(t('explorer.filter-condition'))}
             />
             {showSearch && (
