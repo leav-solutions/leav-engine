@@ -3,6 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitButton, KitSpace} from 'aristid-ds';
 import {IPrimaryAction} from '../_types';
+import {IViewSettingsState} from '../manage-view-settings';
+import {MASS_SELECTION_ALL} from '../_constants';
 
 /**
  * Hook used to get the primary actions for `<DataView />` component.
@@ -10,9 +12,10 @@ import {IPrimaryAction} from '../_types';
  * Based on default actions and custom actions, it returns a primary with first action as "main" action and the others
  * in the dropdown accessible via a split button.
  *
- * @param {Object[]} actions - list of actions to be display as one button: the primary action button
+ * @param view - list of actions to be display as one button: the primary action button
+ * @param actions - list of actions to be display as one button: the primary action button
  */
-export const usePrimaryActionsButton = (actions: IPrimaryAction[]) => {
+export const usePrimaryActionsButton = ({view, actions}: {view: IViewSettingsState; actions: IPrimaryAction[]}) => {
     const [firstAction, ...dropdownActions] = actions;
 
     return {
@@ -22,7 +25,7 @@ export const usePrimaryActionsButton = (actions: IPrimaryAction[]) => {
                     <KitButton
                         type="primary"
                         icon={firstAction.icon}
-                        disabled={firstAction.disabled}
+                        disabled={firstAction.disabled || view.massSelection === MASS_SELECTION_ALL}
                         onClick={firstAction.callback}
                         items={dropdownActions.map((action, index) => ({
                             key: index,
@@ -31,7 +34,7 @@ export const usePrimaryActionsButton = (actions: IPrimaryAction[]) => {
                                     {action.icon} {action.label}
                                 </KitSpace>
                             ),
-                            disabled: action.disabled,
+                            disabled: action.disabled || view.massSelection === MASS_SELECTION_ALL,
                             onClick: action.callback
                         }))}
                     >

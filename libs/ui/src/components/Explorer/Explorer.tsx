@@ -38,11 +38,14 @@ const emptyObject = {};
 
 const ExplorerHeaderDivStyled = styled.div`
     display: flex;
+    align-items: flex-start;
+    padding: calc(var(--general-spacing-xs) * 1px);
+`;
+
+const ExplorerActionsDivStyled = styled.div`
+    display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding-bottom: calc(var(--general-spacing-xs) * 1px);
-    padding-right: calc(var(--general-spacing-xxs) * 1px);
-    padding-top: calc(var(--general-spacing-xxs) * 1px);
+    padding: calc(var(--general-spacing-xs) * 1px);
 `;
 
 const ExplorerPageDivStyled = styled.div`
@@ -159,9 +162,10 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         massActions: [deactivateMassAction, ...massActions].filter(Boolean)
     });
 
-    const {primaryButton} = usePrimaryActionsButton(
-        [createPrimaryAction, linkPrimaryAction, ...primaryActions].filter(Boolean)
-    );
+    const {primaryButton} = usePrimaryActionsButton({
+        view,
+        actions: [createPrimaryAction, linkPrimaryAction, ...primaryActions].filter(Boolean)
+    });
 
     const {viewSettingsButton, viewListButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
 
@@ -180,15 +184,15 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                             ) /*TODO: manage loading*/
                         }
                     </KitTypography.Title>
-                    {!isMassSelectionAll && (
-                        <KitSpace size="xs">
-                            {searchInput}
-                            {enableConfigureView && viewListButton}
-                            {enableConfigureView && viewSettingsButton}
-                            {primaryButton}
-                        </KitSpace>
-                    )}
                 </ExplorerHeaderDivStyled>
+                <ExplorerActionsDivStyled>
+                    {searchInput}
+                    <KitSpace size="xs">
+                        {enableConfigureView && viewListButton}
+                        {enableConfigureView && viewSettingsButton}
+                        {primaryButton}
+                    </KitSpace>
+                </ExplorerActionsDivStyled>
                 {!viewSettingsLoading && (
                     <ExplorerToolbar showFiltersAndSort={showFiltersAndSorts} isMassSelectionAll={isMassSelectionAll}>
                         {selectAllButton}
