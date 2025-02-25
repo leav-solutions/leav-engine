@@ -100,8 +100,6 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
     };
 
     const contentStyle: React.CSSProperties = {
-        lineHeight: '260px',
-        textAlign: 'center',
         marginTop: 16
     };
 
