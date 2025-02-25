@@ -938,7 +938,7 @@ describe('Explorer', () => {
             </Explorer.EditSettingsContextProvider>
         );
 
-        expect(useGetRecordUpdatesSubscriptionMock).toHaveBeenCalledTimes(3);
+        expect(useGetRecordUpdatesSubscriptionMock).toHaveBeenCalledTimes(6);
         expect(useGetRecordUpdatesSubscriptionMock.mock.calls[0]).toEqual([
             {
                 libraries: [''],
