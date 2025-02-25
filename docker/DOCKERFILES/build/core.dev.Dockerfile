@@ -6,9 +6,6 @@ FROM node:18-alpine3.18 AS builder
 WORKDIR /app
 ENV YARN_ENABLE_INLINE_BUILDS=1
 
-# Dependencies needed to retrieve metadata
-RUN apk --update add perl pkgconfig
-
 # Copy required files for builds
 COPY .yarn ./.yarn
 COPY *.json yarn.lock .yarnrc.yml vite-config-common.js ./
@@ -46,6 +43,9 @@ COPY --from=builder /app/apps/core/applications ./apps/core/applications
 COPY --from=builder /app/apps/core/dist ./apps/core/dist
 
 RUN npm install -g nodemon@^3.1.7
+
+# Dependencies needed to retrieve files metadata with exiftool-vendored pkg
+RUN apk --update add perl pkgconfig
 
 # Get ready for runtime
 WORKDIR /app/apps/core
