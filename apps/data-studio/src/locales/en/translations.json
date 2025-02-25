@@ -534,7 +534,12 @@
         "created_at": "Created on",
         "created_at_value": "{{date}} by {{user}}",
         "modified_at": "Modified on",
-        "modified_at_value": "{{date}} by {{user}}"
+        "modified_at_value": "{{date}} by {{user}}",
+        "error": {
+            "title": "Data loading error",
+            "description": "A technical error has occurred, please reload the page. If the error persists, please contact Aristid Support.",
+            "refresh": "Refresh"
+        }
     },
     "floating_menu": {
         "more_actions": "More"
