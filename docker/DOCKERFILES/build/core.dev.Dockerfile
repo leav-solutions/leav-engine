@@ -44,7 +44,7 @@ COPY --from=builder /app/apps/core/dist ./apps/core/dist
 
 RUN npm install -g nodemon@^3.1.7
 
-# Dependencies needed to retrieve metadata
+# Dependencies needed to retrieve files metadata with exiftool-vendored pkg
 RUN apk --update add perl pkgconfig
 
 # Get ready for runtime

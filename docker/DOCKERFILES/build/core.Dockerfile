@@ -42,7 +42,7 @@ COPY --from=prod-dep-install app/ ./
 COPY --from=builder /app/apps/core/applications ./apps/core/applications
 COPY --from=builder /app/apps/core/dist ./apps/core/dist
 
-# Dependencies needed to retrieve metadata
+# Dependencies needed to retrieve files metadata with exiftool-vendored pkg
 RUN apk --update add perl pkgconfig
 
 # Get ready for runtime
