@@ -509,7 +509,12 @@
         "values_version": "Version de valeurs",
         "no_value": "Aucune valeur",
         "calculated_value": "Valeur calculée",
-        "global": "Globale"
+        "global": "Globale",
+        "error": {
+            "title": "Erreur de chargement des données",
+            "description": "Une erreur technique est survenue, veuillez recharger la page s'il vous plaît. Si l'erreur persiste, veuillez contacter le support Aristid.",
+            "refresh": "Rafraîchir"
+        }
     },
     "view": {
         "views": "Vues",
