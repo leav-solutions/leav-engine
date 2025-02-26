@@ -11,17 +11,33 @@ import {prepareViewForRequest} from './prepareViewForRequest';
 import {IViewDisplay} from '_ui/types';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
 import {useTransformFilters} from '../_shared/useTransformFilters';
+import {useEffect, useRef, useState} from 'react';
+import {useMeQuery} from '_ui/_gqlTypes';
+import {IUserView} from '../../_types';
 
 export const useUpdateView = () => {
     const {t} = useSharedTranslation();
     const {toValidFilters} = useTransformFilters();
     const {view, dispatch} = useViewSettingsContext();
     const {saveView} = useExecuteSaveViewMutation();
+    const [isOwnerView, setIsOwnerView] = useState(false);
+    const currentView = useRef<IUserView | undefined>();
+
+    const {data: userData} = useMeQuery();
+
+    useEffect(() => {
+        currentView.current = view.savedViews.find(v => v.id === view.viewId);
+        if (currentView.current === undefined) {
+            return;
+        }
+        setIsOwnerView(currentView.current.ownerId === userData?.me?.whoAmI?.id);
+    }, [view.viewId]);
 
     const _updateView = async () => {
         const mappedView = {
             ...prepareViewForRequest(view, view.viewLabels),
-            id: view.viewId
+            id: view.viewId,
+            shared: currentView.current?.shared ?? false
         };
 
         const {data} = await saveView({
@@ -49,7 +65,7 @@ export const useUpdateView = () => {
 
     return {
         updateViewButton:
-            !view.savedViews.length || !view.viewId ? null : (
+            !view.viewId || !view.savedViews.length || !isOwnerView ? null : (
                 <KitButton type="action" icon={<FaSave />} onClick={_updateView}>
                     {t('global.save')}
                 </KitButton>
