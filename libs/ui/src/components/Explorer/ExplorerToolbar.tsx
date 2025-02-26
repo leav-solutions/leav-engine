@@ -63,7 +63,7 @@ export const ExplorerToolbar: FunctionComponent<{
               );
 
     const _handleClickOnSort: ComponentProps<typeof FilterStyled>['onClick'] = () =>
-        isMassSelectionAll ? undefined : () => openSettingsPanel('sort-items');
+        isMassSelectionAll ? undefined : openSettingsPanel('sort-items');
 
     return (
         <ExplorerToolbarListStyled aria-label={t('explorer.toolbar')}>
