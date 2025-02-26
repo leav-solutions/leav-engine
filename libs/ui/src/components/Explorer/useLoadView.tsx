@@ -20,6 +20,8 @@ export const useLoadView = () => {
         fetchPolicy: 'network-only'
     });
 
+    const {data} = useMeQuery();
+
     useEffect(() => {
         if (!attributesLoading && attributesData) {
             const attributesDataById = (attributesData?.attributes?.list ?? []).reduce((acc, attr) => {
@@ -49,8 +51,6 @@ export const useLoadView = () => {
             closeSettingsPanel();
         }
     }, [attributesData, attributesLoading]);
-
-    const {data} = useMeQuery();
 
     const loadView = (viewId: string | null) => {
         let viewData: IUserView | null;

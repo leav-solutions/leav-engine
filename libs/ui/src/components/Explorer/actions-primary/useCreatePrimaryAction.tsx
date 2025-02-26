@@ -1,13 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useState} from 'react';
+import {ReactElement, useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
-import {EditRecordModal} from '_ui/components';
+import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
-import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
+import {LibraryBehavior, useExplorerLibraryDetailsQuery, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 import {FeatureHook, Entrypoint, IEntrypointLink, IPrimaryAction} from '../_types';
+import {useKitNotification} from 'aristid-ds';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -36,9 +37,10 @@ export const useCreatePrimaryAction = ({
 }>) => {
     const {t} = useSharedTranslation();
 
-    const [isRecordCreationVisible, setRecordCreationVisible] = useState(false);
+    const [isModalCreationVisible, setIsModalCreationVisible] = useState(false);
     const [multipleValues, setIsMultivalues] = useState(false);
     const {saveValues} = useSaveValueBatchMutation();
+    const {kitNotification} = useKitNotification();
 
     useExplorerLinkAttributeQuery({
         skip: entrypoint.type !== 'link',
@@ -54,50 +56,98 @@ export const useCreatePrimaryAction = ({
         }
     });
 
+    const {data, loading, error} = useExplorerLibraryDetailsQuery({variables: {libraryId}, skip: !isEnabled});
+
+    if (error || loading) {
+        return {createPrimaryAction: null, createModal: null};
+    }
+
     const canCreateRecord = entrypoint.type === 'library' ? true : multipleValues || totalCount === 0;
 
     const _createPrimaryAction: IPrimaryAction = {
         callback: () => {
-            setRecordCreationVisible(true);
+            setIsModalCreationVisible(true);
         },
         icon: <FaPlus />,
         disabled: !canCreateRecord,
         label: t('explorer.create-one')
     };
 
+    const _notifyNewCreation = () => {
+        kitNotification.success({
+            message: t('items_list.created_in_success.message'),
+            description: ''
+        });
+    };
+
+    let _createModal: ReactElement | null = null;
+    switch (data?.libraries?.list[0]?.behavior) {
+        case LibraryBehavior.files:
+            _createModal = (
+                <UploadFiles
+                    libraryId={libraryId}
+                    multiple
+                    onClose={() => setIsModalCreationVisible(false)}
+                    onCompleted={() => {
+                        refetch();
+                        _notifyNewCreation();
+                        setIsModalCreationVisible(false);
+                    }}
+                ></UploadFiles>
+            );
+            break;
+        case LibraryBehavior.directories:
+            _createModal = (
+                <CreateDirectory
+                    libraryId={libraryId}
+                    onClose={() => setIsModalCreationVisible(false)}
+                    onCompleted={() => {
+                        refetch();
+                        _notifyNewCreation();
+                        setIsModalCreationVisible(false);
+                    }}
+                ></CreateDirectory>
+            );
+            break;
+        case LibraryBehavior.standard:
+            _createModal = (
+                <EditRecordModal
+                    open
+                    record={null}
+                    library={libraryId}
+                    onClose={() => {
+                        setIsModalCreationVisible(false);
+                    }}
+                    onCreate={newRecord => {
+                        refetch();
+                        _notifyNewCreation();
+                        setIsModalCreationVisible(false);
+                        if (entrypoint.type === 'link') {
+                            saveValues(
+                                {
+                                    id: entrypoint.parentRecordId,
+                                    library: {
+                                        id: entrypoint.parentLibraryId
+                                    }
+                                },
+                                [
+                                    {
+                                        attribute: entrypoint.linkAttributeId,
+                                        idValue: null,
+                                        value: newRecord.id
+                                    }
+                                ]
+                            );
+                        }
+                    }}
+                    submitButtons={['create']}
+                />
+            );
+            break;
+    }
+
     return {
         createPrimaryAction: isEnabled ? _createPrimaryAction : null,
-        createModal: isRecordCreationVisible ? (
-            <EditRecordModal
-                open
-                record={null}
-                library={libraryId}
-                onClose={() => {
-                    setRecordCreationVisible(false);
-                }}
-                onCreate={newRecord => {
-                    refetch();
-                    setRecordCreationVisible(false);
-                    if (entrypoint.type === 'link') {
-                        saveValues(
-                            {
-                                id: entrypoint.parentRecordId,
-                                library: {
-                                    id: entrypoint.parentLibraryId
-                                }
-                            },
-                            [
-                                {
-                                    attribute: entrypoint.linkAttributeId,
-                                    idValue: null,
-                                    value: newRecord.id
-                                }
-                            ]
-                        );
-                    }
-                }}
-                submitButtons={['create']}
-            />
-        ) : null
+        createModal: isModalCreationVisible ? _createModal : null
     };
 };

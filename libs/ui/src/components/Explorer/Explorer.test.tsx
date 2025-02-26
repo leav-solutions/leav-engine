@@ -23,8 +23,26 @@ import {SNACKBAR_MASS_ID} from './actions-mass/useMassActions';
 import {createRef} from 'react';
 import {ExplorerRef} from './Explorer';
 
+const UploadFilesMock = 'UploadFiles';
+const CreateDirectoryMock = 'CreateDirectory';
 const EditRecordModalMock = 'EditRecordModal';
 
+jest.mock('_ui/components/UploadFiles', () => ({
+    UploadFiles: ({onCreate}) => (
+        <div>
+            {UploadFilesMock}
+            <button onClick={() => onCreate({})}>create-file</button>
+        </div>
+    )
+}));
+jest.mock('_ui/components/CreateDirectory', () => ({
+    CreateDirectory: ({onCreate}) => (
+        <div>
+            {CreateDirectoryMock}
+            <button onClick={() => onCreate({})}>create-directory</button>
+        </div>
+    )
+}));
 jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
     EditRecordModal: ({onCreate}) => (
         <div>
@@ -412,20 +430,39 @@ describe('Explorer', () => {
     };
 
     const campaignName = 'Campagnes';
-    const mockLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
+
+    const mockLibraryDetailsQueryResultList = {
+        id: 'campaigns',
+        label: {
+            en: 'Campaigns',
+            fr: campaignName
+        }
+    };
+
+    const mockFilesLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
         loading: false,
         called: true,
         data: {
             libraries: {
-                list: [
-                    {
-                        id: 'campaigns',
-                        label: {
-                            en: 'Campaigns',
-                            fr: campaignName
-                        }
-                    }
-                ]
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.files}]
+            }
+        }
+    };
+    const mockDirectoriesLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
+        loading: false,
+        called: true,
+        data: {
+            libraries: {
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.directories}]
+            }
+        }
+    };
+    const mockStandardLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
+        loading: false,
+        called: true,
+        data: {
+            libraries: {
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.standard}]
             }
         }
     };
@@ -609,7 +646,7 @@ describe('Explorer', () => {
         );
 
         jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-            () => mockLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
+            () => mockStandardLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
         );
 
         jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
@@ -1152,7 +1189,35 @@ describe('Explorer', () => {
     });
 
     describe('Primary Action', () => {
-        test('Should be able to create a new record', async () => {
+        test('Should be able to create a new file when library has files behavior', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+                () => mockFilesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
+            );
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+
+            expect(screen.getByText(UploadFilesMock)).toBeVisible();
+        });
+        test('Should be able to create a new directory when library has directories behavior', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+                () => mockDirectoriesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
+            );
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+
+            expect(screen.getByText(CreateDirectoryMock)).toBeVisible();
+        });
+        test('Should be able to create a new record when library has standard behavior', async () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
