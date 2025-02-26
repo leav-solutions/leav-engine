@@ -30,6 +30,7 @@ import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {MASS_SELECTION_ALL} from './_constants';
+import {useDeleteLinkValues} from './actions-mass/useDeleteLinkValues';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -119,6 +120,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         skip: viewSettingsLoading
     }); // TODO: refresh when go back on page
     const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
+    const isLink = entrypoint.type === 'link';
 
     const {removeItemAction} = useRemoveItemAction({
         isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('remove'),
@@ -141,15 +143,23 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     });
 
     const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
-        isEnabled: entrypoint.type === 'link',
+        isEnabled: isLink,
         maxItemsLeft: null // TODO: use KitTable.row
     });
 
     const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
 
     const {deactivateMassAction} = useDeactivateMassAction({
-        isEnabled: isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
+        isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
         store: {view, dispatch},
+        allVisibleKeys,
+        refetch
+    });
+
+    const {unlinkMassAction} = useDeleteLinkValues({
+        isEnabled: isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
+        store: {view, dispatch},
+        pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
         allVisibleKeys,
         refetch
     });
@@ -159,7 +169,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         store: {view, dispatch},
         totalCount,
         allVisibleKeys,
-        massActions: [deactivateMassAction, ...massActions].filter(Boolean)
+        massActions: [deactivateMassAction, unlinkMassAction, ...massActions].filter(Boolean)
     });
 
     const {primaryButton} = usePrimaryActionsButton({

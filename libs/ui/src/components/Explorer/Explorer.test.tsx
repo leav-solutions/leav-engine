@@ -950,8 +950,7 @@ describe('Explorer', () => {
                 <Explorer entrypoint={libraryEntrypoint} />
             </Explorer.EditSettingsContextProvider>
         );
-
-        expect(useGetRecordUpdatesSubscriptionMock).toHaveBeenCalledTimes(3);
+        expect(useGetRecordUpdatesSubscriptionMock).toHaveBeenCalledTimes(6);
         expect(useGetRecordUpdatesSubscriptionMock.mock.calls[0]).toEqual([
             {
                 libraries: [''],
@@ -959,7 +958,7 @@ describe('Explorer', () => {
             },
             true
         ]);
-        expect(useGetRecordUpdatesSubscriptionMock.mock.calls[1]).toEqual([
+        expect(useGetRecordUpdatesSubscriptionMock.mock.calls[3]).toEqual([
             {
                 libraries: [libraryEntrypoint.libraryId],
                 records: [recordId1, recordId2]
