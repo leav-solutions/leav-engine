@@ -22,7 +22,7 @@ import {getAntdDisplayedValue, getEmptyInitialValue} from '../../antdUtils';
 import {GetRecordColumnsValuesRecord, IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import {EDIT_RECORD_SIDEBAR_ID, STANDARDFIELD_ID_PREFIX} from '_ui/constants';
+import {EDIT_RECORD_SIDEBAR_ID, STANDARD_FIELD_ID_PREFIX} from '_ui/constants';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -82,7 +82,7 @@ const StandardField: FunctionComponent<
     metadataEdit = false
 }) => {
     const {t} = useSharedTranslation();
-    const {lang: availableLang} = useLang();
+    const {lang} = useLang();
 
     const antdListFieldsRef = useRef<{
         add: FormListOperation['add'];
@@ -114,7 +114,7 @@ const StandardField: FunctionComponent<
             const target = event.target as HTMLElement;
 
             const sideBarSelector = '#' + EDIT_RECORD_SIDEBAR_ID;
-            const inputWrapperSelector = '#' + STANDARDFIELD_ID_PREFIX + attribute.id;
+            const inputWrapperSelector = '#' + STANDARD_FIELD_ID_PREFIX + attribute.id;
             const colorDropdownSelector = '.ant-popover.ant-color-picker';
             const pickerDropdownSelector = '.ant-picker-dropdown';
             const richTextModalSelector = '.kit-modal-wrapper.link-modal';
@@ -328,14 +328,14 @@ const StandardField: FunctionComponent<
         attribute.format !== AttributeFormat.encrypted;
     const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1 && !attribute.required;
 
-    const label = localizedTranslation(element.settings.label, availableLang);
+    const label = localizedTranslation(element.settings.label, lang);
 
     const isReadOnly = attribute.readonly || readonly;
 
     return (
         <Wrapper $metadataEdit={metadataEdit}>
             <KitInputWrapperStyled
-                id={STANDARDFIELD_ID_PREFIX + attribute.id}
+                id={STANDARD_FIELD_ID_PREFIX + attribute.id}
                 label={label}
                 required={attribute.required}
                 disabled={isReadOnly}

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
-import {FunctionComponent, Reducer, useContext, useEffect, useReducer} from 'react';
+import {FunctionComponent, Reducer, useContext, useEffect, useReducer, useRef, useState} from 'react';
 import CreationErrorContext from '_ui/components/RecordEdition/EditRecord/creationErrorContext';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
@@ -22,15 +22,45 @@ import {
 } from '../../reducers/linkFieldReducer/linkFieldReducer';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import {MonoValueSelect} from '_ui/components/RecordEdition/EditRecordContent/uiElements/LinkField/MonoValueSelect/MonoValueSelect';
-import {AntForm} from 'aristid-ds';
+import {AntForm, KitButton, KitInputWrapper, KitSpace, KitTooltip} from 'aristid-ds';
 import {MultiValueSelect} from './MultiValueSelect/MultiValueSelect';
 import {useLang} from '_ui/hooks';
+import styled from 'styled-components';
+
+//TODO: factoriser avec StandardField
+import {ComputeIndicator} from '../StandardField/ComputeIndicator';
+import {DeleteAllValuesButton} from '../StandardField/DeleteAllValuesButton';
+import {IEntrypointLink, IPrimaryAction} from '_ui/components/Explorer/_types';
+import {Explorer} from '_ui/components/Explorer';
+import {FaList, FaPlus} from 'react-icons/fa';
+import {LINK_FIELD_ID_PREFIX} from '_ui/constants';
+import {ExplorerRef} from '_ui/components/Explorer/Explorer';
 
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
 
+//TODO: factoriser avec StandardField
+const KitInputExtraAlignLeft = styled.div`
+    margin-right: auto;
+    line-height: 12px;
+`;
+
+const KitFooterButton = styled(KitButton)`
+    margin-top: calc((var(--general-spacing-xs)) * 1px);
+`;
+
+const KitFieldsWrapper = styled.div`
+    max-height: 322px;
+    // overflow-y: scroll;
+
+    > div {
+        max-height: 322px;
+    }
+`;
+
 const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = ({
     element,
+    readonly,
     onValueSubmit,
     onValueDelete
 }) => {
@@ -50,6 +80,8 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
             record
         })
     );
+
+    console.log({state});
 
     const attribute = state.attribute as RecordFormAttributeLinkAttributeFragment;
     const activeValues = getActiveFieldValues(state);
@@ -127,6 +159,39 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
 
     const label = localizedTranslation(state.formElement.settings.label, lang);
 
+    //-------
+    //TODO: Supprimer le state et passer par element (cf StandardField)
+    //TODO: handle computed values and flags 🥲
+    const linkEntrypoint: IEntrypointLink = {
+        type: 'link',
+        parentLibraryId: editRecordState.libraryId,
+        parentRecordId: editRecordState.record.id,
+        linkAttributeId: attribute.id
+    };
+
+    const isReadOnly = attribute.readonly || readonly;
+
+    const isMultipleValues = element.attribute.multiple_values;
+
+    const isFieldInError = false;
+    //TODO: check if field is in error (cf StandardField)
+
+    const explorerRef = useRef<ExplorerRef>(null);
+    const [explorerActions, setExplorerActions] = useState<{createAction: IPrimaryAction; linkAction: IPrimaryAction}>(
+        null
+    );
+
+    useEffect(() => {
+        if (explorerRef.current && !explorerActions) {
+            setExplorerActions({
+                createAction: explorerRef.current.createAction,
+                linkAction: explorerRef.current.linkAction
+            });
+        }
+    }, [explorerRef.current]);
+
+    console.log({explorerRef, explorerActions});
+
     return (
         <AntForm.Item
             name={attribute.id}
@@ -137,25 +202,76 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                 }
             ]}
         >
-            {attribute.multiple_values === true ? (
-                <MultiValueSelect
-                    activeValues={activeValues}
-                    attribute={attribute}
-                    label={label}
-                    required={state.formElement.attribute.required}
-                    onValueDeselect={_handleDeleteValue}
-                    onSelectChange={_handleUpdateValueSubmit}
-                />
-            ) : (
-                <MonoValueSelect
-                    activeValue={activeValues[0]}
-                    attribute={attribute}
-                    label={label}
-                    required={state.formElement.attribute.required}
-                    onSelectClear={_handleDeleteValue}
-                    onSelectChange={_handleUpdateValueSubmit}
-                />
-            )}
+            <KitInputWrapper
+                id={LINK_FIELD_ID_PREFIX + attribute.id}
+                label={label}
+                required={attribute.required}
+                bordered
+                disabled={isReadOnly}
+                status={isFieldInError ? 'error' : undefined}
+                extra={
+                    <>
+                        <KitInputExtraAlignLeft>
+                            {/* <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} /> */}
+                        </KitInputExtraAlignLeft>
+                        {true && <DeleteAllValuesButton handleDelete={null} />}
+                    </>
+                }
+            >
+                <>
+                    <KitFieldsWrapper>
+                        <Explorer
+                            ref={explorerRef}
+                            entrypoint={linkEntrypoint}
+                            showTitle={false}
+                            showSearch={false}
+                            disableSelection={!isMultipleValues}
+                            hidePrimaryActions
+                            iconsOnlyItemActions
+                            hideTableHeader
+                        />
+                    </KitFieldsWrapper>
+                    <KitSpace size="xs">
+                        <KitFooterButton
+                            type="secondary"
+                            size="m"
+                            icon={<FaPlus />}
+                            disabled={explorerActions?.createAction.disabled}
+                            onClick={explorerActions?.createAction.callback}
+                        >
+                            {explorerActions?.createAction.label}
+                        </KitFooterButton>
+                        <KitFooterButton
+                            type="secondary"
+                            size="m"
+                            icon={<FaList />}
+                            disabled={explorerActions?.linkAction.disabled}
+                            onClick={explorerActions?.linkAction.callback}
+                        >
+                            {explorerActions?.linkAction.label}
+                        </KitFooterButton>
+                    </KitSpace>
+                </>
+                {/* {attribute.multiple_values === true ? (
+                    <MultiValueSelect
+                        activeValues={activeValues}
+                        attribute={attribute}
+                        label={label}
+                        required={state.formElement.attribute.required}
+                        onValueDeselect={_handleDeleteValue}
+                        onSelectChange={_handleUpdateValueSubmit}
+                    />
+                ) : (
+                    <MonoValueSelect
+                        activeValue={activeValues[0]}
+                        attribute={attribute}
+                        label={label}
+                        required={state.formElement.attribute.required}
+                        onSelectClear={_handleDeleteValue}
+                        onSelectChange={_handleUpdateValueSubmit}
+                    />
+                )} */}
+            </KitInputWrapper>
         </AntForm.Item>
     );
 };
