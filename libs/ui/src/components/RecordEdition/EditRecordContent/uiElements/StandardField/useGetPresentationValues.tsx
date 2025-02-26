@@ -25,7 +25,9 @@ export const useGetPresentationValues = ({
 }): IUseGetPresentationValues => {
     const {t} = useSharedTranslation();
 
-    const presentationValues = values.map(value => {
+    const mappedValues = values.length > 0 ? values : [{}];
+
+    const presentationValues = mappedValues.map(value => {
         let presentationValue = value.payload || calculatedValue?.payload || inheritedValue?.payload || '';
 
         switch (format) {

@@ -235,6 +235,10 @@ const StandardField: FunctionComponent<
                 }
             }
 
+            if (!submitRes) {
+                return;
+            }
+
             if (!submitRes.error && submitRes.errors) {
                 const attributeError = submitRes.errors.filter(err => err.attribute === attribute.id)?.[0];
 
@@ -349,7 +353,7 @@ const StandardField: FunctionComponent<
             >
                 {!attribute.multiple_values && (
                     <StandardFieldValue
-                        presentationValue={presentationValues[0]}
+                        presentationValue={presentationValues[0] ?? ''}
                         handleSubmit={_handleSubmit(backendWithoutCalculatedOrInheritedValues[0]?.id_value)}
                         attribute={attribute}
                         readonly={isReadOnly}
