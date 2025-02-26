@@ -20,6 +20,8 @@ import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesS
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import * as useColumnWidth from './useColumnWidth';
 import {SNACKBAR_MASS_ID} from './actions-mass/useMassActions';
+import {createRef} from 'react';
+import {ExplorerRef} from './Explorer';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -718,13 +720,120 @@ describe('Explorer', () => {
 
             expect(screen.getByTitle(/settings/)).toBeInTheDocument();
         });
+
+        test('should not display the title', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByText(campaignName)).not.toBeInTheDocument();
+        });
+
+        test('should display the title', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} showTitle />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.getByText(campaignName)).toBeInTheDocument();
+        });
+
+        test('should not display the search field', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(screen.queryByRole('textbox', {name: /search/})).not.toBeInTheDocument();
+        });
+
+        test('should display the search field', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} showSearch />
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(screen.getByRole('textbox', {name: /search/})).toBeInTheDocument();
+        });
+
+        test('should display the primary actions button', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(screen.getByRole('button', {name: 'explorer.create-one'})).toBeInTheDocument();
+        });
+
+        test('should not display the primary actions button', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} hidePrimaryActions />
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+        });
+
+        test('should display the table headers', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(screen.getByText('explorer.name')).toBeInTheDocument();
+            expect(screen.getByText('explorer.actions')).toBeInTheDocument();
+        });
+
+        test('should not display the table headers', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} hideTableHeader />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByText('explorer.name')).not.toBeInTheDocument();
+            expect(screen.queryByText('explorer.actions')).not.toBeInTheDocument();
+        });
+
+        test('should display the selection checkboxes and button', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const tableRows = screen.getAllByRole('row');
+            expect(tableRows).toHaveLength(mockRecords.length); // 2 records
+            const [firstRecordRow] = tableRows;
+            expect(within(firstRecordRow).getByRole('checkbox')).toBeInTheDocument();
+
+            expect(screen.queryByText(/explorer.massAction.itemsTotal/)).toBeInTheDocument();
+        });
+
+        test('should not display the selection checkboxes and button', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} disableSelection />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const tableRows = screen.getAllByRole('row');
+            expect(tableRows).toHaveLength(mockRecords.length); // 2 records
+            const [firstRecordRow] = tableRows;
+            expect(within(firstRecordRow).queryByRole('checkbox')).not.toBeInTheDocument();
+
+            expect(screen.queryByText(/explorer.massAction.itemsTotal/)).not.toBeInTheDocument();
+        });
     });
 
     describe('props title', () => {
         test('Should display library label as title', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
+                    <Explorer entrypoint={libraryEntrypoint} showTitle />
                 </Explorer.EditSettingsContextProvider>
             );
 
@@ -734,7 +843,7 @@ describe('Explorer', () => {
         test('Should display custom title', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} title="Here's my explorer!" />
+                    <Explorer entrypoint={libraryEntrypoint} title="Here's my explorer!" showTitle />
                 </Explorer.EditSettingsContextProvider>
             );
 
@@ -1055,6 +1164,21 @@ describe('Explorer', () => {
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
         });
 
+        test('Should be able to create a new record from Explorer ref', async () => {
+            const explorerRef = createRef<ExplorerRef>();
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} ref={explorerRef} hidePrimaryActions />
+                    <button onClick={() => explorerRef.current?.createAction?.callback()}>test button</button>
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
+            expect(explorerRef.current?.linkAction).toBeNull();
+            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+            await user.click(screen.getByRole('button', {name: 'test button'}));
+            expect(screen.getByText(EditRecordModalMock)).toBeInTheDocument();
+        });
+
         test('should not try to link created record if entrypoint is not a link', async () => {
             const saveValues = jest.fn();
             jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
@@ -1097,6 +1221,35 @@ describe('Explorer', () => {
             const createOneButton = await screen.findByRole('button', {name: 'explorer.create-one'});
             await user.click(createOneButton);
 
+            expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+
+            const createRecordButton = screen.getByRole('button', {name: 'create-record'});
+            await user.click(createRecordButton);
+
+            expect(saveValues).toHaveBeenCalled();
+        });
+
+        test('Should be able to link a new record from Explorer ref', async () => {
+            const saveValues = jest.fn();
+            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
+                loading: false,
+                saveValues
+            });
+
+            const explorerRef = createRef<ExplorerRef>();
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={linkEntrypoint} ref={explorerRef} hidePrimaryActions />
+                    <button onClick={() => explorerRef.current?.createAction?.callback()}>test button</button>
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
+                }
+            );
+            expect(explorerRef.current?.linkAction?.label).toEqual('explorer.add-existing-item');
+            expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
+            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+            await user.click(screen.getByRole('button', {name: 'test button'}));
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
 
             const createRecordButton = screen.getByRole('button', {name: 'create-record'});
@@ -1199,6 +1352,7 @@ describe('Explorer', () => {
                     entrypoint={libraryEntrypoint}
                     primaryActions={customPrimaryActions}
                     defaultPrimaryActions={[]}
+                    showSearch
                 />
             </Explorer.EditSettingsContextProvider>
         );
@@ -1347,6 +1501,7 @@ describe('Explorer', () => {
                         entrypoint={linkEntrypoint}
                         primaryActions={customPrimaryActions}
                         defaultPrimaryActions={[]}
+                        showTitle
                     />
                 </Explorer.EditSettingsContextProvider>,
                 {

@@ -14,7 +14,7 @@ import {
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useActiveLibrary} from 'hooks/useActiveLibrary';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery';
-import {FunctionComponent, useEffect} from 'react';
+import {FunctionComponent, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
@@ -148,6 +148,8 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                     type: 'library',
                     libraryId: library
                 }}
+                showTitle
+                showSearch
                 enableConfigureView
                 showFiltersAndSorts
                 defaultActionsForItem={['edit', 'remove']}
@@ -179,6 +181,8 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
     ) : params.has(explorerLinkQueryParamName) ? (
         <ExplorerContainerDivStyled>
             <Explorer
+                showTitle
+                showSearch
                 enableConfigureView
                 showFiltersAndSorts
                 entrypoint={{

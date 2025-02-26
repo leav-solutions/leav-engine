@@ -146,7 +146,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
             return <TableTagGroup tags={tags} />;
         } else if (isLinkValues(values, attributeProperties)) {
             return (
-                <KitAvatar.Group maxCount={5}>
+                <KitAvatar.Group max={{count: 5}}>
                     {values.map((value, index) => {
                         if (!isLinkValue(value, attributeProperties)) {
                             return null;

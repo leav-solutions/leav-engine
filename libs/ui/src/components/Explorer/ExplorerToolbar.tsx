@@ -70,7 +70,9 @@ export const ExplorerToolbar: FunctionComponent<{
             {children !== null && (
                 <>
                     <li>{children}</li>
-                    {showFiltersAndSort && filters.length !== 0 && <DividerStyled type="vertical" />}
+                    {showFiltersAndSort && (filters.length !== 0 || sort.length > 0) && (
+                        <DividerStyled type="vertical" />
+                    )}
                 </>
             )}
             {showFiltersAndSort && (
