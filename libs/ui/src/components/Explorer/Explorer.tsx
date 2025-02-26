@@ -72,6 +72,7 @@ interface IExplorerProps {
     primaryActions?: IPrimaryAction[];
     massActions?: IMassActions[];
     title?: string;
+    selectionMode?: 'multiple' | 'simple';
     emptyPlaceholder?: ReactNode;
     defaultActionsForItem?: Array<'edit' | 'remove'>;
     defaultPrimaryActions?: Array<'create'>;
@@ -79,9 +80,10 @@ interface IExplorerProps {
     defaultViewSettings?: DefaultViewSettings;
     showFiltersAndSorts?: boolean;
     enableConfigureView?: boolean;
-    disableSelection?: boolean;
     showTitle?: boolean;
     showSearch?: boolean;
+    disableSelection?: boolean;
+    hideSelectAllAction?: boolean;
     hidePrimaryActions?: boolean;
     hideTableHeader?: boolean;
 }
@@ -96,11 +98,13 @@ export const Explorer = forwardRef<ExplorerRef, IExplorerProps>(
             primaryActions = [],
             massActions = [],
             title,
+            selectionMode,
             emptyPlaceholder,
             noPagination,
             showFiltersAndSorts = false,
             enableConfigureView = false,
             disableSelection = false,
+            hideSelectAllAction = false,
             iconsOnlyItemActions = false,
             showTitle = false,
             showSearch = false,
@@ -123,6 +127,7 @@ export const Explorer = forwardRef<ExplorerRef, IExplorerProps>(
 
         const {
             data,
+            isMultivalue,
             loading: loadingData,
             refetch
         } = useExplorerData({
@@ -180,9 +185,11 @@ export const Explorer = forwardRef<ExplorerRef, IExplorerProps>(
             refetch
         });
 
+        const _isSelectionDisable = disableSelection || (isLink && !isMultivalue && totalCount > 0);
+
         const {setSelectedKeys, selectAllButton} = useMassActions({
             isEnabled:
-                totalCount > 0 && !disableSelection && (isNotEmpty(defaultMassActions) || isNotEmpty(massActions)),
+                totalCount > 0 && !_isSelectionDisable && (isNotEmpty(defaultMassActions) || isNotEmpty(massActions)),
             store: {view, dispatch},
             totalCount,
             allVisibleKeys,
@@ -229,12 +236,12 @@ export const Explorer = forwardRef<ExplorerRef, IExplorerProps>(
                             </KitSpace>
                         </ExplorerActionsDivStyled>
                     )}
-                    {!viewSettingsLoading && (showFiltersAndSorts || !disableSelection) && (
+                    {!viewSettingsLoading && (
                         <ExplorerToolbar
                             showFiltersAndSort={showFiltersAndSorts}
                             isMassSelectionAll={isMassSelectionAll}
                         >
-                            {selectAllButton}
+                            {!hideSelectAllAction && selectAllButton}
                         </ExplorerToolbar>
                     )}
                     {loadingData || viewSettingsLoading ? (
@@ -269,11 +276,12 @@ export const Explorer = forwardRef<ExplorerRef, IExplorerProps>(
                                     disabled: isMassSelectionAll
                                 }))}
                             selection={{
-                                onSelectionChange: disableSelection ? null : setSelectedKeys,
+                                onSelectionChange: _isSelectionDisable ? null : setSelectedKeys,
                                 isMassSelectionAll,
                                 selectedKeys: isMassSelectionAll
                                     ? data?.records.map(({whoAmI}) => whoAmI.id)
-                                    : (view.massSelection as string[])
+                                    : (view.massSelection as string[]),
+                                mode: selectionMode
                             }}
                         />
                     )}

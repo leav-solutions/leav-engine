@@ -14,6 +14,7 @@ import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
 import {useColumnWidth} from './useColumnWidth';
+import {RowSelectionType} from 'antd/es/table/interface';
 
 const USELESS = '';
 
@@ -81,6 +82,7 @@ interface IDataViewProps {
         onSelectionChange: null | ((keys: Key[]) => void);
         isMassSelectionAll: boolean;
         selectedKeys: Key[];
+        mode?: 'simple' | 'multiple';
     };
     hideTableHeader: boolean;
 }
@@ -107,7 +109,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         attributesProperties,
         paginationProps,
         itemActions,
-        selection: {onSelectionChange, selectedKeys, isMassSelectionAll},
+        selection: {onSelectionChange, selectedKeys, isMassSelectionAll, mode},
         iconsOnlyItemActions,
         hideTableHeader = false
     }) => {
@@ -228,11 +230,13 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                       ]
             );
 
+        const type: RowSelectionType = mode === 'simple' ? 'radio' : 'checkbox';
+
         const _rowSelection: ComponentProps<typeof KitTable>['rowSelection'] =
             onSelectionChange === null
                 ? undefined
                 : {
-                      type: 'checkbox',
+                      type,
                       columnTitle: ' ', // blank string to hide select all checkbox from <KitTable />
                       selectedRowKeys: selectedKeys,
                       preserveSelectedRowKeys: true,

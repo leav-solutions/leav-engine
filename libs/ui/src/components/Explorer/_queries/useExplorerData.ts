@@ -11,6 +11,7 @@ import {
     LinkPropertyLinkValueFragment,
     SortOrder,
     useExplorerLibraryDataQuery,
+    useExplorerLinkAttributeQuery,
     useExplorerLinkDataQuery
 } from '_ui/_gqlTypes';
 import {prepareFiltersForRequest} from './prepareFiltersForRequest';
@@ -161,6 +162,15 @@ export const useExplorerData = ({
         }
     });
 
+    const {data: attributeData} = useExplorerLinkAttributeQuery({
+        skip: entrypoint.type !== 'link',
+        variables: {
+            id: (entrypoint as IEntrypointLink).linkAttributeId
+        }
+    });
+
+    const isMultivalue = !!attributeData?.attributes?.list?.[0]?.multiple_values;
+
     const memoizedData = useMemo(() => {
         if (isLibrary) {
             return libraryData ? _mappingLibrary(libraryData, libraryId, availableLangs) : null;
@@ -178,6 +188,7 @@ export const useExplorerData = ({
 
     return {
         data: memoizedData,
+        isMultivalue,
         loading: isLibrary ? libraryLoading : linkLoading,
         refetch: isLibrary ? libraryRefetch : linkRefetch
     };
