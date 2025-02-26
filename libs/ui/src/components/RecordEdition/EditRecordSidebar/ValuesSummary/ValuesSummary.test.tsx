@@ -44,4 +44,11 @@ describe('ValuesSummary', () => {
         expect(screen.getByText('12')).toBeVisible();
         expect(screen.getByText('23')).toBeVisible();
     });
+
+    it('Should display period as strings for global and calculated values', async () => {
+        render(<ValuesSummary globalValues={[{from: 1, to: 2}]} calculatedValue={{from: 3, to: 4}} />);
+
+        expect(screen.getAllByTitle(/record_edition.date_range_value|1|2/)[0]).toBeVisible();
+        expect(screen.getAllByTitle(/record_edition.date_range_value|3|4/)[0]).toBeVisible();
+    });
 });

@@ -26,11 +26,32 @@ const stripHtml = (html: string): string => {
     return doc.body.textContent || '';
 };
 
+const _isDateRangeValue = (value: any): value is {from: string; to: string} =>
+    !!value && typeof value === 'object' && 'from' in value && 'to' in value;
+
 export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({globalValues = [], calculatedValue}) => {
     const {t} = useSharedTranslation();
 
-    const stripedGlobalValues = globalValues.map(value => (typeof value === 'string' ? stripHtml(value) : value));
-    const stripedCalculatedValue = typeof calculatedValue === 'string' ? stripHtml(calculatedValue) : calculatedValue;
+    const stringifyValue = (value: RecordFormElementsValueStandardValue['payload']): string => {
+        if (typeof value === 'string') {
+            return stripHtml(value);
+        }
+
+        if (_isDateRangeValue(value)) {
+            return t('record_edition.date_range_value', {
+                from: value.from,
+                to: value.to,
+                interpolation: {
+                    escapeValue: false
+                }
+            });
+        }
+
+        return value;
+    };
+
+    const stripedGlobalValues = globalValues.map(stringifyValue);
+    const stripedCalculatedValue = stringifyValue(calculatedValue);
 
     return (
         <KitTabs
@@ -94,16 +115,7 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({globalVal
                                             stripedGlobalValues.length > 0
                                                 ? stripedGlobalValues.map((value, index) => ({
                                                       key: `${globalValueKey}-${index}`,
-                                                      title:
-                                                          value && value.from
-                                                              ? t('record_edition.date_range_value', {
-                                                                    from: value.from,
-                                                                    to: value.to,
-                                                                    interpolation: {
-                                                                        escapeValue: false
-                                                                    }
-                                                                })
-                                                              : value
+                                                      title: value
                                                   }))
                                                 : [
                                                       {
