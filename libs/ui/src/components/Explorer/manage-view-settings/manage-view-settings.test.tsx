@@ -397,7 +397,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
 
-            await userEvent.click(screen.getByRole('link', {name: 'global.save'}));
+            await userEvent.click(screen.getByRole('button', {name: 'global.save'}));
 
             expect(mockSaveViewMutation).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -431,7 +431,7 @@ describe('Integration tests about managing view settings feature', () => {
             let myViewsElement = screen.getByRole('list', {name: /my-views/});
             expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
 
-            await userEvent.click(screen.getByRole('link', {name: /share-view/}));
+            await userEvent.click(screen.getByRole('button', {name: /share-view/}));
 
             expect(mockSaveViewMutation).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -452,12 +452,12 @@ describe('Integration tests about managing view settings feature', () => {
 
             mockSaveViewMutation.mockClear();
 
-            expect(screen.queryByRole('link', {name: 'explorer.share-view'})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'explorer.share-view'})).not.toBeInTheDocument();
 
             const sharedViewsElement = screen.getByRole('list', {name: /shared-view/});
             expect(within(sharedViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
 
-            await userEvent.click(screen.getByRole('link', {name: /unshare-view/}));
+            await userEvent.click(screen.getByRole('button', {name: /unshare-view/}));
 
             expect(mockSaveViewMutation).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -476,7 +476,7 @@ describe('Integration tests about managing view settings feature', () => {
                 })
             );
 
-            expect(screen.queryByRole('link', {name: /unshare-view/})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: /unshare-view/})).not.toBeInTheDocument();
             myViewsElement = screen.getByRole('list', {name: /my-views/});
             expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
         });
@@ -494,7 +494,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
 
-            await userEvent.click(screen.getByRole('link', {name: /save-view-as/}));
+            await userEvent.click(screen.getByRole('button', {name: /save-view-as/}));
             // hidden: true car l'ouverture de la Modal met un aria-label: hidden sur le body
             const closeButton = screen.getByRole('button', {name: 'global.close', hidden: true});
             expect(closeButton).toBeVisible();
@@ -502,8 +502,10 @@ describe('Integration tests about managing view settings feature', () => {
             expect(closeButton).not.toBeVisible();
             expect(mockSaveViewMutation).not.toHaveBeenCalled();
 
-            await userEvent.click(screen.getByRole('link', {name: /save-view-as/}));
-            const saveButton = screen.getByRole('button', {name: 'global.save', hidden: true});
+            await userEvent.click(screen.getByRole('button', {name: /save-view-as/}));
+            const modal = screen.getByRole('dialog', {hidden: true});
+            expect(modal).toBeVisible();
+            const saveButton = within(modal).getByRole('button', {name: 'global.save', hidden: true});
             expect(saveButton).toBeVisible();
             await userEvent.click(saveButton);
             expect(mockSaveViewMutation).not.toHaveBeenCalled();
@@ -581,7 +583,7 @@ describe('Integration tests about managing view settings feature', () => {
             expect(within(activeSorts).getAllByRole('listitem')).toHaveLength(2);
 
             await userEvent.click(screen.getByRole('button', {name: /back/}));
-            await userEvent.click(screen.getByRole('link', {name: /reinit/}));
+            await userEvent.click(screen.getByRole('button', {name: /reinit/}));
 
             await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
             activeSorts = screen.getByRole('list', {name: 'explorer.sort-list.active'});

@@ -86,9 +86,13 @@ interface IExplorerProps {
     hideTableHeader?: boolean;
 }
 
-export type ExplorerRef = Record<string, IPrimaryAction | null>;
+export interface IExplorerRef {
+    createAction: IPrimaryAction | null;
+    linkAction: IPrimaryAction | null;
+    totalCount: number;
+}
 
-export const Explorer = forwardRef<ExplorerRef, IExplorerProps>(
+export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
     (
         {
             entrypoint,
@@ -198,10 +202,15 @@ export const Explorer = forwardRef<ExplorerRef, IExplorerProps>(
 
         const {searchInput} = useSearchInput({view, dispatch});
 
-        useImperativeHandle(ref, () => ({
-            createAction: createPrimaryAction,
-            linkAction: linkPrimaryAction
-        }));
+        useImperativeHandle(
+            ref,
+            () => ({
+                createAction: createPrimaryAction,
+                linkAction: linkPrimaryAction,
+                totalCount
+            }),
+            [createPrimaryAction?.disabled, linkPrimaryAction?.disabled, totalCount]
+        );
 
         const hasNoResults = data === null || data.totalCount === 0;
 
@@ -233,6 +242,7 @@ export const Explorer = forwardRef<ExplorerRef, IExplorerProps>(
                         <ExplorerToolbar
                             showFiltersAndSort={showFiltersAndSorts}
                             isMassSelectionAll={isMassSelectionAll}
+                            headless={hideTableHeader}
                         >
                             {selectAllButton}
                         </ExplorerToolbar>
