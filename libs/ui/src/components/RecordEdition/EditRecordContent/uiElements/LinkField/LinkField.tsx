@@ -32,7 +32,7 @@ import {ComputeIndicator} from '../StandardField/ComputeIndicator';
 import {DeleteAllValuesButton} from '../StandardField/DeleteAllValuesButton';
 import {IEntrypointLink, IPrimaryAction} from '_ui/components/Explorer/_types';
 import {Explorer} from '_ui/components/Explorer';
-import {FaList, FaPlus} from 'react-icons/fa';
+import {FaList} from 'react-icons/fa';
 import {LINK_FIELD_ID_PREFIX} from '_ui/constants';
 import {IExplorerRef} from '_ui/components/Explorer/Explorer';
 
@@ -96,6 +96,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
         }
     }, [creationErrors, attribute.id]);
 
+    //TODO: delete
     const _handleDeleteValue = async (value: IRecordPropertyLink) => {
         const deleteRes = await onValueDelete({payload: value.linkValue.id, id_value: value.id_value}, attribute.id);
 
@@ -107,6 +108,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
         }
     };
 
+    //TODO: delete
     const _handleUpdateValueSubmit = async (values: Array<{value: IRecordIdentity; idValue: string}>) => {
         const valuesToSave = values.map(value => ({
             attribute,
@@ -173,6 +175,9 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
 
     const isMultipleValues = element.attribute.multiple_values;
 
+    //TODO: add more check
+    const canDeleteAllValues = !isReadOnly && isMultipleValues && !attribute.required;
+
     const isFieldInError = false;
     //TODO: check if field is in error (cf StandardField)
 
@@ -212,7 +217,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                         <KitInputExtraAlignLeft>
                             {/* <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} /> */}
                         </KitInputExtraAlignLeft>
-                        {true && <DeleteAllValuesButton handleDelete={null} />}
+                        {canDeleteAllValues && <DeleteAllValuesButton handleDelete={null} />}
                     </>
                 }
             >
@@ -233,7 +238,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                         <KitFooterButton
                             type="secondary"
                             size="m"
-                            icon={<FaPlus />}
+                            icon={explorerActions?.createAction?.icon}
                             disabled={explorerActions?.createAction?.disabled}
                             onClick={explorerActions?.createAction?.callback}
                         >
@@ -243,7 +248,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                             type="secondary"
                             size="m"
                             icon={<FaList />}
-                            disabled={explorerActions?.linkAction?.disabled}
+                            disabled={explorerActions?.createAction?.disabled} //TODO: When linkAction.disabled will be fixed, replace by linkAction.disabled
                             onClick={explorerActions?.linkAction?.callback}
                         >
                             {explorerActions?.linkAction?.label}
