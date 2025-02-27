@@ -26,6 +26,10 @@ const DataViewContainerDivStyled = styled.div`
     max-height: minmax(0, 1fr);
     overflow: hidden;
 
+    &.headless {
+        overflow-y: auto;
+    }
+
     .kit-table {
         padding-bottom: ${defaultPaginationHeight}px;
         position: relative;
@@ -230,13 +234,11 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                       ]
             );
 
-        const type: RowSelectionType = mode === 'simple' ? 'radio' : 'checkbox';
-
         const _rowSelection: ComponentProps<typeof KitTable>['rowSelection'] =
             onSelectionChange === null
                 ? undefined
                 : {
-                      type,
+                      type: mode === 'simple' ? 'radio' : 'checkbox',
                       columnTitle: ' ', // blank string to hide select all checkbox from <KitTable />
                       selectedRowKeys: selectedKeys,
                       preserveSelectedRowKeys: true,
@@ -251,12 +253,12 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
 
         // TODO: handle columns width based on attribute type/format
         return (
-            <DataViewContainerDivStyled ref={containerRef}>
+            <DataViewContainerDivStyled ref={containerRef} className={hideTableHeader ? 'headless' : ''}>
                 <StyledTable
                     showHeader={dataGroupedFilteredSorted.length > 0 && !hideTableHeader}
                     columns={columns}
                     tableLayout="fixed"
-                    scroll={{y: scrollHeight, x: '100%'}}
+                    scroll={{y: hideTableHeader ? '100%' : scrollHeight, x: '100%'}}
                     dataSource={dataGroupedFilteredSorted}
                     pagination={false}
                     rowSelection={_rowSelection}

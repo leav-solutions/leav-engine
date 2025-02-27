@@ -67,7 +67,7 @@ export const useShareView = () => {
     return {
         shareViewButton:
             !view.viewId || (isSharedView && !isOwnerView) ? null : (
-                <KitButton type="redirect" icon={<FaShare />} onClick={_toggleShareView}>
+                <KitButton type="action" icon={<FaShare />} onClick={_toggleShareView}>
                     {isSharedView ? t('explorer.unshare-view') : t('explorer.share-view')}
                 </KitButton>
             )
