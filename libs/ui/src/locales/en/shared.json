@@ -509,7 +509,12 @@
         "values_version": "Values version",
         "no_value": "No value",
         "calculated_value": "Calculated value",
-        "global": "Global"
+        "global": "Global",
+        "error": {
+            "title": "Data loading error",
+            "description": "A technical error has occurred, please reload the page. If the error persists, please contact Aristid Support.",
+            "refresh": "Refresh"
+        }
     },
     "view": {
         "views": "Views",
