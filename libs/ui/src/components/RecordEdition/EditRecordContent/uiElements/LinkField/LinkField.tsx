@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
-import {FunctionComponent, Reducer, useContext, useEffect, useReducer, useRef, useState} from 'react';
+import {FunctionComponent, Reducer, useContext, useEffect, useReducer, useState} from 'react';
 import CreationErrorContext from '_ui/components/RecordEdition/EditRecord/creationErrorContext';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
@@ -22,7 +22,7 @@ import {
 } from '../../reducers/linkFieldReducer/linkFieldReducer';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import {MonoValueSelect} from '_ui/components/RecordEdition/EditRecordContent/uiElements/LinkField/MonoValueSelect/MonoValueSelect';
-import {AntForm, KitButton, KitInputWrapper, KitSpace, KitTooltip} from 'aristid-ds';
+import {AntForm, KitButton, KitInputWrapper, KitSpace} from 'aristid-ds';
 import {MultiValueSelect} from './MultiValueSelect/MultiValueSelect';
 import {useLang} from '_ui/hooks';
 import styled from 'styled-components';
@@ -34,7 +34,7 @@ import {IEntrypointLink, IPrimaryAction} from '_ui/components/Explorer/_types';
 import {Explorer} from '_ui/components/Explorer';
 import {FaList, FaPlus} from 'react-icons/fa';
 import {LINK_FIELD_ID_PREFIX} from '_ui/constants';
-import {ExplorerRef} from '_ui/components/Explorer/Explorer';
+import {IExplorerRef} from '_ui/components/Explorer/Explorer';
 
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
@@ -176,21 +176,19 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
     const isFieldInError = false;
     //TODO: check if field is in error (cf StandardField)
 
-    const explorerRef = useRef<ExplorerRef>(null);
-    const [explorerActions, setExplorerActions] = useState<{createAction: IPrimaryAction; linkAction: IPrimaryAction}>(
-        null
-    );
+    const [explorerActions, setExplorerActions] = useState<{
+        createAction: IPrimaryAction;
+        linkAction: IPrimaryAction;
+    } | null>(null);
 
-    useEffect(() => {
-        if (explorerRef.current && !explorerActions) {
+    const _handleExplorerRef = (ref: IExplorerRef) => {
+        if (ref?.createAction.disabled !== explorerActions?.createAction?.disabled) {
             setExplorerActions({
-                createAction: explorerRef.current.createAction,
-                linkAction: explorerRef.current.linkAction
+                createAction: ref?.createAction,
+                linkAction: ref?.linkAction
             });
         }
-    }, [explorerRef.current]);
-
-    console.log({explorerRef, explorerActions});
+    };
 
     return (
         <AntForm.Item
@@ -221,14 +219,14 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                 <>
                     <KitFieldsWrapper>
                         <Explorer
-                            ref={explorerRef}
+                            ref={_handleExplorerRef}
                             entrypoint={linkEntrypoint}
                             showTitle={false}
                             showSearch={false}
                             disableSelection={!isMultipleValues}
                             hidePrimaryActions
-                            iconsOnlyItemActions
                             hideTableHeader
+                            iconsOnlyItemActions
                         />
                     </KitFieldsWrapper>
                     <KitSpace size="xs">
@@ -236,19 +234,19 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                             type="secondary"
                             size="m"
                             icon={<FaPlus />}
-                            disabled={explorerActions?.createAction.disabled}
-                            onClick={explorerActions?.createAction.callback}
+                            disabled={explorerActions?.createAction?.disabled}
+                            onClick={explorerActions?.createAction?.callback}
                         >
-                            {explorerActions?.createAction.label}
+                            {explorerActions?.createAction?.label}
                         </KitFooterButton>
                         <KitFooterButton
                             type="secondary"
                             size="m"
                             icon={<FaList />}
-                            disabled={explorerActions?.linkAction.disabled}
-                            onClick={explorerActions?.linkAction.callback}
+                            disabled={explorerActions?.linkAction?.disabled}
+                            onClick={explorerActions?.linkAction?.callback}
                         >
-                            {explorerActions?.linkAction.label}
+                            {explorerActions?.linkAction?.label}
                         </KitFooterButton>
                     </KitSpace>
                 </>
