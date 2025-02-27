@@ -25599,7 +25599,7 @@ __metadata:
     ts-jest: "npm:29.0.5"
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
-    vite: "npm:4.5.5"
+    vite: "npm:4.5.6"
     vite-plugin-dynamic-base: "npm:0.4.9"
     vite-plugin-rewrite-all: "npm:1.0.1"
     web-vitals: "npm:2.1.4"
