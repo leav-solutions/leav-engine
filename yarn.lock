@@ -12757,7 +12757,7 @@ __metadata:
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
     uuid: "npm:7.0.3"
-    vite: "npm:4.5.5"
+    vite: "npm:4.5.6"
     vite-jest: "npm:0.1.4"
     yup: "npm:0.32.11"
   languageName: unknown
