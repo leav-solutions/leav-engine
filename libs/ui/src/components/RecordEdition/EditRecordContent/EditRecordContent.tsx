@@ -151,6 +151,8 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const recordComputedValues = computeFieldsData && record ? computeFieldsData[record.id] : null;
     const elementsByContainer = extractFormElements(recordForm, recordComputedValues, computeFieldsError);
 
+    console.log('elementsByContainer', elementsByContainer);
+
     return (
         <Form
             id={EDIT_OR_CREATE_RECORD_FORM_ID}

@@ -18,6 +18,8 @@ function Container({
     const {elements: formElements} = useRecordEditionContext();
     const children = formElements[element.id] ?? [];
 
+    console.log('Container', children);
+
     return (
         <>
             {children.map(el => (

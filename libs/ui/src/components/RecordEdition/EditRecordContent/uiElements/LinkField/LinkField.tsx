@@ -5,7 +5,10 @@ import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import {FunctionComponent, Reducer, useContext, useEffect, useReducer, useState} from 'react';
 import CreationErrorContext from '_ui/components/RecordEdition/EditRecord/creationErrorContext';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
+import {
+    RecordFormElementsValueLinkValue,
+    RecordFormElementsValueStandardValue
+} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentity} from '_ui/types/records';
 import {RecordFormAttributeLinkAttributeFragment, ValueDetailsLinkValueFragment} from '_ui/_gqlTypes';
@@ -35,6 +38,8 @@ import {Explorer} from '_ui/components/Explorer';
 import {FaList} from 'react-icons/fa';
 import {LINK_FIELD_ID_PREFIX} from '_ui/constants';
 import {IExplorerRef} from '_ui/components/Explorer/Explorer';
+import {computeCalculatedFlags, computeInheritedFlags} from '../StandardField/calculatedInheritedFlags';
+import {Form} from 'antd';
 
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
@@ -62,112 +67,138 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
     element,
     readonly,
     onValueSubmit,
-    onValueDelete
+    onValueDelete,
+    onDeleteMultipleValues
 }) => {
     const {t} = useSharedTranslation();
+    const {state} = useEditRecordReducer();
     const {lang} = useLang();
+    const {attribute} = element;
 
-    const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
-    const {state: editRecordState} = useEditRecordReducer();
-    const creationErrors = useContext(CreationErrorContext);
+    const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
+    const calculatedFlags = computeCalculatedFlags(backendValues);
+    const inheritedFlags = computeInheritedFlags(backendValues);
 
-    const [state, dispatch] = useReducer<Reducer<LinkFieldReducerState, LinkFieldReducerAction>>(
-        linkFieldReducer,
-        computeInitialState({
-            element,
-            formVersion: editRecordState.valuesVersion,
-            isRecordReadOnly,
-            record
-        })
-    );
+    console.log({backendValues, calculatedFlags, inheritedFlags});
 
-    console.log({state});
+    // const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
+    // const creationErrors = useContext(CreationErrorContext);
 
-    const attribute = state.attribute as RecordFormAttributeLinkAttributeFragment;
-    const activeValues = getActiveFieldValues(state);
-    const activeVersion = state.values[state.activeScope].version;
+    //TODO: toujours utiles ?
+    // const [state, dispatch] = useReducer<Reducer<LinkFieldReducerState, LinkFieldReducerAction>>(
+    //     linkFieldReducer,
+    //     computeInitialState({
+    //         element,
+    //         formVersion: editRecordState.valuesVersion,
+    //         isRecordReadOnly,
+    //         record
+    //     })
+    // );
 
-    useEffect(() => {
-        if (creationErrors[attribute.id]) {
-            dispatch({
-                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
-                errorMessage: creationErrors[attribute.id].map(err => err.message).join(' ')
-            });
-        }
-    }, [creationErrors, attribute.id]);
+    // const activeValues = getActiveFieldValues(state);
+    // const activeVersion = state.values[state.activeScope].version;
+
+    //TODO: toujours utiles ?
+    // useEffect(() => {
+    //     if (creationErrors[attribute.id]) {
+    //         dispatch({
+    //             type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
+    //             errorMessage: creationErrors[attribute.id].map(err => err.message).join(' ')
+    //         });
+    //     }
+    // }, [creationErrors, attribute.id]);
 
     //TODO: delete
-    const _handleDeleteValue = async (value: IRecordPropertyLink) => {
-        const deleteRes = await onValueDelete({payload: value.linkValue.id, id_value: value.id_value}, attribute.id);
+    // const _handleDeleteValue = async (value: IRecordPropertyLink) => {
+    //     const deleteRes = await onValueDelete({payload: value.linkValue.id, id_value: value.id_value}, attribute.id);
+
+    //     if (deleteRes.status === APICallStatus.SUCCESS) {
+    //         dispatch({
+    //             type: LinkFieldReducerActionsType.DELETE_VALUE,
+    //             idValue: value.id_value
+    //         });
+    //     }
+    // };
+
+    //TODO: delete
+    // const _handleUpdateValueSubmit = async (values: Array<{value: IRecordIdentity; idValue: string}>) => {
+    //     const valuesToSave = values.map(value => ({
+    //         attribute,
+    //         idValue: value.idValue,
+    //         value: value.value
+    //     }));
+
+    //     const res = await onValueSubmit(valuesToSave, activeVersion);
+
+    //     if (res.status === APICallStatus.ERROR) {
+    //         dispatch({
+    //             type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
+    //             errorMessage: res.error
+    //         });
+    //     } else if (res.values) {
+    //         const formattedValues: RecordFormElementsValueLinkValue[] = (
+    //             res.values as ValueDetailsLinkValueFragment[]
+    //         ).map(v => ({
+    //             ...v,
+    //             version: arrayValueVersionToObject(v.version),
+    //             metadata: v.metadata?.map(metadata => ({
+    //                 ...metadata,
+    //                 value: {
+    //                     ...metadata.value,
+    //                     version: arrayValueVersionToObject(metadata.value?.version ?? [])
+    //                 }
+    //             }))
+    //         }));
+
+    //         dispatch({
+    //             type: LinkFieldReducerActionsType.ADD_VALUES,
+    //             values: formattedValues
+    //         });
+    //     }
+
+    //     if (res?.errors?.length) {
+    //         const selectedRecordsById = values.reduce((acc, cur) => ({...acc, [cur.value.id]: cur.value}), {});
+
+    //         const errorsMessage = res.errors.map(err => {
+    //             const linkedRecordLabel = selectedRecordsById[err.input].label || selectedRecordsById[err.input].id;
+
+    //             return `${linkedRecordLabel}: ${err.message}`;
+    //         });
+    //         dispatch({
+    //             type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
+    //             errorMessage: errorsMessage
+    //         });
+    //     }
+    // };
+
+    //TODO: Fix bug: Ajout 2 éléments -> mtn 5 -> supprimer tout -> supprimer les 3 éléments précédemment ajoutés pas les 2 nouveaux
+    const _handleDeleteAllValues = async () => {
+        const deleteRes = await onDeleteMultipleValues(
+            attribute.id,
+            backendValues.filter(b => b.id_value),
+            null
+        );
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
-            dispatch({
-                type: LinkFieldReducerActionsType.DELETE_VALUE,
-                idValue: value.id_value
-            });
+            // antdListFieldsRef.current.remove(antdListFieldsRef.current.indexes);
+            // antdListFieldsRef.current.add(defaultValueToAddInAntdForm);
+            setBackendValues(previousBackendValues =>
+                previousBackendValues.filter(backendValue => !backendValue.id_value)
+            );
+
+            return;
         }
     };
 
-    //TODO: delete
-    const _handleUpdateValueSubmit = async (values: Array<{value: IRecordIdentity; idValue: string}>) => {
-        const valuesToSave = values.map(value => ({
-            attribute,
-            idValue: value.idValue,
-            value: value.value
-        }));
-
-        const res = await onValueSubmit(valuesToSave, activeVersion);
-
-        if (res.status === APICallStatus.ERROR) {
-            dispatch({
-                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
-                errorMessage: res.error
-            });
-        } else if (res.values) {
-            const formattedValues: RecordFormElementsValueLinkValue[] = (
-                res.values as ValueDetailsLinkValueFragment[]
-            ).map(v => ({
-                ...v,
-                version: arrayValueVersionToObject(v.version),
-                metadata: v.metadata?.map(metadata => ({
-                    ...metadata,
-                    value: {
-                        ...metadata.value,
-                        version: arrayValueVersionToObject(metadata.value?.version ?? [])
-                    }
-                }))
-            }));
-
-            dispatch({
-                type: LinkFieldReducerActionsType.ADD_VALUES,
-                values: formattedValues
-            });
-        }
-
-        if (res?.errors?.length) {
-            const selectedRecordsById = values.reduce((acc, cur) => ({...acc, [cur.value.id]: cur.value}), {});
-
-            const errorsMessage = res.errors.map(err => {
-                const linkedRecordLabel = selectedRecordsById[err.input].label || selectedRecordsById[err.input].id;
-
-                return `${linkedRecordLabel}: ${err.message}`;
-            });
-            dispatch({
-                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
-                errorMessage: errorsMessage
-            });
-        }
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, lang);
+    const label = localizedTranslation(element.settings.label, lang);
 
     //-------
     //TODO: Supprimer le state et passer par element (cf StandardField)
     //TODO: handle computed values and flags 🥲
     const linkEntrypoint: IEntrypointLink = {
         type: 'link',
-        parentLibraryId: editRecordState.libraryId,
-        parentRecordId: editRecordState.record.id,
+        parentLibraryId: state.libraryId,
+        parentRecordId: state.record.id,
         linkAttributeId: attribute.id
     };
 
@@ -181,26 +212,28 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
     const isFieldInError = false;
     //TODO: check if field is in error (cf StandardField)
 
-    const [explorerActions, setExplorerActions] = useState<{
-        createAction: IPrimaryAction;
-        linkAction: IPrimaryAction;
-    } | null>(null);
+    const [explorerActions, setExplorerActions] = useState<IExplorerRef | null>(null);
 
     const _handleExplorerRef = (ref: IExplorerRef) => {
         if (ref?.createAction.disabled !== explorerActions?.createAction?.disabled) {
             setExplorerActions({
                 createAction: ref?.createAction,
-                linkAction: ref?.linkAction
+                linkAction: ref?.linkAction,
+                totalCount: ref?.totalCount
             });
         }
     };
+
+    //TODO: callback pour mettre à jour fields value ?????????????
+    const form = AntForm.useFormInstance();
+    console.log(form.getFieldsValue());
 
     return (
         <AntForm.Item
             name={attribute.id}
             rules={[
                 {
-                    required: state.formElement.attribute.required,
+                    required: attribute.required,
                     message: t('errors.standard_field_required')
                 }
             ]}
@@ -215,9 +248,9 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                 extra={
                     <>
                         <KitInputExtraAlignLeft>
-                            {/* <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} /> */}
+                            <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
                         </KitInputExtraAlignLeft>
-                        {canDeleteAllValues && <DeleteAllValuesButton handleDelete={null} />}
+                        {canDeleteAllValues && <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} />}
                     </>
                 }
             >
