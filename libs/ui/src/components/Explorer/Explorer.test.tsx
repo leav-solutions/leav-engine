@@ -21,7 +21,7 @@ import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordCo
 import * as useColumnWidth from './useColumnWidth';
 import {SNACKBAR_MASS_ID} from './actions-mass/useMassActions';
 import {createRef} from 'react';
-import {ExplorerRef} from './Explorer';
+import {IExplorerRef} from './Explorer';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -1165,7 +1165,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new record from Explorer ref', async () => {
-            const explorerRef = createRef<ExplorerRef>();
+            const explorerRef = createRef<IExplorerRef>();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} ref={explorerRef} hidePrimaryActions />
@@ -1236,7 +1236,7 @@ describe('Explorer', () => {
                 saveValues
             });
 
-            const explorerRef = createRef<ExplorerRef>();
+            const explorerRef = createRef<IExplorerRef>();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={linkEntrypoint} ref={explorerRef} hidePrimaryActions />

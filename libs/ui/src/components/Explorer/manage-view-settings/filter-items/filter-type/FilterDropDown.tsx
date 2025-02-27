@@ -55,10 +55,10 @@ export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}
             />
             <div ref={selectDropDownRef} />
             <KitDivider noMargin />
-            <KitButton type="redirect" icon={<FaClock />} onClick={_onResetFilter}>
+            <KitButton type="action" icon={<FaClock />} onClick={_onResetFilter}>
                 {t('explorer.reset-filter')}
             </KitButton>
-            <KitButton type="redirect" icon={<FaTrash />} onClick={_onDeleteFilter}>
+            <KitButton type="action" icon={<FaTrash />} onClick={_onDeleteFilter}>
                 {t('global.delete')}
             </KitButton>
         </FilterDropDownStyledDiv>

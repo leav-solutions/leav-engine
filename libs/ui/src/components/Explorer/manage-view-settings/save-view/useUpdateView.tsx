@@ -66,7 +66,7 @@ export const useUpdateView = () => {
     return {
         updateViewButton:
             !view.viewId || !view.savedViews.length || !isOwnerView ? null : (
-                <KitButton type="redirect" icon={<FaSave />} onClick={_updateView}>
+                <KitButton type="action" icon={<FaSave />} onClick={_updateView}>
                     {t('global.save')}
                 </KitButton>
             )

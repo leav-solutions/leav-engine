@@ -97,12 +97,9 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
     );
 
     useEffect(() => {
-        setLoading(true);
-        setLibraryId(entrypoint.type === 'library' ? entrypoint.libraryId : null);
-    }, [entrypoint]);
-
-    useEffect(() => {
         if (!entrypointsAreEqual) {
+            setLoading(true);
+            setLibraryId(entrypoint.type === 'library' ? entrypoint.libraryId : null);
             closeSettingsPanel();
         }
     }, [entrypointsAreEqual]);
