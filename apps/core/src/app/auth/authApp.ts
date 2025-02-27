@@ -353,7 +353,10 @@ export default function ({
                 res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, '', host));
 
                 if (config.auth.oidc.enable) {
-                    const redirectUrl = oidcClientService.getLogoutUrl();
+                    const {accessToken} = req.cookies;
+                    const payload = jwt.verify(accessToken, config.auth.key) as IAccessTokenPayload;
+                    const userId = payload.userId;
+                    const redirectUrl = await oidcClientService.getLogoutUrl({userId});
                     return res.status(200).json({redirectUrl});
                 }
 
