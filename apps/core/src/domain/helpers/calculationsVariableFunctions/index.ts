@@ -127,7 +127,19 @@ export default function ({
                                       }
                                     : null
                             )
-                            .filter(v => !!v);
+                            .filter(Boolean);
+                    } else if (properties?.linked_tree) {
+                        currReturnValue = values
+                            .map(v =>
+                                !!v?.payload
+                                    ? {
+                                        library: v.payload.record.library,
+                                        recordId: v.payload.record.id,
+                                        payload: v.payload.record.id
+                                    }
+                                    : null
+                            )
+                            .filter(Boolean);
                     } else {
                         currReturnValue = values.map(v => ({
                             library,
