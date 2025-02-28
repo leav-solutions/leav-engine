@@ -31,6 +31,8 @@ const _getFieldColumWidth = (field: IExplorerData['attributes'][string]): number
     }
 };
 
+export const lastColumnsInlinePadding = 36;
+
 export const useColumnWidth = () => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [columnWidth, setColumnWidth] = useState(FieldColumnWidth.TINY);
@@ -39,7 +41,6 @@ export const useColumnWidth = () => {
         if (ref.current) {
             const columnElement = ref.current;
             const columnElementtWidth = columnElement.getBoundingClientRect().width;
-            const lastColumnsInlinePadding = 36;
 
             if (columnElementtWidth !== columnWidth - lastColumnsInlinePadding) {
                 setColumnWidth(columnElementtWidth + lastColumnsInlinePadding);
@@ -50,6 +51,7 @@ export const useColumnWidth = () => {
     return {
         ref,
         getFieldColumnWidth: _getFieldColumWidth,
-        columnWidth
+        columnWidth,
+        actionsColumnHeaderWidth: columnWidth - lastColumnsInlinePadding
     };
 };

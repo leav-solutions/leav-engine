@@ -19,13 +19,10 @@ const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{
     ${({$shouldUsePresentationLayout}) =>
         $shouldUsePresentationLayout &&
         `   &.ant-picker.ant-picker-range {
-                grid-template-columns: 28px 1fr 0px 0px 12px;
-
-                .ant-picker-range-separator,
-                .ant-picker-input:nth-of-type(0) {
-                    display: none;
-                }
+            div:nth-child(n+3) {
+                display: none;
             }
+        }
         `}
 `;
 
@@ -100,8 +97,6 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
         onChange(rangePickerDates, ...antOnChangeParams);
 
-        // TODO : validate form with await form.validateFields(state.attribute.id)
-
         let datesToSave: StandardValueTypes = null;
 
         if (rangePickerDates !== null) {
@@ -139,7 +134,12 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             value={value}
             format={!isFocused && !isErrors && !!presentationValue ? () => presentationValue : undefined}
             disabled={readonly}
-            allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
+            allowClear={
+                !!value &&
+                !attribute.multiple_values &&
+                !inheritedFlags.isInheritedNotOverrideValue &&
+                !calculatedFlags.isCalculatedNotOverrideValue
+            }
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             onFocus={_handleOnFocus}

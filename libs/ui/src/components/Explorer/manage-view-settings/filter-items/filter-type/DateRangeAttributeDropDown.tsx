@@ -4,12 +4,13 @@
 import {ComponentProps, FunctionComponent} from 'react';
 import {KitSelect} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IFilterChildrenDropDownProps} from '_ui/components/Explorer/_types';
+import {IFilterChildrenDropDownProps} from './_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 
 export const DateRangeAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
     filter,
-    onFilterChange
+    onFilterChange,
+    selectDropDownRef
 }) => {
     const {t} = useSharedTranslation();
 
@@ -23,6 +24,7 @@ export const DateRangeAttributeDropDown: FunctionComponent<IFilterChildrenDropDo
             options={conditionOptionsByType}
             onChange={_onConditionChanged}
             value={filter.condition}
+            getPopupContainer={() => selectDropDownRef?.current ?? document.body}
             placeholder={t('explorer.select-condition')}
         />
     );

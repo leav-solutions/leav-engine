@@ -7,10 +7,6 @@ import styled from 'styled-components';
 import useLang from 'hooks/useLang';
 import {localizedLabel} from 'utils';
 
-interface ILinkFieldSettings extends ICommonFieldsSettings {
-    required?: boolean;
-}
-
 const PreviewSkeleton = styled.div`
     border-radius: 50%;
     background: #ddd;
@@ -32,15 +28,8 @@ const CellWrapper = styled.div`
     align-items: center;
 `;
 
-const StyledLabel = styled.span`
-    &.required::before {
-        content: '* ';
-        color: red;
-    }
-`;
-
-function LinkField({settings}: IFormElementProps<ILinkFieldSettings>): JSX.Element {
-    const {label: settingsLabel, required} = settings;
+function LinkField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+    const {label: settingsLabel} = settings;
     const {lang: availableLangs} = useLang();
 
     const label = localizedLabel(settingsLabel, availableLangs);
@@ -49,9 +38,7 @@ function LinkField({settings}: IFormElementProps<ILinkFieldSettings>): JSX.Eleme
         <Table celled striped>
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell colSpan="3">
-                        <StyledLabel className={required ? 'required' : undefined}>{label}</StyledLabel>
-                    </Table.HeaderCell>
+                    <Table.HeaderCell colSpan="3">{label}</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
             <Table.Body>

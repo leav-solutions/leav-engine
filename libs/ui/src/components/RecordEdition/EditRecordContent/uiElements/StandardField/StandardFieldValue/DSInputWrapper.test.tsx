@@ -19,15 +19,6 @@ const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     calculatedValue: null
 };
 
-const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
-    isCalculatedValue: true,
-    isCalculatedOverrideValue: true,
-    isCalculatedNotOverrideValue: false,
-    calculatedValue: {
-        raw_payload: newValue
-    }
-};
-
 const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
     isInheritedOverrideValue: false,
@@ -35,16 +26,6 @@ const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     inheritedValue: null
 };
 
-const inheritedFlagsWithInheritedValue: InheritedFlags = {
-    isInheritedValue: true,
-    isInheritedOverrideValue: true,
-    isInheritedNotOverrideValue: false,
-    inheritedValue: {
-        raw_payload: newValue
-    }
-};
-
-const notRequired = false;
 const notReadonly = false;
 const readonly = true;
 
@@ -70,7 +51,6 @@ describe('DSInputWrapper', () => {
                         value={value}
                         presentationValue={presentationValue}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -93,7 +73,6 @@ describe('DSInputWrapper', () => {
                     <DSInputWrapper
                         value={value}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -117,7 +96,6 @@ describe('DSInputWrapper', () => {
                         value={value}
                         presentationValue={presentationValue}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -142,7 +120,6 @@ describe('DSInputWrapper', () => {
                         value={value}
                         presentationValue={presentationValue}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={readonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -164,7 +141,6 @@ describe('DSInputWrapper', () => {
                 <AntForm.Item>
                     <DSInputWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -192,7 +168,6 @@ describe('DSInputWrapper', () => {
                 <AntForm.Item>
                     <DSInputWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -210,80 +185,52 @@ describe('DSInputWrapper', () => {
         expect(mockSetActiveValue).toHaveBeenCalled();
     });
 
-    describe('Without inherited or calculated flags', () => {
-        test('Should submit null on clear', async () => {
-            render(
-                <AntForm initialValues={{inputToTest: value}}>
-                    <AntForm.Item name="inputToTest">
-                        <DSInputWrapper
-                            attribute={mockFormAttribute}
-                            required={notRequired}
-                            readonly={notReadonly}
-                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
-                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
-                            handleSubmit={mockHandleSubmit}
-                            onChange={mockOnChange}
-                            setActiveValue={mockSetActiveValue}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
+    test('Should reset value on clear', async () => {
+        render(
+            <AntForm initialValues={{inputToTest: value}}>
+                <AntForm.Item name="inputToTest">
+                    <DSInputWrapper
+                        attribute={mockFormAttribute}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
 
-            const clearIcon = screen.getByLabelText('clear');
-            await user.click(clearIcon);
+        const clearIcon = screen.getByLabelText('clear');
+        await user.click(clearIcon);
+        await user.tab();
 
-            expect(mockOnChange).toHaveBeenCalled();
-            expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
-        });
+        expect(mockOnChange).toHaveBeenCalled();
+        expect(mockHandleSubmit).toHaveBeenCalledWith('', mockFormAttribute.id);
     });
 
-    describe('With inherited or calculated value', () => {
-        it.each`
-            calculatedValue | inheritedValue
-            ${'calculated'} | ${null}
-            ${null}         | ${'inherited'}
-            ${'calculated'} | ${'inherited'}
-        `(
-            'Should submit empty value on clear and call onChange with inherited value',
-            async ({
-                calculatedValue,
-                inheritedValue
-            }: {
-                calculatedValue: string | null;
-                inheritedValue: string | null;
-            }) => {
-                render(
-                    <AntForm initialValues={{inputTest: value}}>
-                        <AntForm.Item name="inputTest">
-                            <DSInputWrapper
-                                value={value}
-                                attribute={mockFormAttribute}
-                                required={notRequired}
-                                readonly={notReadonly}
-                                calculatedFlags={
-                                    calculatedValue
-                                        ? calculatedFlagsWithCalculatedValue
-                                        : calculatedFlagsWithoutCalculatedValue
-                                }
-                                inheritedFlags={
-                                    inheritedValue
-                                        ? inheritedFlagsWithInheritedValue
-                                        : inheritedFlagsWithoutInheritedValue
-                                }
-                                handleSubmit={mockHandleSubmit}
-                                onChange={mockOnChange}
-                                setActiveValue={mockSetActiveValue}
-                            />
-                        </AntForm.Item>
-                    </AntForm>
-                );
-
-                const clearIcon = screen.getByLabelText('clear');
-                await user.click(clearIcon);
-
-                expect(mockOnChange).toHaveBeenCalledWith(newValue);
-                expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
-            }
+    test('Should display the maximum number of characters', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSInputWrapper
+                        value={value}
+                        presentationValue={presentationValue}
+                        attribute={{...mockFormAttribute, character_limit: 15}}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        setActiveValue={mockSetActiveValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
         );
+
+        const input = screen.getByRole('textbox');
+        expect(input).toHaveAttribute('maxlength', '15');
+        expect(screen.getByText('13 / 15')).toBeInTheDocument();
     });
 });

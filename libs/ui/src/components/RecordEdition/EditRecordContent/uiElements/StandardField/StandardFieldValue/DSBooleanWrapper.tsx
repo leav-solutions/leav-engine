@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitSwitch, KitTypography} from 'aristid-ds';
-import {FunctionComponent, MouseEvent} from 'react';
+import {FunctionComponent, KeyboardEvent, MouseEvent} from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IKitSwitch} from 'aristid-ds/dist/Kit/DataEntry/Switch/types';
@@ -49,7 +49,10 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
         handleSubmit(null, attribute.id);
     };
 
-    const _handleOnChange: (checked: boolean, event: MouseEvent<HTMLButtonElement>) => void = (checked, event) => {
+    const _handleOnChange: (
+        checked: boolean,
+        event: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>
+    ) => void = (checked, event) => {
         setActiveValue();
         onChange(checked, event);
         handleSubmit(String(checked), attribute.id);

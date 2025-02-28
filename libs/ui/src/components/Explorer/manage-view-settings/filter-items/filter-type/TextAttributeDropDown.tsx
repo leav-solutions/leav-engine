@@ -6,14 +6,18 @@ import styled from 'styled-components';
 import {KitInput, KitSelect} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IFilterChildrenDropDownProps} from '_ui/components/Explorer/_types';
+import {IFilterChildrenDropDownProps} from './_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 
 const InputStyled = styled(KitInput)`
     width: 100%;
 `;
 
-export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({filter, onFilterChange}) => {
+export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
+    filter,
+    onFilterChange,
+    selectDropDownRef
+}) => {
     const {t} = useSharedTranslation();
 
     const {conditionOptionsByType} = useConditionsOptionsByType(filter);
@@ -38,7 +42,13 @@ export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
 
     return (
         <>
-            <KitSelect options={conditionOptionsByType} onChange={_onConditionChanged} value={filter.condition} />
+            <KitSelect
+                options={conditionOptionsByType}
+                onChange={_onConditionChanged}
+                value={filter.condition}
+                getPopupContainer={() => selectDropDownRef?.current ?? document.body}
+                aria-label={String(t('explorer.filter-condition'))}
+            />
             {showSearch && (
                 <InputStyled
                     placeholder={String(t('explorer.type-a-value'))}

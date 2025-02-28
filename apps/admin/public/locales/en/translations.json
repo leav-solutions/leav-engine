@@ -44,7 +44,8 @@
             "title": "Customization",
             "name": "Name",
             "icon": "Icon",
-            "favicon": "Favicon"
+            "favicon": "Favicon",
+            "default_application": "Default application"
         }
     },
     "errors": {
@@ -105,6 +106,7 @@
         "readonly": "Readonly",
         "required": "Required",
         "unique": "Unique",
+        "character_limit": "Character limit",
         "confirm_delete": "Do you really want to delete attribute {{attrLabel}}?",
         "action_list": "Actions List",
         "available_actions": "Available Actions",
@@ -306,7 +308,6 @@
         "save_success": "Form has been saved successfully",
         "settings": {
             "label": "Label",
-            "required": "Mandatory",
             "attribute": "Attribute",
             "content": "Content",
             "withTime": "Time entry",

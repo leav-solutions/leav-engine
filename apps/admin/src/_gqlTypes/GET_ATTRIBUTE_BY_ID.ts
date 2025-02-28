@@ -80,6 +80,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute {
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf | null;
     libraries: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_libraries[] | null;
     unique: boolean | null;
+    character_limit: number | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_metadata_fields {

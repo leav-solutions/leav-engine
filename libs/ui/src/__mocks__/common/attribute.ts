@@ -47,7 +47,6 @@ export const mockAttributeWithDetails: AttributeDetailsFragment = {
         fr: 'Ma description',
         en: 'My description'
     },
-    maxLength: null,
     unique: false,
     readonly: false,
     multiple_values: false

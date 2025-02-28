@@ -6,9 +6,10 @@ import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
 import {KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
 import {IStandFieldValueContentProps} from './_types';
-import {ColorFactory} from 'antd/lib/color-picker/color';
+import {AggregationColor} from 'antd/es/color-picker/color';
 import {EMPTY_INITIAL_VALUE_UNDEFINED} from '../../../antdUtils';
 import {ColorValueType} from 'antd/es/color-picker/interface';
+import {Form} from 'antd';
 
 const KitColorPickerStyled = styled(KitColorPicker)`
     width: 100%;
@@ -39,9 +40,7 @@ const getColorFormatFromValue = (value: ColorValueType): KitColorPickerProps['fo
 };
 
 const getValueToSubmit = (value: KitColorPickerProps['value'], format: KitColorPickerProps['format']) => {
-    if (typeof value === 'string') {
-        value = new ColorFactory(value);
-    }
+    value = new AggregationColor(value);
 
     switch (format) {
         case 'hex':
@@ -73,11 +72,14 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
     const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_UNDEFINED;
     const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
+    const {errors} = Form.Item.useStatus();
 
     const [hasChanged, setHasChanged] = useState(false);
     const [isFocused, setIsFocused] = useState(focusedDefaultValue);
     const [key, setKey] = useState(0);
     const [format, setFormat] = useState<KitColorPickerProps['format']>(getColorFormatFromValue(value));
+
+    const isErrors = errors.length > 0;
 
     const _handleOnOpenChange = async (open: boolean) => {
         if (!open) {
@@ -113,12 +115,12 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
         if (inheritedFlags.isInheritedValue) {
             setKey(prevKey => prevKey + 1);
 
-            const inheritedColor = new ColorFactory(inheritedFlags.inheritedValue.raw_payload);
+            const inheritedColor = new AggregationColor(inheritedFlags.inheritedValue.raw_payload);
             onChange(inheritedColor, inheritedFlags.inheritedValue.raw_payload);
         } else if (calculatedFlags.isCalculatedValue) {
             setKey(prevKey => prevKey + 1);
 
-            const calculatedColor = new ColorFactory(calculatedFlags.calculatedValue.raw_payload);
+            const calculatedColor = new AggregationColor(calculatedFlags.calculatedValue.raw_payload);
             onChange(calculatedColor, calculatedFlags.calculatedValue.raw_payload);
         } else {
             onChange(undefined, undefined);
@@ -144,11 +146,15 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
             data-testid={attribute.id}
             value={value}
             format={format}
-            showText={isFocused || !presentationValue ? true : () => `${presentationValue}`}
+            showText={isFocused || isErrors || !presentationValue ? true : () => `${presentationValue}`}
+            helper={isErrors ? String(errors[0]) : undefined}
             aria-label={label}
             disabled={readonly}
             allowClear={
-                value && !inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue
+                !!value &&
+                !attribute.multiple_values &&
+                !inheritedFlags.isInheritedNotOverrideValue &&
+                !calculatedFlags.isCalculatedNotOverrideValue
             }
             onOpenChange={_handleOnOpenChange}
             onChange={_handleOnChange}

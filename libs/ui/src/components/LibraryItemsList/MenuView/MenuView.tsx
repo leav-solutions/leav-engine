@@ -192,7 +192,6 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                         }
                         data-testid="dropdown-view-options"
                         onClick={_toggleShowView}
-                        color={searchState.view.current?.color}
                     >
                         <ViewLabel>
                             {localizedTranslation(searchState.view.current?.label, lang) ||

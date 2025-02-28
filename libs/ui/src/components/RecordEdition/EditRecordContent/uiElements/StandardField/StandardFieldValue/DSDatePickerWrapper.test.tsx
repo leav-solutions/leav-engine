@@ -13,8 +13,6 @@ const firstDayOfMonthDate = dayjs().startOf('month');
 const firstDayOfMonthDateFormatted = firstDayOfMonthDate.format('YYYY-MM-DD');
 const firstDayOfMonthDateTimestamp = firstDayOfMonthDate.unix().toString();
 const firstDayOfMonthDateAtNoon = firstDayOfMonthDate
-    .utc()
-    .set('date', firstDayOfMonthDate.date())
     .set('hour', 12)
     .set('minute', 0)
     .set('second', 0)
@@ -80,7 +78,6 @@ describe('DSDatePickerWrapper', () => {
                         value={firstDayOfMonthDate}
                         presentationValue={presentationDate}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -102,7 +99,6 @@ describe('DSDatePickerWrapper', () => {
                     <DSDatePickerWrapper
                         value={firstDayOfMonthDate}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -125,7 +121,6 @@ describe('DSDatePickerWrapper', () => {
                         value={firstDayOfMonthDate}
                         presentationValue={presentationDate}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -150,7 +145,6 @@ describe('DSDatePickerWrapper', () => {
                         value={firstDayOfMonthDate}
                         presentationValue={presentationDate}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={readonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -171,7 +165,6 @@ describe('DSDatePickerWrapper', () => {
                 <Form.Item>
                     <DSDatePickerWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -202,7 +195,6 @@ describe('DSDatePickerWrapper', () => {
                 <Form.Item>
                     <DSDatePickerWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -222,10 +214,9 @@ describe('DSDatePickerWrapper', () => {
     test('Should save to LEAV if field becomes empty', async () => {
         render(
             <Form>
-                <Form.Item>
+                <Form.Item name="datePickerTest">
                     <DSDatePickerWrapper
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -264,7 +255,6 @@ describe('DSDatePickerWrapper', () => {
                             value={firstDayOfMonthDate}
                             presentationValue={presentationDate}
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithInheritedValue}
@@ -294,7 +284,6 @@ describe('DSDatePickerWrapper', () => {
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithInheritedValue}
@@ -323,7 +312,6 @@ describe('DSDatePickerWrapper', () => {
                             value={firstDayOfMonthDate}
                             presentationValue={presentationDate}
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -353,7 +341,6 @@ describe('DSDatePickerWrapper', () => {
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}

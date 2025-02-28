@@ -11,19 +11,29 @@ import {EditSettingsContextProvider} from './open-view-settings/EditSettingsCont
 import {SidePanel} from './open-view-settings/SidePanel';
 import {useOpenViewSettings} from './open-view-settings/useOpenViewSettings';
 import {ViewSettingsContext} from './store-view-settings/ViewSettingsContext';
-import {IViewSettingsState} from './store-view-settings/viewSettingsReducer';
-import {viewSettingsInitialState} from './store-view-settings/viewSettingsInitialState';
 import {act, waitFor} from '@testing-library/react';
 import {useViewSettingsReducer} from '../useViewSettingsReducer';
+import {DefaultViewSettings} from '../_types';
+import {IViewSettingsState} from './store-view-settings/viewSettingsReducer';
 
 const MockOpenEditSettings: FunctionComponent = () => {
-    const {viewSettingsButton} = useOpenViewSettings('');
+    const {viewSettingsButton, viewListButton} = useOpenViewSettings({view: {}, isEnabled: true} as {
+        view: IViewSettingsState;
+        isEnabled: boolean;
+    });
 
-    return <>{viewSettingsButton}</>;
+    return (
+        <>
+            {viewListButton} {viewSettingsButton}
+        </>
+    );
 };
 
-const MockViewSettingsContextProvider: FunctionComponent<{viewMock: IViewSettingsState}> = ({viewMock, children}) => {
-    const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, viewMock);
+const MockViewSettingsContextProvider: FunctionComponent<{defaultSettings?: DefaultViewSettings}> = ({
+    defaultSettings,
+    children
+}) => {
+    const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, defaultSettings);
     return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
 };
 
@@ -41,22 +51,39 @@ describe('Integration tests about managing view settings feature', () => {
         called: true
     };
 
-    const mockSaveViewMutation = jest.fn().mockReturnValue({
+    const mockSaveViewMutation = jest.fn().mockImplementation(data => ({
         data: {
-            saveView: [
-                {
-                    id: 42
-                }
-            ]
+            saveView: {
+                id: '42',
+                created_by: {
+                    id: '1'
+                },
+                shared: !data?.shared,
+                label: {en: 'My view'}
+            }
         }
-    });
+    }));
 
     const mockViewsResult: Mockify<typeof gqlTypes.useGetViewsListQuery> = {
         data: {
             views: {
                 list: [
                     {
-                        id: '42',
+                        id: '43',
+                        shared: false,
+                        display: {
+                            type: gqlTypes.ViewTypes.list
+                        },
+                        created_by: {
+                            id: '1',
+                            whoAmI: {
+                                id: '1',
+                                label: 'Admin',
+                                library: {
+                                    id: 'users'
+                                }
+                            }
+                        },
                         label: {en: 'My view'},
                         filters: [],
                         sort: []
@@ -73,7 +100,21 @@ describe('Integration tests about managing view settings feature', () => {
             views: {
                 list: [
                     {
-                        id: '42',
+                        id: '44',
+                        shared: false,
+                        display: {
+                            type: gqlTypes.ViewTypes.list
+                        },
+                        created_by: {
+                            id: '1',
+                            whoAmI: {
+                                id: '1',
+                                label: 'Admin',
+                                library: {
+                                    id: 'users'
+                                }
+                            }
+                        },
                         label: {en: 'My view'},
                         filters: [],
                         sort: [
@@ -96,6 +137,17 @@ describe('Integration tests about managing view settings feature', () => {
         called: true
     };
 
+    const mockMeResult: Mockify<typeof gqlTypes.useMeQuery> = {
+        data: {
+            me: {
+                id: '1',
+                whoAmI: {
+                    id: '1'
+                }
+            }
+        }
+    };
+
     let getViewsListSpy: jest.SpyInstance;
     beforeAll(() => {
         jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
@@ -114,12 +166,14 @@ describe('Integration tests about managing view settings feature', () => {
             mockSaveViewMutation,
             {loading: false, called: false, client: {} as any, reset: jest.fn()}
         ]);
+
+        jest.spyOn(gqlTypes, 'useMeQuery').mockImplementation(() => mockMeResult as gqlTypes.MeQueryResult);
     });
 
     test('should be able to open panel and navigate inside to advanced setting and go back', async () => {
         render(
             <EditSettingsContextProvider>
-                <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                <MockViewSettingsContextProvider>
                     <MockOpenEditSettings />
                     <SidePanel />
                 </MockViewSettingsContextProvider>
@@ -143,7 +197,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle attribute visibility', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -192,7 +246,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle sort activation', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -238,8 +292,8 @@ describe('Integration tests about managing view settings feature', () => {
             const timeout = r => setTimeout(r, 350);
 
             render(
-                <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                <EditSettingsContextProvider panelElement={() => document.body}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -295,7 +349,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle filter activation', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -331,10 +385,10 @@ describe('Integration tests about managing view settings feature', () => {
     });
 
     describe('Views', () => {
-        test('Should be able to save view', async () => {
+        test('Should be able to update view', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -342,7 +396,68 @@ describe('Integration tests about managing view settings feature', () => {
             );
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
-            await userEvent.click(screen.getByRole('button', {name: /save/}));
+
+            await userEvent.click(screen.getByRole('button', {name: 'global.save'}));
+
+            expect(mockSaveViewMutation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {
+                        view: {
+                            attributes: [],
+                            display: {type: 'list'},
+                            filters: [],
+                            id: '43',
+                            label: {en: 'My view'},
+                            library: 'my_lib',
+                            shared: false,
+                            sort: []
+                        }
+                    }
+                })
+            );
+        });
+
+        test('Should be able to share view', async () => {
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
+            let myViewsElement = screen.getByRole('list', {name: /my-views/});
+            expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
+
+            await userEvent.click(screen.getByRole('button', {name: /share-view/}));
+
+            expect(mockSaveViewMutation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {
+                        view: {
+                            attributes: [],
+                            display: {type: 'list'},
+                            filters: [],
+                            id: '43',
+                            label: {en: 'My view'},
+                            library: 'my_lib',
+                            shared: true,
+                            sort: []
+                        }
+                    }
+                })
+            );
+
+            mockSaveViewMutation.mockClear();
+
+            expect(screen.queryByRole('button', {name: 'explorer.share-view'})).not.toBeInTheDocument();
+
+            const sharedViewsElement = screen.getByRole('list', {name: /shared-view/});
+            expect(within(sharedViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
+
+            await userEvent.click(screen.getByRole('button', {name: /unshare-view/}));
 
             expect(mockSaveViewMutation).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -352,8 +467,68 @@ describe('Integration tests about managing view settings feature', () => {
                             display: {type: 'list'},
                             filters: [],
                             id: '42',
-                            label: {fr: 'user view'},
-                            library: '',
+                            label: {en: 'My view'},
+                            library: 'my_lib',
+                            shared: false,
+                            sort: []
+                        }
+                    }
+                })
+            );
+
+            expect(screen.queryByRole('button', {name: /unshare-view/})).not.toBeInTheDocument();
+            myViewsElement = screen.getByRole('list', {name: /my-views/});
+            expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
+        });
+
+        test('Should be able to save view as', async () => {
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+            mockSaveViewMutation.mockClear();
+
+            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+
+            await userEvent.click(screen.getByRole('button', {name: /save-view-as/}));
+            // hidden: true car l'ouverture de la Modal met un aria-label: hidden sur le body
+            const closeButton = screen.getByRole('button', {name: 'global.close', hidden: true});
+            expect(closeButton).toBeVisible();
+            await userEvent.click(closeButton);
+            expect(closeButton).not.toBeVisible();
+            expect(mockSaveViewMutation).not.toHaveBeenCalled();
+
+            await userEvent.click(screen.getByRole('button', {name: /save-view-as/}));
+            const modal = screen.getByRole('dialog', {hidden: true});
+            expect(modal).toBeVisible();
+            const saveButton = within(modal).getByRole('button', {name: 'global.save', hidden: true});
+            expect(saveButton).toBeVisible();
+            await userEvent.click(saveButton);
+            expect(mockSaveViewMutation).not.toHaveBeenCalled();
+            await waitFor(() => expect(screen.getByText('errors.standard_field_required')).toBeVisible());
+
+            const [requiredInput] = screen
+                .getAllByRole('textbox', {hidden: true})
+                .filter(r => r.getAttribute('aria-required') === 'true');
+
+            await userEvent.type(requiredInput, 'Nom de ma vue requis{Enter}');
+
+            // Timeout for secureClick
+            await userEvent.click(saveButton, {delay: 1000});
+
+            expect(mockSaveViewMutation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {
+                        view: {
+                            attributes: [],
+                            display: {type: 'list'},
+                            filters: [],
+                            label: {fr: 'Nom de ma vue requis', en: 'My view'},
+                            library: 'my_lib',
                             shared: false,
                             sort: []
                         }
@@ -367,7 +542,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -386,7 +561,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                    <MockViewSettingsContextProvider>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -413,6 +588,94 @@ describe('Integration tests about managing view settings feature', () => {
             await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
             activeSorts = screen.getByRole('list', {name: 'explorer.sort-list.active'});
             expect(within(activeSorts).getAllByRole('listitem')).toHaveLength(1);
+        });
+
+        test('Should display views list', async () => {
+            const mockViewsListResult: Mockify<typeof gqlTypes.useGetViewsListQuery> = {
+                data: {
+                    views: {
+                        list: [
+                            {
+                                id: '42',
+                                shared: false,
+                                display: {
+                                    type: gqlTypes.ViewTypes.list
+                                },
+                                created_by: {
+                                    id: '1',
+                                    whoAmI: {
+                                        id: '1',
+                                        label: 'Admin',
+                                        library: {
+                                            id: 'users'
+                                        }
+                                    }
+                                },
+                                label: {en: 'My view'},
+                                filters: [],
+                                sort: []
+                            },
+                            {
+                                id: '43',
+                                shared: false,
+                                display: {
+                                    type: gqlTypes.ViewTypes.list
+                                },
+                                created_by: {
+                                    id: '1',
+                                    whoAmI: {
+                                        id: '1',
+                                        label: 'Admin',
+                                        library: {
+                                            id: 'users'
+                                        }
+                                    }
+                                },
+                                label: {en: 'My second view'},
+                                filters: [],
+                                sort: []
+                            },
+                            {
+                                id: '44',
+                                shared: false,
+                                display: {
+                                    type: gqlTypes.ViewTypes.list
+                                },
+                                created_by: {
+                                    id: '1',
+                                    whoAmI: {
+                                        id: '1',
+                                        label: 'Admin',
+                                        library: {
+                                            id: 'users'
+                                        }
+                                    }
+                                },
+                                label: {en: 'My third view'},
+                                filters: [],
+                                sort: []
+                            }
+                        ]
+                    }
+                },
+                loading: false,
+                called: true
+            };
+            getViewsListSpy.mockReturnValue(mockViewsListResult as gqlTypes.GetViewsListQueryResult);
+
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
+
+            const viewsList = screen.getByRole('list', {name: /explorer.my-views/});
+            expect(within(viewsList).getAllByRole('listitem')).toHaveLength(4);
         });
     });
 });

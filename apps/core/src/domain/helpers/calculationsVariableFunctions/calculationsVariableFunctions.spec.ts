@@ -60,6 +60,30 @@ describe('calculationsVariableFunctions', () => {
         expect(res[0].payload).toBe('meh');
     });
 
+    test('should get the "from" date on period attribute', async () => {
+        const inputValue = [
+            {payload: {from: 17438843200, to: 1742472000}, raw_payload: {from: 17438843233, to: 1742472033}}
+        ];
+
+        const res = await calculationFunctions.fromDate.run(ctx, inputValue, ['attributeKey']);
+
+        expect(res).toHaveLength(1);
+        expect(res[0]).toHaveProperty('payload');
+        expect(res[0].payload).toBe(inputValue[0].raw_payload.from);
+    });
+
+    test('should get the "to" date on period attribute', async () => {
+        const inputValue = [
+            {payload: {from: 17438843200, to: 1742472000}, raw_payload: {from: 17438843233, to: 1742472033}}
+        ];
+
+        const res = await calculationFunctions.toDate.run(ctx, inputValue, ['attributeKey']);
+
+        expect(res).toHaveLength(1);
+        expect(res[0]).toHaveProperty('payload');
+        expect(res[0].payload).toBe(inputValue[0].raw_payload.to);
+    });
+
     test('test first', async () => {
         const res = await calculationFunctions.first.run(ctx, [{payload: 'meh'}, {payload: 'meh2'}], ['toto']);
         expect(res).toHaveLength(1);

@@ -4,19 +4,20 @@
 import {IRecordIdentityWhoAmI} from '../../../types/records';
 import {IValueVersion} from '../../../types/values';
 import {RecordFormAttributeFragment, RecordUpdateSubscription, ValueDetailsFragment} from '../../../_gqlTypes';
-import {RecordProperty} from '../../../_queries/records/getRecordPropertiesQuery';
-import {StandardValueTypes} from '../EditRecordContent/_types';
+import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
+import {SystemTranslation} from '_ui/types';
 
 export interface IRecordPropertyWithAttribute {
     attribute: RecordFormAttributeFragment;
-    value: RecordProperty;
-    editingValue?: StandardValueTypes;
+    globalValues?: Array<RecordFormElementsValueStandardValue['payload']>;
+    calculatedValue?: RecordFormElementsValueStandardValue['payload'];
 }
 
 export interface IEditRecordReducerState {
     record: IRecordIdentityWhoAmI;
     libraryId: string;
-    activeValue: IRecordPropertyWithAttribute;
+    libraryLabel: SystemTranslation | null;
+    activeAttribute: IRecordPropertyWithAttribute;
     sidebarContent: 'summary' | 'valueDetails' | 'valuesVersions' | 'none';
     sidebarDefaultHidden?: boolean;
     valuesVersion: IValueVersion;
@@ -33,10 +34,10 @@ export interface IEditRecordReducerState {
 
 export enum EditRecordReducerActionsTypes {
     SET_RECORD = 'SET_RECORD',
+    SET_LIBRARY_LABEL = 'SET_LIBRARY_LABEL',
     SET_ACTIVE_VALUE = 'SET_ACTIVE_VALUE',
     SET_SIDEBAR_CONTENT = 'SET_SIDEBAR_CONTENT',
     SET_VALUES_VERSION = 'SET_VALUES_VERSION',
-    SET_EDITING_VALUE = 'SET_CURRENT_VALUE_CONTENT',
     REQUEST_REFRESH = 'REQUEST_REFRESH',
     REFRESH_DONE = 'REFRESH_DONE',
     ADD_EXTERNAL_UPDATE = 'ADD_EXTERNAL_UPDATE',
@@ -49,8 +50,13 @@ export type IEditRecordReducerActions =
           record: IEditRecordReducerState['record'];
       }
     | {
+          type: EditRecordReducerActionsTypes.SET_LIBRARY_LABEL;
+          label: SystemTranslation;
+      }
+    | {
           type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE;
-          value: IEditRecordReducerState['activeValue'];
+          attribute?: IEditRecordReducerState['activeAttribute']['attribute'];
+          values?: RecordFormElementsValueStandardValue[];
       }
     | {
           type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT;
@@ -59,10 +65,6 @@ export type IEditRecordReducerActions =
     | {
           type: EditRecordReducerActionsTypes.SET_VALUES_VERSION;
           valuesVersion: IEditRecordReducerState['valuesVersion'];
-      }
-    | {
-          type: EditRecordReducerActionsTypes.SET_EDITING_VALUE;
-          value: StandardValueTypes;
       }
     | {
           type: EditRecordReducerActionsTypes.REQUEST_REFRESH;
@@ -84,7 +86,8 @@ export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void
 export const initialState: IEditRecordReducerState = {
     record: null,
     libraryId: null,
-    activeValue: null,
+    libraryLabel: null,
+    activeAttribute: null,
     sidebarContent: 'summary',
     sidebarDefaultHidden: false,
     valuesVersion: null,
@@ -104,26 +107,27 @@ const editRecordReducer = (
     switch (action.type) {
         case EditRecordReducerActionsTypes.SET_RECORD:
             return {...state, record: action.record};
+        case EditRecordReducerActionsTypes.SET_LIBRARY_LABEL:
+            return {...state, libraryLabel: action.label};
         case EditRecordReducerActionsTypes.SET_ACTIVE_VALUE:
             const newSidebarContent =
-                action.value !== null ? 'valueDetails' : state.sidebarDefaultHidden ? 'none' : 'summary';
+                action.attribute !== null ? 'valueDetails' : state.sidebarDefaultHidden ? 'none' : 'summary';
             return {
                 ...state,
-                activeValue: action.value,
+                activeAttribute: {
+                    attribute: action.attribute ?? state.activeAttribute?.attribute ?? null,
+                    globalValues: action.values
+                        ?.filter(value => !value.isCalculated && !value.isInherited)
+                        .map(value => value.payload),
+                    calculatedValue: action.values?.filter(value => value.isCalculated || value.isInherited)?.[0]
+                        ?.payload
+                },
                 sidebarContent: newSidebarContent
             };
         case EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT:
             return {...state, sidebarContent: action.content};
         case EditRecordReducerActionsTypes.SET_VALUES_VERSION:
             return {...state, valuesVersion: action.valuesVersion};
-        case EditRecordReducerActionsTypes.SET_EDITING_VALUE:
-            return {
-                ...state,
-                activeValue: {
-                    ...state.activeValue,
-                    editingValue: action.value
-                }
-            };
         case EditRecordReducerActionsTypes.REQUEST_REFRESH:
             return {...state, refreshRequested: true};
         case EditRecordReducerActionsTypes.REFRESH_DONE:
@@ -131,7 +135,7 @@ const editRecordReducer = (
         case EditRecordReducerActionsTypes.ADD_EXTERNAL_UPDATE:
             const newState = {...state};
             const newModifiers = state.externalUpdate?.modifiers.find(m => m.id === action.modifier.id)
-                ? newState.externalUpdate?.modifiers ?? []
+                ? (newState.externalUpdate?.modifiers ?? [])
                 : [...(newState.externalUpdate?.modifiers ?? []), action.modifier];
 
             const newValues = action.updatedValues.reduce(

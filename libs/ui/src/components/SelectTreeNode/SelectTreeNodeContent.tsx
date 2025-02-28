@@ -161,7 +161,10 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         const node = treeMap[e.node.key];
         const isRoot = node.id === tree.id;
 
-        if ((!canSelectRoot && isRoot) || (!isRoot && selectableLibraries?.includes(node.record.whoAmI.library.id))) {
+        if (
+            (!canSelectRoot && isRoot) ||
+            (!isRoot && selectableLibraries && !selectableLibraries.includes(node.record.whoAmI.library.id))
+        ) {
             return;
         }
 
@@ -198,9 +201,6 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             loadData={_handleLoadData}
             checkStrictly
             checkable={multiple}
-            showLine={{
-                showLeafIcon: false
-            }}
         />
     );
 };

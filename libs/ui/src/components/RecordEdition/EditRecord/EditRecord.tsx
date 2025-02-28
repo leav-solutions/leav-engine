@@ -9,8 +9,8 @@ import {useCanEditRecord} from '../../../hooks/useCanEditRecord';
 import {IValueVersion} from '../../../types/values';
 import {
     AttributeType,
+    RecordFormAttributeStandardAttributeFragment,
     RecordIdentityFragment,
-    useCreateRecordMutation,
     ValueBatchInput,
     ValueDetailsFragment,
     ValueDetailsLinkValueFragment,
@@ -45,6 +45,9 @@ import {FormInstance} from 'antd/lib/form/Form';
 import {useRunActionsListAndFormatOnValue} from '../EditRecordContent/hooks/useRunActionsListAndFormatOnValue';
 import EditRecordSidebar from '../EditRecordSidebar';
 import EditRecordSkeleton from '../EditRecordSkeleton';
+import {useQuery} from '@apollo/client';
+import {getLibraryByIdQuery} from '_ui/_queries/libraries/getLibraryByIdQuery';
+import useExecuteCreateRecordMutation from '../EditRecordContent/hooks/useCreateRecordMutation';
 
 interface IEditRecordProps {
     antdForm: FormInstance;
@@ -89,7 +92,7 @@ const Content = styled.div<{$shouldUseLayoutWithSidebar: boolean}>`
 export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     antdForm,
     record,
-    library,
+    library: libraryId,
     onCreate,
     valuesVersion,
     showSidebar = false,
@@ -103,7 +106,8 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     const [state, dispatch] = useReducer(editRecordReducer, {
         ...initialState,
         record,
-        libraryId: library,
+        libraryId,
+        libraryLabel: null,
         valuesVersion,
         originValuesVersion: valuesVersion,
         sidebarContent: showSidebar ? 'summary' : 'none',
@@ -115,11 +119,15 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         loading: permissionsLoading,
         canEdit,
         isReadOnly
-    } = useCanEditRecord({...record?.library, id: library}, record?.id);
+    } = useCanEditRecord({...record?.library, id: libraryId}, record?.id);
+
+    const {data: libraryData} = useQuery(getLibraryByIdQuery, {
+        variables: {id: [libraryId]}
+    });
 
     const {saveValues} = useSaveValueBatchMutation();
     const {deleteValue} = useExecuteDeleteValueMutation(record);
-    const [createRecord] = useCreateRecordMutation();
+    const {createRecord} = useExecuteCreateRecordMutation();
 
     const [creationErrors, setCreationErrors] = useState<ICreationErrorByField>({});
 
@@ -130,6 +138,15 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     const pendingValuesRef = useRef(pendingValues);
 
     // Update record in reducer when it changes. Might happen on record identity change (after value save)
+    useEffect(() => {
+        if (libraryData) {
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_LIBRARY_LABEL,
+                label: libraryData.libraries.list[0].label
+            });
+        }
+    }, [libraryData]);
+
     useEffect(() => {
         if (record && !isEqual(record, state.record)) {
             dispatch({
@@ -185,7 +202,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                     return savableValue as IValueToSubmit;
                 }),
                 version,
-                false // deleteEmpty
+                true // deleteEmpty
             );
         }
 
@@ -211,7 +228,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             }
 
             const valueAfterActionsListAndFormat = await runActionsListAndFormatOnValue(
-                library,
+                libraryId,
                 valueToProcess as IValueToSubmit,
                 version
             );
@@ -339,81 +356,79 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     /**
      * Submit the whole record: create record and batch save all stored values
      */
-    const _handleRecordSubmit = async () => {
+    const _handleRecordSubmit = async (attributes: RecordFormAttributeStandardAttributeFragment[]) => {
         const currentPendingValues = pendingValuesRef.current ?? {};
-        if (!!!Object.keys(currentPendingValues).length) {
+
+        if (state.record) {
             return;
         }
 
-        // Create Record
-        let newRecord: RecordIdentityFragment['whoAmI'] = state.record ?? null;
-        if (!newRecord) {
-            const valuesToSave: ValueBatchInput[] = Object.values(currentPendingValues).reduce(
-                (allValues: ValueBatchInput[], valuesById) => {
-                    const attributeValues: ValueBatchInput[] = Object.values(valuesById).map(val => {
-                        let actualValue;
-                        switch (val.attribute.type) {
-                            case AttributeType.advanced_link:
-                            case AttributeType.simple_link:
-                                actualValue = (val as ValueDetailsLinkValueFragment).linkValue.id;
-                                break;
-                            case AttributeType.tree:
-                                const treeValue = (val as ValueDetailsTreeValueFragment).treeValue;
-                                actualValue = treeValue.id;
-                                break;
-                            default:
-                                actualValue = (val as ValueDetailsValueFragment).raw_payload;
-                                break;
-                        }
-                        return {
-                            value: actualValue,
-                            id_value: val.id_value ?? null,
-                            attribute: val.attribute.id,
-                            metadata: val.metadata
-                                ? val.metadata.map(metadataValue => ({
-                                      name: metadataValue.name,
-                                      value: metadataValue.value.raw_payload
-                                  }))
-                                : null
-                        };
-                    });
-
-                    return [...allValues, ...attributeValues];
-                },
-                []
-            );
-
-            const creationResult = await createRecord({variables: {library, data: {values: valuesToSave}}});
-
-            if (creationResult.data.createRecord.valuesErrors?.length) {
-                // Extract errors by field
-                const errorsByField = creationResult.data.createRecord.valuesErrors.reduce((errors, error) => {
-                    if (!errors[error.attributeId]) {
-                        errors[error.attributeId] = [];
+        const valuesToSave: ValueBatchInput[] = Object.values(currentPendingValues).reduce(
+            (allValues: ValueBatchInput[], valuesById) => {
+                const attributeValues: ValueBatchInput[] = Object.values(valuesById).map(val => {
+                    let actualValue;
+                    switch (val.attribute.type) {
+                        case AttributeType.advanced_link:
+                        case AttributeType.simple_link:
+                            actualValue = (val as ValueDetailsLinkValueFragment).linkValue.id;
+                            break;
+                        case AttributeType.tree:
+                            const treeValue = (val as ValueDetailsTreeValueFragment).treeValue;
+                            actualValue = treeValue.id;
+                            break;
+                        default:
+                            actualValue = (val as ValueDetailsValueFragment).raw_payload;
+                            break;
                     }
+                    return {
+                        payload: actualValue,
+                        id_value: val.id_value ?? null,
+                        attribute: val.attribute.id,
+                        metadata: val.metadata
+                            ? val.metadata.map(metadataValue => ({
+                                  name: metadataValue.name,
+                                  value: metadataValue.value.raw_payload
+                              }))
+                            : null
+                    };
+                });
+                return [...allValues, ...attributeValues];
+            },
+            []
+        );
 
-                    errors[error.attributeId].push(error);
-
-                    return errors;
-                }, {});
-                setCreationErrors(errorsByField);
-
-                antdForm.setFields(
-                    creationResult.data.createRecord.valuesErrors.map(error => ({
-                        name: error.attributeId,
-                        errors: [error.message]
-                    }))
-                );
-
-                return;
-            }
-
-            newRecord = creationResult.data.createRecord.record.whoAmI;
-
+        const creationResult = await createRecord(libraryId, valuesToSave);
+        if (creationResult.status === APICallStatus.SUCCESS) {
             if (onCreate) {
-                onCreate(newRecord);
+                onCreate(creationResult.record);
             }
+            return;
         }
+
+        // Extract errors by field
+        const errorsByField = creationResult.errors.reduce((errors, error) => {
+            if (!errors[error.attribute]) {
+                errors[error.attribute] = [];
+            }
+
+            errors[error.attribute].push(error);
+
+            return errors;
+        }, {});
+        setCreationErrors(errorsByField);
+
+        antdForm.setFields(
+            creationResult.errors.map(error => ({
+                name:
+                    attributes.find(attribute => attribute.id === error.attribute)?.multiple_values &&
+                    error.type === 'REQUIRED_ATTRIBUTE'
+                        ? [error.attribute, 0]
+                        : error.attribute,
+                errors: [error.message]
+            }))
+        );
+
+        return;
     };
 
     const _handleDeleteValue: DeleteValueFunc = async (value, attribute) => {
@@ -480,7 +495,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 <EditRecordContent
                                     antdForm={antdForm}
                                     record={record}
-                                    library={library}
+                                    library={libraryId}
                                     onRecordSubmit={_handleRecordSubmit}
                                     onValueSubmit={_handleValueSubmit}
                                     onValueDelete={_handleDeleteValue}

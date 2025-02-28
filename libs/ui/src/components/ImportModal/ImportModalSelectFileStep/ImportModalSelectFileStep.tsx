@@ -172,7 +172,6 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
         name: 'file',
         multiple: false,
         accept: '.xlsx',
-        showUploadList: false,
         description: t('import.file_selection_restriction', {allowedFormat: '.xlsx'}),
         title: file?.name ?? t('import.file_selection_instruction'),
         beforeUpload: fileToImport => {
@@ -220,7 +219,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
     return (
         <Space direction="vertical" style={{width: '100%'}}>
             <Spin spinning={loading}>
-                <KitUpload.KitDragger {...draggerProps} />
+                <KitUpload.Dragger {...draggerProps} />
             </Spin>
             <KitAlert message={t('import.first_line_info')} type="info" showIcon />
         </Space>

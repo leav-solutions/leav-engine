@@ -1,13 +1,13 @@
 {
   "name": "login",
-  "version": "1.0.0-beta16",
+  "version": "1.0.0-beta17",
   "private": true,
   "homepage": ".",
   "dependencies": {
     "@ant-design/icons": "5.2.6",
     "@leav/ui": "workspace:libs/ui",
-    "antd": "5.15.3",
-    "aristid-ds": "12.0.0-8a56c10",
+    "antd": "5.22.2",
+    "aristid-ds": "13.0.0-a482bfb",
     "i18next": "22.5.0",
     "i18next-browser-languagedetector": "7.0.2",
     "i18next-http-backend": "2.1.1",
@@ -36,7 +36,7 @@
     "ts-jest": "29.0.5",
     "ts-jest-mock-import-meta": "1.0.0",
     "typescript": "5.5.3",
-    "vite": "4.5.5",
+    "vite": "4.5.6",
     "vite-plugin-dynamic-base": "0.4.9",
     "vite-plugin-rewrite-all": "1.0.1"
   },

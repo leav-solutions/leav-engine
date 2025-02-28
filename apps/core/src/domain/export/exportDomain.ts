@@ -273,7 +273,7 @@ export default function ({
                         func: {
                             moduleName: 'domain',
                             subModuleName: 'export',
-                            name: 'export',
+                            name: 'exportExcel',
                             args: params
                         },
                         role: {

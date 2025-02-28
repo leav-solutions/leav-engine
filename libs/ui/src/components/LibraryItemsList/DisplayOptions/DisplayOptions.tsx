@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreFilled, DownOutlined, MenuOutlined} from '@ant-design/icons';
-import {Button, Dropdown} from 'antd';
+import {Button, Dropdown, MenuProps} from 'antd';
 import {useState} from 'react';
 import styled from 'styled-components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
@@ -56,7 +56,7 @@ function DisplayOptions(): JSX.Element {
 
     const _handleOpenChange = () => setVisible(!visible);
 
-    const menu = {
+    const menu: MenuProps = {
         style: {minWidth: '11em'},
         items: [
             {

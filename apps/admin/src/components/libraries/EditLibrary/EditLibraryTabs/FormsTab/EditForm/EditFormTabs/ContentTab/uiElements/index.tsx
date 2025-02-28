@@ -84,16 +84,11 @@ export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
     }
 };
 
-const requiredFieldSetting: IFormElementSettings = {
-    name: 'required',
-    inputType: FormElementSettingsInputTypes.CHECKBOX
-};
-
 export const formElements: {[type in FieldTypes]: IUIElement} = {
     [FieldTypes.TEXT_INPUT]: {
         type: FieldTypes.TEXT_INPUT,
         component: <InputField settings={{}} />,
-        settings: [...commonFieldSettings, requiredFieldSetting],
+        settings: [...commonFieldSettings],
         canDrop: () => false
     },
     [FieldTypes.CHECKBOX]: {
@@ -105,23 +100,19 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
     [FieldTypes.DATE]: {
         type: FieldTypes.DATE,
         component: <DateField settings={{}} />,
-        settings: [
-            ...commonFieldSettings,
-            requiredFieldSetting,
-            {name: 'withTime', inputType: FormElementSettingsInputTypes.CHECKBOX}
-        ],
+        settings: [...commonFieldSettings, {name: 'withTime', inputType: FormElementSettingsInputTypes.CHECKBOX}],
         canDrop: () => false
     },
     [FieldTypes.ENCRYPTED]: {
         type: FieldTypes.ENCRYPTED,
         component: <EncryptedField settings={{}} />,
-        settings: [...commonFieldSettings, requiredFieldSetting],
+        settings: [...commonFieldSettings],
         canDrop: () => false
     },
     [FieldTypes.DROPDOWN]: {
         type: FieldTypes.DROPDOWN,
         component: <DropdownField settings={{}} />,
-        settings: [...commonFieldSettings, requiredFieldSetting],
+        settings: [...commonFieldSettings],
         canDrop: () => false
     },
     [FieldTypes.LINK]: {
@@ -147,8 +138,7 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
                 name: 'displayRecordIdentity',
                 inputType: FormElementSettingsInputTypes.CHECKBOX,
                 defaultValue: true
-            },
-            requiredFieldSetting
+            }
         ],
         canDrop: () => false
     },

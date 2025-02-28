@@ -6,14 +6,18 @@ import styled from 'styled-components';
 import {KitInputNumber, KitSelect} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IFilterChildrenDropDownProps} from '_ui/components/Explorer/_types';
+import {IFilterChildrenDropDownProps} from './_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 
 const InputNumberStyled = styled(KitInputNumber)`
     width: 100%;
 `;
 
-export const NumericAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({filter, onFilterChange}) => {
+export const NumericAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
+    filter,
+    onFilterChange,
+    selectDropDownRef
+}) => {
     const {t} = useSharedTranslation();
 
     const {conditionOptionsByType} = useConditionsOptionsByType(filter);
@@ -30,7 +34,12 @@ export const NumericAttributeDropDown: FunctionComponent<IFilterChildrenDropDown
 
     return (
         <>
-            <KitSelect options={conditionOptionsByType} onChange={_onConditionChanged} value={filter.condition} />
+            <KitSelect
+                options={conditionOptionsByType}
+                onChange={_onConditionChanged}
+                value={filter.condition}
+                getPopupContainer={() => selectDropDownRef?.current ?? document.body}
+            />
             {showInput && (
                 <InputNumberStyled
                     placeholder={String(t('explorer.type-a-value'))}

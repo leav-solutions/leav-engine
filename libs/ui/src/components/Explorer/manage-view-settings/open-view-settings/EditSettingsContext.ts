@@ -9,13 +9,13 @@ interface IActiveSettings {
     onClickLeftButton?: () => void;
 }
 
-export type SettingsPanelPages = 'router-menu' | 'configure-display' | 'sort-items' | 'filter-items';
+export type SettingsPanelPages = 'router-menu' | 'configure-display' | 'sort-items' | 'filter-items' | 'my-views';
 
 export interface IEditSettingsContext {
     setActiveSettings: (params: IActiveSettings) => void;
     activeSettings: null | IActiveSettings;
-    panelElement: Element | DocumentFragment | null;
-    onClose: () => void;
+    panelElement: (() => Element | DocumentFragment) | null;
+    closeSettingsPanel: () => void;
 }
 
 export const EditSettingsContext = createContext<IEditSettingsContext>({
@@ -24,7 +24,7 @@ export const EditSettingsContext = createContext<IEditSettingsContext>({
     },
     activeSettings: null,
     panelElement: null,
-    onClose: () => {
-        throw new Error('Not implemented');
+    closeSettingsPanel: () => {
+        throw new Error('Element must be wrapped into EditSettingsContextProvider');
     }
 });

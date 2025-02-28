@@ -3,34 +3,28 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import styled from 'styled-components';
 import {FunctionComponent} from 'react';
-import {KitButton, KitTypography} from 'aristid-ds';
-import {FaFilter, FaList, FaSave, FaSortAlphaDown, FaUndo} from 'react-icons/fa';
+import {KitInput, KitTypography} from 'aristid-ds';
+import {FaFilter, FaList, FaSortAlphaDown} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ConfigureDisplay} from '../configure-display/ConfigureDisplay';
 import {SortItems} from '../sort-items/SortItems';
 import {SettingItem} from './SettingItem';
 import {FilterItems} from '../filter-items/FilterItems';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
-import {useLang} from '_ui/hooks';
-import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
-import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {SettingsPanelPages} from '../open-view-settings/EditSettingsContext';
 import {useOpenViewSettings} from '../open-view-settings/useOpenViewSettings';
+import {SavedViews} from '../../list-saved-views/SavedViews';
+import {ViewActionsButtons} from '../save-view/ViewActionsButtons';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
     flex-direction: column;
-    gap: calc(var(--general-spacing-s) * 1px);
     justify-content: space-between;
     height: 100%;
 `;
 
-const FooterStyledDiv = styled.footer`
-    display: flex;
-    justify-content: center;
-    gap: calc(var(--general-spacing-xs) * 1px);
-    padding: calc(var(--general-spacing-xxs) * 1px) 0;
+const ViewNameStyledKitInput = styled(KitInput)`
+    margin-bottom: calc(var(--general-spacing-s) * 1px);
 `;
 
 const ConfigurationStyledMenu = styled.menu`
@@ -44,40 +38,9 @@ interface ISettingsPanelProps {
 
 export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, page = 'router-menu'}) => {
     const {t} = useSharedTranslation();
-    const {defaultLang} = useLang();
 
-    const {openSettingsPanel} = useOpenViewSettings(library);
-    const {view, dispatch} = useViewSettingsContext();
-
-    const {saveView} = useExecuteSaveViewMutation();
-
-    const _handleSaveView = () => {
-        saveView({
-            view: {
-                id: view.viewId,
-                library,
-                shared: false,
-                display: {
-                    type: mapViewTypeFromExplorerToLegacy[view.viewType]
-                },
-                filters: view.filters.map(filter => ({
-                    field: filter.field,
-                    value: filter.value,
-                    condition: filter.condition
-                })),
-                sort: view.sort.map(({field: attributeId, order}) => ({field: attributeId, order})),
-                attributes: view.attributesIds,
-                label: {
-                    //TODO: add a better label when view management is more advanced
-                    [defaultLang]: 'user view'
-                }
-            }
-        });
-    };
-
-    const _handleReinitView = () => {
-        dispatch({type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS});
-    };
+    const {view} = useViewSettingsContext();
+    const {openSettingsPanel, viewName} = useOpenViewSettings({view, isEnabled: true});
 
     // TODO: look for MemoryRouter
     return (
@@ -85,6 +48,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
             {page === 'router-menu' && (
                 <>
                     <nav>
+                        <ViewNameStyledKitInput disabled value={viewName} />
                         <KitTypography.Title level="h4">{t('explorer.router-menu')}</KitTypography.Title>
                         <ConfigurationStyledMenu>
                             <SettingItem
@@ -109,19 +73,13 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                             )}
                         </ConfigurationStyledMenu>
                     </nav>
-                    <FooterStyledDiv>
-                        <KitButton type="secondary" danger icon={<FaUndo />} onClick={_handleReinitView}>
-                            {t('explorer.reinit-view')}
-                        </KitButton>
-                        <KitButton type="primary" icon={<FaSave />} onClick={_handleSaveView}>
-                            {t('explorer.save-view')}
-                        </KitButton>
-                    </FooterStyledDiv>
+                    <ViewActionsButtons />
                 </>
             )}
             {page === 'configure-display' && <ConfigureDisplay libraryId={library} />}
             {page === 'sort-items' && <SortItems libraryId={library} />}
             {page === 'filter-items' && <FilterItems libraryId={library} />}
+            {page === 'my-views' && <SavedViews />}
         </ContentWrapperStyledDiv>
     );
 };

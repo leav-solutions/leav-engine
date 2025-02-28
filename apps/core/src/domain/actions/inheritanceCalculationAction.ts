@@ -62,13 +62,14 @@ export default function ({
             if (attrProps.type === AttributeTypes.SIMPLE_LINK || attrProps.type === AttributeTypes.ADVANCED_LINK) {
                 inheritedValues = result.map(resultValue => ({
                     payload: {id: String(resultValue.payload), library: resultValue.library},
+                    raw_payload: {id: String(resultValue.raw_payload), library: resultValue.library},
                     isInherited: true
                 }));
             } else {
                 inheritedValues = result.map(v => ({
                     payload: v.payload,
-                    isInherited: true,
-                    raw_payload: v.raw_payload
+                    raw_payload: v.raw_payload,
+                    isInherited: true
                 }));
             }
 

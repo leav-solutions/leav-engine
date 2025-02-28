@@ -32,7 +32,7 @@ module.exports = {
         '^.+\\.svg$': '<rootDir>/src/_tests/svgTransform.js',
         '^.+\\.js$': ['babel-jest', {rootMode: 'upward'}]
     },
-    transformIgnorePatterns: ['node_modules/(?!(@uidotdev/usehooks)/)'],
+    transformIgnorePatterns: ['node_modules/(?!(antd|@babel/runtime|@uidotdev/usehooks)/)'],
     testRegex: '.test.(ts|tsx)$',
     moduleNameMapper: {
         ...commonModuleNameMapper,

@@ -5,13 +5,17 @@ import {Override} from '@leav/utils';
 import {
     AttributeFormat,
     AttributePropertiesFragment,
+    AttributeType,
     PropertyValueFragment,
     RecordFilterCondition,
     RecordFilterInput,
-    RecordIdentityFragment
+    RecordIdentityFragment,
+    ViewDetailsFilterFragment
 } from '_ui/_gqlTypes';
 import {ReactElement} from 'react';
 import {IViewSettingsState} from './manage-view-settings';
+import {ThroughConditionFilter} from '_ui/types/search';
+import {IView} from '_ui/types';
 
 export interface IExplorerData {
     totalCount: number;
@@ -39,6 +43,7 @@ export interface IItemAction {
     callback: (item: IItemData) => void;
     icon: ReactElement;
     label: string;
+    iconOnly?: boolean;
     isDanger?: boolean;
     disabled?: boolean;
 }
@@ -56,36 +61,67 @@ export interface IMassActions {
     label: string;
 }
 
-export type ActionHook<T = {}> = {isEnabled: boolean} & T;
+export type FeatureHook<T = {}> = {isEnabled: boolean} & T;
 
-export interface IExplorerFilter {
-    id: string;
-    attribute: {
-        format: AttributeFormat;
-        label: string;
+interface IExplorerFilterBaseAttribute {
+    type: AttributeType;
+    label: string;
+}
+
+interface IExplorerFilterStandardAttribute extends IExplorerFilterBaseAttribute {
+    format: AttributeFormat;
+}
+
+interface IExplorerFilterLinkAttribute extends IExplorerFilterBaseAttribute {
+    linkedLibrary?: {
+        id: string;
     };
+}
+
+interface IExplorerBaseFilter {
+    id: string;
     field: string;
-    condition: RecordFilterCondition | null;
     value: string | null;
 }
 
-export interface IFilterChildrenDropDownProps {
-    filter: IExplorerFilter;
-    onFilterChange: (filterData: IExplorerFilter) => void;
+export interface IExplorerFilterStandard extends IExplorerBaseFilter {
+    attribute: IExplorerFilterStandardAttribute;
+    condition: RecordFilterCondition | null;
 }
 
+export interface IExplorerFilterLink extends IExplorerBaseFilter {
+    attribute: IExplorerFilterLinkAttribute;
+    condition: RecordFilterCondition | null;
+}
+
+export interface IExplorerFilterThrough extends IExplorerBaseFilter {
+    attribute: IExplorerFilterLinkAttribute;
+    condition: ThroughConditionFilter.THROUGH | null;
+    subCondition: RecordFilterCondition | null;
+    subField: string | null;
+}
+
+export type ExplorerFilter = IExplorerFilterStandard | IExplorerFilterLink | IExplorerFilterThrough;
+
+export const isExplorerFilterStandard = (filter: ExplorerFilter): filter is IExplorerFilterStandard =>
+    [AttributeType.simple, AttributeType.advanced].includes(filter.attribute.type);
+
+export const isExplorerFilterLink = (filter: ExplorerFilter): filter is IExplorerFilterLink =>
+    [AttributeType.simple_link, AttributeType.advanced_link].includes(filter.attribute.type) &&
+    filter.condition !== ThroughConditionFilter.THROUGH;
+
+export const isExplorerFilterThrough = (filter: ExplorerFilter): filter is IExplorerFilterThrough =>
+    [AttributeType.simple_link, AttributeType.advanced_link].includes(filter.attribute.type) &&
+    filter.condition === ThroughConditionFilter.THROUGH;
+
 export interface IFilterDropDownProps {
-    filter: IExplorerFilter;
+    filter: ExplorerFilter;
 }
 
 export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,
     {
-        filters?: Array<{
-            field: string;
-            condition: RecordFilterCondition;
-            value: string | null;
-        }>;
+        filters?: ExplorerFilter[];
     }
 >;
 
@@ -107,4 +143,31 @@ export interface IEntrypointLink {
     linkAttributeId: string;
 }
 
+export type ValidFieldFilter = Override<
+    ViewDetailsFilterFragment,
+    {
+        field: NonNullable<ViewDetailsFilterFragment['field']>;
+        condition: NonNullable<ViewDetailsFilterFragment['condition']>;
+    }
+>;
+
+export type ValidFieldFilterThrough = Override<
+    ValidFieldFilter,
+    {
+        condition: ThroughConditionFilter.THROUGH;
+    }
+> & {
+    subField: NonNullable<ViewDetailsFilterFragment['field']>;
+    subCondition?: ViewDetailsFilterFragment['condition'];
+};
+
+export type validFilter = ValidFieldFilter | ValidFieldFilterThrough;
+
 export type Entrypoint = IEntrypointTree | IEntrypointLibrary | IEntrypointLink;
+
+export interface IUserView extends Pick<IView, 'shared' | 'display' | 'sort' | 'attributes'> {
+    label: Record<string, string>;
+    id: IView['id'] | null;
+    filters: validFilter[];
+    ownerId: string | null;
+}

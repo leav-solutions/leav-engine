@@ -83,7 +83,7 @@ describe('StandardField', () => {
         jest.clearAllMocks();
     });
 
-    describe('Click outside behavior', () => {
+    describe('Click outside the input behavior', () => {
         test('Should call useEditRecord dispatch on click on input', async () => {
             mockEditRecordInitialState.mockReturnValue(initialState);
 
@@ -98,17 +98,15 @@ describe('StandardField', () => {
 
             expect(mockEditRecordDispatch).toHaveBeenCalledWith({
                 type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                value: expect.objectContaining({
-                    attribute: mockFormElementInput.attribute,
-                    editingValue: null,
-                    value: null
-                })
+                attribute: mockFormElementInput.attribute,
+                values: mockFormElementInput.values
             });
         });
 
-        test('Should call useEditRecord dispatch with null value on click outside focused input', async () => {
+        test('Should call useEditRecord dispatch without activeValue on click outside focused input', async () => {
             mockEditRecordInitialState.mockReturnValue({
                 ...initialState,
+                activeAttribute: {attribute: mockFormElementInput.attribute},
                 activeValue: {
                     attribute: mockFormElementInput.attribute,
                     editingValue: null,
@@ -119,7 +117,6 @@ describe('StandardField', () => {
             render(
                 <AntForm>
                     <StandardField element={mockFormElementInput} {...baseProps} />
-                    <button>Outside</button>
                 </AntForm>
             );
 
@@ -127,7 +124,7 @@ describe('StandardField', () => {
 
             expect(mockEditRecordDispatch).toHaveBeenCalledWith({
                 type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                value: null
+                values: mockFormElementInput.values
             });
         });
 
@@ -168,7 +165,7 @@ describe('StandardField', () => {
         });
     });
 
-    describe('Mono', () => {
+    describe('Mono value attribute', () => {
         const initialValues = {
             [mockFormElementInput.attribute.id]: (
                 mockFormElementInput.values[0] as RecordFormElementsValueStandardValue
@@ -228,6 +225,8 @@ describe('StandardField', () => {
         });
 
         test('Should save the value on blur with change', async () => {
+            mockEditRecordInitialState.mockReturnValue(initialState);
+
             render(
                 <AntForm initialValues={initialValues}>
                     <StandardField
@@ -240,11 +239,12 @@ describe('StandardField', () => {
                 </AntForm>
             );
 
-            const textInput = screen.getByRole('textbox');
+            let textInput = screen.getByRole('textbox');
             await userEvent.click(textInput);
 
             const newValue = 'New Value';
-            await userEvent.clear(textInput);
+            const clearIcon = screen.getByLabelText('clear');
+            await userEvent.click(clearIcon);
             await userEvent.type(textInput, newValue);
             await userEvent.tab();
 
@@ -261,11 +261,56 @@ describe('StandardField', () => {
             );
             expect(mockHandleDelete).not.toHaveBeenCalled();
             expect(mockHandleMultipleValues).not.toHaveBeenCalled();
+
+            textInput = screen.getByRole('textbox');
             expect(textInput).toHaveValue(newFormatedValue);
+        });
+
+        describe('Character limit', () => {
+            test('Should limit the number of characters', async () => {
+                render(
+                    <AntForm>
+                        <StandardField
+                            element={{
+                                ...mockFormElementInput,
+                                attribute: {...mockFormElementInput.attribute, character_limit: 5}
+                            }}
+                            {...baseProps}
+                        />
+                    </AntForm>
+                );
+
+                const textInput = screen.getByRole('textbox');
+                await userEvent.type(textInput, '1234567890');
+
+                expect(textInput).toHaveValue('12345');
+            });
+
+            test('Should update the character count when the user types in the input', async () => {
+                render(
+                    <AntForm>
+                        <StandardField
+                            element={{
+                                ...mockFormElementInput,
+                                attribute: {...mockFormElementInput.attribute, character_limit: 5},
+                                values: [{...mockFormElementInput.values[0], payload: ''}]
+                            }}
+                            {...baseProps}
+                        />
+                    </AntForm>
+                );
+
+                expect(screen.getByText('0 / 5')).toBeVisible();
+
+                const textInput = screen.getByRole('textbox');
+                await userEvent.type(textInput, '1234');
+
+                expect(screen.getByText('4 / 5')).toBeVisible();
+            });
         });
     });
 
-    describe('multiple', () => {
+    describe('Multiple values attribute', () => {
         const initialValues = {
             [mockFormElementInput.attribute.id]: [
                 (mockFormElementInput.values[0] as RecordFormElementsValueStandardValue).raw_payload,

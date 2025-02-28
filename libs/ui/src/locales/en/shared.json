@@ -3,6 +3,7 @@
         "submit": "Submit",
         "cancel": "Cancel",
         "close": "Close",
+        "save": "Save",
         "id": "Identifier",
         "search": "Search",
         "info": "Information",
@@ -30,7 +31,8 @@
         "create": "Create",
         "ok": "Ok",
         "max_length": "Max length",
-        "confirm": "Confirm"
+        "confirm": "Confirm",
+        "loading": "Loading"
     },
     "errors": {
         "default_language_required": "The default language is required",
@@ -251,7 +253,7 @@
         "not-classified-in": "Not classified in",
         "equal": "Is Equal",
         "not-equal": "Isn't Equal",
-        "through": "Through",
+        "through": "Whose attribute",
         "begin-with": "Begin With",
         "end-with": "End With",
         "is-empty": "Is Empty",
@@ -406,6 +408,7 @@
         "delete_value": "Delete value",
         "delete_value_confirm": "Do you really want to delete this value?",
         "delete_link_confirm": "Do you really want to delete this link?",
+        "delete_links_confirm": "Do you really want to delete these links?",
         "whoAmI": "Information",
         "no_value": "No value",
         "value_details": "Value details",
@@ -498,7 +501,20 @@
         "open_preview_modal": "Open preview modal",
         "informations": "Informations",
         "chat": "Chat",
-        "history": "History"
+        "history": "History",
+        "entity_overview": "{{entity}} overview",
+        "attribute": "Attribute",
+        "attribute_format": "Attribute format",
+        "descriptive": "Descriptive",
+        "values_version": "Values version",
+        "no_value": "No value",
+        "calculated_value": "Calculated value",
+        "global": "Global",
+        "error": {
+            "title": "Data loading error",
+            "description": "A technical error has occurred, please reload the page. If the error persists, please contact Aristid Support.",
+            "refresh": "Refresh"
+        }
     },
     "view": {
         "views": "Views",
@@ -624,12 +640,13 @@
         "unselect-all": "Unselect All"
     },
     "explorer": {
+        "name": "Name",
         "create-one": "Create",
         "actions": "Actions",
         "more-actions": "Show more",
         "deactivate-item": "Deactivate",
         "delete-item": "Delete",
-        "edit-item": "Edit item",
+        "edit-item": "Edit",
         "settings": "Settings",
         "back": "Back",
         "router-menu": "View Configuration",
@@ -664,23 +681,36 @@
         "active-items-number_zero": "None",
         "invalid-value": "Invalid value",
         "type-a-value": "Type a value",
-        "save-view": "Save",
+        "save-view-as": "Save as...",
+        "share-view": "Share",
+        "unshare-view": "Unshare",
         "reinit-view": "Reset",
+        "view-name": "View name",
+        "default-view": "Default view",
+        "manage-views": "Manage views",
+        "modified": "Modified",
+        "my-views": "My views",
+        "shared-views": "Shared views",
+        "no-shared-views": "No shared views",
         "select-condition": "Select condition",
         "true": "True",
         "false": "False",
+        "filter-condition": "Condition",
+        "filter-link-attribute": "Link attribute",
         "massAction": {
             "itemsTotal_one": "{{count, number}} item",
             "itemsTotal_other": "{{count, number}} items",
             "selectedItems_one": "{{count, number}} selected",
             "selectedItems_other": "{{count, number}} selected",
             "deactivate": "Deactivate",
+            "add-link": "Add",
             "toggle_selection": {
                 "select_page_one": "Select visible item ({{count, number}})",
                 "select_page_other": "Select visible items ({{count, number}})",
                 "select_all": "Select all items ({{count, number}})",
                 "deselect_all": "Deselect all items"
             }
-        }
+        },
+        "add-existing-item": "Add existing item"
     }
 }

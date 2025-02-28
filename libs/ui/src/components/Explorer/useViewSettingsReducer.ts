@@ -2,44 +2,37 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    ExplorerLinkAttributeQuery,
-    LinkAttributeDetailsFragment,
     useExplorerAttributesQuery,
     useExplorerLinkAttributeQuery,
     useGetViewsListQuery,
-    ViewDetailsFilterFragment
+    ViewSizes
 } from '_ui/_gqlTypes';
-import {localizedTranslation, Override} from '@leav/utils';
-import {useLang} from '_ui/hooks';
 import {useEffect, useMemo, useReducer, useState} from 'react';
-import {DefaultViewSettings, Entrypoint, IEntrypointLink, IExplorerFilter} from './_types';
-import {v4 as uuid} from 'uuid';
-import {IViewSettingsState, viewSettingsInitialState, viewSettingsReducer} from './manage-view-settings';
+import {DefaultViewSettings, Entrypoint, IEntrypointLink} from './_types';
+import {
+    IViewSettingsState,
+    useEditSettings,
+    viewSettingsInitialState,
+    viewSettingsReducer
+} from './manage-view-settings';
 import {mapViewTypeFromLegacyToExplorer} from './_constants';
+import {
+    _isLinkAttributeDetails,
+    _isValidFieldFilter,
+    _isValidFieldFilterThrough,
+    useTransformFilters
+} from './manage-view-settings/_shared/useTransformFilters';
 
-type ValidFieldFilter = Override<
-    ViewDetailsFilterFragment,
-    {
-        field: NonNullable<ViewDetailsFilterFragment['field']>;
-        condition: NonNullable<ViewDetailsFilterFragment['condition']>;
-    }
->;
-
-const _isValidFieldFilter = (filter: ViewDetailsFilterFragment): filter is ValidFieldFilter =>
-    !!filter.field && !!filter.condition;
-
-const _isLinkAttributeDetails = (
-    linkAttributeData: NonNullable<ExplorerLinkAttributeQuery['attributes']>['list'][number]
-): linkAttributeData is LinkAttributeDetailsFragment & {id: string; multiple_values: boolean} =>
-    'linked_library' in linkAttributeData;
+const _entrypointsAreEqual = (entrypoint1, entrypoint2) =>
+    Object.keys(entrypoint1).every(key => entrypoint1[key] === entrypoint2[key]);
 
 export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettings: DefaultViewSettings = {}) => {
-    const {lang} = useLang();
     const [loading, setLoading] = useState(true);
-    const [libraryId, setLibraryId] = useState<null | string>(
-        entrypoint.type === 'library' ? entrypoint.libraryId : null
-    );
+    const [libraryId, setLibraryId] = useState(entrypoint.type === 'library' ? entrypoint.libraryId : null);
     const [view, dispatch] = useReducer(viewSettingsReducer, viewSettingsInitialState);
+    const {closeSettingsPanel} = useEditSettings();
+    const entrypointsAreEqual = _entrypointsAreEqual(entrypoint, view.entrypoint);
+    const {toExplorerFilters, toValidFilters} = useTransformFilters();
 
     useExplorerLinkAttributeQuery({
         skip: entrypoint.type !== 'link',
@@ -60,27 +53,22 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
         loading: viewsLoading,
         error: viewError
     } = useGetViewsListQuery({
-        skip: libraryId === null,
+        skip: entrypointsAreEqual || libraryId === null,
+        fetchPolicy: 'network-only',
         variables: {
             libraryId: libraryId as string
         }
     });
-
     // Take the last view from the array
     const userView = viewData?.views?.list?.at(-1);
-    const userViewFilters: ValidFieldFilter[] =
-        userView?.filters
-            ?.filter(filter => _isValidFieldFilter(filter))
-            .map(filter => ({
-                field: filter.field,
-                value: filter.value ?? null,
-                condition: filter.condition
-            })) ?? [];
+
+    const userViewFilters = toValidFilters(userView?.filters ?? []);
+    const preparedDefaultFilters = toValidFilters(defaultViewSettings.filters ?? []);
 
     const attributesToHydrate = [
         ...new Set(
             [
-                ...(defaultViewSettings.filters ?? []),
+                ...(preparedDefaultFilters ?? []),
                 ...(defaultViewSettings.sort ?? []),
                 ...userViewFilters,
                 ...(userView?.sort ?? [])
@@ -109,15 +97,38 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
     );
 
     useEffect(() => {
+        if (!entrypointsAreEqual) {
+            setLoading(true);
+            setLibraryId(entrypoint.type === 'library' ? entrypoint.libraryId : null);
+            closeSettingsPanel();
+        }
+    }, [entrypointsAreEqual]);
+
+    useEffect(() => {
         if (libraryId !== null && !viewsLoading && !attributesLoading) {
+            const savedViews = (viewData?.views.list ?? []).map(
+                ({id, label, shared, display, filters, sort, attributes, created_by}) => ({
+                    id,
+                    ownerId: created_by.id,
+                    label,
+                    shared,
+                    display: {type: display.type, size: display.size || ViewSizes.MEDIUM},
+                    filters: toValidFilters(filters ?? []),
+                    sort: sort ?? [],
+                    attributes: attributes?.map(attribute => attribute.id) ?? []
+                })
+            );
+            const allFilters = [...preparedDefaultFilters, ...userViewFilters];
             const hydratedSettings: IViewSettingsState = {
                 ...viewSettingsInitialState,
                 entrypoint,
                 libraryId,
-                viewId: userView?.id,
+                viewId: userView?.id ?? null,
+                viewLabels: userView?.label ?? {},
                 viewType: userView?.display
                     ? mapViewTypeFromLegacyToExplorer[userView.display.type]
                     : viewSettingsInitialState.viewType,
+                savedViews,
                 ...defaultViewSettings,
                 attributesIds: [
                     ...(userView?.attributes ?? []).map(attr => attr.id),
@@ -127,31 +138,7 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                     field: s.field,
                     order: s.order
                 })),
-                filters: [...(defaultViewSettings?.filters ?? []), ...userViewFilters].reduce<IExplorerFilter[]>(
-                    (acc, filter) => {
-                        if (!attributesDataById[filter.field]) {
-                            console.warn(
-                                `Attribute ${filter.field} from defaultViewSettings or user view not found in database.`
-                            );
-                            return acc;
-                        }
-
-                        return [
-                            ...acc,
-                            {
-                                ...filter,
-                                value: filter.value ?? null,
-                                id: uuid(),
-                                attribute: {
-                                    label: localizedTranslation(attributesDataById[filter.field].label, lang),
-                                    format: attributesDataById[filter.field].format,
-                                    multi_values: attributesDataById[filter.field].multi_values
-                                }
-                            }
-                        ];
-                    },
-                    []
-                )
+                filters: toExplorerFilters({filters: allFilters, attributesDataById})
             };
             dispatch({
                 type: 'RESET',
@@ -163,6 +150,12 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                         sort: hydratedSettings.sort,
                         pageSize: hydratedSettings.pageSize,
                         filters: hydratedSettings.filters
+                    },
+                    defaultViewSettings: {
+                        viewType: defaultViewSettings.viewType ?? 'table',
+                        attributesIds: defaultViewSettings.attributesIds ?? [],
+                        sort: defaultViewSettings.sort ?? [],
+                        filters: defaultViewSettings.filters ?? []
                     }
                 }
             });

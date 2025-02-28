@@ -65,7 +65,6 @@ function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttr
                         format: isStandardType ? values.format : null,
                         readonly: values.readonly,
                         unique: values.type === AttributeType.simple ? values.unique : false,
-                        maxLength: values.maxLength ?? null,
                         multiple_values: isTypeNotSimple ? values.multiple_values : false,
                         versions_conf: isTypeNotSimple
                             ? {
@@ -85,9 +84,9 @@ function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttr
             // Display errors in form
             form.setFields(
                 Object.keys(e.graphQLErrors?.[0]?.extensions?.fields ?? {}).map(fieldName => ({
-                        name: fieldName,
-                        errors: [e.graphQLErrors[0].extensions.fields[fieldName]]
-                    }))
+                    name: fieldName,
+                    errors: [e.graphQLErrors[0].extensions.fields[fieldName]]
+                }))
             );
 
             throw e;

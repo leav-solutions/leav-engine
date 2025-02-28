@@ -9,7 +9,7 @@ import {AntForm} from 'aristid-ds';
 import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
 const pinkColorHex = '#ff00ff';
-const pinkColorRgb = 'rgb(255, 0, 255)';
+const pinkColorRgb = 'rgb(255,0,255)';
 const pinkColorHsb = 'hsb(300, 100%, 100%)';
 const blueColorHex = '#0000ff';
 
@@ -45,7 +45,6 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     }
 };
 
-const notRequired = false;
 const notReadonly = false;
 
 describe('DSColorPickerWrapper', () => {
@@ -74,7 +73,6 @@ describe('DSColorPickerWrapper', () => {
                             value={pinkColorHex}
                             presentationValue={presentationValue}
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -99,7 +97,6 @@ describe('DSColorPickerWrapper', () => {
                         <DSColorPickerWrapper
                             value={value}
                             attribute={mockFormAttribute}
-                            required={notRequired}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -123,7 +120,6 @@ describe('DSColorPickerWrapper', () => {
                         value={blueColorHex}
                         presentationValue={pinkColorHex}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -149,7 +145,6 @@ describe('DSColorPickerWrapper', () => {
                         value={blueColorHex}
                         presentationValue={pinkColorHex}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -176,7 +171,6 @@ describe('DSColorPickerWrapper', () => {
                     <DSColorPickerWrapper
                         value={pinkColorHex}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -208,7 +202,6 @@ describe('DSColorPickerWrapper', () => {
                         value={inheritedFlagsWithInheritedValue.inheritedValue.raw_payload}
                         presentationValue={inheritedFlagsWithInheritedValue.inheritedValue.raw_payload}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithInheritedValue}
@@ -238,7 +231,6 @@ describe('DSColorPickerWrapper', () => {
                         value={calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload}
                         presentationValue={calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
@@ -267,7 +259,6 @@ describe('DSColorPickerWrapper', () => {
                     <DSColorPickerWrapper
                         value={blueColorHex}
                         attribute={mockFormAttribute}
-                        required={notRequired}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}

@@ -107,7 +107,7 @@ const StandardField: FunctionComponent<
 
     useEffect(() => {
         const _handleClickOutside = (event: MouseEvent | FocusEvent) => {
-            if (state.activeValue?.attribute?.id !== attribute.id) {
+            if (state.activeAttribute?.attribute?.id !== attribute.id) {
                 return;
             }
 
@@ -126,7 +126,7 @@ const StandardField: FunctionComponent<
             if (!allowedElementsToKeepValueDetailsDisplayed) {
                 dispatch({
                     type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                    value: null
+                    attribute: null
                 });
             }
         };
@@ -136,7 +136,7 @@ const StandardField: FunctionComponent<
         return () => {
             document.removeEventListener('mousedown', _handleClickOutside);
         };
-    }, [state.activeValue, attribute.id, dispatch]);
+    }, [state.activeAttribute, attribute.id, dispatch]);
 
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
 
@@ -147,6 +147,15 @@ const StandardField: FunctionComponent<
     const backendWithoutCalculatedOrInheritedValues = backendValues
         .filter(backendValue => !backendValue.isCalculated && !backendValue.isInherited)
         .sort((a, b) => Number(a.id_value) - Number(b.id_value));
+
+    useEffect(() => {
+        if (state.activeAttribute?.attribute.id === attribute.id) {
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                values: backendValues
+            });
+        }
+    }, [backendValues]);
 
     const {presentationValues} = useGetPresentationValues({
         //TODO fix type
@@ -159,24 +168,21 @@ const StandardField: FunctionComponent<
     const _handleSubmit =
         (idValue?: string, fieldName?: number) =>
         async (valueToSave: AnyPrimitive): Promise<ISubmitMultipleResult> => {
-            const submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
-
             const shouldSpecifyFieldName = attribute.multiple_values && fieldName !== undefined;
             const name = shouldSpecifyFieldName ? [attribute.id, fieldName] : attribute.id;
+            if (antdForm) {
+                antdForm.setFields([
+                    {
+                        name,
+                        errors: null
+                    }
+                ]);
+            }
 
-            if (submitRes.status === APICallStatus.SUCCESS) {
-                if (antdForm) {
-                    antdForm.setFields([
-                        {
-                            name,
-                            errors: null
-                        }
-                    ]);
-                }
-
-                if (!attribute.multiple_values) {
-                    setBackendValues(submitRes.values as unknown as RecordFormElementsValueStandardValue[]);
-                } else {
+            let submitRes;
+            if (attribute.multiple_values) {
+                submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
+                if (submitRes.status === APICallStatus.SUCCESS) {
                     setBackendValues(previousBackendValues => {
                         const newBackendValues = [...previousBackendValues, ...submitRes.values].reduce(
                             (acc, backendValue) => {
@@ -200,9 +206,37 @@ const StandardField: FunctionComponent<
 
                         return newBackendValues;
                     });
-                }
 
-                return submitRes;
+                    return submitRes;
+                }
+            } else {
+                if (valueToSave) {
+                    submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
+                    if (submitRes.status === APICallStatus.SUCCESS) {
+                        setBackendValues((submitRes.values as unknown as RecordFormElementsValueStandardValue[]) ?? []);
+
+                        return submitRes;
+                    }
+                } else {
+                    if (backendWithoutCalculatedOrInheritedValues.length > 0) {
+                        submitRes = await onValueDelete({id_value: idValue, payload: null}, attribute.id);
+
+                        if (submitRes.status === APICallStatus.SUCCESS) {
+                            setBackendValues(previousBackendValues =>
+                                previousBackendValues.filter(
+                                    value =>
+                                        (value.isCalculated !== null && value.isCalculated !== undefined) ||
+                                        (value.isInherited !== null && value.isInherited !== undefined)
+                                )
+                            );
+                            return submitRes;
+                        }
+                    }
+                }
+            }
+
+            if (!submitRes) {
+                return;
             }
 
             if (!submitRes.error && submitRes.errors) {
@@ -264,34 +298,37 @@ const StandardField: FunctionComponent<
     const setActiveValue = () => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            value: {
-                value: null, // Value is needed for Tree or Metadata (for now it seems that we don't need it)
-                editingValue: null, // Set to null because it is only use to compute value.length but it will no longer be used (TO REMOVE IN XSTREAM-1094)
-                attribute
-            }
+            attribute,
+            values: backendValues
         });
     };
 
-    const isMultipleValues = element.attribute.multiple_values;
-    const hasValue = isMultipleValues && backendValues.length > 0;
-    const canAddAnotherValue =
-        !readonly &&
-        isMultipleValues &&
-        attribute.format !== AttributeFormat.boolean &&
-        attribute.format !== AttributeFormat.encrypted;
-    const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1;
-
-    const label = localizedTranslation(element.settings.label, availableLang);
-
     let isFieldInError = false;
+
     if (antdForm) {
         const hasErrorsInFormList = backendValues.some((_, index) => {
             const errors = antdForm.getFieldError([attribute.id, index]);
             return errors.length > 0;
         });
 
-        isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
+        const multipleFieldRequiredInError =
+            attribute.multiple_values && attribute.required && antdForm.getFieldError([attribute.id, 0])?.length > 0;
+
+        isFieldInError =
+            antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList || multipleFieldRequiredInError;
     }
+
+    const isMultipleValues = element.attribute.multiple_values;
+    const hasValue = isMultipleValues && backendValues.length > 0;
+    const canAddAnotherValue =
+        !readonly &&
+        isMultipleValues &&
+        !isFieldInError &&
+        attribute.format !== AttributeFormat.boolean &&
+        attribute.format !== AttributeFormat.encrypted;
+    const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1 && !attribute.required;
+
+    const label = localizedTranslation(element.settings.label, availableLang);
 
     const isReadOnly = attribute.readonly || readonly;
 
@@ -316,10 +353,9 @@ const StandardField: FunctionComponent<
             >
                 {!attribute.multiple_values && (
                     <StandardFieldValue
-                        presentationValue={presentationValues[0]}
+                        presentationValue={presentationValues[0] ?? ''}
                         handleSubmit={_handleSubmit(backendWithoutCalculatedOrInheritedValues[0]?.id_value)}
                         attribute={attribute}
-                        required={attribute.required}
                         readonly={isReadOnly}
                         label={label}
                         calculatedFlags={calculatedFlags}
@@ -350,7 +386,6 @@ const StandardField: FunctionComponent<
                                                         )}
                                                         attribute={attribute}
                                                         label={label}
-                                                        required={attribute.required}
                                                         readonly={isReadOnly}
                                                         calculatedFlags={calculatedFlags}
                                                         inheritedFlags={inheritedFlags}

@@ -68,6 +68,7 @@ const depsBase: ToAny<IRecordDomainDeps> = {
     'core.domain.eventsManager': jest.fn(),
     'core.infra.cache.cacheService': jest.fn(),
     'core.utils': jest.fn(),
+    'core.infra.form': jest.fn(),
     translator: {}
 };
 
@@ -238,8 +239,7 @@ describe('RecordDomain', () => {
                             attributeId: 'some_attribute',
                             values: [
                                 {
-                                    id_value: 'fake_value1',
-                                    value: 'some_value'
+                                    payload: 'some_value'
                                 }
                             ]
                         })
@@ -249,8 +249,7 @@ describe('RecordDomain', () => {
                             attributeId: 'other_attribute',
                             values: [
                                 {
-                                    id_value: 'fake_value2',
-                                    value: 'some other value'
+                                    payload: 'some other value'
                                 }
                             ]
                         })
@@ -275,12 +274,10 @@ describe('RecordDomain', () => {
                 values: [
                     {
                         attribute: 'some_attribute',
-                        id_value: 'fake_value1',
                         payload: 'some_value'
                     },
                     {
                         attribute: 'other_attribute',
-                        id_value: 'fake_value2',
                         payload: 'some other value'
                     }
                 ],
@@ -295,17 +292,15 @@ describe('RecordDomain', () => {
             expect(res.valuesErrors).toHaveLength(2);
             expect(res.valuesErrors).toEqual([
                 {
-                    attributeId: 'some_attribute',
+                    attribute: 'some_attribute',
                     type: ErrorTypes.VALIDATION_ERROR,
                     message: 'mock error',
-                    id_value: 'fake_value1',
                     input: 'some_value'
                 },
                 {
-                    attributeId: 'other_attribute',
+                    attribute: 'other_attribute',
                     type: ErrorTypes.VALIDATION_ERROR,
                     message: 'mock error',
-                    id_value: 'fake_value2',
                     input: 'some other value'
                 }
             ]);

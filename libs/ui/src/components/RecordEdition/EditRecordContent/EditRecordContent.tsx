@@ -4,12 +4,12 @@
 import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes, simpleStringHash} from '@leav/utils';
 import {FunctionComponent, useEffect, useMemo} from 'react';
 import {ErrorDisplay} from '_ui/components';
-import useGetRecordForm from '_ui/hooks/useGetRecordForm';
+import useGetRecordForm, {IRecordForm} from '_ui/hooks/useGetRecordForm';
 import {useGetRecordUpdatesSubscription} from '_ui/hooks/useGetRecordUpdatesSubscription';
 import useRecordsConsultationHistory from '_ui/hooks/useRecordsConsultationHistory';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
-import {FormElementTypes} from '_ui/_gqlTypes';
+import {AttributeDetailsFragment, FormElementTypes, RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import extractFormElements from './helpers/extractFormElements';
@@ -26,7 +26,7 @@ interface IEditRecordContentProps {
     antdForm: FormInstance;
     record: IRecordIdentityWhoAmI | null;
     library: string;
-    onRecordSubmit: () => void;
+    onRecordSubmit: (attributes: RecordFormAttributeStandardAttributeFragment[]) => void;
     onValueSubmit: SubmitValueFunc;
     onValueDelete: DeleteValueFunc;
     onDeleteMultipleValues: DeleteMultipleValuesFunc;
@@ -80,7 +80,8 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         recordForm
             ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
             : [],
-        [record?.id]
+        [record?.id],
+        true
     );
 
     // Generate a hash of recordForm to detect changes
@@ -155,7 +156,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
             id={EDIT_OR_CREATE_RECORD_FORM_ID}
             form={antdForm}
             initialValues={antdFormInitialValues}
-            onFinish={onRecordSubmit}
+            onFinish={() => onRecordSubmit(recordForm.elements.map(element => element.attribute))}
         >
             <RecordEditionContext.Provider
                 value={{

@@ -233,17 +233,9 @@ export default function ({
                         values: [ValueBatchInput!]
                     }
 
-                    type CreateRecordValueSaveError {
-                        type: String!,
-                        attributeId: String!,
-                        id_value: String,
-                        input: String,
-                        message: String
-                    }
-
                     type CreateRecordResult {
                         record: Record,
-                        valuesErrors: [CreateRecordValueSaveError!]
+                        valuesErrors: [ValueBatchError!]
                     }
 
                     extend type Query {
@@ -340,7 +332,12 @@ export default function ({
                                   }))
                                 : null;
 
-                            return recordDomain.createRecord({library, values: valuesToSave, ctx});
+                            return recordDomain.createRecord({
+                                library,
+                                values: valuesToSave,
+                                verifyRequiredAttributes: true,
+                                ctx
+                            });
                         },
                         async deleteRecord(
                             parent,

@@ -38,6 +38,7 @@ import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permi
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 import {IAuthApp} from '../auth/authApp';
+import {IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
 
 export interface IApplicationApp {
     registerRoute(app: Express): void;
@@ -55,6 +56,7 @@ export interface IApplicationAppDeps {
     'core.domain.permission': IPermissionDomain;
     'core.domain.record': IRecordDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.globalSettings': IGlobalSettingsDomain;
     'core.utils.logger': winston.Winston;
     'core.utils': IUtils;
     config: any;
@@ -70,6 +72,7 @@ export default function ({
     'core.domain.permission': permissionDomain,
     'core.domain.record': recordDomain,
     'core.domain.eventsManager': eventsManagerDomain,
+    'core.domain.globalSettings': globalSettings,
     'core.utils.logger': logger,
     'core.utils': utils,
     config
@@ -86,6 +89,7 @@ export default function ({
 
         return !!files.length;
     };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -319,7 +323,8 @@ export default function ({
                     req.ctx = initQueryContext(req);
 
                     if (endpoint === 'login' && config.auth.oidc.enable) {
-                        return res.redirect(`/${APPS_URL_PREFIX}/portal/`);
+                        const {defaultApp} = await globalSettings.getSettings({userId: config.userId});
+                        return res.redirect(`/${APPS_URL_PREFIX}/${defaultApp}/`);
                     }
 
                     const application = {id: '', module: ''};
@@ -403,7 +408,7 @@ export default function ({
 
                     return next();
                 },
-                async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
+                async (req: IRequestWithContext) => {
                     try {
                         await applicationDomain.updateConsultationHistory({
                             applicationId: req.ctx.applicationId,
@@ -419,16 +424,19 @@ export default function ({
                     res: Response<unknown>,
                     next: NextFunction
                 ) => {
-                    if (err instanceof ApplicationError && err.appEndpoint !== 'portal') {
-                        res.redirect(`/${APPS_URL_PREFIX}/portal/?err=${err.type}&app=${err.appEndpoint}`);
+                    const {defaultApp} = await globalSettings.getSettings({userId: config.userId});
+
+                    if (err instanceof ApplicationError && err.appEndpoint !== defaultApp) {
+                        res.redirect(`/${APPS_URL_PREFIX}/${defaultApp}/?err=${err.type}&app=${err.appEndpoint}`);
                     } else {
                         return next(err);
                     }
                 }
             );
 
-            app.get('/', (req, res) => {
-                res.redirect(`/${APPS_URL_PREFIX}/portal/`);
+            app.get('/', async (req, res) => {
+                const {defaultApp} = await globalSettings.getSettings({userId: config.userId});
+                res.redirect(`/${APPS_URL_PREFIX}/${defaultApp}/`);
             });
         }
     };

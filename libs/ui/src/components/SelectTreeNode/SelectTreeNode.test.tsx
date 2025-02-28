@@ -109,7 +109,7 @@ describe('SelectTreeNode', () => {
         expect(await screen.findByText('label1')).toBeInTheDocument();
 
         // Expand node => fetch children
-        await userEvent.click(screen.getAllByRole('img', {name: 'plus-square'}).pop());
+        await userEvent.click(screen.getByRole('img', {name: 'Ouvrir'}));
         await waitFor(() => expect(screen.getByText('label2')).toBeInTheDocument());
     });
 });

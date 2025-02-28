@@ -59,6 +59,7 @@
         "PREVIEWS_SETTINGS_NOT_ALLOWED": "Cannot define previews settings on a library of behavior different than 'files'",
         "PROTECTED_ENDPOINT": "This endpoint is not allowed: {{endpoint}}",
         "READONLY_ATTRIBUTE": "Attribute {{attribute}} is readonly",
+        "REQUIRED_ATTRIBUTE": "Attribute {{attribute}} is required",
         "REQUIRED_ATTRIBUTE_FORMAT": "Attribute's format must be specified",
         "REQUIRED_ATTRIBUTE_LABEL": "Attribute's label for default language ({{lang}}) must be specified",
         "REQUIRED_ATTRIBUTE_LINKED_LIBRARY": "Attribute's linked library must be specified",
@@ -131,8 +132,8 @@
             "validateEmail": "Check if value is a string matching email format',",
             "validateURL": "Check if value is a string matching URL format",
             "validateRegex": "Check if value is a string matching given regex",
-            "excelCalculation": "Runs an Excel formula. You can insert attributes values, ex : {getValue(label)} will be replace by the value of attribute with identifier label. The input value of the action is available under {input()}. Do not start formula with a \"=\". Usable functions : input(), first(), last(), sum(), avg(), concat(separator), getValue(id_attribut). Ex : {getValue(linked_products).getValue(price).sum()",
-            "inheritanceCalculation": "Runs an heritage. Usable functions : first(), last(), dedup(), getValue(id_attribute). Ex : getValue(linked_products).getValue(picture).dedup()",
+            "excelCalculation": "Runs an Excel formula. You can insert attributes values, ex : {getValue(label)} will be replace by the value of attribute with identifier label. The input value of the action is available under {input()}. Do not start formula with a \"=\". Usable functions : input(), first(), last(), firstDate(), lastDate(), sum(), avg(), concat(separator), getValue(id_attribut). Ex : {getValue(linked_products).getValue(price).sum()",
+            "inheritanceCalculation": "Runs an heritage. Usable functions : first(), last(), firstDate(), lastDate(), dedup(), getValue(id_attribute). Ex : getValue(linked_products).getValue(picture).dedup()",
             "toUppercase": "Convert string to uppercase"
         }
     },

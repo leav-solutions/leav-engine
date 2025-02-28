@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {cloneElement, ComponentProps, FunctionComponent, memo, ReactNode} from 'react';
-import {KitButton, KitDropDown, KitPagination, KitTable, useKitTheme} from 'aristid-ds';
+import {cloneElement, ComponentProps, FunctionComponent, Key, memo, ReactNode} from 'react';
+import {KitButton, KitDropDown, KitPagination, KitTable} from 'aristid-ds';
 import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import {FaEllipsisH} from 'react-icons/fa';
 import {Override} from '@leav/utils';
@@ -13,8 +13,8 @@ import {IExplorerData, IItemAction, IItemData} from './_types';
 import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
-import {MASS_SELECTION_ALL} from '_ui/components/Explorer/_constants';
 import {useColumnWidth} from './useColumnWidth';
+import {RowSelectionType} from 'antd/es/table/interface';
 
 const USELESS = '';
 
@@ -26,6 +26,10 @@ const DataViewContainerDivStyled = styled.div`
     max-height: minmax(0, 1fr);
     overflow: hidden;
 
+    &.headless {
+        overflow-y: auto;
+    }
+
     .kit-table {
         padding-bottom: ${defaultPaginationHeight}px;
         position: relative;
@@ -33,7 +37,7 @@ const DataViewContainerDivStyled = styled.div`
 
     .pagination {
         flex: 0 0 auto;
-        justify-content: flex-end;
+        justify-content: center;
         display: flex;
         padding-top: calc(var(--general-spacing-xs) * 1px);
     }
@@ -54,13 +58,20 @@ const StyledTable = styled(KitTable)`
         .ant-table-cell {
             min-height: ${tableHeaderMinLineHeight}px;
             height: auto !important;
+            padding: 0 calc(var(--general-spacing-s) * 1px) 0 0;
         }
     }
+`;
+
+const ActionsHeaderStyledDiv = styled.div`
+    justify-self: right;
+    text-align: left;
 `;
 
 interface IDataViewProps {
     dataGroupedFilteredSorted: IItemData[];
     itemActions: IItemAction[];
+    iconsOnlyItemActions: boolean;
     attributesProperties: IExplorerData['attributes'];
     attributesToDisplay: string[];
     paginationProps?: {
@@ -72,10 +83,12 @@ interface IDataViewProps {
         setNewPageSize: (page: number, pageSize: number) => void;
     };
     selection: {
-        onSelectionChange: null | ((keys: string[]) => void);
+        onSelectionChange: null | ((keys: Key[]) => void);
         isMassSelectionAll: boolean;
-        selectedKeys: string[];
+        selectedKeys: Key[];
+        mode?: 'simple' | 'multiple';
     };
+    hideTableHeader: boolean;
 }
 
 // TODO: tests will fail if we don't check attributeToDisplay because we have a render with no attributes but data is present. We should check why there's this behavior
@@ -100,13 +113,14 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         attributesProperties,
         paginationProps,
         itemActions,
-        selection: {onSelectionChange, selectedKeys, isMassSelectionAll}
+        selection: {onSelectionChange, selectedKeys, isMassSelectionAll, mode},
+        iconsOnlyItemActions,
+        hideTableHeader = false
     }) => {
         const {t} = useSharedTranslation();
-        const {theme} = useKitTheme();
 
         const {containerRef, scrollHeight} = useTableScrollableHeight(!!paginationProps);
-        const {ref, getFieldColumnWidth, columnWidth} = useColumnWidth();
+        const {ref, getFieldColumnWidth, columnWidth, actionsColumnHeaderWidth} = useColumnWidth();
 
         const _getActionButtons = (
             actions: Array<Override<IItemAction, {callback: () => void}>>,
@@ -118,7 +132,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                 <StyledActionsList ref={columnRef}>
                     {isLessThanFourActions ? (
                         <>
-                            {actions.map(({label, icon, isDanger, callback, disabled}, actionIndex) => (
+                            {actions.map(({label, icon, isDanger, iconOnly, callback, disabled}, actionIndex) => (
                                 <KitButton
                                     key={actionIndex}
                                     title={label}
@@ -127,7 +141,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     danger={isDanger}
                                     disabled={disabled}
                                 >
-                                    {label}
+                                    {!iconsOnlyItemActions && !iconOnly && label}
                                 </KitButton>
                             ))}
                         </>
@@ -136,8 +150,8 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                             <KitButton
                                 type="tertiary"
                                 icon={actions[0].icon}
-                                onClick={actions[0].callback}
                                 title={actions[0].label}
+                                onClick={actions[0].callback}
                                 danger={actions[0].isDanger}
                                 disabled={actions[0].disabled}
                             />
@@ -176,7 +190,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
 
         const columns = attributesToDisplay
             .map<KitTableColumnType<IItemData>>(attributeName => ({
-                title: attributeName === 'whoAmI' ? '' : attributesProperties[attributeName].label,
+                title: attributeName === 'whoAmI' ? t('explorer.name') : attributesProperties[attributeName].label,
                 dataIndex: USELESS,
                 width: getFieldColumnWidth(attributesProperties[attributeName]),
                 shouldCellUpdate: (record, prevRecord) =>
@@ -198,8 +212,14 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                     ? []
                     : [
                           {
-                              title: t('explorer.actions'),
+                              title: (
+                                  <ActionsHeaderStyledDiv style={{width: `${actionsColumnHeaderWidth}px`}}>
+                                      {t('explorer.actions')}
+                                  </ActionsHeaderStyledDiv>
+                              ),
                               dataIndex: USELESS,
+                              align: 'right',
+                              className: 'actions',
                               shouldCellUpdate: () => false,
                               width: columnWidth,
                               render: (_, item, index) =>
@@ -218,13 +238,12 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
             onSelectionChange === null
                 ? undefined
                 : {
-                      type: 'checkbox',
+                      type: mode === 'simple' ? 'radio' : 'checkbox',
                       columnTitle: ' ', // blank string to hide select all checkbox from <KitTable />
                       selectedRowKeys: selectedKeys,
                       preserveSelectedRowKeys: true,
                       // TODO: review types from antd directly
-                      onChange: (selectedRowKeys: string[], _selectedRows: IItemData[], _info: {type: string}) =>
-                          onSelectionChange(selectedRowKeys),
+                      onChange: (selectedRowKeys: Key[]) => onSelectionChange(selectedRowKeys),
                       getCheckboxProps: isMassSelectionAll
                           ? () => ({
                                 disabled: true
@@ -234,15 +253,12 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
 
         // TODO: handle columns width based on attribute type/format
         return (
-            <DataViewContainerDivStyled ref={containerRef}>
+            <DataViewContainerDivStyled ref={containerRef} className={hideTableHeader ? 'headless' : ''}>
                 <StyledTable
-                    borderedRows
-                    cellsBackgroundColor={theme.utilities.light}
-                    backgroundColor={theme.colors.primary['50']}
-                    showHeader={dataGroupedFilteredSorted.length > 0}
+                    showHeader={dataGroupedFilteredSorted.length > 0 && !hideTableHeader}
                     columns={columns}
                     tableLayout="fixed"
-                    scroll={{y: scrollHeight, x: '100%'}}
+                    scroll={{y: hideTableHeader ? '100%' : scrollHeight, x: '100%'}}
                     dataSource={dataGroupedFilteredSorted}
                     pagination={false}
                     rowSelection={_rowSelection}

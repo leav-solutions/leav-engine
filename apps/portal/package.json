@@ -1,14 +1,14 @@
 {
   "name": "portal",
-  "version": "1.0.0-beta16",
+  "version": "1.0.0-beta17",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "5.2.6",
     "@apollo/client": "3.8.1",
     "@leav/ui": "workspace:libs/ui",
     "@leav/utils": "workspace:libs/utils",
-    "antd": "5.15.3",
-    "aristid-ds": "12.0.0-8a56c10",
+    "antd": "5.22.2",
+    "aristid-ds": "13.0.0-a482bfb",
     "cross-fetch": "3.1.5",
     "graphql-ws": "5.12.0",
     "i18next": "22.5.0",
@@ -38,7 +38,7 @@
     "ts-jest": "29.0.5",
     "ts-jest-mock-import-meta": "1.0.0",
     "typescript": "5.5.3",
-    "vite": "4.5.5",
+    "vite": "4.5.6",
     "vite-jest": "0.1.4",
     "vite-plugin-dynamic-base": "0.4.9"
   },

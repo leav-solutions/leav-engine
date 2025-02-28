@@ -14,7 +14,7 @@ import {
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useActiveLibrary} from 'hooks/useActiveLibrary';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery';
-import {FunctionComponent, useEffect} from 'react';
+import {FunctionComponent, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
@@ -24,7 +24,6 @@ import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_t
 import {useSearchParams} from 'react-router-dom';
 import {FaBeer} from 'react-icons/all';
 import styled from 'styled-components';
-import {Empty} from 'antd';
 
 interface ILibraryHomeProps {
     library?: string;
@@ -149,6 +148,10 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                     type: 'library',
                     libraryId: library
                 }}
+                showTitle
+                showSearch
+                enableConfigureView
+                showFiltersAndSorts
                 defaultActionsForItem={['edit', 'remove']}
                 defaultPrimaryActions={['create']}
                 defaultMassActions={['deactivate']}
@@ -173,20 +176,15 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                         callback: () => console.info('Clicked action 1')
                     }
                 ]}
-                emptyPlaceholder={
-                    <Empty
-                        image={Empty.PRESENTED_IMAGE_SIMPLE}
-                        imageStyle={{
-                            height: 60
-                        }}
-                        description={<span>{t('global.element_not_found')}.</span>}
-                    />
-                }
             />
         </ExplorerContainerDivStyled>
     ) : params.has(explorerLinkQueryParamName) ? (
         <ExplorerContainerDivStyled>
             <Explorer
+                showTitle
+                showSearch
+                enableConfigureView
+                showFiltersAndSorts
                 entrypoint={{
                     type: 'link',
                     parentLibraryId: 'sebastien_s_librairy',

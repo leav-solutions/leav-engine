@@ -34,7 +34,6 @@ export const mockRecordProperty: RecordProperty = {
 };
 
 export const mockRecordPropertyWithAttribute: IRecordPropertyWithAttribute = {
-    value: mockRecordProperty,
     attribute: {
         ...mockAttributeSimple,
         description: {

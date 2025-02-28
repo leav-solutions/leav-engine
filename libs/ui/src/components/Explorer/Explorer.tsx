@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, ReactNode} from 'react';
+import {ReactNode, forwardRef, useImperativeHandle} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
@@ -12,11 +12,13 @@ import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
 import {ExplorerTitle} from './ExplorerTitle';
 import {ExplorerToolbar} from './ExplorerToolbar';
-import {useRemoveAction} from './useRemoveAction';
-import {useEditAction} from './useEditAction';
-import {usePrimaryActionsButton} from './usePrimaryActions';
-import {useCreateAction} from './useCreateAction';
-import {useMassActions} from './useMassActions';
+import {useRemoveItemAction} from './actions-item/useRemoveItemAction';
+import {useEditItemAction} from './actions-item/useEditItemAction';
+import {usePrimaryActionsButton} from './actions-primary/usePrimaryActions';
+import {useCreatePrimaryAction} from './actions-primary/useCreatePrimaryAction';
+import {useLinkPrimaryAction} from './actions-primary/useLinkPrimaryAction';
+import {useMassActions} from './actions-mass/useMassActions';
+import {useDeactivateMassAction} from './actions-mass/useDeactivateMassAction';
 import {
     defaultPageSizeOptions,
     SidePanel,
@@ -27,8 +29,8 @@ import {
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
-import {useDeactivateMassAction} from './useDeactivateMassAction';
 import {MASS_SELECTION_ALL} from './_constants';
+import {useDeleteLinkValues} from './actions-mass/useDeleteLinkValues';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -37,10 +39,14 @@ const emptyObject = {};
 
 const ExplorerHeaderDivStyled = styled.div`
     display: flex;
+    align-items: flex-start;
+    padding: calc(var(--general-spacing-xs) * 1px);
+`;
+
+const ExplorerActionsDivStyled = styled.div`
+    display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding-bottom: calc(var(--general-spacing-xs) * 1px);
-    padding-right: calc(var(--general-spacing-xxs) * 1px);
+    padding: calc(var(--general-spacing-xs) * 1px);
 `;
 
 const ExplorerPageDivStyled = styled.div`
@@ -50,164 +56,251 @@ const ExplorerPageDivStyled = styled.div`
     overflow: hidden;
 `;
 
+const ExplorerEmptyDataStyled = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+`;
+
 interface IExplorerProps {
     entrypoint: Entrypoint;
     noPagination?: true;
     itemActions?: IItemAction[];
+    iconsOnlyItemActions?: boolean;
     primaryActions?: IPrimaryAction[];
     massActions?: IMassActions[];
     title?: string;
+    selectionMode?: 'multiple' | 'simple';
     emptyPlaceholder?: ReactNode;
     defaultActionsForItem?: Array<'edit' | 'remove'>;
     defaultPrimaryActions?: Array<'create'>;
     defaultMassActions?: Array<'deactivate'>;
     defaultViewSettings?: DefaultViewSettings;
+    showFiltersAndSorts?: boolean;
+    enableConfigureView?: boolean;
+    showTitle?: boolean;
+    showSearch?: boolean;
+    disableSelection?: boolean;
+    hideSelectAllAction?: boolean;
+    hidePrimaryActions?: boolean;
+    hideTableHeader?: boolean;
 }
 
-export const Explorer: FunctionComponent<IExplorerProps> = ({
-    entrypoint,
-    noPagination,
-    itemActions = [],
-    primaryActions = [],
-    massActions = [],
-    title,
-    emptyPlaceholder,
-    defaultActionsForItem = ['edit', 'remove'],
-    defaultPrimaryActions = ['create'],
-    defaultMassActions = ['deactivate'],
-    defaultViewSettings
-}) => {
-    const {t} = useSharedTranslation();
+export interface IExplorerRef {
+    createAction: IPrimaryAction | null;
+    linkAction: IPrimaryAction | null;
+    totalCount: number;
+}
 
-    const {panelElement} = useEditSettings();
+export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
+    (
+        {
+            entrypoint,
+            itemActions = [],
+            primaryActions = [],
+            massActions = [],
+            title,
+            selectionMode,
+            emptyPlaceholder,
+            noPagination,
+            showFiltersAndSorts = false,
+            enableConfigureView = false,
+            disableSelection = false,
+            hideSelectAllAction = false,
+            iconsOnlyItemActions = false,
+            showTitle = false,
+            showSearch = false,
+            hidePrimaryActions = false,
+            hideTableHeader = false,
+            defaultActionsForItem = ['edit', 'remove'],
+            defaultPrimaryActions = ['create'],
+            defaultMassActions = ['deactivate'],
+            defaultViewSettings
+        },
+        ref
+    ) => {
+        const {t} = useSharedTranslation();
 
-    const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(entrypoint, defaultViewSettings);
+        const {panelElement: settingsPanelElement} = useEditSettings();
 
-    const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
+        const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(entrypoint, defaultViewSettings);
 
-    const {
-        data,
-        loading: loadingData,
-        refetch
-    } = useExplorerData({
-        entrypoint,
-        libraryId: view.libraryId,
-        attributeIds: view.attributesIds,
-        fulltextSearch: view.fulltextSearch,
-        pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
-        sorts: view.sort,
-        filters: view.filters,
-        skip: viewSettingsLoading
-    }); // TODO: refresh when go back on page
+        const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
 
-    const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
+        const {
+            data,
+            isMultivalue,
+            loading: loadingData,
+            refetch
+        } = useExplorerData({
+            entrypoint,
+            libraryId: view.libraryId,
+            attributeIds: view.attributesIds,
+            fulltextSearch: view.fulltextSearch,
+            pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
+            sorts: view.sort,
+            filters: view.filters,
+            skip: viewSettingsLoading
+        }); // TODO: refresh when go back on page
+        const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
+        const isLink = entrypoint.type === 'link';
 
-    const {removeAction} = useRemoveAction({
-        isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('remove'),
-        store: {view, dispatch},
-        entrypoint
-    });
+        const {removeItemAction} = useRemoveItemAction({
+            isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('remove'),
+            store: {view, dispatch},
+            entrypoint
+        });
 
-    const {editAction, editModal} = useEditAction({
-        isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit')
-    });
+        const {editItemAction, editItemModal} = useEditItemAction({
+            isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit')
+        });
 
-    const {createAction, createModal} = useCreateAction({
-        isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
-        library: view.libraryId,
-        entrypoint: view.entrypoint,
-        itemsCount: data?.totalCount ?? 0,
-        refetch
-    });
+        const totalCount = data?.totalCount ?? 0;
 
-    const totalCount = data?.totalCount ?? 0;
-    const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
+        const {createPrimaryAction, createModal} = useCreatePrimaryAction({
+            isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
+            libraryId: view.libraryId,
+            entrypoint,
+            totalCount,
+            refetch
+        });
 
-    const {deactivateMassAction} = useDeactivateMassAction({
-        isEnabled: isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
-        store: {view, dispatch},
-        allVisibleKeys,
-        refetch
-    });
+        const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
+            isEnabled: isLink,
+            maxItemsLeft: null // TODO: use KitTable.row
+        });
 
-    const {setSelectedKeys, selectAllButton} = useMassActions({
-        isEnabled: totalCount > 0 && (isNotEmpty(defaultMassActions) || isNotEmpty(massActions)),
-        store: {view, dispatch},
-        totalCount,
-        allVisibleKeys,
-        massActions: [deactivateMassAction, ...massActions].filter(Boolean)
-    });
+        const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
 
-    const {primaryButton} = usePrimaryActionsButton([createAction, ...primaryActions].filter(Boolean));
+        const {deactivateMassAction} = useDeactivateMassAction({
+            isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
+            store: {view, dispatch},
+            allVisibleKeys,
+            refetch
+        });
 
-    const {viewSettingsButton} = useOpenViewSettings(view.libraryId);
+        const {unlinkMassAction} = useDeleteLinkValues({
+            isEnabled: isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
+            store: {view, dispatch},
+            pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
+            allVisibleKeys,
+            refetch
+        });
 
-    const {searchInput} = useSearchInput({view, dispatch});
+        const _isSelectionDisable = disableSelection || (isLink && !isMultivalue && totalCount > 0);
 
-    const hasNoResults = data === null || data.totalCount === 0;
+        const {setSelectedKeys, selectAllButton} = useMassActions({
+            isEnabled:
+                totalCount > 0 && !_isSelectionDisable && (isNotEmpty(defaultMassActions) || isNotEmpty(massActions)),
+            store: {view, dispatch},
+            totalCount,
+            allVisibleKeys,
+            massActions: [deactivateMassAction, unlinkMassAction, ...massActions].filter(Boolean)
+        });
 
-    return (
-        <ViewSettingsContext.Provider value={{view, dispatch}}>
-            <ExplorerPageDivStyled>
-                <ExplorerHeaderDivStyled>
-                    <KitTypography.Title level="h1">
-                        {
-                            !viewSettingsLoading && (
-                                <ExplorerTitle library={view.libraryId} title={title} entrypoint={entrypoint} />
-                            ) /*TODO: manage loading*/
-                        }
-                    </KitTypography.Title>
-                    {!isMassSelectionAll && (
-                        <KitSpace size="xs">
-                            {searchInput}
-                            {viewSettingsButton}
-                            {primaryButton}
-                        </KitSpace>
+        const {primaryButton} = usePrimaryActionsButton({
+            view,
+            actions: [createPrimaryAction, linkPrimaryAction, ...primaryActions].filter(Boolean)
+        });
+
+        const {viewSettingsButton, viewListButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
+
+        const {searchInput} = useSearchInput({view, dispatch});
+
+        useImperativeHandle(
+            ref,
+            () => ({
+                createAction: createPrimaryAction,
+                linkAction: linkPrimaryAction,
+                totalCount
+            }),
+            [createPrimaryAction?.disabled, linkPrimaryAction?.disabled, totalCount]
+        );
+
+        const hasNoResults = data === null || data.totalCount === 0;
+
+        return (
+            <ViewSettingsContext.Provider value={{view, dispatch}}>
+                <ExplorerPageDivStyled>
+                    {showTitle && (
+                        <ExplorerHeaderDivStyled>
+                            <KitTypography.Title level="h3">
+                                {
+                                    !viewSettingsLoading && (
+                                        <ExplorerTitle library={view.libraryId} title={title} entrypoint={entrypoint} />
+                                    ) /*TODO: manage loading*/
+                                }
+                            </KitTypography.Title>
+                        </ExplorerHeaderDivStyled>
                     )}
-                </ExplorerHeaderDivStyled>
-                {!viewSettingsLoading && (
-                    <ExplorerToolbar libraryId={view.libraryId} isMassSelectionAll={isMassSelectionAll}>
-                        {selectAllButton}
-                    </ExplorerToolbar>
-                )}
-                {loadingData || viewSettingsLoading ? (
-                    <Loading />
-                ) : hasNoResults ? (
-                    <>{emptyPlaceholder || <KitEmpty title={t('explorer.empty-data')} />}</>
-                ) : (
-                    <DataView
-                        dataGroupedFilteredSorted={data?.records ?? emptyArray}
-                        attributesProperties={data?.attributes ?? emptyObject}
-                        attributesToDisplay={['whoAmI', ...view.attributesIds]}
-                        paginationProps={
-                            entrypoint.type === 'library'
-                                ? {
-                                      pageSizeOptions: defaultPageSizeOptions,
-                                      currentPage,
-                                      pageSize: view.pageSize,
-                                      setNewPageSize,
-                                      setNewPage,
-                                      totalCount
-                                  }
-                                : undefined
-                        }
-                        itemActions={[editAction, removeAction, ...itemActions].filter(Boolean).map(action => ({
-                            ...action,
-                            disabled: isMassSelectionAll
-                        }))}
-                        selection={{
-                            onSelectionChange: setSelectedKeys,
-                            isMassSelectionAll,
-                            selectedKeys: isMassSelectionAll
-                                ? data?.records.map(({whoAmI}) => whoAmI.id)
-                                : (view.massSelection as string[])
-                        }}
-                    />
-                )}
-            </ExplorerPageDivStyled>
-            {panelElement && createPortal(<SidePanel />, panelElement)}
-            {editModal}
-            {createModal}
-        </ViewSettingsContext.Provider>
-    );
-};
+                    {(showSearch || enableConfigureView || !hidePrimaryActions) && (
+                        <ExplorerActionsDivStyled>
+                            <div>{showSearch && searchInput}</div>
+                            <KitSpace size="xs">
+                                {enableConfigureView && viewListButton}
+                                {enableConfigureView && viewSettingsButton}
+                                {!hidePrimaryActions && primaryButton}
+                            </KitSpace>
+                        </ExplorerActionsDivStyled>
+                    )}
+                    {!viewSettingsLoading && (
+                        <ExplorerToolbar
+                            showFiltersAndSort={showFiltersAndSorts}
+                            isMassSelectionAll={isMassSelectionAll}
+                            headless={hideTableHeader}
+                        >
+                            {!hideSelectAllAction && selectAllButton}
+                        </ExplorerToolbar>
+                    )}
+                    {loadingData || viewSettingsLoading ? (
+                        <Loading />
+                    ) : hasNoResults ? (
+                        <ExplorerEmptyDataStyled>
+                            {emptyPlaceholder || <KitEmpty title={t('explorer.empty-data')} />}
+                        </ExplorerEmptyDataStyled>
+                    ) : (
+                        <DataView
+                            dataGroupedFilteredSorted={data?.records ?? emptyArray}
+                            attributesProperties={data?.attributes ?? emptyObject}
+                            attributesToDisplay={['whoAmI', ...view.attributesIds]}
+                            iconsOnlyItemActions={iconsOnlyItemActions}
+                            hideTableHeader={hideTableHeader}
+                            paginationProps={
+                                entrypoint.type === 'library'
+                                    ? {
+                                          pageSizeOptions: defaultPageSizeOptions,
+                                          currentPage,
+                                          pageSize: view.pageSize,
+                                          setNewPageSize,
+                                          setNewPage,
+                                          totalCount
+                                      }
+                                    : undefined
+                            }
+                            itemActions={[editItemAction, removeItemAction, ...itemActions]
+                                .filter(Boolean)
+                                .map(action => ({
+                                    ...action,
+                                    disabled: isMassSelectionAll
+                                }))}
+                            selection={{
+                                onSelectionChange: _isSelectionDisable ? null : setSelectedKeys,
+                                isMassSelectionAll,
+                                selectedKeys: isMassSelectionAll
+                                    ? data?.records.map(({whoAmI}) => whoAmI.id)
+                                    : (view.massSelection as string[]),
+                                mode: selectionMode
+                            }}
+                        />
+                    )}
+                </ExplorerPageDivStyled>
+                {settingsPanelElement && createPortal(<SidePanel />, settingsPanelElement?.() ?? document.body)}
+                {editItemModal}
+                {createModal}
+                {linkModal}
+            </ViewSettingsContext.Provider>
+        );
+    }
+);

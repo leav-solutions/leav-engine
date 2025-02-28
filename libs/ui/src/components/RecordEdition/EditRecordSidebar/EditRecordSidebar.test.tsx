@@ -42,7 +42,7 @@ describe('EditRecordSidebar', () => {
         state: {
             ...mockReducer.state,
             record: mockRecord,
-            activeValue: mockRecordPropertyWithAttribute,
+            activeAttribute: mockRecordPropertyWithAttribute,
             sidebarContent: 'valueDetails'
         }
     };
@@ -61,9 +61,9 @@ describe('EditRecordSidebar', () => {
         state: {
             ...mockReducerWithValue.state,
             record: mockRecord,
-            activeValue: {
+            activeAttribute: {
                 ...mockRecordPropertyWithAttribute,
-                value: {...mockRecordPropertyWithAttribute.value, modified_at: null, modified_by: null}
+                attribute: mockRecordPropertyWithAttribute.attribute
             }
         }
     };
@@ -126,94 +126,17 @@ describe('EditRecordSidebar', () => {
         });
     });
 
-    //TODO: In XSTREAM-1088, we will have to handle switch between recordSummary and valueDetails
     describe('Value details', () => {
         test('Display active value details', async () => {
-            const {value, attribute} = mockReducerWithValue.state.activeValue;
-            render(
-                <EditRecordReducerContext.Provider value={mockReducerWithValue}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
-                </EditRecordReducerContext.Provider>
-            );
-
-            expect(screen.queryByText(/created_at/)).toBeInTheDocument();
-            expect(screen.queryByText(/modified_at/)).toBeInTheDocument();
-            // user label should appear on created_by and modified_by
-            expect(screen.getAllByText(new RegExp(value.modified_by.whoAmI.label))).toHaveLength(2);
-
-            // Expand attribute section
-            await userEvent.click(screen.getByRole('button', {name: /attribute/}));
-
-            expect(await screen.findByText(attribute.id)).toBeInTheDocument();
-            expect(screen.getByText(attribute.label.fr)).toBeInTheDocument();
-            expect(screen.getByText(attribute.description.fr)).toBeInTheDocument();
-        });
-
-        test("Don't display modifier if not set in value", async () => {
+            const {attribute} = mockReducerWithValue.state.activeAttribute;
             render(
                 <EditRecordReducerContext.Provider value={mockReducerWithValueSimple}>
                     <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
 
-            expect(screen.queryByText(/modified_at/)).not.toBeInTheDocument();
-            expect(screen.queryByText(/modified_by/)).not.toBeInTheDocument();
-        });
-
-        test('Display ancestors of tree value', async () => {
-            const mockReducerWithTreeValue = {
-                ...mockReducerWithValue,
-                state: {
-                    ...mockReducerWithValue.state,
-                    activeValue: {
-                        attribute: mockFormAttributeTree,
-                        value: {
-                            ...mockRecordPropertyWithAttribute.value,
-                            treeValue: {
-                                id: '123456',
-                                record: {...mockTreeRecord, whoAmI: {...mockTreeRecord.whoAmI, label: 'Tree record'}},
-                                ancestors: [{record: mockTreeRecordChild}, {record: mockTreeRecord}]
-                            }
-                        }
-                    }
-                }
-            };
-            render(
-                <EditRecordReducerContext.Provider value={mockReducerWithTreeValue}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
-                </EditRecordReducerContext.Provider>
-            );
-
-            const collapseBtn = screen.getByRole('button', {name: /path/});
-            await userEvent.click(collapseBtn);
-
-            expect(screen.getByText('Tree record')).toBeInTheDocument();
-            expect(screen.getByText(mockTreeRecordChild.whoAmI.label)).toBeInTheDocument();
-        });
-
-        test('Display metadata of the value', async () => {
-            const mockReducerWithValueAndMetadata = {
-                ...mockReducerWithValue,
-                state: {
-                    ...mockReducerWithValue.state,
-                    activeValue: {
-                        ...mockReducerWithValue.state.activeValue,
-                        attribute: {
-                            ...mockReducerWithValue.state.activeValue.attribute,
-                            metadata_fields: [{...mockFormAttribute, values_list: null}]
-                        }
-                    }
-                }
-            };
-
-            render(
-                <EditRecordReducerContext.Provider value={mockReducerWithValueAndMetadata}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
-                </EditRecordReducerContext.Provider>
-            );
-
-            expect(screen.getByText(/metadata/)).toBeInTheDocument();
-            expect(screen.getByText(/StandardField/)).toBeInTheDocument();
+            expect(screen.getByText('attributes.format_text')).toBeInTheDocument();
+            expect(screen.getByText(attribute.description.fr)).toBeInTheDocument();
         });
     });
 });

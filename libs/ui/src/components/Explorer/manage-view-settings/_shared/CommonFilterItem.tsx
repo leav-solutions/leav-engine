@@ -5,13 +5,21 @@ import {FunctionComponent} from 'react';
 import {FilterDropDown} from '../filter-items/filter-type/FilterDropDown';
 import styled from 'styled-components';
 import {KitFilter} from 'aristid-ds';
-import {IExplorerFilter} from '../../_types';
+import {ExplorerFilter} from '../../_types';
+import {nullValueConditions} from '../../conditionsHelper';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
 `;
 
-export const CommonFilterItem: FunctionComponent<{filter: IExplorerFilter; disabled?: boolean}> = ({
+const getFilterValue = filter => {
+    if (nullValueConditions.includes(filter.condition)) {
+        return [filter.condition];
+    }
+    return filter.value ? [filter.value] : [];
+};
+
+export const CommonFilterItem: FunctionComponent<{filter: ExplorerFilter; disabled?: boolean}> = ({
     filter,
     disabled
 }) => (
@@ -19,7 +27,7 @@ export const CommonFilterItem: FunctionComponent<{filter: IExplorerFilter; disab
         expandable
         disabled={disabled}
         label={filter.attribute.label}
-        values={filter.value === null ? [] : [filter.value]}
+        values={getFilterValue(filter)}
         dropDownProps={{
             placement: 'bottomLeft',
             dropdownRender: () => <FilterDropDown filter={filter} />

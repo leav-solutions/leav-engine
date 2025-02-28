@@ -6,6 +6,7 @@ import {EditSettingsContext, IEditSettingsContext} from './EditSettingsContext';
 
 interface IEditSettingsContextProviderProps {
     panelElement?: IEditSettingsContext['panelElement'];
+    children: React.ReactNode;
 }
 
 export const EditSettingsContextProvider: FunctionComponent<IEditSettingsContextProviderProps> = ({
@@ -13,7 +14,7 @@ export const EditSettingsContextProvider: FunctionComponent<IEditSettingsContext
     panelElement
 }) => {
     const [activeSettings, setActiveSettings] = useState<IEditSettingsContext['activeSettings']>(null);
-    const onClose = () => setActiveSettings(null);
+    const closeSettingsPanel = () => setActiveSettings(null);
 
     return (
         <EditSettingsContext.Provider
@@ -21,7 +22,7 @@ export const EditSettingsContextProvider: FunctionComponent<IEditSettingsContext
                 activeSettings,
                 setActiveSettings,
                 panelElement: panelElement ?? null,
-                onClose
+                closeSettingsPanel
             }}
         >
             {children}

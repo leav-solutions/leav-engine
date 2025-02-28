@@ -14,7 +14,7 @@ import {
 import {useMutation} from '@apollo/client';
 import {CreateDirectory, EditRecordModal, TriggerPreviewsGenerationModal, UploadFiles} from '@leav/ui';
 import {Button, Dropdown, message} from 'antd';
-import {ItemType} from 'antd/lib/menu/hooks/useItems';
+import {ItemType} from 'antd/es/menu/interface';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {useActiveTree} from 'hooks/useActiveTree';

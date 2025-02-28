@@ -1,0 +1,11 @@
+query Me {
+    me {
+        id 
+        whoAmI {
+            id
+            library {
+                id
+            }
+        }
+    }
+}

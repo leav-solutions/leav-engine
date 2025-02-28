@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {EventAction, IDateRangeValue} from '@leav/utils';
+import {EventAction, IDateRangeValue, localizedTranslation} from '@leav/utils';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
@@ -381,10 +381,22 @@ const valueDomain = function ({
                     reverseLink
                 })));
 
+        const attributeLabel =
+            typeof attributeProps.label === 'string'
+                ? attributeProps.label
+                : localizedTranslation(attributeProps.label, [ctx.lang]);
+
         if (attributeProps.readonly) {
-            throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
+            throw new ValidationError<IValue>({
+                [attribute]: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeLabel}}
+            });
         } else if (isRequired) {
-            throw new ValidationError<IValue>({attribute: {msg: Errors.REQUIRED_ATTRIBUTE, vars: {attribute}}});
+            throw new ValidationError<IValue>({
+                [attribute]: {
+                    msg: Errors.REQUIRED_ATTRIBUTE,
+                    vars: {attribute: attributeLabel}
+                }
+            });
         }
 
         const existingValue: IValue = await _getExistingValue({

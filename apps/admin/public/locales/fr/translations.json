@@ -44,7 +44,8 @@
             "title": "Personnalisation",
             "name": "Nom",
             "icon": "Icône",
-            "favicon": "Favicon"
+            "favicon": "Favicon",
+            "default_application": "Application par défaut"
         }
     },
     "errors": {
@@ -105,6 +106,7 @@
         "readonly": "Lecture seule",
         "required": "Requis",
         "unique": "Unique",
+        "character_limit": "Limite de caractères",
         "confirm_delete": "Êtes-vous sûr de vouloir supprimer l'attribut {{attrLabel}}?",
         "available_actions": "Actions disponibles",
         "action_list": "Liste d'actions",
@@ -306,7 +308,6 @@
         "save_success": "Le formulaire a bien été sauvegardé",
         "settings": {
             "label": "Libellé",
-            "required": "Requis",
             "attribute": "Attribut",
             "content": "Contenu",
             "withTime": "Saisie de l'heure",

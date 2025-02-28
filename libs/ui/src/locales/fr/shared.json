@@ -3,6 +3,7 @@
         "submit": "Valider",
         "cancel": "Annuler",
         "close": "Fermer",
+        "save": "Enregistrer",
         "id": "Identifiant",
         "search": "Rechercher",
         "info": "Informations",
@@ -30,7 +31,8 @@
         "create": "Créer",
         "ok": "Ok",
         "max_length": "Longueur maximale",
-        "confirm": "Confirmer"
+        "confirm": "Confirmer",
+        "loading": "Chargement"
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",
@@ -249,7 +251,7 @@
         "not-contains": "Ne contient pas",
         "equal": "Est égal",
         "not-equal": "N'est pas égal",
-        "through": "Au travers",
+        "through": "Dont l’attribut",
         "begin-with": "Commence par",
         "end-with": "Fini Par",
         "is-empty": "Est Vide",
@@ -404,8 +406,9 @@
         "add_value": "Ajouter une valeur",
         "add_value_link": "Ajouter une liaison",
         "delete_value": "Supprimer cette valeur",
-        "delete_value_confirm": "Êtes-vous sûr de vouloir supprimer cette valeur?",
-        "delete_link_confirm": "Êtes-vous sûr de vouloir supprimer cette liaison?",
+        "delete_value_confirm": "Êtes-vous sûr de vouloir supprimer cette valeur ?",
+        "delete_link_confirm": "Êtes-vous sûr de vouloir supprimer cette liaison ?",
+        "delete_links_confirm": "Êtes-vous sûr de vouloir supprimer ces liaisons ?",
         "whoAmI": "Informations",
         "no_value": "Pas de valeur",
         "value_details": "Infos valeur",
@@ -498,7 +501,20 @@
         "open_preview_modal": "Ouvrir la modale d'aperçu",
         "informations": "Informations",
         "chat": "Chat",
-        "history": "Historique"
+        "history": "Historique",
+        "entity_overview": "Fiche {{entity}}",
+        "attribute": "Attribut",
+        "attribute_format": "Format de l'attribut",
+        "descriptive": "Descriptif",
+        "values_version": "Version de valeurs",
+        "no_value": "Aucune valeur",
+        "calculated_value": "Valeur calculée",
+        "global": "Globale",
+        "error": {
+            "title": "Erreur de chargement des données",
+            "description": "Une erreur technique est survenue, veuillez recharger la page s'il vous plaît. Si l'erreur persiste, veuillez contacter le support Aristid.",
+            "refresh": "Rafraîchir"
+        }
     },
     "view": {
         "views": "Vues",
@@ -624,12 +640,13 @@
         "unselect-all": "Tout désélectionner"
     },
     "explorer": {
+        "name": "Nom",
         "create-one": "Créer",
         "actions": "Actions",
         "more-actions": "Voir plus",
         "deactivate-item": "Désactiver",
         "delete-item": "Supprimer",
-        "edit-item": "Éditer l’élément",
+        "edit-item": "Éditer",
         "settings": "Paramètres",
         "back": "Retour",
         "router-menu": "Configuration de la vue",
@@ -664,23 +681,36 @@
         "active-items-number_zero": "Aucun",
         "invalid-value": "Valeur invalide",
         "type-a-value": "Saisissez une valeur",
-        "save-view": "Enregistrer",
+        "save-view-as": "Enregistrer sous...",
+        "share-view": "Partager",
+        "unshare-view": "Retirer le partage",
         "reinit-view": "Réinitialiser",
+        "view-name": "Nom de la vue",
+        "default-view": "Vue par défaut",
+        "manage-views": "Gérer les vues",
+        "modified": "Modifiée",
+        "my-views": "Mes vues",
+        "shared-views": "Vues partagées",
+        "no-shared-views": "Aucune vue partagée",
         "select-condition": "Sélectionner une condition",
         "true": "Vrai",
         "false": "Faux",
+        "filter-condition": "Condition",
+        "filter-link-attribute": "Attribut de liaison",
         "massAction": {
             "itemsTotal_one": "{{count, number}} élément",
             "itemsTotal_other": "{{count, number}} éléments",
             "selectedItems_one": "{{count, number}} sélectionné",
             "selectedItems_other": "{{count, number}} sélectionnés",
             "deactivate": "Supprimer",
+            "add-link": "Ajouter",
             "toggle_selection": {
                 "select_page_one": "Sélectionner l’éléments visible ({{count, number}})",
                 "select_page_other": "Sélectionner les éléments visibles ({{count, number}})",
                 "select_all": "Tout sélectionner ({{count, number}})",
                 "deselect_all": "Tout désélectionner"
             }
-        }
+        },
+        "add-existing-item": "Ajouter un élément existant"
     }
 }

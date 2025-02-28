@@ -193,12 +193,12 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         embedded_fields: [EmbeddedAttribute],
                         values_list: StandardValuesListConf,
                         unique: Boolean,
-                        maxLength: Int
+                        character_limit: Int
                     }
 
                     type LinkAttribute implements Attribute {
                         ${attributesInterfaceSchema}
-                        linked_library: Library,
+                        linked_library: Library, # TODO : https://aristid.atlassian.net/browse/XSTREAM-1155
                         values_list: LinkValuesListConf,
                         reverse_link: String
                     }
@@ -228,7 +228,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         values_list: ValuesListConfInput,
                         reverse_link: String,
                         unique: Boolean,
-                        maxLength: Int
+                        character_limit: Int
                     }
 
                     type EmbeddedAttribute {

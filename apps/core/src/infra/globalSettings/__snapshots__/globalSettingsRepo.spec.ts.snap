@@ -30,6 +30,7 @@ exports[`getSettingsRepo saveSettings Should save settings 2`] = `
   "value0": "1",
   "value1": {
     "_key": "1",
+    "defaultApp": "portal",
     "favicon": {
       "library": "myLibraryId",
       "recordId": "1337",
