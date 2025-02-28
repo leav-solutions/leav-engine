@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {OidcClient} from './oidcClient';
-import {generators, TokenSet} from 'openid-client';
+import {EndSessionParameters, generators, TokenSet} from 'openid-client';
 import {ECacheType, ICachesService} from '../cache/cacheService';
 import LeavError from '../../errors/LeavError';
 import {ErrorTypes} from '../../_types/errors';
@@ -135,11 +135,15 @@ export default function ({
             });
         },
         getLogoutUrl: async ({userId}) => {
-            const tokenSet = await _getTokenSetByUserId(userId);
-            return oidcClient.endSessionUrl({
-                post_logout_redirect_uri: config.auth.oidc.postLogoutRedirectUri,
-                id_token_hint: tokenSet
-            });
+            const payload: EndSessionParameters = {
+                post_logout_redirect_uri: config.auth.oidc.postLogoutRedirectUri
+            };
+
+            if (config.auth.oidc.skipLogoutConfirmationPage) {
+                payload.id_token_hint = await _getTokenSetByUserId(userId);
+            }
+
+            return oidcClient.endSessionUrl(payload);
         },
         saveOIDCTokens: ({userId, tokens}) => _writeTokensSetByUserId(userId, tokens),
         checkTokensValidity: async ({userId}) => {
