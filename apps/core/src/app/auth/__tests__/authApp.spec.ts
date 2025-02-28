@@ -254,7 +254,8 @@ describe('authApp', () => {
             const request = {
                 headers: {
                     host: 'host'
-                }
+                },
+                cookies: jest.fn().mockReturnValue({access_token: 'access_token'})
             };
             const response = {
                 cookie: jest.fn(),
@@ -315,7 +316,8 @@ describe('authApp', () => {
             const request = {
                 headers: {
                     host: 'host'
-                }
+                },
+                cookies: jest.fn().mockReturnValue({access_token: 'access_token'})
             };
             const response = {
                 cookie: jest.fn(),
@@ -333,7 +335,7 @@ describe('authApp', () => {
                 redirectUrl: 'redirectUrl'
             });
             expect(oidcClientServiceMock.getLogoutUrl).toHaveBeenCalledTimes(1);
-            expect(oidcClientServiceMock.getLogoutUrl).toHaveBeenCalledWith();
+            expect(oidcClientServiceMock.getLogoutUrl).toHaveBeenCalledWith({userId: '1'});
             expect(response.cookie).toHaveBeenCalledTimes(2);
             expect(response.cookie).toHaveBeenCalledWith('accessToken', '', {
                 expires: expect.any(Date),

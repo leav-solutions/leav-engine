@@ -84,12 +84,14 @@ export interface IAuth {
               wellKnownEndpoint?: string;
               clientId?: string;
               postLogoutRedirectUri?: string;
+              skipLogoutConfirmationPage?: boolean;
           }
         | {
               enable: true;
               wellKnownEndpoint: string;
               clientId: string;
               postLogoutRedirectUri: string;
+              skipLogoutConfirmationPage?: boolean;
           };
     testApiKey?: string;
 }

@@ -349,11 +349,15 @@ export default function ({
 
             app.post('/auth/logout', async (req, res) => {
                 const host = req.headers.host ?? null;
+                const {accessToken} = req.cookies;
+
                 res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, '', host));
                 res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, '', host));
 
                 if (config.auth.oidc.enable) {
-                    const redirectUrl = oidcClientService.getLogoutUrl();
+                    const payload = jwt.verify(accessToken, config.auth.key) as IAccessTokenPayload;
+                    const userId = payload.userId;
+                    const redirectUrl = await oidcClientService.getLogoutUrl({userId});
                     return res.status(200).json({redirectUrl});
                 }
 
