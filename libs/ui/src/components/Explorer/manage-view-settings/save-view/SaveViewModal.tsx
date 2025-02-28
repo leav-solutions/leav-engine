@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
+import {FunctionComponent, useEffect, useState} from 'react';
 import {FaTimes, FaSave} from 'react-icons/fa';
 import {KitModal, KitButton, AntForm, KitInputWrapper, KitInput} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
@@ -9,6 +9,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 
 interface ISaveViewProps {
+    viewData?: any;
     isOpen: boolean;
     onSave: (label: Record<string, string>) => void;
     onClose: () => void;
@@ -16,12 +17,18 @@ interface ISaveViewProps {
 
 const sortWithDefaultAtFirst = defaultLang => (a, b) => (b === defaultLang ? 1 : 0) - (a === defaultLang ? 1 : 0);
 
-export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onSave, onClose}) => {
+export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({viewData, isOpen, onSave, onClose}) => {
     const {t} = useSharedTranslation();
     const {defaultLang, availableLangs} = useLang();
     const {view} = useViewSettingsContext();
+    // const [initialValues, setInitialValues] = useState<Record<string, string>>({});
 
     const [form] = AntForm.useForm();
+    const initialValues = viewData ? viewData : view.viewId ? view.viewLabels : {};
+
+    useEffect(() => {
+        form.setFieldsValue(initialValues);
+    }, [viewData]);
 
     const _toggleModal = () => {
         if (isOpen) {
@@ -69,7 +76,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onSave
                 </>
             }
         >
-            <AntForm name="label" form={form} initialValues={view.viewId ? view.viewLabels : {}}>
+            <AntForm name="label" form={form} initialValues={initialValues}>
                 <KitInputWrapper label={String(t('explorer.view-name'))}>
                     {[...availableLangs].sort(sortWithDefaultAtFirst(defaultLang)).map(lang => (
                         <AntForm.Item
