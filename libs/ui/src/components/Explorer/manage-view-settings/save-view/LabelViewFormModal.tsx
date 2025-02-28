@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
+import {FunctionComponent, useEffect, useState} from 'react';
 import {FaTimes, FaSave} from 'react-icons/fa';
 import {KitModal, KitButton, AntForm, KitInputWrapper, KitInput} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
@@ -21,6 +21,7 @@ export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData,
     const {t} = useSharedTranslation();
     const {defaultLang, availableLangs} = useLang();
     const {view} = useViewSettingsContext();
+    // const [initialValues, setInitialValues] = useState<Record<string, string>>({});
 
     const [form] = AntForm.useForm();
     const initialValues = viewData ? viewData : view.viewId ? view.viewLabels : {};
