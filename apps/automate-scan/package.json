@@ -1,6 +1,6 @@
 {
     "name": "automate-scan",
-    "version": "1.0.0-beta16",
+    "version": "1.0.0-beta17",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
