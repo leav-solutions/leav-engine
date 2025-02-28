@@ -203,7 +203,7 @@ export const Explorer = forwardRef<ExplorerRef, IExplorerProps>(
             linkAction: linkPrimaryAction
         }));
 
-        const hasNoResults = data === null || data?.totalCount === 0;
+        const hasNoResults = data === null || data.totalCount === 0;
 
         return (
             <ViewSettingsContext.Provider value={{view, dispatch}}>

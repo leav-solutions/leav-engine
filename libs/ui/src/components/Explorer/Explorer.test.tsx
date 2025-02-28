@@ -28,20 +28,10 @@ const CreateDirectoryMock = 'CreateDirectory';
 const EditRecordModalMock = 'EditRecordModal';
 
 jest.mock('_ui/components/UploadFiles', () => ({
-    UploadFiles: ({onCreate}) => (
-        <div>
-            {UploadFilesMock}
-            <button onClick={() => onCreate({})}>create-file</button>
-        </div>
-    )
+    UploadFiles: () => <div>{UploadFilesMock}</div>
 }));
 jest.mock('_ui/components/CreateDirectory', () => ({
-    CreateDirectory: ({onCreate}) => (
-        <div>
-            {CreateDirectoryMock}
-            <button onClick={() => onCreate({})}>create-directory</button>
-        </div>
-    )
+    CreateDirectory: () => <div>{CreateDirectoryMock}</div>
 }));
 jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
     EditRecordModal: ({onCreate}) => (

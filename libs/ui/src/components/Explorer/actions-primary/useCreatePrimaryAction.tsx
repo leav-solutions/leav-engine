@@ -93,7 +93,7 @@ export const useCreatePrimaryAction = ({
                         _notifyNewCreation();
                         setIsModalCreationVisible(false);
                     }}
-                ></UploadFiles>
+                />
             );
             break;
         case LibraryBehavior.directories:
@@ -106,7 +106,7 @@ export const useCreatePrimaryAction = ({
                         _notifyNewCreation();
                         setIsModalCreationVisible(false);
                     }}
-                ></CreateDirectory>
+                />
             );
             break;
         case LibraryBehavior.standard:
