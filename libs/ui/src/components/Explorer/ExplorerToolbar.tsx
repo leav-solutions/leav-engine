@@ -53,7 +53,7 @@ export const ExplorerToolbar: FunctionComponent<{
 
     const {attributeDetailsById} = useAttributeDetailsData(view.libraryId);
 
-    if (filters.length === 0 && sort.length === 0 && children === null) {
+    if (((filters.length === 0 && sort.length === 0) || !showFiltersAndSort) && !children) {
         return null;
     }
 
@@ -72,7 +72,7 @@ export const ExplorerToolbar: FunctionComponent<{
 
     return (
         <ExplorerToolbarListStyled aria-label={t('explorer.toolbar')} className={headless ? 'headless' : ''}>
-            {children !== null && (
+            {!!children && (
                 <>
                     <li>{children}</li>
                     {showFiltersAndSort && (filters.length !== 0 || sort.length > 0) && (

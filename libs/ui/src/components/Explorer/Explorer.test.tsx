@@ -827,6 +827,26 @@ describe('Explorer', () => {
 
             expect(screen.queryByText(/explorer.massAction.itemsTotal/)).not.toBeInTheDocument();
         });
+
+        test('should display the select all action', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByText(/explorer.massAction.itemsTotal/)).toBeVisible();
+        });
+
+        test('should not display the select all action', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} hideSelectAllAction />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByText(/explorer.massAction.itemsTotal/)).not.toBeInTheDocument();
+        });
     });
 
     describe('props title', () => {
