@@ -103,6 +103,7 @@ const LinkField: FunctionComponent<
     useOutsideInteractionDetector({
         attribute,
         activeAttribute: state.activeAttribute,
+        attributePrefix: LINK_FIELD_ID_PREFIX,
         dispatch,
         backendValues
     });

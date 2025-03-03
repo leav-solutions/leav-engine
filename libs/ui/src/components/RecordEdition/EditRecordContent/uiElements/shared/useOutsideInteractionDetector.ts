@@ -1,11 +1,19 @@
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import {EDIT_RECORD_SIDEBAR_ID, LINK_FIELD_ID_PREFIX} from '_ui/constants';
+import {EDIT_RECORD_SIDEBAR_ID} from '_ui/constants';
 import {useEffect} from 'react';
 
-export const useOutsideInteractionDetector = ({attribute, activeAttribute, dispatch, backendValues}) => {
+export const useOutsideInteractionDetector = ({
+    attribute,
+    activeAttribute,
+    attributePrefix,
+    dispatch,
+    backendValues,
+    allowedSelectors = []
+}) => {
     useEffect(() => {
-        const elementSelector = '#' + LINK_FIELD_ID_PREFIX + attribute.id;
+        const elementSelector = '#' + attributePrefix + attribute.id;
         const sideBarSelector = '#' + EDIT_RECORD_SIDEBAR_ID;
+        const allAllowedSelectors = [elementSelector, sideBarSelector, ...allowedSelectors].join(', ');
 
         const activateAttribute = () => {
             dispatch({
@@ -15,28 +23,30 @@ export const useOutsideInteractionDetector = ({attribute, activeAttribute, dispa
             });
         };
 
+        const unsetActiveAttribute = () => {
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                attribute: null
+            });
+        };
+
         const handleClick = (event: MouseEvent | FocusEvent) => {
             const target = event.target as HTMLElement;
 
-            const isClickInsideTargetElement = !!target.closest(elementSelector);
-            const isClickInsideSidebar = !!target.closest(sideBarSelector);
+            const isClickInsideAllowedArea = target.closest(allAllowedSelectors) !== null;
+            const isClickInsideAnyAttribute = target.closest(`[id^="${attributePrefix}"]`) !== null;
 
-            const isClickInsideAnyAttribute = !!target.closest(`[id^="${LINK_FIELD_ID_PREFIX}"]`);
-
-            if (isClickInsideTargetElement) {
+            if (isClickInsideAllowedArea) {
                 activateAttribute();
-            } else if (!isClickInsideSidebar && !isClickInsideAnyAttribute && activeAttribute !== null) {
-                dispatch({
-                    type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                    attribute: null
-                });
+            } else if (!isClickInsideAllowedArea && !isClickInsideAnyAttribute && activeAttribute !== null) {
+                unsetActiveAttribute();
             }
         };
 
         const handleFocus = (event: MouseEvent | FocusEvent) => {
             const target = event.target as HTMLElement;
 
-            const isFocusInsideTargetElement = !!target.closest(elementSelector);
+            const isFocusInsideTargetElement = target.closest(elementSelector) !== null;
 
             if (isFocusInsideTargetElement) {
                 activateAttribute();
@@ -50,5 +60,5 @@ export const useOutsideInteractionDetector = ({attribute, activeAttribute, dispa
             document.removeEventListener('mousedown', handleClick);
             document.removeEventListener('focusin', handleFocus);
         };
-    }, [attribute.id, activeAttribute, dispatch, backendValues]);
+    }, [attribute.id, activeAttribute, dispatch, backendValues, attributePrefix, allowedSelectors]);
 };
