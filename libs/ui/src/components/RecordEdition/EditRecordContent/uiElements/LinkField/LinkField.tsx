@@ -35,11 +35,13 @@ import {DeleteAllValuesButton} from '../shared/DeleteAllValuesButton';
 import {IEntrypointLink, IPrimaryAction} from '_ui/components/Explorer/_types';
 import {Explorer} from '_ui/components/Explorer';
 import {FaList} from 'react-icons/fa';
-import {LINK_FIELD_ID_PREFIX} from '_ui/constants';
+import {EDIT_RECORD_SIDEBAR_ID, LINK_FIELD_ID_PREFIX} from '_ui/constants';
 import {IExplorerRef} from '_ui/components/Explorer/Explorer';
 import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
 import {Form} from 'antd';
 import {ComputeIndicator} from '../shared/ComputeIndicator';
+import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+import {useOutsideInteractionDetector} from '../shared/useOutsideInteractionDetector';
 
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
@@ -75,30 +77,36 @@ const KitInputWrapperStyled = styled(KitInputWrapper)`
     }
 `;
 
-const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings & {
-    columns?: Array<{
-        id: string;
-        label: Record<string, string>;
-    }>;
-}>> = ({
-    element,
-    readonly,
-    onValueSubmit,
-    onValueDelete,
-    onDeleteMultipleValues
-}) => {
+const LinkField: FunctionComponent<
+    IFormElementProps<
+        ICommonFieldsSettings & {
+            columns?: Array<{
+                id: string;
+                label: Record<string, string>;
+            }>;
+        }
+    >
+> = ({element, readonly, onValueSubmit, onValueDelete, onDeleteMultipleValues}) => {
     const {t} = useSharedTranslation();
-    const {state} = useEditRecordReducer();
+    const {state, dispatch} = useEditRecordReducer();
     const {lang} = useLang();
     const {attribute, settings} = element;
+    const form = AntForm.useFormInstance();
 
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
     const calculatedFlags = computeCalculatedFlags(backendValues);
     const inheritedFlags = computeInheritedFlags(backendValues);
 
     const columnsToDisplay = settings.columns?.map(({id}) => id);
-    console.log({backendValues, calculatedFlags, inheritedFlags});
 
+    //---- 🕺 Disco-tech: Focus sur l'explorateur de liaison
+    useOutsideInteractionDetector({
+        attribute,
+        activeAttribute: state.activeAttribute,
+        dispatch,
+        backendValues
+    });
+    //--------------------------------------
 
     // const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     // const creationErrors = useContext(CreationErrorContext);
@@ -194,13 +202,13 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings & {
     const _handleDeleteAllValues = async () => {
         const deleteRes = await onDeleteMultipleValues(
             attribute.id,
-            backendValues.filter(b => b.id_value),
+            backendValues.filter(backendValue => backendValue.id_value),
             null
         );
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
-            // antdListFieldsRef.current.remove(antdListFieldsRef.current.indexes);
-            // antdListFieldsRef.current.add(defaultValueToAddInAntdForm);
+            form.setFieldValue(attribute.id, []); //TODO: Faire pareil dans la callback de la suppression multiple via selection
+
             setBackendValues(previousBackendValues =>
                 previousBackendValues.filter(backendValue => !backendValue.id_value)
             );
@@ -209,14 +217,13 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings & {
         }
     };
 
-    const label = localizedTranslation(element.settings.label, lang);
+    const label = localizedTranslation(settings.label, lang);
 
     //-------
     //TODO: test -> on a bien recréer les boutons (vérifier disabled et callback ??)
     //TODO: Supprimer MultiValueSelect et MonoValueSelect (ainsi que tous leurs fichiers + références diverses)
+    //TODO: Vérifier la création (required)
 
-    //TODO: Supprimer le state et passer par element (cf StandardField)
-    //TODO: handle computed values and flags 🥲
     const linkEntrypoint: IEntrypointLink = {
         type: 'link',
         parentLibraryId: state.libraryId,
@@ -225,12 +232,9 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings & {
     };
 
     const isReadOnly = attribute.readonly || readonly;
-    // const isReadOnly = true;
+    // const isReadOnly = true; //TODO: remove
 
-    const isMultipleValues = element.attribute.multiple_values;
-
-    //TODO: add more check
-    const canDeleteAllValues = isMultipleValues && !attribute.required;
+    const canDeleteAllValues = backendValues.length > 1 && attribute.multiple_values && !attribute.required;
 
     const isFieldInError = false;
     //TODO: check if field is in error (cf StandardField)
@@ -249,8 +253,14 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings & {
     };
 
     //TODO: callback pour mettre à jour fields value ?????????????
-    const form = AntForm.useFormInstance();
-    console.log(form.getFieldsValue());
+    // console.log({
+    //     attribute: attribute.id,
+    //     backendValues,
+    //     calculatedFlags,
+    //     inheritedFlags,
+    //     form: form.getFieldsValue(),
+    //     explorerActions
+    // });
 
     return (
         <AntForm.Item
@@ -294,7 +304,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings & {
                             entrypoint={linkEntrypoint}
                             showTitle={false}
                             showSearch={false}
-                            disableSelection={isReadOnly || !isMultipleValues}
+                            disableSelection={isReadOnly || !attribute.multiple_values}
                             defaultActionsForItem={isReadOnly ? [] : undefined}
                             hidePrimaryActions
                             hideTableHeader
