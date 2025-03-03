@@ -44,7 +44,6 @@ import {ComputeIndicator} from '../shared/ComputeIndicator';
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
 
-//TODO: factoriser avec StandardField
 const KitInputExtraAlignLeft = styled.div`
     margin-right: auto;
     line-height: 12px;
