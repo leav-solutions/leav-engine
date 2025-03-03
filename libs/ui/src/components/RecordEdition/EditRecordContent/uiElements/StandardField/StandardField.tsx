@@ -347,7 +347,11 @@ const StandardField: FunctionComponent<
                             <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
                         </KitInputExtraAlignLeft>
                         {canDeleteAllValues && (
-                            <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} disabled={isReadOnly} />
+                            <DeleteAllValuesButton
+                                handleDelete={_handleDeleteAllValues}
+                                disabled={isReadOnly}
+                                danger={isFieldInError}
+                            />
                         )}
                     </>
                 }

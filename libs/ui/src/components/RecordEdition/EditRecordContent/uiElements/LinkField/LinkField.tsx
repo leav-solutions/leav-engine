@@ -62,25 +62,19 @@ const KitFieldsWrapper = styled.div`
     }
 `;
 
-// const KitInputWrapperStyled = styled(KitInputWrapper)`
-//     //TODO: A supprimer ?
-//     &.disabled {
-//         .kit-input-wrapper-content {
-//             background-color: var(--general-utilities-neutral-light);
+const KitInputWrapperStyled = styled(KitInputWrapper)`
+    &.disabled {
+        .kit-input-wrapper-content {
+            background-color: var(--general-utilities-neutral-light);
+        }
+    }
 
-//             // .ant-table .ant-table-container tbody.ant-table-tbody {
-//             //     & > tr:hover .ant-table-cell,
-//             //     & > tr:focus-visible .ant-table-cell {
-//             //         border: none;
-//             //     }
-
-//             //     tr:focus-visible td:first-of-type .ant-table-cell:not(.ant-table-selection-column) {
-//             //         padding-left: calc((var(--kit-table-row-side-padding) + var(--general-spacing-xs)) * 1px);
-//             //     }
-//             // }
-//         }
-//     }
-// `;
+    &.error {
+        .kit-input-wrapper-content {
+            background-color: var(--general-utilities-error-light);
+        }
+    }
+`;
 
 const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = ({
     element,
@@ -262,7 +256,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                 }
             ]}
         >
-            <KitInputWrapper
+            <KitInputWrapperStyled
                 id={LINK_FIELD_ID_PREFIX + attribute.id}
                 label={label}
                 required={attribute.required}
@@ -275,7 +269,11 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                             <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
                         </KitInputExtraAlignLeft>
                         {canDeleteAllValues && (
-                            <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} disabled={isReadOnly} />
+                            <DeleteAllValuesButton
+                                handleDelete={_handleDeleteAllValues}
+                                disabled={isReadOnly}
+                                danger={isFieldInError}
+                            />
                         )}
                     </>
                 }
@@ -334,7 +332,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                         onSelectChange={_handleUpdateValueSubmit}
                     />
                 )} */}
-            </KitInputWrapper>
+            </KitInputWrapperStyled>
         </AntForm.Item>
     );
 };
