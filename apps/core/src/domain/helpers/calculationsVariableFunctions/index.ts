@@ -42,22 +42,21 @@ export default function ({
     const fromDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> =>
         inputValue.map(variableValue => ({
             ...variableValue,
-            payload: (variableValue.raw_payload as IDateRangeValue).from
+            payload: (variableValue.raw_payload as IDateRangeValue).from,
+            raw_payload: (variableValue.raw_payload as IDateRangeValue).from
         }));
 
     const toDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> =>
         inputValue.map(variableValue => ({
             ...variableValue,
-            payload: (variableValue.raw_payload as IDateRangeValue).to
+            payload: (variableValue.raw_payload as IDateRangeValue).to,
+            raw_payload: (variableValue.raw_payload as IDateRangeValue).to
         }));
 
     const sum = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
             ...inputValue[0],
-            payload: inputValue.reduce((acc, v) => {
-                const value = typeof v.payload === 'object' ? v.payload.value : v.payload;
-                return acc + parseFloat(value);
-            }, 0)
+            payload: inputValue.reduce((acc, v) => acc + parseFloat(String(v.payload)), 0)
         }
     ];
 
@@ -65,10 +64,7 @@ export default function ({
         {
             ...inputValue[0],
             payload:
-                inputValue.reduce((acc, v) => {
-                    const value = typeof v.payload === 'object' ? v.payload.value : v.payload;
-                    return acc + parseFloat(value);
-                }, 0) / inputValue.length
+                inputValue.reduce((acc, v) => acc + parseFloat(String(v.payload)), 0) / inputValue.length
         }
     ];
 
@@ -91,8 +87,8 @@ export default function ({
         });
     };
 
-    const _isTreeNode = (payload: IVariableValue['payload']): payload is ITreeNode =>
-        typeof payload === 'object' && 'id' in payload && 'record' in payload;
+    const _isTreeNodePayload = (payload: IVariableValue['payload']): payload is ITreeNode =>
+         typeof payload === 'object' && 'id' in payload && 'record' in payload;
 
     const getValue = async (
         context: IActionsListContext,
@@ -101,10 +97,10 @@ export default function ({
     ): Promise<IVariableValue[]> =>
         Promise.all(
             inputValue.map(async ({library, recordId, payload}) => {
-                const isTreeNode = _isTreeNode(payload);
+                const isTreeNodePayload = _isTreeNodePayload(payload);
 
                 let values = await recordDomain.getRecordFieldValue({
-                    ...(isTreeNode
+                    ...(isTreeNodePayload
                         ? {library: payload.record.library, record: payload.record}
                         : {library, record: {id: recordId, library}}),
                     attributeId: attributeKey,
@@ -134,8 +130,8 @@ export default function ({
                             .filter(v => !!v);
                     } else {
                         currReturnValue = values.map(v => ({
-                            library: isTreeNode ? payload.record.library : library,
-                            recordId: isTreeNode ? payload.record.id : recordId,
+                            library: isTreeNodePayload ? payload.record.library : library,
+                            recordId: isTreeNodePayload ? payload.record.id : recordId,
                             payload: v?.payload ?? null,
                             raw_payload: TypeGuards.isIStandardValue(v) ? v?.raw_payload : null
                         }));

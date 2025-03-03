@@ -96,8 +96,8 @@ describe('calculationsVariableFunctions', () => {
         const res = await calculationFunctions.fromDate.run(ctx, inputValue, ['attributeKey']);
 
         expect(res).toHaveLength(1);
-        expect(res[0]).toHaveProperty('payload');
         expect(res[0].payload).toBe(inputValue[0].raw_payload.from);
+        expect(res[0].raw_payload).toBe(inputValue[0].raw_payload.from);
     });
 
     test('should get the "to" date on period attribute', async () => {
@@ -108,8 +108,8 @@ describe('calculationsVariableFunctions', () => {
         const res = await calculationFunctions.toDate.run(ctx, inputValue, ['attributeKey']);
 
         expect(res).toHaveLength(1);
-        expect(res[0]).toHaveProperty('payload');
         expect(res[0].payload).toBe(inputValue[0].raw_payload.to);
+        expect(res[0].raw_payload).toBe(inputValue[0].raw_payload.to);
     });
 
     test('test first', async () => {
