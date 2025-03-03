@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
-import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../shared/calculatedInheritedFlags';
 
 const todayDate = dayjs();
 const tomorrowDate = dayjs().add(1, 'day');

@@ -6,7 +6,7 @@ import {DSInputEncryptedWrapper} from './DSInputEncryptedWrapper';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../shared/calculatedInheritedFlags';
 
 const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,

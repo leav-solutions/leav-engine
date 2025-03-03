@@ -7,7 +7,7 @@ import {
     ISubmitMultipleResult,
     StandardValueTypes
 } from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../shared/calculatedInheritedFlags';
 
 export interface IStandFieldValueContentProps<T> extends IProvidedByAntFormItem<T> {
     presentationValue?: string;

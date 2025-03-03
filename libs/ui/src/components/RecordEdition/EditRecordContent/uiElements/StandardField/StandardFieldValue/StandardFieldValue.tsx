@@ -15,7 +15,7 @@ import {DSInputEncryptedWrapper} from './DSInputEncryptedWrapper';
 import {DSBooleanWrapper} from './DSBooleanWrapper';
 import {DSRichTextWrapper} from './DSRichTextWrapper';
 import {DSColorPickerWrapper} from './DSColorPickerWrapper';
-import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../shared/calculatedInheritedFlags';
 
 interface IStandardFieldValueProps {
     presentationValue: string;

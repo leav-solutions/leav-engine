@@ -13,16 +13,16 @@ import {Form, FormInstance, FormListOperation} from 'antd';
 import {KitButton, KitInputWrapper, KitTooltip} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {FaPlus, FaTrash} from 'react-icons/fa';
-import {DeleteAllValuesButton} from './DeleteAllValuesButton';
-import {computeCalculatedFlags, computeInheritedFlags} from './calculatedInheritedFlags';
+import {DeleteAllValuesButton} from '../shared/DeleteAllValuesButton';
+import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
 import {useGetPresentationValues} from './useGetPresentationValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ComputeIndicator} from './ComputeIndicator';
 import {getAntdDisplayedValue, getEmptyInitialValue} from '../../antdUtils';
 import {GetRecordColumnsValuesRecord, IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {EDIT_RECORD_SIDEBAR_ID, STANDARD_FIELD_ID_PREFIX} from '_ui/constants';
+import {ComputeIndicator} from '../shared/ComputeIndicator';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -415,6 +415,7 @@ const StandardField: FunctionComponent<
                                                                 index
                                                             )
                                                         }
+                                                        disabled={isReadOnly}
                                                     />
                                                 )}
                                             </RowValueWrapper>
@@ -433,7 +434,7 @@ const StandardField: FunctionComponent<
                                                 size="m"
                                                 icon={<FaPlus />}
                                                 onClick={() => add(defaultValueToAddInAntdForm)}
-                                                disabled={shouldDisabledAddValueButton}
+                                                disabled={isReadOnly || shouldDisabledAddValueButton}
                                             >
                                                 {t('record_edition.add_value')}
                                             </KitAddValueButton>

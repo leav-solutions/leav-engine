@@ -5,7 +5,7 @@ import {render, screen} from '_ui/_tests/testUtils';
 import {DSInputNumberWrapper} from './DSInputNumberWrapper';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../shared/calculatedInheritedFlags';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 const value = '42';

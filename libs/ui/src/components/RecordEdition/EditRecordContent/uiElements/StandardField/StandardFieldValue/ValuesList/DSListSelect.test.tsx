@@ -13,7 +13,7 @@ import {
     EditRecordReducerActionsTypes,
     IEditRecordReducerState
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import {CalculatedFlags, InheritedFlags} from '../../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../../shared/calculatedInheritedFlags';
 
 const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,

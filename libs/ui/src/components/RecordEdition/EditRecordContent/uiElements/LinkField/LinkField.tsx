@@ -31,15 +31,15 @@ import {useLang} from '_ui/hooks';
 import styled from 'styled-components';
 
 //TODO: factoriser avec StandardField
-import {ComputeIndicator} from '../StandardField/ComputeIndicator';
-import {DeleteAllValuesButton} from '../StandardField/DeleteAllValuesButton';
+import {DeleteAllValuesButton} from '../shared/DeleteAllValuesButton';
 import {IEntrypointLink, IPrimaryAction} from '_ui/components/Explorer/_types';
 import {Explorer} from '_ui/components/Explorer';
 import {FaList} from 'react-icons/fa';
 import {LINK_FIELD_ID_PREFIX} from '_ui/constants';
 import {IExplorerRef} from '_ui/components/Explorer/Explorer';
-import {computeCalculatedFlags, computeInheritedFlags} from '../StandardField/calculatedInheritedFlags';
+import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
 import {Form} from 'antd';
+import {ComputeIndicator} from '../shared/ComputeIndicator';
 
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
