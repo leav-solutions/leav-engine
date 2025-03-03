@@ -3,6 +3,7 @@ query ExplorerLibraryDetails($libraryId: ID!) {
         list {
             id
             label
+            behavior
         }
     }
 }
