@@ -28,11 +28,13 @@ export const useCreatePrimaryAction = ({
     libraryId,
     entrypoint,
     totalCount,
+    onCreate,
     refetch
 }: FeatureHook<{
     libraryId: string;
     entrypoint: Entrypoint;
     totalCount: number;
+    onCreate?: (itemIds: string[]) => void;
     refetch: () => void;
 }>) => {
     const {t} = useSharedTranslation();
@@ -139,6 +141,7 @@ export const useCreatePrimaryAction = ({
                                 ]
                             );
                         }
+                        onCreate?.([newRecord.id]);
                     }}
                     submitButtons={['create']}
                 />

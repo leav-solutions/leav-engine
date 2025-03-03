@@ -78,6 +78,19 @@ interface IExplorerProps {
     defaultPrimaryActions?: Array<'create'>;
     defaultMassActions?: Array<'deactivate'>;
     defaultViewSettings?: DefaultViewSettings;
+    defaultCallbacks?: {
+        item?: {
+            edit?: IItemAction['callback'];
+            remove?: IItemAction['callback'];
+        };
+        primary?: {
+            create?: (itemIds: string[]) => void;
+            link?: (itemIds: string[]) => void;
+        };
+        mass?: {
+            deactivate?: IMassActions['callback'];
+        };
+    };
     showFiltersAndSorts?: boolean;
     enableConfigureView?: boolean;
     showTitle?: boolean;
@@ -117,6 +130,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             defaultActionsForItem = ['edit', 'remove'],
             defaultPrimaryActions = ['create'],
             defaultMassActions = ['deactivate'],
+            defaultCallbacks,
             defaultViewSettings
         },
         ref
@@ -149,12 +163,14 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {removeItemAction} = useRemoveItemAction({
             isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('remove'),
+            onRemove: defaultCallbacks?.item?.remove,
             store: {view, dispatch},
             entrypoint
         });
 
         const {editItemAction, editItemModal} = useEditItemAction({
-            isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit')
+            isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit'),
+            onEdit: defaultCallbacks?.item?.edit
         });
 
         const totalCount = data?.totalCount ?? 0;
@@ -162,6 +178,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {createPrimaryAction, createModal} = useCreatePrimaryAction({
             isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
             libraryId: view.libraryId,
+            onCreate: defaultCallbacks?.primary?.create,
             entrypoint,
             totalCount,
             refetch
@@ -169,6 +186,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
             isEnabled: isLink,
+            onLink: defaultCallbacks?.primary?.link,
             maxItemsLeft: null // TODO: use KitTable.row
         });
 
@@ -178,6 +196,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
             store: {view, dispatch},
             allVisibleKeys,
+            onDeactivate: defaultCallbacks?.mass?.deactivate,
             refetch
         });
 
@@ -186,6 +205,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             store: {view, dispatch},
             pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
             allVisibleKeys,
+            onDelete: defaultCallbacks?.mass?.deactivate,
             refetch
         });
 

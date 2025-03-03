@@ -18,7 +18,12 @@ import {FeatureHook, IItemAction, IItemData} from '../_types';
  *
  * @param isEnabled - whether the action is present
  */
-export const useEditItemAction = ({isEnabled}: FeatureHook) => {
+export const useEditItemAction = ({
+    isEnabled,
+    onEdit
+}: FeatureHook<{
+    onEdit?: IItemAction['callback'];
+}>) => {
     const {t} = useSharedTranslation();
 
     const [refreshItem] = useExplorerLibraryDataLazyQuery({fetchPolicy: 'network-only'});
@@ -48,6 +53,7 @@ export const useEditItemAction = ({isEnabled}: FeatureHook) => {
                 ]
             }
         });
+        onEdit?.(item);
         setEditingItem(null);
     };
 

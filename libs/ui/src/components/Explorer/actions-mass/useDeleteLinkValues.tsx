@@ -17,6 +17,7 @@ export const useDeleteLinkValues = ({
     store: {view, dispatch},
     pagination,
     allVisibleKeys,
+    onDelete,
     refetch
 }: FeatureHook<{
     pagination: null | {limit: number; offset: number};
@@ -25,6 +26,7 @@ export const useDeleteLinkValues = ({
         dispatch: Dispatch<IViewSettingsAction>;
     };
     allVisibleKeys: string[];
+    onDelete?: IMassActions['callback'];
     refetch: ReturnType<typeof useExplorerData>['refetch'];
 }>) => {
     const {t} = useSharedTranslation();
@@ -46,7 +48,7 @@ export const useDeleteLinkValues = ({
         () => ({
             label: t('explorer.massAction.deactivate'),
             icon: <FaTrash />,
-            callback: () => {
+            callback: massSelectionFilter => {
                 KitModal.confirm({
                     type: 'confirm',
                     dangerConfirm: true,
@@ -93,6 +95,8 @@ export const useDeleteLinkValues = ({
                                 undefined,
                                 true
                             );
+
+                            onDelete?.(massSelectionFilter, view.massSelection);
                             await refetch();
                         }
                         dispatch({
