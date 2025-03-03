@@ -310,6 +310,7 @@ const LinkField: FunctionComponent<
                             hidePrimaryActions
                             hideTableHeader
                             iconsOnlyItemActions
+                            subFilter={state.testProps}
                         />
                     </KitFieldsWrapper>
                     <KitSpace size="xs">

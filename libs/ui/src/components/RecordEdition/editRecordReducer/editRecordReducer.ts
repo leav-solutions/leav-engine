@@ -15,6 +15,7 @@ export interface IRecordPropertyWithAttribute {
 
 export interface IEditRecordReducerState {
     record: IRecordIdentityWhoAmI;
+    testProps: any;
     libraryId: string;
     libraryLabel: SystemTranslation | null;
     activeAttribute: IRecordPropertyWithAttribute;
@@ -85,6 +86,7 @@ export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void
 
 export const initialState: IEditRecordReducerState = {
     record: null,
+    testProps: null,
     libraryId: null,
     libraryLabel: null,
     activeAttribute: null,

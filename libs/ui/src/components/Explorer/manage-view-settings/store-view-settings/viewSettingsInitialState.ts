@@ -37,5 +37,6 @@ export const viewSettingsInitialState: IViewSettingsState = {
         attributesIds: [],
         sort: [],
         filters: []
-    }
+    },
+    subFilter: null
 };

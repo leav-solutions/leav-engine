@@ -121,6 +121,8 @@ export const LinkModal: FunctionComponent<IAddLinkModalProps> = ({open, onClose}
                             type: 'library',
                             libraryId: view.libraryId
                         }}
+                        showFiltersAndSorts
+                        defaultViewSettings={view.subFilter}
                         selectionMode={isMultiple ? 'multiple' : 'simple'}
                         hideSelectAllAction={!isMultiple && view.entrypoint.type === 'link'}
                         primaryActions={[]}

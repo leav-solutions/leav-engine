@@ -67,6 +67,7 @@ export interface IViewSettingsState {
     initialViewSettings: Pick<IViewSettingsState, 'viewType' | 'attributesIds' | 'sort' | 'pageSize' | 'filters'>;
     defaultViewSettings: DefaultViewSettings;
     massSelection: MassSelection;
+    subFilter: any;
 }
 
 interface IViewSettingsActionChangePageSize {
