@@ -37,17 +37,32 @@ describe('calculationsVariableFunctions', () => {
             expect(res[0]).not.toHaveProperty('raw_payload');
         });
 
-        it('Should return value on tree attribute', async () => {
-            mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: {record: {library: 'treeLibraryId', id: 'treeRecordId'}}}]);
+        it('Should return tree node on tree attribute', async () => {
+            mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: {id: 'nodeId', record: {library: 'treeLibraryId', id: 'treeRecordId'}}}]);
             mockAttributeDomain.getAttributeProperties.mockResolvedValue({linked_tree: 'treeId'});
 
             const res = await calculationFunctions.getValue.run(ctx,[{library: 'library', recordId: 'recordId'}], 'attributeId');
 
             expect(res).toHaveLength(1);
-            expect(res[0].library).toBe('treeLibraryId');
-            expect(res[0].recordId).toBe('treeRecordId');
-            expect(res[0].payload).toBe('treeRecordId');
-            expect(res[0]).not.toHaveProperty('raw_payload');
+            expect(res[0].library).toBe('library');
+            expect(res[0].recordId).toBe('recordId');
+            expect(res[0].payload).toEqual({id: 'nodeId', record: {library: 'treeLibraryId', id: 'treeRecordId'}});
+            expect(res[0].raw_payload).toBe(null);
+        });
+
+        it('Should return value on tree node as input value', async () => {
+            mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: 'payload', raw_payload: 'rawPayload'}]);
+            mockAttributeDomain.getAttributeProperties.mockResolvedValue({});
+
+            jest.spyOn(TypeGuards, 'isIStandardValue').mockReturnValue(true);
+
+            const res = await calculationFunctions.getValue.run(ctx,[{library: 'libraryId', recordId: 'recordId', payload: {id: 'nodeId', record: {id: 'nodeRecordId', library: 'nodeRecordLibraryId'}}}], 'nodeRecordAttributeId');
+
+            expect(res).toHaveLength(1);
+            expect(res[0].library).toBe('nodeRecordLibraryId');
+            expect(res[0].recordId).toBe('nodeRecordId');
+            expect(res[0].payload).toBe('payload');
+            expect(res[0].raw_payload).toBe('rawPayload');
         });
 
         it('Should return value on standard attribute', async () => {
@@ -64,8 +79,6 @@ describe('calculationsVariableFunctions', () => {
             expect(res[0].payload).toBe('payload');
             expect(res[0].raw_payload).toBe('rawPayload');
         });
-
-
     });
 
     test('test input', async () => {

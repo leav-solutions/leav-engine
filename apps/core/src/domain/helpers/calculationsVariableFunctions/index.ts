@@ -6,7 +6,8 @@ import {IVariableValue} from 'domain/helpers/calculationVariable';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IActionsListContext} from '_types/actionsList';
 import {TypeGuards} from '../../../utils';
-import {IDateRangeValue} from '../../../_types/value';
+import {IDateRangeValue, ITreeValue} from '../../../_types/value';
+import {ITreeNode} from '../../../_types/tree';
 
 interface IDeps {
     'core.domain.record': IRecordDomain;
@@ -90,19 +91,22 @@ export default function ({
         });
     };
 
+    const _isTreeNode = (payload: IVariableValue['payload']): payload is ITreeNode =>
+        typeof payload === 'object' && 'id' in payload && 'record' in payload;
+
     const getValue = async (
         context: IActionsListContext,
         inputValue: IVariableValue[],
         attributeKey: string
     ): Promise<IVariableValue[]> =>
         Promise.all(
-            inputValue.map(async ({library, recordId}) => {
+            inputValue.map(async ({library, recordId, payload}) => {
+                const isTreeNode = _isTreeNode(payload);
+
                 let values = await recordDomain.getRecordFieldValue({
-                    library,
-                    record: {
-                        id: recordId,
-                        library
-                    },
+                    ...(isTreeNode
+                        ? {library: payload.record.library, record: payload.record}
+                        : {library, record: {id: recordId, library}}),
                     attributeId: attributeKey,
                     ctx: context
                 });
@@ -127,23 +131,11 @@ export default function ({
                                       }
                                     : null
                             )
-                            .filter(Boolean);
-                    } else if (properties?.linked_tree) {
-                        currReturnValue = values
-                            .map(v =>
-                                !!v?.payload
-                                    ? {
-                                        library: v.payload.record.library,
-                                        recordId: v.payload.record.id,
-                                        payload: v.payload.record.id
-                                    }
-                                    : null
-                            )
-                            .filter(Boolean);
+                            .filter(v => !!v);
                     } else {
                         currReturnValue = values.map(v => ({
-                            library,
-                            recordId,
+                            library: isTreeNode ? payload.record.library : library,
+                            recordId: isTreeNode ? payload.record.id : recordId,
                             payload: v?.payload ?? null,
                             raw_payload: TypeGuards.isIStandardValue(v) ? v?.raw_payload : null
                         }));
