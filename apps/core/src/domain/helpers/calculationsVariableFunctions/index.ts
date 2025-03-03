@@ -6,7 +6,8 @@ import {IVariableValue} from 'domain/helpers/calculationVariable';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IActionsListContext} from '_types/actionsList';
 import {TypeGuards} from '../../../utils';
-import {IDateRangeValue} from '../../../_types/value';
+import {IDateRangeValue, ITreeValue} from '../../../_types/value';
+import {ITreeNode} from '../../../_types/tree';
 
 interface IDeps {
     'core.domain.record': IRecordDomain;
@@ -41,22 +42,21 @@ export default function ({
     const fromDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> =>
         inputValue.map(variableValue => ({
             ...variableValue,
-            payload: (variableValue.raw_payload as IDateRangeValue).from
+            payload: (variableValue.raw_payload as IDateRangeValue).from,
+            raw_payload: (variableValue.raw_payload as IDateRangeValue).from
         }));
 
     const toDate = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> =>
         inputValue.map(variableValue => ({
             ...variableValue,
-            payload: (variableValue.raw_payload as IDateRangeValue).to
+            payload: (variableValue.raw_payload as IDateRangeValue).to,
+            raw_payload: (variableValue.raw_payload as IDateRangeValue).to
         }));
 
     const sum = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
             ...inputValue[0],
-            payload: inputValue.reduce((acc, v) => {
-                const value = typeof v.payload === 'object' ? v.payload.value : v.payload;
-                return acc + parseFloat(value);
-            }, 0)
+            payload: inputValue.reduce((acc, v) => acc + parseFloat(String(v.payload)), 0)
         }
     ];
 
@@ -64,10 +64,7 @@ export default function ({
         {
             ...inputValue[0],
             payload:
-                inputValue.reduce((acc, v) => {
-                    const value = typeof v.payload === 'object' ? v.payload.value : v.payload;
-                    return acc + parseFloat(value);
-                }, 0) / inputValue.length
+                inputValue.reduce((acc, v) => acc + parseFloat(String(v.payload)), 0) / inputValue.length
         }
     ];
 
@@ -90,19 +87,22 @@ export default function ({
         });
     };
 
+    const _isTreeNodePayload = (payload: IVariableValue['payload']): payload is ITreeNode =>
+         typeof payload === 'object' && 'id' in payload && 'record' in payload;
+
     const getValue = async (
         context: IActionsListContext,
         inputValue: IVariableValue[],
         attributeKey: string
     ): Promise<IVariableValue[]> =>
         Promise.all(
-            inputValue.map(async ({library, recordId}) => {
+            inputValue.map(async ({library, recordId, payload}) => {
+                const isTreeNodePayload = _isTreeNodePayload(payload);
+
                 let values = await recordDomain.getRecordFieldValue({
-                    library,
-                    record: {
-                        id: recordId,
-                        library
-                    },
+                    ...(isTreeNodePayload
+                        ? {library: payload.record.library, record: payload.record}
+                        : {library, record: {id: recordId, library}}),
                     attributeId: attributeKey,
                     ctx: context
                 });
@@ -130,8 +130,8 @@ export default function ({
                             .filter(v => !!v);
                     } else {
                         currReturnValue = values.map(v => ({
-                            library,
-                            recordId,
+                            library: isTreeNodePayload ? payload.record.library : library,
+                            recordId: isTreeNodePayload ? payload.record.id : recordId,
                             payload: v?.payload ?? null,
                             raw_payload: TypeGuards.isIStandardValue(v) ? v?.raw_payload : null
                         }));

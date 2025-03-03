@@ -6,6 +6,7 @@ import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
 import {IVariableFunctions} from '../calculationsVariableFunctions';
+import {ITreeNode} from '../../../_types/tree';
 
 interface IDeps {
     'core.domain.helpers.calculationsVariableFunctions': IVariableFunctions;
@@ -14,7 +15,7 @@ interface IDeps {
 export interface IVariableValue {
     recordId: string;
     library: string;
-    payload: string | number | boolean | Record<string, any>;
+    payload: string | number | boolean | ITreeNode | Record<string, any>;
     raw_payload?: string | number | boolean | Record<string, any>;
 }
 
