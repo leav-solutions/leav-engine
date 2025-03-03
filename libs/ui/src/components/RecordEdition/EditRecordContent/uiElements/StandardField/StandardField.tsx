@@ -326,7 +326,7 @@ const StandardField: FunctionComponent<
         !isFieldInError &&
         attribute.format !== AttributeFormat.boolean &&
         attribute.format !== AttributeFormat.encrypted;
-    const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1 && !attribute.required;
+    const canDeleteAllValues = hasValue && backendValues.length > 1 && !attribute.required;
 
     const label = localizedTranslation(element.settings.label, lang);
 
@@ -346,7 +346,9 @@ const StandardField: FunctionComponent<
                         <KitInputExtraAlignLeft>
                             <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
                         </KitInputExtraAlignLeft>
-                        {canDeleteAllValues && <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} />}
+                        {canDeleteAllValues && (
+                            <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} disabled={isReadOnly} />
+                        )}
                     </>
                 }
                 htmlFor={attribute.id}

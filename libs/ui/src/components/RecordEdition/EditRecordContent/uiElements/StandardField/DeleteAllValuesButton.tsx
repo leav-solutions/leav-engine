@@ -5,7 +5,10 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton, KitModal} from 'aristid-ds';
 import {FunctionComponent} from 'react';
 
-export const DeleteAllValuesButton: FunctionComponent<{handleDelete: () => Promise<void>}> = ({handleDelete}) => {
+export const DeleteAllValuesButton: FunctionComponent<{handleDelete: () => Promise<void>; disabled?: boolean}> = ({
+    handleDelete,
+    disabled
+}) => {
     const {t} = useSharedTranslation();
 
     const _confirmDeleteAllValues = () => {
@@ -24,7 +27,7 @@ export const DeleteAllValuesButton: FunctionComponent<{handleDelete: () => Promi
     };
 
     return (
-        <KitButton type="tertiary" size="s" onClick={_confirmDeleteAllValues}>
+        <KitButton type="tertiary" size="s" onClick={_confirmDeleteAllValues} disabled={disabled}>
             {t('record_edition.delete_all')}
         </KitButton>
     );

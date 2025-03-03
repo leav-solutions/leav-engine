@@ -56,12 +56,31 @@ const KitFooterButton = styled(KitButton)`
 
 const KitFieldsWrapper = styled.div`
     max-height: 322px;
-    // overflow-y: scroll;
 
     > div {
         max-height: 322px;
     }
 `;
+
+// const KitInputWrapperStyled = styled(KitInputWrapper)`
+//     //TODO: A supprimer ?
+//     &.disabled {
+//         .kit-input-wrapper-content {
+//             background-color: var(--general-utilities-neutral-light);
+
+//             // .ant-table .ant-table-container tbody.ant-table-tbody {
+//             //     & > tr:hover .ant-table-cell,
+//             //     & > tr:focus-visible .ant-table-cell {
+//             //         border: none;
+//             //     }
+
+//             //     tr:focus-visible td:first-of-type .ant-table-cell:not(.ant-table-selection-column) {
+//             //         padding-left: calc((var(--kit-table-row-side-padding) + var(--general-spacing-xs)) * 1px);
+//             //     }
+//             // }
+//         }
+//     }
+// `;
 
 const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = ({
     element,
@@ -193,6 +212,9 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
     const label = localizedTranslation(element.settings.label, lang);
 
     //-------
+    //TODO: test -> on a bien recréer les boutons (vérifier disabled et callback ??)
+    //TODO: Supprimer MultiValueSelect et MonoValueSelect (ainsi que tous leurs fichiers + références diverses)
+
     //TODO: Supprimer le state et passer par element (cf StandardField)
     //TODO: handle computed values and flags 🥲
     const linkEntrypoint: IEntrypointLink = {
@@ -203,11 +225,12 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
     };
 
     const isReadOnly = attribute.readonly || readonly;
+    // const isReadOnly = true;
 
     const isMultipleValues = element.attribute.multiple_values;
 
     //TODO: add more check
-    const canDeleteAllValues = !isReadOnly && isMultipleValues && !attribute.required;
+    const canDeleteAllValues = isMultipleValues && !attribute.required;
 
     const isFieldInError = false;
     //TODO: check if field is in error (cf StandardField)
@@ -215,6 +238,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
     const [explorerActions, setExplorerActions] = useState<IExplorerRef | null>(null);
 
     const _handleExplorerRef = (ref: IExplorerRef) => {
+        //TODO: Prendre en compte link action et totalCount
         if (ref?.createAction.disabled !== explorerActions?.createAction?.disabled) {
             setExplorerActions({
                 createAction: ref?.createAction,
@@ -250,7 +274,9 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                         <KitInputExtraAlignLeft>
                             <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
                         </KitInputExtraAlignLeft>
-                        {canDeleteAllValues && <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} />}
+                        {canDeleteAllValues && (
+                            <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} disabled={isReadOnly} />
+                        )}
                     </>
                 }
             >
@@ -261,7 +287,8 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                             entrypoint={linkEntrypoint}
                             showTitle={false}
                             showSearch={false}
-                            disableSelection={!isMultipleValues}
+                            disableSelection={isReadOnly || !isMultipleValues}
+                            defaultActionsForItem={isReadOnly ? [] : undefined}
                             hidePrimaryActions
                             hideTableHeader
                             iconsOnlyItemActions
@@ -272,7 +299,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                             type="secondary"
                             size="m"
                             icon={explorerActions?.createAction?.icon}
-                            disabled={explorerActions?.createAction?.disabled}
+                            disabled={isReadOnly || explorerActions?.createAction?.disabled}
                             onClick={explorerActions?.createAction?.callback}
                         >
                             {explorerActions?.createAction?.label}
@@ -281,7 +308,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                             type="secondary"
                             size="m"
                             icon={<FaList />}
-                            disabled={explorerActions?.createAction?.disabled} //TODO: When linkAction.disabled will be fixed, replace by linkAction.disabled
+                            disabled={isReadOnly || explorerActions?.createAction?.disabled} //TODO: When linkAction.disabled will be fixed, replace by linkAction.disabled
                             onClick={explorerActions?.linkAction?.callback}
                         >
                             {explorerActions?.linkAction?.label}
