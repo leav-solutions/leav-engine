@@ -9200,7 +9200,7 @@ __metadata:
     "@uidotdev/usehooks": "npm:2.4.1"
     babel-jest: "npm:29.3.1"
     commander: "npm:9.5.0"
-    dompurify: "npm:3.1.3"
+    dompurify: "npm:3.2.4"
     html-react-parser: "npm:4.2.2"
     i18next-resources-to-backend: "npm:1.1.4"
     jest: "npm:29.0.3"
@@ -9224,7 +9224,7 @@ __metadata:
     "@ant-design/icons": ">=5.2"
     "@apollo/client": ">=3.8.1"
     antd: 5.22.2
-    aristid-ds: 13.0.0-caa1de8
+    aristid-ds: 13.0.0-a482bfb
     dayjs: ^1.11.13
     i18next: 22.5
     react: 18.2.0
@@ -11980,6 +11980,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/trusted-types@npm:^2.0.7":
+  version: 2.0.7
+  resolution: "@types/trusted-types@npm:2.0.7"
+  checksum: 8e4202766a65877efcf5d5a41b7dd458480b36195e580a3b1085ad21e948bc417d55d6f8af1fd2a7ad008015d4117d5fdfe432731157da3c68678487174e4ba3
+  languageName: node
+  linkType: hard
+
 "@types/unist@npm:*, @types/unist@npm:^2.0.0, @types/unist@npm:^2.0.2, @types/unist@npm:^2.0.3":
   version: 2.0.6
   resolution: "@types/unist@npm:2.0.6"
@@ -12757,7 +12764,7 @@ __metadata:
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
     uuid: "npm:7.0.3"
-    vite: "npm:4.5.5"
+    vite: "npm:4.5.6"
     vite-jest: "npm:0.1.4"
     yup: "npm:0.32.11"
   languageName: unknown
@@ -13729,9 +13736,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:13.0.0-caa1de8":
-  version: 13.0.0-caa1de8
-  resolution: "aristid-ds@npm:13.0.0-caa1de8"
+"aristid-ds@npm:13.0.0-a482bfb":
+  version: 13.0.0-a482bfb
+  resolution: "aristid-ds@npm:13.0.0-a482bfb"
   dependencies:
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
@@ -13788,7 +13795,7 @@ __metadata:
     react-uuid: ^2.0.0
     remark-gfm: ^3.0.1
     styled-components: ^6.0.7
-  checksum: d0583951f09fbd18e7acd4268a7338d867b30e6353ad50fe1e343150f93153d03a54bc1e237188ca5688f0b963355f41c8d8cc0de76a4f30ca8edddf975acea0
+  checksum: 4b6b5f9c3d91180f5340058d51e82eb860a369385d4a7ca5d5fd87518e0dfaaba9318f2b463cb3eb17485b1d28c892f2b0586be3d300cf5db4eae97e49395992
   languageName: node
   linkType: hard
 
@@ -17037,7 +17044,7 @@ __metadata:
     apollo: "npm:2.34.0"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-upload-client: "npm:14.1.3"
-    aristid-ds: "npm:13.0.0-caa1de8"
+    aristid-ds: "npm:13.0.0-a482bfb"
     commander: "npm:5.1.0"
     dayjs: "npm:1.11.13"
     graphql: "npm:15.0.0"
@@ -17068,7 +17075,7 @@ __metadata:
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
     uuid: "npm:9.0.0"
-    vite: "npm:4.5.5"
+    vite: "npm:4.5.6"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:0.4.9"
     vite-plugin-svgr: "npm:2.4.0"
@@ -17645,10 +17652,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:3.1.3":
-  version: 3.1.3
-  resolution: "dompurify@npm:3.1.3"
-  checksum: bb1badf23e8b8c32e116339ae70842465f35706be0d3b2c38a392f3ee1f32e73dbabee6462e9e89406a527e837100b75002b86d8f386937663448cbdf714c466
+"dompurify@npm:3.2.4":
+  version: 3.2.4
+  resolution: "dompurify@npm:3.2.4"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 98570c53385518a2f9b617f796926338856acfdd3369c88b5905bddf96bd7d391bf8a5433127155e0046e6faa2bfb767185fcd571b865dfabe624c099e2537f5
   languageName: node
   linkType: hard
 
@@ -25582,7 +25594,7 @@ __metadata:
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.22.2"
-    aristid-ds: "npm:13.0.0-caa1de8"
+    aristid-ds: "npm:13.0.0-a482bfb"
     i18next: "npm:22.5.0"
     i18next-browser-languagedetector: "npm:7.0.2"
     i18next-http-backend: "npm:2.1.1"
@@ -25599,7 +25611,7 @@ __metadata:
     ts-jest: "npm:29.0.5"
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
-    vite: "npm:4.5.5"
+    vite: "npm:4.5.6"
     vite-plugin-dynamic-base: "npm:0.4.9"
     vite-plugin-rewrite-all: "npm:1.0.1"
     web-vitals: "npm:2.1.4"
@@ -28365,7 +28377,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.22.2"
     apollo: "npm:2.34.0"
-    aristid-ds: "npm:13.0.0-caa1de8"
+    aristid-ds: "npm:13.0.0-a482bfb"
     commander: "npm:10.0.0"
     cross-fetch: "npm:3.1.5"
     graphql-ws: "npm:5.12.0"
@@ -28382,7 +28394,7 @@ __metadata:
     ts-jest: "npm:29.0.5"
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
-    vite: "npm:4.5.5"
+    vite: "npm:4.5.6"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:0.4.9"
   languageName: unknown
@@ -34770,9 +34782,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:4.5.5":
-  version: 4.5.5
-  resolution: "vite@npm:4.5.5"
+"vite@npm:4.5.6":
+  version: 4.5.6
+  resolution: "vite@npm:4.5.6"
   dependencies:
     esbuild: "npm:^0.18.10"
     fsevents: "npm:~2.3.2"
@@ -34806,7 +34818,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 2e8b39e004f2b2e72506b816700b3aafaf3f85bdcb9dd9392075bb234ce7333f859a0d2078a85ce5d0039f0f659ca564a7366af587848e5166f14b136cb0ad37
+  checksum: 7126ce6cc409ee9659483c6f78f2c100f0b976d7550dd3ccf5d9405d313497d0b10071bf6bcc9065d14eba3294edc3f5a666c76e2e2bae9861076e0e62d15bdc
   languageName: node
   linkType: hard
 

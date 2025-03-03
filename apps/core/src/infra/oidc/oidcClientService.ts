@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {OidcClient} from './oidcClient';
-import {generators, TokenSet} from 'openid-client';
+import {EndSessionParameters, generators, TokenSet} from 'openid-client';
 import {ECacheType, ICachesService} from '../cache/cacheService';
 import LeavError from '../../errors/LeavError';
 import {ErrorTypes} from '../../_types/errors';
@@ -21,7 +21,7 @@ export interface IOIDCClientService {
     oidcClient?: OidcClient;
     getTokensFromCodes: (params: {authorizationCode: string; queryId: string}) => Promise<TokenSet>;
     getAuthorizationUrl: (params: {redirectUri: string; queryId: string}) => Promise<string>;
-    getLogoutUrl: () => string;
+    getLogoutUrl: (params: {userId: string}) => Promise<string>;
     saveOIDCTokens: (params: {userId: string; tokens: TokenSet}) => Promise<void>;
     checkTokensValidity: (params: {userId: string}) => Promise<void> | never;
     saveOriginalUrl: (params: {originalUrl: string; queryId: string}) => Promise<void>;
@@ -134,8 +134,17 @@ export default function ({
                 code_challenge_method: 'S256'
             });
         },
-        getLogoutUrl: () =>
-            oidcClient.endSessionUrl({post_logout_redirect_uri: config.auth.oidc.postLogoutRedirectUri}),
+        getLogoutUrl: async ({userId}) => {
+            const payload: EndSessionParameters = {
+                post_logout_redirect_uri: config.auth.oidc.postLogoutRedirectUri
+            };
+
+            if (config.auth.oidc.skipLogoutConfirmationPage) {
+                payload.id_token_hint = await _getTokenSetByUserId(userId);
+            }
+
+            return oidcClient.endSessionUrl(payload);
+        },
         saveOIDCTokens: ({userId, tokens}) => _writeTokensSetByUserId(userId, tokens),
         checkTokensValidity: async ({userId}) => {
             const tokenSet = await _getTokenSetByUserId(userId);

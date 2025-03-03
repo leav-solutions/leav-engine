@@ -534,12 +534,7 @@
         "created_at": "Créé le",
         "created_at_value": "{{date}} par {{user}}",
         "modified_at": "Modifié le",
-        "modified_at_value": "{{date}} par {{user}}",
-        "error": {
-            "title": "Erreur de chargement des données",
-            "description": "Une erreur technique est survenue, veuillez recharger la page s'il vous plaît. Si l'erreur persiste, veuillez contacter le support Aristid.",
-            "refresh": "Rafraîchir"
-        }
+        "modified_at_value": "{{date}} par {{user}}"
     },
     "floating_menu": {
         "more_actions": "Plus"

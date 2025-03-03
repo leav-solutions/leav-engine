@@ -50,7 +50,8 @@ module.exports = {
                 process.env.OIDC_WELLKNOWN_ENDPOINT ||
                 'http://keycloak:8080/realms/LEAV/.well-known/openid-configuration',
             clientId: process.env.OIDC_CLIENT_ID || 'leav',
-            postLogoutRedirectUri: process.env.OIDC_POST_LOGOUT_REDIRECT_URI || 'http://core.leav.localhost/'
+            postLogoutRedirectUri: process.env.OIDC_POST_LOGOUT_REDIRECT_URI || 'http://core.leav.localhost/',
+            skipLogoutConfirmationPage: process.env.OIDC_SKIP_LOGOUT_CONFIRMATION_PAGE || false
         },
         testApiKey: process.env.TEST_API_KEY // /!\ do not use in production /!\
     },

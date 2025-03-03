@@ -29,6 +29,10 @@ const ExplorerToolbarListStyled = styled.ul`
     gap: 0;
     white-space: nowrap;
     min-height: 26px; // height of the filter chip
+
+    &.headless {
+        margin-bottom: 0;
+    }
 `;
 
 const DividerStyled = styled(KitDivider)`
@@ -38,7 +42,8 @@ const DividerStyled = styled(KitDivider)`
 export const ExplorerToolbar: FunctionComponent<{
     isMassSelectionAll: boolean;
     showFiltersAndSort: boolean;
-}> = ({isMassSelectionAll, showFiltersAndSort, children}) => {
+    headless: boolean;
+}> = ({isMassSelectionAll, showFiltersAndSort, headless, children}) => {
     const {t} = useSharedTranslation();
 
     const {view} = useViewSettingsContext();
@@ -48,7 +53,7 @@ export const ExplorerToolbar: FunctionComponent<{
 
     const {attributeDetailsById} = useAttributeDetailsData(view.libraryId);
 
-    if (filters.length === 0 && sort.length === 0 && children === null) {
+    if (((filters.length === 0 && sort.length === 0) || !showFiltersAndSort) && !children) {
         return null;
     }
 
@@ -63,11 +68,11 @@ export const ExplorerToolbar: FunctionComponent<{
               );
 
     const _handleClickOnSort: ComponentProps<typeof FilterStyled>['onClick'] = () =>
-        isMassSelectionAll ? undefined : () => openSettingsPanel('sort-items');
+        isMassSelectionAll ? undefined : openSettingsPanel('sort-items');
 
     return (
-        <ExplorerToolbarListStyled aria-label={t('explorer.toolbar')}>
-            {children !== null && (
+        <ExplorerToolbarListStyled aria-label={t('explorer.toolbar')} className={headless ? 'headless' : ''}>
+            {!!children && (
                 <>
                     <li>{children}</li>
                     {showFiltersAndSort && (filters.length !== 0 || sort.length > 0) && (

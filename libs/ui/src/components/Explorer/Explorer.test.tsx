@@ -21,7 +21,7 @@ import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordCo
 import * as useColumnWidth from './useColumnWidth';
 import {SNACKBAR_MASS_ID} from './actions-mass/useMassActions';
 import {createRef} from 'react';
-import {ExplorerRef} from './Explorer';
+import {IExplorerRef} from './Explorer';
 
 const UploadFilesMock = 'UploadFiles';
 const CreateDirectoryMock = 'CreateDirectory';
@@ -854,6 +854,26 @@ describe('Explorer', () => {
 
             expect(screen.queryByText(/explorer.massAction.itemsTotal/)).not.toBeInTheDocument();
         });
+
+        test('should display the select all action', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByText(/explorer.massAction.itemsTotal/)).toBeVisible();
+        });
+
+        test('should not display the select all action', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} hideSelectAllAction />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByText(/explorer.massAction.itemsTotal/)).not.toBeInTheDocument();
+        });
     });
 
     describe('props title', () => {
@@ -1220,7 +1240,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new record from Explorer ref', async () => {
-            const explorerRef = createRef<ExplorerRef>();
+            const explorerRef = createRef<IExplorerRef>();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} ref={explorerRef} hidePrimaryActions />
@@ -1291,7 +1311,7 @@ describe('Explorer', () => {
                 saveValues
             });
 
-            const explorerRef = createRef<ExplorerRef>();
+            const explorerRef = createRef<IExplorerRef>();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={linkEntrypoint} ref={explorerRef} hidePrimaryActions />

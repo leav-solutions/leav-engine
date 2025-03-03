@@ -14,6 +14,7 @@ import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
 import {useColumnWidth} from './useColumnWidth';
+import {RowSelectionType} from 'antd/es/table/interface';
 
 const USELESS = '';
 
@@ -24,6 +25,10 @@ const DataViewContainerDivStyled = styled.div`
     flex: 1 1 min-content;
     max-height: minmax(0, 1fr);
     overflow: hidden;
+
+    &.headless {
+        overflow-y: auto;
+    }
 
     .kit-table {
         padding-bottom: ${defaultPaginationHeight}px;
@@ -81,6 +86,7 @@ interface IDataViewProps {
         onSelectionChange: null | ((keys: Key[]) => void);
         isMassSelectionAll: boolean;
         selectedKeys: Key[];
+        mode?: 'simple' | 'multiple';
     };
     hideTableHeader: boolean;
 }
@@ -107,7 +113,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         attributesProperties,
         paginationProps,
         itemActions,
-        selection: {onSelectionChange, selectedKeys, isMassSelectionAll},
+        selection: {onSelectionChange, selectedKeys, isMassSelectionAll, mode},
         iconsOnlyItemActions,
         hideTableHeader = false
     }) => {
@@ -232,7 +238,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
             onSelectionChange === null
                 ? undefined
                 : {
-                      type: 'checkbox',
+                      type: mode === 'simple' ? 'radio' : 'checkbox',
                       columnTitle: ' ', // blank string to hide select all checkbox from <KitTable />
                       selectedRowKeys: selectedKeys,
                       preserveSelectedRowKeys: true,
@@ -247,12 +253,12 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
 
         // TODO: handle columns width based on attribute type/format
         return (
-            <DataViewContainerDivStyled ref={containerRef}>
+            <DataViewContainerDivStyled ref={containerRef} className={hideTableHeader ? 'headless' : ''}>
                 <StyledTable
                     showHeader={dataGroupedFilteredSorted.length > 0 && !hideTableHeader}
                     columns={columns}
                     tableLayout="fixed"
-                    scroll={{y: scrollHeight, x: '100%'}}
+                    scroll={{y: hideTableHeader ? '100%' : scrollHeight, x: '100%'}}
                     dataSource={dataGroupedFilteredSorted}
                     pagination={false}
                     rowSelection={_rowSelection}

@@ -12,6 +12,7 @@ import {IEntrypointLink} from '../_types';
 import {useLinkMassAction} from './useLinkMassAction';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {EditSettingsContextProvider} from '../manage-view-settings';
+import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 
 interface IAddLinkModalProps {
     open: boolean;
@@ -63,6 +64,15 @@ export const LinkModal: FunctionComponent<IAddLinkModalProps> = ({open, onClose}
     const explorerContainerRef = useRef<HTMLDivElement>(null);
     const {view, dispatch} = useViewSettingsContext();
 
+    const {data: attributeData} = useExplorerLinkAttributeQuery({
+        skip: view.entrypoint.type !== 'link',
+        variables: {
+            id: (view.entrypoint as IEntrypointLink).linkAttributeId
+        }
+    });
+
+    const isMultiple = attributeData?.attributes?.list?.[0]?.multiple_values;
+
     const {addLinkMassAction} = useLinkMassAction({
         isEnabled: true,
         store: {view, dispatch},
@@ -111,6 +121,8 @@ export const LinkModal: FunctionComponent<IAddLinkModalProps> = ({open, onClose}
                             type: 'library',
                             libraryId: view.libraryId
                         }}
+                        selectionMode={isMultiple ? 'multiple' : 'simple'}
+                        hideSelectAllAction={!isMultiple && view.entrypoint.type === 'link'}
                         primaryActions={[]}
                         defaultActionsForItem={[]}
                         defaultMassActions={[]}
