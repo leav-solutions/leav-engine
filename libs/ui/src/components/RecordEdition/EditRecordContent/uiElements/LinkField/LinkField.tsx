@@ -75,7 +75,12 @@ const KitInputWrapperStyled = styled(KitInputWrapper)`
     }
 `;
 
-const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = ({
+const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings & {
+    columns?: Array<{
+        id: string;
+        label: Record<string, string>;
+    }>;
+}>> = ({
     element,
     readonly,
     onValueSubmit,
@@ -85,13 +90,15 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
     const {t} = useSharedTranslation();
     const {state} = useEditRecordReducer();
     const {lang} = useLang();
-    const {attribute} = element;
+    const {attribute, settings} = element;
 
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
     const calculatedFlags = computeCalculatedFlags(backendValues);
     const inheritedFlags = computeInheritedFlags(backendValues);
 
+    const columnsToDisplay = settings.columns?.map(({id}) => id);
     console.log({backendValues, calculatedFlags, inheritedFlags});
+
 
     // const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     // const creationErrors = useContext(CreationErrorContext);
@@ -281,6 +288,9 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                     <KitFieldsWrapper>
                         <Explorer
                             ref={_handleExplorerRef}
+                            defaultViewSettings={{
+                                attributesIds: columnsToDisplay
+                            }}
                             entrypoint={linkEntrypoint}
                             showTitle={false}
                             showSearch={false}
