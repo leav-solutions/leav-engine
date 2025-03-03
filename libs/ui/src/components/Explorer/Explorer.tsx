@@ -86,6 +86,7 @@ interface IExplorerProps {
     hideSelectAllAction?: boolean;
     hidePrimaryActions?: boolean;
     hideTableHeader?: boolean;
+    subFilter?: string;
 }
 
 export interface IExplorerRef {
@@ -117,7 +118,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             defaultActionsForItem = ['edit', 'remove'],
             defaultPrimaryActions = ['create'],
             defaultMassActions = ['deactivate'],
-            defaultViewSettings
+            defaultViewSettings,
+            subFilter
         },
         ref
     ) => {
@@ -128,6 +130,11 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(entrypoint, defaultViewSettings);
 
         const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
+
+        // console.log({defaultViewSettings});
+        console.log({subFilter});
+
+        view.subFilter = subFilter;
 
         const {
             data,

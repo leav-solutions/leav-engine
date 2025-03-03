@@ -69,6 +69,12 @@ export const useCreatePrimaryAction = ({
         createPrimaryAction: isEnabled ? _createPrimaryAction : null,
         createModal: isRecordCreationVisible ? (
             <EditRecordModal
+                testProps={
+                    // attributeId: {
+                    //     filters: []
+                    // }
+                    'call oui'
+                }
                 open
                 record={null}
                 library={libraryId}

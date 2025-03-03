@@ -299,6 +299,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings & {
                             hidePrimaryActions
                             hideTableHeader
                             iconsOnlyItemActions
+                            subFilter={state.testProps}
                         />
                     </KitFieldsWrapper>
                     <KitSpace size="xs">

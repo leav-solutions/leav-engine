@@ -5,7 +5,7 @@ import {useMemo, useState} from 'react';
 import {FaPen} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
-import {RecordFilterCondition, useExplorerLibraryDataLazyQuery} from '_ui/_gqlTypes';
+import {AttributeFormat, AttributeType, RecordFilterCondition, useExplorerLibraryDataLazyQuery} from '_ui/_gqlTypes';
 import {FeatureHook, IItemAction, IItemData} from '../_types';
 
 /**
@@ -57,6 +57,21 @@ export const useEditItemAction = ({isEnabled}: FeatureHook) => {
             editItemModal:
                 isEnabled && editingItem !== null ? (
                     <EditRecordModal
+                        testProps={{
+                            filters: [
+                                {
+                                    id: '1',
+                                    attribute: {
+                                        format: AttributeFormat.text,
+                                        label: 'ISI',
+                                        type: AttributeType.simple
+                                    },
+                                    field: 'modified_by',
+                                    condition: RecordFilterCondition.CONTAINS,
+                                    value: 'ISI'
+                                }
+                            ]
+                        }}
                         open
                         record={editingItem.whoAmI}
                         library={editingItem.libraryId}
