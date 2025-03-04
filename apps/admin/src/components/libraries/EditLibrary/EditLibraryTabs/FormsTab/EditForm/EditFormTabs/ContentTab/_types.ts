@@ -12,7 +12,8 @@ export enum UIElementTypes {
     DIVIDER = 'divider',
     FIELDS_CONTAINER = 'fields_container',
     TEXT_BLOCK = 'text_block',
-    TABS = 'tabs'
+    TABS = 'tabs',
+    FRAME = 'frame'
 }
 
 export enum FieldTypes {

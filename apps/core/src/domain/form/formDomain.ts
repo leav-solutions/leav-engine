@@ -232,7 +232,6 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                             logger.error(error);
                             logger.error('Form element was ', depElement);
                         }
-
                         if (isElementVisible) {
                             const {error: valueError, values} = await getElementValues({
                                 element: depElement,
@@ -328,6 +327,10 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                             ];
                         }
                         hasFields = hasFields || childHasFields;
+                    } else if (elem.uiElementType === FormUIElementTypes.FRAME) {
+                        // we should keep a frame
+                        hasFields = true;
+                        _childrenToKeep = [omit(elem, ['children'])];
                     } else {
                         _childrenToKeep = [omit(elem, ['children'])];
 
