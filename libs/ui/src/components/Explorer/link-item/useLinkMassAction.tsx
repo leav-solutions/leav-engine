@@ -24,6 +24,7 @@ export const useLinkMassAction = ({
     store: {view, dispatch},
     libraryId,
     linkAttributeId,
+    onLink,
     closeModal
 }: FeatureHook<{
     store: {
@@ -32,6 +33,7 @@ export const useLinkMassAction = ({
     };
     libraryId: string;
     linkAttributeId: string;
+    onLink?: (itemIds: string[]) => void;
     closeModal: () => void;
 }>) => {
     const {t} = useSharedTranslation();
@@ -56,7 +58,9 @@ export const useLinkMassAction = ({
                     }
                 },
                 values
-            );
+            ).then(() => {
+                onLink?.(data.records.list.map(({id}) => id));
+            });
             closeModal();
         }
     });

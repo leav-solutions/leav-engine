@@ -139,7 +139,7 @@ describe('useLinkMassAction', () => {
 
         expect(addLinkMassAction).not.toBeNull();
 
-        addLinkMassAction?.callback(filters);
+        addLinkMassAction?.callback(filters, []);
         expect(fetch).toHaveBeenCalledWith({
             variables: {
                 filters,

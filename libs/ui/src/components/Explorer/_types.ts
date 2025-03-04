@@ -12,10 +12,13 @@ import {
     RecordIdentityFragment,
     ViewDetailsFilterFragment
 } from '_ui/_gqlTypes';
-import {ReactElement} from 'react';
+import {Key, ReactElement} from 'react';
 import {IViewSettingsState} from './manage-view-settings';
 import {ThroughConditionFilter} from '_ui/types/search';
 import {IView} from '_ui/types';
+import {MASS_SELECTION_ALL} from './_constants';
+
+export type MassSelection = Key[] | typeof MASS_SELECTION_ALL;
 
 export interface IExplorerData {
     totalCount: number;
@@ -56,7 +59,7 @@ export interface IPrimaryAction {
 }
 
 export interface IMassActions {
-    callback: (massSelectedFilter: RecordFilterInput[]) => void | Promise<void>;
+    callback: (massSelectedFilter: RecordFilterInput[], massSelection: MassSelection) => void | Promise<void>;
     icon: ReactElement;
     label: string;
 }

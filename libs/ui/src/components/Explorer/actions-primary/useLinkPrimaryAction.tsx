@@ -19,9 +19,11 @@ import {LinkModal} from '../link-item/LinkModal';
  */
 export const useLinkPrimaryAction = ({
     isEnabled,
-    maxItemsLeft
+    maxItemsLeft,
+    onLink
 }: FeatureHook<{
     maxItemsLeft: number | null;
+    onLink?: (itemIds: string[]) => void;
 }>) => {
     const {t} = useSharedTranslation();
 
@@ -43,6 +45,7 @@ export const useLinkPrimaryAction = ({
         linkModal: isLinkModalVisible ? (
             <LinkModal
                 open
+                onLink={onLink}
                 onClose={() => {
                     setIsLinkModalVisible(false);
                 }}

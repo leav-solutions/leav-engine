@@ -17,6 +17,7 @@ import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 interface IAddLinkModalProps {
     open: boolean;
     onClose: () => void;
+    onLink?: (itemIds: string[]) => void;
 }
 
 const modalMaxWidth = 1200;
@@ -59,7 +60,7 @@ const ModalFooterStyledDiv = styled.div`
     border-top: 1px solid var(--general-utilities-border);
 `;
 
-export const LinkModal: FunctionComponent<IAddLinkModalProps> = ({open, onClose}) => {
+export const LinkModal: FunctionComponent<IAddLinkModalProps> = ({open, onLink, onClose}) => {
     const {t} = useSharedTranslation();
     const explorerContainerRef = useRef<HTMLDivElement>(null);
     const {view, dispatch} = useViewSettingsContext();
@@ -78,6 +79,7 @@ export const LinkModal: FunctionComponent<IAddLinkModalProps> = ({open, onClose}
         store: {view, dispatch},
         linkAttributeId: (view.entrypoint as IEntrypointLink).linkAttributeId,
         libraryId: view.libraryId,
+        onLink,
         closeModal: onClose
     });
 
