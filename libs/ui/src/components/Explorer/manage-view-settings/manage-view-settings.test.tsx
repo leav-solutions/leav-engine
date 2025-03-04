@@ -64,6 +64,19 @@ describe('Integration tests about managing view settings feature', () => {
         }
     }));
 
+    const mockUpdateViewMutation = jest.fn().mockImplementation(data => ({
+        data: {
+            updateView: {
+                id: '42',
+                created_by: {
+                    id: '1'
+                },
+                shared: !data?.shared,
+                label: {en: 'My view'}
+            }
+        }
+    }));
+
     const mockViewsResult: Mockify<typeof gqlTypes.useGetViewsListQuery> = {
         data: {
             views: {
@@ -162,13 +175,13 @@ describe('Integration tests about managing view settings feature', () => {
             mockExplorerAttributesQuery as gqlTypes.ExplorerAttributesQueryResult
         );
 
-        // const fetch = jest.fn();
-        // jest.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
-        //     () => [fetch, {mockExplorerAttributesQuery}] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult
-        // );
-
         jest.spyOn(gqlTypes, 'useSaveViewMutation').mockImplementation(() => [
             mockSaveViewMutation,
+            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+        ]);
+
+        jest.spyOn(gqlTypes, 'useUpdateViewMutation').mockImplementation(() => [
+            mockUpdateViewMutation,
             {loading: false, called: false, client: {} as any, reset: jest.fn()}
         ]);
 
@@ -389,7 +402,7 @@ describe('Integration tests about managing view settings feature', () => {
         });
     });
 
-    describe.only('Views', () => {
+    describe('Views', () => {
         test('Should be able to update view', async () => {
             render(
                 <EditSettingsContextProvider>
@@ -404,7 +417,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             await userEvent.click(screen.getByRole('button', {name: 'global.save'}));
 
-            expect(mockSaveViewMutation).toHaveBeenCalledWith(
+            expect(mockUpdateViewMutation).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: {
                         view: {
@@ -422,7 +435,7 @@ describe('Integration tests about managing view settings feature', () => {
             );
         });
 
-        test.only('Should be able to share view', async () => {
+        test('Should be able to share view', async () => {
             render(
                 <EditSettingsContextProvider>
                     <MockViewSettingsContextProvider>

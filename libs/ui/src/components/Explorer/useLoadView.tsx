@@ -48,7 +48,7 @@ export const useLoadView = () => {
                 type: ViewSettingsActionTypes.LOAD_VIEW,
                 payload: viewSettings
             });
-            // closeSettingsPanel();
+            closeSettingsPanel();
         }
     }, [attributesData, attributesLoading]);
 

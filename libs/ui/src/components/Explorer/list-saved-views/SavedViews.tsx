@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {KitRadio, KitSpace, KitTypography} from 'aristid-ds';
+import {KitRadio, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {localizedTranslation} from '@leav/utils';
@@ -33,10 +33,7 @@ const StyledListViewsDiv = styled.div`
 const StyleKitRadioGroup = styled(KitRadio.Group)`
     padding: calc(var(--general-spacing-s) * 1px) 0;
     margin: 0 0 calc(var(--general-spacing-xs) * 1px) 0;
-    list-style: none;
     color: var(--general-utilities-text-primary);
-    display: flex;
-    flex-direction: column;
     gap: calc(var(--general-spacing-xs) * 1px);
 `;
 
@@ -47,7 +44,7 @@ const StyledViewDiv = styled.div`
     width: 100%;
     padding: 5px 0;
 
-    .check {
+    .edit {
         color: var(--general-utilities-main-default);
         margin-left: calc(var(--general-spacing-xs) * 1px);
         font-size: calc(var(--general-typography-fontSize5) * 1px);
@@ -120,46 +117,39 @@ export const SavedViews: FunctionComponent = () => {
             <SaveViewModal viewData={dataViewToEdit} isOpen={isModalOpen} onSave={_onSaveEdit} onClose={_toggleModal} />
             <ContentWrapperStyledDiv>
                 <StyledListViewsDiv>
-                    <KitTypography.Title level="h4">{t('explorer.my-views')}</KitTypography.Title>
                     <StyleKitRadioGroup onChange={_handleViewClick} value={currentView?.id}>
-                        <KitSpace direction="vertical">
+                        <KitTypography.Title level="h4">{t('explorer.my-views')}</KitTypography.Title>
+                        <StyledViewDiv>
                             <KitRadio value={undefined}>{t('explorer.default-view')}</KitRadio>
-                            {myViews.map(viewItem => (
+                        </StyledViewDiv>
+                        {myViews.map(viewItem => (
+                            <StyledViewDiv key={viewItem.id}>
+                                <KitRadio value={viewItem.id}>
+                                    {localizedTranslation(viewItem.label, availableLangs)}
+                                </KitRadio>
+                                <FaEdit className="edit" onClick={() => _onClickEdit(viewItem.id, viewItem.label)} />
+                            </StyledViewDiv>
+                        ))}
+                    </StyleKitRadioGroup>
+                    <StyleKitRadioGroup onChange={_handleViewClick} value={currentView?.id}>
+                        <KitTypography.Title level="h4">{t('explorer.shared-views')}</KitTypography.Title>
+                        {sharedViews.length === 0 ? (
+                            <KitTypography.Text size="fontSize5">{t('explorer.no-shared-views')}</KitTypography.Text>
+                        ) : (
+                            sharedViews.map(viewItem => (
                                 <StyledViewDiv key={viewItem.id}>
                                     <KitRadio value={viewItem.id}>
                                         {localizedTranslation(viewItem.label, availableLangs)}
                                     </KitRadio>
-                                    <FaEdit
-                                        className="check"
-                                        onClick={() => _onClickEdit(viewItem.id, viewItem.label)}
-                                    />
+                                    {isOwnerView(viewItem.ownerId) ? (
+                                        <FaEdit
+                                            className="edit"
+                                            onClick={() => _onClickEdit(viewItem.id, viewItem.label)}
+                                        />
+                                    ) : null}
                                 </StyledViewDiv>
-                            ))}
-                        </KitSpace>
-                    </StyleKitRadioGroup>
-                    <StyleKitRadioGroup onChange={_handleViewClick} value={currentView?.id}>
-                        <KitSpace direction="vertical">
-                            <KitTypography.Title level="h4">{t('explorer.shared-views')}</KitTypography.Title>
-                            {sharedViews.length === 0 ? (
-                                <KitTypography.Text size="fontSize5">
-                                    {t('explorer.no-shared-views')}
-                                </KitTypography.Text>
-                            ) : (
-                                sharedViews.map(viewItem => (
-                                    <StyledViewDiv key={viewItem.id}>
-                                        <KitRadio value={viewItem.id}>
-                                            {localizedTranslation(viewItem.label, availableLangs)}
-                                        </KitRadio>
-                                        {isOwnerView(viewItem.ownerId) ? (
-                                            <FaEdit
-                                                className="check"
-                                                onClick={() => _onClickEdit(viewItem.id, viewItem.label)}
-                                            />
-                                        ) : null}
-                                    </StyledViewDiv>
-                                ))
-                            )}
-                        </KitSpace>
+                            ))
+                        )}
                     </StyleKitRadioGroup>
                 </StyledListViewsDiv>
                 <ViewActionsButtons />

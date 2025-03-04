@@ -6,7 +6,7 @@ import {FaSave} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
-import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
+import useExecuteUpdateViewMutation from '_ui/hooks/useExecuteUpdateViewMutation';
 import {prepareViewForRequest} from './prepareViewForRequest';
 import {IViewDisplay} from '_ui/types';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
@@ -19,7 +19,7 @@ export const useUpdateView = () => {
     const {t} = useSharedTranslation();
     const {toValidFilters} = useTransformFilters();
     const {view, dispatch} = useViewSettingsContext();
-    const {saveView} = useExecuteSaveViewMutation();
+    const {updateView} = useExecuteUpdateViewMutation();
     const [isOwnerView, setIsOwnerView] = useState(false);
     const currentView = useRef<IUserView | undefined>();
 
@@ -40,7 +40,7 @@ export const useUpdateView = () => {
             shared: currentView.current?.shared ?? false
         };
 
-        const {data} = await saveView({
+        const {data} = await updateView({
             view: mappedView
         });
 
@@ -48,16 +48,16 @@ export const useUpdateView = () => {
             dispatch({
                 type: ViewSettingsActionTypes.UPDATE_VIEWS,
                 payload: {
-                    id: data.saveView.id,
-                    ownerId: data.saveView.created_by.id,
-                    label: data.saveView.label,
-                    shared: data.saveView.shared,
-                    filters: toValidFilters(data.saveView.filters),
-                    sort: data.saveView.sort ?? [],
-                    display: (data.saveView.display as IViewDisplay) ?? {
+                    id: data.updateView.id,
+                    ownerId: data.updateView.created_by.id,
+                    label: data.updateView.label,
+                    shared: data.updateView.shared,
+                    filters: toValidFilters(data.updateView.filters),
+                    sort: data.updateView.sort ?? [],
+                    display: (data.updateView.display as IViewDisplay) ?? {
                         type: mapViewTypeFromExplorerToLegacy[view.viewType]
                     },
-                    attributes: data.saveView?.attributes?.map(({id}) => id) ?? []
+                    attributes: data.updateView?.attributes?.map(({id}) => id) ?? []
                 }
             });
         }
