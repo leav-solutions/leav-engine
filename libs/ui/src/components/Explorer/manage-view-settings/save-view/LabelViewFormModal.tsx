@@ -21,7 +21,6 @@ export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData,
     const {t} = useSharedTranslation();
     const {defaultLang, availableLangs} = useLang();
     const {view} = useViewSettingsContext();
-    // const [initialValues, setInitialValues] = useState<Record<string, string>>({});
 
     const [form] = AntForm.useForm();
     const initialValues = viewData?.label ? viewData.label : view.viewId ? view.viewLabels : {};
@@ -43,7 +42,6 @@ export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData,
 
     return (
         <KitModal
-            getContainer={false}
             // TODO: remove appElement and put in the test : "KitModal.setAppElement(document.body) once exposed"
             appElement={document.body}
             title={t('explorer.save-view-as')}
