@@ -175,6 +175,11 @@ describe('Integration tests about managing view settings feature', () => {
             mockExplorerAttributesQuery as gqlTypes.ExplorerAttributesQueryResult
         );
 
+        // const fetch = jest.fn();
+        // jest.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
+        //     () => [fetch, {mockExplorerAttributesQuery}] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult
+        // );
+
         jest.spyOn(gqlTypes, 'useSaveViewMutation').mockImplementation(() => [
             mockSaveViewMutation,
             {loading: false, called: false, client: {} as any, reset: jest.fn()}
@@ -402,7 +407,7 @@ describe('Integration tests about managing view settings feature', () => {
         });
     });
 
-    describe('Views', () => {
+    describe.only('Views', () => {
         test('Should be able to update view', async () => {
             render(
                 <EditSettingsContextProvider>
@@ -435,7 +440,7 @@ describe('Integration tests about managing view settings feature', () => {
             );
         });
 
-        test('Should be able to share view', async () => {
+        test.only('Should be able to share view', async () => {
             render(
                 <EditSettingsContextProvider>
                     <MockViewSettingsContextProvider>

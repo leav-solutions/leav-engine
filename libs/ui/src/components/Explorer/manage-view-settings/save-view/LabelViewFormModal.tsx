@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useState} from 'react';
+import {FunctionComponent} from 'react';
 import {FaTimes, FaSave} from 'react-icons/fa';
 import {KitModal, KitButton, AntForm, KitInputWrapper, KitInput} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
@@ -24,7 +24,7 @@ export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData,
     // const [initialValues, setInitialValues] = useState<Record<string, string>>({});
 
     const [form] = AntForm.useForm();
-    const initialValues = viewData ? viewData : view.viewId ? view.viewLabels : {};
+    const initialValues = viewData?.label ? viewData.label : view.viewId ? view.viewLabels : {};
 
     const _toggleModal = () => {
         onClose();
@@ -43,6 +43,7 @@ export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData,
 
     return (
         <KitModal
+            getContainer={false}
             // TODO: remove appElement and put in the test : "KitModal.setAppElement(document.body) once exposed"
             appElement={document.body}
             title={t('explorer.save-view-as')}

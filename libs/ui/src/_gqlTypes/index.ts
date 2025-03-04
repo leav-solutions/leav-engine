@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IPreviewScalar} from '@leav/utils'
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
@@ -1376,6 +1373,13 @@ export type SaveViewMutationVariables = Exact<{
 
 
 export type SaveViewMutation = { saveView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
+
+export type UpdateViewMutationVariables = Exact<{
+  view: ViewInputPartial;
+}>;
+
+
+export type UpdateViewMutation = { updateView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
 
 export type ExplorerAttributesQueryVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
@@ -4130,6 +4134,39 @@ export function useSaveViewMutation(baseOptions?: Apollo.MutationHookOptions<Sav
 export type SaveViewMutationHookResult = ReturnType<typeof useSaveViewMutation>;
 export type SaveViewMutationResult = Apollo.MutationResult<SaveViewMutation>;
 export type SaveViewMutationOptions = Apollo.BaseMutationOptions<SaveViewMutation, SaveViewMutationVariables>;
+export const UpdateViewDocument = gql`
+    mutation UPDATE_VIEW($view: ViewInputPartial!) {
+  updateView(view: $view) {
+    ...ViewDetails
+  }
+}
+    ${ViewDetailsFragmentDoc}`;
+export type UpdateViewMutationFn = Apollo.MutationFunction<UpdateViewMutation, UpdateViewMutationVariables>;
+
+/**
+ * __useUpdateViewMutation__
+ *
+ * To run a mutation, you first call `useUpdateViewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateViewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateViewMutation, { data, loading, error }] = useUpdateViewMutation({
+ *   variables: {
+ *      view: // value for 'view'
+ *   },
+ * });
+ */
+export function useUpdateViewMutation(baseOptions?: Apollo.MutationHookOptions<UpdateViewMutation, UpdateViewMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateViewMutation, UpdateViewMutationVariables>(UpdateViewDocument, options);
+      }
+export type UpdateViewMutationHookResult = ReturnType<typeof useUpdateViewMutation>;
+export type UpdateViewMutationResult = Apollo.MutationResult<UpdateViewMutation>;
+export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMutation, UpdateViewMutationVariables>;
 export const ExplorerAttributesDocument = gql`
     query ExplorerAttributes($ids: [ID!]) {
   attributes(filters: {ids: $ids}) {
