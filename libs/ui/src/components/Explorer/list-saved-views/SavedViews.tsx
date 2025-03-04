@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useRef, useState} from 'react';
+import {FunctionComponent, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {KitRadio, KitSpace, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -13,14 +13,10 @@ import {ViewActionsButtons} from '../manage-view-settings/save-view/ViewActionsB
 import {useLoadView} from '../useLoadView';
 import {RadioChangeEvent} from 'antd';
 import {useMeQuery} from '_ui/_gqlTypes';
-import {IUserView} from '../_types';
 import {SaveViewModal} from '../manage-view-settings/save-view/SaveViewModal';
-import {prepareViewForRequest} from '../manage-view-settings/save-view/prepareViewForRequest';
-import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
-import {IViewDisplay} from '_ui/types';
-import {mapViewTypeFromExplorerToLegacy} from '../_constants';
 import {ViewSettingsActionTypes} from '../manage-view-settings';
-import {useTransformFilters} from '../manage-view-settings/_shared/useTransformFilters';
+import useExecuteUpdateViewMutation from '_ui/hooks/useExecuteUpdateViewMutation';
+import {IViewData} from '../manage-view-settings/store-view-settings/viewSettingsReducer';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -63,42 +59,34 @@ const StyledViewDiv = styled.div`
 
 export const SavedViews: FunctionComponent = () => {
     const {t} = useSharedTranslation();
-    const {view, dispatch} = useViewSettingsContext();
     const {availableLangs} = useLang();
+    const {view, dispatch} = useViewSettingsContext();
+    const {updateView} = useExecuteUpdateViewMutation();
     const {loadView} = useLoadView();
-    const {toValidFilters} = useTransformFilters();
-    const {saveView} = useExecuteSaveViewMutation();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [viewData, setViewData] = useState();
+    const [dataViewToEdit, setDataViewToEdit] = useState<IViewData>({id: null, label: null});
 
-    const sharedViews = view.savedViews.filter(viewItem => viewItem.shared);
-    const myViews = view.savedViews.filter(viewItem => !viewItem.shared);
-
-    const [viewSelected, setViewSelected] = useState(
-        myViews.find(viewItem => view.viewId === viewItem.id)?.id ??
-            sharedViews.find(viewItem => view.viewId === viewItem.id)?.id ??
-            undefined
+    const [currentView, setCurrentView] = useState(
+        view.savedViews.find(viewItem => view.viewId === viewItem.id) ?? undefined
     );
 
     const {data: userData} = useMeQuery();
 
     const isOwnerView = (ownerId: string | null) => ownerId === userData?.me?.whoAmI?.id;
 
+    const sharedViews = view.savedViews.filter(viewItem => viewItem.shared);
+    const myViews = view.savedViews.filter(viewItem => !viewItem.shared);
+
     useEffect(() => {
-        setViewSelected(
-            myViews.find(viewItem => view.viewId === viewItem.id)?.id ??
-                sharedViews.find(viewItem => view.viewId === viewItem.id)?.id ??
-                undefined
-        );
+        setCurrentView(view.savedViews.find(viewItem => view.viewId === viewItem.id) ?? undefined);
     }, [view.viewId]);
 
     const _handleViewClick = (e: RadioChangeEvent) => {
         loadView(e.target.value);
     };
 
-    const onEdit = (id: string | null, label: Record<string, string>) => {
-        console.log({id});
-        setViewData({id, label});
+    const _onClickEdit = (id: string | null, label: Record<string, string>) => {
+        setDataViewToEdit({id, label});
         _toggleModal();
     };
 
@@ -106,44 +94,34 @@ export const SavedViews: FunctionComponent = () => {
         setIsModalOpen(!isModalOpen);
     };
 
-    const _editView = async (label: Record<string, string>) => {
+    const _onSaveEdit = async (label: Record<string, string>, idSelected: string | undefined) => {
         const mappedView = {
-            ...prepareViewForRequest(view, label),
-            id: view.viewId
+            id: idSelected,
+            label
         };
 
-        console.log({mappedView});
+        const {data} = await updateView({
+            view: mappedView
+        });
 
-        // const {data} = await saveView({
-        //     view: mappedView
-        // });
-
-        // if (data) {
-        //     dispatch({
-        //         type: ViewSettingsActionTypes.UPDATE_VIEWS,
-        //         payload: {
-        //             id: data.saveView.id,
-        //             ownerId: data.saveView.created_by.id,
-        //             label: data.saveView.label,
-        //             shared: data.saveView.shared,
-        //             filters: toValidFilters(data.saveView.filters),
-        //             sort: data.saveView.sort ?? [],
-        //             display: (data.saveView.display as IViewDisplay) ?? {
-        //                 type: mapViewTypeFromExplorerToLegacy[view.viewType]
-        //             },
-        //             attributes: data.saveView?.attributes?.map(({id}) => id) ?? []
-        //         }
-        //     });
-        // }
+        if (data) {
+            dispatch({
+                type: ViewSettingsActionTypes.RENAME_VIEW,
+                payload: {
+                    id: data.updateView.id,
+                    label: data.updateView.label
+                }
+            });
+        }
     };
 
     return (
         <>
-            <SaveViewModal viewData={viewData} isOpen={isModalOpen} onSave={_editView} onClose={_toggleModal} />
+            <SaveViewModal viewData={dataViewToEdit} isOpen={isModalOpen} onSave={_onSaveEdit} onClose={_toggleModal} />
             <ContentWrapperStyledDiv>
                 <StyledListViewsDiv>
                     <KitTypography.Title level="h4">{t('explorer.my-views')}</KitTypography.Title>
-                    <StyleKitRadioGroup onChange={_handleViewClick} value={viewSelected}>
+                    <StyleKitRadioGroup onChange={_handleViewClick} value={currentView?.id}>
                         <KitSpace direction="vertical">
                             <KitRadio value={undefined}>{t('explorer.default-view')}</KitRadio>
                             {myViews.map(viewItem => (
@@ -151,12 +129,15 @@ export const SavedViews: FunctionComponent = () => {
                                     <KitRadio value={viewItem.id}>
                                         {localizedTranslation(viewItem.label, availableLangs)}
                                     </KitRadio>
-                                    <FaEdit className="check" onClick={() => onEdit(viewItem.id, viewItem.label)} />
+                                    <FaEdit
+                                        className="check"
+                                        onClick={() => _onClickEdit(viewItem.id, viewItem.label)}
+                                    />
                                 </StyledViewDiv>
                             ))}
                         </KitSpace>
                     </StyleKitRadioGroup>
-                    <StyleKitRadioGroup onChange={_handleViewClick} value={viewSelected}>
+                    <StyleKitRadioGroup onChange={_handleViewClick} value={currentView?.id}>
                         <KitSpace direction="vertical">
                             <KitTypography.Title level="h4">{t('explorer.shared-views')}</KitTypography.Title>
                             {sharedViews.length === 0 ? (
@@ -172,7 +153,7 @@ export const SavedViews: FunctionComponent = () => {
                                         {isOwnerView(viewItem.ownerId) ? (
                                             <FaEdit
                                                 className="check"
-                                                onClick={() => onEdit(viewItem.id, viewItem.label)}
+                                                onClick={() => _onClickEdit(viewItem.id, viewItem.label)}
                                             />
                                         ) : null}
                                     </StyledViewDiv>

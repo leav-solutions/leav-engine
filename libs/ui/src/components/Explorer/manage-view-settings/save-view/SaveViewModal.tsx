@@ -1,17 +1,18 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useState} from 'react';
+import {FunctionComponent, useEffect} from 'react';
 import {FaTimes, FaSave} from 'react-icons/fa';
 import {KitModal, KitButton, AntForm, KitInputWrapper, KitInput} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
+import {IViewData} from '../store-view-settings/viewSettingsReducer';
 
 interface ISaveViewProps {
-    viewData?: any;
+    viewData?: IViewData;
     isOpen: boolean;
-    onSave: (label: Record<string, string>) => void;
+    onSave: (label: Record<string, string>, id?: string | undefined) => void;
     onClose: () => void;
 }
 
@@ -24,9 +25,10 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({viewData, isOp
     // const [initialValues, setInitialValues] = useState<Record<string, string>>({});
 
     const [form] = AntForm.useForm();
-    const initialValues = viewData ? viewData : view.viewId ? view.viewLabels : {};
+    const initialValues = viewData?.label ? viewData.label : view.viewId ? view.viewLabels : {};
 
     useEffect(() => {
+        // CAN'T REMOVE : Warning: Instance created by `useForm` is not connected to any Form element. Forget to pass `form` prop?
         form.setFieldsValue(initialValues);
     }, [viewData]);
 
@@ -47,7 +49,11 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({viewData, isOp
             return;
         }
 
-        onSave(form.getFieldsValue());
+        if (!!viewData?.id) {
+            onSave(form.getFieldsValue(), viewData.id);
+        } else {
+            onSave(form.getFieldsValue());
+        }
         onClose();
     };
 
@@ -59,6 +65,7 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({viewData, isOp
 
     return (
         <KitModal
+            getContainer={false}
             // TODO: remove appElement and put in the test : "KitModal.setAppElement(document.body) once exposed"
             appElement={document.body}
             title={t('explorer.save-view-as')}

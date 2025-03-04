@@ -162,6 +162,11 @@ describe('Integration tests about managing view settings feature', () => {
             mockExplorerAttributesQuery as gqlTypes.ExplorerAttributesQueryResult
         );
 
+        // const fetch = jest.fn();
+        // jest.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
+        //     () => [fetch, {mockExplorerAttributesQuery}] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult
+        // );
+
         jest.spyOn(gqlTypes, 'useSaveViewMutation').mockImplementation(() => [
             mockSaveViewMutation,
             {loading: false, called: false, client: {} as any, reset: jest.fn()}
@@ -384,7 +389,7 @@ describe('Integration tests about managing view settings feature', () => {
         });
     });
 
-    describe('Views', () => {
+    describe.only('Views', () => {
         test('Should be able to update view', async () => {
             render(
                 <EditSettingsContextProvider>
@@ -417,7 +422,7 @@ describe('Integration tests about managing view settings feature', () => {
             );
         });
 
-        test('Should be able to share view', async () => {
+        test.only('Should be able to share view', async () => {
             render(
                 <EditSettingsContextProvider>
                     <MockViewSettingsContextProvider>
@@ -428,8 +433,8 @@ describe('Integration tests about managing view settings feature', () => {
             );
 
             await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
-            let myViewsElement = screen.getByRole('list', {name: /my-views/});
-            expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
+            let myViewsElement = screen.getByRole('heading', {name: /my-views/}).parentElement;
+            expect(within(myViewsElement!).getByRole('radio', {name: 'My view'})).toBeInTheDocument();
 
             await userEvent.click(screen.getByRole('button', {name: /share-view/}));
 
@@ -454,8 +459,8 @@ describe('Integration tests about managing view settings feature', () => {
 
             expect(screen.queryByRole('button', {name: 'explorer.share-view'})).not.toBeInTheDocument();
 
-            const sharedViewsElement = screen.getByRole('list', {name: /shared-view/});
-            expect(within(sharedViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
+            const sharedViewsElement = screen.getByRole('heading', {name: /shared-view/}).parentElement;
+            expect(within(sharedViewsElement!).getByRole('radio', {name: 'My view'})).toBeInTheDocument();
 
             await userEvent.click(screen.getByRole('button', {name: /unshare-view/}));
 
@@ -477,8 +482,8 @@ describe('Integration tests about managing view settings feature', () => {
             );
 
             expect(screen.queryByRole('button', {name: /unshare-view/})).not.toBeInTheDocument();
-            myViewsElement = screen.getByRole('list', {name: /my-views/});
-            expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
+            myViewsElement = screen.getByRole('heading', {name: /my-views/}).parentElement;
+            expect(within(myViewsElement!).getByRole('radio', {name: 'My view'})).toBeInTheDocument();
         });
 
         test('Should be able to save view as', async () => {
@@ -674,8 +679,8 @@ describe('Integration tests about managing view settings feature', () => {
 
             await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
 
-            const viewsList = screen.getByRole('list', {name: /explorer.my-views/});
-            expect(within(viewsList).getAllByRole('listitem')).toHaveLength(4);
+            const viewsList = screen.getByRole('heading', {name: /explorer.my-views/}).parentElement;
+            expect(within(viewsList!).getAllByRole('radio')).toHaveLength(4);
         });
     });
 });

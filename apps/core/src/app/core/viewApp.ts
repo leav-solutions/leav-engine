@@ -92,6 +92,20 @@ export default function ({
                         attributes: [String!]
                     }
 
+                    input ViewInputPartial {
+                        id: String,
+                        library: String,
+                        display: ViewDisplayInput,
+                        shared: Boolean,
+                        label: SystemTranslation,
+                        description: SystemTranslationOptional,
+                        color: String,
+                        filters: [RecordFilterInput!],
+                        sort: [RecordSortInput!],
+                        valuesVersions: [ViewValuesVersionInput!],
+                        attributes: [String!]
+                    }
+
                     type ViewsList {
                         totalCount: Int!,
                         list: [View!]!
@@ -104,6 +118,7 @@ export default function ({
 
                     extend type Mutation {
                         saveView(view: ViewInput!): View!
+                        updateView(view: ViewInputPartial!): View!
                         deleteView(viewId: String!): View!
                     }
                 `,
@@ -116,6 +131,14 @@ export default function ({
                     },
                     Mutation: {
                         saveView: (_, {view}: {view: ViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> =>
+                            viewDomain.saveView(
+                                {
+                                    ...view,
+                                    valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode')
+                                },
+                                ctx
+                            ),
+                        updateView: (_, {view}: {view: ViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> =>
                             viewDomain.saveView(
                                 {
                                     ...view,
