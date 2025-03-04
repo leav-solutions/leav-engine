@@ -51,6 +51,7 @@ import useExecuteCreateRecordMutation from '../EditRecordContent/hooks/useCreate
 
 interface IEditRecordProps {
     antdForm: FormInstance;
+    formId?: string;
     record: RecordIdentityFragment['whoAmI'] | null;
     library: string;
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
@@ -91,6 +92,7 @@ const Content = styled.div<{$shouldUseLayoutWithSidebar: boolean}>`
 
 export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     antdForm,
+    formId,
     record,
     library: libraryId,
     onCreate,
@@ -494,6 +496,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                             ) : canEdit ? (
                                 <EditRecordContent
                                     antdForm={antdForm}
+                                    formId={formId}
                                     record={record}
                                     library={libraryId}
                                     onRecordSubmit={_handleRecordSubmit}

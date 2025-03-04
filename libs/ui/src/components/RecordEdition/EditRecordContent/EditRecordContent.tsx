@@ -24,6 +24,7 @@ import EditRecordSkeleton from '../EditRecordSkeleton';
 
 interface IEditRecordContentProps {
     antdForm: FormInstance;
+    formId?: string;
     record: IRecordIdentityWhoAmI | null;
     library: string;
     onRecordSubmit: (attributes: RecordFormAttributeStandardAttributeFragment[]) => void;
@@ -35,6 +36,7 @@ interface IEditRecordContentProps {
 
 const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     antdForm,
+    formId,
     record,
     library,
     onRecordSubmit,
@@ -43,7 +45,10 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     onDeleteMultipleValues,
     readonly
 }) => {
-    const formId = record ? 'edition' : 'creation';
+    let formIdToLoad = formId;
+    if (!formId) {
+        formIdToLoad = record ? 'edition' : 'creation';
+    }
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
 
@@ -67,7 +72,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const {loading, error, recordForm, refetch} = useGetRecordForm({
         libraryId: library,
         recordId: record?.id,
-        formId,
+        formId: formIdToLoad,
         version: state.valuesVersion
     });
 

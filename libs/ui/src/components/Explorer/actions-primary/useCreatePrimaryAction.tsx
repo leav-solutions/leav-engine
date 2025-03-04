@@ -31,6 +31,7 @@ export const useCreatePrimaryAction = ({
     entrypoint,
     totalCount,
     onCreate,
+    formId,
     refetch
 }: FeatureHook<{
     libraryId: string;
@@ -43,6 +44,7 @@ export const useCreatePrimaryAction = ({
         recordIdCreated: string;
         saveValuesResultOnLink?: ISubmitMultipleResult;
     }) => void;
+    formId?: string;
     refetch: () => void;
 }>) => {
     const {t} = useSharedTranslation();
@@ -125,6 +127,7 @@ export const useCreatePrimaryAction = ({
                     open
                     record={null}
                     library={libraryId}
+                    creationFormId={formId}
                     onClose={() => {
                         setIsModalCreationVisible(false);
                     }}

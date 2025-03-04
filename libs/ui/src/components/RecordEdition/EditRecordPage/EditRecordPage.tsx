@@ -17,6 +17,8 @@ import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
+    creationFormId?: string;
+    editionFormId?: string;
     library: string;
     title?: ReactNode;
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void; // Called after submitting via the "create" button
@@ -44,6 +46,8 @@ const Header = styled.div`
 export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     record,
     library,
+    creationFormId,
+    editionFormId,
     onCreate,
     onCreateAndEdit,
     valuesVersion,
@@ -95,6 +99,8 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
         }
     };
 
+    const formId = isCreation ? creationFormId : editionFormId;
+
     return (
         <>
             <Header>
@@ -124,6 +130,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
             <KitDivider noMargin color="lightGrey" />
             <EditRecord
                 antdForm={antdForm}
+                formId={formId}
                 record={currentRecord}
                 library={library}
                 valuesVersion={valuesVersion}

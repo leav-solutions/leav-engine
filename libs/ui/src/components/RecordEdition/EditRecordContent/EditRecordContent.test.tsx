@@ -142,4 +142,36 @@ describe('EditRecordContent', () => {
         expect(await screen.findByTestId('container-child-element')).toBeInTheDocument();
         expect(screen.getByText('StandardField')).toBeInTheDocument();
     });
+
+    test('Render with custom formId', async () => {
+        const spy = jest.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
+            loading: true,
+            error: null,
+            recordForm: null,
+            refetch: jest.fn()
+        }));
+
+        render(
+            <EditRecordContentWithForm
+                record={mockRecord}
+                formId="test"
+                library={mockRecord.library.id}
+                onRecordSubmit={jest.fn()}
+                onValueDelete={jest.fn()}
+                onValueSubmit={jest.fn()}
+                onDeleteMultipleValues={jest.fn()}
+                readonly={false}
+            />,
+            {
+                mocks
+            }
+        );
+
+        expect(spy).toHaveBeenCalledWith({
+            libraryId: mockRecord.library.id,
+            recordId: mockRecord.id,
+            formId: 'test',
+            version: null
+        });
+    });
 });

@@ -106,6 +106,8 @@ interface IExplorerProps {
     hideSelectAllAction?: boolean;
     hidePrimaryActions?: boolean;
     hideTableHeader?: boolean;
+    creationFormId?: string;
+    editionFormId?: string;
 }
 
 export interface IExplorerRef {
@@ -125,6 +127,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             selectionMode,
             emptyPlaceholder,
             noPagination,
+            creationFormId,
+            editionFormId,
             showFiltersAndSorts = false,
             enableConfigureView = false,
             disableSelection = false,
@@ -177,7 +181,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {editItemAction, editItemModal} = useEditItemAction({
             isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit'),
-            onEdit: defaultCallbacks?.item?.edit
+            onEdit: defaultCallbacks?.item?.edit,
+            formId: editionFormId
         });
 
         const totalCount = data?.totalCount ?? 0;
@@ -188,6 +193,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             onCreate: defaultCallbacks?.primary?.create,
             entrypoint,
             totalCount,
+            formId: creationFormId,
             refetch
         });
 
