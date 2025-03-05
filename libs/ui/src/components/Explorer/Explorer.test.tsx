@@ -6,6 +6,7 @@
 // Prefer using spyOn method for Mocking hooks except for hooks using onCompleted callback.
 // In this case, the spyOn is too complex to implement, prefer using the mocks parameter of render method.
 //
+import {createRef} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {waitFor} from '@testing-library/react';
@@ -15,12 +16,11 @@ import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
-import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
 import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
+import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import * as useColumnWidth from './useColumnWidth';
 import {SNACKBAR_MASS_ID} from './actions-mass/useMassActions';
-import {createRef} from 'react';
 import {IExplorerRef} from './Explorer';
 
 const UploadFilesMock = 'UploadFiles';
@@ -1277,7 +1277,7 @@ describe('Explorer', () => {
             const createRecordButton = screen.getByRole('button', {name: 'create-record'});
             await user.click(createRecordButton);
 
-            expect(onCreate).toHaveBeenCalledWith([987654]);
+            expect(onCreate).toHaveBeenCalledWith({recordIdCreated: 987654});
         });
 
         test('Should be able to create a new record from Explorer ref', async () => {
@@ -1319,11 +1319,12 @@ describe('Explorer', () => {
         });
 
         test('Should be able to link a new record', async () => {
-            const saveValues = jest.fn();
-            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
+            const saveValuesResult = 'saveValuesResult';
+            const saveValues = jest.fn<any, any>(async () => saveValuesResult);
+            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(() => ({
                 loading: false,
                 saveValues
-            });
+            }));
             const onCreate = jest.fn();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1342,17 +1343,21 @@ describe('Explorer', () => {
             const createRecordButton = screen.getByRole('button', {name: 'create-record'});
             await user.click(createRecordButton);
 
-            expect(saveValues).toHaveBeenCalled();
-            expect(onCreate).toHaveBeenCalled();
+            expect(saveValues).toHaveBeenCalledWith(
+                {id: linkEntrypoint.parentRecordId, library: {id: linkEntrypoint.parentLibraryId}},
+                [{attribute: linkEntrypoint.linkAttributeId, idValue: null, value: 987654}]
+            );
+            expect(onCreate).toHaveBeenCalledWith({recordIdCreated: 987654, saveValuesResultOnLink: saveValuesResult});
         });
 
         test('Should be able to link a new record from Explorer ref', async () => {
-            const saveValues = jest.fn();
             const onCreate = jest.fn();
-            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
+            const saveValuesResult = 'saveValuesResult';
+            const saveValues = jest.fn<any, any>(async () => saveValuesResult);
+            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(() => ({
                 loading: false,
                 saveValues
-            });
+            }));
 
             const explorerRef = createRef<IExplorerRef>();
             render(
@@ -1378,8 +1383,11 @@ describe('Explorer', () => {
             const createRecordButton = screen.getByRole('button', {name: 'create-record'});
             await user.click(createRecordButton);
 
-            expect(saveValues).toHaveBeenCalled();
-            expect(onCreate).toHaveBeenCalled();
+            expect(saveValues).toHaveBeenCalledWith(
+                {id: linkEntrypoint.parentRecordId, library: {id: linkEntrypoint.parentLibraryId}},
+                [{attribute: linkEntrypoint.linkAttributeId, idValue: null, value: 987654}]
+            );
+            expect(onCreate).toHaveBeenCalledWith({recordIdCreated: 987654, saveValuesResultOnLink: saveValuesResult});
         });
 
         test('Should be able to link existing record', async () => {

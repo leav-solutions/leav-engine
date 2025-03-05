@@ -7,6 +7,7 @@ import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {Loading} from '_ui/components/Loading';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {DefaultViewSettings, Entrypoint, IItemAction, IMassActions, IPrimaryAction} from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
@@ -84,8 +85,14 @@ interface IExplorerProps {
             remove?: IItemAction['callback'];
         };
         primary?: {
-            create?: (itemIds: string[]) => void;
-            link?: (itemIds: string[]) => void;
+            create?: ({
+                recordIdCreated,
+                saveValuesResultOnLink
+            }: {
+                recordIdCreated: string;
+                saveValuesResultOnLink?: ISubmitMultipleResult;
+            }) => void;
+            link?: (saveValuesResult: ISubmitMultipleResult) => void;
         };
         mass?: {
             deactivate?: IMassActions['callback'];

@@ -2,10 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Dispatch, useMemo} from 'react';
-import {FaTrash} from 'react-icons/fa';
+import {FaPlus} from 'react-icons/fa';
 import {useExplorerSelectionIdsLazyQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
+import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {FeatureHook, IEntrypointLink, IMassActions} from '../_types';
 import {IViewSettingsAction, IViewSettingsState} from '../manage-view-settings';
 
@@ -16,8 +17,9 @@ import {IViewSettingsAction, IViewSettingsState} from '../manage-view-settings';
  * @param view - represent the current view
  * @param dispatch - method to change the current view
  * @param libraryId - concerned library
- * @param linkAttributeId
- * @param closeModal
+ * @param linkAttributeId - attribute that represent the link
+ * @param onLink - callback to let outside world know about linking feedback
+ * @param closeModal - callback to close the link modal
  */
 export const useLinkMassAction = ({
     isEnabled,
@@ -33,7 +35,7 @@ export const useLinkMassAction = ({
     };
     libraryId: string;
     linkAttributeId: string;
-    onLink?: (itemIds: string[]) => void;
+    onLink?: (saveValuesResult: ISubmitMultipleResult) => void;
     closeModal: () => void;
 }>) => {
     const {t} = useSharedTranslation();
@@ -42,7 +44,7 @@ export const useLinkMassAction = ({
 
     const [fetch] = useExplorerSelectionIdsLazyQuery({
         fetchPolicy: 'no-cache',
-        onCompleted: data => {
+        onCompleted: async data => {
             const entrypoint = view.entrypoint as IEntrypointLink;
             const values = data.records.list.map(({id}) => ({
                 attribute: linkAttributeId,
@@ -50,7 +52,7 @@ export const useLinkMassAction = ({
                 value: id
             }));
 
-            saveValues(
+            const saveValuesResult = await saveValues(
                 {
                     id: entrypoint.parentRecordId,
                     library: {
@@ -58,26 +60,26 @@ export const useLinkMassAction = ({
                     }
                 },
                 values
-            ).then(() => {
-                onLink?.(data.records.list.map(({id}) => id));
-            });
+            );
+            onLink?.(saveValuesResult);
             closeModal();
         }
     });
 
-    const _addLinkMassAction: IMassActions = useMemo(
-        () => ({
-            label: t('explorer.massAction.add-link'),
-            icon: <FaTrash />,
-            callback: massSelectionFilter => {
-                fetch({
-                    variables: {
-                        libraryId,
-                        filters: massSelectionFilter
-                    }
-                });
-            }
-        }),
+    const _addLinkMassAction = useMemo(
+        () =>
+            ({
+                label: t('explorer.massAction.add-link'),
+                icon: <FaPlus />,
+                callback: async massSelectionFilter => {
+                    await fetch({
+                        variables: {
+                            libraryId,
+                            filters: massSelectionFilter
+                        }
+                    });
+                }
+            }) satisfies IMassActions,
         [t, fetch, view.massSelection, dispatch, libraryId]
     );
 
