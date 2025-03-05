@@ -6,7 +6,7 @@ import {FaSave} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
-import useExecuteUpdateViewMutation from '_ui/hooks/useExecuteUpdateViewMutation';
+import useExecuteUpdateViewMutation from '../../_queries/useExecuteUpdateViewMutation';
 import {prepareViewForRequest} from './prepareViewForRequest';
 import {IViewDisplay} from '_ui/types';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
@@ -34,6 +34,9 @@ export const useUpdateView = () => {
     }, [view.viewId]);
 
     const _updateView = async () => {
+        if (!view.viewId) {
+            return;
+        }
         const mappedView = {
             ...prepareViewForRequest(view, view.viewLabels),
             id: view.viewId,

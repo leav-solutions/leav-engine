@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
-import {SaveViewModal} from './SaveViewModal';
+import {LabelViewFormModal} from './LabelViewFormModal';
 import {KitButton} from 'aristid-ds';
 import {FaSdCard} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -54,7 +54,7 @@ export const useCreateNewView = () => {
     return {
         createNewViewButton: (
             <>
-                <SaveViewModal isOpen={isModalOpen} onSave={_createView} onClose={_toggleModal} />
+                <LabelViewFormModal isOpen={isModalOpen} onSubmit={_createView} onClose={_toggleModal} />
                 <KitButton type="action" icon={<FaSdCard />} onClick={_toggleModal}>
                     {t('explorer.save-view-as')}
                 </KitButton>

@@ -9,7 +9,14 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {IView, IViewValuesVersionForGraphql, ViewFromGraphQL, ViewSizes, ViewTypes} from '../../_types/views';
+import {
+    IView,
+    IViewValuesVersionForGraphql,
+    PartialViewFromGraphQL,
+    ViewFromGraphQL,
+    ViewSizes,
+    ViewTypes
+} from '../../_types/views';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
 interface IDeps {
@@ -93,7 +100,7 @@ export default function ({
                     }
 
                     input ViewInputPartial {
-                        id: String,
+                        id: String!,
                         library: String,
                         display: ViewDisplayInput,
                         shared: Boolean,
@@ -138,7 +145,7 @@ export default function ({
                                 },
                                 ctx
                             ),
-                        updateView: (_, {view}: {view: ViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> =>
+                        updateView: (_, {view}: {view: PartialViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> =>
                             viewDomain.saveView(
                                 {
                                     ...view,

@@ -13,10 +13,9 @@ import {ViewActionsButtons} from '../manage-view-settings/save-view/ViewActionsB
 import {useLoadView} from '../useLoadView';
 import {RadioChangeEvent} from 'antd';
 import {useMeQuery} from '_ui/_gqlTypes';
-import {SaveViewModal} from '../manage-view-settings/save-view/SaveViewModal';
+import {LabelViewFormModal} from '../manage-view-settings/save-view/LabelViewFormModal';
 import {ViewSettingsActionTypes} from '../manage-view-settings';
-import useExecuteUpdateViewMutation from '_ui/hooks/useExecuteUpdateViewMutation';
-import {IViewData} from '../manage-view-settings/store-view-settings/viewSettingsReducer';
+import useExecuteUpdateViewMutation from '../_queries/useExecuteUpdateViewMutation';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -41,18 +40,21 @@ const StyledViewDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
-    padding: 5px 0;
+    padding: calc(var(--general-spacing-xs) * 1px) 0;
 
     .edit {
         color: var(--general-utilities-main-default);
-        margin-left: calc(var(--general-spacing-xs) * 1px);
         font-size: calc(var(--general-typography-fontSize5) * 1px);
         flex: 0 0 auto;
         cursor: pointer;
         display: inline-block;
     }
 `;
+
+interface IDataViewToEdit {
+    id: string | null;
+    label: Record<string, string> | null;
+}
 
 export const SavedViews: FunctionComponent = () => {
     const {t} = useSharedTranslation();
@@ -61,7 +63,7 @@ export const SavedViews: FunctionComponent = () => {
     const {updateView} = useExecuteUpdateViewMutation();
     const {loadView} = useLoadView();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [dataViewToEdit, setDataViewToEdit] = useState<IViewData>({id: null, label: null});
+    const [dataViewToEdit, setDataViewToEdit] = useState<IDataViewToEdit>({id: null, label: null});
 
     const [currentView, setCurrentView] = useState(
         view.savedViews.find(viewItem => view.viewId === viewItem.id) ?? undefined
@@ -91,9 +93,12 @@ export const SavedViews: FunctionComponent = () => {
         setIsModalOpen(!isModalOpen);
     };
 
-    const _onSaveEdit = async (label: Record<string, string>, idSelected: string | undefined) => {
+    const _onEditName = async (label: Record<string, string>) => {
+        if (!dataViewToEdit.id) {
+            return;
+        }
         const mappedView = {
-            id: idSelected,
+            id: dataViewToEdit.id,
             label
         };
 
@@ -114,7 +119,14 @@ export const SavedViews: FunctionComponent = () => {
 
     return (
         <>
-            <SaveViewModal viewData={dataViewToEdit} isOpen={isModalOpen} onSave={_onSaveEdit} onClose={_toggleModal} />
+            {isModalOpen && (
+                <LabelViewFormModal
+                    viewData={dataViewToEdit.label}
+                    isOpen
+                    onSubmit={_onEditName}
+                    onClose={_toggleModal}
+                />
+            )}
             <ContentWrapperStyledDiv>
                 <StyledListViewsDiv>
                     <StyleKitRadioGroup onChange={_handleViewClick} value={currentView?.id}>

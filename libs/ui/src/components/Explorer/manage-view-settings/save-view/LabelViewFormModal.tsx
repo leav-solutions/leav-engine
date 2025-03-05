@@ -1,63 +1,41 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect} from 'react';
+import {FunctionComponent} from 'react';
 import {FaTimes, FaSave} from 'react-icons/fa';
 import {KitModal, KitButton, AntForm, KitInputWrapper, KitInput} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-import {IViewData} from '../store-view-settings/viewSettingsReducer';
 
 interface ISaveViewProps {
-    viewData?: IViewData;
+    viewData?: Record<string, string> | null;
     isOpen: boolean;
-    onSave: (label: Record<string, string>, id?: string | undefined) => void;
+    onSubmit: (label: Record<string, string>, id?: string | undefined) => void;
     onClose: () => void;
 }
 
 const sortWithDefaultAtFirst = defaultLang => (a, b) => (b === defaultLang ? 1 : 0) - (a === defaultLang ? 1 : 0);
 
-export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({viewData, isOpen, onSave, onClose}) => {
+export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData, isOpen, onSubmit, onClose}) => {
     const {t} = useSharedTranslation();
     const {defaultLang, availableLangs} = useLang();
     const {view} = useViewSettingsContext();
 
     const [form] = AntForm.useForm();
-    const initialValues = viewData?.label ? viewData.label : view.viewId ? view.viewLabels : {};
-
-    useEffect(() => {
-        // CAN'T REMOVE : Warning: Instance created by `useForm` is not connected to any Form element. Forget to pass `form` prop?
-        form.setFieldsValue(initialValues);
-    }, [viewData]);
+    const initialValues = viewData ? viewData : view.viewId ? view.viewLabels : {};
 
     const _toggleModal = () => {
-        if (isOpen) {
-            form.resetFields();
-        }
         onClose();
     };
 
     const _handleSaveView = () => {
-        form.validateFields();
-        const hasError = form.getFieldsError().some(field => field.errors.length > 0);
-        const hasOnlyEmptyField = Object.entries(form.getFieldsValue()).some(
-            ([language, value]) => language === defaultLang && !value
-        );
-        if (hasError || hasOnlyEmptyField) {
-            return;
-        }
-
-        if (!!viewData?.id) {
-            onSave(form.getFieldsValue(), viewData.id);
-        } else {
-            onSave(form.getFieldsValue());
-        }
-        onClose();
+        form.submit();
     };
 
-    const _onCheck = () => {
-        form.validateFields();
+    const _onSubmit = values => {
+        onSubmit(values);
+        onClose();
     };
 
     const _preventCloseSettingsPanel = e => e.stopPropagation();
@@ -81,12 +59,13 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({viewData, isOp
                 </>
             }
         >
-            <AntForm name="label" form={form} initialValues={initialValues}>
+            <AntForm name="label" form={form} initialValues={initialValues} onFinish={_onSubmit}>
                 <KitInputWrapper label={String(t('explorer.view-name'))}>
                     {[...availableLangs].sort(sortWithDefaultAtFirst(defaultLang)).map(lang => (
                         <AntForm.Item
                             key={lang}
                             name={lang}
+                            validateTrigger="onBlur"
                             rules={[
                                 {
                                     required: lang === defaultLang,
@@ -98,7 +77,6 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({viewData, isOp
                                 label={lang}
                                 required={lang === defaultLang}
                                 onMouseDown={_preventCloseSettingsPanel}
-                                onBlur={_onCheck}
                             />
                         </AntForm.Item>
                     ))}

@@ -14,8 +14,7 @@ export default function useExecuteUpdateViewMutation(): IUseUpdateViewMutationHo
     return {
         updateView(variables) {
             return executeUpdateView({
-                variables,
-                update: () => null
+                variables
             });
         }
     };

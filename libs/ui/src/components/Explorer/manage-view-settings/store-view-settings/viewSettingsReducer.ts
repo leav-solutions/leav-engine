@@ -181,14 +181,14 @@ interface IViewSettingsActionUpdateViewListAndCurrentView {
     payload: IUserView;
 }
 
-export interface IViewData {
-    id: string | null;
-    label: Record<string, string> | null;
+interface IViewDataPayload {
+    id: string;
+    label: Record<string, string>;
 }
 
 interface IViewSettingsActionRenameView {
     type: typeof ViewSettingsActionTypes.RENAME_VIEW;
-    payload: IViewData;
+    payload: IViewDataPayload;
 }
 
 export type IViewSettingsActionLoadViewPayload = Pick<
@@ -399,8 +399,8 @@ const updateViewListAndCurrentView: Reducer<IViewSettingsActionUpdateViewListAnd
 
 const renameView: Reducer<IViewSettingsActionRenameView> = (state, payload) => ({
     ...state,
-    viewLabels: payload.label!,
-    savedViews: state.savedViews.map(view => (view.id === payload.id ? {...view, label: payload?.label!} : view))
+    viewLabels: payload.label,
+    savedViews: state.savedViews.map(view => (view.id === payload.id ? {...view, label: payload?.label} : view))
 });
 
 const loadView: Reducer<IViewSettingsActionLoadView> = (state, payload) => ({
