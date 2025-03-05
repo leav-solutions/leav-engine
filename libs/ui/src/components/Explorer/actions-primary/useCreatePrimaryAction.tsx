@@ -3,12 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ReactElement, useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
+import {useKitNotification} from 'aristid-ds';
 import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
+import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {LibraryBehavior, useExplorerLibraryDetailsQuery, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 import {FeatureHook, Entrypoint, IEntrypointLink, IPrimaryAction} from '../_types';
-import {useKitNotification} from 'aristid-ds';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -21,6 +22,7 @@ import {useKitNotification} from 'aristid-ds';
  * @param libraryId - the library's id to add new item
  * @param entrypoint - represent the current entrypoint
  * @param totalCount - used for display purpose only
+ * @param onCreate - callback to let outside world known about creating item (and linking)
  * @param refetch - method to call to refresh the list. New item will be visible if it matches filters and sorts
  */
 export const useCreatePrimaryAction = ({
@@ -34,7 +36,13 @@ export const useCreatePrimaryAction = ({
     libraryId: string;
     entrypoint: Entrypoint;
     totalCount: number;
-    onCreate?: (itemIds: string[]) => void;
+    onCreate?: ({
+        recordIdCreated,
+        saveValuesResultOnLink
+    }: {
+        recordIdCreated: string;
+        saveValuesResultOnLink?: ISubmitMultipleResult;
+    }) => void;
     refetch: () => void;
 }>) => {
     const {t} = useSharedTranslation();
@@ -139,9 +147,12 @@ export const useCreatePrimaryAction = ({
                                         value: newRecord.id
                                     }
                                 ]
-                            );
+                            ).then(saveValuesResult => {
+                                onCreate?.({recordIdCreated: newRecord.id, saveValuesResultOnLink: saveValuesResult});
+                            });
+                        } else {
+                            onCreate?.({recordIdCreated: newRecord.id});
                         }
-                        onCreate?.([newRecord.id]);
                     }}
                     submitButtons={['create']}
                 />
