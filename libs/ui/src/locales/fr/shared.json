@@ -688,6 +688,7 @@
         "view-name": "Nom de la vue",
         "default-view": "Vue par défaut",
         "manage-views": "Gérer les vues",
+        "delete-view": "Supprimer cette vue ?",
         "modified": "Modifiée",
         "my-views": "Mes vues",
         "shared-views": "Vues partagées",
