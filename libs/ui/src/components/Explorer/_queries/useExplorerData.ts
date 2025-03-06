@@ -34,22 +34,24 @@ const _mappingLibrary = (
           }, {})
         : {};
 
-    const records = data.records.list.map(({whoAmI, properties}) => ({
-        libraryId,
-        key: whoAmI.id, // For <KitTable /> only
-        itemId: whoAmI.id, // For <KitTable /> only
-        whoAmI: {
-            label: null,
-            subLabel: null,
-            color: null,
-            preview: null,
-            ...whoAmI
-        },
-        propertiesById: properties.reduce((acc, {attributeId, values}) => ({...acc, [attributeId]: values}), {})
-    }));
+    const records = data.records.list
+        .filter(({permissions}) => permissions.access_record)
+        .map(({whoAmI, properties}) => ({
+            libraryId,
+            key: whoAmI.id, // For <KitTable /> only
+            itemId: whoAmI.id, // For <KitTable /> only
+            whoAmI: {
+                label: null,
+                subLabel: null,
+                color: null,
+                preview: null,
+                ...whoAmI
+            },
+            propertiesById: properties.reduce((acc, {attributeId, values}) => ({...acc, [attributeId]: values}), {})
+        }));
 
     return {
-        totalCount: data.records.totalCount ?? 0,
+        totalCount: records.length,
         attributes,
         records
     };
@@ -72,7 +74,7 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
 
     const records = data.records.list[0].property
         .map((linkValue: LinkPropertyLinkValueFragment) => {
-            if (!linkValue.payload) {
+            if (!linkValue.payload || !linkValue.payload.permissions.access_record) {
                 return null;
             }
 

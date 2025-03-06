@@ -950,7 +950,7 @@ export type PropertyValueValueFragment = { valuePayload?: any | null, valueRawPa
 
 export type PropertyValueFragment = PropertyValueLinkValueFragment | PropertyValueTreeValueFragment | PropertyValueValueFragment;
 
-export type LinkPropertyLinkValueFragment = { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null, valueRawPayload?: any | null }> }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
+export type LinkPropertyLinkValueFragment = { id_value?: string | null, payload?: { id: string, permissions: { access_record: boolean }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null, valueRawPayload?: any | null }> }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
 
 export type LinkPropertyTreeValueValueFragment = { id_value?: string | null };
 
@@ -1387,7 +1387,7 @@ export type ExplorerLibraryDataQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerLibraryDataQuery = { records: { totalCount?: number | null, list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null, valueRawPayload?: any | null }> }> }> } };
+export type ExplorerLibraryDataQuery = { records: { totalCount?: number | null, list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, permissions: { access_record: boolean }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null, valueRawPayload?: any | null }> }> }> } };
 
 export type ExplorerLinkDataQueryVariables = Exact<{
   attributeIds: Array<Scalars['ID']> | Scalars['ID'];
@@ -1397,7 +1397,7 @@ export type ExplorerLinkDataQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerLinkDataQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, library: { id: string } }, property: Array<{ id_value?: string | null, payload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null, valueRawPayload?: any | null }> }> } | null } | { id_value?: string | null }> }> } };
+export type ExplorerLinkDataQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, library: { id: string } }, property: Array<{ id_value?: string | null, payload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, permissions: { access_record: boolean }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null, valueRawPayload?: any | null }> }> } | null } | { id_value?: string | null }> }> } };
 
 export type GetLibraryAttributesQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -2032,6 +2032,9 @@ export const LinkPropertyFragmentDoc = gql`
   ... on LinkValue {
     payload {
       ...RecordIdentity
+      permissions {
+        access_record
+      }
       properties(attributeIds: $attributeIds) {
         attributeId
         attributeProperties {
@@ -4201,6 +4204,9 @@ export const ExplorerLibraryDataDocument = gql`
     totalCount
     list {
       ...RecordIdentity
+      permissions {
+        access_record
+      }
       properties(attributeIds: $attributeIds) {
         attributeId
         attributeProperties {

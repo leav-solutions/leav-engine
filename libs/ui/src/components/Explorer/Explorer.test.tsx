@@ -183,6 +183,9 @@ describe('Explorer', () => {
                 },
                 preview: null
             },
+            permissions: {
+                access_record: true
+            },
             properties: [
                 {
                     attributeId: simpleMockAttribute.id,
@@ -312,6 +315,9 @@ describe('Explorer', () => {
                 },
                 preview: null
             },
+            permissions: {
+                access_record: true
+            },
             properties: [
                 {
                     attributeId: simpleMockAttribute.id,
@@ -401,6 +407,18 @@ describe('Explorer', () => {
         }
     };
 
+    const mockExplorerLibraryDataQueryResultWithPermissions: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
+        loading: false,
+        called: true,
+        refetch: jest.fn(),
+        data: {
+            records: {
+                totalCount: mockRecords.length,
+                list: [mockRecords[0], {...mockRecords[1], permissions: {access_record: false}}]
+            }
+        }
+    };
+
     const mockExplorerLinkDataQueryResultProperty = [
         {
             id_value: '0',
@@ -428,6 +446,37 @@ describe('Explorer', () => {
                             }
                         },
                         property: mockExplorerLinkDataQueryResultProperty
+                    }
+                ]
+            }
+        }
+    };
+
+    const mockExplorerLinkDataQueryResultWithPermissions: Mockify<typeof gqlTypes.useExplorerLinkDataQuery> = {
+        loading: false,
+        called: true,
+        refetch: jest.fn(),
+        data: {
+            records: {
+                list: [
+                    {
+                        id: '612694174',
+                        whoAmI: {
+                            id: '612694174',
+                            library: {
+                                id: 'campaigns'
+                            }
+                        },
+                        property: [
+                            {
+                                id_value: '0',
+                                payload: mockRecords[0]
+                            },
+                            {
+                                id_value: '1',
+                                payload: {...mockRecords[1], permissions: {access_record: false}}
+                            }
+                        ]
                     }
                 ]
             }
@@ -1545,6 +1594,9 @@ describe('Explorer', () => {
                                 },
                                 preview: null
                             },
+                            permissions: {
+                                access_record: true
+                            },
                             properties: []
                         }
                     ]
@@ -1602,6 +1654,9 @@ describe('Explorer', () => {
                                     }
                                 },
                                 preview: null
+                            },
+                            permissions: {
+                                access_record: true
                             },
                             properties: []
                         }
@@ -2308,6 +2363,48 @@ describe('Explorer', () => {
             await user.click(viewItem);
 
             waitFor(() => expect(manageViewsButton).toHaveTextContent('Second view'));
+        });
+    });
+
+    describe('permissions', () => {
+        test('Should not display library records if no permission', async () => {
+            spyUseExplorerLibraryDataQuery = jest
+                .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+                .mockImplementation(
+                    () => mockExplorerLibraryDataQueryResultWithPermissions as gqlTypes.ExplorerLibraryDataQueryResult
+                );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.getByRole('table')).toBeVisible();
+            expect(screen.getAllByRole('row')).toHaveLength(1); // 2 records
+            const [record1, record2] = mockRecords;
+            expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
+            expect(screen.queryByText(record2.whoAmI.label)).not.toBeInTheDocument();
+        });
+
+        test('Should not display link records if no permission', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
+                () => mockExplorerLinkDataQueryResultWithPermissions as gqlTypes.ExplorerLinkDataQueryResult
+            );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={linkEntrypoint} />
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [ExplorerLinkAttributeQueryMock]
+                }
+            );
+            const rows = await screen.findAllByRole('row');
+            expect(rows).toHaveLength(1); // 2 records
+            const [record1, record2] = mockRecords;
+            expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
+            expect(screen.queryByText(record2.whoAmI.label)).not.toBeInTheDocument();
         });
     });
 });

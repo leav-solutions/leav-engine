@@ -37,6 +37,9 @@ query ExplorerLibraryData(
         totalCount
         list {
             ...RecordIdentity
+            permissions {
+                access_record
+            }
             properties(attributeIds: $attributeIds) {
                 attributeId
                 attributeProperties {
@@ -55,6 +58,9 @@ fragment LinkProperty on GenericValue {
     ... on LinkValue {
         payload {
         ...RecordIdentity
+        permissions {
+            access_record
+        }
         properties(attributeIds: $attributeIds) {
             attributeId
             attributeProperties {
