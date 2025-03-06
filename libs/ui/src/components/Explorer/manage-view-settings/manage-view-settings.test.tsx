@@ -64,6 +64,19 @@ describe('Integration tests about managing view settings feature', () => {
         }
     }));
 
+    const mockUpdateViewMutation = jest.fn().mockImplementation(data => ({
+        data: {
+            updateView: {
+                id: '42',
+                created_by: {
+                    id: '1'
+                },
+                shared: !data?.shared,
+                label: {en: 'My view'}
+            }
+        }
+    }));
+
     const mockViewsResult: Mockify<typeof gqlTypes.useGetViewsListQuery> = {
         data: {
             views: {
@@ -164,6 +177,11 @@ describe('Integration tests about managing view settings feature', () => {
 
         jest.spyOn(gqlTypes, 'useSaveViewMutation').mockImplementation(() => [
             mockSaveViewMutation,
+            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+        ]);
+
+        jest.spyOn(gqlTypes, 'useUpdateViewMutation').mockImplementation(() => [
+            mockUpdateViewMutation,
             {loading: false, called: false, client: {} as any, reset: jest.fn()}
         ]);
 
@@ -399,7 +417,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             await userEvent.click(screen.getByRole('button', {name: 'global.save'}));
 
-            expect(mockSaveViewMutation).toHaveBeenCalledWith(
+            expect(mockUpdateViewMutation).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: {
                         view: {
@@ -428,8 +446,8 @@ describe('Integration tests about managing view settings feature', () => {
             );
 
             await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
-            let myViewsElement = screen.getByRole('list', {name: /my-views/});
-            expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
+            let myViewsElement = screen.getByRole('heading', {name: /my-views/}).parentElement;
+            expect(within(myViewsElement!).getByRole('radio', {name: 'My view'})).toBeInTheDocument();
 
             await userEvent.click(screen.getByRole('button', {name: /share-view/}));
 
@@ -454,8 +472,8 @@ describe('Integration tests about managing view settings feature', () => {
 
             expect(screen.queryByRole('button', {name: 'explorer.share-view'})).not.toBeInTheDocument();
 
-            const sharedViewsElement = screen.getByRole('list', {name: /shared-view/});
-            expect(within(sharedViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
+            const sharedViewsElement = screen.getByRole('heading', {name: /shared-view/}).parentElement;
+            expect(within(sharedViewsElement!).getByRole('radio', {name: 'My view'})).toBeInTheDocument();
 
             await userEvent.click(screen.getByRole('button', {name: /unshare-view/}));
 
@@ -477,8 +495,8 @@ describe('Integration tests about managing view settings feature', () => {
             );
 
             expect(screen.queryByRole('button', {name: /unshare-view/})).not.toBeInTheDocument();
-            myViewsElement = screen.getByRole('list', {name: /my-views/});
-            expect(within(myViewsElement).getByRole('listitem', {name: 'My view'})).toBeVisible();
+            myViewsElement = screen.getByRole('heading', {name: /my-views/}).parentElement;
+            expect(within(myViewsElement!).getByRole('radio', {name: 'My view'})).toBeInTheDocument();
         });
 
         test('Should be able to save view as', async () => {
@@ -674,8 +692,8 @@ describe('Integration tests about managing view settings feature', () => {
 
             await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
 
-            const viewsList = screen.getByRole('list', {name: /explorer.my-views/});
-            expect(within(viewsList).getAllByRole('listitem')).toHaveLength(4);
+            const viewsList = screen.getByRole('heading', {name: /explorer.my-views/}).parentElement;
+            expect(within(viewsList!).getAllByRole('radio')).toHaveLength(4);
         });
     });
 });

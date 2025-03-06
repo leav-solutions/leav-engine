@@ -49,6 +49,11 @@ export type ViewFromGraphQL = Omit<IView, 'valuesVersions' | 'settings'> & {
     valuesVersions: IViewValuesVersionForGraphql[];
 };
 
+export type PartialViewFromGraphQL = Omit<IView, 'id' | 'valuesVersions' | 'settings'> & {
+    id: string;
+    valuesVersions: IViewValuesVersionForGraphql[];
+};
+
 export interface IViewFilterOptions extends ICoreEntityFilterOptions {
     created_by?: string;
     library?: string;

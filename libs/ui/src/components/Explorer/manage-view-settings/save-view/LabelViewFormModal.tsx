@@ -9,43 +9,33 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 
 interface ISaveViewProps {
+    viewData?: Record<string, string> | null;
     isOpen: boolean;
-    onSave: (label: Record<string, string>) => void;
+    onSubmit: (label: Record<string, string>, id?: string | undefined) => void;
     onClose: () => void;
 }
 
 const sortWithDefaultAtFirst = defaultLang => (a, b) => (b === defaultLang ? 1 : 0) - (a === defaultLang ? 1 : 0);
 
-export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onSave, onClose}) => {
+export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData, isOpen, onSubmit, onClose}) => {
     const {t} = useSharedTranslation();
     const {defaultLang, availableLangs} = useLang();
     const {view} = useViewSettingsContext();
 
     const [form] = AntForm.useForm();
+    const initialValues = viewData ? viewData : view.viewId ? view.viewLabels : {};
 
     const _toggleModal = () => {
-        if (isOpen) {
-            form.resetFields();
-        }
         onClose();
     };
 
     const _handleSaveView = () => {
-        form.validateFields();
-        const hasError = form.getFieldsError().some(field => field.errors.length > 0);
-        const hasOnlyEmptyField = Object.entries(form.getFieldsValue()).some(
-            ([language, value]) => language === defaultLang && !value
-        );
-        if (hasError || hasOnlyEmptyField) {
-            return;
-        }
-
-        onSave(form.getFieldsValue());
-        onClose();
+        form.submit();
     };
 
-    const _onCheck = () => {
-        form.validateFields();
+    const _onSubmit = values => {
+        onSubmit(values);
+        onClose();
     };
 
     const _preventCloseSettingsPanel = e => e.stopPropagation();
@@ -69,12 +59,13 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onSave
                 </>
             }
         >
-            <AntForm name="label" form={form} initialValues={view.viewId ? view.viewLabels : {}}>
+            <AntForm name="label" form={form} initialValues={initialValues} onFinish={_onSubmit}>
                 <KitInputWrapper label={String(t('explorer.view-name'))}>
                     {[...availableLangs].sort(sortWithDefaultAtFirst(defaultLang)).map(lang => (
                         <AntForm.Item
                             key={lang}
                             name={lang}
+                            validateTrigger="onBlur"
                             rules={[
                                 {
                                     required: lang === defaultLang,
@@ -86,7 +77,6 @@ export const SaveViewModal: FunctionComponent<ISaveViewProps> = ({isOpen, onSave
                                 label={lang}
                                 required={lang === defaultLang}
                                 onMouseDown={_preventCloseSettingsPanel}
-                                onBlur={_onCheck}
                             />
                         </AntForm.Item>
                     ))}

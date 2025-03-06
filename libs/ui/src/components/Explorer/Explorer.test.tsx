@@ -658,6 +658,15 @@ describe('Explorer', () => {
             () => mockExplorerAttributesQueryResult as gqlTypes.ExplorerAttributesQueryResult
         );
 
+        const fetch = jest.fn();
+        jest.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
+            () =>
+                [
+                    fetch,
+                    {mockExplorerAttributesQueryResult}
+                ] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult
+        );
+
         jest.spyOn(gqlTypes, 'useGetViewsListQuery').mockReturnValue(
             mockViewsResult as gqlTypes.GetViewsListQueryResult
         );
@@ -2303,8 +2312,8 @@ describe('Explorer', () => {
             expect(manageViewsButton).toHaveTextContent('My view');
 
             await user.click(manageViewsButton);
-            const viewItem = screen.getByRole('listitem', {name: /Second view/});
-            expect(viewItem).toBeVisible();
+            const viewItem = screen.getByRole('radio', {name: /Second view/});
+            expect(viewItem).toBeInTheDocument();
             await user.click(viewItem);
 
             waitFor(() => expect(manageViewsButton).toHaveTextContent('Second view'));

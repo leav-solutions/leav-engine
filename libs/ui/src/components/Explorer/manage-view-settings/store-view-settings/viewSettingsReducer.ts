@@ -42,6 +42,7 @@ export const ViewSettingsActionTypes = {
     SET_SELECTED_KEYS: 'SET_SELECTED_KEYS',
     RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS',
     UPDATE_VIEWS: 'UPDATE_VIEWS',
+    RENAME_VIEW: 'RENAME_VIEW',
     LOAD_VIEW: 'LOAD_VIEW'
 } as const;
 
@@ -176,6 +177,16 @@ interface IViewSettingsActionRestoreInitialViewSettings {
 interface IViewSettingsActionUpdateViewListAndCurrentView {
     type: typeof ViewSettingsActionTypes.UPDATE_VIEWS;
     payload: IUserView;
+}
+
+interface IViewDataPayload {
+    id: string;
+    label: Record<string, string>;
+}
+
+interface IViewSettingsActionRenameView {
+    type: typeof ViewSettingsActionTypes.RENAME_VIEW;
+    payload: IViewDataPayload;
 }
 
 export type IViewSettingsActionLoadViewPayload = Pick<
@@ -384,6 +395,12 @@ const updateViewListAndCurrentView: Reducer<IViewSettingsActionUpdateViewListAnd
     viewModified: false
 });
 
+const renameView: Reducer<IViewSettingsActionRenameView> = (state, payload) => ({
+    ...state,
+    viewLabels: payload.label,
+    savedViews: state.savedViews.map(view => (view.id === payload.id ? {...view, label: payload?.label} : view))
+});
+
 const loadView: Reducer<IViewSettingsActionLoadView> = (state, payload) => ({
     ...state,
     ...payload,
@@ -419,6 +436,7 @@ export type IViewSettingsAction =
     | IViewSettingsActionSetSelectedKeys
     | IViewSettingsActionRestoreInitialViewSettings
     | IViewSettingsActionUpdateViewListAndCurrentView
+    | IViewSettingsActionRenameView
     | IViewSettingsActionLoadView;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
@@ -485,6 +503,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.UPDATE_VIEWS: {
             return updateViewListAndCurrentView(state, action.payload);
+        }
+        case ViewSettingsActionTypes.RENAME_VIEW: {
+            return renameView(state, action.payload);
         }
         case ViewSettingsActionTypes.LOAD_VIEW: {
             return loadView(state, action.payload);
