@@ -1236,7 +1236,7 @@ export default function ({
                                 .filter((_, i) => mapping[i]) // Ignore cells not mapped
                                 .map((cellValue, cellIndex) => ({
                                     attribute: filteredMapping[cellIndex], // Retrieve attribute
-                                    values: [{value: String(cellValue)}],
+                                    values: [{payload: String(cellValue)}],
                                     action: Action.REPLACE
                                 }))
                                 .filter(cell => cell.attribute !== 'id');
@@ -1261,7 +1261,7 @@ export default function ({
                                     values: [
                                         {
                                             library: keyToValueLibrary ?? '',
-                                            value: [{attribute: keyToAttribute, value: keyToValue}],
+                                            payload: [{attribute: keyToAttribute, value: keyToValue}],
                                             metadata: metadataValues.reduce(
                                                 (allMetadata, metadataValue, metadataValueIndex) => {
                                                     allMetadata[metadataValueIndex] = metadataValue;
