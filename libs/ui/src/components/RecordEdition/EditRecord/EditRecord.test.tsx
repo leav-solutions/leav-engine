@@ -11,9 +11,15 @@ import {render, screen} from '../../../_tests/testUtils';
 import {EditRecord} from './EditRecord';
 import {Form} from 'antd';
 
-jest.mock('../EditRecordContent', () => function EditRecordContent() {
-        return <div>EditRecordContent</div>;
-    });
+const editRecordContentFn = jest.fn();
+jest.mock(
+    '../EditRecordContent',
+    () =>
+        function EditRecordContent(props) {
+            editRecordContentFn(props);
+            return <div>EditRecordContent</div>;
+        }
+);
 
 jest.mock('hooks/useCanEditRecord/useCanEditRecord', () => ({
     useCanEditRecord: (): IUseCanEditRecordHook => ({loading: false, canEdit: true, isReadOnly: false})
@@ -78,5 +84,30 @@ describe('EditRecord', () => {
         });
 
         expect(screen.getByText('EditRecordContent')).toBeVisible();
+    });
+
+    test('shoud call EditRecordContent with custom formId', async () => {
+        const CompWithButtons = () => {
+            const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+            return (
+                <>
+                    <button ref={closeButtonRef}>Close</button>;
+                    <EditRecordWithForm
+                        withInfoButton={false}
+                        formId="customFormId"
+                        library={mockRecord.library.id}
+                        record={mockRecord}
+                        buttonsRefs={{}}
+                    />
+                </>
+            );
+        };
+
+        render(<CompWithButtons />, {
+            mocks: commonMocks
+        });
+
+        expect(editRecordContentFn).toHaveBeenCalledWith(expect.objectContaining({formId: 'customFormId'}));
     });
 });

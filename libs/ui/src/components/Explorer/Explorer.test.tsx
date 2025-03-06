@@ -34,14 +34,18 @@ jest.mock('_ui/components/UploadFiles', () => ({
 jest.mock('_ui/components/CreateDirectory', () => ({
     CreateDirectory: () => <div>{CreateDirectoryMock}</div>
 }));
+const editRecordFn = jest.fn();
 jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
-    EditRecordModal: ({onCreate, onClose}) => (
-        <div>
-            {EditRecordModalMock}
-            <button onClick={() => onCreate({id: 987654})}>create-record</button>
-            <button onClick={() => onClose?.({})}>close-modal</button>
-        </div>
-    )
+    EditRecordModal: ({onCreate, onClose, ...props}) => {
+        editRecordFn(props);
+        return (
+            <div>
+                {EditRecordModalMock}
+                <button onClick={() => onCreate({id: 987654})}>create-record</button>
+                <button onClick={() => onClose?.({})}>close-modal</button>
+            </div>
+        );
+    }
 }));
 
 jest.mock('_ui/components/Explorer/link-item/LinkModal', () => ({
@@ -1136,6 +1140,19 @@ describe('Explorer', () => {
         );
     });
 
+    test('Should be able to edit a record with custom form Id', async () => {
+        render(
+            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                <Explorer entrypoint={libraryEntrypoint} editionFormId="test-edition" />
+            </Explorer.EditSettingsContextProvider>
+        );
+
+        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.edit-item'}));
+        expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+        expect(editRecordFn).toHaveBeenCalledWith(expect.objectContaining({editionFormId: 'test-edition'}));
+    });
+
     test('Should call the useGetRecordUpdatesSubscription', async () => {
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1280,6 +1297,18 @@ describe('Explorer', () => {
             expect(onCreate).toHaveBeenCalledWith({recordIdCreated: 987654});
         });
 
+        test('Should be able to create a new record with custom formId when library has standard behavior', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} creationFormId="test-creation" />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+            expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+            expect(editRecordFn).toHaveBeenCalledWith(expect.objectContaining({creationFormId: 'test-creation'}));
+        });
+
         test('Should be able to create a new record from Explorer ref', async () => {
             const explorerRef = createRef<IExplorerRef>();
             render(
@@ -1293,6 +1322,28 @@ describe('Explorer', () => {
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             await user.click(screen.getByRole('button', {name: 'test button'}));
             expect(screen.getByText(EditRecordModalMock)).toBeInTheDocument();
+        });
+
+        test('Should be able to create a new record with custom formId when library has standard behavior from Explorer ref', async () => {
+            const explorerRef = createRef<IExplorerRef>();
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        ref={explorerRef}
+                        hidePrimaryActions
+                        creationFormId="test-creation"
+                    />
+                    <button onClick={() => explorerRef.current?.createAction?.callback()}>test button</button>
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
+            expect(explorerRef.current?.linkAction).toBeNull();
+            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+            await user.click(screen.getByRole('button', {name: 'test button'}));
+            expect(screen.getByText(EditRecordModalMock)).toBeInTheDocument();
+            expect(editRecordFn).toHaveBeenCalledWith(expect.objectContaining({creationFormId: 'test-creation'}));
         });
 
         test('should not try to link created record if entrypoint is not a link', async () => {

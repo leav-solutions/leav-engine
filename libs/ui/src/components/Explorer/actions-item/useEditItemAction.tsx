@@ -20,9 +20,11 @@ import {FeatureHook, IItemAction, IItemData} from '../_types';
  */
 export const useEditItemAction = ({
     isEnabled,
+    formId,
     onEdit
 }: FeatureHook<{
     onEdit?: IItemAction['callback'];
+    formId?: string;
 }>) => {
     const {t} = useSharedTranslation();
 
@@ -64,6 +66,7 @@ export const useEditItemAction = ({
                 isEnabled && editingItem !== null ? (
                     <EditRecordModal
                         open
+                        editionFormId={formId}
                         record={editingItem.whoAmI}
                         library={editingItem.libraryId}
                         onClose={() => _handleEditModalClose(editingItem)}
