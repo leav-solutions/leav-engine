@@ -7,7 +7,8 @@ import {IKeyValue} from './shared';
 export enum FormLayoutElementType {
     DIVIDER = 'divider',
     TABS = 'tabs',
-    FIELDS_CONTAINER = 'fields_container'
+    FIELDS_CONTAINER = 'fields_container',
+    FRAME = 'frame'
 }
 
 export enum FormFieldType {
@@ -41,6 +42,11 @@ export interface IFormLayoutElement {
 export interface IFormDivider extends IFormLayoutElement {
     type: FormLayoutElementType.DIVIDER;
     title?: string;
+}
+export interface IFormFrame extends IFormLayoutElement {
+    type: FormLayoutElementType.FRAME;
+    url: string;
+    height: string;
 }
 
 export interface IFormTabs extends IFormLayoutElement {

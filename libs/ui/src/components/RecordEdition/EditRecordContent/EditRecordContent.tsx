@@ -21,6 +21,7 @@ import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import EditRecordSkeleton from '../EditRecordSkeleton';
+import styled from 'styled-components';
 
 interface IEditRecordContentProps {
     antdForm: FormInstance;
@@ -33,6 +34,10 @@ interface IEditRecordContentProps {
     onDeleteMultipleValues: DeleteMultipleValuesFunc;
     readonly: boolean;
 }
+
+const WrappedForm = styled(Form)`
+    height: 100%;
+`;
 
 const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     antdForm,
@@ -157,7 +162,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const elementsByContainer = extractFormElements(recordForm, recordComputedValues, computeFieldsError);
 
     return (
-        <Form
+        <WrappedForm
             id={EDIT_OR_CREATE_RECORD_FORM_ID}
             form={antdForm}
             initialValues={antdFormInitialValues}
@@ -182,7 +187,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                     onDeleteMultipleValues={onDeleteMultipleValues}
                 />
             </RecordEditionContext.Provider>
-        </Form>
+        </WrappedForm>
     );
 };
 
