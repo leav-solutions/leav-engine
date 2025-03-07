@@ -898,6 +898,26 @@ describe('Explorer', () => {
 
             expect(screen.queryByText(/explorer.massAction.itemsTotal/)).not.toBeInTheDocument();
         });
+
+        test('should display the pagination', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.getByText(/explorer.pagination-total-number/)).toBeInTheDocument();
+        });
+
+        test('should not display the pagination', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} noPagination />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByText(/explorer.pagination-total-number/)).not.toBeInTheDocument();
+        });
     });
 
     describe('props title', () => {
