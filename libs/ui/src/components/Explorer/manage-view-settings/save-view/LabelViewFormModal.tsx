@@ -23,7 +23,7 @@ export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData,
     const {view} = useViewSettingsContext();
 
     const [form] = AntForm.useForm();
-    const initialValues = viewData?.label ? viewData.label : view.viewId ? view.viewLabels : {};
+    const initialValues = viewData ? viewData : view.viewId ? view.viewLabels : {};
 
     const _toggleModal = () => {
         onClose();
