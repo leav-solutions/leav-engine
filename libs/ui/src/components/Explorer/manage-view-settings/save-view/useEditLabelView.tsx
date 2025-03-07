@@ -8,6 +8,12 @@ import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReduce
 import {IUserView} from '../../_types';
 import useExecuteUpdateViewMutation from '../../_queries/useExecuteUpdateViewMutation';
 import {LabelViewFormModal} from './LabelViewFormModal';
+import styled from 'styled-components';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+
+const StyledButton = styled.button`
+    all: unset;
+`;
 
 interface IDataViewOnAction {
     id: string | null;
@@ -18,6 +24,7 @@ export const useEditLabelView = (
     dataViewOnAction: IDataViewOnAction,
     setDataViewOnAction: (dataViewOnAction: IDataViewOnAction) => void
 ) => {
+    const {t} = useSharedTranslation();
     const {updateView} = useExecuteUpdateViewMutation();
     const {dispatch} = useViewSettingsContext();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -56,7 +63,13 @@ export const useEditLabelView = (
     };
 
     const iconEditLabel = (viewItem: IUserView) => (
-        <FaEdit className="edit" onClick={() => _onClickEdit(viewItem.id, viewItem.label)} />
+        <StyledButton
+            className="edit"
+            title={t('explorer.edit-view')}
+            onClick={() => _onClickEdit(viewItem.id, viewItem.label)}
+        >
+            <FaEdit />
+        </StyledButton>
     );
 
     return {

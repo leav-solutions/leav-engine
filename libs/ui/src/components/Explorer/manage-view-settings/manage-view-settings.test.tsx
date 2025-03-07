@@ -51,29 +51,30 @@ describe('Integration tests about managing view settings feature', () => {
         called: true
     };
 
+    const viewMutation = data => ({
+        id: '42',
+        created_by: {
+            id: '1'
+        },
+        shared: !data?.shared,
+        label: {en: 'My view'}
+    });
+
     const mockSaveViewMutation = jest.fn().mockImplementation(data => ({
         data: {
-            saveView: {
-                id: '42',
-                created_by: {
-                    id: '1'
-                },
-                shared: !data?.shared,
-                label: {en: 'My view'}
-            }
+            saveView: viewMutation(data)
         }
     }));
 
     const mockUpdateViewMutation = jest.fn().mockImplementation(data => ({
         data: {
-            updateView: {
-                id: '42',
-                created_by: {
-                    id: '1'
-                },
-                shared: !data?.shared,
-                label: {en: 'My view'}
-            }
+            updateView: viewMutation(data)
+        }
+    }));
+
+    const mockDeleteViewMutation = jest.fn().mockImplementation(data => ({
+        data: {
+            deleteView: viewMutation(data)
         }
     }));
 
@@ -182,6 +183,11 @@ describe('Integration tests about managing view settings feature', () => {
 
         jest.spyOn(gqlTypes, 'useUpdateViewMutation').mockImplementation(() => [
             mockUpdateViewMutation,
+            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+        ]);
+
+        jest.spyOn(gqlTypes, 'useDeleteViewMutation').mockImplementation(() => [
+            mockDeleteViewMutation,
             {loading: false, called: false, client: {} as any, reset: jest.fn()}
         ]);
 
@@ -433,6 +439,91 @@ describe('Integration tests about managing view settings feature', () => {
                     }
                 })
             );
+            mockUpdateViewMutation.mockClear();
+        });
+
+        test('Should be able to edit view name', async () => {
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+            await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
+            const myViewsElement = screen.getByRole('heading', {name: /my-views/}).parentElement;
+            await userEvent.click(within(myViewsElement!).getByRole('button', {name: /edit-view/}));
+            let modal = screen.getByRole('dialog', {hidden: true});
+            expect(modal).toBeVisible();
+            const closeButton = within(modal).getByRole('button', {name: 'global.close', hidden: true});
+            expect(closeButton).toBeVisible();
+            await userEvent.click(closeButton);
+            expect(closeButton).not.toBeVisible();
+            expect(mockUpdateViewMutation).not.toHaveBeenCalled();
+
+            await userEvent.click(within(myViewsElement!).getByRole('button', {name: /edit-view/}));
+            modal = screen.getByRole('dialog', {hidden: true});
+            expect(modal).toBeVisible();
+            const saveButton = within(modal).getByRole('button', {name: 'global.save', hidden: true});
+            expect(saveButton).toBeVisible();
+            const [requiredInput] = screen
+                .getAllByRole('textbox', {hidden: true})
+                .filter(r => r.getAttribute('aria-required') === 'true');
+
+            await userEvent.type(requiredInput, 'Nom de ma vue requis{Enter}');
+            await userEvent.click(saveButton, {delay: 1000});
+
+            expect(mockUpdateViewMutation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {
+                        view: {
+                            id: '43',
+                            label: {fr: 'Nom de ma vue requis', en: 'My view'}
+                        }
+                    }
+                })
+            );
+            mockUpdateViewMutation.mockClear();
+        });
+
+        test('Should be able to delete view', async () => {
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
+            const myViewsElement = screen.getByRole('heading', {name: /my-views/}).parentElement;
+            await userEvent.click(within(myViewsElement!).getByRole('button', {name: /delete-view/}));
+            let modal = screen.getByRole('dialog', {hidden: true});
+            expect(modal).toBeVisible();
+            const closeButton = within(modal).getByRole('button', {name: 'global.close', hidden: true});
+            expect(closeButton).toBeVisible();
+            await userEvent.click(closeButton);
+            expect(closeButton).not.toBeVisible();
+            expect(mockDeleteViewMutation).not.toHaveBeenCalled();
+
+            await userEvent.click(within(myViewsElement!).getByRole('button', {name: /delete-view/}));
+            modal = screen.getByRole('dialog', {hidden: true});
+            expect(modal).toBeVisible();
+            const deleteButton = within(modal).getByRole('button', {name: 'global.delete', hidden: true});
+            expect(deleteButton).toBeVisible();
+
+            await userEvent.click(deleteButton);
+
+            expect(mockDeleteViewMutation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {
+                        viewId: '43'
+                    }
+                })
+            );
+            mockDeleteViewMutation.mockClear();
         });
 
         test('Should be able to share view', async () => {
@@ -497,6 +588,7 @@ describe('Integration tests about managing view settings feature', () => {
             expect(screen.queryByRole('button', {name: /unshare-view/})).not.toBeInTheDocument();
             myViewsElement = screen.getByRole('heading', {name: /my-views/}).parentElement;
             expect(within(myViewsElement!).getByRole('radio', {name: 'My view'})).toBeInTheDocument();
+            mockSaveViewMutation.mockClear();
         });
 
         test('Should be able to save view as', async () => {
@@ -508,20 +600,21 @@ describe('Integration tests about managing view settings feature', () => {
                     </MockViewSettingsContextProvider>
                 </EditSettingsContextProvider>
             );
-            mockSaveViewMutation.mockClear();
 
             await userEvent.click(screen.getByRole('button', {name: /settings/}));
 
             await userEvent.click(screen.getByRole('button', {name: /save-view-as/}));
             // hidden: true car l'ouverture de la Modal met un aria-label: hidden sur le body
-            const closeButton = screen.getByRole('button', {name: 'global.close', hidden: true});
+            let modal = screen.getByRole('dialog', {hidden: true});
+            expect(modal).toBeVisible();
+            const closeButton = within(modal).getByRole('button', {name: 'global.close', hidden: true});
             expect(closeButton).toBeVisible();
             await userEvent.click(closeButton);
             expect(closeButton).not.toBeVisible();
             expect(mockSaveViewMutation).not.toHaveBeenCalled();
 
             await userEvent.click(screen.getByRole('button', {name: /save-view-as/}));
-            const modal = screen.getByRole('dialog', {hidden: true});
+            modal = screen.getByRole('dialog', {hidden: true});
             expect(modal).toBeVisible();
             const saveButton = within(modal).getByRole('button', {name: 'global.save', hidden: true});
             expect(saveButton).toBeVisible();
@@ -553,6 +646,7 @@ describe('Integration tests about managing view settings feature', () => {
                     }
                 })
             );
+            mockSaveViewMutation.mockClear();
         });
 
         test('Should be able to load user view', async () => {

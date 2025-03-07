@@ -11,7 +11,11 @@ import useExecuteDeleteViewMutation from '_ui/hooks/useExecuteDeleteViewMutation
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {IUserView} from '../../_types';
+import styled from 'styled-components';
 
+const StyledButton = styled.button`
+    all: unset;
+`;
 interface IDataViewOnAction {
     id: string | null;
     label: Record<string, string> | null;
@@ -46,7 +50,7 @@ export const useDeleteView = (
             dispatch({
                 type: ViewSettingsActionTypes.DELETE_VIEW,
                 payload: {
-                    id: data.deleteView.id
+                    id: dataViewOnAction.id
                 }
             });
         }
@@ -54,14 +58,21 @@ export const useDeleteView = (
     };
 
     const iconDelete = (viewItem: IUserView) => (
-        <FaTrash className="delete" onClick={() => _onClickDelete(viewItem.id, viewItem.label)} />
+        <StyledButton
+            className="delete"
+            title={t('explorer.delete-view')}
+            onClick={() => _onClickDelete(viewItem.id, viewItem.label)}
+        >
+            <FaTrash />
+        </StyledButton>
     );
 
     return {
         iconDelete,
         deleteModal: isDeleteModalOpen && (
             <KitModal
-                title={t('explorer.delete-view')}
+                appElement={document.body}
+                title={t('explorer.confirm-delete-view')}
                 isOpen={isDeleteModalOpen}
                 footer={
                     <>

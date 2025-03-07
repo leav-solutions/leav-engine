@@ -408,9 +408,12 @@ const renameView: Reducer<IViewSettingsActionRenameView> = (state, payload) => (
 });
 
 const deleteView: Reducer<IViewSettingsActionDeleteView> = (state, payload) => {
-    const indexViewDeleted = state.savedViews.findIndex(view => view.id === payload.id);
-    const newSavedViews = indexViewDeleted >= 0 ? state.savedViews.toSpliced(indexViewDeleted, 1) : state.savedViews;
-
+    const newSavedViews = [...state.savedViews];
+    const indexViewDeleted = newSavedViews.findIndex(view => view.id === payload.id);
+    // TODO use newES6 syntax (toSpliced)
+    if (indexViewDeleted >= 0) {
+        newSavedViews.splice(indexViewDeleted, 1);
+    }
     if (state.viewId === payload.id) {
         return {
             ...state,
