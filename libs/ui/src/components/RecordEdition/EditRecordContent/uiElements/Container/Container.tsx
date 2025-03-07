@@ -10,6 +10,7 @@ function Container({
     element,
     computedValues,
     antdForm,
+    formIdToLoad,
     readonly,
     onValueSubmit,
     onValueDelete,
@@ -19,6 +20,8 @@ function Container({
     const children = formElements[element.id] ?? [];
 
     const isAlone = children.length < 2;
+
+    // console.log('Container', children);
 
     return (
         <>
@@ -31,6 +34,7 @@ function Container({
                                 computedValues={computedValues}
                                 readonly={readonly}
                                 antdForm={antdForm}
+                                formIdToLoad={formIdToLoad}
                                 onValueSubmit={onValueSubmit}
                                 onValueDelete={onValueDelete}
                                 onDeleteMultipleValues={onDeleteMultipleValues}

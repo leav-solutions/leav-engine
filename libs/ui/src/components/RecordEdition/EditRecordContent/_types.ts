@@ -113,6 +113,7 @@ export interface ISubmittedValueBase {
 export interface IFormElementProps<SettingsType, RecordFormElements = RecordFormElementsValue> {
     element: FormElement<SettingsType, RecordFormElements>;
     readonly?: boolean;
+    formIdToLoad?: string | 'edition' | 'creation';
     onValueSubmit?: SubmitValueFunc;
     onValueDelete?: DeleteValueFunc;
     onDeleteMultipleValues?: DeleteMultipleValuesFunc;
