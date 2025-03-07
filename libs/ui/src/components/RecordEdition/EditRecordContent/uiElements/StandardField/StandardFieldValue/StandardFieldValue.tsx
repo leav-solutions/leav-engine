@@ -15,7 +15,7 @@ import {DSInputEncryptedWrapper} from './DSInputEncryptedWrapper';
 import {DSBooleanWrapper} from './DSBooleanWrapper';
 import {DSRichTextWrapper} from './DSRichTextWrapper';
 import {DSColorPickerWrapper} from './DSColorPickerWrapper';
-import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../shared/calculatedInheritedFlags';
 
 interface IStandardFieldValueProps {
     presentationValue: string;
@@ -28,7 +28,6 @@ interface IStandardFieldValueProps {
     listField?: FormListFieldData;
     removeLastValueOfMultivalues?: () => void;
     isLastValueOfMultivalues?: boolean;
-    setActiveValue: () => void;
 }
 
 function StandardFieldValue({
@@ -41,7 +40,6 @@ function StandardFieldValue({
     inheritedFlags,
     listField,
     removeLastValueOfMultivalues,
-    setActiveValue,
     isLastValueOfMultivalues = false
 }: IStandardFieldValueProps): JSX.Element {
     const isValuesListEnabled = !!attribute?.values_list?.enable;
@@ -66,8 +64,7 @@ function StandardFieldValue({
         readonly,
         label,
         calculatedFlags,
-        inheritedFlags,
-        setActiveValue
+        inheritedFlags
     };
 
     let valueContent: ReactNode;

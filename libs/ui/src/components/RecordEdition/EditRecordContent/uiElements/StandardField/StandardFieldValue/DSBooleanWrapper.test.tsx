@@ -6,7 +6,7 @@ import {AntForm} from 'aristid-ds';
 import {DSBooleanWrapper} from './DSBooleanWrapper';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
-import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../shared/calculatedInheritedFlags';
 
 const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
@@ -48,13 +48,11 @@ describe('DSBooleanWrapper', () => {
     let user!: ReturnType<typeof userEvent.setup>;
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
-    const mockSetActiveValue = jest.fn();
 
     beforeEach(() => {
         user = userEvent.setup({});
         mockHandleSubmit.mockReset();
         mockOnChange.mockReset();
-        mockSetActiveValue.mockReset();
     });
 
     test('Should display boolean value as yes', async () => {
@@ -69,7 +67,6 @@ describe('DSBooleanWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -90,7 +87,6 @@ describe('DSBooleanWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -111,7 +107,6 @@ describe('DSBooleanWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -133,7 +128,6 @@ describe('DSBooleanWrapper', () => {
                         inheritedFlags={inheritedFagsWithInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -157,7 +151,6 @@ describe('DSBooleanWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -181,7 +174,6 @@ describe('DSBooleanWrapper', () => {
                         inheritedFlags={inheritedFagsWithInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -205,7 +197,6 @@ describe('DSBooleanWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -215,29 +206,5 @@ describe('DSBooleanWrapper', () => {
         await user.click(clearButton);
 
         expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
-    });
-
-    test('Should call setActiveValue when the switch is clicked', async () => {
-        render(
-            <AntForm>
-                <AntForm.Item>
-                    <DSBooleanWrapper
-                        value={false}
-                        attribute={mockFormAttribute}
-                        readonly={notReadonly}
-                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
-                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
-                    />
-                </AntForm.Item>
-            </AntForm>
-        );
-
-        const switchInput = screen.getByRole('switch');
-        await user.click(switchInput);
-
-        expect(mockSetActiveValue).toHaveBeenCalled();
     });
 });

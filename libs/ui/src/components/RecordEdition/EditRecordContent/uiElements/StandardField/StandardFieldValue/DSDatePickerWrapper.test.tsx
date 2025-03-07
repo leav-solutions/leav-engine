@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
-import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../shared/calculatedInheritedFlags';
 
 const firstDayOfMonthDate = dayjs().startOf('month');
 const firstDayOfMonthDateFormatted = firstDayOfMonthDate.format('YYYY-MM-DD');
@@ -59,7 +59,6 @@ describe('DSDatePickerWrapper', () => {
     const mockOnChange = jest.fn();
     const mockHandleSubmit = jest.fn();
     const mockHandleBlur = jest.fn();
-    const mockSetActiveValue = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
@@ -67,7 +66,6 @@ describe('DSDatePickerWrapper', () => {
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
         mockHandleBlur.mockReset();
-        mockSetActiveValue.mockReset();
     });
 
     test('Should display presentationValue By default', async () => {
@@ -83,7 +81,6 @@ describe('DSDatePickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </Form.Item>
             </Form>
@@ -104,7 +101,6 @@ describe('DSDatePickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </Form.Item>
             </Form>
@@ -126,7 +122,6 @@ describe('DSDatePickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </Form.Item>
             </Form>
@@ -150,7 +145,6 @@ describe('DSDatePickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </Form.Item>
             </Form>
@@ -170,7 +164,6 @@ describe('DSDatePickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </Form.Item>
             </Form>
@@ -189,28 +182,6 @@ describe('DSDatePickerWrapper', () => {
         );
     });
 
-    test('Should call setActiveValue if focused', async () => {
-        render(
-            <Form>
-                <Form.Item>
-                    <DSDatePickerWrapper
-                        attribute={mockFormAttribute}
-                        readonly={notReadonly}
-                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
-                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
-                        onChange={mockOnChange}
-                        handleSubmit={mockHandleSubmit}
-                        setActiveValue={mockSetActiveValue}
-                    />
-                </Form.Item>
-            </Form>
-        );
-
-        await user.click(screen.getByRole('textbox'));
-
-        expect(mockSetActiveValue).toHaveBeenCalled();
-    });
-
     test('Should save to LEAV if field becomes empty', async () => {
         render(
             <Form>
@@ -222,7 +193,6 @@ describe('DSDatePickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </Form.Item>
             </Form>
@@ -260,7 +230,6 @@ describe('DSDatePickerWrapper', () => {
                             inheritedFlags={inheritedFlagsWithInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
-                            setActiveValue={mockSetActiveValue}
                         />
                     </Form.Item>
                 </Form>
@@ -289,7 +258,6 @@ describe('DSDatePickerWrapper', () => {
                             inheritedFlags={inheritedFlagsWithInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
-                            setActiveValue={mockSetActiveValue}
                         />
                     </Form.Item>
                 </Form>
@@ -317,7 +285,6 @@ describe('DSDatePickerWrapper', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
-                            setActiveValue={mockSetActiveValue}
                         />
                     </Form.Item>
                 </Form>
@@ -346,7 +313,6 @@ describe('DSDatePickerWrapper', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
-                            setActiveValue={mockSetActiveValue}
                         />
                     </Form.Item>
                 </Form>

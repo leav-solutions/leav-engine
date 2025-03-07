@@ -5,7 +5,7 @@ import {render, screen} from '_ui/_tests/testUtils';
 import {DSInputNumberWrapper} from './DSInputNumberWrapper';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../shared/calculatedInheritedFlags';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 const value = '42';
@@ -50,7 +50,6 @@ const readonly = true;
 describe('DSInputNumberWrapper', () => {
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
-    const mockSetActiveValue = jest.fn();
 
     let user!: ReturnType<typeof userEvent.setup>;
 
@@ -58,7 +57,6 @@ describe('DSInputNumberWrapper', () => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
-        mockSetActiveValue.mockReset();
     });
 
     test('Should display the presentationValue', async () => {
@@ -74,7 +72,6 @@ describe('DSInputNumberWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -96,7 +93,6 @@ describe('DSInputNumberWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -119,7 +115,6 @@ describe('DSInputNumberWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -143,7 +138,6 @@ describe('DSInputNumberWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -164,7 +158,6 @@ describe('DSInputNumberWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -180,31 +173,6 @@ describe('DSInputNumberWrapper', () => {
         expect(mockHandleSubmit).toHaveBeenCalledWith(dartMaxScore, mockFormAttribute.id);
     });
 
-    test('Should call setActiveValue if focused', async () => {
-        render(
-            <AntForm>
-                <AntForm.Item>
-                    <DSInputNumberWrapper
-                        value={value}
-                        attribute={mockFormAttribute}
-                        readonly={notReadonly}
-                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
-                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
-                    />
-                </AntForm.Item>
-            </AntForm>
-        );
-
-        const inputNumber = screen.getByRole('spinbutton');
-
-        await user.click(inputNumber);
-
-        expect(mockSetActiveValue).toHaveBeenCalled();
-    });
-
     describe('Without inherited or calculated flags', () => {
         test('Should submit empty value on clear', async () => {
             render(
@@ -217,7 +185,6 @@ describe('DSInputNumberWrapper', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
-                            setActiveValue={mockSetActiveValue}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -268,7 +235,6 @@ describe('DSInputNumberWrapper', () => {
                                 }
                                 handleSubmit={mockHandleSubmit}
                                 onChange={mockOnChange}
-                                setActiveValue={mockSetActiveValue}
                             />
                         </AntForm.Item>
                     </AntForm>
