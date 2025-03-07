@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloError, useApolloClient} from '@apollo/client';
+import {ApolloError} from '@apollo/client';
 import {ErrorTypes, objectToNameValueArray} from '@leav/utils';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
@@ -14,12 +14,13 @@ export interface ISaveValueBatchHook {
 }
 
 export default function useExecuteSaveValueBatchMutation(): ISaveValueBatchHook {
-    const {cache} = useApolloClient();
-    const [executeSaveValueBatch, {loading}] = useSaveValueBatchMutation();
-    const updateValuesCache = useValuesCacheUpdate();
     const {t} = useSharedTranslation();
 
+    const [executeSaveValueBatch, {loading}] = useSaveValueBatchMutation();
+    const updateValuesCache = useValuesCacheUpdate();
+
     return {
+        loading,
         saveValues: async (record, values, version, deleteEmpty = false) => {
             try {
                 const saveRes = await executeSaveValueBatch({
@@ -69,7 +70,6 @@ export default function useExecuteSaveValueBatchMutation(): ISaveValueBatchHook 
 
                 return {status: APICallStatus.ERROR, error: message};
             }
-        },
-        loading
+        }
     };
 }

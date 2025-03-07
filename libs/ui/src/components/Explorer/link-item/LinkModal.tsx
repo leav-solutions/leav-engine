@@ -5,6 +5,8 @@ import {ComponentProps, FunctionComponent, useRef} from 'react';
 import {closeKitSnackBar, KitButton, KitSpace, AntModal} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
+import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {Explorer} from '../Explorer';
@@ -12,11 +14,11 @@ import {IEntrypointLink} from '../_types';
 import {useLinkMassAction} from './useLinkMassAction';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {EditSettingsContextProvider} from '../manage-view-settings';
-import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 
 interface IAddLinkModalProps {
     open: boolean;
     onClose: () => void;
+    onLink?: (saveValuesResult: ISubmitMultipleResult) => void;
 }
 
 const modalMaxWidth = 1200;
@@ -59,7 +61,7 @@ const ModalFooterStyledDiv = styled.div`
     border-top: 1px solid var(--general-utilities-border);
 `;
 
-export const LinkModal: FunctionComponent<IAddLinkModalProps> = ({open, onClose}) => {
+export const LinkModal: FunctionComponent<IAddLinkModalProps> = ({open, onLink, onClose}) => {
     const {t} = useSharedTranslation();
     const explorerContainerRef = useRef<HTMLDivElement>(null);
     const {view, dispatch} = useViewSettingsContext();
@@ -78,6 +80,7 @@ export const LinkModal: FunctionComponent<IAddLinkModalProps> = ({open, onClose}
         store: {view, dispatch},
         linkAttributeId: (view.entrypoint as IEntrypointLink).linkAttributeId,
         libraryId: view.libraryId,
+        onLink,
         closeModal: onClose
     });
 

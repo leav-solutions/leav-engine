@@ -28,6 +28,7 @@ export const useDeactivateMassAction = ({
     isEnabled,
     store: {view, dispatch},
     allVisibleKeys,
+    onDeactivate,
     refetch
 }: FeatureHook<{
     store: {
@@ -35,6 +36,7 @@ export const useDeactivateMassAction = ({
         dispatch: Dispatch<IViewSettingsAction>;
     };
     allVisibleKeys: string[];
+    onDeactivate?: IMassActions['callback'];
     refetch: ReturnType<typeof useExplorerData>['refetch'];
 }>) => {
     const {t} = useSharedTranslation();
@@ -74,6 +76,7 @@ export const useDeactivateMassAction = ({
                         } else {
                             await refetch();
                         }
+                        onDeactivate?.(massSelectionFilter, view.massSelection);
                         dispatch({
                             type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
                             payload: []

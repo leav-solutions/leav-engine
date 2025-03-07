@@ -1411,7 +1411,7 @@ export type ExplorerLibraryDetailsQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerLibraryDetailsQuery = { libraries?: { list: Array<{ id: string, label?: any | null }> } | null };
+export type ExplorerLibraryDetailsQuery = { libraries?: { list: Array<{ id: string, label?: any | null, behavior: LibraryBehavior }> } | null };
 
 export type ExplorerSelectionIdsQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -4347,6 +4347,7 @@ export const ExplorerLibraryDetailsDocument = gql`
     list {
       id
       label
+      behavior
     }
   }
 }

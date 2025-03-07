@@ -7,11 +7,10 @@ import {FaChevronDown} from 'react-icons/fa';
 import {RecordFilterCondition, RecordFilterOperator} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
-import {IMassActions} from '../_types';
+import {IMassActions, MassSelection} from '../_types';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {prepareFiltersForRequest} from '../_queries/prepareFiltersForRequest';
-import {MassSelection} from '../manage-view-settings/store-view-settings/viewSettingsReducer';
 
 export const SNACKBAR_MASS_ID = 'SNACKBAR_MASS_ID';
 
@@ -70,7 +69,8 @@ export const useMassActions = ({
                                               value: String(key)
                                           }
                                       ])
-                                  )
+                                  ),
+                            view.massSelection
                         );
                         dispatch({
                             type: ViewSettingsActionTypes.SET_SELECTED_KEYS,

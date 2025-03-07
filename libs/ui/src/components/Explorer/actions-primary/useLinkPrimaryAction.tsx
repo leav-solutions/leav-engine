@@ -4,6 +4,7 @@
 import {useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {FeatureHook, IPrimaryAction} from '../_types';
 import {LinkModal} from '../link-item/LinkModal';
 
@@ -16,12 +17,15 @@ import {LinkModal} from '../link-item/LinkModal';
  *
  * @param isEnabled - whether the action is present
  * @param maxItemsLeft - the number of items that can be added
+ * @param onLink - callback to let outside world know about linking feedback
  */
 export const useLinkPrimaryAction = ({
     isEnabled,
-    maxItemsLeft
+    maxItemsLeft,
+    onLink
 }: FeatureHook<{
     maxItemsLeft: number | null;
+    onLink?: (saveValuesResult: ISubmitMultipleResult) => void;
 }>) => {
     const {t} = useSharedTranslation();
 
@@ -43,6 +47,7 @@ export const useLinkPrimaryAction = ({
         linkModal: isLinkModalVisible ? (
             <LinkModal
                 open
+                onLink={onLink}
                 onClose={() => {
                     setIsLinkModalVisible(false);
                 }}

@@ -6,6 +6,7 @@
 // Prefer using spyOn method for Mocking hooks except for hooks using onCompleted callback.
 // In this case, the spyOn is too complex to implement, prefer using the mocks parameter of render method.
 //
+import {createRef} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {waitFor} from '@testing-library/react';
@@ -15,21 +16,39 @@ import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
-import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
 import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
+import {IEntrypointLibrary, IEntrypointLink, IItemAction, IPrimaryAction} from './_types';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import * as useColumnWidth from './useColumnWidth';
 import {SNACKBAR_MASS_ID} from './actions-mass/useMassActions';
-import {createRef} from 'react';
 import {IExplorerRef} from './Explorer';
 
+const UploadFilesMock = 'UploadFiles';
+const CreateDirectoryMock = 'CreateDirectory';
 const EditRecordModalMock = 'EditRecordModal';
+const LinkRecordModalMock = 'LinkRecordModalMock';
 
+jest.mock('_ui/components/UploadFiles', () => ({
+    UploadFiles: () => <div>{UploadFilesMock}</div>
+}));
+jest.mock('_ui/components/CreateDirectory', () => ({
+    CreateDirectory: () => <div>{CreateDirectoryMock}</div>
+}));
 jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
-    EditRecordModal: ({onCreate}) => (
+    EditRecordModal: ({onCreate, onClose}) => (
         <div>
             {EditRecordModalMock}
-            <button onClick={() => onCreate({})}>create-record</button>
+            <button onClick={() => onCreate({id: 987654})}>create-record</button>
+            <button onClick={() => onClose?.({})}>close-modal</button>
+        </div>
+    )
+}));
+
+jest.mock('_ui/components/Explorer/link-item/LinkModal', () => ({
+    LinkModal: ({onLink}) => (
+        <div>
+            {LinkRecordModalMock}
+            <button onClick={() => onLink([987654])}>link-record</button>
         </div>
     )
 }));
@@ -412,20 +431,39 @@ describe('Explorer', () => {
     };
 
     const campaignName = 'Campagnes';
-    const mockLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
+
+    const mockLibraryDetailsQueryResultList = {
+        id: 'campaigns',
+        label: {
+            en: 'Campaigns',
+            fr: campaignName
+        }
+    };
+
+    const mockFilesLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
         loading: false,
         called: true,
         data: {
             libraries: {
-                list: [
-                    {
-                        id: 'campaigns',
-                        label: {
-                            en: 'Campaigns',
-                            fr: campaignName
-                        }
-                    }
-                ]
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.files}]
+            }
+        }
+    };
+    const mockDirectoriesLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
+        loading: false,
+        called: true,
+        data: {
+            libraries: {
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.directories}]
+            }
+        }
+    };
+    const mockStandardLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
+        loading: false,
+        called: true,
+        data: {
+            libraries: {
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.standard}]
             }
         }
     };
@@ -609,7 +647,7 @@ describe('Explorer', () => {
         );
 
         jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-            () => mockLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
+            () => mockStandardLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
         );
 
         jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
@@ -1004,9 +1042,11 @@ describe('Explorer', () => {
             {loading: false, called: false, client: {} as any, reset: jest.fn()}
         ]);
 
+        const onRemove = jest.fn();
+
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={libraryEntrypoint} />
+                <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />
             </Explorer.EditSettingsContextProvider>
         );
 
@@ -1017,6 +1057,12 @@ describe('Explorer', () => {
         await user.click(screen.getByText('global.submit'));
 
         expect(mockDeactivateMutation).toHaveBeenCalled();
+        expect(onRemove).toHaveBeenCalledWith(
+            expect.objectContaining({
+                key: mockRecords[1].id,
+                itemId: mockRecords[1].id
+            })
+        );
     });
 
     test('Should be able to delete a linked record with default actions', async () => {
@@ -1043,9 +1089,11 @@ describe('Explorer', () => {
             actionsColumnHeaderWidth: 464
         });
 
+        const onRemove = jest.fn();
+
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={linkEntrypoint} />
+                <Explorer entrypoint={linkEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />
             </Explorer.EditSettingsContextProvider>,
             {
                 mocks: [ExplorerLinkAttributeQueryMock]
@@ -1059,18 +1107,33 @@ describe('Explorer', () => {
         await user.click(screen.getByText('global.submit'));
 
         expect(mockDeleteValueMutation).toHaveBeenCalled();
+        expect(onRemove).toHaveBeenCalledWith(
+            expect.objectContaining({
+                key: mockRecords[1].id,
+                itemId: mockRecords[1].id
+            })
+        );
     });
 
     test('Should be able to edit a record with default actions', async () => {
+        const onEdit = jest.fn();
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={libraryEntrypoint} />
+                <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{item: {edit: onEdit}}} />
             </Explorer.EditSettingsContextProvider>
         );
 
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.edit-item'}));
         expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+
+        await user.click(screen.getByRole('button', {name: 'close-modal'}));
+        expect(onEdit).toHaveBeenCalledWith(
+            expect.objectContaining({
+                key: mockRecords[1].id,
+                itemId: mockRecords[1].id
+            })
+        );
     });
 
     test('Should call the useGetRecordUpdatesSubscription', async () => {
@@ -1172,7 +1235,10 @@ describe('Explorer', () => {
     });
 
     describe('Primary Action', () => {
-        test('Should be able to create a new record', async () => {
+        test('Should be able to create a new file when library has files behavior', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+                () => mockFilesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
+            );
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} />
@@ -1181,7 +1247,37 @@ describe('Explorer', () => {
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
 
+            expect(screen.getByText(UploadFilesMock)).toBeVisible();
+        });
+        test('Should be able to create a new directory when library has directories behavior', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+                () => mockDirectoriesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
+            );
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+
+            expect(screen.getByText(CreateDirectoryMock)).toBeVisible();
+        });
+        test('Should be able to create a new record when library has standard behavior', async () => {
+            const onCreate = jest.fn();
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+            const createRecordButton = screen.getByRole('button', {name: 'create-record'});
+            await user.click(createRecordButton);
+
+            expect(onCreate).toHaveBeenCalledWith({recordIdCreated: 987654});
         });
 
         test('Should be able to create a new record from Explorer ref', async () => {
@@ -1223,15 +1319,16 @@ describe('Explorer', () => {
         });
 
         test('Should be able to link a new record', async () => {
-            const saveValues = jest.fn();
-            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
+            const saveValuesResult = 'saveValuesResult';
+            const saveValues = jest.fn<any, any>(async () => saveValuesResult);
+            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(() => ({
                 loading: false,
                 saveValues
-            });
-
+            }));
+            const onCreate = jest.fn();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={linkEntrypoint} />
+                    <Explorer entrypoint={linkEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
                 </Explorer.EditSettingsContextProvider>,
                 {
                     mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
@@ -1246,20 +1343,31 @@ describe('Explorer', () => {
             const createRecordButton = screen.getByRole('button', {name: 'create-record'});
             await user.click(createRecordButton);
 
-            expect(saveValues).toHaveBeenCalled();
+            expect(saveValues).toHaveBeenCalledWith(
+                {id: linkEntrypoint.parentRecordId, library: {id: linkEntrypoint.parentLibraryId}},
+                [{attribute: linkEntrypoint.linkAttributeId, idValue: null, value: 987654}]
+            );
+            expect(onCreate).toHaveBeenCalledWith({recordIdCreated: 987654, saveValuesResultOnLink: saveValuesResult});
         });
 
         test('Should be able to link a new record from Explorer ref', async () => {
-            const saveValues = jest.fn();
-            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
+            const onCreate = jest.fn();
+            const saveValuesResult = 'saveValuesResult';
+            const saveValues = jest.fn<any, any>(async () => saveValuesResult);
+            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(() => ({
                 loading: false,
                 saveValues
-            });
+            }));
 
             const explorerRef = createRef<IExplorerRef>();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={linkEntrypoint} ref={explorerRef} hidePrimaryActions />
+                    <Explorer
+                        entrypoint={linkEntrypoint}
+                        ref={explorerRef}
+                        hidePrimaryActions
+                        defaultCallbacks={{primary: {create: onCreate}}}
+                    />
                     <button onClick={() => explorerRef.current?.createAction?.callback()}>test button</button>
                 </Explorer.EditSettingsContextProvider>,
                 {
@@ -1275,7 +1383,40 @@ describe('Explorer', () => {
             const createRecordButton = screen.getByRole('button', {name: 'create-record'});
             await user.click(createRecordButton);
 
-            expect(saveValues).toHaveBeenCalled();
+            expect(saveValues).toHaveBeenCalledWith(
+                {id: linkEntrypoint.parentRecordId, library: {id: linkEntrypoint.parentLibraryId}},
+                [{attribute: linkEntrypoint.linkAttributeId, idValue: null, value: 987654}]
+            );
+            expect(onCreate).toHaveBeenCalledWith({recordIdCreated: 987654, saveValuesResultOnLink: saveValuesResult});
+        });
+
+        test('Should be able to link existing record', async () => {
+            const saveValues = jest.fn();
+            const onLink = jest.fn();
+            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
+                loading: false,
+                saveValues
+            });
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={linkEntrypoint}
+                        defaultPrimaryActions={[]}
+                        defaultCallbacks={{primary: {link: onLink}}}
+                    />
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
+                }
+            );
+            const linkExistingButton = await screen.findByRole('button', {name: 'explorer.add-existing-item'});
+            await user.click(linkExistingButton);
+
+            expect(screen.getByText(LinkRecordModalMock)).toBeVisible();
+
+            const createRecordButton = screen.getByRole('button', {name: 'link-record'});
+            await user.click(createRecordButton);
+            expect(onLink).toHaveBeenCalledWith([987654]);
         });
 
         test('Should be able to display custom primary actions', async () => {
@@ -1956,11 +2097,11 @@ describe('Explorer', () => {
             jest.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(
                 () => [mockOnUseDeactivateRecordsMutation, {}] as any
             );
-
+            const onDeactivate = jest.fn();
             // WHEN the component is rendered
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
+                    <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{mass: {deactivate: onDeactivate}}} />
                 </Explorer.EditSettingsContextProvider>
             );
 
@@ -2004,16 +2145,90 @@ describe('Explorer', () => {
             // THEN the mock mutation is called with the ids of selected items
             expect(mockOnUseDeactivateRecordsMutation).toHaveBeenCalledTimes(1);
             const [firstRecord, secondRecord] = mockRecords;
+            const expectedDeactivateFilters = [
+                {field: 'id', condition: 'EQUAL', value: firstRecord.id},
+                {operator: 'OR'},
+                {field: 'id', condition: 'EQUAL', value: secondRecord.id}
+            ];
             expect(mockOnUseDeactivateRecordsMutation).toHaveBeenCalledWith({
                 variables: {
                     libraryId: 'campaigns',
-                    filters: [
-                        {field: 'id', condition: 'EQUAL', value: firstRecord.id},
-                        {operator: 'OR'},
-                        {field: 'id', condition: 'EQUAL', value: secondRecord.id}
-                    ]
+                    filters: expectedDeactivateFilters
                 }
             });
+
+            expect(onDeactivate).toHaveBeenCalledWith(expectedDeactivateFilters, [firstRecord.id, secondRecord.id]);
+
+            // AND the selection is cleared (see beforeEach)
+        });
+
+        it('should unlink massively for link entrypoint (manual selection with only one page)', async () => {
+            // GIVEN a mocked deactivate record mutation
+            const mockOnUseDeactivateRecordsMutation = jest.fn();
+            jest.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(
+                () => [mockOnUseDeactivateRecordsMutation, {}] as any
+            );
+            const onDeactivate = jest.fn();
+            // WHEN the component is rendered
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{mass: {deactivate: onDeactivate}}} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            // WHEN the toolbar is cleared
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(within(toolbar).getByRole('checkbox')).not.toHaveAttribute('checked');
+            // AND the snackbar is hidden
+            expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+            // AND the records are displayed
+            const tableRows = screen.getAllByRole('row');
+            expect(screen.getByRole('table')).toBeVisible();
+            expect(tableRows).toHaveLength(mockRecords.length); // 2 records
+
+            // WHEN ths user clicks on the select all checkbox (no pagination)
+            await user.click(within(toolbar).getByRole('checkbox'));
+
+            // THEN the toolbar select all checkbox is checked
+            expect(within(toolbar).getByRole('checkbox')).toBeChecked();
+
+            // AND the first record is selected
+            const [firstRecordRow] = screen.getAllByRole('row');
+            const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
+            expect(within(firstSelectRowCell).getByRole('checkbox')).toBeChecked();
+            // AND the second record is selected too
+            const [, secondRecordRow] = screen.getAllByRole('row');
+            const [secondSelectRowCell] = within(secondRecordRow).getAllByRole('cell');
+            expect(within(secondSelectRowCell).getByRole('checkbox')).toBeChecked();
+
+            // AND the snackbar is up to date with the count of selected items
+            expect(screen.getByRole('status').textContent).toContain('massAction.selectedItems|2');
+
+            // WHEN the user clicks on the mass deactivate action
+            await user.click(within(screen.getByRole('status')).getByRole('button', {name: /massAction.deactivate/}));
+
+            // THEN a confirmation modal is displayed
+            expect(screen.getByText(/records_deactivation.confirm/)).toBeVisible();
+            // WHEN the user confirms the deactivation
+            await user.click(screen.getByText(/submit/));
+
+            // THEN the mock mutation is called with the ids of selected items
+            expect(mockOnUseDeactivateRecordsMutation).toHaveBeenCalledTimes(1);
+            const [firstRecord, secondRecord] = mockRecords;
+            const expectedDeactivateFilters = [
+                {field: 'id', condition: 'EQUAL', value: firstRecord.id},
+                {operator: 'OR'},
+                {field: 'id', condition: 'EQUAL', value: secondRecord.id}
+            ];
+            expect(mockOnUseDeactivateRecordsMutation).toHaveBeenCalledWith({
+                variables: {
+                    libraryId: 'campaigns',
+                    filters: expectedDeactivateFilters
+                }
+            });
+
+            expect(onDeactivate).toHaveBeenCalledWith(expectedDeactivateFilters, [firstRecord.id, secondRecord.id]);
 
             // AND the selection is cleared (see beforeEach)
         });

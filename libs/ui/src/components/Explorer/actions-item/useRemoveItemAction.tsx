@@ -25,12 +25,14 @@ import {MASS_SELECTION_ALL} from '../_constants';
 export const useRemoveItemAction = ({
     isEnabled,
     store: {view, dispatch},
+    onRemove,
     entrypoint
 }: FeatureHook<{
     store: {
         view: IViewSettingsState;
         dispatch: Dispatch<IViewSettingsAction>;
     };
+    onRemove?: IItemAction['callback'];
     entrypoint: Entrypoint;
 }>) => {
     const {t} = useSharedTranslation();
@@ -73,7 +75,8 @@ export const useRemoveItemAction = ({
             label: entrypoint.type === 'library' ? t('explorer.deactivate-item') : t('explorer.delete-item'),
             icon: <FaTrash />,
             isDanger: true,
-            callback: ({itemId, libraryId, id_value}) => {
+            callback: item => {
+                const {itemId, libraryId, id_value} = item;
                 KitModal.confirm({
                     type: 'confirm',
                     dangerConfirm: true,
@@ -86,7 +89,7 @@ export const useRemoveItemAction = ({
                     onOk: async () => {
                         switch (entrypoint.type) {
                             case 'library':
-                                const res = await deactivateRecordsMutation({
+                                const libRes = await deactivateRecordsMutation({
                                     variables: {
                                         libraryId,
                                         recordsIds: [itemId]
@@ -98,9 +101,10 @@ export const useRemoveItemAction = ({
                                         payload: view.massSelection.filter(key => key !== itemId)
                                     });
                                 }
-                                return res;
+                                onRemove?.(item);
+                                return libRes;
                             case 'link':
-                                return deleteRecordLinkMutation({
+                                const linkRes = await deleteRecordLinkMutation({
                                     variables: {
                                         library: entrypoint.parentLibraryId,
                                         attribute: entrypoint.linkAttributeId,
@@ -111,6 +115,8 @@ export const useRemoveItemAction = ({
                                         }
                                     }
                                 });
+                                onRemove?.(item);
+                                return linkRes;
                             default:
                                 return;
                         }
