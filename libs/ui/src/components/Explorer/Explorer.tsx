@@ -301,7 +301,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                             iconsOnlyItemActions={iconsOnlyItemActions}
                             hideTableHeader={hideTableHeader}
                             paginationProps={
-                                entrypoint.type === 'library'
+                                entrypoint.type === 'library' && !noPagination
                                     ? {
                                           pageSizeOptions: defaultPageSizeOptions,
                                           currentPage,
