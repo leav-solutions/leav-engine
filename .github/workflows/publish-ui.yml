@@ -20,13 +20,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: 'develop'
+          fetch-depth: 0
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v4
         with:
           node-version: 18.x
           registry-url: 'https://registry.npmjs.org'
       - name: Update package.json version
-        run: yarn workspace @leav/ui version minor
+        run: |
+          git config --global user.email "${{ github.triggering_actor }}@aristid.com"
+          git config --global user.name "${{ github.triggering_actor }}"
+          yarn workspace @leav/ui version minor
       - name: Commit and push changes
         run: "git add libs/ui/package.json && git commit -m 'chore(@leav/ui): update to next minor version' && git push"
       - name: Cache NPM dependencies
