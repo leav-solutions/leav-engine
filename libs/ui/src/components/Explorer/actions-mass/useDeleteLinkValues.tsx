@@ -40,6 +40,7 @@ export const useDeleteLinkValues = ({
         fulltextSearch: view.fulltextSearch,
         pagination,
         sorts: view.sort,
+        filtersOperator: view.filtersOperator,
         filters: view.filters,
         skip: !isLink
     });

@@ -59,7 +59,7 @@ export const useMassActions = ({
                     onClick: async () => {
                         await callback(
                             view.massSelection === MASS_SELECTION_ALL
-                                ? prepareFiltersForRequest(view.filters)
+                                ? prepareFiltersForRequest(view.filters, view.filtersOperator)
                                 : interleaveElement(
                                       {operator: RecordFilterOperator.OR},
                                       view.massSelection.map(key => [

@@ -167,6 +167,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
             sorts: view.sort,
             filters: view.filters,
+            filtersOperator: view.filtersOperator,
             skip: viewSettingsLoading
         }); // TODO: refresh when go back on page
         const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;

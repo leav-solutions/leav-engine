@@ -5,7 +5,13 @@ import dayjs from 'dayjs';
 import {AttributeFormat, RecordFilterCondition, RecordFilterInput, RecordFilterOperator} from '_ui/_gqlTypes';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
 import {AttributeConditionFilter} from '_ui/types';
-import {ExplorerFilter, IExplorerFilterStandard, isExplorerFilterStandard, isExplorerFilterThrough} from '../_types';
+import {
+    DefaultViewSettings,
+    ExplorerFilter,
+    IExplorerFilterStandard,
+    isExplorerFilterStandard,
+    isExplorerFilterThrough
+} from '../_types';
 import {nullValueConditions} from '../conditionsHelper';
 
 export const dateValuesSeparator = '\n';
@@ -67,9 +73,12 @@ const _getBooleanRequestFilters = (filter: IExplorerFilterStandard): RecordFilte
     return [{field: filter.field, condition: filter.condition, value: filter.value}];
 };
 
-export const prepareFiltersForRequest = (filters: ExplorerFilter[]): RecordFilterInput[] =>
+export const prepareFiltersForRequest = (
+    filters: ExplorerFilter[],
+    filtersOperator: DefaultViewSettings['filtersOperator']
+): RecordFilterInput[] =>
     interleaveElement(
-        {operator: RecordFilterOperator.AND},
+        {operator: filtersOperator === 'OR' ? RecordFilterOperator.OR : RecordFilterOperator.AND},
         filters
             .filter(filter => {
                 if (isExplorerFilterThrough(filter)) {
