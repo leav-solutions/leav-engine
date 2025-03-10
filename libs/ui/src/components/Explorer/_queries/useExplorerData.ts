@@ -4,7 +4,7 @@
 import {localizedTranslation} from '@leav/utils';
 import {useMemo} from 'react';
 import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
-import {Entrypoint, IEntrypointLink, IExplorerData, ExplorerFilter} from '../_types';
+import {Entrypoint, IEntrypointLink, IExplorerData, ExplorerFilter, DefaultViewSettings} from '../_types';
 import {
     ExplorerLibraryDataQuery,
     ExplorerLinkDataQuery,
@@ -111,6 +111,7 @@ export const useExplorerData = ({
     sorts,
     pagination,
     filters,
+    filtersOperator,
     skip
 }: {
     entrypoint: Entrypoint;
@@ -123,6 +124,7 @@ export const useExplorerData = ({
     }>;
     pagination: null | {limit: number; offset: number};
     filters: ExplorerFilter[];
+    filtersOperator: DefaultViewSettings['filtersOperator'];
     skip: boolean;
 }) => {
     const {lang: availableLangs} = useLang();
@@ -158,7 +160,7 @@ export const useExplorerData = ({
             pagination,
             searchQuery: fulltextSearch,
             multipleSort: sorts,
-            filters: prepareFiltersForRequest(filters)
+            filters: prepareFiltersForRequest(filters, filtersOperator)
         }
     });
 

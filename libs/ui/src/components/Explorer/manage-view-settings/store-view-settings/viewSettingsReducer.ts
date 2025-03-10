@@ -61,6 +61,7 @@ export interface IViewSettingsState {
         order: SortOrder;
     }>;
     pageSize: number;
+    filtersOperator: 'AND' | 'OR';
     filters: ExplorerFilter[];
     maxFilters: number;
     initialViewSettings: Pick<IViewSettingsState, 'viewType' | 'attributesIds' | 'sort' | 'pageSize' | 'filters'>;

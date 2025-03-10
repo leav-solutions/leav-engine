@@ -138,6 +138,7 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                     field: s.field,
                     order: s.order
                 })),
+                filtersOperator: defaultViewSettings?.filtersOperator ?? 'AND',
                 filters: toExplorerFilters({filters: allFilters, attributesDataById})
             };
             dispatch({

@@ -1699,6 +1699,84 @@ describe('Explorer', () => {
                 })
             );
         });
+
+        test('Should handle filters for the request and for the display with OR operator', async () => {
+            const spy = jest
+                .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+                .mockImplementation(
+                    ({variables}) =>
+                        (Array.isArray(variables?.filters) && variables.filters.length
+                            ? mockExplorerLibraryDataQueryResultWithFilters
+                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
+                );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                        showFiltersAndSorts
+                        enableConfigureView
+                        defaultViewSettings={{
+                            filtersOperator: 'OR',
+                            filters: [
+                                {
+                                    id: '',
+                                    attribute: {
+                                        format: simpleMockAttribute.format,
+                                        label: simpleMockAttribute.label.fr,
+                                        type: simpleMockAttribute.type
+                                    },
+                                    field: simpleMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                    value: 'Christmas'
+                                },
+                                {
+                                    id: '',
+                                    attribute: {
+                                        format: simpleMockAttribute.format,
+                                        label: simpleMockAttribute.label.fr,
+                                        type: simpleMockAttribute.type
+                                    },
+                                    field: simpleMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                    value: 'Test'
+                                }
+                            ],
+                            sort: [
+                                {
+                                    field: simpleMockAttribute.id,
+                                    order: gqlTypes.SortOrder.asc
+                                }
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
+
+            expect(spy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining({
+                        filters: [
+                            {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas'
+                            },
+                            {operator: 'OR'},
+                            {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Test'
+                            }
+                        ]
+                    })
+                })
+            );
+        });
     });
 
     describe('Entrypoint type link', () => {

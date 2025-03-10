@@ -22,6 +22,7 @@ export const viewSettingsInitialState: IViewSettingsState = {
     fulltextSearch: '',
     sort: [],
     pageSize: defaultPageSizeOptions[0],
+    filtersOperator: 'AND',
     filters: [],
     maxFilters: defaultMaxFilters,
     massSelection: [],

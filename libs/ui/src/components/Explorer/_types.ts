@@ -124,6 +124,7 @@ export interface IFilterDropDownProps {
 export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,
     {
+        filtersOperator?: 'AND' | 'OR';
         filters?: ExplorerFilter[];
     }
 >;
