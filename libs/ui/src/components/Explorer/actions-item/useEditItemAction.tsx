@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMemo, useState} from 'react';
-import {FaPen} from 'react-icons/fa';
+import {FaEye, FaPen} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
 import {RecordFilterCondition, useExplorerLibraryDataLazyQuery} from '_ui/_gqlTypes';
@@ -34,7 +34,7 @@ export const useEditItemAction = ({
 
     const _editItemAction: IItemAction = {
         label: t('explorer.edit-item'),
-        icon: <FaPen />,
+        icon: <FaEye />,
         callback: item => {
             setEditingItem(item);
         }
