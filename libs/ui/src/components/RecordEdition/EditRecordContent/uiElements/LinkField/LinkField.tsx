@@ -245,7 +245,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
                             libraryId={state.libraryId}
                             isReadOnly={isReadOnly}
                             isMultipleValues={attribute.multiple_values}
-                            // hasNoValue={backendValues.length === 0} //TODO: Variable hasNoValue DRY
+                            // hasNoValue={backendValues.length === 0} //TODO: Keep hasNoValue or use children based on selectedRecordIds.length ?
                         />
                     ) : (
                         <LinkRecordsInEdition

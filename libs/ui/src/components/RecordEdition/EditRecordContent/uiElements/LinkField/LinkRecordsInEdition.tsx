@@ -20,6 +20,11 @@ interface ILinkRecordsInCreationProps {
     hasNoValue: boolean;
 }
 
+const _shouldUpdateExplorerActions = (ref: IExplorerRef, explorerActions: IExplorerRef) =>
+    ref?.createAction?.disabled !== explorerActions?.createAction?.disabled ||
+    ref?.linkAction?.disabled !== explorerActions?.linkAction?.disabled ||
+    ref?.totalCount !== explorerActions?.totalCount;
+
 const LinkRecordsInEdition: FunctionComponent<ILinkRecordsInCreationProps> = ({
     libraryId,
     recordId,
@@ -34,9 +39,7 @@ const LinkRecordsInEdition: FunctionComponent<ILinkRecordsInCreationProps> = ({
     const [explorerActions, setExplorerActions] = useState<IExplorerRef | null>(null);
 
     const _handleExplorerRef = (ref: IExplorerRef) => {
-        // console.log('ref', ref);
-        //TODO: Prendre en compte link action et totalCount
-        if (ref?.createAction?.disabled !== explorerActions?.createAction?.disabled) {
+        if (_shouldUpdateExplorerActions(ref, explorerActions)) {
             setExplorerActions({
                 createAction: ref?.createAction,
                 linkAction: ref?.linkAction,

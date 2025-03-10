@@ -22,6 +22,11 @@ interface ILinkRecordsInCreationProps {
     isMultipleValues: boolean;
 }
 
+//TODO:
+// - MAJ des backendValues ?
+// - MAJ des valeurs du formulaire ?
+// - Tester la création avec valeurs bien saisi
+// - Tester la création sans valeurs (test de requis également)
 const LinkRecordsInCreation: FunctionComponent<ILinkRecordsInCreationProps> = ({
     libraryId,
     isReadOnly,
