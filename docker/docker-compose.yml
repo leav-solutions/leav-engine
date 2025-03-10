@@ -528,17 +528,19 @@ services:
       - traefik.http.services.redis.loadbalancer.server.port=6379
     volumes:
       - redis_data:/data
+    healthcheck:
+        test: [ "CMD", "redis-cli", "ping" ]
+        interval: 5s
+        timeout: 2s
+        retries: 15
 
   redis-commander:
     profiles: ["debug"]
-    container_name: redis-commander
     hostname: redis-commander
     image: rediscommander/redis-commander:latest
     restart: always
     environment:
     - REDIS_HOSTS=local:redis:6379
-    ports:
-    - "9876:8081"
     labels:
       - traefik.enable=true
       - traefik.http.routers.redis-commander.rule=Host(`redis.leav.localhost`)
