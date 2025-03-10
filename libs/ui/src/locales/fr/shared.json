@@ -647,6 +647,7 @@
         "deactivate-item": "Désactiver",
         "delete-item": "Supprimer",
         "edit-item": "Éditer",
+        "replace-item": "Remplacer",
         "settings": "Paramètres",
         "back": "Retour",
         "router-menu": "Configuration de la vue",
@@ -704,6 +705,7 @@
             "selectedItems_other": "{{count, number}} sélectionnés",
             "deactivate": "Supprimer",
             "add-link": "Ajouter",
+            "replace-link": "Remplacer", 
             "toggle_selection": {
                 "select_page_one": "Sélectionner l’éléments visible ({{count, number}})",
                 "select_page_other": "Sélectionner les éléments visibles ({{count, number}})",

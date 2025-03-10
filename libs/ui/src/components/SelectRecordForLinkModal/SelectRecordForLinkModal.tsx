@@ -7,7 +7,7 @@ import {closeKitSnackBar, KitButton, KitSpace, AntModal} from 'aristid-ds';
 // TODO: harmonize icon sources
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
-import {FaPlus} from 'react-icons/fa';
+import {FaExchangeAlt, FaPlus} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ExplorerSelectionIdsQuery, useExplorerSelectionIdsLazyQuery} from '_ui/_gqlTypes';
 import {Explorer} from '_ui/components/Explorer';
@@ -54,6 +54,7 @@ const ModalMainStyledDiv = styled.div`
 interface ISelectRecordForLinkModalProps {
     open: boolean;
     childLibraryId: string;
+    replacementMode: boolean;
     selectionMode: ComponentProps<typeof Explorer>['selectionMode'];
     hideSelectAllAction: ComponentProps<typeof Explorer>['hideSelectAllAction'];
     onSelectionCompleted: (data: ExplorerSelectionIdsQuery) => void;
@@ -63,6 +64,7 @@ interface ISelectRecordForLinkModalProps {
 export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkModalProps> = ({
     open,
     childLibraryId,
+    replacementMode,
     selectionMode,
     hideSelectAllAction,
     onSelectionCompleted,
@@ -122,8 +124,10 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                         hideSelectAllAction={hideSelectAllAction}
                         massActions={[
                             {
-                                label: t('explorer.massAction.add-link'),
-                                icon: <FaPlus />,
+                                label: replacementMode
+                                    ? t('explorer.massAction.replace-link')
+                                    : t('explorer.massAction.add-link'),
+                                icon: replacementMode ? <FaExchangeAlt /> : <FaPlus />,
                                 callback: async massSelectionFilter => {
                                     await getRecordIdsFromFilters({
                                         variables: {

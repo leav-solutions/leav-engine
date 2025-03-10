@@ -647,6 +647,7 @@
         "deactivate-item": "Deactivate",
         "delete-item": "Delete",
         "edit-item": "Edit",
+        "replace-item": "Replace",
         "settings": "Settings",
         "back": "Back",
         "router-menu": "View Configuration",
@@ -704,6 +705,7 @@
             "selectedItems_other": "{{count, number}} selected",
             "deactivate": "Deactivate",
             "add-link": "Add",
+            "replace-link": "Replace", 
             "toggle_selection": {
                 "select_page_one": "Select visible item ({{count, number}})",
                 "select_page_other": "Select visible items ({{count, number}})",

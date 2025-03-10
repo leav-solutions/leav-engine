@@ -1142,7 +1142,6 @@ describe('Explorer', () => {
         expect(mockDeleteValueMutation).toHaveBeenCalled();
         expect(onRemove).toHaveBeenCalledWith(
             expect.objectContaining({
-                key: mockRecords[1].id,
                 itemId: mockRecords[1].id
             })
         );
@@ -1780,7 +1779,7 @@ describe('Explorer', () => {
     });
 
     describe('Entrypoint type link', () => {
-        test('Should display the list of linked records', async () => {
+        test('Should display the list of linked records and call action', async () => {
             const actionCallback = jest.fn();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1788,6 +1787,7 @@ describe('Explorer', () => {
                         entrypoint={linkEntrypoint}
                         primaryActions={customPrimaryActions}
                         defaultPrimaryActions={[]}
+                        defaultActionsForItem={[]}
                         itemActions={[
                             {
                                 label: 'Test 1',
