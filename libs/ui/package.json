@@ -1,6 +1,6 @@
 {
   "name": "@leav/ui",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "description": "Shared React components and hooks",
   "scripts": {
     "prepublishOnly": "yarn build",
@@ -61,7 +61,6 @@
     "react-icons": ">=4",
     "styled-components": ">=5.3"
   },
-  "stableVersion": "1.0.0",
   "dependencies": {
     "@ckeditor/ckeditor5-build-inline": "39.0.1",
     "@ckeditor/ckeditor5-react": "6.1.0",
