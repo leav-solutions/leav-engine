@@ -32,6 +32,7 @@ import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {MASS_SELECTION_ALL} from './_constants';
 import {useDeleteLinkValues} from './actions-mass/useDeleteLinkValues';
+import {useReplaceItemAction} from './actions-item/useReplaceItemAction';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -75,13 +76,14 @@ interface IExplorerProps {
     title?: string;
     selectionMode?: 'multiple' | 'simple';
     emptyPlaceholder?: ReactNode;
-    defaultActionsForItem?: Array<'edit' | 'remove'>;
+    defaultActionsForItem?: Array<'edit' | 'replaceLink' | 'remove'>;
     defaultPrimaryActions?: Array<'create'>;
     defaultMassActions?: Array<'deactivate'>;
     defaultViewSettings?: DefaultViewSettings;
     defaultCallbacks?: {
         item?: {
             edit?: IItemAction['callback'];
+            replaceLink?: (replaceValuesResult: ISubmitMultipleResult) => void;
             remove?: IItemAction['callback'];
         };
         primary?: {
@@ -138,7 +140,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             showSearch = false,
             hidePrimaryActions = false,
             hideTableHeader = false,
-            defaultActionsForItem = ['edit', 'remove'],
+            defaultActionsForItem = ['edit', 'replaceLink', 'remove'],
             defaultPrimaryActions = ['create'],
             defaultMassActions = ['deactivate'],
             defaultCallbacks,
@@ -178,6 +180,11 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             onRemove: defaultCallbacks?.item?.remove,
             store: {view, dispatch},
             entrypoint
+        });
+
+        const {replaceItemAction, replaceItemModal} = useReplaceItemAction({
+            isEnabled: isLink && isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('replaceLink'),
+            onReplace: defaultCallbacks?.item?.replaceLink
         });
 
         const {editItemAction, editItemModal} = useEditItemAction({
@@ -313,7 +320,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                       }
                                     : undefined
                             }
-                            itemActions={[editItemAction, removeItemAction, ...itemActions]
+                            itemActions={[editItemAction, replaceItemAction, removeItemAction, ...itemActions]
                                 .filter(Boolean)
                                 .map(action => ({
                                     ...action,
@@ -332,6 +339,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                 </ExplorerPageDivStyled>
                 {settingsPanelElement && createPortal(<SidePanel />, settingsPanelElement?.() ?? document.body)}
                 {editItemModal}
+                {replaceItemModal}
                 {createModal}
                 {linkModal}
             </ViewSettingsContext.Provider>

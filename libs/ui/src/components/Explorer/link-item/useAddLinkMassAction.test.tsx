@@ -4,7 +4,7 @@
 import {act, renderHook} from '_ui/_tests/testUtils';
 import * as useExecuteSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {IEntrypointLibrary} from '../_types';
-import {useLinkMassAction} from './useLinkMassAction';
+import {useAddLinkMassAction} from './useAddLinkMassAction';
 import {viewSettingsInitialState} from '../manage-view-settings';
 
 const libraryEntrypoint: IEntrypointLibrary = {
@@ -29,7 +29,7 @@ const explorerLinkAttribute = {
     __typename: 'LinkAttribute'
 };
 
-describe('useLinkMassAction', () => {
+describe('useAddLinkMassAction', () => {
     test('should call the link action', async () => {
         const viewInitialState = {
             ...viewSettingsInitialState,
@@ -50,7 +50,7 @@ describe('useLinkMassAction', () => {
                 current: {createLinks}
             }
         } = renderHook(() =>
-            useLinkMassAction({
+            useAddLinkMassAction({
                 store: {
                     view: {
                         ...viewInitialState,

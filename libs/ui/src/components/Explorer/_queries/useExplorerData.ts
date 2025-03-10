@@ -71,14 +71,14 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
         : {};
 
     const records = data.records.list[0].property
-        .map((linkValue: LinkPropertyLinkValueFragment) => {
+        .map((linkValue: LinkPropertyLinkValueFragment, index: number) => {
             if (!linkValue.payload) {
                 return null;
             }
 
             return {
                 libraryId,
-                key: linkValue.payload.whoAmI.id, // For <KitTable /> only
+                key: linkValue.payload.whoAmI.id + index, // For <KitTable /> only => index handle duplicate keys
                 itemId: linkValue.payload.whoAmI.id, // For <KitTable /> only
                 whoAmI: {
                     label: null,
