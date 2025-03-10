@@ -26,8 +26,7 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
     handleSubmit,
     readonly,
     calculatedFlags,
-    inheritedFlags,
-    setActiveValue
+    inheritedFlags
 }) => {
     if (!onChange) {
         throw Error('DSDatePickerWrapper should be used inside a antd Form.Item');
@@ -99,7 +98,6 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
 
     const _handleOnFocus = () => {
         setIsFocused(true);
-        setActiveValue();
     };
 
     return (

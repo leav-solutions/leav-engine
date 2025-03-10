@@ -51,4 +51,6 @@ export const TOOLTIP_DEFAULT_DELAY_IN_SECONDS = 0.5;
 
 export const EDIT_RECORD_SIDEBAR_ID = 'edit_record_sidebar';
 
-export const STANDARDFIELD_ID_PREFIX = 'standardfield-';
+export const STANDARD_FIELD_ID_PREFIX = 'standardfield-';
+
+export const LINK_FIELD_ID_PREFIX = 'linkfield-';

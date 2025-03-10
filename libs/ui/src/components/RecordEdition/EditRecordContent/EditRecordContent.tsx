@@ -161,6 +161,8 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const recordComputedValues = computeFieldsData && record ? computeFieldsData[record.id] : null;
     const elementsByContainer = extractFormElements(recordForm, recordComputedValues, computeFieldsError);
 
+    // console.log('elementsByContainer', elementsByContainer);
+
     return (
         <WrappedForm
             id={EDIT_OR_CREATE_RECORD_FORM_ID}
@@ -179,6 +181,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                     // Use a hash of record form as a key to force a full re-render when the form changes
                     key={recordFormHash}
                     antdForm={antdForm}
+                    formIdToLoad={formIdToLoad}
                     element={rootElement}
                     computedValues={recordComputedValues}
                     readonly={readonly}
