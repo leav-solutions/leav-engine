@@ -84,11 +84,11 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
             <KitButton
                 type="secondary"
                 icon={<FaBars />}
-                onClick={() => _openSettingsPanel('my-views')}
+                onClick={() => _openSettingsPanel('viewList.my-views')}
                 disabled={isMassSelectionAll}
-                title={String(t('explorer.manage-views')) /* TODO: avoid transform null to 'null' */}
+                title={String(t('explorer.viewList.manage-views')) /* TODO: avoid transform null to 'null' */}
             >
-                {viewName === '' ? t('explorer.manage-views') : viewName}
+                {viewName === '' ? t('explorer.viewList.manage-views') : viewName}
                 {view.viewModified && (
                     <ModifiedStyledKitTag type="error" idCardProps={{description: String(t('explorer.modified'))}} />
                 )}
@@ -100,6 +100,6 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
         openSettingsPanel: _openSettingsPanel,
         viewSettingsButton: button,
         viewListButton,
-        viewName: viewName === '' ? t('explorer.default-view') : viewName
+        viewName: viewName === '' ? t('explorer.viewList.default-view') : viewName
     };
 };

@@ -44,7 +44,7 @@ export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData,
         <KitModal
             // TODO: remove appElement and put in the test : "KitModal.setAppElement(document.body) once exposed"
             appElement={document.body}
-            title={t('explorer.save-view-as')}
+            title={t('explorer.viewList.save-view-as')}
             showCloseIcon={false}
             close={_toggleModal}
             isOpen={isOpen}
@@ -60,7 +60,7 @@ export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData,
             }
         >
             <AntForm name="label" form={form} initialValues={initialValues} onFinish={_onSubmit}>
-                <KitInputWrapper label={String(t('explorer.view-name'))}>
+                <KitInputWrapper label={String(t('explorer.viewList.view-name'))}>
                     {[...availableLangs].sort(sortWithDefaultAtFirst(defaultLang)).map(lang => (
                         <AntForm.Item
                             key={lang}

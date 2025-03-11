@@ -1,21 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useState} from 'react';
+import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {KitRadio, KitTypography} from 'aristid-ds';
+import {KitRadio, KitSpace, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
-import {FaEdit} from 'react-icons/fa';
 import {ViewActionsButtons} from '../manage-view-settings/save-view/ViewActionsButtons';
 import {useLoadView} from '../useLoadView';
-import {RadioChangeEvent} from 'antd';
+import {Radio} from 'antd';
 import {useMeQuery} from '_ui/_gqlTypes';
-import {LabelViewFormModal} from '../manage-view-settings/save-view/LabelViewFormModal';
-import {ViewSettingsActionTypes} from '../manage-view-settings';
-import useExecuteUpdateViewMutation from '../_queries/useExecuteUpdateViewMutation';
+import {useDeleteView} from '../manage-view-settings/save-view/useDeleteView';
+import {useEditLabelView} from '../manage-view-settings/save-view/useEditLabelView';
+import {IDataViewOnAction, IUserView} from '../_types';
+import classNames from 'classnames';
+import {DefaultViewId} from '../manage-view-settings/store-view-settings/viewSettingsInitialState';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -40,32 +41,43 @@ const StyledViewDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: calc(var(--general-spacing-xs) * 1px) 0;
+    padding: calc(var(--general-spacing-xs) * 1px);
+    border-radius: calc(var(--general-border-radius-xs) * 1px);
 
-    .edit {
-        color: var(--general-utilities-main-default);
+    &.selected,
+    &:has(label:hover),
+    &:has(svg:hover) {
+        background: var(--general-utilities-main-light);
+    }
+`;
+
+const StyledIconsDiv = styled.div`
+    .edit,
+    .delete {
         font-size: calc(var(--general-typography-fontSize5) * 1px);
         flex: 0 0 auto;
         cursor: pointer;
         display: inline-block;
     }
-`;
 
-interface IDataViewToEdit {
-    id: string | null;
-    label: Record<string, string> | null;
-}
+    .edit {
+        color: var(--general-utilities-main-default);
+    }
+
+    .delete {
+        color: var(--general-utilities-error-default);
+    }
+`;
 
 export const SavedViews: FunctionComponent = () => {
     const {t} = useSharedTranslation();
     const {availableLangs} = useLang();
-    const {view, dispatch} = useViewSettingsContext();
-    const {updateView} = useExecuteUpdateViewMutation();
+    const {view} = useViewSettingsContext();
     const {loadView} = useLoadView();
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [dataViewToEdit, setDataViewToEdit] = useState<IDataViewToEdit>({id: null, label: null});
+    const {iconDelete, deleteModal} = useDeleteView();
+    const {iconEditLabel, editViewModal} = useEditLabelView();
 
-    const [currentView, setCurrentView] = useState(
+    const [currentView, setCurrentView] = useState<IUserView | undefined>(
         view.savedViews.find(viewItem => view.viewId === viewItem.id) ?? undefined
     );
 
@@ -76,88 +88,63 @@ export const SavedViews: FunctionComponent = () => {
     const sharedViews = view.savedViews.filter(viewItem => viewItem.shared);
     const myViews = view.savedViews.filter(viewItem => !viewItem.shared);
 
+    const _selectedViewClass = (viewId: string | null) =>
+        classNames({
+            selected: view.viewId === viewId
+        });
+
     useEffect(() => {
         setCurrentView(view.savedViews.find(viewItem => view.viewId === viewItem.id) ?? undefined);
     }, [view.viewId]);
 
-    const _handleViewClick = (e: RadioChangeEvent) => {
+    const _onClickLoadView: ComponentProps<typeof Radio>['onChange'] = e => {
         loadView(e.target.value);
-    };
-
-    const _onClickEdit = (id: string | null, label: Record<string, string>) => {
-        setDataViewToEdit({id, label});
-        _toggleModal();
-    };
-
-    const _toggleModal = () => {
-        setIsModalOpen(!isModalOpen);
-    };
-
-    const _onEditName = async (label: Record<string, string>) => {
-        if (!dataViewToEdit.id) {
-            return;
-        }
-        const mappedView = {
-            id: dataViewToEdit.id,
-            label
-        };
-
-        const {data} = await updateView({
-            view: mappedView
-        });
-
-        if (data) {
-            dispatch({
-                type: ViewSettingsActionTypes.RENAME_VIEW,
-                payload: {
-                    id: data.updateView.id,
-                    label: data.updateView.label
-                }
-            });
-        }
     };
 
     return (
         <>
-            {isModalOpen && (
-                <LabelViewFormModal
-                    viewData={dataViewToEdit.label}
-                    isOpen
-                    onSubmit={_onEditName}
-                    onClose={_toggleModal}
-                />
-            )}
+            {editViewModal}
+            {deleteModal}
             <ContentWrapperStyledDiv>
                 <StyledListViewsDiv>
-                    <StyleKitRadioGroup onChange={_handleViewClick} value={currentView?.id}>
-                        <KitTypography.Title level="h4">{t('explorer.my-views')}</KitTypography.Title>
-                        <StyledViewDiv>
-                            <KitRadio value={undefined}>{t('explorer.default-view')}</KitRadio>
+                    <StyleKitRadioGroup onChange={_onClickLoadView} value={currentView?.id}>
+                        <KitTypography.Title level="h4">{t('explorer.viewList.my-views')}</KitTypography.Title>
+                        <StyledViewDiv className={_selectedViewClass(DefaultViewId)}>
+                            <KitRadio value={undefined}>{t('explorer.viewList.default-view')}</KitRadio>
                         </StyledViewDiv>
                         {myViews.map(viewItem => (
-                            <StyledViewDiv key={viewItem.id}>
+                            <StyledViewDiv className={_selectedViewClass(viewItem.id)} key={viewItem.id}>
                                 <KitRadio value={viewItem.id}>
                                     {localizedTranslation(viewItem.label, availableLangs)}
                                 </KitRadio>
-                                <FaEdit className="edit" onClick={() => _onClickEdit(viewItem.id, viewItem.label)} />
+                                <StyledIconsDiv>
+                                    <KitSpace>
+                                        {iconEditLabel(viewItem)}
+                                        {iconDelete(viewItem)}
+                                    </KitSpace>
+                                </StyledIconsDiv>
                             </StyledViewDiv>
                         ))}
                     </StyleKitRadioGroup>
-                    <StyleKitRadioGroup onChange={_handleViewClick} value={currentView?.id}>
-                        <KitTypography.Title level="h4">{t('explorer.shared-views')}</KitTypography.Title>
+                    <StyleKitRadioGroup onChange={_onClickLoadView} value={currentView?.id}>
+                        <KitTypography.Title level="h4">{t('explorer.viewList.shared-views')}</KitTypography.Title>
                         {sharedViews.length === 0 ? (
-                            <KitTypography.Text size="fontSize5">{t('explorer.no-shared-views')}</KitTypography.Text>
+                            <KitTypography.Text size="fontSize5">
+                                {t('explorer.viewList.no-shared-views')}
+                            </KitTypography.Text>
                         ) : (
                             sharedViews.map(viewItem => (
-                                <StyledViewDiv key={viewItem.id}>
+                                <StyledViewDiv className={_selectedViewClass(viewItem.id)} key={viewItem.id}>
                                     <KitRadio value={viewItem.id}>
                                         {localizedTranslation(viewItem.label, availableLangs)}
                                     </KitRadio>
                                     {isOwnerView(viewItem.ownerId) ? (
-                                        <FaEdit
-                                            className="edit"
-                                            onClick={() => _onClickEdit(viewItem.id, viewItem.label)}
-                                        />
+                                        <StyledIconsDiv>
+                                            <KitSpace>
+                                                {iconEditLabel(viewItem)}
+                                                {iconDelete(viewItem)}
+                                            </KitSpace>
+                                        </StyledIconsDiv>
                                     ) : null}
                                 </StyledViewDiv>
                             ))

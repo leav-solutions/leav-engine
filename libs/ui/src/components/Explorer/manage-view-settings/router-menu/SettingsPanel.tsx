@@ -79,7 +79,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
             {page === 'configure-display' && <ConfigureDisplay libraryId={library} />}
             {page === 'sort-items' && <SortItems libraryId={library} />}
             {page === 'filter-items' && <FilterItems libraryId={library} />}
-            {page === 'my-views' && <SavedViews />}
+            {page === 'viewList.my-views' && <SavedViews />}
         </ContentWrapperStyledDiv>
     );
 };

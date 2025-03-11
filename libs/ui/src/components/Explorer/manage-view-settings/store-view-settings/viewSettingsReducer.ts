@@ -17,6 +17,7 @@ import {
 import {hasOnlyNoValueConditions} from '../../conditionsHelper';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
 import {ThroughConditionFilter} from '_ui/types';
+import {DefaultViewId, viewSettingsInitialState} from './viewSettingsInitialState';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 
@@ -43,6 +44,7 @@ export const ViewSettingsActionTypes = {
     RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS',
     UPDATE_VIEWS: 'UPDATE_VIEWS',
     RENAME_VIEW: 'RENAME_VIEW',
+    DELETE_VIEW: 'DELETE_VIEW',
     LOAD_VIEW: 'LOAD_VIEW'
 } as const;
 
@@ -188,6 +190,11 @@ interface IViewDataPayload {
 interface IViewSettingsActionRenameView {
     type: typeof ViewSettingsActionTypes.RENAME_VIEW;
     payload: IViewDataPayload;
+}
+
+interface IViewSettingsActionDeleteView {
+    type: typeof ViewSettingsActionTypes.DELETE_VIEW;
+    payload: {id: string};
 }
 
 export type IViewSettingsActionLoadViewPayload = Pick<
@@ -402,6 +409,32 @@ const renameView: Reducer<IViewSettingsActionRenameView> = (state, payload) => (
     savedViews: state.savedViews.map(view => (view.id === payload.id ? {...view, label: payload?.label} : view))
 });
 
+const deleteView: Reducer<IViewSettingsActionDeleteView> = (state, payload) => {
+    const newSavedViews = [...state.savedViews];
+    const indexViewDeleted = newSavedViews.findIndex(view => view.id === payload.id);
+    // TODO use newES6 syntax (toSpliced)
+    if (indexViewDeleted !== -1) {
+        newSavedViews.splice(indexViewDeleted, 1);
+    }
+    if (state.viewId === payload.id) {
+        const defaultViewSettings = {
+            ...state.defaultViewSettings,
+            viewId: DefaultViewId,
+            viewLabels: {},
+            viewModified: false
+        };
+        return {
+            ...state,
+            ...defaultViewSettings,
+            savedViews: newSavedViews
+        };
+    }
+    return {
+        ...state,
+        savedViews: newSavedViews
+    };
+};
+
 const loadView: Reducer<IViewSettingsActionLoadView> = (state, payload) => ({
     ...state,
     ...payload,
@@ -438,6 +471,7 @@ export type IViewSettingsAction =
     | IViewSettingsActionRestoreInitialViewSettings
     | IViewSettingsActionUpdateViewListAndCurrentView
     | IViewSettingsActionRenameView
+    | IViewSettingsActionDeleteView
     | IViewSettingsActionLoadView;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
@@ -507,6 +541,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.RENAME_VIEW: {
             return renameView(state, action.payload);
+        }
+        case ViewSettingsActionTypes.DELETE_VIEW: {
+            return deleteView(state, action.payload);
         }
         case ViewSettingsActionTypes.LOAD_VIEW: {
             return loadView(state, action.payload);

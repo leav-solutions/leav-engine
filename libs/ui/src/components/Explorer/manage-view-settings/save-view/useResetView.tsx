@@ -18,7 +18,7 @@ export const useResetView = () => {
     return {
         resetViewButton: (
             <KitButton type="action" icon={<FaUndo />} onClick={_resetView}>
-                {t('explorer.reinit-view')}
+                {t('explorer.viewList.reinit-view')}
             </KitButton>
         )
     };
