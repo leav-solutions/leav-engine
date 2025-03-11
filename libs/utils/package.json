@@ -1,6 +1,6 @@
 {
   "name": "@leav/utils",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "files": [
     "dist"
   ],
@@ -14,7 +14,7 @@
     "test": "jest -c jest-config.json",
     "test:ci": "jest -c jest-config.json",
     "test:commit": "jest -c jest-config.json --maxWorkers=50% --onlyChanged ",
-    "publish": "npm publish --access public"
+    "publish-utils": "npm publish --access public"
   },
   "repository": "https://github.com/leav-solutions/leav-engine",
   "author": "",
@@ -29,7 +29,6 @@
     "lodash": "4.17.21",
     "minimatch": "3.1.2"
   },
-  "stableVersion": "1.0.0",
   "exports": {
     "import": "./dist/esm/index.js",
     "require": "./dist/cjs/index.js",
