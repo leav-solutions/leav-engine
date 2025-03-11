@@ -17,6 +17,7 @@ import {
 import {hasOnlyNoValueConditions} from '../../conditionsHelper';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
 import {ThroughConditionFilter} from '_ui/types';
+import {DefaultViewId, viewSettingsInitialState} from './viewSettingsInitialState';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 
@@ -411,18 +412,19 @@ const deleteView: Reducer<IViewSettingsActionDeleteView> = (state, payload) => {
     const newSavedViews = [...state.savedViews];
     const indexViewDeleted = newSavedViews.findIndex(view => view.id === payload.id);
     // TODO use newES6 syntax (toSpliced)
-    if (indexViewDeleted >= 0) {
+    if (indexViewDeleted !== -1) {
         newSavedViews.splice(indexViewDeleted, 1);
     }
     if (state.viewId === payload.id) {
+        const defaultViewSettings = {
+            ...state.defaultViewSettings,
+            viewId: DefaultViewId,
+            viewLabels: {},
+            viewModified: false
+        };
         return {
             ...state,
-            viewId: null,
-            viewLabels: {},
-            attributesIds: [],
-            sort: [],
-            filters: [],
-            viewModified: false,
+            ...defaultViewSettings,
             savedViews: newSavedViews
         };
     }

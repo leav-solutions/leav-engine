@@ -174,3 +174,8 @@ export interface IUserView extends Pick<IView, 'shared' | 'display' | 'sort' | '
     filters: validFilter[];
     ownerId: string | null;
 }
+
+export interface IDataViewOnAction {
+    id: string | null;
+    label: Record<string, string> | null;
+}

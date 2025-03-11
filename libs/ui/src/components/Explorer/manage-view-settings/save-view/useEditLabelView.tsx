@@ -5,7 +5,7 @@ import {FaEdit} from 'react-icons/fa';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {useState} from 'react';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
-import {IUserView} from '../../_types';
+import {IDataViewOnAction, IUserView} from '../../_types';
 import useExecuteUpdateViewMutation from '../../_queries/useExecuteUpdateViewMutation';
 import {LabelViewFormModal} from './LabelViewFormModal';
 import styled from 'styled-components';
@@ -15,28 +15,11 @@ const StyledButton = styled.button`
     all: unset;
 `;
 
-interface IDataViewOnAction {
-    id: string | null;
-    label: Record<string, string> | null;
-}
-
-export const useEditLabelView = (
-    dataViewOnAction: IDataViewOnAction,
-    setDataViewOnAction: (dataViewOnAction: IDataViewOnAction) => void
-) => {
+export const useEditLabelView = () => {
     const {t} = useSharedTranslation();
     const {updateView} = useExecuteUpdateViewMutation();
     const {dispatch} = useViewSettingsContext();
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
-    const _toggleEditModal = () => {
-        setIsEditModalOpen(!isEditModalOpen);
-    };
-
-    const _onClickEdit = (id: string | null, label: Record<string, string>) => {
-        setDataViewOnAction({id, label});
-        _toggleEditModal();
-    };
+    const [dataViewOnAction, setDataViewOnAction] = useState<IDataViewOnAction>({id: null, label: null});
 
     const _onEditLabel = async (label: Record<string, string>) => {
         if (!dataViewOnAction.id) {
@@ -65,8 +48,8 @@ export const useEditLabelView = (
     const iconEditLabel = (viewItem: IUserView) => (
         <StyledButton
             className="edit"
-            title={t('explorer.edit-view')}
-            onClick={() => _onClickEdit(viewItem.id, viewItem.label)}
+            title={t('explorer.viewList.edit-view')}
+            onClick={() => setDataViewOnAction({id: viewItem.id, label: viewItem.label})}
         >
             <FaEdit />
         </StyledButton>
@@ -74,12 +57,12 @@ export const useEditLabelView = (
 
     return {
         iconEditLabel,
-        editViewModal: isEditModalOpen && (
+        editViewModal: dataViewOnAction.id && dataViewOnAction.label && (
             <LabelViewFormModal
                 viewData={dataViewOnAction.label}
                 isOpen
                 onSubmit={_onEditLabel}
-                onClose={_toggleEditModal}
+                onClose={() => setDataViewOnAction({id: null, label: null})}
             />
         )
     };

@@ -7,10 +7,12 @@ export const defaultPageSizeOptions = [20, 50, 100];
 
 export const defaultMaxFilters = 3;
 
+export const DefaultViewId = null;
+
 export const viewSettingsInitialState: IViewSettingsState = {
     libraryId: '',
     viewType: 'table',
-    viewId: null,
+    viewId: DefaultViewId,
     viewModified: false,
     viewLabels: {},
     savedViews: [],

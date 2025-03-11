@@ -786,7 +786,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
 
-            const viewsList = screen.getByRole('heading', {name: /explorer.my-views/}).parentElement;
+            const viewsList = screen.getByRole('heading', {name: /explorer.viewList.my-views/}).parentElement;
             expect(within(viewsList!).getAllByRole('radio')).toHaveLength(4);
         });
     });

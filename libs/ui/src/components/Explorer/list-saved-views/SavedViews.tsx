@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useState} from 'react';
+import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {KitRadio, KitSpace, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -10,11 +10,13 @@ import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {ViewActionsButtons} from '../manage-view-settings/save-view/ViewActionsButtons';
 import {useLoadView} from '../useLoadView';
-import {RadioChangeEvent} from 'antd';
+import {Radio} from 'antd';
 import {useMeQuery} from '_ui/_gqlTypes';
 import {useDeleteView} from '../manage-view-settings/save-view/useDeleteView';
 import {useEditLabelView} from '../manage-view-settings/save-view/useEditLabelView';
-import {IUserView} from '../_types';
+import {IDataViewOnAction, IUserView} from '../_types';
+import classNames from 'classnames';
+import {DefaultViewId} from '../manage-view-settings/store-view-settings/viewSettingsInitialState';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -67,19 +69,13 @@ const StyledIconsDiv = styled.div`
     }
 `;
 
-interface IDataViewOnAction {
-    id: string | null;
-    label: Record<string, string> | null;
-}
-
 export const SavedViews: FunctionComponent = () => {
     const {t} = useSharedTranslation();
     const {availableLangs} = useLang();
     const {view} = useViewSettingsContext();
     const {loadView} = useLoadView();
-    const [dataViewOnAction, setDataViewOnAction] = useState<IDataViewOnAction>({id: null, label: null});
-    const {iconDelete, deleteModal} = useDeleteView(dataViewOnAction, setDataViewOnAction);
-    const {iconEditLabel, editViewModal} = useEditLabelView(dataViewOnAction, setDataViewOnAction);
+    const {iconDelete, deleteModal} = useDeleteView();
+    const {iconEditLabel, editViewModal} = useEditLabelView();
 
     const [currentView, setCurrentView] = useState<IUserView | undefined>(
         view.savedViews.find(viewItem => view.viewId === viewItem.id) ?? undefined
@@ -92,13 +88,16 @@ export const SavedViews: FunctionComponent = () => {
     const sharedViews = view.savedViews.filter(viewItem => viewItem.shared);
     const myViews = view.savedViews.filter(viewItem => !viewItem.shared);
 
-    const _getViewClassName = (viewId: string | null) => (view.viewId === viewId ? 'selected' : '');
+    const _selectedViewClass = (viewId: string | null) =>
+        classNames({
+            selected: view.viewId === viewId
+        });
 
     useEffect(() => {
         setCurrentView(view.savedViews.find(viewItem => view.viewId === viewItem.id) ?? undefined);
     }, [view.viewId]);
 
-    const _onClickLoadView = (e: RadioChangeEvent) => {
+    const _onClickLoadView: ComponentProps<typeof Radio>['onChange'] = e => {
         loadView(e.target.value);
     };
 
@@ -109,12 +108,12 @@ export const SavedViews: FunctionComponent = () => {
             <ContentWrapperStyledDiv>
                 <StyledListViewsDiv>
                     <StyleKitRadioGroup onChange={_onClickLoadView} value={currentView?.id}>
-                        <KitTypography.Title level="h4">{t('explorer.my-views')}</KitTypography.Title>
-                        <StyledViewDiv className={_getViewClassName(null)}>
-                            <KitRadio value={undefined}>{t('explorer.default-view')}</KitRadio>
+                        <KitTypography.Title level="h4">{t('explorer.viewList.my-views')}</KitTypography.Title>
+                        <StyledViewDiv className={_selectedViewClass(DefaultViewId)}>
+                            <KitRadio value={undefined}>{t('explorer.viewList.default-view')}</KitRadio>
                         </StyledViewDiv>
                         {myViews.map(viewItem => (
-                            <StyledViewDiv className={_getViewClassName(viewItem.id)} key={viewItem.id}>
+                            <StyledViewDiv className={_selectedViewClass(viewItem.id)} key={viewItem.id}>
                                 <KitRadio value={viewItem.id}>
                                     {localizedTranslation(viewItem.label, availableLangs)}
                                 </KitRadio>
@@ -128,23 +127,25 @@ export const SavedViews: FunctionComponent = () => {
                         ))}
                     </StyleKitRadioGroup>
                     <StyleKitRadioGroup onChange={_onClickLoadView} value={currentView?.id}>
-                        <KitTypography.Title level="h4">{t('explorer.shared-views')}</KitTypography.Title>
+                        <KitTypography.Title level="h4">{t('explorer.viewList.shared-views')}</KitTypography.Title>
                         {sharedViews.length === 0 ? (
-                            <KitTypography.Text size="fontSize5">{t('explorer.no-shared-views')}</KitTypography.Text>
+                            <KitTypography.Text size="fontSize5">
+                                {t('explorer.viewList.no-shared-views')}
+                            </KitTypography.Text>
                         ) : (
                             sharedViews.map(viewItem => (
-                                <StyledViewDiv className={_getViewClassName(viewItem.id)} key={viewItem.id}>
+                                <StyledViewDiv className={_selectedViewClass(viewItem.id)} key={viewItem.id}>
                                     <KitRadio value={viewItem.id}>
                                         {localizedTranslation(viewItem.label, availableLangs)}
                                     </KitRadio>
-                                    <StyledIconsDiv>
-                                        {isOwnerView(viewItem.ownerId) ? (
+                                    {isOwnerView(viewItem.ownerId) ? (
+                                        <StyledIconsDiv>
                                             <KitSpace>
                                                 {iconEditLabel(viewItem)}
                                                 {iconDelete(viewItem)}
                                             </KitSpace>
-                                        ) : null}
-                                    </StyledIconsDiv>
+                                        </StyledIconsDiv>
+                                    ) : null}
                                 </StyledViewDiv>
                             ))
                         )}

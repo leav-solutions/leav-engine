@@ -904,16 +904,14 @@ describe('ViewSettings Reducer', () => {
     });
 
     test(`Action ${ViewSettingsActionTypes.DELETE_VIEW} test when delete current view`, async () => {
-        const view = {
-            id: 'viewId'
-        };
+        const id = 'viewId';
         const state = viewSettingsReducer(
             {
                 ...viewSettingsInitialState,
-                viewId: 'viewId',
+                viewId: id,
                 savedViews: [
                     {
-                        id: 'viewId',
+                        id,
                         ownerId: 'Admin',
                         label: {
                             fr: 'Ma vue'
@@ -927,7 +925,7 @@ describe('ViewSettings Reducer', () => {
             },
             {
                 type: ViewSettingsActionTypes.DELETE_VIEW,
-                payload: view
+                payload: {id}
             }
         );
 
@@ -937,15 +935,13 @@ describe('ViewSettings Reducer', () => {
     });
 
     test(`Action ${ViewSettingsActionTypes.DELETE_VIEW} test when delete another view`, async () => {
-        const view = {
-            id: 'viewId'
-        };
+        const id = 'viewId';
         const state = viewSettingsReducer(
             {
                 ...viewSettingsInitialState,
                 savedViews: [
                     {
-                        id: 'viewId',
+                        id,
                         ownerId: 'Admin',
                         label: {
                             fr: 'Ma vue'
@@ -959,7 +955,7 @@ describe('ViewSettings Reducer', () => {
             },
             {
                 type: ViewSettingsActionTypes.DELETE_VIEW,
-                payload: view
+                payload: {id}
             }
         );
 

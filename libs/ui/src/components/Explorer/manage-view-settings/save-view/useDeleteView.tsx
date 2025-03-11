@@ -5,42 +5,27 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton, KitModal, KitTypography} from 'aristid-ds';
 import {FaTimes, FaTrash} from 'react-icons/fa';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-import {useState} from 'react';
+import {ComponentProps, useState} from 'react';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import useExecuteDeleteViewMutation from '_ui/hooks/useExecuteDeleteViewMutation/useExecuteDeleteViewMutation';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
-import {IUserView} from '../../_types';
+import {IUserView, IDataViewOnAction} from '../../_types';
 import styled from 'styled-components';
+import {Button} from 'antd';
 
 const StyledButton = styled.button`
     all: unset;
 `;
-interface IDataViewOnAction {
-    id: string | null;
-    label: Record<string, string> | null;
-}
 
-export const useDeleteView = (
-    dataViewOnAction: IDataViewOnAction,
-    setDataViewOnAction: (dataViewOnAction: IDataViewOnAction) => void
-) => {
+export const useDeleteView = () => {
     const {t} = useSharedTranslation();
     const {availableLangs} = useLang();
     const {deleteView} = useExecuteDeleteViewMutation();
     const {dispatch} = useViewSettingsContext();
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [dataViewOnAction, setDataViewOnAction] = useState<IDataViewOnAction>({id: null, label: null});
 
-    const _toggleDeleteModal = () => {
-        setIsDeleteModalOpen(!isDeleteModalOpen);
-    };
-
-    const _onClickDelete = (id: string | null, label: Record<string, string>) => {
-        setDataViewOnAction({id, label});
-        _toggleDeleteModal();
-    };
-
-    const _onDeleteConfirm = async () => {
+    const _onDeleteConfirm: ComponentProps<typeof Button>['onClick'] = async () => {
         if (!dataViewOnAction.id) {
             return;
         }
@@ -54,14 +39,16 @@ export const useDeleteView = (
                 }
             });
         }
-        setIsDeleteModalOpen(!isDeleteModalOpen);
+        setDataViewOnAction({id: null, label: null});
     };
 
     const iconDelete = (viewItem: IUserView) => (
         <StyledButton
             className="delete"
-            title={t('explorer.delete-view')}
-            onClick={() => _onClickDelete(viewItem.id, viewItem.label)}
+            title={t('explorer.viewList.delete-view')}
+            onClick={() => {
+                setDataViewOnAction({id: viewItem.id, label: viewItem.label});
+            }}
         >
             <FaTrash />
         </StyledButton>
@@ -69,14 +56,18 @@ export const useDeleteView = (
 
     return {
         iconDelete,
-        deleteModal: isDeleteModalOpen && (
+        deleteModal: dataViewOnAction.id && dataViewOnAction.label && (
             <KitModal
                 appElement={document.body}
-                title={t('explorer.confirm-delete-view')}
-                isOpen={isDeleteModalOpen}
+                title={t('explorer.viewList.confirm-delete-view')}
+                isOpen={!!dataViewOnAction.id && !!dataViewOnAction.label}
                 footer={
                     <>
-                        <KitButton type="secondary" onClick={_toggleDeleteModal} icon={<FaTimes />}>
+                        <KitButton
+                            type="secondary"
+                            onClick={() => setDataViewOnAction({id: null, label: null})}
+                            icon={<FaTimes />}
+                        >
                             {t('global.close')}
                         </KitButton>
                         <KitButton type="primary" danger onClick={_onDeleteConfirm} icon={<FaTrash />}>
@@ -86,7 +77,7 @@ export const useDeleteView = (
                 }
             >
                 <KitTypography.Text size="fontSize3" weight="medium">
-                    {localizedTranslation(dataViewOnAction.label!, availableLangs)}
+                    {localizedTranslation(dataViewOnAction.label, availableLangs)}
                 </KitTypography.Text>
             </KitModal>
         )
