@@ -56,7 +56,7 @@ export const useCreateNewView = () => {
             <>
                 <LabelViewFormModal isOpen={isModalOpen} onSubmit={_createView} onClose={_toggleModal} />
                 <KitButton type="action" icon={<FaSdCard />} onClick={_toggleModal}>
-                    {t('explorer.save-view-as')}
+                    {t('explorer.viewList.save-view-as')}
                 </KitButton>
             </>
         )
