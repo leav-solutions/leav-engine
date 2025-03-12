@@ -30,7 +30,11 @@ import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
-import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
+import {
+    LibraryPermissionsActions,
+    RecordAttributePermissionsActions,
+    RecordPermissionsActions
+} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {
     AttributeCondition,
@@ -49,6 +53,7 @@ import getAttributesFromField from './helpers/getAttributesFromField';
 import {isRecordWithId, SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
 import {IFormRepo} from 'infra/form/formRepo';
+import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -180,6 +185,7 @@ export interface IRecordDomainDeps {
     'core.domain.value': IValueDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
     'core.domain.permission.library': ILibraryPermissionDomain;
+    'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
@@ -200,6 +206,7 @@ export default function ({
     'core.domain.value': valueDomain,
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.permission.library': libraryPermissionDomain,
+    'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.helpers.validate': validateHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
@@ -1221,6 +1228,19 @@ export default function ({
                 throw new ValidationError({
                     [attributeId]: {msg: Errors.INVALID_ATTRIBUTE_FOR_LIBRARY, vars: {attribute: attributeId, library}}
                 });
+            }
+
+            const perm = await recordAttributePermissionDomain.getRecordAttributePermission(
+                RecordAttributePermissionsActions.ACCESS_ATTRIBUTE,
+                ctx.userId,
+                attributeId,
+                library,
+                record.id,
+                ctx
+            );
+
+            if (!perm) {
+                return [];
             }
 
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});

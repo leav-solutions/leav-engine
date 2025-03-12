@@ -39,6 +39,7 @@ import {mockTree} from '../../__tests__/mocks/tree';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain, {IRecordDomainDeps} from './recordDomain';
+import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
@@ -59,6 +60,7 @@ const depsBase: ToAny<IRecordDomainDeps> = {
     'core.domain.value': jest.fn(),
     'core.domain.permission.record': jest.fn(),
     'core.domain.permission.library': jest.fn(),
+    'core.domain.permission.recordAttribute': jest.fn(),
     'core.domain.helpers.getCoreEntityById': jest.fn(),
     'core.domain.helpers.validate': jest.fn(),
     'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
@@ -76,6 +78,11 @@ describe('RecordDomain', () => {
     const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
         getRecordPermission: global.__mockPromise(true)
     };
+
+    const mockRecordAttributePermissionDomain: Mockify<IRecordAttributePermissionDomain> = {
+        getRecordAttributePermission: global.__mockPromise(true)
+    };
+
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'recordDomainTest',
@@ -1868,7 +1875,9 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain({
                 ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.value': mockValueDomainFormatValue as IValueDomain
+                'core.domain.value': mockValueDomainFormatValue as IValueDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
             });
 
             const values = (await recDomain.getRecordFieldValue({
@@ -1904,7 +1913,9 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain({
                 ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.value': mockValDomain as IValueDomain
+                'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
             });
 
             const values = await recDomain.getRecordFieldValue({
@@ -1941,7 +1952,9 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain({
                 ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.value': mockValueDomainFormatValueDate as IValueDomain
+                'core.domain.value': mockValueDomainFormatValueDate as IValueDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
             });
 
             const values = (await recDomain.getRecordFieldValue({
@@ -1976,7 +1989,9 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain({
                 ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.value': mockValueDomainFormatValueLink as IValueDomain
+                'core.domain.value': mockValueDomainFormatValueLink as IValueDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
             });
 
             const values = (await recDomain.getRecordFieldValue({
@@ -2002,7 +2017,9 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain({
                 ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.value': mockValueDomainFormatValue as IValueDomain
+                'core.domain.value': mockValueDomainFormatValue as IValueDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
             });
 
             const values = (await recDomain.getRecordFieldValue({
@@ -2015,6 +2032,39 @@ describe('RecordDomain', () => {
 
             expect(Array.isArray(values)).toBe(true);
             expect(values[0].payload).toBe(2119477320);
+        });
+
+        test('If no permission on record for attribute, return an empty array', async () => {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                ...mockAttributeDomainCommon,
+                getAttributeProperties: global.__mockPromise({
+                    id: 'created_at',
+                    type: AttributeTypes.SIMPLE,
+                    multiple_values: false
+                })
+            };
+
+            const mockRecordAttributeNoPermissionDomain: Mockify<IRecordAttributePermissionDomain> = {
+                getRecordAttributePermission: global.__mockPromise(false)
+            };
+
+            const recDomain = recordDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.value': mockValueDomainFormatValue as IValueDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributeNoPermissionDomain as IRecordAttributePermissionDomain
+            });
+
+            const values = (await recDomain.getRecordFieldValue({
+                library: 'test_lib',
+                record: mockRecordWithValues,
+                attributeId: 'created_at',
+                ctx
+            })) as IValue[];
+
+            expect(Array.isArray(values)).toBe(true);
+            expect(values.length).toBe(0);
         });
     });
 
