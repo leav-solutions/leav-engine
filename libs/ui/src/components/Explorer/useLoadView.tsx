@@ -25,7 +25,9 @@ export const useLoadView = () => {
     useEffect(() => {
         if (!attributesLoading && attributesData) {
             const attributesDataById = (attributesData?.attributes?.list ?? []).reduce((acc, attr) => {
-                acc[attr.id] = attr;
+                if (attr.permissions.access_attribute) {
+                    acc[attr.id] = attr;
+                }
                 return acc;
             }, {});
             const viewSettings: IViewSettingsActionLoadViewPayload = {
@@ -34,11 +36,13 @@ export const useLoadView = () => {
                 viewType: curentView.current?.display
                     ? mapViewTypeFromLegacyToExplorer[curentView.current?.display.type]
                     : view.viewType,
-                attributesIds: curentView.current?.attributes ?? [],
-                sort: (curentView.current?.sort ?? []).map(s => ({
-                    field: s.field,
-                    order: s.order
-                })),
+                attributesIds: (curentView.current?.attributes ?? []).filter(id => attributesDataById[id]),
+                sort: (curentView.current?.sort ?? [])
+                    .map(s => ({
+                        field: s.field,
+                        order: s.order
+                    }))
+                    .filter(s => attributesDataById[s.field]),
                 filters: toExplorerFilters({
                     filters: toValidFilters((curentView.current?.filters as validFiltersArgument) ?? []),
                     attributesDataById

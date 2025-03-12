@@ -90,7 +90,9 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
     const attributesDataById = useMemo(
         () =>
             (attributesData?.attributes?.list ?? []).reduce((acc, attr) => {
-                acc[attr.id] = attr;
+                if (attr.permissions.access_attribute) {
+                    acc[attr.id] = attr;
+                }
                 return acc;
             }, {}),
         [attributesData]
@@ -131,13 +133,15 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                 savedViews,
                 ...defaultViewSettings,
                 attributesIds: [
-                    ...(userView?.attributes ?? []).map(attr => attr.id),
-                    ...(defaultViewSettings?.attributesIds ?? [])
+                    ...(userView?.attributes ?? []).map(attr => attr.id).filter(attr => attributesDataById[attr]),
+                    ...(defaultViewSettings?.attributesIds ?? []).filter(attr => attributesDataById[attr])
                 ],
-                sort: [...(defaultViewSettings?.sort ?? []), ...(userView?.sort ?? [])].map(s => ({
-                    field: s.field,
-                    order: s.order
-                })),
+                sort: [...(defaultViewSettings?.sort ?? []), ...(userView?.sort ?? [])]
+                    .map(s => ({
+                        field: s.field,
+                        order: s.order
+                    }))
+                    .filter(s => attributesDataById[s.field]),
                 filtersOperator: defaultViewSettings?.filtersOperator ?? 'AND',
                 filters: toExplorerFilters({filters: allFilters, attributesDataById})
             };
