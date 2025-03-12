@@ -3,33 +3,65 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {IFormFrameSettings} from '@leav/utils';
-import React, {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {IFormElementProps} from '../../_types';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 
-function Frame({element}: IFormElementProps<IFormFrameSettings>): JSX.Element {
-    const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
+const Wrapper = styled.iframe`
+    width: 100%;
+    height: ${props => props.height || '100%'};
+    min-height: ${props => props.height || '500px'};
+    border: none;
+`;
 
+function Frame({element, onValueSubmit}: IFormElementProps<IFormFrameSettings>): JSX.Element {
+    const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
+    const iFrameRef = useRef<HTMLIFrameElement>(null);
+    const [iframeLoaded, setIframeLoaded] = useState(false);
+    useEffect(() => {
+        const iframe = iFrameRef.current;
+        if (iframe) {
+            const handleLoad = () => {
+                setIframeLoaded(true);
+            };
+
+            iframe.addEventListener('load', handleLoad);
+
+            return () => {
+                iframe.removeEventListener('load', handleLoad);
+            };
+        }
+    }, [iFrameRef]);
     useEffect(() => {
         const handler = event => {
-            // eslint-disable-next-line
-            console.log('event', event);
+            switch (event.data.type) {
+                case 'submitValue':
+                    onValueSubmit(event.data.values, event.data.version);
+                    break;
+                default:
+                    //console.log('unknown message type');
+                    break;
+            }
         };
         window.addEventListener('message', handler);
 
         // clean up
         return () => window.removeEventListener('message', handler);
     }, []);
+    useEffect(() => {
+        const iframe = iFrameRef.current;
+        if (iframe && iframeLoaded) {
+            iframe.contentWindow?.postMessage(
+                {
+                    currentRecord: record
+                },
+                element.settings.url
+            );
+        }
+    }, [record, iframeLoaded]);
 
-    const Wrapper = styled.iframe`
-        width: 100%;
-        height: ${element.settings.height || '100%'};
-        min-height: ${element.settings.height || '500px'};
-        border: none;
-    `;
-
-    return <Wrapper src={element.settings.url}></Wrapper>;
+    return <Wrapper ref={iFrameRef} height={element.settings.height} src={element.settings.url}></Wrapper>;
 }
 
 export default Frame;
