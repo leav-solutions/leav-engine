@@ -132,13 +132,21 @@ export const useExplorerData = ({
     const isLibrary = entrypoint.type === 'library';
     const isLink = entrypoint.type === 'link';
 
+    const {data: attributeData} = useExplorerLinkAttributeQuery({
+        skip: entrypoint.type !== 'link',
+        variables: {
+            id: (entrypoint as IEntrypointLink).linkAttributeId
+        }
+    });
+
+    const isLinkAttributeAllowed = attributeData?.attributes?.list?.[0]?.permissions?.access_attribute;
     const {
         data: linkData,
         loading: linkLoading,
         refetch: linkRefetch
     } = useExplorerLinkDataQuery({
         fetchPolicy: 'network-only',
-        skip: skip || !isLink,
+        skip: skip || !isLink || !isLinkAttributeAllowed,
         variables: {
             parentLibraryId: (entrypoint as IEntrypointLink).parentLibraryId,
             parentRecordId: (entrypoint as IEntrypointLink).parentRecordId,
@@ -161,13 +169,6 @@ export const useExplorerData = ({
             searchQuery: fulltextSearch,
             multipleSort: sorts,
             filters: prepareFiltersForRequest(filters, filtersOperator)
-        }
-    });
-
-    const {data: attributeData} = useExplorerLinkAttributeQuery({
-        skip: entrypoint.type !== 'link',
-        variables: {
-            id: (entrypoint as IEntrypointLink).linkAttributeId
         }
     });
 

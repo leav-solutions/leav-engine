@@ -17,7 +17,10 @@ export const useLoadView = () => {
     const curentView = useRef<IUserView | null>(null);
 
     const [fetchAttributes, {data: attributesData, loading: attributesLoading}] = useExplorerAttributesLazyQuery({
-        fetchPolicy: 'network-only'
+        fetchPolicy: 'network-only',
+        onCompleted: () => {
+            closeSettingsPanel();
+        }
     });
 
     const {data} = useMeQuery();
@@ -48,7 +51,6 @@ export const useLoadView = () => {
                 type: ViewSettingsActionTypes.LOAD_VIEW,
                 payload: viewSettings
             });
-            closeSettingsPanel();
         }
     }, [attributesData, attributesLoading]);
 

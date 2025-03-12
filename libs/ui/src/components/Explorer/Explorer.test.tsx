@@ -9,7 +9,7 @@
 import {createRef} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
-import {waitFor} from '@testing-library/react';
+import {act, waitFor} from '@testing-library/react';
 import {toast} from 'react-hot-toast';
 import {Mockify} from '@leav/utils';
 import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
@@ -481,8 +481,91 @@ describe('Explorer', () => {
                     {
                         id: simpleMockAttribute.id,
                         label: simpleMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
                         type: simpleMockAttribute.type,
                         format: simpleMockAttribute.format,
+                        multiple_values: true
+                    },
+                    {
+                        id: linkMockAttribute.id,
+                        label: linkMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: linkMockAttribute.type,
+                        format: linkMockAttribute.format,
+                        multiple_values: false
+                    },
+                    {
+                        id: multivalLinkMockAttribute.id,
+                        label: multivalLinkMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: multivalLinkMockAttribute.type,
+                        format: multivalLinkMockAttribute.format,
+                        multiple_values: true
+                    },
+                    {
+                        id: simpleRichTextMockAttribute.id,
+                        label: simpleRichTextMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: simpleRichTextMockAttribute.type,
+                        format: simpleRichTextMockAttribute.format,
+                        multiple_values: false
+                    },
+                    {
+                        id: simpleColorMockAttribute.id,
+                        label: simpleColorMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: simpleColorMockAttribute.type,
+                        format: simpleColorMockAttribute.format,
+                        multiple_values: false
+                    },
+                    {
+                        id: multivalColorMockAttribute.id,
+                        label: multivalColorMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: multivalColorMockAttribute.type,
+                        format: multivalColorMockAttribute.format,
+                        multiple_values: true
+                    },
+                    {
+                        id: booleanMockAttribute.id,
+                        label: booleanMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: booleanMockAttribute.type,
+                        format: booleanMockAttribute.format,
+                        multiple_values: false
+                    },
+                    {
+                        id: simpleDateRangeMockAttribute.id,
+                        label: simpleDateRangeMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: simpleDateRangeMockAttribute.type,
+                        format: simpleDateRangeMockAttribute.format,
+                        multiple_values: false
+                    },
+                    {
+                        id: multivalDateRangeMockAttribute.id,
+                        label: multivalDateRangeMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: multivalDateRangeMockAttribute.type,
+                        format: multivalDateRangeMockAttribute.format,
                         multiple_values: true
                     }
                 ]
@@ -556,11 +639,21 @@ describe('Explorer', () => {
     };
 
     const attributesList = [
-        {...simpleMockAttribute, id: 'simple_attribute', label: {fr: 'Attribut simple'}},
-        {...linkMockAttribute, id: 'link_attribute', label: {fr: 'Attribut lien'}}
+        {
+            ...simpleMockAttribute,
+            id: 'simple_attribute',
+            label: {fr: 'Attribut simple'},
+            permissions: {access_attribute: true}
+        },
+        {
+            ...linkMockAttribute,
+            id: 'link_attribute',
+            label: {fr: 'Attribut lien'},
+            permissions: {access_attribute: true}
+        }
     ];
 
-    const mockAttributesByLibResult: Mockify<typeof gqlTypes.useGetAttributesByLibQuery> = {
+    const mockAttributesByLibResult: Mockify<typeof gqlTypes.useGetAttributesByLibWithPermissionsQuery> = {
         data: {attributes: {list: attributesList}},
         loading: false,
         called: true
@@ -594,6 +687,9 @@ describe('Explorer', () => {
     const explorerLinkAttribute = {
         id: 'link_attribute',
         multiple_values: true,
+        permissions: {
+            access_attribute: true
+        },
         label: {
             en: 'Delivery Platforms',
             fr: 'Plateformes de diffusion'
@@ -661,18 +757,15 @@ describe('Explorer', () => {
         const fetch = jest.fn();
         jest.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
             () =>
-                [
-                    fetch,
-                    {mockExplorerAttributesQueryResult}
-                ] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult
+                [fetch, mockExplorerAttributesQueryResult] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult
         );
 
         jest.spyOn(gqlTypes, 'useGetViewsListQuery').mockReturnValue(
             mockViewsResult as gqlTypes.GetViewsListQueryResult
         );
 
-        jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
-            mockAttributesByLibResult as gqlTypes.GetAttributesByLibQueryResult
+        jest.spyOn(gqlTypes, 'useGetAttributesByLibWithPermissionsQuery').mockReturnValue(
+            mockAttributesByLibResult as gqlTypes.GetAttributesByLibWithPermissionsQueryResult
         );
 
         jest.spyOn(gqlTypes, 'useMeQuery').mockReturnValue(mockMeResult as gqlTypes.MeQueryResult);
@@ -2392,8 +2485,255 @@ describe('Explorer', () => {
         });
     });
 
+    describe('Permissions', () => {
+        const mockExplorerAttributesPermissionsQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
+            loading: false,
+            called: true,
+            data: {
+                attributes: {
+                    list: [
+                        {
+                            id: simpleMockAttribute.id,
+                            label: simpleMockAttribute.label,
+                            permissions: {
+                                access_attribute: true
+                            },
+                            type: simpleMockAttribute.type,
+                            format: simpleMockAttribute.format,
+                            multiple_values: true
+                        },
+                        {
+                            id: simpleColorMockAttribute.id,
+                            label: simpleColorMockAttribute.label,
+                            permissions: {
+                                access_attribute: false
+                            },
+                            type: simpleColorMockAttribute.type,
+                            format: simpleColorMockAttribute.format,
+                            multiple_values: false
+                        },
+                        {
+                            id: booleanMockAttribute.id,
+                            label: booleanMockAttribute.label,
+                            permissions: {
+                                access_attribute: false
+                            },
+                            type: booleanMockAttribute.type,
+                            format: booleanMockAttribute.format,
+                            multiple_values: false
+                        }
+                    ]
+                }
+            }
+        };
+
+        test('Should not display the columns for attributes the user does not have access to', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
+                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
+            );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        defaultViewSettings={{
+                            attributesIds: [
+                                simpleMockAttribute.id,
+                                simpleColorMockAttribute.id,
+                                booleanMockAttribute.id
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const tableRows = screen.getAllByRole('row');
+            expect(screen.getByRole('table')).toBeVisible();
+
+            const [firstRecordRow] = tableRows;
+            const cells = within(firstRecordRow).getAllByRole('cell');
+            expect(cells.length).toEqual(4);
+
+            expect(within(firstRecordRow).queryByText(booleanMockAttribute.label.fr)).not.toBeInTheDocument();
+        });
+
+        test('Should not display filter for attributes the user does not have access to', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
+                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
+            );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        showFiltersAndSorts
+                        defaultViewSettings={{
+                            attributesIds: [
+                                simpleMockAttribute.id,
+                                simpleColorMockAttribute.id,
+                                booleanMockAttribute.id
+                            ],
+                            filters: [
+                                {
+                                    id: '123',
+                                    attribute: {
+                                        format: simpleMockAttribute.format,
+                                        label: simpleMockAttribute.label.fr,
+                                        type: simpleMockAttribute.type
+                                    },
+                                    field: simpleMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                    value: 'Christmas'
+                                },
+                                {
+                                    id: '456',
+                                    attribute: {
+                                        format: booleanMockAttribute.format,
+                                        label: booleanMockAttribute.label.fr,
+                                        type: booleanMockAttribute.type
+                                    },
+                                    field: booleanMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.EQUAL,
+                                    value: 'true'
+                                }
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+            expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
+
+            expect(within(toolbar).queryByText(booleanMockAttribute.label.fr)).not.toBeInTheDocument();
+
+            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining({
+                        filters: [
+                            {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas'
+                            }
+                        ]
+                    })
+                })
+            );
+        });
+
+        test('Should not display sorts for attributes the user does not have access to', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
+                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
+            );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        showFiltersAndSorts
+                        defaultViewSettings={{
+                            attributesIds: [
+                                simpleMockAttribute.id,
+                                simpleColorMockAttribute.id,
+                                booleanMockAttribute.id
+                            ],
+                            sort: [
+                                {
+                                    field: simpleMockAttribute.id,
+                                    order: gqlTypes.SortOrder.asc
+                                },
+                                {
+                                    field: simpleColorMockAttribute.id,
+                                    order: gqlTypes.SortOrder.desc
+                                }
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+
+            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
+
+            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining({
+                        multipleSort: [
+                            {
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc
+                            }
+                        ]
+                    })
+                })
+            );
+        });
+
+        test('Should not display linked items if entrypoint is of type link and the user does not have access to the attribute', async () => {
+            const explorerLinkAttributeWithNoPermissions = {
+                id: 'link_attribute',
+                multiple_values: true,
+                permissions: {
+                    access_attribute: false
+                },
+                label: {
+                    en: 'Delivery Platforms',
+                    fr: 'Plateformes de diffusion'
+                },
+                linked_library: {
+                    id: 'delivery_platforms',
+                    label: {
+                        fr: 'Plateformes de diffusion'
+                    },
+                    __typename: 'Library'
+                },
+                __typename: 'LinkAttribute'
+            };
+
+            const ExplorerLinkAttributeWithNoPermissionsQueryMock: IExplorerLinkAttributeQueryMockType = {
+                request: {
+                    query: gqlTypes.ExplorerLinkAttributeDocument,
+                    variables: {
+                        id: linkEntrypoint.linkAttributeId
+                    }
+                },
+                result: {
+                    data: {
+                        attributes: {
+                            list: [explorerLinkAttributeWithNoPermissions]
+                        }
+                    }
+                }
+            };
+
+            jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockRestore();
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={linkEntrypoint}
+                        primaryActions={customPrimaryActions}
+                        defaultPrimaryActions={[]}
+                    />
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [ExplorerLinkAttributeWithNoPermissionsQueryMock]
+                }
+            );
+
+            expect(await screen.queryAllByRole('row')).toHaveLength(0);
+            await waitFor(() => {
+                expect(screen.getByText(/empty-data/)).toBeVisible();
+            });
+        });
+    });
+
     describe('Saved views', () => {
-        test('should load a view', async () => {
+        test('Should load a view', async () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
@@ -2408,12 +2748,10 @@ describe('Explorer', () => {
             const manageViewsButton = screen.getByRole('button', {name: /My view/});
             expect(manageViewsButton).toBeVisible();
             expect(manageViewsButton).toHaveTextContent('My view');
-
             await user.click(manageViewsButton);
             const viewItem = screen.getByRole('radio', {name: /Second view/});
             expect(viewItem).toBeInTheDocument();
             await user.click(viewItem);
-
             waitFor(() => expect(manageViewsButton).toHaveTextContent('Second view'));
         });
     });
