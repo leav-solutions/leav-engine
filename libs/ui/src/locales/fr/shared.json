@@ -708,6 +708,8 @@
             "selectedItems_one": "{{count, number}} sélectionné",
             "selectedItems_other": "{{count, number}} sélectionnés",
             "deactivate": "Supprimer",
+            "deactivate_message": "{{count, number}}/{{total, number}} éléments pour lesquels vous disposez des permissions nécessaires ont été supprimés. Les autres éléments restent inchangés.",
+            "deactivate_message_zero": "Aucun élément n’a été supprimé, vous ne disposez pas des permissions nécessaires.",
             "add-link": "Ajouter",
             "toggle_selection": {
                 "select_page_one": "Sélectionner l’éléments visible ({{count, number}})",

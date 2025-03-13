@@ -708,6 +708,8 @@
             "selectedItems_one": "{{count, number}} selected",
             "selectedItems_other": "{{count, number}} selected",
             "deactivate": "Deactivate",
+            "deactivate_message": "{{count, number}}/{{total, number}} element for which you have permissions have been deleted. Others remain unchanged.",
+            "deactivate_message_zero": "No element deleted, you don't have sufficient permissions.",
             "add-link": "Add",
             "toggle_selection": {
                 "select_page_one": "Select visible item ({{count, number}})",
