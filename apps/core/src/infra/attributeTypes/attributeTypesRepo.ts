@@ -90,7 +90,7 @@ export interface IAttributeTypeRepo {
         ctx
     }: {
         library: string;
-        recordId: string;
+        recordId: string | null;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;

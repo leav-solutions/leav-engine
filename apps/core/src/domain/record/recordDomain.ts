@@ -892,12 +892,32 @@ export default function ({
 
             if (Object.keys(valuesByAttribute).length) {
                 // First, check if values are ok. If not, we won't create the record at all
+                // TODO add missing check here
                 const res = await Promise.allSettled(
                     Object.entries(valuesByAttribute).map(async ([attributeId, attributeValues]) => {
                         const attributeProps = await attributeDomain.getAttributeProperties({
                             id: attributeId,
                             ctx
                         });
+
+                        for (const value of attributeValues) {
+                            if (typeof attributeProps.unique !== 'undefined' && attributeProps.unique) {
+                                const isUnique = await validateHelper.validateUniqueLibraryAttributeValue(
+                                    library,
+                                    attributeProps,
+                                    value.payload,
+                                    ctx
+                                );
+
+                                if (!isUnique) {
+                                    const error = new ValidationError<IValue>({
+                                        [attributeProps.id]: Errors.VALUE_NOT_UNIQUE
+                                    });
+                                    error.context = {attributeId: attributeProps.id, values: [value]};
+                                    throw error;
+                                }
+                            }
+                        }
 
                         return valueDomain.runActionsList({
                             listName: ActionsListEvents.SAVE_VALUE,

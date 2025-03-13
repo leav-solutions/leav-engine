@@ -8,10 +8,12 @@ import {IUtils} from 'utils/utils';
 import {ILibrary} from '_types/library';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
-import {AttributeTypes} from '../../_types/attribute';
+import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {GetCoreEntityByIdFunc} from './getCoreEntityById';
+import {IValueRepo} from 'infra/value/valueRepo';
+import {IValue} from '_types/value';
 
 interface IDeps {
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
@@ -19,6 +21,7 @@ interface IDeps {
     'core.utils': IUtils;
     'core.infra.library': ILibraryRepo;
     'core.infra.cache.cacheService': ICachesService;
+    'core.infra.value': IValueRepo;
 }
 
 export interface IValidateHelper {
@@ -27,6 +30,12 @@ export interface IValidateHelper {
     validateView(view: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean>;
     validateTree(tree: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean>;
     validateLibraryAttribute(library: string, attribute: string, ctx: IQueryInfos): Promise<void>;
+    validateUniqueLibraryAttributeValue(
+        library: string,
+        attributeProps: IAttribute,
+        value: IValue,
+        ctx: IQueryInfos
+    ): Promise<boolean>;
 }
 
 export default function ({
@@ -34,6 +43,7 @@ export default function ({
     'core.infra.record': recordRepo,
     'core.utils': utils,
     'core.infra.library': libraryRepo,
+    'core.infra.value': valueRepo,
     'core.infra.cache.cacheService': cacheService
 }: IDeps): IValidateHelper {
     return {
@@ -108,6 +118,15 @@ export default function ({
             }
 
             return false;
+        },
+        async validateUniqueLibraryAttributeValue(library, attributeProps, value, ctx) {
+            return valueRepo.isValueUnique({
+                library,
+                recordId: null,
+                attribute: attributeProps,
+                value,
+                ctx
+            });
         }
     };
 }

@@ -179,7 +179,7 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
         }
     }
 
-    // Check if this value has already been registered for this attribute in this library
+    // Check if this value has already been registered for this attribute in this library execept for the given record
     if (typeof attributeProps.unique !== 'undefined' && attributeProps.unique) {
         const isValueUnique = await deps.valueRepo.isValueUnique({
             library,

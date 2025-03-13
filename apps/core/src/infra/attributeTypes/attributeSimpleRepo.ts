@@ -75,9 +75,14 @@ export default function ({
             return _saveValue(library, recordId, attribute, {...value, payload: null}, ctx);
         },
         async isValueUnique({library, recordId, attribute, value, ctx}): Promise<boolean> {
+            let filterString = `r.${attribute.id} == ${value.payload}`;
+            if (recordId !== null) {
+                filterString += ` && r._key != ${recordId}`;
+            }
+
             const query = aql`
                 FOR r IN ${dbService.db.collection(library)} 
-                    FILTER r._key != ${recordId} && r.${attribute.id} == ${value.payload}
+                    FILTER ${filterString}
                     RETURN r._key
             `;
 

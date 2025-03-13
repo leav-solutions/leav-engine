@@ -60,6 +60,10 @@ export interface IValueRepo {
         ctx: IQueryInfos;
     }): Promise<IValue>;
 
+    /**
+     * Check if a value is unique expeted for the given record
+     * if recordId is null, it will check for the whole library
+     */
     isValueUnique({
         library,
         recordId,
@@ -68,7 +72,7 @@ export interface IValueRepo {
         ctx
     }: {
         library: string;
-        recordId: string;
+        recordId: string | null;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;
