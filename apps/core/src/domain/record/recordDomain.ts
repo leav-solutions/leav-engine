@@ -1357,19 +1357,7 @@ export default function ({
                     },
                     ctx
                 });
-                recordsToDeactivate = await Promise.all(
-                    records.list.map(async record => {
-                        const permission = await recordPermissionDomain.getRecordPermission({
-                            action: RecordPermissionsActions.DELETE_RECORD,
-                            userId: ctx.userId,
-                            library: libraryId,
-                            recordId: record.id,
-                            ctx
-                        });
-                        return permission ? record.id : null;
-                    })
-                );
-                recordsToDeactivate = recordsToDeactivate.filter(recordId => recordId !== null);
+                recordsToDeactivate = records.list.map(record => record.id);
             }
 
             recordsToDeactivate = await Promise.all(
