@@ -10,6 +10,7 @@ import {IAttributeTypesRepo, IAttributeWithRevLink} from '../attributeTypes/attr
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 export const VALUES_COLLECTION = 'core_values';
+export const EMPTY_VALUE = '__empty_value__';
 
 export interface IValueRepo {
     createValue({

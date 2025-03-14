@@ -38,6 +38,7 @@ export default async (params: IPrepareValueParams): Promise<IValue[]> => {
           })
         : [value];
 
+    // Execute actions list on metadata
     preparedValues.map(async preparedValue => {
         if (preparedValue.metadata) {
             try {
