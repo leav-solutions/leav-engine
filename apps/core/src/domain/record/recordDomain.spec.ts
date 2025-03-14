@@ -346,7 +346,6 @@ describe('RecordDomain', () => {
             const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
-                // getLibraryFullTextAttributes: global.__mockPromise([]),
                 getAttributeProperties: global.__mockPromise(mockUniqueAttrSimple)
             };
 
@@ -358,16 +357,7 @@ describe('RecordDomain', () => {
                 getAttributePermission: global.__mockPromise(true)
             };
 
-            mockValidateValue.mockRejectedValueOnce(
-                new ValidationError({some_attribute: 'invalid value'}, 'mock error', false, {
-                    attributeId: 'some_unique_attribute',
-                    values: [
-                        {
-                            payload: 'some_unique_value'
-                        }
-                    ]
-                })
-            );
+            mockValidateValue.mockResolvedValueOnce({[mockUniqueAttrSimple.id]: 'mock error'});
 
             const mockValueDomain: Mockify<IValueDomain> = {
                 saveValueBatch: global.__mockPromise(),
@@ -392,7 +382,7 @@ describe('RecordDomain', () => {
                 library: 'test',
                 values: [
                     {
-                        attribute: 'some_unique_attribute',
+                        attribute: mockUniqueAttrSimple.id,
                         payload: 'some_unique_value'
                     }
                 ],
@@ -408,7 +398,7 @@ describe('RecordDomain', () => {
             expect(res.valuesErrors).toEqual([
                 {
                     type: ErrorTypes.VALIDATION_ERROR,
-                    attribute: 'some_unique_attribute',
+                    attribute: mockUniqueAttrSimple.id,
                     message: 'mock error',
                     input: 'some_unique_value'
                 }

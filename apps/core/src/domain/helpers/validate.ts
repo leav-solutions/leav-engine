@@ -8,13 +8,10 @@ import {IUtils} from 'utils/utils';
 import {ILibrary} from '_types/library';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
-import {AttributeTypes, IAttribute} from '../../_types/attribute';
+import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {GetCoreEntityByIdFunc} from './getCoreEntityById';
-import {IValueRepo} from 'infra/value/valueRepo';
-import {IValue} from '_types/value';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
 interface IDeps {
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
@@ -22,7 +19,6 @@ interface IDeps {
     'core.utils': IUtils;
     'core.infra.library': ILibraryRepo;
     'core.infra.cache.cacheService': ICachesService;
-    'core.infra.value': IValueRepo;
 }
 
 export interface IValidateHelper {
