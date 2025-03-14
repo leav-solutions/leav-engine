@@ -13,16 +13,17 @@ import {Form, FormInstance, FormListOperation} from 'antd';
 import {KitButton, KitInputWrapper, KitTooltip} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {FaPlus, FaTrash} from 'react-icons/fa';
-import {DeleteAllValuesButton} from './DeleteAllValuesButton';
-import {computeCalculatedFlags, computeInheritedFlags} from './calculatedInheritedFlags';
+import {DeleteAllValuesButton} from '../shared/DeleteAllValuesButton';
+import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
 import {useGetPresentationValues} from './useGetPresentationValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ComputeIndicator} from './ComputeIndicator';
 import {getAntdDisplayedValue, getEmptyInitialValue} from '../../antdUtils';
 import {GetRecordColumnsValuesRecord, IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import {STANDARD_FIELD_ID_PREFIX} from '_ui/constants';
+import {ComputeIndicator} from '../shared/ComputeIndicator';
+import {useOutsideInteractionDetector} from '../shared/useOutsideInteractionDetector';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import {EDIT_RECORD_SIDEBAR_ID, STANDARDFIELD_ID_PREFIX} from '_ui/constants';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -76,13 +77,15 @@ const StandardField: FunctionComponent<
     computedValues,
     antdForm,
     readonly,
+    formIdToLoad,
+    pendingValues,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues,
     metadataEdit = false
 }) => {
     const {t} = useSharedTranslation();
-    const {lang: availableLang} = useLang();
+    const {lang} = useLang();
 
     const antdListFieldsRef = useRef<{
         add: FormListOperation['add'];
@@ -105,48 +108,21 @@ const StandardField: FunctionComponent<
 
     const {state, dispatch} = useEditRecordReducer();
 
-    useEffect(() => {
-        const _handleClickOutside = (event: MouseEvent | FocusEvent) => {
-            if (state.activeAttribute?.attribute?.id !== attribute.id) {
-                return;
-            }
-
-            const target = event.target as HTMLElement;
-
-            const sideBarSelector = '#' + EDIT_RECORD_SIDEBAR_ID;
-            const inputWrapperSelector = '#' + STANDARDFIELD_ID_PREFIX + attribute.id;
-            const colorDropdownSelector = '.ant-popover.ant-color-picker';
-            const pickerDropdownSelector = '.ant-picker-dropdown';
-            const richTextModalSelector = '.kit-modal-wrapper.link-modal';
-
-            const allowedElementsToKeepValueDetailsDisplayed = target.closest(
-                `${sideBarSelector}, ${inputWrapperSelector}, ${colorDropdownSelector}, ${pickerDropdownSelector}, ${richTextModalSelector}`
-            );
-
-            if (!allowedElementsToKeepValueDetailsDisplayed) {
-                dispatch({
-                    type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                    attribute: null
-                });
-            }
-        };
-
-        document.addEventListener('mousedown', _handleClickOutside);
-
-        return () => {
-            document.removeEventListener('mousedown', _handleClickOutside);
-        };
-    }, [state.activeAttribute, attribute.id, dispatch]);
-
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
 
     const calculatedFlags = computeCalculatedFlags(backendValues);
     const inheritedFlags = computeInheritedFlags(backendValues);
     const defaultValueToAddInAntdForm = getEmptyInitialValue(attribute);
 
-    const backendWithoutCalculatedOrInheritedValues = backendValues
-        .filter(backendValue => !backendValue.isCalculated && !backendValue.isInherited)
-        .sort((a, b) => Number(a.id_value) - Number(b.id_value));
+    const [attributePendingValues, setAttributePendingValues] = useState<RecordFormElementsValueStandardValue[]>([]);
+
+    useEffect(() => {
+        setAttributePendingValues(
+            pendingValues?.[attribute.id]
+                ? (Object.values(pendingValues?.[attribute.id]) as unknown as RecordFormElementsValueStandardValue[])
+                : []
+        );
+    }, [pendingValues, attribute.id]);
 
     useEffect(() => {
         if (state.activeAttribute?.attribute.id === attribute.id) {
@@ -156,6 +132,21 @@ const StandardField: FunctionComponent<
             });
         }
     }, [backendValues]);
+
+    useOutsideInteractionDetector({
+        attribute,
+        activeAttribute: state.activeAttribute,
+        attributePrefix: STANDARD_FIELD_ID_PREFIX,
+        dispatch,
+        formIdToLoad,
+        backendValues,
+        pendingValues: attributePendingValues,
+        allowedSelectors: ['.ant-popover.ant-color-picker', '.ant-picker-dropdown', '.kit-modal-wrapper.link-modal']
+    });
+
+    const backendWithoutCalculatedOrInheritedValues = backendValues
+        .filter(backendValue => !backendValue.isCalculated && !backendValue.isInherited)
+        .sort((a, b) => Number(a.id_value) - Number(b.id_value));
 
     const {presentationValues} = useGetPresentationValues({
         //TODO fix type
@@ -295,14 +286,6 @@ const StandardField: FunctionComponent<
         }
     };
 
-    const setActiveValue = () => {
-        dispatch({
-            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            attribute,
-            values: backendValues
-        });
-    };
-
     let isFieldInError = false;
 
     if (antdForm) {
@@ -326,16 +309,16 @@ const StandardField: FunctionComponent<
         !isFieldInError &&
         attribute.format !== AttributeFormat.boolean &&
         attribute.format !== AttributeFormat.encrypted;
-    const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1 && !attribute.required;
+    const canDeleteAllValues = hasValue && backendValues.length > 1 && !attribute.required;
 
-    const label = localizedTranslation(element.settings.label, availableLang);
+    const label = localizedTranslation(element.settings.label, lang);
 
     const isReadOnly = attribute.readonly || readonly;
 
     return (
         <Wrapper $metadataEdit={metadataEdit}>
             <KitInputWrapperStyled
-                id={STANDARDFIELD_ID_PREFIX + attribute.id}
+                id={STANDARD_FIELD_ID_PREFIX + attribute.id}
                 label={label}
                 required={attribute.required}
                 disabled={isReadOnly}
@@ -346,7 +329,13 @@ const StandardField: FunctionComponent<
                         <KitInputExtraAlignLeft>
                             <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
                         </KitInputExtraAlignLeft>
-                        {canDeleteAllValues && <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} />}
+                        {canDeleteAllValues && (
+                            <DeleteAllValuesButton
+                                handleDelete={_handleDeleteAllValues}
+                                disabled={isReadOnly}
+                                danger={isFieldInError}
+                            />
+                        )}
                     </>
                 }
                 htmlFor={attribute.id}
@@ -360,7 +349,6 @@ const StandardField: FunctionComponent<
                         label={label}
                         calculatedFlags={calculatedFlags}
                         inheritedFlags={inheritedFlags}
-                        setActiveValue={setActiveValue}
                     />
                 )}
                 {attribute.multiple_values && (
@@ -393,7 +381,6 @@ const StandardField: FunctionComponent<
                                                             index === fields.length - 1 && index !== 0
                                                         }
                                                         removeLastValueOfMultivalues={() => remove(index)}
-                                                        setActiveValue={setActiveValue}
                                                     />
                                                 </StandardFieldValueWrapper>
                                                 {fields.length > 1 && (
@@ -409,6 +396,7 @@ const StandardField: FunctionComponent<
                                                                 index
                                                             )
                                                         }
+                                                        disabled={isReadOnly}
                                                     />
                                                 )}
                                             </RowValueWrapper>
@@ -427,7 +415,7 @@ const StandardField: FunctionComponent<
                                                 size="m"
                                                 icon={<FaPlus />}
                                                 onClick={() => add(defaultValueToAddInAntdForm)}
-                                                disabled={shouldDisabledAddValueButton}
+                                                disabled={isReadOnly || shouldDisabledAddValueButton}
                                             >
                                                 {t('record_edition.add_value')}
                                             </KitAddValueButton>

@@ -6,7 +6,7 @@ import {DSColorPickerWrapper} from './DSColorPickerWrapper';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../shared/calculatedInheritedFlags';
 
 const pinkColorHex = '#ff00ff';
 const pinkColorRgb = 'rgb(255,0,255)';
@@ -51,7 +51,6 @@ describe('DSColorPickerWrapper', () => {
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
     const mockHandleBlur = jest.fn();
-    const mockSetActiveValue = jest.fn();
 
     let user!: ReturnType<typeof userEvent.setup>;
 
@@ -60,7 +59,6 @@ describe('DSColorPickerWrapper', () => {
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
         mockHandleBlur.mockReset();
-        mockSetActiveValue.mockReset();
     });
 
     test.each([pinkColorHex, pinkColorRgb, pinkColorHsb])(
@@ -78,7 +76,6 @@ describe('DSColorPickerWrapper', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
-                            setActiveValue={mockSetActiveValue}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -102,7 +99,6 @@ describe('DSColorPickerWrapper', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
-                            setActiveValue={mockSetActiveValue}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -125,7 +121,6 @@ describe('DSColorPickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -150,7 +145,6 @@ describe('DSColorPickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -176,7 +170,6 @@ describe('DSColorPickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -207,7 +200,6 @@ describe('DSColorPickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -236,7 +228,6 @@ describe('DSColorPickerWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -250,29 +241,5 @@ describe('DSColorPickerWrapper', () => {
 
         expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
         expect(mockOnChange).toHaveBeenCalled();
-    });
-
-    test('Should call setActiveValue if focused', async () => {
-        render(
-            <AntForm>
-                <AntForm.Item>
-                    <DSColorPickerWrapper
-                        value={blueColorHex}
-                        attribute={mockFormAttribute}
-                        readonly={notReadonly}
-                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
-                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
-                    />
-                </AntForm.Item>
-            </AntForm>
-        );
-
-        const colorPicker = screen.getByTestId(mockFormAttribute.id);
-        await user.click(colorPicker);
-
-        expect(mockSetActiveValue).toHaveBeenCalled();
     });
 });

@@ -6,7 +6,7 @@ import {DSInputEncryptedWrapper} from './DSInputEncryptedWrapper';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {CalculatedFlags, InheritedFlags} from '../../shared/calculatedInheritedFlags';
 
 const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,
@@ -28,7 +28,6 @@ const readonly = true;
 describe('DSInputEncryptedWrapper', () => {
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
-    const mockSetActiveValue = jest.fn();
 
     let user!: ReturnType<typeof userEvent.setup>;
 
@@ -36,7 +35,6 @@ describe('DSInputEncryptedWrapper', () => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
-        mockSetActiveValue.mockReset();
     });
 
     test('Should submit the value', async () => {
@@ -50,7 +48,6 @@ describe('DSInputEncryptedWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -78,7 +75,6 @@ describe('DSInputEncryptedWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -110,7 +106,6 @@ describe('DSInputEncryptedWrapper', () => {
                         inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -119,30 +114,5 @@ describe('DSInputEncryptedWrapper', () => {
         const input = screen.getByTestId('kit-input-password');
 
         expect(input).toBeDisabled();
-    });
-
-    test('Should call setActiveValue if focused', async () => {
-        render(
-            <AntForm>
-                <AntForm.Item>
-                    <DSInputEncryptedWrapper
-                        value="password"
-                        attribute={mockFormAttribute}
-                        readonly={notReadonly}
-                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
-                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                        setActiveValue={mockSetActiveValue}
-                    />
-                </AntForm.Item>
-            </AntForm>
-        );
-
-        const input = screen.getByTestId('kit-input-password');
-
-        await user.click(input);
-
-        expect(mockSetActiveValue).toHaveBeenCalled();
     });
 });

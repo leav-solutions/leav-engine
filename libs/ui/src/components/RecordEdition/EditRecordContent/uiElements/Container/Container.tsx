@@ -10,14 +10,15 @@ function Container({
     element,
     computedValues,
     antdForm,
+    formIdToLoad,
     readonly,
+    pendingValues,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues
 }: IFormElementProps<{}> & {antdForm?: FormInstance; computedValues: GetRecordColumnsValuesRecord}): JSX.Element {
     const {elements: formElements} = useRecordEditionContext();
     const children = formElements[element.id] ?? [];
-
     const isAlone = children.length < 2;
 
     return (
@@ -31,6 +32,8 @@ function Container({
                                 computedValues={computedValues}
                                 readonly={readonly}
                                 antdForm={antdForm}
+                                pendingValues={pendingValues}
+                                formIdToLoad={formIdToLoad}
                                 onValueSubmit={onValueSubmit}
                                 onValueDelete={onValueDelete}
                                 onDeleteMultipleValues={onDeleteMultipleValues}

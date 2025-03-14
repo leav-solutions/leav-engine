@@ -112,6 +112,8 @@ export interface ISubmittedValueBase {
 
 export interface IFormElementProps<SettingsType, RecordFormElements = RecordFormElementsValue> {
     element: FormElement<SettingsType, RecordFormElements>;
+    formIdToLoad: string | 'edition' | 'creation';
+    pendingValues?: IPendingValues;
     readonly?: boolean;
     onValueSubmit?: SubmitValueFunc;
     onValueDelete?: DeleteValueFunc;
@@ -167,3 +169,5 @@ export interface IProvidedByAntFormItem<
     value?: InputFieldProps['value'];
     onChange?: AntNotifier['onChange'];
 }
+
+export type IPendingValues = Record<string, {[idValue: string]: ValueDetailsFragment}>;

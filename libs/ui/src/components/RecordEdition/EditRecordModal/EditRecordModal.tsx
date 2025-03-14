@@ -17,6 +17,7 @@ import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 
 export interface IEditRecordModalProps {
+    className?: string;
     open: boolean;
     record: RecordIdentityFragment['whoAmI'] | null;
     creationFormId?: string;
@@ -63,6 +64,7 @@ const ModalFooter = styled.div`
 `;
 
 export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
+    className,
     open,
     record,
     creationFormId,
@@ -139,6 +141,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
 
     return (
         <StyledModal
+            className={className}
             open={open}
             onCancel={_handleClose}
             destroyOnClose

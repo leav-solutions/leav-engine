@@ -13,10 +13,12 @@ const ComputeIndicatorWrapper = styled.div`
     font-size: calc(var(--general-typography-fontSize7) * 1px);
 `;
 
-export const ComputeIndicator: FunctionComponent<{
+interface IComputeIndicatorProps {
     calculatedFlags: CalculatedFlags;
     inheritedFlags: InheritedFlags;
-}> = ({calculatedFlags, inheritedFlags}) => {
+}
+
+export const ComputeIndicator: FunctionComponent<IComputeIndicatorProps> = ({calculatedFlags, inheritedFlags}) => {
     const {t} = useSharedTranslation();
 
     const shouldDisplayComputedIcon =

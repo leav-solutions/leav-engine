@@ -9,7 +9,7 @@ import FormTabs from './FormTabs';
 describe('Tabs', () => {
     test('Render Tabs', async () => {
         await act(async () => {
-            render(<FormTabs {...mockCommonFormElementProps} element={mockFormElementTabs} />);
+            render(<FormTabs {...mockCommonFormElementProps} element={mockFormElementTabs} formIdToLoad="edition" />);
         });
 
         await act(async () => {
@@ -25,6 +25,7 @@ describe('Tabs', () => {
                     ...mockFormElementTabs,
                     settings: {...mockFormElementTabs.settings, direction: TabsDirection.VERTICAL}
                 }}
+                formIdToLoad="edition"
             />
         );
 
