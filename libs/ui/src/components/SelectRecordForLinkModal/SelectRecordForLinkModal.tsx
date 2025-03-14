@@ -52,6 +52,7 @@ const ModalMainStyledDiv = styled.div`
 `;
 
 interface ISelectRecordForLinkModalProps {
+    className?: string;
     open: boolean;
     childLibraryId: string;
     selectionMode: ComponentProps<typeof Explorer>['selectionMode'];
@@ -61,6 +62,7 @@ interface ISelectRecordForLinkModalProps {
 }
 
 export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkModalProps> = ({
+    className,
     open,
     childLibraryId,
     selectionMode,
@@ -100,6 +102,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
 
     return (
         <StyledModal
+            className={className}
             open={open}
             onCancel={_handleClose}
             destroyOnClose

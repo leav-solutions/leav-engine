@@ -23,7 +23,14 @@ jest.mock('../../hooks/useRecordEditionContext', () => ({
 
 describe('Container', () => {
     test('Render children', async () => {
-        render(<Container {...mockCommonFormElementProps} element={mockFormElementContainer} computedValues={null} />);
+        render(
+            <Container
+                {...mockCommonFormElementProps}
+                element={mockFormElementContainer}
+                computedValues={null}
+                formIdToLoad="edition"
+            />
+        );
 
         const children = await screen.findAllByTestId('container-child-element');
         expect(children.length).toBe(4);

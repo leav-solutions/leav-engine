@@ -44,8 +44,7 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
     readonly,
     handleSubmit,
     inheritedFlags,
-    calculatedFlags,
-    setActiveValue
+    calculatedFlags
 }) => {
     if (!onChange) {
         throw Error('DSListSelect should be used inside a antd Form.Item');
@@ -177,10 +176,6 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
         }
     };
 
-    const _handleOnFocus = () => {
-        setActiveValue();
-    };
-
     const valueToDisplay = isFocused ? value : presentationValue;
     const isValueEmpty = value === '';
 
@@ -201,7 +196,6 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
             onChange={onChange}
             onClear={_handleOnClear}
             onSearch={_handleOnSearch}
-            onFocus={_handleOnFocus}
             placeholder={t('record_edition.placeholder.select_an_option')}
             dropdownRender={menu => (
                 <>

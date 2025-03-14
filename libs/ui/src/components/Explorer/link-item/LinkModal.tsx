@@ -8,6 +8,7 @@ import {SelectRecordForLinkModal} from '_ui/components/SelectRecordForLinkModal'
 import {IEntrypointLink} from '../_types';
 import {useLinkMassAction} from './useLinkMassAction';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
+import {LINK_RECORDS_MODAL_CLASSNAME} from '../_constants';
 
 interface ILinkModalProps {
     open: boolean;
@@ -36,6 +37,7 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({open, onLink, onC
 
     return (
         <SelectRecordForLinkModal
+            className={LINK_RECORDS_MODAL_CLASSNAME}
             open={open}
             childLibraryId={view.libraryId}
             onSelectionCompleted={createLinks}
