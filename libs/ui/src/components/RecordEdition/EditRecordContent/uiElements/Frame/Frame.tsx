@@ -15,10 +15,11 @@ const Wrapper = styled.iframe`
     border: none;
 `;
 
-function Frame({element, onValueSubmit}: IFormElementProps<IFormFrameSettings>): JSX.Element {
+function Frame({element, onValueSubmit, onDeleteMultipleValues}: IFormElementProps<IFormFrameSettings>): JSX.Element {
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [iframeLoaded, setIframeLoaded] = useState(false);
+
     useEffect(() => {
         const iframe = iFrameRef.current;
         if (iframe) {
@@ -33,11 +34,15 @@ function Frame({element, onValueSubmit}: IFormElementProps<IFormFrameSettings>):
             };
         }
     }, [iFrameRef]);
+
     useEffect(() => {
         const handler = event => {
             switch (event.data.type) {
                 case 'submitValue':
                     onValueSubmit(event.data.values, event.data.version);
+                    break;
+                case 'deleteValue':
+                    onDeleteMultipleValues(event.data.attribute, event.data.values, event.data.version);
                     break;
                 default:
                     //console.log('unknown message type');
@@ -49,6 +54,7 @@ function Frame({element, onValueSubmit}: IFormElementProps<IFormFrameSettings>):
         // clean up
         return () => window.removeEventListener('message', handler);
     }, []);
+
     useEffect(() => {
         const iframe = iFrameRef.current;
         if (iframe && iframeLoaded) {
