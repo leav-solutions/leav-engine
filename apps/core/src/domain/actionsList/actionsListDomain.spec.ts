@@ -11,6 +11,7 @@ import actionListDomain, {IActionsListDomainDeps} from './actionsListDomain';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {i18n} from 'i18next';
 import {ToAny} from 'utils/utils';
+import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 
 const depsBase: ToAny<IActionsListDomainDeps> = {
     'core.depsManager': jest.fn(),
@@ -43,7 +44,7 @@ describe('handleJoiError', () => {
 describe('runActionsList', () => {
     const val = {
         id_value: '999',
-        value: 'test_val'
+        payload: 'test_val'
     };
 
     const ctx = {
@@ -62,7 +63,7 @@ describe('runActionsList', () => {
                 id: 'validate',
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => ({
-                    values: {id_value: '999', value: 'test_val'},
+                    values: [{id_value: '999', payload: 'test_val'}],
                     errors: []
                 }))
             },
@@ -70,7 +71,7 @@ describe('runActionsList', () => {
                 id: 'convert',
                 name: 'convert',
                 action: jest.fn().mockImplementation(() => ({
-                    values: {id_value: '999', value: 'test_val'},
+                    values: [{id_value: '999', payload: 'test_val'}],
                     errors: []
                 }))
             }
@@ -87,7 +88,43 @@ describe('runActionsList', () => {
             ctx
         );
 
-        expect(res).toEqual(val);
+        expect(res).toEqual([val]);
+    });
+
+    test('Should not run a list of actions on empty values', async () => {
+        const domain = actionListDomain(depsBase);
+
+        const availActions = [
+            {
+                id: 'validate',
+                name: 'validate',
+                action: jest.fn().mockImplementation(() => ({
+                    values: [{id_value: '999', payload: 'test_val'}],
+                    errors: []
+                }))
+            },
+            {
+                id: 'convert',
+                name: 'convert',
+                action: jest.fn().mockImplementation(() => ({
+                    values: [{id_value: '999', payload: 'test_val'}],
+                    errors: []
+                }))
+            }
+        ];
+
+        domain.getAvailableActions = jest.fn().mockReturnValue(availActions);
+
+        const res = await domain.runActionsList(
+            [
+                {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
+                {id: 'validate', name: 'Validate', is_system: true}
+            ],
+            [val, {payload: EMPTY_VALUE}],
+            ctx
+        );
+
+        expect(res).toEqual([val, {payload: EMPTY_VALUE}]);
     });
 
     test('Should throw if an action throws', async () => {
@@ -97,14 +134,14 @@ describe('runActionsList', () => {
                 id: 'validate',
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
                 }))
             },
             {
                 id: 'convert',
                 name: 'convert',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
                 }))
             }
         ];

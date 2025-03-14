@@ -5,6 +5,7 @@ import {AnyPrimitive, Override} from '@leav/utils';
 import {IDbEdge} from 'infra/db/_types';
 import {IRecord} from './record';
 import {ITreeNode, TreePaths} from './tree';
+import {EMPTY_VALUE} from 'infra/value/valueRepo';
 
 export type IValueFromGql = Override<
     Omit<IValue, 'version'>,
@@ -41,6 +42,8 @@ export interface IValueMetadata {
     [fieldName: string]: IStandardValue | AnyPrimitive;
 }
 
+export type EmptyValue = typeof EMPTY_VALUE;
+
 export interface IGenericValue {
     id_value?: string;
     attribute?: string;
@@ -55,8 +58,8 @@ export interface IGenericValue {
 }
 
 export interface IStandardValue extends IGenericValue {
-    payload?: any;
-    raw_payload?: any;
+    payload?: any | EmptyValue;
+    raw_payload?: any | EmptyValue;
 }
 
 export interface ILinkValue extends IGenericValue {
