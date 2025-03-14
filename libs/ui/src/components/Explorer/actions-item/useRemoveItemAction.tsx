@@ -1,15 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Dispatch, useMemo} from 'react';
+import {Dispatch, useMemo, useState} from 'react';
 import {FaTrash} from 'react-icons/fa';
 import {KitModal} from 'aristid-ds';
-import {useDeactivateRecordsMutation, useDeleteValueMutation} from '_ui/_gqlTypes';
+import {useDeactivateRecordsMutation, useDeleteValueMutation, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
-import {FeatureHook, Entrypoint, IEntrypointLink, IItemAction} from '../_types';
+import {FeatureHook, Entrypoint, IEntrypointLink, IItemAction, IItemData} from '../_types';
 import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {MASS_SELECTION_ALL} from '../_constants';
+import {use} from 'i18next';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -24,6 +25,7 @@ import {MASS_SELECTION_ALL} from '../_constants';
  */
 export const useRemoveItemAction = ({
     isEnabled,
+    canDeleteLinkValues,
     store: {view, dispatch},
     onRemove,
     entrypoint
@@ -32,6 +34,7 @@ export const useRemoveItemAction = ({
         view: IViewSettingsState;
         dispatch: Dispatch<IViewSettingsAction>;
     };
+    canDeleteLinkValues: boolean;
     onRemove?: IItemAction['callback'];
     entrypoint: Entrypoint;
 }>) => {
@@ -75,6 +78,7 @@ export const useRemoveItemAction = ({
             label: entrypoint.type === 'library' ? t('explorer.deactivate-item') : t('explorer.delete-item'),
             icon: <FaTrash />,
             isDanger: true,
+            disabled: (item: IItemData) => (entrypoint.type === 'link' ? !canDeleteLinkValues : !item.canDelete),
             callback: item => {
                 const {itemId, libraryId, id_value} = item;
                 KitModal.confirm({
@@ -124,7 +128,15 @@ export const useRemoveItemAction = ({
                 });
             }
         }),
-        [t, deactivateRecordsMutation, deleteRecordLinkMutation, entrypoint.type, view.massSelection, dispatch]
+        [
+            t,
+            deactivateRecordsMutation,
+            deleteRecordLinkMutation,
+            canDeleteLinkValues,
+            entrypoint.type,
+            view.massSelection,
+            dispatch
+        ]
     );
 
     return {

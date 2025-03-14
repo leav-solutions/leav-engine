@@ -28,6 +28,7 @@ query ExplorerLinkAttribute($id: ID!) {
             multiple_values
             permissions {
                 access_attribute
+                edit_value
             }
             ...LinkAttributeDetails
         }

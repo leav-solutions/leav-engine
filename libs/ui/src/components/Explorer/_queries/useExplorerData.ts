@@ -34,10 +34,11 @@ const _mappingLibrary = (
           }, {})
         : {};
 
-    const records = data.records.list.map(({whoAmI, properties}) => ({
+    const records = data.records.list.map(({whoAmI, permissions, properties}) => ({
         libraryId,
         key: whoAmI.id, // For <KitTable /> only
         itemId: whoAmI.id, // For <KitTable /> only
+        canDelete: permissions.delete_record,
         whoAmI: {
             label: null,
             subLabel: null,
@@ -81,6 +82,7 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
                 // same link id can be duplicated, so we add the index to the key
                 key: linkValue.payload.whoAmI.id + index, // For <KitTable /> only
                 itemId: linkValue.payload.whoAmI.id, // For <KitTable /> only
+                canDelete: true,
                 whoAmI: {
                     label: null,
                     subLabel: null,
@@ -174,6 +176,7 @@ export const useExplorerData = ({
     });
 
     const isMultivalue = !!attributeData?.attributes?.list?.[0]?.multiple_values;
+    const canEditLinkAttributeValues = !!attributeData?.attributes?.list?.[0]?.permissions?.edit_value;
 
     const memoizedData = useMemo(() => {
         if (isLibrary) {
@@ -193,6 +196,7 @@ export const useExplorerData = ({
     return {
         data: memoizedData,
         isMultivalue,
+        canEditLinkAttributeValues,
         loading: isLibrary ? libraryLoading : linkLoading,
         refetch: isLibrary ? libraryRefetch : linkRefetch
     };
