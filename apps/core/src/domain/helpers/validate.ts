@@ -14,6 +14,7 @@ import {AttributeCondition, IRecord} from '../../_types/record';
 import {GetCoreEntityByIdFunc} from './getCoreEntityById';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IValue} from '_types/value';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
 interface IDeps {
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
@@ -30,12 +31,6 @@ export interface IValidateHelper {
     validateView(view: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean>;
     validateTree(tree: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean>;
     validateLibraryAttribute(library: string, attribute: string, ctx: IQueryInfos): Promise<void>;
-    validateUniqueLibraryAttributeValue(
-        library: string,
-        attributeProps: IAttribute,
-        value: IValue,
-        ctx: IQueryInfos
-    ): Promise<boolean>;
 }
 
 export default function ({
@@ -43,7 +38,6 @@ export default function ({
     'core.infra.record': recordRepo,
     'core.utils': utils,
     'core.infra.library': libraryRepo,
-    'core.infra.value': valueRepo,
     'core.infra.cache.cacheService': cacheService
 }: IDeps): IValidateHelper {
     return {
@@ -118,15 +112,6 @@ export default function ({
             }
 
             return false;
-        },
-        async validateUniqueLibraryAttributeValue(library, attributeProps, value, ctx) {
-            return valueRepo.isValueUnique({
-                library,
-                recordId: null,
-                attribute: attributeProps,
-                value,
-                ctx
-            });
         }
     };
 }
