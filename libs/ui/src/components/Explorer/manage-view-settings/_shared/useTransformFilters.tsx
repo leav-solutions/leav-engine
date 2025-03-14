@@ -35,8 +35,13 @@ export const _isValidFieldFilterThrough = (
 
 export const _isLinkAttributeDetails = (
     linkAttributeData: NonNullable<ExplorerLinkAttributeQuery['attributes']>['list'][number]
-): linkAttributeData is LinkAttributeDetailsFragment & {id: string; multiple_values: boolean} =>
-    'linked_library' in linkAttributeData;
+): linkAttributeData is LinkAttributeDetailsFragment & {
+    id: string;
+    multiple_values: boolean;
+    permissions: {
+        edit_value: boolean;
+    };
+} => 'linked_library' in linkAttributeData;
 
 export type validFiltersArgument = GetViewsListQuery['views']['list'][number]['filters'] | ExplorerFilter[];
 

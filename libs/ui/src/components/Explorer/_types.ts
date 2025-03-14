@@ -33,6 +33,7 @@ export interface IItemData {
     key: string;
     itemId: string;
     whoAmI: Required<RecordIdentityFragment['whoAmI']>;
+    canDelete: boolean;
     propertiesById: {
         [attributeId: string]: PropertyValueFragment[];
     };
@@ -48,7 +49,7 @@ export interface IItemAction {
     label: string;
     iconOnly?: boolean;
     isDanger?: boolean;
-    disabled?: boolean;
+    disabled?: boolean | ((item: IItemData) => boolean);
 }
 
 export interface IPrimaryAction {

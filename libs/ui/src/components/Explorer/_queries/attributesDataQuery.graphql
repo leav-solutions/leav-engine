@@ -24,6 +24,9 @@ query ExplorerLinkAttribute($id: ID!) {
         list {
             id
             multiple_values
+            permissions {
+                edit_value
+            }
             ...LinkAttributeDetails
         }
     }

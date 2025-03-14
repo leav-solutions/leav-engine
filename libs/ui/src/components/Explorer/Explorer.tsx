@@ -157,6 +157,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {
             data,
             isMultivalue,
+            canEditLinkAttributeValues,
             loading: loadingData,
             refetch
         } = useExplorerData({
@@ -176,6 +177,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {removeItemAction} = useRemoveItemAction({
             isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('remove'),
             onRemove: defaultCallbacks?.item?.remove,
+            canDeleteLinkValues: canEditLinkAttributeValues,
             store: {view, dispatch},
             entrypoint
         });
@@ -318,7 +320,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                 .filter(Boolean)
                                 .map(action => ({
                                     ...action,
-                                    disabled: isMassSelectionAll
+                                    disabled: isMassSelectionAll || action.disabled
                                 }))}
                             selection={{
                                 onSelectionChange: _isSelectionDisable ? null : setSelectedKeys,

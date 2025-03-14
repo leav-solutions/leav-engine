@@ -2233,6 +2233,29 @@ describe('RecordDomain', () => {
             expect(domain.deactivateRecord).toBeCalledTimes(3);
             expect(records).toEqual([mockRecord, mockRecord, mockRecord]);
         });
+
+        test('Do not deactivate records without permission', async () => {
+            const mockRecordPermissionDomain: Mockify<IRecordPermissionDomain> = {
+                getRecordPermission: global.__mockPromiseMultiple([true, true, false])
+            };
+
+            const domain = recordDomain({
+                ...depsBase,
+                'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain
+            });
+            domain.find = jest.fn();
+            domain.deactivateRecord = jest.fn().mockImplementation(() => Promise.resolve(mockRecord));
+
+            const records = await domain.deactivateRecordsBatch({
+                libraryId: 'test_lib',
+                recordsIds: ['1', '2', '3'],
+                ctx: mockCtx
+            });
+
+            expect(domain.deactivateRecord).toBeCalledTimes(2);
+            expect(domain.find).not.toBeCalled();
+            expect(records).toEqual([mockRecord, mockRecord]);
+        });
     });
 
     describe('purgeInactiveRecords', () => {
