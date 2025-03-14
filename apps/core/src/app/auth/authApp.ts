@@ -222,7 +222,7 @@ export default function ({
                         });
 
                         const decodedToken = jwt.decode(oidcTokenSet.id_token) as jwt.JwtPayload;
-                        const {email} = decodedToken;
+                        const {preferred_username} = decodedToken;
 
                         const ctx: IQueryInfos = {
                             ...initQueryContext(req),
@@ -233,7 +233,9 @@ export default function ({
                         const userRecords = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}]
+                                filters: [
+                                    {field: 'email', condition: AttributeCondition.EQUAL, value: preferred_username}
+                                ]
                             },
                             ctx
                         });
