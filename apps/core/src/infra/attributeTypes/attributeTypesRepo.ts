@@ -82,15 +82,15 @@ export interface IAttributeTypeRepo {
     /**
      * Check if a value is unique
      */
-    isValueUnique?({
+    isValueUsed?({
         library,
-        recordId,
+        excludedRecordId,
         attribute,
         value,
         ctx
     }: {
         library: string;
-        recordId: string;
+        excludedRecordId?: string;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;

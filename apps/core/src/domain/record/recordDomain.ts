@@ -31,6 +31,7 @@ import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} f
 import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {
+    AttributePermissionsActions,
     LibraryPermissionsActions,
     RecordAttributePermissionsActions,
     RecordPermissionsActions
@@ -53,7 +54,10 @@ import getAttributesFromField from './helpers/getAttributesFromField';
 import {isRecordWithId, SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
 import {IFormRepo} from 'infra/form/formRepo';
-import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
+import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
+import validateValue from '../value/helpers/validateValue';
+import {IActionsListDomain} from '../actionsList/actionsListDomain';
+import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -185,6 +189,7 @@ export interface IRecordDomainDeps {
     'core.domain.value': IValueDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
     'core.domain.permission.library': ILibraryPermissionDomain;
+    'core.domain.permission.attribute': IAttributePermissionDomain;
     'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.helpers.validate': IValidateHelper;
@@ -206,6 +211,7 @@ export default function ({
     'core.domain.value': valueDomain,
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.permission.library': libraryPermissionDomain,
+    'core.domain.permission.attribute': attrPermissionDomain,
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.helpers.validate': validateHelper,
@@ -894,10 +900,50 @@ export default function ({
                 // First, check if values are ok. If not, we won't create the record at all
                 const res = await Promise.allSettled(
                     Object.entries(valuesByAttribute).map(async ([attributeId, attributeValues]) => {
+                        const canEditAttr = await attrPermissionDomain.getAttributePermission({
+                            action: AttributePermissionsActions.EDIT_VALUE,
+                            attributeId,
+                            ctx
+                        });
+
+                        if (!canEditAttr) {
+                            throw new PermissionError(AttributePermissionsActions.EDIT_VALUE);
+                        }
+
                         const attributeProps = await attributeDomain.getAttributeProperties({
                             id: attributeId,
                             ctx
                         });
+
+                        const valueChecksParams = {
+                            attributeProps,
+                            library,
+                            keepEmpty: false,
+                            infos: ctx
+                        };
+
+                        const [validationErrors] = await Promise.all(
+                            attributeValues.map(value =>
+                                validateValue({
+                                    ...valueChecksParams,
+                                    value,
+                                    deps: {
+                                        attributeDomain,
+                                        recordRepo,
+                                        valueRepo,
+                                        treeRepo
+                                    },
+                                    ctx
+                                })
+                            )
+                        );
+
+                        if (Object.keys(validationErrors).length) {
+                            throw new ValidationError<IValue>(validationErrors, 'Validation error', false, {
+                                attributeId: attributeProps.id,
+                                values: attributeValues
+                            });
+                        }
 
                         return valueDomain.runActionsList({
                             listName: ActionsListEvents.SAVE_VALUE,
