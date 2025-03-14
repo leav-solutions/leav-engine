@@ -210,6 +210,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
             store: {view, dispatch},
             allVisibleKeys,
+            totalCount,
             onDeactivate: defaultCallbacks?.mass?.deactivate,
             refetch
         });

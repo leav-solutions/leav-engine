@@ -2173,7 +2173,14 @@ describe('RecordDomain', () => {
 
     describe('deactivateRecordsBatch', () => {
         test('Deactivate records from a list of records ids', async () => {
-            const domain = recordDomain(depsBase);
+            const mockRecordPermissionDomain: Mockify<IRecordPermissionDomain> = {
+                getRecordPermission: global.__mockPromise(true)
+            };
+
+            const domain = recordDomain({
+                ...depsBase,
+                'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain
+            });
             domain.find = jest.fn();
             domain.deactivateRecord = jest.fn().mockImplementation(() => Promise.resolve(mockRecord));
 
@@ -2189,7 +2196,14 @@ describe('RecordDomain', () => {
         });
 
         test('Deactivate records from filters', async () => {
-            const domain = recordDomain(depsBase);
+            const mockRecordPermissionDomain: Mockify<IRecordPermissionDomain> = {
+                getRecordPermission: global.__mockPromise(true)
+            };
+
+            const domain = recordDomain({
+                ...depsBase,
+                'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain
+            });
             domain.find = jest
                 .fn()
                 .mockImplementation(() => Promise.resolve({list: [mockRecord, mockRecord, mockRecord]}));
