@@ -13,7 +13,9 @@ query ExplorerAttributes($ids: [ID!]) {
             type
             format
             label
-
+            permissions {
+                access_attribute
+            }
             ...LinkAttributeDetails
         }
     }
@@ -24,6 +26,9 @@ query ExplorerLinkAttribute($id: ID!) {
         list {
             id
             multiple_values
+            permissions {
+                access_attribute
+            }
             ...LinkAttributeDetails
         }
     }

@@ -15,7 +15,9 @@ fragment LibraryAttribute on Attribute {
     id
     type
     label
-
+    permissions {
+        access_attribute
+    }
     ... on StandardAttribute {
         format
     }

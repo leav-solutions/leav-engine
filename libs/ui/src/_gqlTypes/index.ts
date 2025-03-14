@@ -952,6 +952,16 @@ export type ViewDetailsFragment = { id: string, shared: boolean, label: any, des
 
 export type ViewDetailsFilterFragment = { field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null };
 
+export type AttributesByLibAttributeWithPermissionsLinkAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, readonly: boolean, permissions: { access_attribute: boolean }, linked_library?: { id: string } | null };
+
+export type AttributesByLibAttributeWithPermissionsStandardAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, readonly: boolean, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, permissions: { access_attribute: boolean } };
+
+export type AttributesByLibAttributeWithPermissionsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, readonly: boolean, linked_tree?: { id: string, label?: any | null, libraries: Array<{ library: { id: string, label?: any | null } }> } | null, permissions: { access_attribute: boolean } };
+
+export type AttributesByLibAttributeWithPermissionsFragment = AttributesByLibAttributeWithPermissionsLinkAttributeFragment | AttributesByLibAttributeWithPermissionsStandardAttributeFragment | AttributesByLibAttributeWithPermissionsTreeAttributeFragment;
+
+export type AttributesByLibLinkAttributeWithPermissionsFragment = { linked_library?: { id: string } | null };
+
 export type LinkAttributeDetailsFragment = { label?: any | null, linked_library?: { id: string, label?: any | null } | null };
 
 export type AttributePropertiesFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean };
@@ -970,11 +980,11 @@ export type LinkPropertyTreeValueValueFragment = { id_value?: string | null };
 
 export type LinkPropertyFragment = LinkPropertyLinkValueFragment | LinkPropertyTreeValueValueFragment;
 
-export type LibraryAttributeLinkAttributeFragment = { id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null, attributes?: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> | null } | null };
+export type LibraryAttributeLinkAttributeFragment = { id: string, type: AttributeType, label?: any | null, permissions: { access_attribute: boolean }, linked_library?: { id: string, label?: any | null, attributes?: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> | null } | null };
 
-export type LibraryAttributeStandardAttributeFragment = { format?: AttributeFormat | null, id: string, type: AttributeType, label?: any | null };
+export type LibraryAttributeStandardAttributeFragment = { format?: AttributeFormat | null, id: string, type: AttributeType, label?: any | null, permissions: { access_attribute: boolean } };
 
-export type LibraryAttributeTreeAttributeFragment = { id: string, type: AttributeType, label?: any | null };
+export type LibraryAttributeTreeAttributeFragment = { id: string, type: AttributeType, label?: any | null, permissions: { access_attribute: boolean } };
 
 export type LibraryAttributeFragment = LibraryAttributeLinkAttributeFragment | LibraryAttributeStandardAttributeFragment | LibraryAttributeTreeAttributeFragment;
 
@@ -1377,19 +1387,26 @@ export type SaveViewMutationVariables = Exact<{
 
 export type SaveViewMutation = { saveView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
 
+export type GetAttributesByLibWithPermissionsQueryVariables = Exact<{
+  library: Scalars['String'];
+}>;
+
+
+export type GetAttributesByLibWithPermissionsQuery = { attributes?: { list: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, readonly: boolean, linked_library?: { id: string } | null, permissions: { access_attribute: boolean } } | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, readonly: boolean, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, permissions: { access_attribute: boolean } } | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, readonly: boolean, linked_tree?: { id: string, label?: any | null, libraries: Array<{ library: { id: string, label?: any | null } }> } | null, permissions: { access_attribute: boolean } }> } | null };
+
 export type ExplorerAttributesQueryVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
 }>;
 
 
-export type ExplorerAttributesQuery = { attributes?: { list: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_library?: { id: string, label?: any | null } | null } | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> } | null };
+export type ExplorerAttributesQuery = { attributes?: { list: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_library?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } } | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, permissions: { access_attribute: boolean } }> } | null };
 
 export type ExplorerLinkAttributeQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<{ label?: any | null, id: string, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null } | { id: string, multiple_values: boolean }> } | null };
+export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<{ label?: any | null, id: string, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } } | { id: string, multiple_values: boolean, permissions: { access_attribute: boolean } }> } | null };
 
 export type ExplorerLibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -1418,7 +1435,7 @@ export type GetLibraryAttributesQueryVariables = Exact<{
 }>;
 
 
-export type GetLibraryAttributesQuery = { libraries?: { list: Array<{ id: string, attributes?: Array<{ id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null, attributes?: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> | null } | null } | { format?: AttributeFormat | null, id: string, type: AttributeType, label?: any | null } | { id: string, type: AttributeType, label?: any | null }> | null }> } | null };
+export type GetLibraryAttributesQuery = { libraries?: { list: Array<{ id: string, attributes?: Array<{ id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null, attributes?: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> | null } | null, permissions: { access_attribute: boolean } } | { format?: AttributeFormat | null, id: string, type: AttributeType, label?: any | null, permissions: { access_attribute: boolean } } | { id: string, type: AttributeType, label?: any | null, permissions: { access_attribute: boolean } }> | null }> } | null };
 
 export type ExplorerLibraryDetailsQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -2009,6 +2026,47 @@ export const ViewDetailsFragmentDoc = gql`
 }
     ${ViewDetailsFilterFragmentDoc}
 ${RecordIdentityFragmentDoc}`;
+export const AttributesByLibLinkAttributeWithPermissionsFragmentDoc = gql`
+    fragment AttributesByLibLinkAttributeWithPermissions on LinkAttribute {
+  linked_library {
+    id
+  }
+}
+    `;
+export const AttributesByLibAttributeWithPermissionsFragmentDoc = gql`
+    fragment AttributesByLibAttributeWithPermissions on Attribute {
+  id
+  type
+  format
+  label
+  multiple_values
+  system
+  readonly
+  permissions {
+    access_attribute
+  }
+  ...AttributesByLibLinkAttributeWithPermissions
+  ... on TreeAttribute {
+    linked_tree {
+      id
+      label
+      libraries {
+        library {
+          id
+          label
+        }
+      }
+    }
+  }
+  ... on StandardAttribute {
+    embedded_fields {
+      id
+      format
+      label
+    }
+  }
+}
+    ${AttributesByLibLinkAttributeWithPermissionsFragmentDoc}`;
 export const LinkAttributeDetailsFragmentDoc = gql`
     fragment LinkAttributeDetails on LinkAttribute {
   label
@@ -2087,6 +2145,9 @@ export const LibraryAttributeFragmentDoc = gql`
   id
   type
   label
+  permissions {
+    access_attribute
+  }
   ... on StandardAttribute {
     format
   }
@@ -4130,6 +4191,43 @@ export function useSaveViewMutation(baseOptions?: Apollo.MutationHookOptions<Sav
 export type SaveViewMutationHookResult = ReturnType<typeof useSaveViewMutation>;
 export type SaveViewMutationResult = Apollo.MutationResult<SaveViewMutation>;
 export type SaveViewMutationOptions = Apollo.BaseMutationOptions<SaveViewMutation, SaveViewMutationVariables>;
+export const GetAttributesByLibWithPermissionsDocument = gql`
+    query getAttributesByLibWithPermissions($library: String!) {
+  attributes(filters: {libraries: [$library]}) {
+    list {
+      ...AttributesByLibAttributeWithPermissions
+    }
+  }
+}
+    ${AttributesByLibAttributeWithPermissionsFragmentDoc}`;
+
+/**
+ * __useGetAttributesByLibWithPermissionsQuery__
+ *
+ * To run a query within a React component, call `useGetAttributesByLibWithPermissionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAttributesByLibWithPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAttributesByLibWithPermissionsQuery({
+ *   variables: {
+ *      library: // value for 'library'
+ *   },
+ * });
+ */
+export function useGetAttributesByLibWithPermissionsQuery(baseOptions: Apollo.QueryHookOptions<GetAttributesByLibWithPermissionsQuery, GetAttributesByLibWithPermissionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAttributesByLibWithPermissionsQuery, GetAttributesByLibWithPermissionsQueryVariables>(GetAttributesByLibWithPermissionsDocument, options);
+      }
+export function useGetAttributesByLibWithPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAttributesByLibWithPermissionsQuery, GetAttributesByLibWithPermissionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAttributesByLibWithPermissionsQuery, GetAttributesByLibWithPermissionsQueryVariables>(GetAttributesByLibWithPermissionsDocument, options);
+        }
+export type GetAttributesByLibWithPermissionsQueryHookResult = ReturnType<typeof useGetAttributesByLibWithPermissionsQuery>;
+export type GetAttributesByLibWithPermissionsLazyQueryHookResult = ReturnType<typeof useGetAttributesByLibWithPermissionsLazyQuery>;
+export type GetAttributesByLibWithPermissionsQueryResult = Apollo.QueryResult<GetAttributesByLibWithPermissionsQuery, GetAttributesByLibWithPermissionsQueryVariables>;
 export const ExplorerAttributesDocument = gql`
     query ExplorerAttributes($ids: [ID!]) {
   attributes(filters: {ids: $ids}) {
@@ -4138,6 +4236,9 @@ export const ExplorerAttributesDocument = gql`
       type
       format
       label
+      permissions {
+        access_attribute
+      }
       ...LinkAttributeDetails
     }
   }
@@ -4177,6 +4278,9 @@ export const ExplorerLinkAttributeDocument = gql`
     list {
       id
       multiple_values
+      permissions {
+        access_attribute
+      }
       ...LinkAttributeDetails
     }
   }
