@@ -25,6 +25,7 @@ const base: IAttribute = {
 };
 
 export const mockAttrSimple: IAttribute = {...base, id: 'simple_attribute'};
+export const mockUniqueAttrSimple: IAttribute = {...base, id: 'simple_unique_attribute', unique: true};
 export const mockAttrId: IAttribute = {...base, id: 'id', system: true};
 
 export const mockAttrAdv: IAttribute = {
