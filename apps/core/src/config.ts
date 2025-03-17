@@ -64,7 +64,8 @@ export const validateConfig = (conf: IConfig) => {
                     then: Joi.string().required(),
                     otherwise: Joi.string()
                 }),
-                skipLogoutConfirmationPage: Joi.boolean()
+                skipLogoutConfirmationPage: Joi.boolean(),
+                idTokenUserClaim: Joi.string()
             }),
             testApiKey: Joi.string()
         }),
