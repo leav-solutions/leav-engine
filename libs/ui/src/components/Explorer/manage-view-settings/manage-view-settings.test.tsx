@@ -39,13 +39,38 @@ const MockViewSettingsContextProvider: FunctionComponent<{defaultSettings?: Defa
 
 describe('Integration tests about managing view settings feature', () => {
     const attributesList = [
-        {...mockAttributeSimple, id: 'simple_attribute', label: {fr: 'Attribut simple'}},
-        {...mockAttributeLink, id: 'link_attribute', label: {fr: 'Attribut lien'}},
-        {...mockAttributeSimple, id: 'simple_attribute_allemand', label: {fr: 'Fußballer Märchenkönig'}},
-        {...mockAttributeSimple, id: 'simple_attribute_polonais', label: {fr: 'zdawał się być pogrążonym wnętrzności'}},
-        {...mockAttributeSimple, id: 'simple_attribute_français', label: {fr: 'éssai français Noël'}}
+        {
+            ...mockAttributeSimple,
+            id: 'simple_attribute',
+            permissions: {access_attribute: true},
+            label: {fr: 'Attribut simple'}
+        },
+        {
+            ...mockAttributeLink,
+            id: 'link_attribute',
+            permissions: {access_attribute: true},
+            label: {fr: 'Attribut lien'}
+        },
+        {
+            ...mockAttributeSimple,
+            id: 'simple_attribute_allemand',
+            permissions: {access_attribute: true},
+            label: {fr: 'Fußballer Märchenkönig'}
+        },
+        {
+            ...mockAttributeSimple,
+            id: 'simple_attribute_polonais',
+            permissions: {access_attribute: true},
+            label: {fr: 'zdawał się być pogrążonym wnętrzności'}
+        },
+        {
+            ...mockAttributeSimple,
+            id: 'simple_attribute_français',
+            permissions: {access_attribute: true},
+            label: {fr: 'éssai français Noël'}
+        }
     ];
-    const mockAttributesByLibResult: Mockify<typeof gqlTypes.useGetAttributesByLibQuery> = {
+    const mockAttributesByLibResult: Mockify<typeof gqlTypes.useGetAttributesByLibWithPermissionsQuery> = {
         data: {attributes: {list: attributesList}},
         loading: false,
         called: true
@@ -164,8 +189,8 @@ describe('Integration tests about managing view settings feature', () => {
 
     let getViewsListSpy: jest.SpyInstance;
     beforeAll(() => {
-        jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
-            mockAttributesByLibResult as gqlTypes.GetAttributesByLibQueryResult
+        jest.spyOn(gqlTypes, 'useGetAttributesByLibWithPermissionsQuery').mockReturnValue(
+            mockAttributesByLibResult as gqlTypes.GetAttributesByLibWithPermissionsQueryResult
         );
 
         getViewsListSpy = jest
