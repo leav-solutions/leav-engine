@@ -15,7 +15,7 @@ import {IViewSettingsState} from '../manage-view-settings';
  * @param onLink - callback to let outside world know about linking feedback
  * @param closeModal - callback to close the link modal
  */
-export const useLinkMassAction = ({
+export const useAddLinkMassAction = ({
     store: {view},
     linkAttributeId,
     onLink,

@@ -646,6 +646,7 @@
         "more-actions": "Voir plus",
         "deactivate-item": "Désactiver",
         "delete-item": "Supprimer",
+        "replace-item": "Remplacer",
         "edit-item": "Afficher",
         "settings": "Paramètres",
         "back": "Retour",
@@ -711,6 +712,7 @@
             "deactivate_message": "{{count, number}}/{{total, number}} éléments pour lesquels vous disposez des permissions nécessaires ont été supprimés. Les autres éléments restent inchangés.",
             "deactivate_message_zero": "Aucun élément n’a été supprimé, vous ne disposez pas des permissions nécessaires.",
             "add-link": "Ajouter",
+            "replace-link": "Remplacer", 
             "toggle_selection": {
                 "select_page_one": "Sélectionner l’éléments visible ({{count, number}})",
                 "select_page_other": "Sélectionner les éléments visibles ({{count, number}})",
