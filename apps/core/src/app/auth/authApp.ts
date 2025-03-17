@@ -222,7 +222,7 @@ export default function ({
                         });
 
                         const decodedToken = jwt.decode(oidcTokenSet.id_token) as jwt.JwtPayload;
-                        const {email} = decodedToken;
+                        const email = decodedToken[config.auth.oidc.idTokenUserClaim];
 
                         const ctx: IQueryInfos = {
                             ...initQueryContext(req),
