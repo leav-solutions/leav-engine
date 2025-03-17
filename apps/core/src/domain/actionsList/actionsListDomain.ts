@@ -137,8 +137,6 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
                 }
             }
 
-            console.log('resultAction', resultAction);
-
             return resultAction.concat(emptyValues);
         }
     };
