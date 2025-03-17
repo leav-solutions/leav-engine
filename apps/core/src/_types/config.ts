@@ -93,7 +93,7 @@ export interface IAuth {
               clientId: string;
               postLogoutRedirectUri: string;
               skipLogoutConfirmationPage?: boolean;
-              idTokenUserClaim?: string;
+              idTokenUserClaim: string;
           };
     testApiKey?: string;
 }
