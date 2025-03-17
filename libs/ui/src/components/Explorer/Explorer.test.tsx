@@ -642,9 +642,15 @@ describe('Explorer', () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
+        const fetch = jest.fn();
+
         spyUseExplorerLibraryDataQuery = jest
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
             .mockImplementation(() => mockExplorerLibraryDataQueryResult as gqlTypes.ExplorerLibraryDataQueryResult);
+
+        jest.spyOn(gqlTypes, 'useExplorerLibraryDataLazyQuery').mockImplementation(
+            () => [fetch] as unknown as gqlTypes.ExplorerLibraryDataLazyQueryHookResult
+        );
 
         jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
             () => mockExplorerLinkDataQueryResult as gqlTypes.ExplorerLinkDataQueryResult
@@ -658,7 +664,6 @@ describe('Explorer', () => {
             () => mockExplorerAttributesQueryResult as gqlTypes.ExplorerAttributesQueryResult
         );
 
-        const fetch = jest.fn();
         jest.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
             () =>
                 [

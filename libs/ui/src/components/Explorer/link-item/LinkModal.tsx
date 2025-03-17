@@ -38,25 +38,19 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({open, linkId, onL
         closeModal: onClose
     });
 
-    let linkMassAction: (data: ExplorerSelectionIdsQuery) => Promise<void> = createLinks;
-
-    if (isReplacement) {
-        const {replaceLink} = useReplaceLinkMassAction({
-            store: {view},
-            linkAttributeId: (view.entrypoint as IEntrypointLink).linkAttributeId,
-            linkId,
-            onReplace,
-            closeModal: onClose
-        });
-
-        linkMassAction = replaceLink;
-    }
+    const {replaceLink} = useReplaceLinkMassAction({
+        store: {view},
+        linkAttributeId: (view.entrypoint as IEntrypointLink).linkAttributeId,
+        linkId,
+        onReplace,
+        closeModal: onClose
+    });
 
     return (
         <SelectRecordForLinkModal
             open={open}
             childLibraryId={view.libraryId}
-            onSelectionCompleted={linkMassAction}
+            onSelectionCompleted={isReplacement ? replaceLink : createLinks}
             replacementMode={isReplacement}
             selectionMode={isReplacement || !isMultiple ? 'simple' : 'multiple'}
             hideSelectAllAction={(isReplacement || !isMultiple) && view.entrypoint.type === 'link'}

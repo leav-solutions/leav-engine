@@ -8,7 +8,7 @@ import {IEntrypointLink} from '../_types';
 import {IViewSettingsState} from '../manage-view-settings';
 
 /**
- * Hook used to link records
+ * Hook used to replace link
  *
  * @param view - represent the current view
  * @param linkAttributeId - attribute that represent the link
@@ -27,7 +27,7 @@ export const useReplaceLinkMassAction = ({
         view: IViewSettingsState;
     };
     linkAttributeId: string;
-    linkId: string;
+    linkId?: string;
     onReplace?: (replaceValuesResult: ISubmitMultipleResult) => void;
     closeModal: () => void;
 }) => {
@@ -35,6 +35,9 @@ export const useReplaceLinkMassAction = ({
 
     return {
         replaceLink: async (data: ExplorerSelectionIdsQuery) => {
+            if (!linkId) {
+                return;
+            }
             const entrypoint = view.entrypoint as IEntrypointLink;
             const values = data.records.list.map(({id}) => ({
                 attribute: linkAttributeId,
