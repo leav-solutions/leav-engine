@@ -7,7 +7,7 @@ import {KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation, useDeleteValueMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
-import {FeatureHook, Entrypoint, IEntrypointLink, IItemAction} from '../_types';
+import {FeatureHook, Entrypoint, IEntrypointLink, IItemAction, IItemData} from '../_types';
 import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {MASS_SELECTION_ALL} from '../_constants';
 
@@ -21,9 +21,11 @@ import {MASS_SELECTION_ALL} from '../_constants';
  * @param view - represent the current view
  * @param dispatch - method to change the current view
  * @param entrypoint - represent the current entrypoint
+ * @param canDeleteLinkValues - check permission to delete link values
  */
 export const useRemoveItemAction = ({
     isEnabled,
+    canDeleteLinkValues,
     store: {view, dispatch},
     onRemove,
     entrypoint
@@ -32,6 +34,7 @@ export const useRemoveItemAction = ({
         view: IViewSettingsState;
         dispatch: Dispatch<IViewSettingsAction>;
     };
+    canDeleteLinkValues: boolean;
     onRemove?: IItemAction['callback'];
     entrypoint: Entrypoint;
 }>) => {
@@ -75,6 +78,7 @@ export const useRemoveItemAction = ({
             label: entrypoint.type === 'library' ? t('explorer.deactivate-item') : t('explorer.delete-item'),
             icon: <FaTrash />,
             isDanger: true,
+            disabled: (item: IItemData) => (entrypoint.type === 'link' ? !canDeleteLinkValues : !item.canDelete),
             callback: item => {
                 const {itemId, libraryId, id_value} = item;
                 KitModal.confirm({
@@ -124,7 +128,15 @@ export const useRemoveItemAction = ({
                 });
             }
         }),
-        [t, deactivateRecordsMutation, deleteRecordLinkMutation, entrypoint.type, view.massSelection, dispatch]
+        [
+            t,
+            deactivateRecordsMutation,
+            deleteRecordLinkMutation,
+            canDeleteLinkValues,
+            entrypoint.type,
+            view.massSelection,
+            dispatch
+        ]
     );
 
     return {

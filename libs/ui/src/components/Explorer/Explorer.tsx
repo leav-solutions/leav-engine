@@ -159,6 +159,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {
             data,
             isMultivalue,
+            canEditLinkAttributeValues,
             loading: loadingData,
             refetch
         } = useExplorerData({
@@ -178,13 +179,15 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {removeItemAction} = useRemoveItemAction({
             isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('remove'),
             onRemove: defaultCallbacks?.item?.remove,
+            canDeleteLinkValues: canEditLinkAttributeValues,
             store: {view, dispatch},
             entrypoint
         });
 
         const {replaceItemAction, replaceItemModal} = useReplaceItemAction({
             isEnabled: isLink && isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('replaceLink'),
-            onReplace: defaultCallbacks?.item?.replaceLink
+            onReplace: defaultCallbacks?.item?.replaceLink,
+            canReplaceLinkValues: canEditLinkAttributeValues
         });
 
         const {editItemAction, editItemModal} = useEditItemAction({
@@ -198,6 +201,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {createPrimaryAction, createModal} = useCreatePrimaryAction({
             isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
             libraryId: view.libraryId,
+            canCreateAndLinkValue: canEditLinkAttributeValues,
             onCreate: defaultCallbacks?.primary?.create,
             entrypoint,
             totalCount,
@@ -207,6 +211,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
             isEnabled: isLink,
+            canAddLinkValue: canEditLinkAttributeValues,
             onLink: defaultCallbacks?.primary?.link,
             maxItemsLeft: null // TODO: use KitTable.row
         });
@@ -325,7 +330,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                 .filter(Boolean)
                                 .map(action => ({
                                     ...action,
-                                    disabled: isMassSelectionAll
+                                    disabled: isMassSelectionAll || action.disabled
                                 }))}
                             selection={{
                                 onSelectionChange: _isSelectionDisable ? null : setSelectedKeys,

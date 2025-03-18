@@ -22,16 +22,18 @@ import {LinkModal} from '../link-item/LinkModal';
 export const useLinkPrimaryAction = ({
     isEnabled,
     maxItemsLeft,
+    canAddLinkValue,
     onLink
 }: FeatureHook<{
     maxItemsLeft: number | null;
+    canAddLinkValue: boolean;
     onLink?: (saveValuesResult: ISubmitMultipleResult) => void;
 }>) => {
     const {t} = useSharedTranslation();
 
     const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
 
-    const disableAddItemAction = maxItemsLeft === 0;
+    const disableAddItemAction = maxItemsLeft === 0 || !canAddLinkValue;
 
     const _linkPrimaryAction: IPrimaryAction = {
         callback: () => {
