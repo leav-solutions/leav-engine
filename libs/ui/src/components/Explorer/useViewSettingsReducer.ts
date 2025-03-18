@@ -71,7 +71,9 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                 ...(preparedDefaultFilters ?? []),
                 ...(defaultViewSettings.sort ?? []),
                 ...userViewFilters,
-                ...(userView?.sort ?? [])
+                ...(userView?.sort ?? []),
+                ...(userView?.attributes?.map(attribute => ({field: attribute.id})) ?? []),
+                ...(defaultViewSettings?.attributesIds?.map(attributeId => ({field: attributeId})) ?? [])
             ].map(({field}) => field)
         )
     ];
