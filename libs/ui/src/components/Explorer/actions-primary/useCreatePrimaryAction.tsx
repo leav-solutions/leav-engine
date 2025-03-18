@@ -30,6 +30,7 @@ export const useCreatePrimaryAction = ({
     libraryId,
     entrypoint,
     totalCount,
+    canCreateAndLinkValue,
     onCreate,
     formId,
     refetch
@@ -37,6 +38,7 @@ export const useCreatePrimaryAction = ({
     libraryId: string;
     entrypoint: Entrypoint;
     totalCount: number;
+    canCreateAndLinkValue: boolean;
     onCreate?: ({
         recordIdCreated,
         saveValuesResultOnLink
@@ -74,7 +76,12 @@ export const useCreatePrimaryAction = ({
         return {createPrimaryAction: null, createModal: null};
     }
 
-    const canCreateRecord = entrypoint.type === 'library' ? true : multipleValues || totalCount === 0;
+    let canCreateRecord;
+    if (entrypoint.type === 'library') {
+        canCreateRecord = true;
+    } else {
+        canCreateRecord = canCreateAndLinkValue && (multipleValues || totalCount === 0);
+    }
 
     const _createPrimaryAction: IPrimaryAction = {
         callback: () => {

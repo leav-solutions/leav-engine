@@ -1,16 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Dispatch, useMemo, useState} from 'react';
+import {Dispatch, useMemo} from 'react';
 import {FaTrash} from 'react-icons/fa';
 import {KitModal} from 'aristid-ds';
-import {useDeactivateRecordsMutation, useDeleteValueMutation, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
+import {useDeactivateRecordsMutation, useDeleteValueMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
 import {FeatureHook, Entrypoint, IEntrypointLink, IItemAction, IItemData} from '../_types';
 import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {MASS_SELECTION_ALL} from '../_constants';
-import {use} from 'i18next';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -22,6 +21,7 @@ import {use} from 'i18next';
  * @param view - represent the current view
  * @param dispatch - method to change the current view
  * @param entrypoint - represent the current entrypoint
+ * @param canDeleteLinkValues - check permission to delete link values
  */
 export const useRemoveItemAction = ({
     isEnabled,

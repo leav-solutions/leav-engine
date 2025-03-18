@@ -2515,7 +2515,7 @@ describe('Explorer', () => {
         });
     });
 
-    describe('Permissions', () => {
+    describe.only('Permissions', () => {
         const mockExplorerAttributesPermissionsQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
             loading: false,
             called: true,
@@ -2553,6 +2553,43 @@ describe('Explorer', () => {
                             multiple_values: false
                         }
                     ]
+                }
+            }
+        };
+
+        const explorerLinkAttributeNoPermissions = {
+            id: 'link_attribute',
+            multiple_values: true,
+            label: {
+                en: 'Delivery Platforms',
+                fr: 'Plateformes de diffusion'
+            },
+            permissions: {
+                access_attribute: true,
+                edit_value: false,
+                __typename: 'AttributePermissions'
+            },
+            linked_library: {
+                id: 'delivery_platforms',
+                label: {
+                    fr: 'Plateformes de diffusion'
+                },
+                __typename: 'Library'
+            },
+            __typename: 'LinkAttribute'
+        };
+        const ExplorerLinkAttributeWithoutPermissionsQueryMock: IExplorerLinkAttributeQueryMockType = {
+            request: {
+                query: gqlTypes.ExplorerLinkAttributeDocument,
+                variables: {
+                    id: linkEntrypoint.linkAttributeId
+                }
+            },
+            result: {
+                data: {
+                    attributes: {
+                        list: [explorerLinkAttributeNoPermissions]
+                    }
                 }
             }
         };
@@ -2598,43 +2635,6 @@ describe('Explorer', () => {
         });
 
         test('Should disable delete link action on record without edit_value Permission on Link Attribute', async () => {
-            const explorerLinkAttributeNoPermissions = {
-                id: 'link_attribute',
-                multiple_values: true,
-                label: {
-                    en: 'Delivery Platforms',
-                    fr: 'Plateformes de diffusion'
-                },
-                permissions: {
-                    access_attribute: true,
-                    edit_value: false,
-                    __typename: 'AttributePermissions'
-                },
-                linked_library: {
-                    id: 'delivery_platforms',
-                    label: {
-                        fr: 'Plateformes de diffusion'
-                    },
-                    __typename: 'Library'
-                },
-                __typename: 'LinkAttribute'
-            };
-            const ExplorerLinkAttributeWithoutPermissionsQueryMock: IExplorerLinkAttributeQueryMockType = {
-                request: {
-                    query: gqlTypes.ExplorerLinkAttributeDocument,
-                    variables: {
-                        id: linkEntrypoint.linkAttributeId
-                    }
-                },
-                result: {
-                    data: {
-                        attributes: {
-                            list: [explorerLinkAttributeNoPermissions]
-                        }
-                    }
-                }
-            };
-
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={linkEntrypoint} />
@@ -2649,6 +2649,23 @@ describe('Explorer', () => {
 
             const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
             expect(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'})).not.toBeEnabled();
+        });
+
+        test('Should disable replace link action on record without edit_value Permission on Link Attribute', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={linkEntrypoint} />
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock
+                    ]
+                }
+            );
+
+            const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
+            expect(within(firstRecordRow).getByRole('button', {name: 'explorer.replace-item'})).not.toBeEnabled();
         });
 
         test('Should not display the columns for attributes the user does not have access to', async () => {
@@ -2798,43 +2815,6 @@ describe('Explorer', () => {
         });
 
         test('Should not display linked items if entrypoint is of type link and the user does not have access to the attribute', async () => {
-            const explorerLinkAttributeWithNoPermissions = {
-                id: 'link_attribute',
-                multiple_values: true,
-                permissions: {
-                    access_attribute: false,
-                    edit_value: true
-                },
-                label: {
-                    en: 'Delivery Platforms',
-                    fr: 'Plateformes de diffusion'
-                },
-                linked_library: {
-                    id: 'delivery_platforms',
-                    label: {
-                        fr: 'Plateformes de diffusion'
-                    },
-                    __typename: 'Library'
-                },
-                __typename: 'LinkAttribute'
-            };
-
-            const ExplorerLinkAttributeWithNoPermissionsQueryMock: IExplorerLinkAttributeQueryMockType = {
-                request: {
-                    query: gqlTypes.ExplorerLinkAttributeDocument,
-                    variables: {
-                        id: linkEntrypoint.linkAttributeId
-                    }
-                },
-                result: {
-                    data: {
-                        attributes: {
-                            list: [explorerLinkAttributeWithNoPermissions]
-                        }
-                    }
-                }
-            };
-
             jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockRestore();
 
             render(
@@ -2846,7 +2826,7 @@ describe('Explorer', () => {
                     />
                 </Explorer.EditSettingsContextProvider>,
                 {
-                    mocks: [ExplorerLinkAttributeWithNoPermissionsQueryMock]
+                    mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock]
                 }
             );
 
@@ -2854,6 +2834,41 @@ describe('Explorer', () => {
             await waitFor(() => {
                 expect(screen.getByText(/empty-data/)).toBeVisible();
             });
+        });
+
+        test('Should not be able to link a new record without permissions on linkAttribute', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={linkEntrypoint} />
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock
+                    ]
+                }
+            );
+
+            const createOneButton = await screen.findByRole('button', {name: 'explorer.create-one'});
+            expect(createOneButton).toBeVisible();
+            expect(createOneButton).toBeDisabled();
+        });
+
+        test('Should be able to link existing record', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={linkEntrypoint} defaultPrimaryActions={[]} />
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock
+                    ]
+                }
+            );
+            const linkExistingButton = await screen.findByRole('button', {name: 'explorer.add-existing-item'});
+            expect(linkExistingButton).toBeVisible();
+            expect(linkExistingButton).toBeDisabled();
         });
     });
 

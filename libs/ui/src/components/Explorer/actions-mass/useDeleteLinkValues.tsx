@@ -33,7 +33,7 @@ export const useDeleteLinkValues = ({
     const {saveValues} = useSaveValueBatchMutation();
 
     const isLink = view.entrypoint.type === 'link';
-    const {data: linkData, canEditLinkAttributeValues} = useExplorerData({
+    const {data: linkData, canEditLinkAttributeValues: canUnlinkValues} = useExplorerData({
         entrypoint: view.entrypoint,
         libraryId: view.libraryId,
         attributeIds: view.attributesIds,
@@ -112,6 +112,6 @@ export const useDeleteLinkValues = ({
     );
 
     return {
-        unlinkMassAction: isEnabled && canEditLinkAttributeValues ? _unlinkMassAction : null
+        unlinkMassAction: isEnabled && canUnlinkValues ? _unlinkMassAction : null
     };
 };

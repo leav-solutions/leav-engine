@@ -18,25 +18,32 @@ import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordCont
  *
  * @param isEnabled - whether the action is present
  * @param onReplace - callback to let outside world know about replacing feedback
+ * @param canReplaceLinkValues - check permission to delete link values
  */
 export const useReplaceItemAction = ({
     isEnabled,
-    onReplace
+    onReplace,
+    canReplaceLinkValues
 }: FeatureHook<{
     onReplace?: (replaceValuesResult: ISubmitMultipleResult) => void;
+    canReplaceLinkValues: boolean;
 }>) => {
     const {t} = useSharedTranslation();
     const [isReplaceModalOpen, setIsReplaceModalOpen] = useState(false);
     const [linkIdSelected, setLinkIdSelected] = useState<string | undefined>();
 
-    const _replaceItemAction: IItemAction = {
-        label: t('explorer.replace-item'),
-        icon: <FaExchangeAlt />,
-        callback: item => {
-            setLinkIdSelected(item.id_value);
-            setIsReplaceModalOpen(!isReplaceModalOpen);
-        }
-    };
+    const _replaceItemAction: IItemAction = useMemo(
+        () => ({
+            label: t('explorer.replace-item'),
+            icon: <FaExchangeAlt />,
+            disabled: !canReplaceLinkValues,
+            callback: item => {
+                setLinkIdSelected(item.id_value);
+                setIsReplaceModalOpen(!isReplaceModalOpen);
+            }
+        }),
+        [canReplaceLinkValues]
+    );
 
     const replaceAction = useMemo(
         () => ({
