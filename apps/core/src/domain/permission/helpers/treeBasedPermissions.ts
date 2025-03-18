@@ -88,7 +88,6 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                             });
 
                             return valuePerm;
-                            // il faut pas s'arreter sinon on va pas chercher pour le root des valeurs
 
                             // if (valuePerm !== null) {
                             //     perm = valuePerm;

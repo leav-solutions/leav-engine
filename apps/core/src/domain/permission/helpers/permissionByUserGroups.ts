@@ -93,7 +93,8 @@ export default function (deps: IDeps): IPermissionByUserGroupsHelper {
                                   if (treeTargetPath?.length) {
                                       return checkPermission(treeTargetPath.slice(1));
                                   } else if (!!treeTargetPath && !treeTargetPath.length) {
-                                      userGroupPermission = await _getRootPermission({tree: permissionTreeTarget.tree, nodeId: null}); //?? defaultPermHelper.getDefaultPermission(); ?
+                                      // FIXME: après ?? call libraryPermissionDomain.getLibraryPermission ou prend defaultPermission en params car ça dépend du context
+                                      userGroupPermission = await _getRootPermission({tree: permissionTreeTarget.tree, nodeId: null}) ?? defaultPermHelper.getDefaultPermission();
                                   } else {
                                       userGroupPermission = await _getRootPermission(permissionTreeTarget) ?? defaultPermHelper.getDefaultPermission();
                                   }
