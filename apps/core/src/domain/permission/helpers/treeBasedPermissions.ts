@@ -66,34 +66,38 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                 permTreeValues.map(
                     // Permissions for each values of tree attribute
                     async (value): Promise<boolean | null> => {
-                        const permTreePath = await elementAncestorsHelper.getCachedElementAncestors({
-                            // Ancestors of value
-                            treeId: permTreeId,
-                            nodeId: value,
-                            ctx
-                        });
+                        // const permTreePath = await elementAncestorsHelper.getCachedElementAncestors({
+                        //     // Ancestors of value
+                        //     treeId: permTreeId,
+                        //     nodeId: value,
+                        //     ctx
+                        // });
 
-                        let perm: boolean | null = null;
-                        for (const pathElem of permTreePath.reverse()) {
+                      //  let perm: boolean | null = null;
+                        // for (const pathElem of permTreePath.reverse()) { //  reverse ??
                             const valuePerm = await permByUserGroupsHelper.getPermissionByUserGroups({
                                 type,
                                 action,
                                 userGroupsPaths,
                                 applyTo,
                                 permissionTreeTarget: {
-                                    nodeId: pathElem.id,
+                                    nodeId: value, //pathElem.id,
                                     tree: permTreeId
                                 },
                                 ctx
                             });
 
-                            if (valuePerm !== null) {
-                                perm = valuePerm;
-                                break;
-                            }
-                        }
+                            return valuePerm;
+                            // il faut pas s'arreter sinon on va pas chercher pour le root des valeurs
 
-                        return perm;
+                            // if (valuePerm !== null) {
+                            //     perm = valuePerm;
+                            //     console.log('value', value, 'perm', perm);
+                            //     break;
+                            // }
+                        // }
+
+                       // return perm;
                     }
                 )
             );

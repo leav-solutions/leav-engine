@@ -54,6 +54,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                 throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
             }
 
+            // Si on a pas d'extensions
             if (typeof libProps.permissions_conf === 'undefined') {
                 // Check if action is present in library permissions
                 const isLibAction =
@@ -70,8 +71,11 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                     : defaultPermHelper.getDefaultPermission();
             }
 
+
+            // A partir de là c'est pour les extensions
             const treesAttrValues = await Promise.all(
                 libProps.permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
+
                     const permTreeAttrProps = await attributeDomain.getAttributeProperties({id: permTreeAttr, ctx});
                     return valueRepo.getValues({
                         library,
