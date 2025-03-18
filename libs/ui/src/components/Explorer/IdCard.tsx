@@ -19,5 +19,5 @@ export const IdCard: FunctionComponent<IIdCardProps> = ({item}) => {
         avatarProps.src = preview.small;
     }
 
-    return <KitIdCard avatarProps={avatarProps} title={label ?? id} description={subLabel ?? library.id} />;
+    return <KitIdCard avatarProps={avatarProps} title={label ?? id} description={subLabel ?? undefined} />;
 };
