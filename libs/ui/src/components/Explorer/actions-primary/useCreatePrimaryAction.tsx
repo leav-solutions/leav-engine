@@ -10,6 +10,7 @@ import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordCo
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {LibraryBehavior, useExplorerLibraryDetailsQuery, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 import {FeatureHook, Entrypoint, IEntrypointLink, IPrimaryAction} from '../_types';
+import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -131,6 +132,7 @@ export const useCreatePrimaryAction = ({
         case LibraryBehavior.standard:
             _createModal = (
                 <EditRecordModal
+                    className={CREATE_RECORD_MODAL_CLASSNAME}
                     open
                     record={null}
                     library={libraryId}

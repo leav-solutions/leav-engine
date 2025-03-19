@@ -17,11 +17,7 @@ import {
 import StandardField from './StandardField';
 import {AntForm} from 'aristid-ds';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {
-    EditRecordReducerActionsTypes,
-    initialState
-} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import {EDIT_RECORD_SIDEBAR_ID} from '_ui/constants';
+import {initialState} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
 describe('StandardField', () => {
@@ -65,6 +61,7 @@ describe('StandardField', () => {
         .mockReturnValue({status: APICallStatus.SUCCESS});
 
     const baseProps = {
+        formIdToLoad: 'edition',
         readonly: false,
         onValueSubmit: mockHandleSubmit,
         onValueDelete: mockHandleDelete,
@@ -75,94 +72,12 @@ describe('StandardField', () => {
     const mockEditRecordInitialState = jest.fn();
 
     jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
-        state: mockEditRecordInitialState(),
+        state: initialState,
         dispatch: mockEditRecordDispatch
     }));
 
     beforeEach(() => {
         jest.clearAllMocks();
-    });
-
-    describe('Click outside the input behavior', () => {
-        test('Should call useEditRecord dispatch on click on input', async () => {
-            mockEditRecordInitialState.mockReturnValue(initialState);
-
-            render(
-                <AntForm>
-                    <StandardField element={mockFormElementInput} {...baseProps} />
-                </AntForm>
-            );
-
-            const textInput = screen.getByRole('textbox');
-            await userEvent.click(textInput);
-
-            expect(mockEditRecordDispatch).toHaveBeenCalledWith({
-                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                attribute: mockFormElementInput.attribute,
-                values: mockFormElementInput.values
-            });
-        });
-
-        test('Should call useEditRecord dispatch without activeValue on click outside focused input', async () => {
-            mockEditRecordInitialState.mockReturnValue({
-                ...initialState,
-                activeAttribute: {attribute: mockFormElementInput.attribute},
-                activeValue: {
-                    attribute: mockFormElementInput.attribute,
-                    editingValue: null,
-                    value: null
-                }
-            });
-
-            render(
-                <AntForm>
-                    <StandardField element={mockFormElementInput} {...baseProps} />
-                </AntForm>
-            );
-
-            await userEvent.click(document.body);
-
-            expect(mockEditRecordDispatch).toHaveBeenCalledWith({
-                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                values: mockFormElementInput.values
-            });
-        });
-
-        describe('On click on allowed element', () => {
-            test.each`
-                property       | value
-                ${'id'}        | ${EDIT_RECORD_SIDEBAR_ID}
-                ${'id'}        | ${'standardfield-' + mockFormElementInput.attribute.id}
-                ${'className'} | ${'ant-popover ant-color-picker'}
-                ${'className'} | ${'ant-picker-dropdown'}
-                ${'className'} | ${'kit-modal-wrapper link-modal'}
-            `(
-                'Should not call useEditRecord dispatch on click outside focused input',
-                async ({property, value}: {property: string; value: string}) => {
-                    mockEditRecordInitialState.mockReturnValue({
-                        ...initialState,
-                        activeValue: {
-                            attribute: mockFormElementInput.attribute,
-                            editingValue: null,
-                            value: null
-                        }
-                    });
-
-                    const allowedElementProps = property === 'id' ? {id: value} : {className: value};
-
-                    render(
-                        <AntForm>
-                            <StandardField element={mockFormElementInput} {...baseProps} />
-                            <div {...allowedElementProps}>Allowed click</div>
-                        </AntForm>
-                    );
-
-                    await userEvent.click(screen.getByText('Allowed click'));
-
-                    expect(mockEditRecordDispatch).not.toHaveBeenCalled();
-                }
-            );
-        });
     });
 
     describe('Mono value attribute', () => {

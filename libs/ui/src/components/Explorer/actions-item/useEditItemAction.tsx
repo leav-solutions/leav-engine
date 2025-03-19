@@ -7,6 +7,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
 import {RecordFilterCondition, useExplorerLibraryDataLazyQuery} from '_ui/_gqlTypes';
 import {FeatureHook, IItemAction, IItemData} from '../_types';
+import {EDIT_RECORD_MODAL_CLASSNAME} from '../_constants';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -65,6 +66,7 @@ export const useEditItemAction = ({
             editItemModal:
                 isEnabled && editingItem !== null ? (
                     <EditRecordModal
+                        className={EDIT_RECORD_MODAL_CLASSNAME}
                         open
                         editionFormId={formId}
                         record={editingItem.whoAmI}
