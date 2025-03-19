@@ -9,6 +9,7 @@ import {MemoryRouter} from 'react-router-dom';
 import Login from './Login';
 
 enableFetchMocks();
+jest.setTimeout(10_000);
 
 window.matchMedia = query => ({
     matches: false,

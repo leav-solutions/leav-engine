@@ -19,6 +19,7 @@ const ForgotPassword = (): JSX.Element => {
             setForgotPasswordError('');
             setForgotPasswordSuccess('');
 
+            console.log('before response1');
             const response = await fetch(FORGOT_PASSWORD_URL, {
                 method: 'POST',
                 headers: new Headers([['Content-Type', 'application/json']]),
@@ -27,6 +28,7 @@ const ForgotPassword = (): JSX.Element => {
                     lang: i18n.language
                 })
             });
+            console.log({response});
 
             if (response.status === 400) {
                 throw new Error(t('error.missing_parameters'));
@@ -44,6 +46,7 @@ const ForgotPassword = (): JSX.Element => {
                 throw new Error(t('error.no_server_response'));
             }
         } catch (err) {
+            console.log({err});
             let msg = err.message;
 
             if (err.message.indexOf('NetworkError') > -1) {
@@ -52,6 +55,7 @@ const ForgotPassword = (): JSX.Element => {
 
             setForgotPasswordError(msg);
         } finally {
+            console.log({forgotPasswordError});
             setIsLoading(false);
         }
     };

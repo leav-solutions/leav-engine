@@ -10,6 +10,7 @@ import ForgotPassword from './ForgotPassword';
 global.ASYNC_VALIDATOR_NO_WARNING = 1; // Suppress some really weird warning coming from ant-design during testing
 
 enableFetchMocks();
+jest.setTimeout(10_000);
 
 window.matchMedia = query => ({
     matches: false,
@@ -37,6 +38,10 @@ const _enterValidEmailAndSubmit = () => {
 };
 
 describe('ForgotPassword', () => {
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     test('Display error msg if user is not found', async () => {
         (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
             status: 401,

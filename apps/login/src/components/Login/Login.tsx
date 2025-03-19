@@ -19,7 +19,7 @@ const Login = (): JSX.Element => {
         try {
             setIsLoading(true);
             setLoginError('');
-
+            console.log('before response');
             const response = await fetch(AUTH_URL, {
                 method: 'POST',
                 headers: new Headers([['Content-Type', 'application/json']]),
@@ -28,6 +28,7 @@ const Login = (): JSX.Element => {
                     password
                 })
             });
+            console.log({response});
 
             if (response.status === 401) {
                 throw new Error(t('login.error.bad_credentials'));
@@ -39,6 +40,7 @@ const Login = (): JSX.Element => {
 
             window.location.replace(redirectTo);
         } catch (err) {
+            console.log({err});
             let msg = err.message;
 
             if (err.message.indexOf('NetworkError') > -1) {
@@ -47,6 +49,7 @@ const Login = (): JSX.Element => {
 
             setLoginError(msg);
         } finally {
+            console.log({loginError});
             setIsLoading(false);
         }
     };
