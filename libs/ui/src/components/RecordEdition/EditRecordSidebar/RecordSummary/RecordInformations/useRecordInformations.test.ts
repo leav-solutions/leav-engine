@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useRecordInformations} from './useRecordInformations';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@testing-library/react';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';

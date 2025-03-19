@@ -29,11 +29,19 @@ describe('useRefetchFieldValues', () => {
                             list: [
                                 {
                                     _id: '123456',
+                                    whoAmI: {
+                                        id: '123456',
+                                        library: {
+                                            id: 'test_lib'
+                                        }
+                                    },
                                     my_attribute: [
                                         {
                                             __typename: 'Value',
-                                            value: 'my_value',
-                                            raw_value: 'my_value',
+                                            raw_payload: 'my_value',
+                                            payload: 'my_value',
+                                            isCalculated: false,
+                                            isInherited: false,
                                             id_value: null,
                                             created_at: null,
                                             created_by: null,
@@ -67,8 +75,10 @@ describe('useRefetchFieldValues', () => {
                 modified_at: null,
                 modified_by: null,
                 version: {},
-                value: 'my_value',
-                raw_value: 'my_value'
+                isCalculated: false,
+                isInherited: false,
+                raw_payload: 'my_value',
+                payload: 'my_value'
             }
         ]);
     });
