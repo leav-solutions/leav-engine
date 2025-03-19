@@ -9,6 +9,7 @@ import {MemoryRouter} from 'react-router-dom';
 import Login from './Login';
 
 enableFetchMocks();
+jest.setTimeout(15_000); // TODO : remove when runners are betters
 
 window.matchMedia = query => ({
     matches: false,
