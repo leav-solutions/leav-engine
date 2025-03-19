@@ -10,6 +10,7 @@ import {IUseCanEditRecordHook} from '../../../hooks/useCanEditRecord/useCanEditR
 import {render, screen} from '../../../_tests/testUtils';
 import {EditRecord} from './EditRecord';
 import {Form} from 'antd';
+import {getLibraryByIdQuery} from '_ui/_queries/libraries/getLibraryByIdQuery';
 
 const editRecordContentFn = jest.fn();
 jest.mock(
@@ -51,6 +52,21 @@ describe('EditRecord', () => {
                                 modified_by: mockRecord
                             }
                         ]
+                    }
+                }
+            }
+        },
+        {
+            request: {
+                query: getLibraryByIdQuery,
+                variables: {id: [mockRecord.library.id]}
+            },
+            result: {
+                data: {
+                    libraries: {
+                        __typename: 'LibrariesList',
+                        totalCount: 0,
+                        list: []
                     }
                 }
             }

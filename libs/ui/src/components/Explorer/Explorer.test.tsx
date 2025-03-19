@@ -2729,6 +2729,8 @@ describe('Explorer', () => {
                 () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
             );
 
+            jest.spyOn(console, 'warn').mockImplementationOnce(() => jest.fn());
+
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
@@ -2768,6 +2770,8 @@ describe('Explorer', () => {
                     />
                 </Explorer.EditSettingsContextProvider>
             );
+
+            expect(console.warn).toHaveBeenCalledWith(expect.stringContaining(booleanMockAttribute.id));
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
@@ -2841,7 +2845,31 @@ describe('Explorer', () => {
         });
 
         test('Should not display linked items if entrypoint is of type link and the user does not have access to the attribute', async () => {
-            jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockRestore();
+            const mockExplorerLinkDataQueryEmptyResult: Mockify<typeof gqlTypes.useExplorerLinkDataQuery> = {
+                loading: false,
+                called: true,
+                refetch: jest.fn(),
+                data: {
+                    records: {
+                        list: [
+                            {
+                                id: '612694174',
+                                whoAmI: {
+                                    id: '612694174',
+                                    library: {
+                                        id: 'campaigns'
+                                    }
+                                },
+                                property: []
+                            }
+                        ]
+                    }
+                }
+            };
+
+            jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
+                () => mockExplorerLinkDataQueryEmptyResult as gqlTypes.ExplorerLinkDataQueryResult
+            );
 
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
