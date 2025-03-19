@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, GeneratedAqlQuery, literal} from 'arangojs/aql';
+import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
@@ -74,16 +74,22 @@ export default function ({
         async deleteValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
             return _saveValue(library, recordId, attribute, {...value, payload: null}, ctx);
         },
-        async isValueUnique({library, recordId, attribute, value, ctx}): Promise<boolean> {
-            const query = aql`
-                FOR r IN ${dbService.db.collection(library)} 
-                    FILTER r._key != ${recordId} && r.${attribute.id} == ${value.payload}
-                    RETURN r._key
-            `;
+        async isValueUsed({library, excludedRecordId, attribute, value, ctx}): Promise<boolean> {
+            const queryParts = [
+                aql`FOR r IN ${dbService.db.collection(library)} 
+                        FILTER r.${attribute.id} == ${value.payload}`
+            ];
+
+            if (excludedRecordId) {
+                queryParts.push(aql`FILTER r._key != ${excludedRecordId}`);
+            }
+
+            queryParts.push(aql`RETURN r._key`);
+            const query = join(queryParts);
 
             const res = await dbService.execute({query, ctx});
 
-            return !res.length;
+            return res.length > 0;
         },
         async getValues({library, recordId, attribute, ctx}): Promise<IStandardValue[]> {
             const query = aql`

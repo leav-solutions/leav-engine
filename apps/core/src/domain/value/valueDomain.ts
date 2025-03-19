@@ -29,7 +29,7 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
 import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import canSaveValue from './helpers/canSaveValue';
+import canSaveRecordValue from './helpers/canSaveRecordValue';
 import findValue from './helpers/findValue';
 import prepareValue from './helpers/prepareValue';
 import saveOneValue from './helpers/saveOneValue';
@@ -206,7 +206,7 @@ const valueDomain = function ({
             // If ValidationError, add some context about value to the error and throw it again
             if (e.type === ErrorTypes.VALIDATION_ERROR) {
                 e.context = {
-                    attributeId: attrProps.id,
+                    attribute: attrProps.id,
                     values,
                     recordId: record?.id
                 };
@@ -691,7 +691,7 @@ const valueDomain = function ({
                 canSave,
                 reason: forbiddenSaveReason,
                 fields
-            } = await canSaveValue({
+            } = await canSaveRecordValue({
                 ...valueChecksParams,
                 ctx,
                 deps: {
@@ -808,7 +808,7 @@ const valueDomain = function ({
                         };
 
                         // Check permissions
-                        const {canSave, reason: forbiddenSaveReason} = await canSaveValue({
+                        const {canSave, reason: forbiddenSaveReason} = await canSaveRecordValue({
                             ...valueChecksParams,
                             ctx,
                             deps: {

@@ -102,7 +102,11 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
                           : '';
                     if (customMessage) {
                         customMessage += ': ' + errors.map(error => error.attributeValue?.payload).join(', ');
-                        throw new ValidationError({[ctx.attribute.id]: customMessage}, customMessage, true);
+                        throw new ValidationError(
+                            {[ctx.attribute.id]: customMessage, attribute: ctx.attribute.id},
+                            customMessage,
+                            true
+                        );
                     } else {
                         const errorsByType = errors.reduce<
                             Record<Errors, {attributeValues: IValue[]; message: string}> | {}
@@ -127,7 +131,10 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
 
                         const formattedErrorMessage = errorMessage.join('\n');
 
-                        throw new ValidationError({[ctx.attribute.id]: formattedErrorMessage}, formattedErrorMessage);
+                        throw new ValidationError(
+                            {[ctx.attribute.id]: formattedErrorMessage, attribute: ctx.attribute.id},
+                            formattedErrorMessage
+                        );
                     }
                 }
             }
