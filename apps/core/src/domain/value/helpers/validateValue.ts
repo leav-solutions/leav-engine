@@ -22,7 +22,7 @@ interface IValidateValueParams {
     attributeProps: IAttribute;
     value: IValue;
     library: string;
-    recordId: string;
+    recordId?: string;
     infos?: IQueryInfos;
     keepEmpty: boolean;
     deps: {
@@ -179,23 +179,23 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
         }
     }
 
-    // Check if this value has already been registered for this attribute in this library
+    // Check if this value has already been registered for this attribute in this library execept for the given record
     if (typeof attributeProps.unique !== 'undefined' && attributeProps.unique) {
-        const isValueUnique = await deps.valueRepo.isValueUnique({
+        const isValueUsed = await deps.valueRepo.isValueUsed({
             library,
-            recordId,
+            excludedRecordId: recordId,
             attribute: attributeProps,
             value,
             ctx
         });
 
-        if (!isValueUnique) {
+        if (isValueUsed) {
             errors[attributeProps.id] = Errors.VALUE_NOT_UNIQUE;
         }
     }
 
     // Check if value ID actually exists
-    if (valueExists) {
+    if (valueExists && recordId) {
         const existingVal = await deps.valueRepo.getValueById({
             library,
             recordId,
@@ -240,6 +240,10 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
         if (!isValidLink.isValid) {
             errors[attributeProps.id] = isValidLink.reason;
         }
+    }
+
+    if (Object.keys(errors).length > 0) {
+        errors.attribute = attributeProps.id;
     }
 
     return errors;

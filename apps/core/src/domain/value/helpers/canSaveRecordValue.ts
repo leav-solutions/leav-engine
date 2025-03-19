@@ -11,13 +11,13 @@ import {ErrorFieldDetail, Errors} from '../../../_types/errors';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../../_types/permissions';
 import doesValueExist from './doesValueExist';
 
-interface ICanSaveValueRes {
+interface ICanSaveRecordValueRes {
     canSave: boolean;
     reason?: RecordAttributePermissionsActions | RecordPermissionsActions | Errors;
     fields?: ErrorFieldDetail<IValue>;
 }
 
-interface ICanSaveValueParams {
+interface ICanSaveRecordValueParams {
     attributeProps: IAttribute;
     value: IValue;
     library: string;
@@ -70,7 +70,7 @@ const _canSaveMetadata = async (
     };
 };
 
-export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> => {
+export default async (params: ICanSaveRecordValueParams): Promise<ICanSaveRecordValueRes> => {
     const {attributeProps, value, library, recordId, ctx, deps, keepEmpty = false} = params;
 
     if (attributeProps.readonly) {
@@ -80,7 +80,7 @@ export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> =>
     const valueExists = doesValueExist(value, attributeProps);
 
     // Check permission
-    const canUpdateRecord = await deps.recordPermissionDomain.getRecordPermission({
+    const canSaveRecord = await deps.recordPermissionDomain.getRecordPermission({
         action: RecordPermissionsActions.EDIT_RECORD,
         userId: ctx.userId,
         library,
@@ -88,7 +88,7 @@ export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> =>
         ctx
     });
 
-    if (!canUpdateRecord) {
+    if (!canSaveRecord) {
         return {canSave: false, reason: RecordPermissionsActions.EDIT_RECORD};
     }
 
