@@ -6,8 +6,9 @@ import {Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockLibraryWithDetails} from '_ui/__mocks__/common/library';
-import {act, fireEvent, render, screen, waitFor} from '../../_tests/testUtils';
+import {fireEvent, render, screen, waitFor} from '../../_tests/testUtils';
 import EditLibraryModal from './EditLibraryModal';
+import {act} from '@testing-library/react';
 
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
@@ -232,11 +233,14 @@ describe('EditLibraryModal', () => {
             const labelSelect = screen.getByRole('combobox', {name: /label/});
             expect(labelSelect).not.toBeDisabled();
 
-            await user.click(labelSelect);
+            await userEvent.click(labelSelect);
 
             const labelOption = screen.getByText(mockLibraryWithDetails.attributes[0].label.fr);
             expect(labelOption).toBeInTheDocument();
-            user.click(labelOption);
+
+            await act(() => {
+                labelOption.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+            });
 
             await waitFor(
                 () => {

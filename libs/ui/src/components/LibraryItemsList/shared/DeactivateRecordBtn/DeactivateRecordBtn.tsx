@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined} from '@ant-design/icons';
 import {App, Button, ButtonProps} from 'antd';
-import confirm from 'antd/lib/modal/confirm';
 import {SyntheticEvent} from 'react';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer/';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
