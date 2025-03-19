@@ -2515,7 +2515,7 @@ describe('Explorer', () => {
         });
     });
 
-    describe.only('Permissions', () => {
+    describe('Permissions', () => {
         const mockExplorerAttributesPermissionsQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
             loading: false,
             called: true,

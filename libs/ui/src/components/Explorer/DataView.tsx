@@ -14,11 +14,10 @@ import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
 import {useColumnWidth} from './useColumnWidth';
-import {RowSelectionType} from 'antd/es/table/interface';
 
 const USELESS = '';
 
-const tableHeaderHeight = 56;
+const tableRowHeight = 56;
 const tableHeaderMinLineHeight = 22;
 
 const DataViewContainerDivStyled = styled.div`
@@ -53,12 +52,19 @@ const StyledTable = styled(KitTable)`
     .ant-table-thead > tr > th {
         padding-top: calc(var(--general-spacing-xxs) * 1px) !important;
         padding-bottom: calc(var(--general-spacing-xxs) * 1px) !important;
-        height: ${tableHeaderHeight}px;
+        height: ${tableRowHeight}px;
 
         .ant-table-cell {
             min-height: ${tableHeaderMinLineHeight}px;
             height: auto !important;
             padding: 0 calc(var(--general-spacing-s) * 1px) 0 0;
+        }
+    }
+
+    .ant-table-tbody > tr {
+        .ant-table-cell {
+            min-height: ${tableRowHeight}px;
+            height: auto !important;
         }
     }
 `;
@@ -140,6 +146,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     icon={icon}
                                     onClick={callback}
                                     danger={isDanger}
+                                    size="m"
                                     disabled={typeof disabled === 'function' ? disabled(item) : disabled}
                                 >
                                     {!iconsOnlyItemActions && !iconOnly && label}

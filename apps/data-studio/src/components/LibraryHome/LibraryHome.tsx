@@ -155,27 +155,36 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 defaultActionsForItem={['edit', 'remove']}
                 defaultPrimaryActions={['create']}
                 defaultMassActions={['deactivate']}
-                itemActions={[
-                    {
-                        label: 'Test 1',
-                        icon: <FaBeer />,
-                        callback: item => console.info(1, item)
-                    }
-                ]}
-                massActions={[
-                    {
-                        icon: null,
-                        label: 'test',
-                        callback: console.log
-                    }
-                ]}
-                primaryActions={[
-                    {
-                        icon: <FaBeer />,
-                        label: 'Additional action 1',
-                        callback: () => console.info('Clicked action 1')
-                    }
-                ]}
+                itemActions={
+                    [
+                        // Example :
+                        // {
+                        //     label: 'Test 1',
+                        //     icon: <FaBeer />,
+                        //     callback: item => console.info(1, item)
+                        // }
+                    ]
+                }
+                massActions={
+                    [
+                        // Example :
+                        // {
+                        //     icon: null,
+                        //     label: 'test',
+                        //     callback: console.log
+                        // }
+                    ]
+                }
+                primaryActions={
+                    [
+                        // Example :
+                        // {
+                        //     icon: <FaBeer />,
+                        //     label: 'Additional action 1',
+                        //     callback: () => console.info('Clicked action 1')
+                        // }
+                    ]
+                }
             />
         </ExplorerContainerDivStyled>
     ) : params.has(explorerLinkQueryParamName) ? (
