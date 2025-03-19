@@ -96,14 +96,13 @@ export default function ({
                 values.map(v => v.payload)
             );
 
-            // eslint-disable-next-line no-restricted-syntax
-            console.info('Excel formula : ', finalFormula);
-
             const parser = new Parser();
 
             const {error, result} = parser.parse(finalFormula);
 
             if (error) {
+                // eslint-disable-next-line no-restricted-syntax
+                console.info('Excel formula : ', finalFormula);
                 // eslint-disable-next-line no-restricted-syntax
                 console.error('Error from Excel parser : ', error);
             }
