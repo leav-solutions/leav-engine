@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent, useRef, useState} from 'react';
 import {PlusOutlined} from '@ant-design/icons';
 import {Button} from 'antd';
 import {LibraryBehavior} from '_ui/_gqlTypes';
