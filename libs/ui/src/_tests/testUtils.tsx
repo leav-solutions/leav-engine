@@ -5,7 +5,7 @@
 import {InMemoryCache, InMemoryCacheConfig} from '@apollo/client';
 import {MockedProvider, MockedResponse} from '@apollo/client/testing';
 import {Queries, render, renderHook, RenderHookOptions, RenderOptions, RenderResult} from '@testing-library/react';
-import {KitApp} from 'aristid-ds';
+import {AntApp, KitApp} from 'aristid-ds';
 import {PropsWithChildren, ReactElement} from 'react';
 import {MemoryRouter, MemoryRouterProps} from 'react-router-dom';
 import {gqlPossibleTypes} from '_ui/gqlPossibleTypes';
@@ -41,7 +41,9 @@ const Providers = ({children, mocks, cacheSettings, routerProps}: PropsWithChild
             <MockedUserContextProvider>
                 <MockedProvider mocks={mocks} cache={mockCache} addTypename={true}>
                     <MemoryRouter {...routerProps}>
-                        <KitApp>{children ?? <></>}</KitApp>
+                        <AntApp>
+                            <KitApp>{children ?? <></>}</KitApp>
+                        </AntApp>
                     </MemoryRouter>
                 </MockedProvider>
             </MockedUserContextProvider>

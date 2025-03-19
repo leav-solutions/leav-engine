@@ -1,5 +1,0 @@
-jest-haste-map: duplicate manual mock found: index
-  The following files share their name; please delete one of them:
-    * <rootDir>/src/hooks/useLang/__mocks__/index.ts
-    * <rootDir>/src/hooks/useSharedTranslation/__mocks__/index.ts
-
