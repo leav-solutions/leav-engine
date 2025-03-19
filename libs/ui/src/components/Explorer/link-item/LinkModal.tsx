@@ -9,6 +9,7 @@ import {IEntrypointLink} from '../_types';
 import {useAddLinkMassAction} from './useAddLinkMassAction';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {useReplaceLinkMassAction} from './useReplaceLinkMassAction';
+import {LINK_RECORDS_MODAL_CLASSNAME} from '../_constants';
 
 interface ILinkModalProps {
     open: boolean;
@@ -48,6 +49,7 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({open, linkId, onL
 
     return (
         <SelectRecordForLinkModal
+            className={LINK_RECORDS_MODAL_CLASSNAME}
             open={open}
             childLibraryId={view.libraryId}
             onSelectionCompleted={isReplacement ? replaceLink : createLinks}

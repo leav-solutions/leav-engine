@@ -24,8 +24,7 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
     handleSubmit,
     readonly,
     calculatedFlags,
-    inheritedFlags,
-    setActiveValue
+    inheritedFlags
 }) => {
     if (!onChange) {
         throw Error('DSInputNumberWrapper should be used inside a antd Form.Item');
@@ -54,7 +53,6 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
 
     const _handleFocus = () => {
         setIsFocused(true);
-        setActiveValue();
     };
 
     const _handleOnBlur = async (event: FocusEvent<HTMLInputElement>) => {

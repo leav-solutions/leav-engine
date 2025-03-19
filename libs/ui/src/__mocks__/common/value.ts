@@ -21,18 +21,6 @@ export const mockModifier: IRecordPropertyModifier = {
     }
 };
 
-export const mockRecordProperty: RecordProperty = {
-    id_value: '123456',
-    created_at: 1234567890,
-    created_by: mockModifier,
-    modified_at: 1234567890,
-    modified_by: mockModifier,
-    payload: 'my payload',
-    raw_payload: 'my payload',
-    treeValue: null,
-    linkValue: null
-};
-
 export const mockRecordPropertyWithAttribute: IRecordPropertyWithAttribute = {
     attribute: {
         ...mockAttributeSimple,
