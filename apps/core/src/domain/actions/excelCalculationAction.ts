@@ -101,19 +101,13 @@ export default function ({
             const {error, result} = parser.parse(finalFormula);
 
             if (error) {
-                // eslint-disable-next-line no-restricted-syntax
-                console.info('Excel formula : ', finalFormula);
-                // eslint-disable-next-line no-restricted-syntax
-                console.error('Error from Excel parser : ', error);
-            }
-
-            if (error) {
                 return {
                     values,
                     errors: [
                         {
                             errorType: Errors.EXCEL_CALCULATION_ERROR,
-                            attributeValue: null
+                            attributeValue: null,
+                            message: `Error: ${error} in formula: -- ${finalFormula} --`
                         }
                     ]
                 };
