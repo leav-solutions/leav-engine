@@ -7,7 +7,12 @@ import {
     IEditRecordReducerActions,
     IRecordPropertyWithAttribute
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import {EDIT_RECORD_SIDEBAR_ID, LINK_FIELD_ID_PREFIX, STANDARD_FIELD_ID_PREFIX} from '_ui/constants';
+import {
+    EDIT_RECORD_SIDEBAR_ID,
+    LINK_FIELD_ID_PREFIX,
+    STANDARD_FIELD_ID_PREFIX,
+    TREE_FIELD_ID_PREFIX
+} from '_ui/constants';
 import {RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
 import {Dispatch, useEffect, useRef} from 'react';
 
@@ -19,7 +24,7 @@ interface IUseOutsideInteractionDetectorProps {
     backendValues: RecordFormElementsValue[];
     pendingValues: RecordFormElementsValue[];
     allowedSelectors?: string[];
-    attributePrefix?: typeof LINK_FIELD_ID_PREFIX | typeof STANDARD_FIELD_ID_PREFIX;
+    attributePrefix?: typeof LINK_FIELD_ID_PREFIX | typeof STANDARD_FIELD_ID_PREFIX | typeof TREE_FIELD_ID_PREFIX;
 }
 
 export const useOutsideInteractionDetector = ({

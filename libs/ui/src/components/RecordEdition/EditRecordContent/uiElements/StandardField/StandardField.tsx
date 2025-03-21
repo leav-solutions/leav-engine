@@ -24,13 +24,14 @@ import {STANDARD_FIELD_ID_PREFIX} from '_ui/constants';
 import {ComputeIndicator} from '../shared/ComputeIndicator';
 import {useOutsideInteractionDetector} from '../shared/useOutsideInteractionDetector';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+import {INPUT_MAX_HEIGHT} from '../../formConstants';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
 `;
 
 const KitFieldsWrapper = styled.div`
-    max-height: 322px;
+    max-height: ${INPUT_MAX_HEIGHT};
     overflow-y: scroll;
 `;
 

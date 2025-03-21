@@ -9,14 +9,16 @@ import {ErrorDisplay} from '../..';
 import useLang from '../../hooks/useLang';
 import {ITreeNodeWithRecord} from '../../types/trees';
 import {SelectTreeNodeContent} from './SelectTreeNodeContent';
-import {Skeleton} from 'antd';
+import {SelectTreeNodeContentSkeleton} from './SelectTreeNodeContentSkeleton';
 
 interface ISelectTreeNodeProps {
     treeId: string;
-    selectedNode?: string;
+    selectedNodes?: string[];
+    disabledNodes?: string[];
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
     onCheck?: (selection: ITreeNodeWithRecord[]) => void;
     multiple?: boolean;
+    checkable?: boolean;
     canSelectRoot?: boolean;
     selectableLibraries?: string[]; // all by default
 }
@@ -25,8 +27,10 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     treeId,
     onSelect,
     onCheck,
-    selectedNode,
+    selectedNodes,
+    disabledNodes,
     multiple = false,
+    checkable = false,
     canSelectRoot = false,
     selectableLibraries
 }) => {
@@ -37,7 +41,7 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     });
 
     if (loading) {
-        return <Skeleton.Input />; //TODO: use DS when export of KitSkeleton is fixed
+        return <SelectTreeNodeContentSkeleton />;
     }
 
     if (error) {
@@ -56,7 +60,9 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
             onCheck={onCheck}
             onSelect={onSelect}
             multiple={multiple}
-            selectedNode={selectedNode}
+            checkable={checkable}
+            selectedNodes={selectedNodes}
+            disabledNodes={disabledNodes}
             canSelectRoot={canSelectRoot}
             selectableLibraries={selectableLibraries}
         />

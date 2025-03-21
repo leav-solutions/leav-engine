@@ -9,13 +9,16 @@ import {TreeNodeChildFragment, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes
 import {defaultPaginationPageSize, ErrorDisplay} from '../..';
 import {ITreeNodeWithRecord} from '../../types/trees';
 import {KitTree} from 'aristid-ds';
+import {TreeNodeTitle} from './TreeNodeTitle';
 
 interface ISelectTreeNodeContentProps {
     treeData: {id: string; label: string};
-    selectedNode?: string;
+    selectedNodes?: string[];
+    disabledNodes?: string[];
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
     onCheck?: (selection: ITreeNodeWithRecord[]) => void;
     multiple?: boolean;
+    checkable?: boolean;
     canSelectRoot?: boolean;
     selectableLibraries?: string[]; // all by default
 }
@@ -40,6 +43,7 @@ interface ITreeMapElement extends ITreeNodeWithRecord {
     children: ITreeMapElement[];
     isShowMore?: boolean;
     selectable?: boolean;
+    disabled?: boolean;
 }
 
 interface ITreeMap {
@@ -50,8 +54,10 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     treeData: tree,
     onSelect,
     onCheck,
-    selectedNode: initSelectedNode,
+    selectedNodes: initSelectedNodes,
+    disabledNodes,
     multiple = false,
+    checkable = false,
     canSelectRoot = false,
     selectableLibraries
 }) => {
@@ -72,7 +78,8 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     const [treeMap, setTreeMap] = useState<ITreeMap>({
         [tree.id]: rootNode
     });
-    const [selectedNode, setSelectedNode] = useState<string>(initSelectedNode);
+
+    const [selectedNodes, setSelectedNodes] = useState<string[]>(initSelectedNodes);
     const [fetchError, setFetchError] = useState<string>();
     const [loadTreeContent, {error, called}] = useTreeNodeChildrenLazyQuery();
 
@@ -102,7 +109,12 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             );
 
             for (const node of formattedNodes) {
-                const nodeForTreeMap = {...node, paginationOffset: 0};
+                const nodeForTreeMap = {
+                    ...node,
+                    paginationOffset: 0,
+                    disabled: disabledNodes?.includes(node.id)
+                };
+
                 newTreeMap[nodeForTreeMap.key] = nodeForTreeMap as ITreeMapElement;
                 parentElement.paginationOffset = offset;
                 parentElement.children.push(nodeForTreeMap as ITreeMapElement);
@@ -120,7 +132,6 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                     selectable: false,
                     children: []
                 };
-
                 parentElement.children.push(showMoreElement);
             }
             setTreeMap(newTreeMap);
@@ -132,8 +143,8 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     };
 
     useEffect(() => {
-        setSelectedNode(initSelectedNode);
-    }, [initSelectedNode]);
+        setSelectedNodes(initSelectedNodes);
+    }, [initSelectedNodes]);
 
     useEffect(() => {
         // Load root
@@ -193,14 +204,26 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         <KitTree
             defaultExpandedKeys={[tree.id]} // TODO: Should be selectedNode but more changes are needed
             multiple={multiple}
-            selectable={true}
-            selectedKeys={[selectedNode]}
+            selectedKeys={selectedNodes}
+            checkedKeys={selectedNodes}
+            titleRender={node => {
+                const dataNode = node as ITreeMapElement;
+
+                return (
+                    <TreeNodeTitle
+                        title={dataNode.title}
+                        checkable={checkable}
+                        isSelected={selectedNodes?.includes(dataNode.id)}
+                        isDisabled={disabledNodes?.includes(dataNode.id)}
+                    />
+                );
+            }}
             onSelect={_handleSelect}
             onCheck={_handleCheck}
             treeData={treeData}
             loadData={_handleLoadData}
             checkStrictly
-            checkable={multiple}
+            checkable={checkable}
         />
     );
 };

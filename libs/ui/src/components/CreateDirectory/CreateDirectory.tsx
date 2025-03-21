@@ -148,7 +148,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
                         <SelectTreeNode
                             treeId={treeId}
                             onSelect={onSelectPath}
-                            selectedNode={selectedNodeKey}
+                            selectedNodes={[selectedNodeKey]}
                             canSelectRoot
                             selectableLibraries={[libraryId]}
                         />
