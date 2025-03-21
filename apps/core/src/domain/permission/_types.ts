@@ -54,7 +54,7 @@ export interface IGetPermissionByUserGroupsParams {
     userGroupsPaths: TreePaths[];
     applyTo?: string;
     permissionTreeTarget?: IPermissionsTreeTarget;
-    getDefaultPermission?: () =>  Promise<boolean> | boolean;
+    getDefaultPermission?: () => Promise<boolean> | boolean;
     ctx: IQueryInfos;
 }
 
@@ -89,7 +89,7 @@ export interface IGetTreeLibraryPermissionParams {
     treeId: string;
     libraryId: string;
     userId: string;
-    getDefaultPermission?: (params?: IGetDefaultTreeLibraryPermissionParams) => boolean | null;
+    getDefaultPermission?: (params?: IGetDefaultTreeLibraryPermissionParams) => Promise<boolean> | boolean;
     ctx: IQueryInfos;
 }
 

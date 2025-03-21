@@ -57,29 +57,28 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
     }): Promise<boolean> => {
         const {type, action, applyTo, userGroupsPaths, permTreeId, permTreeValues, getDefaultPermission, ctx} = params;
 
-        if (permTreeValues.length) {
-            // Get permissions for all values, then check if we're allowed somewhere
-            const allValuesPermissions = await Promise.all(
-                permTreeValues.map(
-                    // Permissions for each values of tree attribute
-                    (value): Promise<boolean> =>
-                        permByUserGroupsHelper.getPermissionByUserGroups({
-                            type,
-                            action,
-                            userGroupsPaths,
-                            applyTo,
-                            permissionTreeTarget: {
-                                nodeId: value, //pathElem.id,
-                                tree: permTreeId
-                            },
-                            getDefaultPermission,
-                            ctx
-                        })
-                )
-            );
+        // Get permissions for all values, then check if we're allowed somewhere
+        const allValuesPermissions = await Promise.all(
+            // if there is no values, we get the tree target root permission
+            (permTreeValues.length ? permTreeValues : [null]).map(
+                // Permissions for each values of tree attribute
+                (value): Promise<boolean> =>
+                    permByUserGroupsHelper.getPermissionByUserGroups({
+                        type,
+                        action,
+                        userGroupsPaths,
+                        applyTo,
+                        permissionTreeTarget: {
+                            nodeId: value,
+                            tree: permTreeId
+                        },
+                        getDefaultPermission,
+                        ctx
+                    })
+            )
+        );
 
-            return reducePermissionsArrayHelper.reducePermissionsArray(allValuesPermissions);
-        }
+        return reducePermissionsArrayHelper.reducePermissionsArray(allValuesPermissions);
     };
 
     const getTreeBasedPermission = async (
@@ -97,54 +96,54 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             return values.length ? acc + `${acc.length ? '_' : ''}${values.join('_')}` : acc;
         }, '');
 
-        const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, key);
-        const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
+        // disable cache temporary: const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, key);
+        // disable cache temporary: const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
         let perm: boolean;
 
-        if (permFromCache !== null) {
+        /* disable cache temporary: if (permFromCache !== null) {
             perm = permFromCache === 'true';
-        } else {
-            const userGroupsPaths = !!ctx.groupsId
-                ? await Promise.all(
-                      ctx.groupsId.map(async groupId =>
-                          elementAncestorsHelper.getCachedElementAncestors({
-                              treeId: 'users_groups',
-                              nodeId: groupId,
-                              ctx
-                          })
-                      )
+        } else { */
+        const userGroupsPaths = !!ctx.groupsId
+            ? await Promise.all(
+                  ctx.groupsId.map(async groupId =>
+                      elementAncestorsHelper.getCachedElementAncestors({
+                          treeId: 'users_groups',
+                          nodeId: groupId,
+                          ctx
+                      })
                   )
-                : [];
+              )
+            : [];
 
-            const treePerms = await Promise.all(
-                permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
-                    const permTreeAttrProps = await attributeDomain.getAttributeProperties({id: permTreeAttr, ctx});
+        const treePerms = await Promise.all(
+            permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
+                const permTreeAttrProps = await attributeDomain.getAttributeProperties({id: permTreeAttr, ctx});
 
-                    return _getPermTreePermission({
-                        type,
-                        action,
-                        applyTo,
-                        userGroupsPaths,
-                        permTreeId: permTreeAttrProps.linked_tree,
-                        permTreeValues: treeValues[permTreeAttr],
-                        getDefaultPermission: () => getDefaultPermission({action, applyTo, userId}),
-                        ctx
-                    });
-                })
-            );
+                return _getPermTreePermission({
+                    type,
+                    action,
+                    applyTo,
+                    userGroupsPaths,
+                    permTreeId: permTreeAttrProps.linked_tree,
+                    permTreeValues: treeValues[permTreeAttr],
+                    getDefaultPermission: () => getDefaultPermission({action, applyTo, userId}),
+                    ctx
+                });
+            })
+        );
 
-            perm = treePerms.reduce((globalPerm, treePerm) => {
-                if (globalPerm === null) {
-                    return treePerm;
-                }
+        perm = treePerms.reduce((globalPerm, treePerm) => {
+            if (globalPerm === null) {
+                return treePerm;
+            }
 
-                return permissions_conf.relation === PermissionsRelations.AND
-                    ? globalPerm && treePerm
-                    : globalPerm || treePerm;
-            }, null);
+            return permissions_conf.relation === PermissionsRelations.AND
+                ? globalPerm && treePerm
+                : globalPerm || treePerm;
+        }, null);
 
-            await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: perm.toString()});
-        }
+        // disable cache temporary: await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: perm.toString()});
+        // }
 
         return perm;
     };

@@ -18,7 +18,7 @@ interface IGetGlobalPermissionParams {
     applyTo?: string;
     userId: string;
     action: PermissionsActions;
-    getDefaultPermission?: (params?: IGetDefaultGlobalPermissionParams) => boolean;
+    getDefaultPermission?: (params?: IGetDefaultGlobalPermissionParams) => Promise<boolean> | boolean;
 }
 
 interface IGetInheritedGlobalPermissionParams {
@@ -64,35 +64,36 @@ export default function ({
             {type, applyTo, userId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
             ctx
         ): Promise<boolean> {
-            const cacheKey = getPermissionCacheKey(ctx.groupsId ?? null, type, applyTo, action, '');
-            const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
+            // disable cache temporary: const cacheKey = getPermissionCacheKey(ctx.groupsId ?? null, type, applyTo, action, '');
+            // disable cache temporary: const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
             let perm: boolean;
 
-            if (permFromCache !== null) {
+            /* disable cache temporary: if (permFromCache !== null) {
                 perm = permFromCache === 'true';
-            } else {
-                const userGroupsPaths = !!ctx.groupsId
-                    ? await Promise.all(
-                          ctx.groupsId.map(async groupId =>
-                              treeRepo.getElementAncestors({
-                                  treeId: 'users_groups',
-                                  nodeId: groupId,
-                                  ctx
-                              })
-                          )
+            } else {*/
+            const userGroupsPaths = !!ctx.groupsId
+                ? await Promise.all(
+                      ctx.groupsId.map(async groupId =>
+                          treeRepo.getElementAncestors({
+                              treeId: 'users_groups',
+                              nodeId: groupId,
+                              ctx
+                          })
                       )
-                    : [];
+                  )
+                : [];
 
-                perm = await permByUserGroupsHelper.getPermissionByUserGroups({
-                    type,
-                    action,
-                    userGroupsPaths,
-                    applyTo,
-                    ctx
-                });
+            perm = await permByUserGroupsHelper.getPermissionByUserGroups({
+                type,
+                action,
+                userGroupsPaths,
+                applyTo,
+                getDefaultPermission,
+                ctx
+            });
 
-                await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: perm.toString()});
-            }
+            // disable cache temporary: await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: perm.toString()});
+            // }
 
             return perm;
         },
@@ -112,6 +113,7 @@ export default function ({
                 action,
                 userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
                 applyTo,
+                getDefaultPermission,
                 ctx
             });
         }

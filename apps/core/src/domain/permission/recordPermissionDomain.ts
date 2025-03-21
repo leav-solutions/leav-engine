@@ -119,7 +119,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
             permTreeNode,
             ctx
         }): Promise<boolean> {
-            const _getDefaultPermission = async (params: IGetDefaultPermissionParams) =>
+            const _getDefaultPermission = (params: IGetDefaultPermissionParams) =>
                 permByUserGroupHelper.getPermissionByUserGroups({
                     type: PermissionTypes.LIBRARY,
                     action,
