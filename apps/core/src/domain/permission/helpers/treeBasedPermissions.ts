@@ -8,11 +8,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {TreePaths} from '_types/tree';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsActions, PermissionsRelations, PermissionTypes} from '../../../_types/permissions';
-import {
-    IGetInheritedTreeBasedPermissionParams,
-    IGetTreeBasedPermissionParams,
-    PERMISSIONS_NULL_PLACEHOLDER
-} from '../_types';
+import {IGetInheritedTreeBasedPermissionParams, IGetTreeBasedPermissionParams} from '../_types';
 import {IDefaultPermissionHelper} from './defaultPermission';
 import getPermissionCacheKey from './getPermissionCacheKey';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
@@ -56,73 +52,34 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
         userGroupsPaths: TreePaths[];
         permTreeId: string;
         permTreeValues: string[];
+        getDefaultPermission: () => Promise<boolean> | boolean;
         ctx: IQueryInfos;
-    }): Promise<boolean | null> => {
-        const {type, action, applyTo, userGroupsPaths, permTreeId, permTreeValues, ctx} = params;
+    }): Promise<boolean> => {
+        const {type, action, applyTo, userGroupsPaths, permTreeId, permTreeValues, getDefaultPermission, ctx} = params;
 
         if (permTreeValues.length) {
             // Get permissions for all values, then check if we're allowed somewhere
             const allValuesPermissions = await Promise.all(
                 permTreeValues.map(
                     // Permissions for each values of tree attribute
-                    async (value): Promise<boolean | null> => {
-                        // const permTreePath = await elementAncestorsHelper.getCachedElementAncestors({
-                        //     // Ancestors of value
-                        //     treeId: permTreeId,
-                        //     nodeId: value,
-                        //     ctx
-                        // });
-
-                      //  let perm: boolean | null = null;
-                        // for (const pathElem of permTreePath.reverse()) { //  reverse ??
-                            const valuePerm = await permByUserGroupsHelper.getPermissionByUserGroups({
-                                type,
-                                action,
-                                userGroupsPaths,
-                                applyTo,
-                                permissionTreeTarget: {
-                                    nodeId: value, //pathElem.id,
-                                    tree: permTreeId
-                                },
-                                ctx
-                            });
-
-                            return valuePerm;
-
-                            // if (valuePerm !== null) {
-                            //     perm = valuePerm;
-                            //     console.log('value', value, 'perm', perm);
-                            //     break;
-                            // }
-                        // }
-
-                       // return perm;
-                    }
+                    (value): Promise<boolean> =>
+                        permByUserGroupsHelper.getPermissionByUserGroups({
+                            type,
+                            action,
+                            userGroupsPaths,
+                            applyTo,
+                            permissionTreeTarget: {
+                                nodeId: value, //pathElem.id,
+                                tree: permTreeId
+                            },
+                            getDefaultPermission,
+                            ctx
+                        })
                 )
             );
 
-            // Looks for a true somewhere, but keeps null if everything is null
-            const perm = reducePermissionsArrayHelper.reducePermissionsArray(allValuesPermissions);
-
-            if (perm !== null) {
-                return perm;
-            }
+            return reducePermissionsArrayHelper.reducePermissionsArray(allValuesPermissions);
         }
-
-        // Nothing found on tree or no value defined, return root level permission
-        const rootPerm = await permByUserGroupsHelper.getPermissionByUserGroups({
-            type,
-            action,
-            userGroupsPaths,
-            applyTo,
-            permissionTreeTarget: {
-                nodeId: null,
-                tree: permTreeId
-            },
-            ctx
-        });
-
-        return rootPerm;
     };
 
     const getTreeBasedPermission = async (
@@ -142,14 +99,10 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
 
         const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, key);
         const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
-        let perm: boolean | null;
+        let perm: boolean;
 
         if (permFromCache !== null) {
-            if (permFromCache === PERMISSIONS_NULL_PLACEHOLDER) {
-                perm = null;
-            } else {
-                perm = permFromCache === 'true';
-            }
+            perm = permFromCache === 'true';
         } else {
             const userGroupsPaths = !!ctx.groupsId
                 ? await Promise.all(
@@ -166,17 +119,17 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             const treePerms = await Promise.all(
                 permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
                     const permTreeAttrProps = await attributeDomain.getAttributeProperties({id: permTreeAttr, ctx});
-                    const treePerm = await _getPermTreePermission({
+
+                    return _getPermTreePermission({
                         type,
                         action,
                         applyTo,
                         userGroupsPaths,
                         permTreeId: permTreeAttrProps.linked_tree,
                         permTreeValues: treeValues[permTreeAttr],
+                        getDefaultPermission: () => getDefaultPermission({action, applyTo, userId}),
                         ctx
                     });
-
-                    return treePerm ?? getDefaultPermission({action, applyTo, userId});
                 })
             );
 
@@ -190,8 +143,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                     : globalPerm || treePerm;
             }, null);
 
-            const permToStore = perm === null ? PERMISSIONS_NULL_PLACEHOLDER : perm.toString();
-            await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: permToStore});
+            await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: perm.toString()});
         }
 
         return perm;
@@ -210,47 +162,15 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             ctx
         });
 
-        const parentPerm = await permByUserGroupsHelper.getPermissionByUserGroups({
+        return permByUserGroupsHelper.getPermissionByUserGroups({
             type,
             action,
             userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
             applyTo,
             permissionTreeTarget,
+            getDefaultPermission: () => getDefaultPermission({action, applyTo, userGroups: [groupAncestors]}),
             ctx
         });
-
-        if (parentPerm !== null) {
-            return parentPerm;
-        }
-
-        const treeElemAncestors = await elementAncestorsHelper.getCachedElementAncestors({
-            treeId: permissionTreeTarget.tree,
-            nodeId: permissionTreeTarget.nodeId,
-            ctx
-        });
-
-        const perm = await _getPermTreePermission({
-            type,
-            action,
-            applyTo,
-            userGroupsPaths: [groupAncestors],
-            permTreeId: permissionTreeTarget.tree,
-            permTreeValues: treeElemAncestors.map(anc => anc.id),
-            ctx
-        });
-
-        if (perm !== null) {
-            return perm;
-        }
-
-        // Nothing found? Return library permission
-        const libPerm = await getDefaultPermission({
-            action,
-            applyTo,
-            userGroups: [groupAncestors]
-        });
-
-        return libPerm !== null ? libPerm : defaultPermHelper.getDefaultPermission();
     };
 
     return {

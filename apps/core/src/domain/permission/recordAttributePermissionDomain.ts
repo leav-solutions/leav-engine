@@ -121,19 +121,14 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
             {action, attributeId, userGroupId, permTree, permTreeNode},
             ctx: IQueryInfos
         ): Promise<boolean> {
-            const _getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
-                const {applyTo, userGroups} = params;
-
-                const libPerm = await permByUserGroupsHelper.getPermissionByUserGroups({
+            const _getDefaultPermission = async (params: IGetDefaultPermissionParams) =>
+                permByUserGroupsHelper.getPermissionByUserGroups({
                     type: PermissionTypes.ATTRIBUTE,
                     action,
-                    userGroupsPaths: userGroups,
-                    applyTo,
+                    userGroupsPaths: params.userGroups,
+                    applyTo: params.applyTo,
                     ctx
                 });
-
-                return libPerm !== null ? libPerm : defaultPermHelper.getDefaultPermission();
-            };
 
             return treeBasedPermissionsHelper.getInheritedTreeBasedPermission(
                 {

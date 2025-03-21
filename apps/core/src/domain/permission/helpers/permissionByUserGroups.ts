@@ -8,6 +8,7 @@ import {ISimplePermissionHelper} from './simplePermission';
 import {IDefaultPermissionHelper} from './defaultPermission';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {ITreeNode} from '../../../_types/tree';
+import {IPermissionsTreeTarget} from '../../../_types/permissions';
 
 interface IDeps {
     'core.domain.permission.helpers.simplePermission': ISimplePermissionHelper;
@@ -18,7 +19,7 @@ interface IDeps {
 }
 
 export interface IPermissionByUserGroupsHelper {
-    getPermissionByUserGroups: (params: IGetPermissionByUserGroupsParams) => Promise<boolean | null>;
+    getPermissionByUserGroups: (params: IGetPermissionByUserGroupsParams) => Promise<boolean>;
 }
 
 export default function (deps: IDeps): IPermissionByUserGroupsHelper {
@@ -36,86 +37,59 @@ export default function (deps: IDeps): IPermissionByUserGroupsHelper {
             userGroupsPaths,
             applyTo = null,
             permissionTreeTarget = null,
+            getDefaultPermission = defaultPermHelper.getDefaultPermission,
             ctx
-        }: IGetPermissionByUserGroupsParams): Promise<boolean | null> {
-            // Used to retrieve permission for root level ("all users")
-            const _getRootPermission = (treeTarget) =>
-                simplePermHelper.getSimplePermission({
-                    type,
-                    applyTo,
-                    action,
-                    usersGroupNodeId: null,
-                    permissionTreeTarget: treeTarget,
-                    ctx
-                });
-
+        }: IGetPermissionByUserGroupsParams): Promise<boolean> {
             let permTreePath: ITreeNode[] = null;
             if (permissionTreeTarget) {
-                permTreePath = (await elementAncestorsHelper.getCachedElementAncestors({
-                    // Ancestors of value
-                    treeId: permissionTreeTarget.tree,
-                    nodeId: permissionTreeTarget.nodeId,
-                    ctx
-                })).reverse();
+                permTreePath = (
+                    await elementAncestorsHelper.getCachedElementAncestors({
+                        treeId: permissionTreeTarget.tree,
+                        nodeId: permissionTreeTarget.nodeId,
+                        ctx
+                    })
+                ).reverse();
             }
 
-            // Retrieve permission for each user group.
-            // If user has no group, retrieve permission for root level ("all users")
-            const userPerms = userGroupsPaths.length
-                ? await Promise.all(
-                      userGroupsPaths.map(async (userGroupPath): Promise<boolean | null> => {
-                          let userGroupPermission: boolean | null = null;
+            // we reverse to have group paths from current user groups to the added root group
+            userGroupsPaths = userGroupsPaths.length
+                ? userGroupsPaths.map(path => [...path.reverse(), {id: null}])
+                : [[{id: null}]];
 
-                          const checkPermission = async (treeTargetPath: ITreeNode[] | null) => {
-                              if (userGroupPath.length) {
-                                  for (const groupNode of userGroupPath) {
+            const getPermission = async (
+                userGroupPath: ITreeNode[],
+                treeTargetPath: ITreeNode[] | null
+            ): Promise<boolean> => {
+                for (const groupNode of userGroupPath) {
+                    const groupNodePermission = await simplePermHelper.getSimplePermission({
+                        type,
+                        applyTo,
+                        action,
+                        usersGroupNodeId: groupNode.id,
+                        ...(!!treeTargetPath && {
+                            permissionTreeTarget: {
+                                tree: permissionTreeTarget.tree,
+                                nodeId: treeTargetPath[0]?.id ?? null
+                            }
+                        }),
+                        ctx
+                    });
 
-                                      // Check if this group node has a permission defined on it
-                                      const groupNodePermission = await simplePermHelper.getSimplePermission({
-                                          type,
-                                          applyTo,
-                                          action,
-                                          usersGroupNodeId: groupNode.id,
-                                          ...(!!treeTargetPath && {permissionTreeTarget: {tree: permissionTreeTarget.tree, nodeId: treeTargetPath[0]?.id ?? null}}),
-                                          ctx
-                                      });
+                    if (groupNodePermission !== null) {
+                        return groupNodePermission;
+                    }
+                }
 
+                if (treeTargetPath?.length) {
+                    return getPermission(userGroupPath, treeTargetPath.slice(1));
+                }
 
-                                      // We stop on the first group node with a permission defined (null == inherited)
-                                      if (groupNodePermission !== null) {
-                                          userGroupPermission = groupNodePermission;
-                                          break;
-                                      }
-                                  }
-                              }
+                return getDefaultPermission();
+            };
 
-                              if (userGroupPermission === null) {
-                                  if (treeTargetPath?.length) {
-                                      return checkPermission(treeTargetPath.slice(1));
-                                  } else if (!!treeTargetPath && !treeTargetPath.length) {
-                                      // FIXME: après ?? call libraryPermissionDomain.getLibraryPermission ou prend defaultPermission en params car ça dépend du context
-                                      userGroupPermission = await _getRootPermission({tree: permissionTreeTarget.tree, nodeId: null}) ?? defaultPermHelper.getDefaultPermission();
-                                  } else {
-                                      userGroupPermission = await _getRootPermission(permissionTreeTarget) ?? defaultPermHelper.getDefaultPermission();
-                                  }
-                              }
-
-                              return userGroupPermission;
-                          };
-
-                          // if (userGroupPath.length) {
-                              await checkPermission(permTreePath);
-                          // }
-
-                          // If no permission was found on any group, retrieve permission for root level ("all users")
-                          // if (userGroupPermission === null) {
-                          //     userGroupPermission = await _getRootPermission();
-                          // }
-
-                          return userGroupPermission;
-                      })
-                  )
-                : [await _getRootPermission(permissionTreeTarget) ?? defaultPermHelper.getDefaultPermission()]; // TODO: à vérifier l'ajout du ??
+            const userPerms = await Promise.all(
+                userGroupsPaths.map(userGroupPath => getPermission(userGroupPath, permTreePath))
+            );
 
             // The user may have multiple groups with different permissions. We must reduce them to a single permission
             return reducePermissionsArrayHelper.reducePermissionsArray(userPerms);

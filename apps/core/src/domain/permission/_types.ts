@@ -54,6 +54,7 @@ export interface IGetPermissionByUserGroupsParams {
     userGroupsPaths: TreePaths[];
     applyTo?: string;
     permissionTreeTarget?: IPermissionsTreeTarget;
+    getDefaultPermission?: () =>  Promise<boolean> | boolean;
     ctx: IQueryInfos;
 }
 
