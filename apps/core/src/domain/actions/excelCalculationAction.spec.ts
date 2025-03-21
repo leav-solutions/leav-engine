@@ -145,7 +145,8 @@ describe('excelCalculationAction', () => {
             errors: [
                 {
                     errorType: Errors.EXCEL_CALCULATION_ERROR,
-                    attributeValue: null
+                    attributeValue: null,
+                    message: 'Error: #NAME? in formula: -- UNKNOWN --'
                 }
             ],
             values: []
