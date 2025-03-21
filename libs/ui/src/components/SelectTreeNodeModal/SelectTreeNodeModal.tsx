@@ -69,7 +69,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
             <SelectTreeNode
                 treeId={treeId}
                 onSelect={_onSelect}
-                selectedNode={selectedNode?.key}
+                selectedNodes={[selectedNode?.key]}
                 canSelectRoot={canSelectRoot}
             />
         </KitModal>

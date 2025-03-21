@@ -12,6 +12,8 @@
         "or": "or",
         "details": "Details",
         "select": "Select",
+        "replace": "Replace",
+        "add": "Add",
         "edit": "Edit",
         "delete": "Delete",
         "duplicate": "Duplicate",

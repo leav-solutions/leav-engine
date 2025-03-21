@@ -54,3 +54,5 @@ export const EDIT_RECORD_SIDEBAR_ID = 'edit_record_sidebar';
 export const STANDARD_FIELD_ID_PREFIX = 'standardfield-';
 
 export const LINK_FIELD_ID_PREFIX = 'linkfield-';
+
+export const TREE_FIELD_ID_PREFIX = 'treefield-';

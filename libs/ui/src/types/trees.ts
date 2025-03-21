@@ -9,6 +9,7 @@ export interface ITreeNode {
     id: string;
     key: string | null;
     children: ITreeNode[];
+    disabled?: boolean;
 }
 
 export interface ITreeNodeWithRecord extends ITreeNode {

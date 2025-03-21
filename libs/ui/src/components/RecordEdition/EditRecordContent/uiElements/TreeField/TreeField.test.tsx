@@ -1,242 +1,215 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ICommonFieldsSettings} from '@leav/utils';
-import userEvent from '@testing-library/user-event';
+import {render, screen} from '_ui/_tests/testUtils';
+import TreeField from './TreeField';
+import {useDisplayTreeNode} from './display-tree-node/useDisplayTreeNode';
+import {useManageTreeNodeSelection} from './manage-tree-node-selection/useManageTreeNodeSelection';
+import {AntForm} from 'aristid-ds';
 import {
-    EditRecordReducerActionsTypes,
-    initialState
-} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
-import * as useRefreshFieldValues from '_ui/hooks/useRefreshFieldValues/useRefreshFieldValues';
-import {RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
-import {act, ICustomRenderOptions, render, screen, waitFor, within} from '_ui/_tests/testUtils';
-import {mockAttributeTree} from '_ui/__mocks__/common/attribute';
-import {mockFormElementTree, mockTreeValueA} from '_ui/__mocks__/common/form';
-import {mockRecord} from '_ui/__mocks__/common/record';
-import {mockTreeRecord} from '_ui/__mocks__/common/treeElements';
-import TreeField from '.';
+    CalculatedFlags,
+    computeCalculatedFlags,
+    computeInheritedFlags,
+    InheritedFlags
+} from '../shared/calculatedInheritedFlags';
+import {FormInstance} from 'antd';
+import {mockFormElementTree} from '_ui/__mocks__/common/form';
 import {RecordEditionContext} from '../../hooks/useRecordEditionContext';
-import {
-    APICallStatus,
-    DeleteMultipleValuesFunc,
-    DeleteValueFunc,
-    IFormElementProps,
-    ISubmitMultipleResult,
-    SubmitValueFunc
-} from '../../_types';
+import {mockRecord} from '_ui/__mocks__/common/record';
+import {MockedLangContextProvider} from '_ui/testing';
+import {initialState} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+import {RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
+import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 
-jest.mock('_ui/components/SelectTreeNode', () => ({
-    SelectTreeNode: () => <div>SelectTreeNode</div>
+const mockInitialState = {...initialState};
+const mockedUseFormInstance = AntForm.useFormInstance as jest.MockedFunction<typeof AntForm.useFormInstance>;
+const mockedUseDisplayTreeNode = useDisplayTreeNode as jest.MockedFunction<typeof useDisplayTreeNode>;
+const mockedUseManageTreeNodeSelection = useManageTreeNodeSelection as jest.MockedFunction<
+    typeof useManageTreeNodeSelection
+>;
+const mockedComputeCalculatedFlags = computeCalculatedFlags as jest.MockedFunction<typeof computeCalculatedFlags>;
+const mockedComputeInheritedFlags = computeInheritedFlags as jest.MockedFunction<typeof computeInheritedFlags>;
+
+jest.mock('./display-tree-node/useDisplayTreeNode', () => ({
+    useDisplayTreeNode: jest.fn()
 }));
 
-// To skip ellipsis in RecordCard, which is not very predictable during tests (sometimes only render "...")
-jest.mock(
-    'antd/lib/typography/Paragraph',
-    () =>
-        function Paragraph({children}) {
-            return <div>{children}</div>;
-        }
-);
+jest.mock('./manage-tree-node-selection/useManageTreeNodeSelection', () => ({
+    useManageTreeNodeSelection: jest.fn()
+}));
+
+jest.mock('../shared/calculatedInheritedFlags', () => ({
+    computeCalculatedFlags: jest.fn(),
+    computeInheritedFlags: jest.fn()
+}));
+
+jest.mock('../shared/useOutsideInteractionDetector', () => ({
+    useOutsideInteractionDetector: jest.fn()
+}));
+
+jest.mock('aristid-ds', () => ({
+    ...jest.requireActual('aristid-ds'),
+    AntForm: {
+        Item: ({children, ...props}: any) => (
+            <div data-testid="form-item" {...props}>
+                {children}
+            </div>
+        ),
+        useFormInstance: jest.fn()
+    }
+}));
+
+jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+    state: mockInitialState,
+    dispatch: jest.fn()
+}));
 
 describe('TreeField', () => {
-    window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    const mockEditRecordDispatch = jest.fn();
-    jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
-        state: initialState,
-        dispatch: mockEditRecordDispatch
-    }));
-
-    jest.spyOn(useRefreshFieldValues, 'default').mockImplementation(() => ({
-        fetchValues: jest.fn().mockResolvedValue([])
-    }));
-
-    const mockSubmitRes: ISubmitMultipleResult = {
-        status: APICallStatus.SUCCESS,
-        values: [
-            {
-                ...(mockTreeValueA as RecordFormElementsValueTreeValue),
-                id_value: '987655',
-                version: null,
-                attribute: {...mockAttributeTree, system: false},
-                metadata: null
+    const treeFieldDefaultProps = {
+        element: {
+            ...mockFormElementTree,
+            settings: {
+                ...mockFormElementTree.settings,
+                label: {fr: 'arbre', en: 'tree'}
+            },
+            attribute: {
+                ...(mockFormElementTree.attribute as RecordFormAttributeTreeAttributeFragment),
+                multiple_values: false
             }
-        ]
-    };
-    const mockHandleSubmit: SubmitValueFunc = jest.fn(async () => mockSubmitRes);
-    const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
-
-    const mockHandleDeleteMultipleValues: DeleteMultipleValuesFunc = jest
-        .fn()
-        .mockReturnValue({status: APICallStatus.SUCCESS});
-
-    const baseProps = {
-        onValueSubmit: mockHandleSubmit,
-        onValueDelete: mockHandleDelete,
-        onDeleteMultipleValues: mockHandleDeleteMultipleValues
+        },
+        readonly: false,
+        formIdToLoad: 'creation',
+        onValueSubmit: jest.fn(),
+        onValueDelete: jest.fn(),
+        onDeleteMultipleValues: jest.fn(),
+        metadataEdit: false
     };
 
-    const _renderTreeField = (
-        props: Partial<IFormElementProps<ICommonFieldsSettings>>,
-        renderOptions?: ICustomRenderOptions
-    ) => {
-        const allProps = {
-            ...baseProps,
-            ...(props as IFormElementProps<ICommonFieldsSettings>)
-        };
+    const recordEditionContextDefaultProps = {
+        record: mockRecord,
+        readOnly: true,
+        elements: null
+    };
 
-        return render(
-            <RecordEditionContext.Provider
-                value={{
-                    record: mockRecord,
-                    readOnly: false,
-                    elements: null
-                }}
-            >
-                <TreeField {...allProps} />
-            </RecordEditionContext.Provider>,
-            renderOptions
+    const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
+        isCalculatedValue: false,
+        isCalculatedOverrideValue: false,
+        isCalculatedNotOverrideValue: false,
+        calculatedValue: null
+    };
+
+    const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
+        isInheritedValue: false,
+        isInheritedOverrideValue: false,
+        isInheritedNotOverrideValue: false,
+        inheritedValue: null
+    };
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+
+        Object.assign(mockInitialState, initialState);
+
+        mockedUseFormInstance.mockReturnValue({
+            getFieldError: jest.fn().mockReturnValue([])
+        } as unknown as FormInstance);
+
+        mockedComputeCalculatedFlags.mockReturnValue(calculatedFlagsWithoutCalculatedValue);
+        mockedComputeInheritedFlags.mockReturnValue(inheritedFlagsWithoutInheritedValue);
+
+        mockedUseDisplayTreeNode.mockReturnValue({
+            TreeNodeList: <div data-testid="tree-node-list">Tree Node List</div>
+        } as any);
+
+        mockedUseManageTreeNodeSelection.mockReturnValue({
+            openModal: jest.fn(),
+            removeTreeNode: jest.fn(),
+            actionButtonLabel: 'Select Tree Node',
+            SelectTreeNodeModal: <div data-testid="select-tree-node-modal">Select Tree Node Modal</div>,
+            RemoveAllTreeNodes: <div data-testid="remove-all-tree-nodes">Remove All Tree Nodes</div>
+        } as any);
+    });
+
+    it('should render with default props', () => {
+        render(
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...treeFieldDefaultProps} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
         );
-    };
 
-    beforeEach(() => jest.clearAllMocks());
-
-    test('If no values, display "add values" button', async () => {
-        _renderTreeField({
-            element: {...mockFormElementTree, values: []}
-        });
-
-        expect(screen.getByRole('button', {name: /add/})).toBeInTheDocument();
+        expect(screen.getByTestId('tree-node-list')).toBeInTheDocument();
+        expect(screen.getByTestId('select-tree-node-modal')).toBeInTheDocument();
+        expect(screen.getByTestId('remove-all-tree-nodes')).toBeInTheDocument();
+        expect(screen.getByText('Select Tree Node')).toBeInTheDocument();
     });
 
-    test('If multiple values, can add a new value', async () => {
-        _renderTreeField({
-            element: {
-                ...mockFormElementTree,
-                attribute: {...mockFormElementTree.attribute, multiple_values: true}
-            }
-        });
+    it('should call useManageTreeNodeSelection with default props', () => {
+        render(
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...treeFieldDefaultProps} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
+        );
 
-        const addValueBtn = screen.getByRole('button', {name: /add/});
-        expect(addValueBtn).toBeInTheDocument();
+        expect(mockedUseManageTreeNodeSelection).toHaveBeenCalled();
 
-        userEvent.click(addValueBtn);
+        const callArgs = mockedUseManageTreeNodeSelection.mock.calls[0][0];
 
-        await waitFor(() => {
-            expect(screen.getByText('SelectTreeNode')).toBeInTheDocument();
-        });
+        expect(callArgs.modaleTitle).toBe('arbre');
+        expect(callArgs.attribute).toBe(treeFieldDefaultProps.element.attribute);
+        expect(callArgs.backendValues).toEqual(mockFormElementTree.values);
+        expect(callArgs.isReadOnly).toBe(false);
+        expect(callArgs.isFieldInError).toBe(false);
     });
 
-    test('If readonly attribute, cannot add a new value', async () => {
-        _renderTreeField({
-            element: {
-                ...mockFormElementTree,
-                attribute: {...mockFormElementTree.attribute, multiple_values: true, readonly: true}
-            }
-        });
+    it('should call useDisplayTreeNode with default props', () => {
+        render(
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...treeFieldDefaultProps} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
+        );
 
-        expect(screen.queryByRole('button', {name: /add/})).not.toBeInTheDocument();
+        expect(mockedUseDisplayTreeNode).toHaveBeenCalled();
+
+        const callArgs = mockedUseDisplayTreeNode.mock.calls[0][0];
+
+        expect(callArgs.attribute).toBe(treeFieldDefaultProps.element.attribute);
+        expect(callArgs.backendValues).toEqual(mockFormElementTree.values);
+        expect(typeof callArgs.removeTreeNode).toBe('function');
     });
 
-    test('If not multiple values, cannot add a new value', async () => {
-        _renderTreeField({
-            element: {
-                ...mockFormElementTree,
-                attribute: {...mockFormElementTree.attribute, multiple_values: false}
-            }
-        });
+    it('should call useManageTreeNodeSelection with isReadOnly to true', () => {
+        render(
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...treeFieldDefaultProps} readonly={true} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
+        );
 
-        expect(screen.queryByRole('button', {name: /add/})).not.toBeInTheDocument();
+        const callArgs = mockedUseManageTreeNodeSelection.mock.calls[0][0];
+        expect(callArgs.isReadOnly).toBe(true);
     });
 
-    test('Can delete existing value', async () => {
-        _renderTreeField({
-            element: mockFormElementTree
-        });
+    it('should call useManageTreeNodeSelection with isFieldInError to true', () => {
+        mockedUseFormInstance.mockReturnValue({
+            getFieldError: jest.fn().mockReturnValue(['Test error'])
+        } as unknown as FormInstance);
 
-        expect(screen.getAllByRole('button', {name: /delete-value/, hidden: true})).toHaveLength(2);
-    });
+        render(
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...treeFieldDefaultProps} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
+        );
 
-    test('Can delete all values', async () => {
-        _renderTreeField({
-            element: mockFormElementTree
-        });
-
-        const deleteAllButton = screen.getByRole('button', {name: /delete-all-values/, hidden: true});
-        expect(deleteAllButton).toBeInTheDocument();
-
-        // Click on the parent, because of the issue on Tooltip. See DeleteAllValuesBtn component file
-        await userEvent.click(deleteAllButton.parentElement);
-
-        await userEvent.click(screen.getByRole('button', {name: /confirm/}));
-
-        expect(baseProps.onDeleteMultipleValues).toBeCalled();
-    });
-
-    test('Can edit linked node', async () => {
-        _renderTreeField({
-            element: mockFormElementTree
-        });
-
-        expect(screen.getAllByRole('button', {name: 'edit-record', hidden: true})).toHaveLength(2);
-    });
-
-    test('Can display value details', async () => {
-        _renderTreeField({
-            element: mockFormElementTree
-        });
-
-        const valueDetailsButtons = screen.getAllByRole('button', {name: /info/, hidden: true});
-        expect(valueDetailsButtons).toHaveLength(3); // 1 per value + 1 for the attribute
-
-        await userEvent.click(valueDetailsButtons[0]);
-
-        expect(mockEditRecordDispatch).toBeCalled();
-        expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
-    });
-
-    test('Can select value from values list', async () => {
-        const mockRecordFromList = {
-            ...mockTreeRecord,
-            whoAmI: {...mockTreeRecord.whoAmI, label: 'Record from value'}
-        };
-        const mockAttribute: RecordFormAttributeTreeAttributeFragment = {
-            ...mockFormElementTree.attribute,
-            linked_tree: {
-                id: 'some_tree',
-                label: {fr: 'Mon arbre'}
-            },
-            treeValuesList: {
-                enable: true,
-                allowFreeEntry: true,
-                allowListUpdate: true,
-                values: [
-                    {
-                        id: '123456',
-                        record: mockRecordFromList,
-                        ancestors: [{record: mockRecordFromList}]
-                    }
-                ]
-            },
-            multiple_values: true
-        };
-
-        _renderTreeField({
-            element: {...mockFormElementTree, attribute: mockAttribute}
-        });
-
-        const addValueBtn = screen.getByRole('button', {name: /add/});
-
-        await userEvent.click(addValueBtn);
-
-        const valuesAddBlock = within(screen.getByTestId('values-add'));
-
-        const elementInList = valuesAddBlock.getByText(mockRecordFromList.whoAmI.label);
-        expect(elementInList).toBeInTheDocument();
-
-        await userEvent.click(elementInList);
-
-        expect(mockHandleSubmit).toBeCalled();
+        const callArgs = mockedUseManageTreeNodeSelection.mock.calls[0][0];
+        expect(callArgs.isFieldInError).toBe(true);
     });
 });
