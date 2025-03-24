@@ -14,6 +14,7 @@ import {possibleSubmitButtons, submitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
+import {v4 as uuidv4} from 'uuid';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
@@ -63,13 +64,19 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
     const [clickedSubmitButton, setClickedSubmitButton] = useState<submitButtonsName | null>(null);
     const showCancelConfirm = useCreateCancelConfirm(onClose);
+    const formElementId = useRef(uuidv4());
     const isCreation = !currentRecord;
 
     const _handleClickSubmit = (button: submitButtonsName) => {
         setClickedSubmitButton(button);
     };
 
-    const displayedSubmitButtons = useGetSubmitButtons(submitButtons, isCreation, _handleClickSubmit);
+    const displayedSubmitButtons = useGetSubmitButtons(
+        submitButtons,
+        formElementId.current,
+        isCreation,
+        _handleClickSubmit
+    );
     const [antdForm] = useForm();
 
     const _handleClose = () => {
@@ -131,6 +138,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
             <EditRecord
                 antdForm={antdForm}
                 formId={formId}
+                formElementId={formElementId.current}
                 record={currentRecord}
                 library={library}
                 valuesVersion={valuesVersion}
