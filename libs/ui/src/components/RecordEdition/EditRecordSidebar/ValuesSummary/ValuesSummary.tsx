@@ -37,6 +37,10 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({globalVal
             return stripHtml(value);
         }
 
+        if (typeof value === 'boolean') {
+            return value ? t('global.yes') : t('global.no');
+        }
+
         if (_isDateRangeValue(value)) {
             return t('record_edition.date_range_value', {
                 from: value.from,
