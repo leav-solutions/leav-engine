@@ -9,7 +9,7 @@
 import {createRef} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
-import {act, waitFor} from '@testing-library/react';
+import {waitFor} from '@testing-library/react';
 import {toast} from 'react-hot-toast';
 import {Mockify} from '@leav/utils';
 import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
@@ -22,6 +22,9 @@ import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordCo
 import * as useColumnWidth from './useColumnWidth';
 import {SNACKBAR_MASS_ID} from './actions-mass/useMassActions';
 import {IExplorerRef} from './Explorer';
+import ResizeObserver from 'resize-observer-polyfill';
+
+global.ResizeObserver = ResizeObserver;
 
 const UploadFilesMock = 'UploadFiles';
 const CreateDirectoryMock = 'CreateDirectory';
@@ -2515,7 +2518,7 @@ describe('Explorer', () => {
         });
     });
 
-    describe.only('Permissions', () => {
+    describe('Permissions', () => {
         const mockExplorerAttributesPermissionsQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
             loading: false,
             called: true,

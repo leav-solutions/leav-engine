@@ -10,6 +10,7 @@ import ForgotPassword from './ForgotPassword';
 global.ASYNC_VALIDATOR_NO_WARNING = 1; // Suppress some really weird warning coming from ant-design during testing
 
 enableFetchMocks();
+jest.setTimeout(15_000); // TODO : remove when runners are betters
 
 window.matchMedia = query => ({
     matches: false,
