@@ -4,7 +4,7 @@
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {FeatureHook, IEntrypointLink, IMassActions} from '../_types';
 import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
-import {Dispatch, useMemo} from 'react';
+import {Dispatch, Key, useMemo} from 'react';
 import {useExplorerData} from '../_queries/useExplorerData';
 import {FaTrash} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -72,8 +72,8 @@ export const useDeleteLinkValues = ({
                                     value: null
                                 })) ?? [];
                         } else {
-                            values = (linkData?.records ?? []).reduce<IValueToSubmit[]>((acc, {id_value, itemId}) => {
-                                if (view.massSelection.includes(itemId)) {
+                            values = (linkData?.records ?? []).reduce<IValueToSubmit[]>((acc, {id_value, key}) => {
+                                if (view.massSelection.includes(key)) {
                                     acc.push({
                                         attribute: entrypoint.linkAttributeId,
                                         idValue: id_value ?? null,
@@ -97,7 +97,10 @@ export const useDeleteLinkValues = ({
                                 true
                             );
 
-                            onDelete?.(massSelectionFilter, view.massSelection);
+                            onDelete?.(
+                                massSelectionFilter,
+                                values.map(({idValue}) => idValue as Key)
+                            );
                             await refetch();
                         }
                         dispatch({
