@@ -218,7 +218,7 @@ describe('useLinkRecords', () => {
             );
 
             act(() => {
-                result.current.handleExplorerMassDeactivateValues(null, [mockBackendValue.linkValue.id]);
+                result.current.handleExplorerMassDeactivateValues(null, [mockBackendValue.id_value]);
             });
 
             const updateFn = mockSetBackendValues.mock.calls[0][0];
@@ -240,7 +240,7 @@ describe('useLinkRecords', () => {
             );
 
             act(() => {
-                result.current.handleExplorerMassDeactivateValues(null, [mockBackendValue.linkValue.id]);
+                result.current.handleExplorerMassDeactivateValues(null, [mockBackendValue.id_value]);
             });
 
             expect(mockSetFields).toHaveBeenCalledWith([

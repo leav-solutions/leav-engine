@@ -181,10 +181,7 @@ export const useLinkRecordsInEdition = ({
                     }}
                     linkButtonProps={{
                         icon: <FaList />,
-                        label:
-                            attribute.multiple_values || hasNoValue
-                                ? explorerActions?.linkAction?.label
-                                : t('record_edition.replace-by-existing-item'),
+                        label: explorerActions?.linkAction?.label,
                         callback: explorerActions?.linkAction?.callback,
                         disabled: isReadOnly || (attribute.multiple_values && explorerActions?.linkAction?.disabled)
                     }}

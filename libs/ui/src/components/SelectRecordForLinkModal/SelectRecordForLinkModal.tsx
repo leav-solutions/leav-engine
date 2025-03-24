@@ -146,6 +146,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                         defaultMassActions={[]}
                         itemActions={[]}
                         defaultPrimaryActions={[]}
+                        showSearch
                     />
                     {/* TODO: avoid getting last view for user */}
                 </Explorer.EditSettingsContextProvider>

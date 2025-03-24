@@ -27,7 +27,7 @@ export const useLinkRecords = ({
 
     const form = AntForm.useFormInstance();
 
-    const removeValues = (filterFn?: (id: string) => boolean) => {
+    const removeValues = (filterFn?: (id: string) => boolean, useIdValue: boolean = false) => {
         if (!filterFn) {
             form.setFieldValue(attribute.id, []);
             form.setFields([
@@ -40,7 +40,9 @@ export const useLinkRecords = ({
             return;
         }
 
-        const newBackendValues = backendValues.filter(backendValue => filterFn(backendValue.linkValue.id));
+        const newBackendValues = backendValues.filter(backendValue =>
+            filterFn(useIdValue ? backendValue.id_value : backendValue.linkValue.id)
+        );
 
         form.setFieldValue(
             attribute.id,
@@ -55,7 +57,9 @@ export const useLinkRecords = ({
         ]);
 
         setBackendValues(previousBackendValues =>
-            previousBackendValues.filter(backendValue => filterFn(backendValue.linkValue.id))
+            previousBackendValues.filter(backendValue =>
+                filterFn(useIdValue ? backendValue.id_value : backendValue.linkValue.id)
+            )
         );
     };
 
@@ -79,7 +83,7 @@ export const useLinkRecords = ({
         _massSelectedFilter: RecordFilterInput[],
         massSelection: MassSelection
     ) => {
-        removeValues(id => !massSelection.includes(id));
+        removeValues(idValue => !massSelection.includes(idValue), true);
     };
 
     const handleExplorerLinkValue = (saveValuesResult: ISubmitMultipleResult) => {

@@ -10,10 +10,16 @@ type SelectionMode = 'simple' | 'multiple';
 interface IUseRecordSelectorProps {
     libraryId: string;
     selectionMode: SelectionMode;
+    isReplacementMode: boolean;
     linkRecords: (recordIds: string[]) => void;
 }
 
-export const useRecordSelector = ({libraryId, selectionMode, linkRecords}: IUseRecordSelectorProps) => {
+export const useRecordSelector = ({
+    libraryId,
+    selectionMode,
+    isReplacementMode,
+    linkRecords
+}: IUseRecordSelectorProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const openModal = () => {
@@ -30,7 +36,7 @@ export const useRecordSelector = ({libraryId, selectionMode, linkRecords}: IUseR
             <SelectRecordForLinkModal
                 className={LINK_RECORDS_MODAL_CLASSNAME}
                 open
-                replacementMode={selectionMode === 'simple'}
+                replacementMode={isReplacementMode}
                 childLibraryId={libraryId}
                 selectionMode={selectionMode}
                 hideSelectAllAction={selectionMode !== 'multiple'}

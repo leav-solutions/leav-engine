@@ -208,11 +208,12 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             formId: creationFormId,
             refetch
         });
-
         const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
+            entrypoint,
             isEnabled: isLink,
             canAddLinkValue: canEditLinkAttributeValues,
             onLink: defaultCallbacks?.primary?.link,
+            linkId: data?.totalCount === 0 ? undefined : data?.records[0]?.id_value,
             maxItemsLeft: null // TODO: use KitTable.row
         });
 
