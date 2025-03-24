@@ -4,7 +4,7 @@
 import {localizedTranslation} from '@leav/utils';
 import {useMemo} from 'react';
 import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
-import {Entrypoint, IEntrypointLink, IExplorerData, ExplorerFilter} from '../_types';
+import {Entrypoint, IEntrypointLink, IExplorerData, ExplorerFilter, DefaultViewSettings} from '../_types';
 import {
     ExplorerLibraryDataQuery,
     ExplorerLinkDataQuery,
@@ -34,10 +34,11 @@ const _mappingLibrary = (
           }, {})
         : {};
 
-    const records = data.records.list.map(({whoAmI, properties}) => ({
+    const records = data.records.list.map(({whoAmI, permissions, properties}) => ({
         libraryId,
         key: whoAmI.id, // For <KitTable /> only
         itemId: whoAmI.id, // For <KitTable /> only
+        canDelete: permissions.delete_record,
         whoAmI: {
             label: null,
             subLabel: null,
@@ -71,15 +72,17 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
         : {};
 
     const records = data.records.list[0].property
-        .map((linkValue: LinkPropertyLinkValueFragment) => {
+        .map((linkValue: LinkPropertyLinkValueFragment, index: number) => {
             if (!linkValue.payload) {
                 return null;
             }
 
             return {
                 libraryId,
-                key: linkValue.payload.whoAmI.id, // For <KitTable /> only
+                // same link id can be duplicated, so we add the index to the key
+                key: linkValue.payload.whoAmI.id + index, // For <KitTable /> only
                 itemId: linkValue.payload.whoAmI.id, // For <KitTable /> only
+                canDelete: true,
                 whoAmI: {
                     label: null,
                     subLabel: null,
@@ -111,6 +114,7 @@ export const useExplorerData = ({
     sorts,
     pagination,
     filters,
+    filtersOperator,
     skip
 }: {
     entrypoint: Entrypoint;
@@ -123,6 +127,7 @@ export const useExplorerData = ({
     }>;
     pagination: null | {limit: number; offset: number};
     filters: ExplorerFilter[];
+    filtersOperator: DefaultViewSettings['filtersOperator'];
     skip: boolean;
 }) => {
     const {lang: availableLangs} = useLang();
@@ -130,13 +135,21 @@ export const useExplorerData = ({
     const isLibrary = entrypoint.type === 'library';
     const isLink = entrypoint.type === 'link';
 
+    const {data: attributeData} = useExplorerLinkAttributeQuery({
+        skip: entrypoint.type !== 'link',
+        variables: {
+            id: (entrypoint as IEntrypointLink).linkAttributeId
+        }
+    });
+
+    const isLinkAttributeAllowed = attributeData?.attributes?.list?.[0]?.permissions?.access_attribute;
     const {
         data: linkData,
         loading: linkLoading,
         refetch: linkRefetch
     } = useExplorerLinkDataQuery({
         fetchPolicy: 'network-only',
-        skip: skip || !isLink,
+        skip: skip || !isLink || !isLinkAttributeAllowed,
         variables: {
             parentLibraryId: (entrypoint as IEntrypointLink).parentLibraryId,
             parentRecordId: (entrypoint as IEntrypointLink).parentRecordId,
@@ -158,18 +171,12 @@ export const useExplorerData = ({
             pagination,
             searchQuery: fulltextSearch,
             multipleSort: sorts,
-            filters: prepareFiltersForRequest(filters)
-        }
-    });
-
-    const {data: attributeData} = useExplorerLinkAttributeQuery({
-        skip: entrypoint.type !== 'link',
-        variables: {
-            id: (entrypoint as IEntrypointLink).linkAttributeId
+            filters: prepareFiltersForRequest(filters, filtersOperator)
         }
     });
 
     const isMultivalue = !!attributeData?.attributes?.list?.[0]?.multiple_values;
+    const canEditLinkAttributeValues = !!attributeData?.attributes?.list?.[0]?.permissions?.edit_value;
 
     const memoizedData = useMemo(() => {
         if (isLibrary) {
@@ -189,6 +196,7 @@ export const useExplorerData = ({
     return {
         data: memoizedData,
         isMultivalue,
+        canEditLinkAttributeValues,
         loading: isLibrary ? libraryLoading : linkLoading,
         refetch: isLibrary ? libraryRefetch : linkRefetch
     };

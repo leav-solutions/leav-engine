@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Dispatch, useMemo} from 'react';
 import {FaTrash} from 'react-icons/fa';
-import {KitModal} from 'aristid-ds';
+import {KitModal, useKitNotification} from 'aristid-ds';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FeatureHook, IMassActions} from '../_types';
@@ -28,6 +28,7 @@ export const useDeactivateMassAction = ({
     isEnabled,
     store: {view, dispatch},
     allVisibleKeys,
+    totalCount,
     onDeactivate,
     refetch
 }: FeatureHook<{
@@ -36,10 +37,12 @@ export const useDeactivateMassAction = ({
         dispatch: Dispatch<IViewSettingsAction>;
     };
     allVisibleKeys: string[];
+    totalCount: number;
     onDeactivate?: IMassActions['callback'];
     refetch: ReturnType<typeof useExplorerData>['refetch'];
 }>) => {
     const {t} = useSharedTranslation();
+    const {kitNotification} = useKitNotification();
 
     const [deactivateRecordsMutation] = useDeactivateRecordsMutation();
 
@@ -57,11 +60,20 @@ export const useDeactivateMassAction = ({
                     okText: t('global.submit') ?? undefined,
                     cancelText: t('global.cancel') ?? undefined,
                     onOk: async () => {
-                        await deactivateRecordsMutation({
+                        const {data} = await deactivateRecordsMutation({
                             variables: {
                                 libraryId: view.libraryId,
                                 filters: massSelectionFilter
                             }
+                        });
+                        const total =
+                            view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
+                        kitNotification.info({
+                            message: t('explorer.massAction.deactivate_message', {
+                                count: data?.deactivateRecords.length,
+                                total
+                            }),
+                            description: null as unknown as string
                         });
                         if (
                             view.massSelection === MASS_SELECTION_ALL ||

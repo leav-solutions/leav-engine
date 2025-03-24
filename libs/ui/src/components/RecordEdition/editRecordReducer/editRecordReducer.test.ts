@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mockAttributeSimple} from '_ui/__mocks__/common/attribute';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {mockRecordProperty, mockRecordPropertyWithAttribute} from '_ui/__mocks__/common/value';
+import {mockRecordPropertyWithAttribute} from '_ui/__mocks__/common/value';
 import editRecordReducer, {
     EditRecordReducerActionsTypes,
     IEditRecordReducerState,

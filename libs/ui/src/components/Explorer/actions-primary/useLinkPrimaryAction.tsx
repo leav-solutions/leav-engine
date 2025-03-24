@@ -5,8 +5,9 @@ import {useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {FeatureHook, IPrimaryAction} from '../_types';
+import {Entrypoint, FeatureHook, IEntrypointLink, IPrimaryAction} from '../_types';
 import {LinkModal} from '../link-item/LinkModal';
+import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -22,16 +23,39 @@ import {LinkModal} from '../link-item/LinkModal';
 export const useLinkPrimaryAction = ({
     isEnabled,
     maxItemsLeft,
+    entrypoint,
+    linkId,
+    canAddLinkValue,
     onLink
 }: FeatureHook<{
+    entrypoint: Entrypoint;
+    linkId?: string;
     maxItemsLeft: number | null;
+    canAddLinkValue: boolean;
     onLink?: (saveValuesResult: ISubmitMultipleResult) => void;
 }>) => {
     const {t} = useSharedTranslation();
 
     const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
+    const [multipleValues, setIsMultivalues] = useState(false);
 
-    const disableAddItemAction = maxItemsLeft === 0;
+    const disableAddItemAction = maxItemsLeft === 0 || !canAddLinkValue;
+
+    useExplorerLinkAttributeQuery({
+        skip: entrypoint.type !== 'link',
+        variables: {
+            id: (entrypoint as IEntrypointLink).linkAttributeId
+        },
+        onCompleted: data => {
+            const attributeData = data?.attributes?.list?.[0];
+            if (!attributeData) {
+                throw new Error('Unknown link attribute');
+            }
+            setIsMultivalues(attributeData.multiple_values);
+        }
+    });
+
+    const replacementMode = linkId && !multipleValues;
 
     const _linkPrimaryAction: IPrimaryAction = {
         callback: () => {
@@ -39,7 +63,7 @@ export const useLinkPrimaryAction = ({
         },
         icon: <FaPlus />,
         disabled: disableAddItemAction,
-        label: t('explorer.add-existing-item')
+        label: replacementMode ? t('record_edition.replace-by-existing-item') : t('explorer.add-existing-item')
     };
 
     return {
@@ -48,6 +72,7 @@ export const useLinkPrimaryAction = ({
             <LinkModal
                 open
                 onLink={onLink}
+                linkId={replacementMode ? linkId : undefined}
                 onClose={() => {
                     setIsLinkModalVisible(false);
                 }}

@@ -28,9 +28,14 @@ import {getPreviewUrl} from '../../utils/preview/preview';
 import {TypeGuards} from '../../utils/typeGuards';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
-import {Errors} from '../../_types/errors';
+import {Errors, ErrorTypes} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
-import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
+import {
+    AttributePermissionsActions,
+    LibraryPermissionsActions,
+    RecordAttributePermissionsActions,
+    RecordPermissionsActions
+} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {
     AttributeCondition,
@@ -49,6 +54,9 @@ import getAttributesFromField from './helpers/getAttributesFromField';
 import {isRecordWithId, SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
 import {IFormRepo} from 'infra/form/formRepo';
+import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
+import validateValue from '../value/helpers/validateValue';
+import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -180,6 +188,8 @@ export interface IRecordDomainDeps {
     'core.domain.value': IValueDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
     'core.domain.permission.library': ILibraryPermissionDomain;
+    'core.domain.permission.attribute': IAttributePermissionDomain;
+    'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
@@ -200,6 +210,8 @@ export default function ({
     'core.domain.value': valueDomain,
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.permission.library': libraryPermissionDomain,
+    'core.domain.permission.attribute': attrPermissionDomain,
+    'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.helpers.validate': validateHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
@@ -887,10 +899,53 @@ export default function ({
                 // First, check if values are ok. If not, we won't create the record at all
                 const res = await Promise.allSettled(
                     Object.entries(valuesByAttribute).map(async ([attributeId, attributeValues]) => {
+                        const canEditAttr = await attrPermissionDomain.getAttributePermission({
+                            action: AttributePermissionsActions.EDIT_VALUE,
+                            attributeId,
+                            ctx
+                        });
+
+                        if (!canEditAttr) {
+                            throw new PermissionError<IValue>(AttributePermissionsActions.EDIT_VALUE, {
+                                attribute: attributeId,
+                                [attributeId]: 'Permission denied'
+                            });
+                        }
+
                         const attributeProps = await attributeDomain.getAttributeProperties({
                             id: attributeId,
                             ctx
                         });
+
+                        const valueChecksParams = {
+                            attributeProps,
+                            library,
+                            keepEmpty: false,
+                            infos: ctx
+                        };
+
+                        const [validationErrors] = await Promise.all(
+                            attributeValues.map(value =>
+                                validateValue({
+                                    ...valueChecksParams,
+                                    value,
+                                    deps: {
+                                        attributeDomain,
+                                        recordRepo,
+                                        valueRepo,
+                                        treeRepo
+                                    },
+                                    ctx
+                                })
+                            )
+                        );
+
+                        if (Object.keys(validationErrors).length > 0) {
+                            throw new ValidationError<IValue>(validationErrors, 'Validation error', false, {
+                                attribute: attributeProps.id,
+                                values: attributeValues
+                            });
+                        }
 
                         return valueDomain.runActionsList({
                             listName: ActionsListEvents.SAVE_VALUE,
@@ -906,17 +961,18 @@ export default function ({
                     .filter(r => r.status === 'rejected')
                     .map(err => {
                         const rejection = err as PromiseRejectedResult;
-                        const errorAttribute = rejection.reason.context?.attributeId;
+                        const errorAttribute = rejection.reason.fields?.attribute;
+                        const errorReason = rejection.reason.fields?.[errorAttribute];
 
                         return {
                             type: rejection.reason.type,
                             attribute: errorAttribute,
                             input: rejection.reason.context?.values[0].payload,
-                            message: utils.translateError(rejection.reason.fields?.[errorAttribute], ctx.lang)
+                            message: utils.translateError(errorReason, ctx.lang)
                         };
                     });
 
-                if (errors.length) {
+                if (errors.length > 0) {
                     return {record: null, valuesErrors: errors};
                 }
             }
@@ -1223,6 +1279,19 @@ export default function ({
                 });
             }
 
+            const perm = await recordAttributePermissionDomain.getRecordAttributePermission(
+                RecordAttributePermissionsActions.ACCESS_ATTRIBUTE,
+                ctx.userId,
+                attributeId,
+                library,
+                record.id,
+                ctx
+            );
+
+            if (!perm) {
+                return [];
+            }
+
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
             let values = await _extractRecordValue(record, attrProps, library, options, ctx);
 
@@ -1339,6 +1408,20 @@ export default function ({
                 });
                 recordsToDeactivate = records.list.map(record => record.id);
             }
+
+            recordsToDeactivate = await Promise.all(
+                recordsToDeactivate.map(async recordId => {
+                    const hasDeletePermission = await recordPermissionDomain.getRecordPermission({
+                        action: RecordPermissionsActions.DELETE_RECORD,
+                        userId: ctx.userId,
+                        library: libraryId,
+                        recordId,
+                        ctx
+                    });
+                    return hasDeletePermission ? recordId : null;
+                })
+            );
+            recordsToDeactivate = recordsToDeactivate.filter(recordId => recordId !== null);
 
             if (!recordsToDeactivate.length) {
                 return [];

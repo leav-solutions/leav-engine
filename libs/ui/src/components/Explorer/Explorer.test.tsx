@@ -22,6 +22,9 @@ import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordCo
 import * as useColumnWidth from './useColumnWidth';
 import {SNACKBAR_MASS_ID} from './actions-mass/useMassActions';
 import {IExplorerRef} from './Explorer';
+import ResizeObserver from 'resize-observer-polyfill';
+
+global.ResizeObserver = ResizeObserver;
 
 const UploadFilesMock = 'UploadFiles';
 const CreateDirectoryMock = 'CreateDirectory';
@@ -34,14 +37,18 @@ jest.mock('_ui/components/UploadFiles', () => ({
 jest.mock('_ui/components/CreateDirectory', () => ({
     CreateDirectory: () => <div>{CreateDirectoryMock}</div>
 }));
+const editRecordFn = jest.fn();
 jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
-    EditRecordModal: ({onCreate, onClose}) => (
-        <div>
-            {EditRecordModalMock}
-            <button onClick={() => onCreate({id: 987654})}>create-record</button>
-            <button onClick={() => onClose?.({})}>close-modal</button>
-        </div>
-    )
+    EditRecordModal: ({onCreate, onClose, ...props}) => {
+        editRecordFn(props);
+        return (
+            <div>
+                {EditRecordModalMock}
+                <button onClick={() => onCreate({id: 987654})}>create-record</button>
+                <button onClick={() => onClose?.({})}>close-modal</button>
+            </div>
+        );
+    }
 }));
 
 jest.mock('_ui/components/Explorer/link-item/LinkModal', () => ({
@@ -55,6 +62,17 @@ jest.mock('_ui/components/Explorer/link-item/LinkModal', () => ({
 
 jest.mock('@uidotdev/usehooks', () => ({
     useMeasure: () => [jest.fn(), {height: 100, width: 100}]
+}));
+
+const kitNotificationMock = {
+    success: jest.fn(),
+    info: jest.fn()
+};
+jest.mock('aristid-ds', () => ({
+    ...jest.requireActual('aristid-ds'),
+    useKitNotification: () => ({
+        kitNotification: kitNotificationMock
+    })
 }));
 
 const simpleMockAttribute = {
@@ -178,6 +196,9 @@ describe('Explorer', () => {
                     }
                 },
                 preview: null
+            },
+            permissions: {
+                delete_record: true
             },
             properties: [
                 {
@@ -307,6 +328,9 @@ describe('Explorer', () => {
                     }
                 },
                 preview: null
+            },
+            permissions: {
+                delete_record: true
             },
             properties: [
                 {
@@ -477,8 +501,91 @@ describe('Explorer', () => {
                     {
                         id: simpleMockAttribute.id,
                         label: simpleMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
                         type: simpleMockAttribute.type,
                         format: simpleMockAttribute.format,
+                        multiple_values: true
+                    },
+                    {
+                        id: linkMockAttribute.id,
+                        label: linkMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: linkMockAttribute.type,
+                        format: linkMockAttribute.format,
+                        multiple_values: false
+                    },
+                    {
+                        id: multivalLinkMockAttribute.id,
+                        label: multivalLinkMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: multivalLinkMockAttribute.type,
+                        format: multivalLinkMockAttribute.format,
+                        multiple_values: true
+                    },
+                    {
+                        id: simpleRichTextMockAttribute.id,
+                        label: simpleRichTextMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: simpleRichTextMockAttribute.type,
+                        format: simpleRichTextMockAttribute.format,
+                        multiple_values: false
+                    },
+                    {
+                        id: simpleColorMockAttribute.id,
+                        label: simpleColorMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: simpleColorMockAttribute.type,
+                        format: simpleColorMockAttribute.format,
+                        multiple_values: false
+                    },
+                    {
+                        id: multivalColorMockAttribute.id,
+                        label: multivalColorMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: multivalColorMockAttribute.type,
+                        format: multivalColorMockAttribute.format,
+                        multiple_values: true
+                    },
+                    {
+                        id: booleanMockAttribute.id,
+                        label: booleanMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: booleanMockAttribute.type,
+                        format: booleanMockAttribute.format,
+                        multiple_values: false
+                    },
+                    {
+                        id: simpleDateRangeMockAttribute.id,
+                        label: simpleDateRangeMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: simpleDateRangeMockAttribute.type,
+                        format: simpleDateRangeMockAttribute.format,
+                        multiple_values: false
+                    },
+                    {
+                        id: multivalDateRangeMockAttribute.id,
+                        label: multivalDateRangeMockAttribute.label,
+                        permissions: {
+                            access_attribute: true
+                        },
+                        type: multivalDateRangeMockAttribute.type,
+                        format: multivalDateRangeMockAttribute.format,
                         multiple_values: true
                     }
                 ]
@@ -552,11 +659,21 @@ describe('Explorer', () => {
     };
 
     const attributesList = [
-        {...simpleMockAttribute, id: 'simple_attribute', label: {fr: 'Attribut simple'}},
-        {...linkMockAttribute, id: 'link_attribute', label: {fr: 'Attribut lien'}}
+        {
+            ...simpleMockAttribute,
+            id: 'simple_attribute',
+            label: {fr: 'Attribut simple'},
+            permissions: {access_attribute: true}
+        },
+        {
+            ...linkMockAttribute,
+            id: 'link_attribute',
+            label: {fr: 'Attribut lien'},
+            permissions: {access_attribute: true}
+        }
     ];
 
-    const mockAttributesByLibResult: Mockify<typeof gqlTypes.useGetAttributesByLibQuery> = {
+    const mockAttributesByLibResult: Mockify<typeof gqlTypes.useGetAttributesByLibWithPermissionsQuery> = {
         data: {attributes: {list: attributesList}},
         loading: false,
         called: true
@@ -590,6 +707,11 @@ describe('Explorer', () => {
     const explorerLinkAttribute = {
         id: 'link_attribute',
         multiple_values: true,
+        permissions: {
+            access_attribute: true,
+            edit_value: true,
+            __typename: 'AttributePermissions'
+        },
         label: {
             en: 'Delivery Platforms',
             fr: 'Plateformes de diffusion'
@@ -638,9 +760,15 @@ describe('Explorer', () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
+        const fetch = jest.fn();
+
         spyUseExplorerLibraryDataQuery = jest
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
             .mockImplementation(() => mockExplorerLibraryDataQueryResult as gqlTypes.ExplorerLibraryDataQueryResult);
+
+        jest.spyOn(gqlTypes, 'useExplorerLibraryDataLazyQuery').mockImplementation(
+            () => [fetch] as unknown as gqlTypes.ExplorerLibraryDataLazyQueryHookResult
+        );
 
         jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
             () => mockExplorerLinkDataQueryResult as gqlTypes.ExplorerLinkDataQueryResult
@@ -654,12 +782,17 @@ describe('Explorer', () => {
             () => mockExplorerAttributesQueryResult as gqlTypes.ExplorerAttributesQueryResult
         );
 
+        jest.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
+            () =>
+                [fetch, mockExplorerAttributesQueryResult] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult
+        );
+
         jest.spyOn(gqlTypes, 'useGetViewsListQuery').mockReturnValue(
             mockViewsResult as gqlTypes.GetViewsListQueryResult
         );
 
-        jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
-            mockAttributesByLibResult as gqlTypes.GetAttributesByLibQueryResult
+        jest.spyOn(gqlTypes, 'useGetAttributesByLibWithPermissionsQuery').mockReturnValue(
+            mockAttributesByLibResult as gqlTypes.GetAttributesByLibWithPermissionsQueryResult
         );
 
         jest.spyOn(gqlTypes, 'useMeQuery').mockReturnValue(mockMeResult as gqlTypes.MeQueryResult);
@@ -885,6 +1018,26 @@ describe('Explorer', () => {
 
             expect(screen.queryByText(/explorer.massAction.itemsTotal/)).not.toBeInTheDocument();
         });
+
+        test('should display the pagination', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.getByText(/explorer.pagination-total-number/)).toBeInTheDocument();
+        });
+
+        test('should not display the pagination', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} noPagination />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByText(/explorer.pagination-total-number/)).not.toBeInTheDocument();
+        });
     });
 
     describe('props title', () => {
@@ -1109,7 +1262,6 @@ describe('Explorer', () => {
         expect(mockDeleteValueMutation).toHaveBeenCalled();
         expect(onRemove).toHaveBeenCalledWith(
             expect.objectContaining({
-                key: mockRecords[1].id,
                 itemId: mockRecords[1].id
             })
         );
@@ -1134,6 +1286,19 @@ describe('Explorer', () => {
                 itemId: mockRecords[1].id
             })
         );
+    });
+
+    test('Should be able to edit a record with custom form Id', async () => {
+        render(
+            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                <Explorer entrypoint={libraryEntrypoint} editionFormId="test-edition" />
+            </Explorer.EditSettingsContextProvider>
+        );
+
+        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.edit-item'}));
+        expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+        expect(editRecordFn).toHaveBeenCalledWith(expect.objectContaining({editionFormId: 'test-edition'}));
     });
 
     test('Should call the useGetRecordUpdatesSubscription', async () => {
@@ -1280,6 +1445,18 @@ describe('Explorer', () => {
             expect(onCreate).toHaveBeenCalledWith({recordIdCreated: 987654});
         });
 
+        test('Should be able to create a new record with custom formId when library has standard behavior', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} creationFormId="test-creation" />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+            expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+            expect(editRecordFn).toHaveBeenCalledWith(expect.objectContaining({creationFormId: 'test-creation'}));
+        });
+
         test('Should be able to create a new record from Explorer ref', async () => {
             const explorerRef = createRef<IExplorerRef>();
             render(
@@ -1293,6 +1470,28 @@ describe('Explorer', () => {
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             await user.click(screen.getByRole('button', {name: 'test button'}));
             expect(screen.getByText(EditRecordModalMock)).toBeInTheDocument();
+        });
+
+        test('Should be able to create a new record with custom formId when library has standard behavior from Explorer ref', async () => {
+            const explorerRef = createRef<IExplorerRef>();
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        ref={explorerRef}
+                        hidePrimaryActions
+                        creationFormId="test-creation"
+                    />
+                    <button onClick={() => explorerRef.current?.createAction?.callback()}>test button</button>
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
+            expect(explorerRef.current?.linkAction).toBeNull();
+            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+            await user.click(screen.getByRole('button', {name: 'test button'}));
+            expect(screen.getByText(EditRecordModalMock)).toBeInTheDocument();
+            expect(editRecordFn).toHaveBeenCalledWith(expect.objectContaining({creationFormId: 'test-creation'}));
         });
 
         test('should not try to link created record if entrypoint is not a link', async () => {
@@ -1374,7 +1573,7 @@ describe('Explorer', () => {
                     mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
                 }
             );
-            expect(explorerRef.current?.linkAction?.label).toEqual('explorer.add-existing-item');
+            expect(explorerRef.current?.linkAction?.label).toEqual('record_edition.replace-by-existing-item');
             expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             await user.click(screen.getByRole('button', {name: 'test button'}));
@@ -1480,6 +1679,9 @@ describe('Explorer', () => {
                     list: [
                         {
                             id: '613982168',
+                            permissions: {
+                                delete_record: true
+                            },
                             whoAmI: {
                                 id: '613982168',
                                 label: 'Christmas 2024',
@@ -1538,6 +1740,9 @@ describe('Explorer', () => {
                     list: [
                         {
                             id: '613982168',
+                            permissions: {
+                                delete_record: true
+                            },
                             whoAmI: {
                                 id: '613982168',
                                 label: 'Christmas 2024',
@@ -1619,10 +1824,88 @@ describe('Explorer', () => {
                 })
             );
         });
+
+        test('Should handle filters for the request and for the display with OR operator', async () => {
+            const spy = jest
+                .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+                .mockImplementation(
+                    ({variables}) =>
+                        (Array.isArray(variables?.filters) && variables.filters.length
+                            ? mockExplorerLibraryDataQueryResultWithFilters
+                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
+                );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                        showFiltersAndSorts
+                        enableConfigureView
+                        defaultViewSettings={{
+                            filtersOperator: 'OR',
+                            filters: [
+                                {
+                                    id: '',
+                                    attribute: {
+                                        format: simpleMockAttribute.format,
+                                        label: simpleMockAttribute.label.fr,
+                                        type: simpleMockAttribute.type
+                                    },
+                                    field: simpleMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                    value: 'Christmas'
+                                },
+                                {
+                                    id: '',
+                                    attribute: {
+                                        format: simpleMockAttribute.format,
+                                        label: simpleMockAttribute.label.fr,
+                                        type: simpleMockAttribute.type
+                                    },
+                                    field: simpleMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                    value: 'Test'
+                                }
+                            ],
+                            sort: [
+                                {
+                                    field: simpleMockAttribute.id,
+                                    order: gqlTypes.SortOrder.asc
+                                }
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
+
+            expect(spy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining({
+                        filters: [
+                            {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas'
+                            },
+                            {operator: 'OR'},
+                            {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Test'
+                            }
+                        ]
+                    })
+                })
+            );
+        });
     });
 
     describe('Entrypoint type link', () => {
-        test('Should display the list of linked records', async () => {
+        test('Should display the list of linked records and call action', async () => {
             const actionCallback = jest.fn();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1630,6 +1913,7 @@ describe('Explorer', () => {
                         entrypoint={linkEntrypoint}
                         primaryActions={customPrimaryActions}
                         defaultPrimaryActions={[]}
+                        defaultActionsForItem={[]}
                         itemActions={[
                             {
                                 label: 'Test 1',
@@ -2234,8 +2518,365 @@ describe('Explorer', () => {
         });
     });
 
+    describe('Permissions', () => {
+        const mockExplorerAttributesPermissionsQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
+            loading: false,
+            called: true,
+            data: {
+                attributes: {
+                    list: [
+                        {
+                            id: simpleMockAttribute.id,
+                            label: simpleMockAttribute.label,
+                            permissions: {
+                                access_attribute: true
+                            },
+                            type: simpleMockAttribute.type,
+                            format: simpleMockAttribute.format,
+                            multiple_values: true
+                        },
+                        {
+                            id: simpleColorMockAttribute.id,
+                            label: simpleColorMockAttribute.label,
+                            permissions: {
+                                access_attribute: false
+                            },
+                            type: simpleColorMockAttribute.type,
+                            format: simpleColorMockAttribute.format,
+                            multiple_values: false
+                        },
+                        {
+                            id: booleanMockAttribute.id,
+                            label: booleanMockAttribute.label,
+                            permissions: {
+                                access_attribute: false
+                            },
+                            type: booleanMockAttribute.type,
+                            format: booleanMockAttribute.format,
+                            multiple_values: false
+                        }
+                    ]
+                }
+            }
+        };
+
+        const explorerLinkAttributeNoPermissions = {
+            id: 'link_attribute',
+            multiple_values: true,
+            label: {
+                en: 'Delivery Platforms',
+                fr: 'Plateformes de diffusion'
+            },
+            permissions: {
+                access_attribute: true,
+                edit_value: false,
+                __typename: 'AttributePermissions'
+            },
+            linked_library: {
+                id: 'delivery_platforms',
+                label: {
+                    fr: 'Plateformes de diffusion'
+                },
+                __typename: 'Library'
+            },
+            __typename: 'LinkAttribute'
+        };
+        const ExplorerLinkAttributeWithoutPermissionsQueryMock: IExplorerLinkAttributeQueryMockType = {
+            request: {
+                query: gqlTypes.ExplorerLinkAttributeDocument,
+                variables: {
+                    id: linkEntrypoint.linkAttributeId
+                }
+            },
+            result: {
+                data: {
+                    attributes: {
+                        list: [explorerLinkAttributeNoPermissions]
+                    }
+                }
+            }
+        };
+
+        test('Should disable delete action on record without delete_record Permission', async () => {
+            const mockExplorerLibraryDataQueryWithPermissionsResult: Mockify<
+                typeof gqlTypes.useExplorerLibraryDataQuery
+            > = {
+                loading: false,
+                called: true,
+                refetch: jest.fn(),
+                data: {
+                    records: {
+                        totalCount: mockRecords.length,
+                        list: [mockRecords[0], {...mockRecords[1], permissions: {delete_record: false}}]
+                    }
+                }
+            };
+            jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
+                () => mockExplorerLibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerLibraryDataQueryResult
+            );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        enableConfigureView
+                        showFiltersAndSorts
+                        entrypoint={libraryEntrypoint}
+                        defaultPrimaryActions={[]}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.getByRole('table')).toBeVisible();
+            expect(screen.getAllByRole('row')).toHaveLength(mockRecords.length); // 2 records
+            const [record1, record2] = mockRecords;
+            expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
+            expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
+
+            const [firstRecordRow, secondRecordRow] = screen.getAllByRole('row');
+            expect(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'})).toBeEnabled();
+            expect(within(secondRecordRow).getByRole('button', {name: 'explorer.deactivate-item'})).not.toBeEnabled();
+        });
+
+        test('Should disable delete link action on record without edit_value Permission on Link Attribute', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={linkEntrypoint} />
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock
+                    ]
+                }
+            );
+
+            const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
+            expect(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'})).not.toBeEnabled();
+        });
+
+        test('Should disable replace link action on record without edit_value Permission on Link Attribute', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={linkEntrypoint} />
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock
+                    ]
+                }
+            );
+
+            const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
+            expect(within(firstRecordRow).getByRole('button', {name: 'explorer.replace-item'})).not.toBeEnabled();
+        });
+
+        test('Should not display the columns for attributes the user does not have access to', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
+                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
+            );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        defaultViewSettings={{
+                            attributesIds: [
+                                simpleMockAttribute.id,
+                                simpleColorMockAttribute.id,
+                                booleanMockAttribute.id
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const tableRows = screen.getAllByRole('row');
+            expect(screen.getByRole('table')).toBeVisible();
+
+            const [firstRecordRow] = tableRows;
+            const cells = within(firstRecordRow).getAllByRole('cell');
+            expect(cells.length).toEqual(4);
+
+            expect(within(firstRecordRow).queryByText(booleanMockAttribute.label.fr)).not.toBeInTheDocument();
+        });
+
+        test('Should not display filter for attributes the user does not have access to', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
+                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
+            );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        showFiltersAndSorts
+                        defaultViewSettings={{
+                            attributesIds: [
+                                simpleMockAttribute.id,
+                                simpleColorMockAttribute.id,
+                                booleanMockAttribute.id
+                            ],
+                            filters: [
+                                {
+                                    id: '123',
+                                    attribute: {
+                                        format: simpleMockAttribute.format,
+                                        label: simpleMockAttribute.label.fr,
+                                        type: simpleMockAttribute.type
+                                    },
+                                    field: simpleMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                    value: 'Christmas'
+                                },
+                                {
+                                    id: '456',
+                                    attribute: {
+                                        format: booleanMockAttribute.format,
+                                        label: booleanMockAttribute.label.fr,
+                                        type: booleanMockAttribute.type
+                                    },
+                                    field: booleanMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.EQUAL,
+                                    value: 'true'
+                                }
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+            expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
+
+            expect(within(toolbar).queryByText(booleanMockAttribute.label.fr)).not.toBeInTheDocument();
+
+            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining({
+                        filters: [
+                            {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas'
+                            }
+                        ]
+                    })
+                })
+            );
+        });
+
+        test('Should not display sorts for attributes the user does not have access to', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
+                () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
+            );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        showFiltersAndSorts
+                        defaultViewSettings={{
+                            attributesIds: [
+                                simpleMockAttribute.id,
+                                simpleColorMockAttribute.id,
+                                booleanMockAttribute.id
+                            ],
+                            sort: [
+                                {
+                                    field: simpleMockAttribute.id,
+                                    order: gqlTypes.SortOrder.asc
+                                },
+                                {
+                                    field: simpleColorMockAttribute.id,
+                                    order: gqlTypes.SortOrder.desc
+                                }
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+
+            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
+
+            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining({
+                        multipleSort: [
+                            {
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc
+                            }
+                        ]
+                    })
+                })
+            );
+        });
+
+        test('Should not display linked items if entrypoint is of type link and the user does not have access to the attribute', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockRestore();
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={linkEntrypoint}
+                        primaryActions={customPrimaryActions}
+                        defaultPrimaryActions={[]}
+                    />
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock]
+                }
+            );
+
+            expect(await screen.queryAllByRole('row')).toHaveLength(0);
+            await waitFor(() => {
+                expect(screen.getByText(/empty-data/)).toBeVisible();
+            });
+        });
+
+        test('Should not be able to link a new record without permissions on linkAttribute', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={linkEntrypoint} />
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock
+                    ]
+                }
+            );
+
+            const createOneButton = await screen.findByRole('button', {name: 'explorer.create-one'});
+            expect(createOneButton).toBeVisible();
+            expect(createOneButton).toBeDisabled();
+        });
+
+        test('Should be able to link existing record', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={linkEntrypoint} defaultPrimaryActions={[]} />
+                </Explorer.EditSettingsContextProvider>,
+                {
+                    mocks: [
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                        ExplorerLinkAttributeWithoutPermissionsQueryMock
+                    ]
+                }
+            );
+            const linkExistingButton = await screen.findByRole('button', {name: 'explorer.add-existing-item'});
+            expect(linkExistingButton).toBeVisible();
+            expect(linkExistingButton).toBeDisabled();
+        });
+    });
+
     describe('Saved views', () => {
-        test('should load a view', async () => {
+        test('Should load a view', async () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
@@ -2250,12 +2891,12 @@ describe('Explorer', () => {
             const manageViewsButton = screen.getByRole('button', {name: /My view/});
             expect(manageViewsButton).toBeVisible();
             expect(manageViewsButton).toHaveTextContent('My view');
-
             await user.click(manageViewsButton);
-            const viewItem = screen.getByRole('listitem', {name: /Second view/});
-            expect(viewItem).toBeVisible();
-            await user.click(viewItem);
 
+            const viewItem = screen.getByRole('radio', {name: /Second view/});
+            expect(viewItem).toBeInTheDocument();
+
+            await user.click(viewItem);
             waitFor(() => expect(manageViewsButton).toHaveTextContent('Second view'));
         });
     });

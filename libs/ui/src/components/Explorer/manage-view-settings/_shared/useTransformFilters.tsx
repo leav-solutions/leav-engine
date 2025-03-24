@@ -33,10 +33,30 @@ export const _isValidFieldFilterThrough = (
 ): filter is ValidFieldFilterThrough =>
     filter.condition === ThroughConditionFilter.THROUGH && !!filter.subCondition && !!filter.subField;
 
+type LinkAttributeDetailsWithPermissionsFragment = LinkAttributeDetailsFragment & {
+    id: string;
+    multiple_values: boolean;
+    permissions: {
+        access_attribute: boolean;
+    };
+};
+
+type AttributeDetailsLinkAttributeWithPermissionsFragment = AttributeDetailsLinkAttributeFragment & {
+    permissions: {
+        access_attribute: boolean;
+    };
+};
+
 export const _isLinkAttributeDetails = (
     linkAttributeData: NonNullable<ExplorerLinkAttributeQuery['attributes']>['list'][number]
-): linkAttributeData is LinkAttributeDetailsFragment & {id: string; multiple_values: boolean} =>
-    'linked_library' in linkAttributeData;
+): linkAttributeData is LinkAttributeDetailsFragment & {
+    id: string;
+    multiple_values: boolean;
+    permissions: {
+        access_attribute: boolean;
+        edit_value: boolean;
+    };
+} => 'linked_library' in linkAttributeData;
 
 export type validFiltersArgument = GetViewsListQuery['views']['list'][number]['filters'] | ExplorerFilter[];
 
@@ -103,7 +123,9 @@ export const useTransformFilters = () => {
             }
 
             if (isLinkAttribute(filterAttributeBase.type)) {
-                const attributeData = attributesDataById[filter.field] as AttributeDetailsLinkAttributeFragment;
+                const attributeData = attributesDataById[
+                    filter.field
+                ] as AttributeDetailsLinkAttributeWithPermissionsFragment;
                 if (_isValidFieldFilterThrough(filter)) {
                     const newFilter: IExplorerFilterThrough = {
                         field: filter.field,

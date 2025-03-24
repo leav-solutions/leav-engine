@@ -10,6 +10,7 @@ import {IAttributeTypesRepo, IAttributeWithRevLink} from '../attributeTypes/attr
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 export const VALUES_COLLECTION = 'core_values';
+export const EMPTY_VALUE = '__empty_value__';
 
 export interface IValueRepo {
     createValue({
@@ -60,15 +61,19 @@ export interface IValueRepo {
         ctx: IQueryInfos;
     }): Promise<IValue>;
 
-    isValueUnique({
+    /**
+     * Check if a value is unique expeted for the given record
+     * if recordId is null, it will check for the whole library
+     */
+    isValueUsed({
         library,
-        recordId,
+        excludedRecordId,
         attribute,
         value,
         ctx
     }: {
         library: string;
-        recordId: string;
+        excludedRecordId?: string;
         attribute: IAttribute;
         value: IValue;
         ctx: IQueryInfos;
@@ -141,9 +146,9 @@ export default function ({
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
             return typeRepo.deleteValue({library, recordId, attribute, value, ctx});
         },
-        isValueUnique({library, recordId, attribute, value, ctx}): Promise<boolean> {
+        isValueUsed({library, excludedRecordId, attribute, value, ctx}): Promise<boolean> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.isValueUnique({library, recordId, attribute, value, ctx});
+            return typeRepo.isValueUsed({library, excludedRecordId, attribute, value, ctx});
         },
         getValues({library, recordId, attribute, forceGetAllValues, options, ctx}): Promise<IValue[]> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);

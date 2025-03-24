@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import isEqual from 'lodash/isEqual';
-import {FunctionComponent, useEffect, useReducer, useRef, useState} from 'react';
+import {FunctionComponent, useCallback, useEffect, useReducer, useRef, useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {ErrorDisplayTypes} from '../../../constants';
 import {useCanEditRecord} from '../../../hooks/useCanEditRecord';
@@ -31,6 +31,7 @@ import {
     APICallStatus,
     DeleteMultipleValuesFunc,
     DeleteValueFunc,
+    IPendingValues,
     ISubmittedValueLink,
     ISubmittedValueStandard,
     ISubmittedValueTree,
@@ -51,6 +52,7 @@ import useExecuteCreateRecordMutation from '../EditRecordContent/hooks/useCreate
 
 interface IEditRecordProps {
     antdForm: FormInstance;
+    formId?: string;
     record: RecordIdentityFragment['whoAmI'] | null;
     library: string;
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
@@ -65,10 +67,6 @@ interface IEditRecordProps {
         refresh?: React.RefObject<HTMLButtonElement>;
         valuesVersions?: React.RefObject<HTMLButtonElement>;
     };
-}
-
-interface IPendingValues {
-    [attributeId: string]: {[idValue: string]: ValueDetailsFragment};
 }
 
 const sidebarWidth = '352px';
@@ -91,6 +89,7 @@ const Content = styled.div<{$shouldUseLayoutWithSidebar: boolean}>`
 
 export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     antdForm,
+    formId,
     record,
     library: libraryId,
     onCreate,
@@ -418,33 +417,54 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         setCreationErrors(errorsByField);
 
         antdForm.setFields(
-            creationResult.errors.map(error => ({
-                name:
-                    attributes.find(attribute => attribute.id === error.attribute)?.multiple_values &&
-                    error.type === 'REQUIRED_ATTRIBUTE'
-                        ? [error.attribute, 0]
-                        : error.attribute,
-                errors: [error.message]
-            }))
+            creationResult.errors.map(error => {
+                const attributeInError = attributes.find(attribute => attribute.id === error.attribute);
+
+                const doesAttributeHaveMultipleFields =
+                    attributeInError?.multiple_values &&
+                    ![AttributeType.simple_link, AttributeType.advanced_link].includes(attributeInError.type);
+
+                return {
+                    name:
+                        doesAttributeHaveMultipleFields && error.type === 'REQUIRED_ATTRIBUTE'
+                            ? [error.attribute, 0]
+                            : error.attribute,
+                    errors: [error.message]
+                };
+            })
         );
 
         return;
     };
 
-    const _handleDeleteValue: DeleteValueFunc = async (value, attribute) => {
-        if (!isCreationMode) {
-            return deleteValue(value, attribute);
-        }
+    const _handleDeleteValue: DeleteValueFunc = useCallback(
+        async (value, attribute) => {
+            if (!isCreationMode) {
+                return deleteValue(value, attribute);
+            }
 
-        const newPendingValues = {...pendingValues};
-        delete newPendingValues[attribute][value.id_value];
+            const newPendingValues = {...pendingValuesRef.current};
 
-        setPendingValues(newPendingValues);
+            delete newPendingValues[attribute][value.id_value];
 
-        return {
-            status: APICallStatus.SUCCESS
-        };
-    };
+            const attributeValues = Object.values(newPendingValues[attribute]);
+
+            newPendingValues[attribute] = {};
+
+            attributeValues.forEach((val, index) => {
+                const newIdValue = `pending_${index + 1}`;
+                const updatedValue = {...val, id_value: newIdValue};
+                newPendingValues[attribute][newIdValue] = updatedValue;
+            });
+
+            setPendingValues(newPendingValues);
+
+            return {
+                status: APICallStatus.SUCCESS
+            };
+        },
+        [pendingValues, isCreationMode, deleteValue]
+    );
 
     const _handleDeleteAllValues: DeleteMultipleValuesFunc = async (attribute, values, version) => {
         if (!isCreationMode) {
@@ -494,8 +514,10 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                             ) : canEdit ? (
                                 <EditRecordContent
                                     antdForm={antdForm}
+                                    formId={formId}
                                     record={record}
                                     library={libraryId}
+                                    pendingValues={pendingValues}
                                     onRecordSubmit={_handleRecordSubmit}
                                     onValueSubmit={_handleValueSubmit}
                                     onValueDelete={_handleDeleteValue}

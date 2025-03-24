@@ -51,4 +51,11 @@ describe('ValuesSummary', () => {
         expect(screen.getAllByTitle(/record_edition.date_range_value|1|2/)[0]).toBeVisible();
         expect(screen.getAllByTitle(/record_edition.date_range_value|3|4/)[0]).toBeVisible();
     });
+
+    it('Should display yes and no for boolean values', async () => {
+        render(<ValuesSummary globalValues={[true, false]} />);
+
+        expect(screen.getByText('global.yes')).toBeVisible();
+        expect(screen.getByText('global.no')).toBeVisible();
+    });
 });

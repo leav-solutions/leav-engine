@@ -10,6 +10,7 @@ import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordCo
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {LibraryBehavior, useExplorerLibraryDetailsQuery, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 import {FeatureHook, Entrypoint, IEntrypointLink, IPrimaryAction} from '../_types';
+import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -30,12 +31,15 @@ export const useCreatePrimaryAction = ({
     libraryId,
     entrypoint,
     totalCount,
+    canCreateAndLinkValue,
     onCreate,
+    formId,
     refetch
 }: FeatureHook<{
     libraryId: string;
     entrypoint: Entrypoint;
     totalCount: number;
+    canCreateAndLinkValue: boolean;
     onCreate?: ({
         recordIdCreated,
         saveValuesResultOnLink
@@ -43,6 +47,7 @@ export const useCreatePrimaryAction = ({
         recordIdCreated: string;
         saveValuesResultOnLink?: ISubmitMultipleResult;
     }) => void;
+    formId?: string;
     refetch: () => void;
 }>) => {
     const {t} = useSharedTranslation();
@@ -72,7 +77,12 @@ export const useCreatePrimaryAction = ({
         return {createPrimaryAction: null, createModal: null};
     }
 
-    const canCreateRecord = entrypoint.type === 'library' ? true : multipleValues || totalCount === 0;
+    let canCreateRecord;
+    if (entrypoint.type === 'library') {
+        canCreateRecord = true;
+    } else {
+        canCreateRecord = canCreateAndLinkValue && (multipleValues || totalCount === 0);
+    }
 
     const _createPrimaryAction: IPrimaryAction = {
         callback: () => {
@@ -122,9 +132,11 @@ export const useCreatePrimaryAction = ({
         case LibraryBehavior.standard:
             _createModal = (
                 <EditRecordModal
+                    className={CREATE_RECORD_MODAL_CLASSNAME}
                     open
                     record={null}
                     library={libraryId}
+                    creationFormId={formId}
                     onClose={() => {
                         setIsModalCreationVisible(false);
                     }}

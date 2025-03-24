@@ -31,8 +31,7 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
     attribute,
     readonly,
     inheritedFlags,
-    calculatedFlags,
-    setActiveValue
+    calculatedFlags
 }) => {
     if (!onChange) {
         throw Error('DSBooleanWrapper should be used inside a antd Form.Item');
@@ -53,7 +52,6 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
         checked: boolean,
         event: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>
     ) => void = (checked, event) => {
-        setActiveValue();
         onChange(checked, event);
         handleSubmit(String(checked), attribute.id);
     };

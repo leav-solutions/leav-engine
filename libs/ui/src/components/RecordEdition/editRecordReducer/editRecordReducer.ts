@@ -4,8 +4,13 @@
 import {IRecordIdentityWhoAmI} from '../../../types/records';
 import {IValueVersion} from '../../../types/values';
 import {RecordFormAttributeFragment, RecordUpdateSubscription, ValueDetailsFragment} from '../../../_gqlTypes';
-import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
+import {
+    RecordFormElementsValueLinkValue,
+    RecordFormElementsValueStandardValue,
+    RecordFormElementsValueTreeValue
+} from '_ui/hooks/useGetRecordForm';
 import {SystemTranslation} from '_ui/types';
+import {TypeGuards} from '_ui/components/LibraryItemsList/LibraryItemsListTable/Cell/typeGuards';
 
 export interface IRecordPropertyWithAttribute {
     attribute: RecordFormAttributeFragment;
@@ -56,7 +61,10 @@ export type IEditRecordReducerActions =
     | {
           type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE;
           attribute?: IEditRecordReducerState['activeAttribute']['attribute'];
-          values?: RecordFormElementsValueStandardValue[];
+          values?:
+              | RecordFormElementsValueStandardValue[]
+              | RecordFormElementsValueLinkValue[]
+              | RecordFormElementsValueTreeValue[];
       }
     | {
           type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT;
@@ -118,9 +126,38 @@ const editRecordReducer = (
                     attribute: action.attribute ?? state.activeAttribute?.attribute ?? null,
                     globalValues: action.values
                         ?.filter(value => !value.isCalculated && !value.isInherited)
-                        .map(value => value.payload),
-                    calculatedValue: action.values?.filter(value => value.isCalculated || value.isInherited)?.[0]
-                        ?.payload
+                        .map(value => {
+                            if (TypeGuards.isRecordFormElementsValuesLinkValue(value)) {
+                                return value.linkValue.whoAmI.label ?? value.linkValue.whoAmI.id;
+                            }
+
+                            if (TypeGuards.isRecordFormElementsValuesTreeValue(value)) {
+                                return value.treeValue.record.whoAmI.label ?? value.treeValue.record.whoAmI.id;
+                            }
+
+                            return value?.payload;
+                        }),
+                    calculatedValue: (() => {
+                        const calculatedOrInheritedValue = action.values?.filter(
+                            value => value.isCalculated || value.isInherited
+                        )?.[0];
+
+                        if (TypeGuards.isRecordFormElementsValuesLinkValue(calculatedOrInheritedValue)) {
+                            return (
+                                calculatedOrInheritedValue.linkValue.whoAmI.label ??
+                                calculatedOrInheritedValue.linkValue.whoAmI.id
+                            );
+                        }
+
+                        if (TypeGuards.isRecordFormElementsValuesTreeValue(calculatedOrInheritedValue)) {
+                            return (
+                                calculatedOrInheritedValue.treeValue.record.whoAmI.label ??
+                                calculatedOrInheritedValue.treeValue.record.whoAmI.id
+                            );
+                        }
+
+                        return calculatedOrInheritedValue?.payload;
+                    })()
                 },
                 sidebarContent: newSidebarContent
             };

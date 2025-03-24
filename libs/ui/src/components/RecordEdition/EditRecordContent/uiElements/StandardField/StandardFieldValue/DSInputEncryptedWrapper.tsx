@@ -13,8 +13,7 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
     onChange,
     attribute,
     handleSubmit,
-    readonly,
-    setActiveValue
+    readonly
 }) => {
     if (!onChange) {
         throw Error('DSInputEncryptedWrapper should be used inside a antd Form.Item');
@@ -26,10 +25,6 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
     const {t} = useSharedTranslation();
 
     const isErrors = errors.length > 0;
-
-    const _handleOnFocus = () => {
-        setActiveValue();
-    };
 
     const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
         setHasChanged(false);
@@ -57,7 +52,6 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
             placeholder={t('record_edition.placeholder.enter_a_password')}
             disabled={readonly}
             allowClear
-            onFocus={_handleOnFocus}
             onChange={_handleOnChange}
             onBlur={_handleOnBlur}
         />

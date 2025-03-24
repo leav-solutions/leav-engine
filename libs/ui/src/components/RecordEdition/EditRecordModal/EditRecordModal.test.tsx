@@ -9,8 +9,10 @@ import {Form} from 'antd';
 
 let user!: ReturnType<typeof userEvent.setup>;
 
+const editRecordFn = jest.fn();
 jest.mock('../EditRecord', () => ({
-    EditRecord: ({antdForm, record, onCreate}) => {
+    EditRecord: ({antdForm, record, onCreate, ...props}) => {
+        editRecordFn(props);
         const fields = [{name: 'leonbloum', value: record ? 'EditRecord' : 'CreateRecord'}];
         return (
             <Form form={antdForm} fields={fields}>
@@ -139,6 +141,48 @@ describe('EditRecordModal', () => {
 
             expect(screen.queryByText('record_edition.cancel_confirm_modal_title')).not.toBeInTheDocument();
             expect(mockOnClose).toHaveBeenCalled();
+        });
+    });
+
+    describe('custom form ids', () => {
+        test('Shoud call EditRecord with creation FromId', async () => {
+            render(
+                <EditRecordModal
+                    open
+                    creationFormId="creation-form"
+                    editionFormId="edition-form"
+                    library="test_lib"
+                    onClose={jest.fn()}
+                    record={null}
+                    submitButtons={['createAndEdit']}
+                />
+            );
+
+            expect(editRecordFn).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    formId: 'creation-form'
+                })
+            );
+        });
+
+        test('Shoud call EditRecord with edition FromId', async () => {
+            render(
+                <EditRecordModal
+                    open
+                    creationFormId="creation-form"
+                    editionFormId="edition-form"
+                    library="test_lib"
+                    onClose={jest.fn()}
+                    record={{id: '123456', library: {id: 'test_lib'}}}
+                    submitButtons={['createAndEdit']}
+                />
+            );
+
+            expect(editRecordFn).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    formId: 'edition-form'
+                })
+            );
         });
     });
 });

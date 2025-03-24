@@ -6,6 +6,7 @@ import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGql
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import isEmptyValue from '../../domain/value/helpers/isEmptyValue';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
@@ -13,6 +14,7 @@ import {IRecord} from '_types/record';
 import {IStandardValue, ITreeValue, IValue, IValueFromGql, IValueVersion, IValueVersionFromGql} from '_types/value';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
+import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 
 export interface ICoreValueApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -25,6 +27,7 @@ interface IDeps {
     'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
     'core.utils': IUtils;
 }
+
 export default function ({
     'core.domain.value': valueDomain,
     'core.domain.record': recordDomain,
@@ -135,7 +138,9 @@ export default function ({
                         id_value: ID,
                         value: Any @deprecated(reason: "Use payload instead"),
                         raw_value: Any @deprecated(reason: "Use raw_payload instead"),
-                        payload: Any,
+                        """ it can be "\\__empty_value__" whatever the format """
+                        payload: Any, 
+                        """ it can be "\\__empty_value__" whatever the format """
                         raw_payload: Any,
                         modified_at: Int,
                         created_at: Int,
@@ -203,6 +208,7 @@ export default function ({
                     input ValueInput {
                         id_value: ID,
                         value: String @deprecated(reason: "Use payload instead"),
+                        """ Use "\\__empty_value__" to set an empty value """
                         payload: String,
                         metadata: [ValueMetadataInput],
                         version: [ValueVersionInput]
@@ -212,7 +218,8 @@ export default function ({
                         attribute: ID,
                         id_value: ID,
                         value: String @deprecated(reason: "Use payload instead"),
-                        payload: String,
+                        """ Use "\\__empty_value__" to set an empty value """
+                        payload: String, 
                         metadata: [ValueMetadataInput]
                     }
 
@@ -242,10 +249,13 @@ export default function ({
                         async saveValue(_: never, {library, recordId, attribute, value}, ctx): Promise<IValue[]> {
                             const valToSave = {
                                 ...value,
-                                payload: value?.payload ?? value?.value,
+                                payload: value.payload ?? value.value,
                                 version: convertVersionFromGqlFormat(value.version),
                                 metadata: utils.nameValArrayToObj(value.metadata)
                             };
+
+                            valToSave.payload = isEmptyValue(valToSave) ? EMPTY_VALUE : valToSave.payload;
+
                             const savedValues = await valueDomain.saveValue({
                                 library,
                                 recordId,
@@ -259,12 +269,18 @@ export default function ({
                         async saveValueBatch(parent, {library, recordId, version, values, deleteEmpty}, ctx) {
                             // Convert version
                             const versionToUse = convertVersionFromGqlFormat(version);
-                            const convertedValues = values.map(val => ({
-                                ...val,
-                                payload: val.payload ?? val.value,
-                                version: versionToUse,
-                                metadata: utils.nameValArrayToObj(val.metadata)
-                            }));
+                            const convertedValues = values.map(val => {
+                                const valToSave = {
+                                    ...val,
+                                    payload: val.payload ?? val.value,
+                                    version: versionToUse,
+                                    metadata: utils.nameValArrayToObj(val.metadata)
+                                };
+
+                                valToSave.payload = isEmptyValue(valToSave) ? EMPTY_VALUE : valToSave.payload;
+
+                                return valToSave;
+                            });
 
                             const savedValues = await valueDomain.saveValueBatch({
                                 library,

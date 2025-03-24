@@ -9,7 +9,14 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {IView, IViewValuesVersionForGraphql, ViewFromGraphQL, ViewSizes, ViewTypes} from '../../_types/views';
+import {
+    IView,
+    IViewValuesVersionForGraphql,
+    PartialViewFromGraphQL,
+    ViewFromGraphQL,
+    ViewSizes,
+    ViewTypes
+} from '../../_types/views';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
 interface IDeps {
@@ -92,6 +99,20 @@ export default function ({
                         attributes: [String!]
                     }
 
+                    input ViewInputPartial {
+                        id: String!,
+                        library: String,
+                        display: ViewDisplayInput,
+                        shared: Boolean,
+                        label: SystemTranslation,
+                        description: SystemTranslationOptional,
+                        color: String,
+                        filters: [RecordFilterInput!],
+                        sort: [RecordSortInput!],
+                        valuesVersions: [ViewValuesVersionInput!],
+                        attributes: [String!]
+                    }
+
                     type ViewsList {
                         totalCount: Int!,
                         list: [View!]!
@@ -104,6 +125,7 @@ export default function ({
 
                     extend type Mutation {
                         saveView(view: ViewInput!): View!
+                        updateView(view: ViewInputPartial!): View!
                         deleteView(viewId: String!): View!
                     }
                 `,
@@ -116,6 +138,14 @@ export default function ({
                     },
                     Mutation: {
                         saveView: (_, {view}: {view: ViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> =>
+                            viewDomain.saveView(
+                                {
+                                    ...view,
+                                    valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode')
+                                },
+                                ctx
+                            ),
+                        updateView: (_, {view}: {view: PartialViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> =>
                             viewDomain.saveView(
                                 {
                                     ...view,

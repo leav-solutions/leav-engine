@@ -71,7 +71,9 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                 ...(preparedDefaultFilters ?? []),
                 ...(defaultViewSettings.sort ?? []),
                 ...userViewFilters,
-                ...(userView?.sort ?? [])
+                ...(userView?.sort ?? []),
+                ...(userView?.attributes?.map(attribute => ({field: attribute.id})) ?? []),
+                ...(defaultViewSettings?.attributesIds?.map(attributeId => ({field: attributeId})) ?? [])
             ].map(({field}) => field)
         )
     ];
@@ -90,7 +92,9 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
     const attributesDataById = useMemo(
         () =>
             (attributesData?.attributes?.list ?? []).reduce((acc, attr) => {
-                acc[attr.id] = attr;
+                if (attr.permissions.access_attribute) {
+                    acc[attr.id] = attr;
+                }
                 return acc;
             }, {}),
         [attributesData]
@@ -118,7 +122,15 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                     attributes: attributes?.map(attribute => attribute.id) ?? []
                 })
             );
-            const allFilters = [...preparedDefaultFilters, ...userViewFilters];
+            const allFilters = preparedDefaultFilters.length > 0 ? preparedDefaultFilters : userViewFilters;
+            const defaultSorts = defaultViewSettings?.sort ?? [];
+            const userViewSorts = userView?.sort ?? [];
+            const defaultattributesIds = (defaultViewSettings?.attributesIds ?? []).filter(
+                attr => attributesDataById[attr]
+            );
+            const userViewAttributesIds = (userView?.attributes ?? [])
+                .map(attr => attr.id)
+                .filter(attr => attributesDataById[attr]);
             const hydratedSettings: IViewSettingsState = {
                 ...viewSettingsInitialState,
                 entrypoint,
@@ -130,14 +142,14 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
                     : viewSettingsInitialState.viewType,
                 savedViews,
                 ...defaultViewSettings,
-                attributesIds: [
-                    ...(userView?.attributes ?? []).map(attr => attr.id),
-                    ...(defaultViewSettings?.attributesIds ?? [])
-                ],
-                sort: [...(defaultViewSettings?.sort ?? []), ...(userView?.sort ?? [])].map(s => ({
-                    field: s.field,
-                    order: s.order
-                })),
+                attributesIds: defaultattributesIds.length > 0 ? defaultattributesIds : userViewAttributesIds,
+                sort: (defaultSorts.length > 0 ? defaultSorts : userViewSorts)
+                    .map(s => ({
+                        field: s.field,
+                        order: s.order
+                    }))
+                    .filter(s => attributesDataById[s.field]),
+                filtersOperator: defaultViewSettings?.filtersOperator ?? 'AND',
                 filters: toExplorerFilters({filters: allFilters, attributesDataById})
             };
             dispatch({

@@ -36,8 +36,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     handleSubmit,
     readonly,
     calculatedFlags,
-    inheritedFlags,
-    setActiveValue
+    inheritedFlags
 }) => {
     if (!onChange) {
         throw Error('DSRangePickerWrapper should be used inside a antd Form.Item');
@@ -119,7 +118,6 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
     const _handleOnFocus = () => {
         setIsFocused(true);
-        setActiveValue();
     };
 
     const placeholderToDisplay: IKitRangePicker['placeholder'] = isFocused

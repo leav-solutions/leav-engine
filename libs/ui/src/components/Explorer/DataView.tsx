@@ -14,11 +14,10 @@ import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
 import {useColumnWidth} from './useColumnWidth';
-import {RowSelectionType} from 'antd/es/table/interface';
 
 const USELESS = '';
 
-const tableHeaderHeight = 56;
+const tableRowHeight = 56;
 const tableHeaderMinLineHeight = 22;
 
 const DataViewContainerDivStyled = styled.div`
@@ -53,12 +52,19 @@ const StyledTable = styled(KitTable)`
     .ant-table-thead > tr > th {
         padding-top: calc(var(--general-spacing-xxs) * 1px) !important;
         padding-bottom: calc(var(--general-spacing-xxs) * 1px) !important;
-        height: ${tableHeaderHeight}px;
+        height: ${tableRowHeight}px;
 
         .ant-table-cell {
             min-height: ${tableHeaderMinLineHeight}px;
             height: auto !important;
             padding: 0 calc(var(--general-spacing-s) * 1px) 0 0;
+        }
+    }
+
+    .ant-table-tbody > tr {
+        .ant-table-cell {
+            min-height: ${tableRowHeight}px;
+            height: auto !important;
         }
     }
 `;
@@ -124,6 +130,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
 
         const _getActionButtons = (
             actions: Array<Override<IItemAction, {callback: () => void}>>,
+            item: IItemData,
             columnRef: typeof ref | null
         ): ReactNode => {
             const isLessThanFourActions = actions.length < 4;
@@ -139,7 +146,8 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     icon={icon}
                                     onClick={callback}
                                     danger={isDanger}
-                                    disabled={disabled}
+                                    size="m"
+                                    disabled={typeof disabled === 'function' ? disabled(item) : disabled}
                                 >
                                     {!iconsOnlyItemActions && !iconOnly && label}
                                 </KitButton>
@@ -153,7 +161,11 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                 title={actions[0].label}
                                 onClick={actions[0].callback}
                                 danger={actions[0].isDanger}
-                                disabled={actions[0].disabled}
+                                disabled={
+                                    typeof actions[0].disabled === 'function'
+                                        ? actions[0].disabled(item)
+                                        : actions[0].disabled
+                                }
                             />
                             <KitButton
                                 type="tertiary"
@@ -161,7 +173,11 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                 onClick={actions[1].callback}
                                 title={actions[1].label}
                                 danger={actions[1].isDanger}
-                                disabled={actions[1].disabled}
+                                disabled={
+                                    typeof actions[1].disabled === 'function'
+                                        ? actions[1].disabled(item)
+                                        : actions[1].disabled
+                                }
                             />
                             <KitDropDown
                                 menu={{
@@ -169,7 +185,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                         key: label,
                                         title: label,
                                         danger: isDanger,
-                                        disabled,
+                                        disabled: typeof disabled === 'function' ? disabled(item) : disabled,
                                         label,
                                         icon: icon ? cloneElement(icon, {size: '2em'}) : null, // TODO: find better tuning
                                         onClick: callback
@@ -228,6 +244,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                           ...action,
                                           callback: () => action.callback(item)
                                       })),
+                                      item,
                                       index === 0 ? ref : null
                                   )
                           }

@@ -868,6 +868,101 @@ describe('ViewSettings Reducer', () => {
         expect(state.viewModified).toEqual(false);
     });
 
+    test(`Action ${ViewSettingsActionTypes.RENAME_VIEW} test`, async () => {
+        const view = {
+            id: 'viewId',
+            label: {
+                fr: 'Ma nouvelle vue'
+            }
+        };
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                savedViews: [
+                    {
+                        id: 'viewId',
+                        ownerId: 'Admin',
+                        label: {
+                            fr: 'Ma vue'
+                        },
+                        shared: false,
+                        filters: [],
+                        display: {type: ViewTypes.list}
+                    }
+                ],
+                viewModified: true
+            },
+            {
+                type: ViewSettingsActionTypes.RENAME_VIEW,
+                payload: view
+            }
+        );
+
+        expect(state.viewLabels).toEqual(view.label);
+        expect(state.savedViews[0].label).toEqual(view.label);
+        expect(state.viewModified).toEqual(true);
+    });
+
+    test(`Action ${ViewSettingsActionTypes.DELETE_VIEW} test when delete current view`, async () => {
+        const id = 'viewId';
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                viewId: id,
+                savedViews: [
+                    {
+                        id,
+                        ownerId: 'Admin',
+                        label: {
+                            fr: 'Ma vue'
+                        },
+                        shared: false,
+                        filters: [],
+                        display: {type: ViewTypes.list}
+                    }
+                ],
+                viewModified: true
+            },
+            {
+                type: ViewSettingsActionTypes.DELETE_VIEW,
+                payload: {id}
+            }
+        );
+
+        expect(state.viewId).toEqual(null);
+        expect(state.savedViews.length).toEqual(0);
+        expect(state.viewModified).toEqual(false);
+    });
+
+    test(`Action ${ViewSettingsActionTypes.DELETE_VIEW} test when delete another view`, async () => {
+        const id = 'viewId';
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                savedViews: [
+                    {
+                        id,
+                        ownerId: 'Admin',
+                        label: {
+                            fr: 'Ma vue'
+                        },
+                        shared: false,
+                        filters: [],
+                        display: {type: ViewTypes.list}
+                    }
+                ],
+                viewModified: true
+            },
+            {
+                type: ViewSettingsActionTypes.DELETE_VIEW,
+                payload: {id}
+            }
+        );
+
+        expect(state.savedViews.length).toEqual(0);
+        expect(state.viewModified).toEqual(true);
+    });
+
     test(`Action ${ViewSettingsActionTypes.LOAD_VIEW} test`, async () => {
         const view = {
             viewId: 'viewId',

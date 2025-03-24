@@ -32,6 +32,7 @@ import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {MASS_SELECTION_ALL} from './_constants';
 import {useDeleteLinkValues} from './actions-mass/useDeleteLinkValues';
+import {useReplaceItemAction} from './actions-item/useReplaceItemAction';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -75,13 +76,14 @@ interface IExplorerProps {
     title?: string;
     selectionMode?: 'multiple' | 'simple';
     emptyPlaceholder?: ReactNode;
-    defaultActionsForItem?: Array<'edit' | 'remove'>;
+    defaultActionsForItem?: Array<'edit' | 'replaceLink' | 'remove'>;
     defaultPrimaryActions?: Array<'create'>;
     defaultMassActions?: Array<'deactivate'>;
     defaultViewSettings?: DefaultViewSettings;
     defaultCallbacks?: {
         item?: {
             edit?: IItemAction['callback'];
+            replaceLink?: (replaceValuesResult: ISubmitMultipleResult) => void;
             remove?: IItemAction['callback'];
         };
         primary?: {
@@ -106,6 +108,8 @@ interface IExplorerProps {
     hideSelectAllAction?: boolean;
     hidePrimaryActions?: boolean;
     hideTableHeader?: boolean;
+    creationFormId?: string;
+    editionFormId?: string;
 }
 
 export interface IExplorerRef {
@@ -125,6 +129,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             selectionMode,
             emptyPlaceholder,
             noPagination,
+            creationFormId,
+            editionFormId,
             showFiltersAndSorts = false,
             enableConfigureView = false,
             disableSelection = false,
@@ -134,7 +140,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             showSearch = false,
             hidePrimaryActions = false,
             hideTableHeader = false,
-            defaultActionsForItem = ['edit', 'remove'],
+            defaultActionsForItem = ['edit', 'replaceLink', 'remove'],
             defaultPrimaryActions = ['create'],
             defaultMassActions = ['deactivate'],
             defaultCallbacks,
@@ -153,6 +159,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {
             data,
             isMultivalue,
+            canEditLinkAttributeValues,
             loading: loadingData,
             refetch
         } = useExplorerData({
@@ -163,6 +170,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
             sorts: view.sort,
             filters: view.filters,
+            filtersOperator: view.filtersOperator,
             skip: viewSettingsLoading
         }); // TODO: refresh when go back on page
         const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
@@ -171,13 +179,21 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {removeItemAction} = useRemoveItemAction({
             isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('remove'),
             onRemove: defaultCallbacks?.item?.remove,
+            canDeleteLinkValues: canEditLinkAttributeValues,
             store: {view, dispatch},
             entrypoint
         });
 
+        const {replaceItemAction, replaceItemModal} = useReplaceItemAction({
+            isEnabled: isLink && isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('replaceLink'),
+            onReplace: defaultCallbacks?.item?.replaceLink,
+            canReplaceLinkValues: canEditLinkAttributeValues
+        });
+
         const {editItemAction, editItemModal} = useEditItemAction({
             isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit'),
-            onEdit: defaultCallbacks?.item?.edit
+            onEdit: defaultCallbacks?.item?.edit,
+            formId: editionFormId
         });
 
         const totalCount = data?.totalCount ?? 0;
@@ -185,15 +201,19 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {createPrimaryAction, createModal} = useCreatePrimaryAction({
             isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
             libraryId: view.libraryId,
+            canCreateAndLinkValue: canEditLinkAttributeValues,
             onCreate: defaultCallbacks?.primary?.create,
             entrypoint,
             totalCount,
+            formId: creationFormId,
             refetch
         });
-
         const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
+            entrypoint,
             isEnabled: isLink,
+            canAddLinkValue: canEditLinkAttributeValues,
             onLink: defaultCallbacks?.primary?.link,
+            linkId: data?.totalCount === 0 ? undefined : data?.records[0]?.id_value,
             maxItemsLeft: null // TODO: use KitTable.row
         });
 
@@ -203,6 +223,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
             store: {view, dispatch},
             allVisibleKeys,
+            totalCount,
             onDeactivate: defaultCallbacks?.mass?.deactivate,
             refetch
         });
@@ -295,7 +316,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                             iconsOnlyItemActions={iconsOnlyItemActions}
                             hideTableHeader={hideTableHeader}
                             paginationProps={
-                                entrypoint.type === 'library'
+                                entrypoint.type === 'library' && !noPagination
                                     ? {
                                           pageSizeOptions: defaultPageSizeOptions,
                                           currentPage,
@@ -306,11 +327,11 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                       }
                                     : undefined
                             }
-                            itemActions={[editItemAction, removeItemAction, ...itemActions]
+                            itemActions={[editItemAction, replaceItemAction, removeItemAction, ...itemActions]
                                 .filter(Boolean)
                                 .map(action => ({
                                     ...action,
-                                    disabled: isMassSelectionAll
+                                    disabled: isMassSelectionAll || action.disabled
                                 }))}
                             selection={{
                                 onSelectionChange: _isSelectionDisable ? null : setSelectedKeys,
@@ -325,6 +346,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                 </ExplorerPageDivStyled>
                 {settingsPanelElement && createPortal(<SidePanel />, settingsPanelElement?.() ?? document.body)}
                 {editItemModal}
+                {replaceItemModal}
                 {createModal}
                 {linkModal}
             </ViewSettingsContext.Provider>

@@ -9184,7 +9184,7 @@ __metadata:
     "@dnd-kit/sortable": "npm:8.0.0"
     "@graphql-codegen/add": "npm:5.0.0"
     "@graphql-codegen/cli": "npm:5.0.0"
-    "@leav/utils": "npm:0.0.3"
+    "@leav/utils": "npm:0.0.4"
     "@testing-library/jest-dom": "npm:5.16.5"
     "@testing-library/react": "npm:14.0.0"
     "@testing-library/react-hooks": "npm:8.0.1"
@@ -9235,7 +9235,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@leav/utils@npm:0.0.3, @leav/utils@workspace:*, @leav/utils@workspace:libs/utils":
+"@leav/utils@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@leav/utils@npm:0.0.3"
+  dependencies:
+    lodash: "npm:4.17.21"
+    minimatch: "npm:3.1.2"
+  checksum: d98f18b68c7d199836557ed5f99700d1c653876bce7c21f66e045a4828e8d2bfded98657e72e286544294c559bf61cb62e8c680d4c374b49d859f4992679031a
+  languageName: node
+  linkType: hard
+
+"@leav/utils@npm:0.0.4, @leav/utils@workspace:*, @leav/utils@workspace:libs/utils":
   version: 0.0.0-use.local
   resolution: "@leav/utils@workspace:libs/utils"
   dependencies:

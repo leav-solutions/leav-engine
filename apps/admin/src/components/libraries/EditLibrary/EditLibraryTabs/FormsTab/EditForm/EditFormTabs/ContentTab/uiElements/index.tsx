@@ -28,6 +28,7 @@ import Container from './layout/Container';
 import Tabs from './layout/Tabs';
 import TextBlock from './layout/TextBlock';
 import UiDivider from './layout/UiDivider';
+import UiIframe from './layout/UiIframe';
 
 const commonFieldSettings: IFormElementSettings[] = [
     {
@@ -78,6 +79,21 @@ export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
                 getInputSettings: (): SettingsFieldSpecificProps<ISettingsFieldSelectProps> => ({
                     options: [TabsDirection.HORIZONTAL, TabsDirection.VERTICAL]
                 })
+            }
+        ],
+        canDrop: () => false
+    },
+    [UIElementTypes.FRAME]: {
+        type: UIElementTypes.FRAME,
+        component: <UiIframe settings={{url: 'http://...'}} />,
+        settings: [
+            {
+                name: 'url',
+                inputType: FormElementSettingsInputTypes.INPUT
+            },
+            {
+                name: 'height',
+                inputType: FormElementSettingsInputTypes.INPUT
             }
         ],
         canDrop: () => false

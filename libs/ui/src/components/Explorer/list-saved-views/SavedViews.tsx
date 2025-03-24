@@ -1,21 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
+import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {KitTypography} from 'aristid-ds';
+import {KitRadio, KitSpace, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
-import {FaCheck} from 'react-icons/fa';
 import {ViewActionsButtons} from '../manage-view-settings/save-view/ViewActionsButtons';
 import {useLoadView} from '../useLoadView';
-
-const StyledListUlContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-`;
+import {Radio} from 'antd';
+import {useMeQuery} from '_ui/_gqlTypes';
+import {useDeleteView} from '../manage-view-settings/save-view/useDeleteView';
+import {useEditLabelView} from '../manage-view-settings/save-view/useEditLabelView';
+import {IDataViewOnAction, IUserView} from '../_types';
+import classNames from 'classnames';
+import {DefaultViewId} from '../manage-view-settings/store-view-settings/viewSettingsInitialState';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -24,114 +25,134 @@ const ContentWrapperStyledDiv = styled.div`
     height: 100%;
 `;
 
-const StyledListUl = styled.ul`
-    padding: calc(var(--general-spacing-s) * 1px) 0;
-    margin: 0 0 calc(var(--general-spacing-xs) * 1px) 0;
-    list-style: none;
-    color: var(--general-utilities-text-primary);
+const StyledListViewsDiv = styled.div`
     display: flex;
     flex-direction: column;
+`;
+
+const StyleKitRadioGroup = styled(KitRadio.Group)`
+    padding: calc(var(--general-spacing-s) * 1px) 0;
+    margin: 0 0 calc(var(--general-spacing-xs) * 1px) 0;
+    color: var(--general-utilities-text-primary);
     gap: calc(var(--general-spacing-xs) * 1px);
 `;
 
-const StyleViewItemLi = styled.li`
+const StyledViewDiv = styled.div`
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: calc(var(--general-spacing-xxs) * 1px) calc(var(--general-spacing-xs) * 1px);
-    border: 1px solid transparent;
-    border-radius: calc(var(--general-border-radius-s) * 1px);
-    height: calc(var(--general-spacing-l) * 1px);
-    cursor: pointer;
+    justify-content: space-between;
+    padding: calc(var(--general-spacing-xs) * 1px);
+    border-radius: calc(var(--general-border-radius-xs) * 1px);
 
-    &:hover {
-        border-color: var(--general-utilities-main-default);
-        background-color: var(--general-utilities-light);
+    &.selected,
+    &:has(label:hover),
+    &:has(svg:hover) {
+        background: var(--general-utilities-main-light);
     }
+`;
 
-    .check {
-        color: var(--general-utilities-main-default);
-        margin-left: calc(var(--general-spacing-xs) * 1px);
+const StyledIconsDiv = styled.div`
+    .edit,
+    .delete {
         font-size: calc(var(--general-typography-fontSize5) * 1px);
         flex: 0 0 auto;
-        display: none;
+        cursor: pointer;
+        display: inline-block;
     }
 
-    &.selected {
-        background: var(--general-utilities-main-light);
+    .edit {
+        color: var(--general-utilities-main-default);
+    }
 
-        .check {
-            display: inline-block;
-        }
+    .delete {
+        color: var(--general-utilities-error-default);
     }
 `;
 
 export const SavedViews: FunctionComponent = () => {
     const {t} = useSharedTranslation();
-    const {view} = useViewSettingsContext();
     const {availableLangs} = useLang();
+    const {view} = useViewSettingsContext();
     const {loadView} = useLoadView();
+    const {iconDelete, deleteModal} = useDeleteView();
+    const {iconEditLabel, editViewModal} = useEditLabelView();
+
+    const [currentView, setCurrentView] = useState<IUserView | undefined>(
+        view.savedViews.find(viewItem => view.viewId === viewItem.id) ?? undefined
+    );
+
+    const {data: userData} = useMeQuery();
+
+    const isOwnerView = (ownerId: string | null) => ownerId === userData?.me?.whoAmI?.id;
 
     const sharedViews = view.savedViews.filter(viewItem => viewItem.shared);
     const myViews = view.savedViews.filter(viewItem => !viewItem.shared);
 
-    const _getViewClassName = (viewId: string | null) => (view.viewId === viewId ? 'selected' : '');
+    const _selectedViewClass = (viewId: string | null) =>
+        classNames({
+            selected: view.viewId === viewId
+        });
 
-    const _handleViewClick = (id: string | null) => () => {
-        loadView(id);
+    useEffect(() => {
+        setCurrentView(view.savedViews.find(viewItem => view.viewId === viewItem.id) ?? undefined);
+    }, [view.viewId]);
+
+    const _onClickLoadView: ComponentProps<typeof Radio>['onChange'] = e => {
+        loadView(e.target.value);
     };
 
     return (
-        <ContentWrapperStyledDiv>
-            <StyledListUlContainer>
-                <KitTypography.Title level="h4">{t('explorer.my-views')}</KitTypography.Title>
-                <StyledListUl aria-label={t('explorer.my-views')}>
-                    <StyleViewItemLi
-                        className={_getViewClassName(null)}
-                        onClick={_handleViewClick(null)}
-                        aria-label={t('explorer.default-view')}
-                    >
-                        <KitTypography.Text size="fontSize5" weight="medium" ellipsis>
-                            {t('explorer.default-view')}
-                        </KitTypography.Text>
-                        <FaCheck className="check" />
-                    </StyleViewItemLi>
-                    {myViews.map(viewItem => (
-                        <StyleViewItemLi
-                            key={viewItem.id}
-                            className={_getViewClassName(viewItem.id)}
-                            onClick={_handleViewClick(viewItem.id)}
-                            aria-label={localizedTranslation(viewItem.label, availableLangs)}
-                        >
-                            <KitTypography.Text size="fontSize5" weight="medium" ellipsis>
-                                {localizedTranslation(viewItem.label, availableLangs)}
-                            </KitTypography.Text>
-                            <FaCheck className="check" />
-                        </StyleViewItemLi>
-                    ))}
-                </StyledListUl>
-                <KitTypography.Title level="h4">{t('explorer.shared-views')}</KitTypography.Title>
-                {sharedViews.length === 0 ? (
-                    <KitTypography.Text size="fontSize5">{t('explorer.no-shared-views')}</KitTypography.Text>
-                ) : (
-                    <StyledListUl aria-label={t('explorer.shared-view')}>
-                        {sharedViews.map(viewItem => (
-                            <StyleViewItemLi
-                                key={viewItem.id}
-                                className={_getViewClassName(viewItem.id)}
-                                onClick={_handleViewClick(viewItem.id)}
-                                aria-label={localizedTranslation(viewItem.label, availableLangs)}
-                            >
-                                <KitTypography.Text size="fontSize5" weight="medium" ellipsis>
+        <>
+            {editViewModal}
+            {deleteModal}
+            <ContentWrapperStyledDiv>
+                <StyledListViewsDiv>
+                    <StyleKitRadioGroup onChange={_onClickLoadView} value={currentView?.id}>
+                        <KitTypography.Title level="h4">{t('explorer.viewList.my-views')}</KitTypography.Title>
+                        <StyledViewDiv className={_selectedViewClass(DefaultViewId)}>
+                            <KitRadio value={undefined}>{t('explorer.viewList.default-view')}</KitRadio>
+                        </StyledViewDiv>
+                        {myViews.map(viewItem => (
+                            <StyledViewDiv className={_selectedViewClass(viewItem.id)} key={viewItem.id}>
+                                <KitRadio value={viewItem.id}>
                                     {localizedTranslation(viewItem.label, availableLangs)}
-                                </KitTypography.Text>
-                                <FaCheck className="check" />
-                            </StyleViewItemLi>
+                                </KitRadio>
+                                <StyledIconsDiv>
+                                    <KitSpace>
+                                        {iconEditLabel(viewItem)}
+                                        {iconDelete(viewItem)}
+                                    </KitSpace>
+                                </StyledIconsDiv>
+                            </StyledViewDiv>
                         ))}
-                    </StyledListUl>
-                )}
-            </StyledListUlContainer>
-            <ViewActionsButtons />
-        </ContentWrapperStyledDiv>
+                    </StyleKitRadioGroup>
+                    <StyleKitRadioGroup onChange={_onClickLoadView} value={currentView?.id}>
+                        <KitTypography.Title level="h4">{t('explorer.viewList.shared-views')}</KitTypography.Title>
+                        {sharedViews.length === 0 ? (
+                            <KitTypography.Text size="fontSize5">
+                                {t('explorer.viewList.no-shared-views')}
+                            </KitTypography.Text>
+                        ) : (
+                            sharedViews.map(viewItem => (
+                                <StyledViewDiv className={_selectedViewClass(viewItem.id)} key={viewItem.id}>
+                                    <KitRadio value={viewItem.id}>
+                                        {localizedTranslation(viewItem.label, availableLangs)}
+                                    </KitRadio>
+                                    {isOwnerView(viewItem.ownerId) ? (
+                                        <StyledIconsDiv>
+                                            <KitSpace>
+                                                {iconEditLabel(viewItem)}
+                                                {iconDelete(viewItem)}
+                                            </KitSpace>
+                                        </StyledIconsDiv>
+                                    ) : null}
+                                </StyledViewDiv>
+                            ))
+                        )}
+                    </StyleKitRadioGroup>
+                </StyledListViewsDiv>
+                <ViewActionsButtons />
+            </ContentWrapperStyledDiv>
+        </>
     );
 };

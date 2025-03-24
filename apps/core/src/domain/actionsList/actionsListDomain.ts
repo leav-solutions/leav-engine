@@ -16,6 +16,8 @@ import {ErrorFieldDetail, Errors} from '../../_types/errors';
 import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import {i18n} from 'i18next';
+import isEmptyValue from '../value/helpers/isEmptyValue';
+import partition from 'lodash/partition';
 
 export interface IActionsListDomain {
     /**
@@ -78,7 +80,10 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
         },
         async runActionsList(actions, values, ctx) {
             const availActions: IActionsListFunction[] = this.getAvailableActions();
-            let resultAction = values;
+
+            // we separate empty values to not treat them in the actions
+            const [emptyValues, nonEmptyValues] = partition(values, isEmptyValue);
+            let resultAction = nonEmptyValues;
 
             for (const action of actions) {
                 const params: ActionsListParams<string> = !!action.params
@@ -102,7 +107,11 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
                           : '';
                     if (customMessage) {
                         customMessage += ': ' + errors.map(error => error.attributeValue?.payload).join(', ');
-                        throw new ValidationError({[ctx.attribute.id]: customMessage}, customMessage, true);
+                        throw new ValidationError(
+                            {[ctx.attribute.id]: customMessage, attribute: ctx.attribute.id},
+                            customMessage,
+                            true
+                        );
                     } else {
                         const errorsByType = errors.reduce<
                             Record<Errors, {attributeValues: IValue[]; message: string}> | {}
@@ -127,11 +136,15 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
 
                         const formattedErrorMessage = errorMessage.join('\n');
 
-                        throw new ValidationError({[ctx.attribute.id]: formattedErrorMessage}, formattedErrorMessage);
+                        throw new ValidationError(
+                            {[ctx.attribute.id]: formattedErrorMessage, attribute: ctx.attribute.id},
+                            formattedErrorMessage
+                        );
                     }
                 }
             }
-            return resultAction;
+
+            return resultAction.concat(emptyValues);
         }
     };
 }

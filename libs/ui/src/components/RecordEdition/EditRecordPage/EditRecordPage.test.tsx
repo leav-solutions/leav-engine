@@ -9,8 +9,10 @@ import {Form} from 'antd';
 
 let user!: ReturnType<typeof userEvent.setup>;
 
+const editRecordFn = jest.fn();
 jest.mock('../EditRecord', () => ({
-    EditRecord: ({antdForm, record, onCreate}) => {
+    EditRecord: ({antdForm, record, onCreate, ...props}) => {
+        editRecordFn(props);
         const fields = [{name: 'jeanjau', value: record ? 'EditRecord' : 'CreateRecord'}];
         return (
             <Form form={antdForm} fields={fields}>
@@ -111,9 +113,7 @@ describe('EditRecordPage', () => {
         });
 
         test('Should display a custom title', async () => {
-            render(
-                <EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} title="Custom title" />
-            );
+            render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} title="Custom title" />);
 
             expect(screen.getByText('Custom title')).toBeInTheDocument();
         });
@@ -167,5 +167,47 @@ describe('EditRecordPage', () => {
         );
 
         expect(screen.queryByLabelText('refresh')).not.toBeInTheDocument();
+    });
+
+    describe('custom form ids', () => {
+        test('Shoud call EditRecord with creation FromId', async () => {
+            render(
+                <EditRecordPage
+                    library="test_lib"
+                    creationFormId="creation-form"
+                    editionFormId="edition-form"
+                    onClose={jest.fn()}
+                    record={null}
+                    title="Custom title"
+                    showRefreshButton={false}
+                />
+            );
+
+            expect(editRecordFn).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    formId: 'creation-form'
+                })
+            );
+        });
+
+        test('Shoud call EditRecord with edition FromId', async () => {
+            render(
+                <EditRecordPage
+                    library="test_lib"
+                    creationFormId="creation-form"
+                    editionFormId="edition-form"
+                    onClose={jest.fn()}
+                    record={mockRecord}
+                    title="Custom title"
+                    showRefreshButton={false}
+                />
+            );
+
+            expect(editRecordFn).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    formId: 'edition-form'
+                })
+            );
+        });
     });
 });

@@ -4,26 +4,28 @@
 import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes, simpleStringHash} from '@leav/utils';
 import {FunctionComponent, useEffect, useMemo} from 'react';
 import {ErrorDisplay} from '_ui/components';
-import useGetRecordForm, {IRecordForm} from '_ui/hooks/useGetRecordForm';
+import useGetRecordForm from '_ui/hooks/useGetRecordForm';
 import {useGetRecordUpdatesSubscription} from '_ui/hooks/useGetRecordUpdatesSubscription';
 import useRecordsConsultationHistory from '_ui/hooks/useRecordsConsultationHistory';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
-import {AttributeDetailsFragment, FormElementTypes, RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
+import {FormElementTypes, RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import extractFormElements from './helpers/extractFormElements';
 import {RecordEditionContext} from './hooks/useRecordEditionContext';
 import {formComponents} from './uiElements';
-import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
+import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, IPendingValues, SubmitValueFunc} from './_types';
 import {Form, FormInstance} from 'antd';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import EditRecordSkeleton from '../EditRecordSkeleton';
+import styled from 'styled-components';
 
 interface IEditRecordContentProps {
     antdForm: FormInstance;
+    formId?: string;
     record: IRecordIdentityWhoAmI | null;
     library: string;
     onRecordSubmit: (attributes: RecordFormAttributeStandardAttributeFragment[]) => void;
@@ -31,19 +33,29 @@ interface IEditRecordContentProps {
     onValueDelete: DeleteValueFunc;
     onDeleteMultipleValues: DeleteMultipleValuesFunc;
     readonly: boolean;
+    pendingValues: IPendingValues;
 }
+
+const WrappedForm = styled(Form)`
+    height: 100%;
+`;
 
 const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     antdForm,
+    formId,
     record,
     library,
+    pendingValues,
     onRecordSubmit,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues,
     readonly
 }) => {
-    const formId = record ? 'edition' : 'creation';
+    let formIdToLoad = formId;
+    if (!formId) {
+        formIdToLoad = record ? 'edition' : 'creation';
+    }
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
 
@@ -67,7 +79,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const {loading, error, recordForm, refetch} = useGetRecordForm({
         libraryId: library,
         recordId: record?.id,
-        formId,
+        formId: formIdToLoad,
         version: state.valuesVersion
     });
 
@@ -152,7 +164,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const elementsByContainer = extractFormElements(recordForm, recordComputedValues, computeFieldsError);
 
     return (
-        <Form
+        <WrappedForm
             id={EDIT_OR_CREATE_RECORD_FORM_ID}
             form={antdForm}
             initialValues={antdFormInitialValues}
@@ -169,15 +181,17 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                     // Use a hash of record form as a key to force a full re-render when the form changes
                     key={recordFormHash}
                     antdForm={antdForm}
+                    formIdToLoad={formIdToLoad}
                     element={rootElement}
                     computedValues={recordComputedValues}
                     readonly={readonly}
+                    pendingValues={pendingValues}
                     onValueSubmit={_handleValueSubmit}
                     onValueDelete={_handleValueDelete}
                     onDeleteMultipleValues={onDeleteMultipleValues}
                 />
             </RecordEditionContext.Provider>
-        </Form>
+        </WrappedForm>
     );
 };
 

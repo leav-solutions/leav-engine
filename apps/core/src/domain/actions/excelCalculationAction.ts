@@ -95,6 +95,7 @@ export default function ({
                 ctx,
                 values.map(v => v.payload)
             );
+
             const parser = new Parser();
 
             const {error, result} = parser.parse(finalFormula);
@@ -105,7 +106,8 @@ export default function ({
                     errors: [
                         {
                             errorType: Errors.EXCEL_CALCULATION_ERROR,
-                            attributeValue: null
+                            attributeValue: null,
+                            message: `Error: ${error} in formula: -- ${finalFormula} --`
                         }
                     ]
                 };

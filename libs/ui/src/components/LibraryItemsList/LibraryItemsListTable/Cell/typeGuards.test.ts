@@ -137,4 +137,40 @@ describe('typeGuards', () => {
             expect(TypeGuards.isTreeCellValues([{...mockTreeValue, isInherited: true}])).toBe(true);
         });
     });
+
+    describe('isRecordFormElementsValueStandardValue', () => {
+        it('should be false if value has no value property', () => {
+            expect(TypeGuards.isRecordFormElementsValueStandardValue({} as any)).toBe(false);
+            expect(TypeGuards.isRecordFormElementsValueStandardValue({...mockLinkValue})).toBe(false);
+            expect(TypeGuards.isRecordFormElementsValueStandardValue({...mockTreeValue})).toBe(false);
+        });
+
+        it('should be true if value has value property', () => {
+            expect(TypeGuards.isRecordFormElementsValueStandardValue({...mockValue})).toBe(true);
+        });
+    });
+
+    describe('isRecordFormElementsValuesLinkValue', () => {
+        it('should be false if value has no linkValue property', () => {
+            expect(TypeGuards.isRecordFormElementsValuesLinkValue({} as any)).toBe(false);
+            expect(TypeGuards.isRecordFormElementsValuesLinkValue({...mockValue})).toBe(false);
+            expect(TypeGuards.isRecordFormElementsValuesLinkValue({...mockTreeValue})).toBe(false);
+        });
+
+        it('should be true if value has linkValue property', () => {
+            expect(TypeGuards.isRecordFormElementsValuesLinkValue({...mockLinkValue})).toBe(true);
+        });
+    });
+
+    describe('isRecordFormElementsValuesTreeValue', () => {
+        it('should be false if value has no treeValue property', () => {
+            expect(TypeGuards.isRecordFormElementsValuesTreeValue({} as any)).toBe(false);
+            expect(TypeGuards.isRecordFormElementsValuesTreeValue({...mockValue})).toBe(false);
+            expect(TypeGuards.isRecordFormElementsValuesTreeValue({...mockLinkValue})).toBe(false);
+        });
+
+        it('should be true if value has treeValue property', () => {
+            expect(TypeGuards.isRecordFormElementsValuesTreeValue({...mockTreeValue})).toBe(true);
+        });
+    });
 });

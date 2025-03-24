@@ -1,0 +1,72 @@
+fragment RecordIdentity on Record {
+    id
+    whoAmI {
+        id
+        label
+        subLabel
+        color
+        library {
+            id
+            label
+        }
+        preview
+    }
+}
+
+fragment ViewDetailsFilter on RecordFilter {
+    field
+    value
+    tree {
+        id
+        label
+    }
+    condition
+    operator
+}
+
+fragment ViewDetails on View {
+    id
+    display {
+        size
+        type
+    }
+    shared
+    created_by {
+        id
+        whoAmI {
+            id
+            label
+            library {
+                id
+            }
+        }
+    }
+    label
+    description
+    color
+    filters {
+        ...ViewDetailsFilter
+    }
+    sort {
+        field
+        order
+    }
+    valuesVersions {
+        treeId
+        treeNode {
+            id
+            record {
+                ...RecordIdentity
+            }
+        }
+    }
+    attributes {
+        id
+    }
+}
+
+mutation UpdateView($view: ViewInputPartial!) {
+    updateView(view: $view) {
+        ...ViewDetails
+    }
+}

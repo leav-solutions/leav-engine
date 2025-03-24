@@ -3,12 +3,18 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ChangeEvent, useMemo, useState} from 'react';
 import {useDebouncedValue} from '_ui/hooks/useDebouncedValue';
-import {AttributeDetailsFragment, GetAttributesByLibQuery, useGetAttributesByLibQuery} from '_ui/_gqlTypes';
+import {
+    useGetAttributesByLibWithPermissionsQuery,
+    GetAttributesByLibWithPermissionsQuery,
+    AttributeDetailsFragment
+} from '_ui/_gqlTypes';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 
 interface IColumnsById {
-    [attributeId: string]: AttributeDetailsFragment & {index: string};
+    [attributeId: string]: AttributeDetailsFragment & {
+        index: string;
+    };
 }
 
 const sanitize = (str: string) =>
@@ -17,14 +23,19 @@ const sanitize = (str: string) =>
         .replace(/\p{Diacritic}/gu, '')
         .toLowerCase();
 
-const _mapping = (data: GetAttributesByLibQuery | undefined, availableLanguages: string[]): IColumnsById =>
-    data?.attributes?.list.reduce<IColumnsById>((acc, attribute) => {
-        const label = localizedTranslation(attribute.label, availableLanguages);
-        acc[attribute.id] = {
-            ...attribute,
-            label,
-            index: `${sanitize(attribute.id)} ${sanitize(label)}`
-        };
+const _mapping = (
+    data: GetAttributesByLibWithPermissionsQuery | undefined,
+    availableLanguages: string[]
+): IColumnsById =>
+    data?.attributes?.list.reduce<IColumnsById>((acc, {permissions, ...attribute}) => {
+        if (permissions.access_attribute) {
+            const label = localizedTranslation(attribute.label, availableLanguages);
+            acc[attribute.id] = {
+                ...attribute,
+                label,
+                index: `${sanitize(attribute.id)} ${sanitize(label)}`
+            };
+        }
         return acc;
     }, {}) ?? {};
 
@@ -33,7 +44,7 @@ export const useAttributeDetailsData = (libraryId: string) => {
     const debouncedSearchInput = useDebouncedValue(searchInput, 300);
 
     const {lang: availableLanguages} = useLang();
-    const {data} = useGetAttributesByLibQuery({
+    const {data} = useGetAttributesByLibWithPermissionsQuery({
         variables: {
             library: libraryId
         }

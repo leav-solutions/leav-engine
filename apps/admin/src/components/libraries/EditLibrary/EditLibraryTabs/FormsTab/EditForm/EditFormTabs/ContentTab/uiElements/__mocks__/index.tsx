@@ -26,6 +26,10 @@ export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
     [UIElementTypes.TABS]: {
         ...baseMock,
         type: UIElementTypes.TABS
+    },
+    [UIElementTypes.FRAME]: {
+        ...baseMock,
+        type: UIElementTypes.FRAME
     }
 };
 

@@ -33,6 +33,7 @@ export interface IItemData {
     key: string;
     itemId: string;
     whoAmI: Required<RecordIdentityFragment['whoAmI']>;
+    canDelete: boolean;
     propertiesById: {
         [attributeId: string]: PropertyValueFragment[];
     };
@@ -48,7 +49,7 @@ export interface IItemAction {
     label: string;
     iconOnly?: boolean;
     isDanger?: boolean;
-    disabled?: boolean;
+    disabled?: boolean | ((item: IItemData) => boolean);
 }
 
 export interface IPrimaryAction {
@@ -124,6 +125,7 @@ export interface IFilterDropDownProps {
 export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,
     {
+        filtersOperator?: 'AND' | 'OR';
         filters?: ExplorerFilter[];
     }
 >;
@@ -173,4 +175,9 @@ export interface IUserView extends Pick<IView, 'shared' | 'display' | 'sort' | '
     id: IView['id'] | null;
     filters: validFilter[];
     ownerId: string | null;
+}
+
+export interface IDataViewOnAction {
+    id: string | null;
+    label: Record<string, string> | null;
 }
