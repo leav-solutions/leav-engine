@@ -60,7 +60,7 @@ export const useReplaceItemAction = ({
                     />
                 ) : null
         }),
-        [isEnabled, isReplaceModalOpen]
+        [isEnabled, isReplaceModalOpen, _replaceItemAction]
     );
 
     return replaceAction;

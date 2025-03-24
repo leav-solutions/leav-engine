@@ -1570,7 +1570,7 @@ describe('Explorer', () => {
                     mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
                 }
             );
-            expect(explorerRef.current?.linkAction?.label).toEqual('explorer.add-existing-item');
+            expect(explorerRef.current?.linkAction?.label).toEqual('record_edition.replace-by-existing-item');
             expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             await user.click(screen.getByRole('button', {name: 'test button'}));
@@ -2515,7 +2515,7 @@ describe('Explorer', () => {
         });
     });
 
-    describe.only('Permissions', () => {
+    describe('Permissions', () => {
         const mockExplorerAttributesPermissionsQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
             loading: false,
             called: true,

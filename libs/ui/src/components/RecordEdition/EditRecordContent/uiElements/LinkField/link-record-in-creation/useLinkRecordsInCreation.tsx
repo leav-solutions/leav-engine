@@ -67,6 +67,7 @@ export const useLinkRecordsInCreation = ({
 
     const {openModal: openRecordSelectorModal, RecordSelectorModal} = useRecordSelector({
         libraryId,
+        isReplacementMode: !attribute.multiple_values && !hasNoSelectedRecord,
         selectionMode: attribute.multiple_values ? 'multiple' : 'simple',
         linkRecords
     });
@@ -156,7 +157,7 @@ export const useLinkRecordsInCreation = ({
                         icon: <FaPlus />,
                         label: t('explorer.create-one'),
                         callback: () => openCreateRecordModal(libraryId),
-                        disabled: isReadOnly
+                        disabled: isReadOnly || !attribute.permissions.edit_value
                     }}
                     linkButtonProps={{
                         icon: <FaList />,
@@ -165,7 +166,7 @@ export const useLinkRecordsInCreation = ({
                                 ? t('explorer.add-existing-item')
                                 : t('record_edition.replace-by-existing-item'),
                         callback: openRecordSelectorModal,
-                        disabled: isReadOnly
+                        disabled: isReadOnly || !attribute.permissions.edit_value
                     }}
                     hasNoValue={hasNoSelectedRecord}
                 />
