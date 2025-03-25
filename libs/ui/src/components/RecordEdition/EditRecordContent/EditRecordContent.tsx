@@ -170,7 +170,11 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
             id={formElementId ?? EDIT_OR_CREATE_RECORD_FORM_ID}
             form={antdForm}
             initialValues={antdFormInitialValues}
-            onFinish={() => onRecordSubmit(recordForm.elements.map(element => element.attribute))}
+            onFinish={() =>
+                onRecordSubmit(
+                    recordForm.elements.filter(element => element.attribute?.id).map(element => element.attribute)
+                )
+            }
         >
             <RecordEditionContext.Provider
                 value={{
