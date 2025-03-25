@@ -8,9 +8,8 @@ import {ISimplePermissionHelper} from './simplePermission';
 import {IDefaultPermissionHelper} from './defaultPermission';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {ITreeNode} from '../../../_types/tree';
-import {IPermissionsTreeTarget} from '../../../_types/permissions';
 
-interface IDeps {
+export interface IPermissionByUserGroupsHelperDeps {
     'core.domain.permission.helpers.simplePermission': ISimplePermissionHelper;
     'core.domain.permission.helpers.reducePermissionsArray': IReducePermissionsArrayHelper;
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
@@ -22,7 +21,7 @@ export interface IPermissionByUserGroupsHelper {
     getPermissionByUserGroups: (params: IGetPermissionByUserGroupsParams) => Promise<boolean>;
 }
 
-export default function (deps: IDeps): IPermissionByUserGroupsHelper {
+export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionByUserGroupsHelper {
     const {
         'core.domain.permission.helpers.simplePermission': simplePermHelper,
         'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper,
