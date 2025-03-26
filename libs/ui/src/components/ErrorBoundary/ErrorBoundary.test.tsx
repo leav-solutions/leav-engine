@@ -4,40 +4,81 @@
 import {Button} from 'antd';
 import {render, screen} from '../../_tests/testUtils';
 import {ErrorBoundary} from './ErrorBoundary';
+import {FunctionComponent} from 'react';
+
+let isDevEnvMock: boolean;
+jest.mock('_ui/_utils/isDevEnv', () => ({
+    isDevEnv: () => isDevEnvMock
+}));
 
 describe('ErrorBoundary', () => {
-    beforeAll(() => jest.spyOn(console, 'error').mockImplementation(jest.fn()));
-    afterAll(() => (console.error as jest.Mock).mockRestore());
-
-    const ComponentWithError = () => {
+    const ComponentWithError: FunctionComponent = () => {
         throw new Error('boom!');
     };
 
-    test('Display proper error message with recovery buttons', async () => {
-        const buttons = [<Button>refresh</Button>, <Button>go_back</Button>];
+    describe('in production build', () => {
+        beforeEach(() => {
+            isDevEnvMock = false;
+        });
+        test('Should display recovery buttons', async () => {
+            const buttons = [<Button>refresh</Button>, <Button>go_back</Button>];
 
-        render(
-            <ErrorBoundary recoveryButtons={buttons}>
-                <ComponentWithError />
-            </ErrorBoundary>
-        );
+            render(
+                <ErrorBoundary recoveryButtons={buttons}>
+                    <ComponentWithError />
+                </ErrorBoundary>
+            );
 
-        expect(screen.getByText(/error_occurred/)).toBeInTheDocument();
-        expect(screen.getByText(/boom!/)).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: /refresh/i})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: /go_back/i})).toBeInTheDocument();
+            expect(screen.getByText(/error_occurred/)).toBeInTheDocument();
+            expect(screen.queryByText(/boom!/)).not.toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /refresh/i})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /go_back/i})).toBeInTheDocument();
+        });
+
+        test('Should display error', async () => {
+            render(
+                <ErrorBoundary>
+                    <ComponentWithError />
+                </ErrorBoundary>
+            );
+
+            expect(screen.getByText(/error_occurred/)).toBeInTheDocument();
+            expect(screen.queryByText(/boom!/)).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: /refresh/i})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: /go_back/i})).not.toBeInTheDocument();
+        });
     });
 
-    test('Display error message without recovery buttons', async () => {
-        render(
-            <ErrorBoundary>
-                <ComponentWithError />
-            </ErrorBoundary>
-        );
+    describe('in local build', () => {
+        beforeEach(() => {
+            isDevEnvMock = true;
+        });
+        test('Should display proper error message with recovery buttons', async () => {
+            const buttons = [<Button>refresh</Button>, <Button>go_back</Button>];
 
-        expect(screen.getByText(/error_occurred/)).toBeInTheDocument();
-        expect(screen.getByText(/boom!/)).toBeInTheDocument();
-        expect(screen.queryByRole('button', {name: /refresh/i})).not.toBeInTheDocument();
-        expect(screen.queryByRole('button', {name: /go_back/i})).not.toBeInTheDocument();
+            render(
+                <ErrorBoundary recoveryButtons={buttons}>
+                    <ComponentWithError />
+                </ErrorBoundary>
+            );
+
+            expect(screen.getByText(/error_occurred/)).toBeInTheDocument();
+            expect(screen.getByText(/boom!/)).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /refresh/i})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /go_back/i})).toBeInTheDocument();
+        });
+
+        test('Should display error message without recovery buttons', async () => {
+            render(
+                <ErrorBoundary>
+                    <ComponentWithError />
+                </ErrorBoundary>
+            );
+
+            expect(screen.getByText(/error_occurred/)).toBeInTheDocument();
+            expect(screen.getByText(/boom!/)).toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: /refresh/i})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: /go_back/i})).not.toBeInTheDocument();
+        });
     });
 });

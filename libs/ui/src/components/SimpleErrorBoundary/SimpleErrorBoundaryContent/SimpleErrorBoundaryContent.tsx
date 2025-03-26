@@ -3,13 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FrownOutlined} from '@ant-design/icons';
 import {Result} from 'antd';
-import {ErrorInfo} from 'react';
+import {ErrorInfo, FunctionComponent} from 'react';
 import styled from 'styled-components';
-
-interface IErrorBoundaryContentProps {
-    error?: Error;
-    errorInfo?: ErrorInfo;
-}
+import {isDevEnv} from '_ui/_utils/isDevEnv';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const ErrorResult = styled(Result)`
     font-size: 1rem;
@@ -26,16 +23,25 @@ const ErrorResult = styled(Result)`
     }
 `;
 
-function SimpleErrorBoundaryContent({error, errorInfo}: IErrorBoundaryContentProps): JSX.Element {
+interface IErrorBoundaryContentProps {
+    error?: Error;
+    errorInfo?: ErrorInfo;
+}
+
+const SimpleErrorBoundaryContent: FunctionComponent<IErrorBoundaryContentProps> = ({error, errorInfo}) => {
+    const {t} = useSharedTranslation();
+
     return (
-        <ErrorResult status="error" title="An error occurred" icon={<FrownOutlined />}>
-            <details style={{whiteSpace: 'pre-wrap'}}>
-                {error && error.toString()}
-                <br />
-                {errorInfo.componentStack}
-            </details>
+        <ErrorResult status="error" title={t('error.error_occurred')} icon={<FrownOutlined />}>
+            {isDevEnv() && (
+                <details style={{whiteSpace: 'pre-wrap'}}>
+                    {error?.toString()}
+                    <br />
+                    {errorInfo.componentStack}
+                </details>
+            )}
         </ErrorResult>
     );
-}
+};
 
 export default SimpleErrorBoundaryContent;
