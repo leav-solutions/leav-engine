@@ -3,17 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FrownOutlined} from '@ant-design/icons';
 import {ConfigProvider, Result, Space, theme} from 'antd';
-import {ErrorInfo, ReactNode} from 'react';
+import {ErrorInfo, FunctionComponent, ReactNode} from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {AntdThemeToken, customTheme, themeVars} from '../../../antdTheme';
-
-interface IErrorBoundaryContentProps {
-    error?: Error;
-    errorInfo?: ErrorInfo;
-    recoveryButtons?: ReactNode[];
-    showRecoveryButtons?: boolean;
-}
+import {isDevEnv} from '_ui/_utils/isDevEnv';
 
 const ErrorResult = styled(Result)<{$themeToken: AntdThemeToken}>`
     font-size: 1rem;
@@ -38,7 +32,14 @@ const ButtonsWrapper = styled(Space)`
     }
 `;
 
-function ErrorBoundaryContent({error, errorInfo, recoveryButtons}: IErrorBoundaryContentProps): JSX.Element {
+interface IErrorBoundaryContentProps {
+    error?: Error;
+    errorInfo?: ErrorInfo;
+    recoveryButtons?: ReactNode[];
+    showRecoveryButtons?: boolean;
+}
+
+const ErrorBoundaryContent: FunctionComponent<IErrorBoundaryContentProps> = ({error, errorInfo, recoveryButtons}) => {
     const {token} = theme.useToken();
     const {t} = useSharedTranslation();
 
@@ -46,14 +47,16 @@ function ErrorBoundaryContent({error, errorInfo, recoveryButtons}: IErrorBoundar
         <ConfigProvider theme={customTheme}>
             <ErrorResult status="error" title={t('error.error_occurred')} icon={<FrownOutlined />} $themeToken={token}>
                 {!!recoveryButtons?.length && <ButtonsWrapper>{recoveryButtons}</ButtonsWrapper>}
-                <details style={{whiteSpace: 'pre-wrap'}}>
-                    {error && error.toString()}
-                    <br />
-                    {errorInfo.componentStack}
-                </details>
+                {isDevEnv() && (
+                    <details style={{whiteSpace: 'pre-wrap'}}>
+                        {error?.toString()}
+                        <br />
+                        {errorInfo.componentStack}
+                    </details>
+                )}
             </ErrorResult>
         </ConfigProvider>
     );
-}
+};
 
 export default ErrorBoundaryContent;
