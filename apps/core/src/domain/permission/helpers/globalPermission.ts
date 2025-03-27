@@ -66,7 +66,7 @@ export default function ({
         ): Promise<boolean> {
             // disable cache temporary: const cacheKey = getPermissionCacheKey(ctx.groupsId ?? null, type, applyTo, action, '');
             // disable cache temporary: const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
-            let perm: boolean;
+            // disable cache temporary: let perm: boolean;
 
             /* disable cache temporary: if (permFromCache !== null) {
                 perm = permFromCache === 'true';
@@ -83,7 +83,7 @@ export default function ({
                   )
                 : [];
 
-            perm = await permByUserGroupsHelper.getPermissionByUserGroups({
+            const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
                 type,
                 action,
                 userGroupsPaths,

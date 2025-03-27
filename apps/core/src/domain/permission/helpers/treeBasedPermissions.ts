@@ -105,7 +105,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
 
         // disable cache temporary: const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, key);
         // disable cache temporary: const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
-        let perm: boolean;
+        // disable cache temporary: let perm: boolean;
 
         /* disable cache temporary: if (permFromCache !== null) {
             perm = permFromCache === 'true';
@@ -139,7 +139,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             })
         );
 
-        perm = treePerms.reduce((globalPerm, treePerm) => {
+        const perm = treePerms.reduce((globalPerm, treePerm) => {
             if (globalPerm === null) {
                 return treePerm;
             }
