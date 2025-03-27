@@ -16,7 +16,7 @@ import {
     TreePermissionsActions
 } from '_types/permissions';
 import {IQueryInfos} from '_types/queryInfos';
-import {TreePaths} from '_types/tree';
+import {ITreeNode, TreePaths} from '_types/tree';
 
 export const PERMISSIONS_CACHE_HEADER = 'permissions';
 export const PERMISSIONS_NULL_PLACEHOLDER = '__null__';
@@ -53,7 +53,7 @@ export interface IGetPermissionByUserGroupsParams {
     action: PermissionsActions;
     userGroupsPaths: TreePaths[];
     applyTo?: string;
-    permissionTreeTarget?: IPermissionsTreeTarget;
+    treeTarget?: {tree: string; path: ITreeNode[]};
     getDefaultPermission?: () => Promise<boolean> | boolean;
     ctx: IQueryInfos;
 }

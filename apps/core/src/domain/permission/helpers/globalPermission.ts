@@ -6,7 +6,7 @@ import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
-import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
+import {ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {PERMISSIONS_NULL_PLACEHOLDER} from '../_types';
 import {IDefaultPermissionHelper} from './defaultPermission';

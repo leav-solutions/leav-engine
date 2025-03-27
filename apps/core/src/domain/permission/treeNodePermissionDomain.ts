@@ -64,17 +64,9 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
         permConf: ITreeNodePermissionsConf;
         treeElement: ITreeElement;
         ctx: IQueryInfos;
-    }) => {
+    }): Promise<boolean | null> => {
         const {action, userId, treeId, permConf, treeElement, ctx} = params;
         const {id: recordId, library} = treeElement;
-
-        const _getTreePermission = () =>
-            treePermissionDomain.getTreePermission({
-                action: action as unknown as TreePermissionsActions,
-                userId,
-                treeId,
-                ctx
-            });
 
         if (!permConf?.[library]) {
             return treeLibraryPermissionDomain.getTreeLibraryPermission({
@@ -83,7 +75,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 libraryId: library,
                 userId,
                 ctx,
-                getDefaultPermission: _getTreePermission
+                getDefaultPermission: () => null
             });
         }
 
@@ -113,7 +105,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 libraryId: library,
                 userId,
                 ctx,
-                getDefaultPermission: _getTreePermission
+                getDefaultPermission: () => null
             });
 
         return treeBasedPermissionsHelper.getTreeBasedPermission(
@@ -154,12 +146,52 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
             }
 
             // Retrieve permissions for this element, based on tree permissions conf
-            return _getPermByTreeNode({
+            const elemPerm = await _getPermByTreeNode({
                 action: action as unknown as TreeNodePermissionsActions,
                 userId,
                 treeId,
                 permConf: treeData.permissions_conf,
                 treeElement: nodeElement,
+                ctx
+            });
+
+            if (elemPerm !== null) {
+                return elemPerm;
+            }
+
+            // Element has no permission defined. We check on its ancestors and return the first we find.
+            // If we find nothing, we'll return global tree permission.
+            const ancestors = await treeRepo.getElementAncestors({
+                treeId,
+                nodeId,
+                ctx
+            });
+
+            for (const parent of ancestors) {
+                const parentNode: ITreeElement = {
+                    id: parent.record.id,
+                    library: parent.record.library
+                };
+
+                const parentPerm = await _getPermByTreeNode({
+                    action,
+                    userId,
+                    treeId,
+                    permConf: treeData.permissions_conf,
+                    treeElement: parentNode,
+                    ctx
+                });
+
+                if (parentPerm !== null) {
+                    return parentPerm;
+                }
+            }
+
+            // Nothing found on all ancestors
+            return treePermissionDomain.getTreePermission({
+                action: action as unknown as TreePermissionsActions,
+                userId,
+                treeId,
                 ctx
             });
         },

@@ -22,7 +22,6 @@ import {
 
 export interface IRecordPermissionDomain {
     getRecordPermission(params: IGetRecordPermissionParams): Promise<boolean>;
-
     getInheritedRecordPermission(params: IGetInheritedRecordPermissionParams): Promise<boolean>;
 }
 

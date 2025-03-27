@@ -35,40 +35,32 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
             action,
             userGroupsPaths,
             applyTo = null,
-            permissionTreeTarget = null,
+            treeTarget = null,
             getDefaultPermission = defaultPermHelper.getDefaultPermission,
             ctx
         }: IGetPermissionByUserGroupsParams): Promise<boolean> {
-            let permTreePath: ITreeNode[] = null;
-            if (permissionTreeTarget) {
-                permTreePath = (
-                    await elementAncestorsHelper.getCachedElementAncestors({
-                        treeId: permissionTreeTarget.tree,
-                        nodeId: permissionTreeTarget.nodeId,
-                        ctx
-                    })
-                ).reverse();
-            }
-
             // we reverse to have group paths from current user groups to the added root group
-            userGroupsPaths = userGroupsPaths.length
+            const reversedUserGroupsPaths = userGroupsPaths.length
                 ? userGroupsPaths.map(path => [...path.reverse(), {id: null}])
                 : [[{id: null}]];
 
-            const getPermission = async (
-                userGroupPath: ITreeNode[],
-                treeTargetPath: ITreeNode[] | null
-            ): Promise<boolean> => {
+            // we reverse to have tree target path from current target
+            let reversedTreeTargetPath: ITreeNode[];
+            if (treeTarget) {
+                reversedTreeTargetPath = [...treeTarget.path].reverse();
+            }
+
+            const getPermission = async (userGroupPath: ITreeNode[], targetPath?: ITreeNode[]): Promise<boolean> => {
                 for (const groupNode of userGroupPath) {
                     const groupNodePermission = await simplePermHelper.getSimplePermission({
                         type,
                         applyTo,
                         action,
                         usersGroupNodeId: groupNode.id,
-                        ...(!!treeTargetPath && {
+                        ...(!!targetPath && {
                             permissionTreeTarget: {
-                                tree: permissionTreeTarget.tree,
-                                nodeId: treeTargetPath[0]?.id ?? null
+                                tree: treeTarget.tree,
+                                nodeId: targetPath[0]?.id ?? null
                             }
                         }),
                         ctx
@@ -79,15 +71,15 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
                     }
                 }
 
-                if (treeTargetPath?.length) {
-                    return getPermission(userGroupPath, treeTargetPath.slice(1));
+                if (targetPath?.length) {
+                    return getPermission(userGroupPath, targetPath.slice(1));
                 }
 
                 return getDefaultPermission();
             };
 
             const userPerms = await Promise.all(
-                userGroupsPaths.map(userGroupPath => getPermission(userGroupPath, permTreePath))
+                reversedUserGroupsPaths.map(userGroupPath => getPermission(userGroupPath, reversedTreeTargetPath))
             );
 
             // The user may have multiple groups with different permissions. We must reduce them to a single permission
