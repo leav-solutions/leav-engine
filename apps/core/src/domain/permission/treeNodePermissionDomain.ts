@@ -64,7 +64,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
         permConf: ITreeNodePermissionsConf;
         treeElement: ITreeElement;
         ctx: IQueryInfos;
-    }) => {
+    }): Promise<boolean | null> => {
         const {action, userId, treeId, permConf, treeElement, ctx} = params;
         const {id: recordId, library} = treeElement;
 
@@ -98,8 +98,17 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
             return allVal;
         }, {});
 
-        // Get permission
-        const nodePerm = await treeBasedPermissionsHelper.getTreeBasedPermission(
+        const _getDefaultPermission = () =>
+            treeLibraryPermissionDomain.getTreeLibraryPermission({
+                action,
+                treeId,
+                libraryId: library,
+                userId,
+                ctx,
+                getDefaultPermission: () => null
+            });
+
+        return treeBasedPermissionsHelper.getTreeBasedPermission(
             {
                 type: PermissionTypes.TREE_NODE,
                 action,
@@ -107,24 +116,10 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 applyTo: `${treeId}/${library}`,
                 treeValues: valuesByAttr,
                 permissions_conf: permConf[library],
-                getDefaultPermission: () => null
+                getDefaultPermission: _getDefaultPermission
             },
             ctx
         );
-
-        if (nodePerm !== null) {
-            return nodePerm;
-        }
-
-        // Element has no permission defined, look for tree library permission
-        return treeLibraryPermissionDomain.getTreeLibraryPermission({
-            action,
-            treeId,
-            libraryId: library,
-            userId,
-            ctx,
-            getDefaultPermission: () => null
-        });
     };
 
     return {
@@ -209,32 +204,22 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
             permTreeNode,
             ctx
         }): Promise<boolean> {
-            const _getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
-                const {userGroups} = params;
-
-                // Check tree library permission
-                const treeLibPerm = await permByUserGroupHelper.getPermissionByUserGroups({
+            const _getDefaultPermission = (params: IGetDefaultPermissionParams) =>
+                permByUserGroupHelper.getPermissionByUserGroups({
                     type: PermissionTypes.TREE_LIBRARY,
                     action,
-                    userGroupsPaths: userGroups,
+                    userGroupsPaths: params.userGroups,
                     applyTo: `${treeId}/${libraryId}`,
+                    getDefaultPermission: () =>
+                        permByUserGroupHelper.getPermissionByUserGroups({
+                            type: PermissionTypes.TREE,
+                            action,
+                            userGroupsPaths: params.userGroups,
+                            applyTo: treeId,
+                            ctx
+                        }),
                     ctx
                 });
-
-                if (treeLibPerm !== null) {
-                    return treeLibPerm;
-                }
-
-                const treePerm = await permByUserGroupHelper.getPermissionByUserGroups({
-                    type: PermissionTypes.TREE,
-                    action,
-                    userGroupsPaths: userGroups,
-                    applyTo: treeId,
-                    ctx
-                });
-
-                return treePerm !== null ? treePerm : defaultPermHelper.getDefaultPermission();
-            };
 
             return treeBasedPermissionsHelper.getInheritedTreeBasedPermission(
                 {

@@ -5,21 +5,28 @@ import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IGetPermissionByUserGroupsParams} from '../_types';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import {ISimplePermissionHelper} from './simplePermission';
+import {IDefaultPermissionHelper} from './defaultPermission';
+import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {ITreeNode} from '../../../_types/tree';
 
-interface IDeps {
+export interface IPermissionByUserGroupsHelperDeps {
     'core.domain.permission.helpers.simplePermission': ISimplePermissionHelper;
     'core.domain.permission.helpers.reducePermissionsArray': IReducePermissionsArrayHelper;
+    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
+    'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.infra.permission'?: IPermissionRepo;
 }
 
 export interface IPermissionByUserGroupsHelper {
-    getPermissionByUserGroups: (params: IGetPermissionByUserGroupsParams) => Promise<boolean | null>;
+    getPermissionByUserGroups: (params: IGetPermissionByUserGroupsParams) => Promise<boolean>;
 }
 
-export default function (deps: IDeps): IPermissionByUserGroupsHelper {
+export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionByUserGroupsHelper {
     const {
         'core.domain.permission.helpers.simplePermission': simplePermHelper,
-        'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper
+        'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+        'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper
     } = deps;
 
     return {
@@ -28,55 +35,52 @@ export default function (deps: IDeps): IPermissionByUserGroupsHelper {
             action,
             userGroupsPaths,
             applyTo = null,
-            permissionTreeTarget = null,
+            treeTarget = null,
+            getDefaultPermission = defaultPermHelper.getDefaultPermission,
             ctx
-        }: IGetPermissionByUserGroupsParams): Promise<boolean | null> {
-            // Used to retrieve permission for root level ("all users")
-            const _getRootPermission = () =>
-                simplePermHelper.getSimplePermission({
-                    type,
-                    applyTo,
-                    action,
-                    usersGroupNodeId: null,
-                    permissionTreeTarget,
-                    ctx
-                });
+        }: IGetPermissionByUserGroupsParams): Promise<boolean> {
+            // we reverse to have group paths from current user groups to the added root group
+            const reversedUserGroupsPaths = userGroupsPaths.length
+                ? userGroupsPaths.map(path => [...path.reverse(), {id: null}])
+                : [[{id: null}]];
 
-            // Retrieve permission for each user group.
-            // If user has no group, retrieve permission for root level ("all users")
-            const userPerms = userGroupsPaths.length
-                ? await Promise.all(
-                      userGroupsPaths.map(async (userGroupPath): Promise<boolean | null> => {
-                          let userGroupPermission: boolean | null = null;
-                          if (userGroupPath.length) {
-                              for (const groupNode of userGroupPath) {
-                                  // Check if this group node has a permission defined on it
-                                  const groupNodePermission = await simplePermHelper.getSimplePermission({
-                                      type,
-                                      applyTo,
-                                      action,
-                                      usersGroupNodeId: groupNode.id,
-                                      permissionTreeTarget,
-                                      ctx
-                                  });
+            // we reverse to have tree target path from current target
+            let reversedTreeTargetPath: ITreeNode[];
+            if (treeTarget) {
+                reversedTreeTargetPath = [...treeTarget.path].reverse();
+            }
 
-                                  // We stop on the first group node with a permission defined (null == inherited)
-                                  if (groupNodePermission !== null) {
-                                      userGroupPermission = groupNodePermission;
-                                      break;
-                                  }
-                              }
-                          }
+            const getPermission = async (userGroupPath: ITreeNode[], targetPath?: ITreeNode[]): Promise<boolean> => {
+                for (const groupNode of userGroupPath) {
+                    const groupNodePermission = await simplePermHelper.getSimplePermission({
+                        type,
+                        applyTo,
+                        action,
+                        usersGroupNodeId: groupNode.id,
+                        ...(!!targetPath && {
+                            permissionTreeTarget: {
+                                tree: treeTarget.tree,
+                                nodeId: targetPath[0]?.id ?? null
+                            }
+                        }),
+                        ctx
+                    });
 
-                          // If no permission was found on any group, retrieve permission for root level ("all users")
-                          if (userGroupPermission === null) {
-                              userGroupPermission = await _getRootPermission();
-                          }
+                    if (groupNodePermission !== null) {
+                        return groupNodePermission;
+                    }
+                }
 
-                          return userGroupPermission;
-                      })
-                  )
-                : [await _getRootPermission()];
+                if (targetPath?.length) {
+                    return getPermission(userGroupPath, targetPath.slice(1));
+                }
+
+                return getDefaultPermission();
+            };
+
+            const userPerms = await Promise.all(
+                reversedUserGroupsPaths.map(userGroupPath => getPermission(userGroupPath, reversedTreeTargetPath))
+            );
 
             // The user may have multiple groups with different permissions. We must reduce them to a single permission
             return reducePermissionsArrayHelper.reducePermissionsArray(userPerms);

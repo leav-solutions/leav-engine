@@ -3,9 +3,19 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
 import {AdminPermissionsActions, PermissionTypes} from '../../../_types/permissions';
-import permissionByUserGroupsHelper from './permissionByUserGroups';
+import permissionByUserGroupsHelper, {type IPermissionByUserGroupsHelperDeps} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import {ISimplePermissionHelper} from './simplePermission';
+import {IDefaultPermissionHelper} from './defaultPermission';
+import {IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
+import {ToAny} from '../../../utils/utils';
+
+const depsBase: ToAny<IPermissionByUserGroupsHelperDeps> = {
+    'core.domain.permission.helpers.simplePermission': jest.fn(),
+    'core.domain.permission.helpers.reducePermissionsArray': jest.fn(),
+    'core.domain.permission.helpers.defaultPermission': jest.fn(),
+    'core.domain.tree.helpers.elementAncestors': jest.fn()
+};
 
 describe('getPermissionByUserGroups', () => {
     const ctx: IQueryInfos = {
@@ -56,6 +66,10 @@ describe('getPermissionByUserGroups', () => {
         reducePermissionsArray: jest.fn().mockReturnValue(null)
     };
 
+    const mockDefaultPermHelper: Mockify<IDefaultPermissionHelper> = {
+        getDefaultPermission: jest.fn().mockReturnValue(true)
+    };
+
     test('Retrieve first "allowed" permission', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
             getSimplePermission: jest.fn().mockImplementation(({usersGroupId}) => {
@@ -70,8 +84,10 @@ describe('getPermissionByUserGroups', () => {
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({
+            ...depsBase,
             'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
-            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper
+            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
+            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -96,8 +112,10 @@ describe('getPermissionByUserGroups', () => {
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({
+            ...depsBase,
             'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
-            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse
+            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
+            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -107,7 +125,10 @@ describe('getPermissionByUserGroups', () => {
             ctx
         });
 
-        expect(mockReducePermissionsArrayHelperFalse.reducePermissionsArray).toBeCalledWith([null, false]);
+        expect(mockReducePermissionsArrayHelperFalse.reducePermissionsArray).toBeCalledWith([
+            mockDefaultPermHelper.getDefaultPermission(),
+            false
+        ]);
         expect(perm).toBe(false);
     });
 
@@ -119,8 +140,10 @@ describe('getPermissionByUserGroups', () => {
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({
+            ...depsBase,
             'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
-            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse
+            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
+            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -142,8 +165,10 @@ describe('getPermissionByUserGroups', () => {
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({
+            ...depsBase,
             'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
-            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse
+            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
+            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -157,14 +182,16 @@ describe('getPermissionByUserGroups', () => {
         expect(mockSimplePermHelper.getSimplePermission).toBeCalled();
     });
 
-    test('Return null if no permission found', async () => {
+    test('Return default permission if no permission found', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
             getSimplePermission: global.__mockPromise(null)
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({
+            ...depsBase,
             'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
-            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperNull
+            'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
+            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -174,7 +201,11 @@ describe('getPermissionByUserGroups', () => {
             ctx
         });
 
-        expect(mockReducePermissionsArrayHelperNull.reducePermissionsArray).toBeCalledWith([null, null]);
-        expect(perm).toBe(null);
+        expect(mockReducePermissionsArrayHelper.reducePermissionsArray).toBeCalledWith([
+            mockDefaultPermHelper.getDefaultPermission(),
+            mockDefaultPermHelper.getDefaultPermission()
+        ]);
+
+        expect(perm).toBe(true);
     });
 });

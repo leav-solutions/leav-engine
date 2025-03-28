@@ -97,7 +97,14 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                 return allVal;
             }, {});
 
-            const perm = treeBasedPermissionsHelper.getTreeBasedPermission(
+            const _getDefaultPermission = () =>
+                attrPermissionDomain.getAttributePermission({
+                    action: action as unknown as AttributePermissionsActions,
+                    attributeId,
+                    ctx
+                });
+
+            return treeBasedPermissionsHelper.getTreeBasedPermission(
                 {
                     type: PermissionTypes.RECORD_ATTRIBUTE,
                     action,
@@ -105,35 +112,23 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                     applyTo: attributeId,
                     treeValues: valuesByAttr,
                     permissions_conf: attrProps.permissions_conf,
-                    getDefaultPermission: () =>
-                        attrPermissionDomain.getAttributePermission({
-                            action: action as unknown as AttributePermissionsActions,
-                            attributeId,
-                            ctx
-                        })
+                    getDefaultPermission: _getDefaultPermission
                 },
                 ctx
             );
-
-            return perm;
         },
         async getInheritedRecordAttributePermission(
             {action, attributeId, userGroupId, permTree, permTreeNode},
             ctx: IQueryInfos
         ): Promise<boolean> {
-            const _getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
-                const {applyTo, userGroups} = params;
-
-                const libPerm = await permByUserGroupsHelper.getPermissionByUserGroups({
+            const _getDefaultPermission = (params: IGetDefaultPermissionParams) =>
+                permByUserGroupsHelper.getPermissionByUserGroups({
                     type: PermissionTypes.ATTRIBUTE,
                     action,
-                    userGroupsPaths: userGroups,
-                    applyTo,
+                    userGroupsPaths: params.userGroups,
+                    applyTo: params.applyTo,
                     ctx
                 });
-
-                return libPerm !== null ? libPerm : defaultPermHelper.getDefaultPermission();
-            };
 
             return treeBasedPermissionsHelper.getInheritedTreeBasedPermission(
                 {

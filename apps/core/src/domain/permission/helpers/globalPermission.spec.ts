@@ -120,35 +120,6 @@ describe('globalPermissionsHelper', () => {
 
             expect(perm).toBe(true);
         });
-
-        test('Return default permission if nothing defined', async () => {
-            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-                getPermissionByUserGroups: global.__mockPromise(null)
-            };
-
-            const permHelper = globalPermissions({
-                ...depsBase,
-                'core.domain.permission.helpers.permissionByUserGroups':
-                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
-                'core.infra.value': mockValRepo as IValueRepo,
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService
-            });
-
-            const perm = await permHelper.getGlobalPermission(
-                {
-                    type: PermissionTypes.LIBRARY,
-                    action: LibraryPermissionsActions.ACCESS_RECORD,
-                    applyTo: 'test_lib',
-                    userId: '12345',
-                    getDefaultPermission: () => defaultPerm
-                },
-                ctx
-            );
-
-            expect(perm).toBe(defaultPerm);
-        });
     });
 
     describe('getInheritedGlobalPermission', () => {
@@ -200,32 +171,6 @@ describe('globalPermissionsHelper', () => {
             );
 
             expect(perm).toBe(true);
-        });
-
-        test('Herit of default perm if nothing defined', async () => {
-            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-                getPermissionByUserGroups: global.__mockPromise(null)
-            };
-
-            const permHelper = globalPermissions({
-                ...depsBase,
-                'core.domain.permission.helpers.permissionByUserGroups':
-                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
-            });
-
-            const perm = await permHelper.getInheritedGlobalPermission(
-                {
-                    type: PermissionTypes.LIBRARY,
-                    action: LibraryPermissionsActions.ACCESS_RECORD,
-                    applyTo: 'test_lib',
-                    userGroupNodeId: '12345',
-                    getDefaultPermission: () => defaultPerm
-                },
-                ctx
-            );
-
-            expect(perm).toBe(defaultPerm);
         });
     });
 });
