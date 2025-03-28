@@ -4,7 +4,7 @@
 import {ActionsListEvents, ActionsListIOTypes, ActionsListConfig} from './actionsList';
 import {ITreePermissionsConf} from './permissions';
 import {IRecord} from './record';
-import {IGetCoreEntitiesParams} from './shared';
+import {IGetCoreEntitiesParams, IKeyValue} from './shared';
 import {ISystemTranslation} from './systemTranslation';
 import {ITreeElement} from './tree';
 import {IDateRangeValue} from './value';
@@ -28,6 +28,7 @@ export interface IAttribute extends ICoreEntity {
     reverse_link?: string | IAttribute; // linked attribute
     unique?: boolean; // only on simple attribute
     description?: ISystemTranslation;
+    settings?: IKeyValue<any>;
 }
 
 export enum ValueVersionMode {

@@ -102,7 +102,8 @@ export default function ({
                         linkedTrees: [Tree!],
                         defaultView: View,
                         permissions: LibraryPermissions,
-                        previewsSettings: [LibraryPreviewsSettings!]
+                        previewsSettings: [LibraryPreviewsSettings!],
+                        settings: JSONObject
                     }
 
                     input LibraryIconInput {
@@ -137,7 +138,8 @@ export default function ({
                         permissions_conf: Treepermissions_confInput,
                         recordIdentityConf: RecordIdentityConfInput,
                         defaultView: ID,
-                        previewsSettings: [LibraryPreviewsSettingsInput!]
+                        previewsSettings: [LibraryPreviewsSettingsInput!],
+                        settings: JSONObject
                     }
 
                     input LibrariesFiltersInput {

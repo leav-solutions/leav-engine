@@ -181,7 +181,8 @@ export default function ({
                         label(lang: [AvailableLanguage!]): SystemTranslation,
                         permissions_conf: [TreeNodePermissionsConf!],
                         permissions: TreePermissions!,
-                        defaultElement: TreeNode
+                        defaultElement: TreeNode,
+                        settings: JSONObject
                     }
 
                     type TreeNodePermissionsConf {
@@ -204,8 +205,9 @@ export default function ({
                         id: ID!
                         libraries: [TreeLibraryInput!],
                         behavior: TreeBehavior,
-                        label: SystemTranslation
-                        permissions_conf: [TreeNodePermissionsConfInput!]
+                        label: SystemTranslation,
+                        permissions_conf: [TreeNodePermissionsConfInput!],
+                        settings: JSONObject
                     }
 
                     input TreeNodePermissionsConfInput {
