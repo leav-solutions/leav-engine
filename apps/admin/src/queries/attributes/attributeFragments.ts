@@ -21,6 +21,7 @@ export const attributeDetailsFragment = gql`
             type
             format
         }
+        settings
         permissions_conf {
             permissionTreeAttributes {
                 id

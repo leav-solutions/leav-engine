@@ -69,6 +69,7 @@ export interface GET_TREE_BY_ID_trees_list {
     label: SystemTranslation | null;
     system: boolean;
     behavior: TreeBehavior;
+    settings: JSONObject | null;
     permissions_conf: GET_TREE_BY_ID_trees_list_permissions_conf[] | null;
     libraries: GET_TREE_BY_ID_trees_list_libraries[];
 }

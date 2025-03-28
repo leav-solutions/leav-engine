@@ -9,6 +9,14 @@ import {Mockify} from '../../../../../_types/Mockify';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import AttributesTab from './AttributesTab';
 
+jest.mock(
+    '../../../../shared/CustomConfig',
+    () =>
+        function CustomConfig() {
+            return <div>CustomConfig</div>;
+        }
+);
+
 describe('AttributesTab', () => {
     test('Snapshot test', async () => {
         const lib: Mockify<GET_LIB_BY_ID_libraries_list> = {

@@ -18,7 +18,9 @@ import FormsTab from './FormsTab';
 import InfosTab from './InfosTab';
 import PermissionsTab from './PermissionsTab';
 import PurgeTab from './PurgeTab';
-import CustomConfig from 'components/shared/CustomConfig/CustomConfig';
+import CustomConfig from '../../../shared/CustomConfig';
+import {SAVE_LIBRARY, SAVE_LIBRARYVariables} from '_gqlTypes/SAVE_LIBRARY';
+import {saveLibQuery} from 'queries/libraries/saveLibMutation';
 
 const Title = styled(Header)`
     display: flex;
@@ -102,7 +104,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
             menuItem: 'Custom config',
             render: () => (
                 <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
-                    <CustomConfig type="library" readOnly={readOnly} />
+                    <CustomConfig onChange={_onChangeConfig} data={library.settings} />
                 </Tab.Pane>
             )
         }
@@ -112,6 +114,23 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
     const [activeIndex, setActiveIndex] = useState<number | undefined>(
         tabName ? panes.findIndex(p => tabName === p.key) : 0
     );
+
+    const [saveLibrary, {error, loading}] = useMutation<SAVE_LIBRARY, SAVE_LIBRARYVariables>(saveLibQuery, {
+        // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
+        onError: () => undefined
+    });
+
+    const _onChangeConfig = (value: Record<string, any>) => {
+        const dataToSave = {
+            libData: {
+                id: library.id,
+                settings: value
+            }
+        };
+        saveLibrary({
+            variables: dataToSave
+        });
+    };
 
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {
