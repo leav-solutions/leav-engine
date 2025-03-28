@@ -75,6 +75,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    settings: JSONObject | null;
     metadata_fields: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissions_conf | null;
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf | null;
@@ -150,6 +151,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    settings: JSONObject | null;
     metadata_fields: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_permissions_conf | null;
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_versions_conf | null;
@@ -225,6 +227,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    settings: JSONObject | null;
     metadata_fields: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf | null;
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf | null;

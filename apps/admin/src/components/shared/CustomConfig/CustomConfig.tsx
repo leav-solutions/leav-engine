@@ -1,13 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
-import {saveApplicationMutation} from 'queries/applications/saveApplicationMutation';
 import styled from 'styled-components';
-import {SAVE_APPLICATION, SAVE_APPLICATIONVariables} from '_gqlTypes/SAVE_APPLICATION';
-import {FunctionComponent} from 'react';
 
 const Wrapper = styled.div`
     .jsoneditor {
@@ -52,36 +48,24 @@ const Wrapper = styled.div`
 `;
 
 interface ICustomConfigProps {
-    type: string;
-    readOnly?: boolean;
+    onChange?: (value: Record<string, any>) => void;
+    data?: any;
 }
 
-const CustomConfig: FunctionComponent<ICustomConfigProps> = ({type, readOnly}): JSX.Element => {
-    // const [saveType, {error, loading}] = useMutation<SAVE_APPLICATION, SAVE_APPLICATIONVariables>(
-    //     saveApplicationMutation,
-    //     {
-    //         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
-    //         onError: () => undefined
-    //     }
-    // );
-
-    const _handleChange = (value: Record<string, any>) => {
-        const dataToSave = value;
-    };
-
+function CustomConfig({onChange, data}: ICustomConfigProps): JSX.Element {
     return (
         <Wrapper>
             <JsonEditor
-                mode={readOnly ? 'view' : 'tree'}
-                value=""
-                // value={fromDB.value ?? ''}
+                mode="tree"
+                value={data ?? ''}
+                // value={{test: {test1: {test: {test1: {test: {test1: {test: {test1: {}}}}}}}}}}
                 navigationBar={false}
                 statusBar={false}
-                onChange={_handleChange}
-                allowedModes={readOnly ? [] : ['code', 'tree']}
+                onChange={onChange ? onChange : () => null}
+                allowedModes={['code', 'tree']}
             />
         </Wrapper>
     );
-};
+}
 
 export default CustomConfig;

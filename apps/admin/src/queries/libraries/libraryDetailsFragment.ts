@@ -20,6 +20,7 @@ export const libraryDetailsFragment = gql`
             id
             label
         }
+        settings
         permissions_conf {
             permissionTreeAttributes {
                 id

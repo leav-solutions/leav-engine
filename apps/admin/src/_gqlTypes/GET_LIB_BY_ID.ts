@@ -323,6 +323,7 @@ export interface GET_LIB_BY_ID_libraries_list {
     system: boolean | null;
     label: SystemTranslation | null;
     behavior: LibraryBehavior;
+    settings: JSONObject | null;
     attributes: GET_LIB_BY_ID_libraries_list_attributes[] | null;
     fullTextAttributes: GET_LIB_BY_ID_libraries_list_fullTextAttributes[] | null;
     permissions_conf: GET_LIB_BY_ID_libraries_list_permissions_conf | null;
