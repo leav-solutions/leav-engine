@@ -1,350 +1,154 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FunctionComponent, useEffect, useState} from 'react';
+import {IFormElementProps} from '../../_types';
 import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
-import {List, Popover, theme} from 'antd';
-import {GlobalToken} from 'antd/lib/theme/interface';
-import Paragraph from 'antd/lib/typography/Paragraph';
-import {Reducer, useContext, useEffect, useReducer} from 'react';
 import styled from 'styled-components';
-import {themeVars} from '_ui/antdTheme';
-import Dimmer from '_ui/components/Dimmer';
-import ErrorMessage from '_ui/components/ErrorMessage';
-import CreationErrorContext from '_ui/components/RecordEdition/EditRecord/creationErrorContext';
-import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
-import {useRefreshFieldValues} from '_ui/hooks/useRefreshFieldValues';
-import {ITreeNodeWithRecord} from '_ui/types/trees';
+import {AntForm, KitButton, KitInputWrapper} from 'aristid-ds';
 import {RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
-import {IRecordPropertyTree} from '_ui/_queries/records/getRecordPropertiesQuery';
-import {arrayValueVersionToObject} from '_ui/_utils';
-import getActiveFieldValues from '../../helpers/getActiveFieldValues';
-import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
-import linkFieldReducer, {
-    computeInitialState,
-    ILinkFieldState,
-    LinkFieldReducerActions,
-    LinkFieldReducerActionsType
-} from '../../reducers/linkFieldReducer/linkFieldReducer';
-import AddValueBtn from '../../shared/AddValueBtn';
-import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
-import FieldFooter from '../../shared/FieldFooter';
-import InheritedFieldLabel from '../../shared/InheritedFieldLabel';
-import NoValue from '../../shared/NoValue';
-import UpdatedFieldIcon from '../../shared/UpdatedFieldIcon';
-import ValueDetailsBtn from '../../shared/ValueDetailsBtn';
-import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
-import ValuesVersionIndicator from '../../shared/ValuesVersionIndicator';
-import {APICallStatus, VersionFieldScope, IFormElementProps} from '../../_types';
-import TreeFieldValue from './TreeFieldValue';
-import ValuesAdd from './ValuesAdd';
+import {TREE_FIELD_ID_PREFIX} from '_ui/constants';
 import {useLang} from '_ui/hooks';
+import {FaList} from 'react-icons/fa';
+import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
+import {useDisplayTreeNode} from './display-tree-node/useDisplayTreeNode';
+import {useManageTreeNodeSelection} from './manage-tree-node-selection/useManageTreeNodeSelection';
+import {useOutsideInteractionDetector} from '../shared/useOutsideInteractionDetector';
+import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
+import {ComputeIndicator} from '../shared/ComputeIndicator';
 
-const Wrapper = styled.div<{$isValuesAddVisible: boolean; $themeToken: GlobalToken}>`
-    position: relative;
-    border: 1px solid ${themeVars.borderColor};
-    margin-bottom: 1.5em;
-    border-radius: ${p => p.$themeToken.borderRadius}px;
-    background: ${themeVars.defaultBg};
-    z-index: ${p => (p.$isValuesAddVisible ? 1 : 'auto')};
-
-    .ant-list-items {
-        max-height: 320px;
-        overflow-y: auto;
-    }
-
-    .ant-list-footer {
-        padding: 0;
-        border-radius: ${p => p.$themeToken.borderRadius}px;
-    }
+const Wrapper = styled.div<{$metadataEdit: boolean}>`
+    margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
 `;
 
-const FieldLabel = styled(Paragraph)`
-    && {
-        top: calc(50% - 0.9em);
-        font-size: 0.9em;
-        padding: 0 0.5em;
-        color: ${themeVars.secondaryTextColor};
-        z-index: 1;
-        margin-bottom: 0;
-    }
+const KitInputExtraAlignLeft = styled.div`
+    margin-right: auto;
+    line-height: 12px;
 `;
 
-type TreeFieldReducerState = ILinkFieldState<RecordFormElementsValueTreeValue>;
-type TreeFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueTreeValue>;
+const KitFieldFooterButton = styled(KitButton)<{$hasNoValue: boolean}>`
+    margin-top: ${props => (props.$hasNoValue ? 0 : 'calc((var(--general-spacing-xs)) * 1px)')};
+`;
 
-function TreeField({
+type TreeFieldProps = IFormElementProps<ICommonFieldsSettings>;
+
+const TreeField: FunctionComponent<TreeFieldProps> = ({
     element,
+    readonly,
+    formIdToLoad,
+    pendingValues,
+    onDeleteMultipleValues,
     onValueSubmit,
     onValueDelete,
-    onDeleteMultipleValues
-}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
-    const {token} = theme.useToken();
-    const {lang: availableLangs} = useLang();
-    const {state: editRecordState, dispatch: editRecordDispatch} = useEditRecordReducer();
-    const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
+    metadataEdit = false
+}) => {
+    const {state, dispatch} = useEditRecordReducer();
+    const {lang} = useLang();
+    const {
+        settings,
+        attribute,
+        values
+    }: {
+        settings: typeof element.settings;
+        attribute?: RecordFormAttributeTreeAttributeFragment;
+        values?: RecordFormElementsValueTreeValue[];
+    } = element;
 
-    const creationErrors = useContext(CreationErrorContext);
-    const isInCreationMode = record === null;
+    const [backendValues, setBackendValues] = useState<RecordFormElementsValueTreeValue[]>(values);
+    const [attributePendingValues, setAttributePendingValues] = useState<RecordFormElementsValueTreeValue[]>([]);
 
-    const [state, dispatch] = useReducer<Reducer<TreeFieldReducerState, TreeFieldReducerAction>>(
-        linkFieldReducer,
-        computeInitialState({
-            element,
-            formVersion: editRecordState.valuesVersion,
-            isRecordReadOnly,
-            record
-        })
-    );
+    const calculatedFlags = computeCalculatedFlags(backendValues);
+    const inheritedFlags = computeInheritedFlags(backendValues);
+    const label = localizedTranslation(settings.label, lang);
+    const form = AntForm.useFormInstance();
+    const fieldErrors = form.getFieldError(attribute.id);
 
-    const {fetchValues} = useRefreshFieldValues(record?.library?.id, state.attribute.id, record?.id);
-
-    const attribute = state.attribute as RecordFormAttributeTreeAttributeFragment;
-    const isReadOnly = attribute?.readonly || isRecordReadOnly || !attribute.permissions.edit_value;
-    const activeValues = getActiveFieldValues(state);
-    const activeVersion = state.values[state.activeScope]?.version;
-
-    const data = activeValues.map(val => ({
-        ...val,
-        key: val.id_value
-    }));
-
-    // Cancel value editing if value details panel is closed
-    useEffect(() => {
-        if (editRecordState.activeAttribute === null && state.isValuesAddVisible) {
-            _handleCloseValuesAdd();
-        }
-    }, [editRecordState.activeAttribute]);
+    const isReadOnly = attribute.readonly || readonly;
+    const isFieldInError = fieldErrors.length > 0;
 
     useEffect(() => {
-        if (creationErrors[attribute.id]) {
-            dispatch({
-                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
-                errorMessage: creationErrors[attribute.id].map(err => err.message).join(' ')
-            });
-        }
-    }, [creationErrors, attribute.id]);
-
-    const renderItem = (value: IRecordPropertyTree) => {
-        const _handleDelete = async () => {
-            const deleteRes = await onValueDelete({id_value: value.id_value}, attribute.id);
-
-            if (deleteRes.status === APICallStatus.SUCCESS) {
-                dispatch({
-                    type: LinkFieldReducerActionsType.DELETE_VALUE,
-                    idValue: value.id_value
-                });
-
-                if (!isInCreationMode) {
-                    const freshValues = await fetchValues(state.values[state.activeScope].version);
-
-                    dispatch({
-                        type: LinkFieldReducerActionsType.REFRESH_VALUES,
-                        formVersion: editRecordState.valuesVersion,
-                        values: freshValues as RecordFormElementsValueTreeValue[]
-                    });
-                }
-
-                return;
-            }
-        };
-
-        return (
-            <>
-                {attribute.versions_conf?.versionable && <ValuesVersionIndicator activeScope={state.activeScope} />}
-                <TreeFieldValue value={value} attribute={attribute} onDelete={_handleDelete} isReadOnly={isReadOnly} />
-            </>
+        setAttributePendingValues(
+            pendingValues?.[attribute.id]
+                ? (Object.values(pendingValues?.[attribute.id]) as unknown as RecordFormElementsValueTreeValue[])
+                : []
         );
-    };
+    }, [pendingValues, attribute.id]);
 
-    const canAddValue = !isReadOnly && (attribute.multiple_values || !activeValues.length);
+    useEffect(() => {
+        if (state.activeAttribute?.attribute.id === attribute.id) {
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                values: backendValues
+            });
+        }
+    }, [backendValues]);
 
-    const _handleAddValue = () => {
-        editRecordDispatch({
-            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            attribute
-        });
+    useOutsideInteractionDetector({
+        attribute,
+        activeAttribute: state.activeAttribute,
+        attributePrefix: TREE_FIELD_ID_PREFIX,
+        dispatch,
+        formIdToLoad,
+        backendValues,
+        pendingValues: attributePendingValues,
+        allowedSelectors: ['.kit-modal-wrapper']
+    });
 
-        dispatch({
-            type: LinkFieldReducerActionsType.SET_IS_VALUES_ADD_VISIBLE,
-            isValuesAddVisible: true
-        });
-    };
-
-    const _handleSubmitSelectTreeNodeModal = async (treeNodes: ITreeNodeWithRecord[]) => {
-        const valuesToSave = treeNodes.map(node => ({
+    const {openModal, removeTreeNode, actionButtonLabel, SelectTreeNodeModal, RemoveAllTreeNodes} =
+        useManageTreeNodeSelection({
+            modaleTitle: label,
             attribute,
-            idValue: null,
-            value: node
-        }));
-
-        const res = await onValueSubmit(valuesToSave, activeVersion);
-
-        if (res.status === APICallStatus.ERROR) {
-            dispatch({
-                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
-                errorMessage: res.error
-            });
-        } else if (res.values) {
-            const formattedValues: RecordFormElementsValueTreeValue[] = res.values.map(v => ({
-                ...v,
-                version: arrayValueVersionToObject(v.version),
-                metadata: v.metadata?.map(metadata => ({
-                    ...metadata,
-                    value: {
-                        ...metadata.value,
-                        version: arrayValueVersionToObject(metadata.value.version ?? [])
-                    }
-                }))
-            }));
-
-            dispatch({
-                type: LinkFieldReducerActionsType.ADD_VALUES,
-                values: formattedValues
-            });
-        }
-
-        if (res?.errors?.length) {
-            const selectedNodesById = treeNodes.reduce((acc, cur) => ({...acc, [cur.id]: cur}), {});
-
-            const errorsMessage = res.errors.map(err => {
-                const linkedRecordLabel = selectedNodesById[err.input].title || selectedNodesById[err.input].id;
-
-                return `${linkedRecordLabel}: ${err.message}`;
-            });
-            dispatch({
-                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
-                errorMessage: errorsMessage
-            });
-        } else {
-            dispatch({
-                type: LinkFieldReducerActionsType.SET_IS_VALUES_ADD_VISIBLE,
-                isValuesAddVisible: false
-            });
-        }
-    };
-
-    const _handleDeleteAllValues = async () => {
-        const deleteRes = await onDeleteMultipleValues(attribute.id, activeValues, activeVersion);
-
-        if (deleteRes.status === APICallStatus.SUCCESS) {
-            dispatch({
-                type: LinkFieldReducerActionsType.DELETE_ALL_VALUES
-            });
-
-            if (!isInCreationMode) {
-                const freshValues = await fetchValues(state.values[state.activeScope].version);
-
-                dispatch({
-                    type: LinkFieldReducerActionsType.REFRESH_VALUES,
-                    formVersion: editRecordState.valuesVersion,
-                    values: freshValues as RecordFormElementsValueTreeValue[]
-                });
-            }
-        }
-
-        if (deleteRes?.errors?.length) {
-            dispatch({
-                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
-                errorMessage: deleteRes.errors.map(err => err.message)
-            });
-        }
-    };
-
-    const _handleScopeChange = (scope: VersionFieldScope) => {
-        dispatch({
-            type: LinkFieldReducerActionsType.CHANGE_ACTIVE_SCOPE,
-            scope
-        });
-    };
-
-    const versions = {
-        [VersionFieldScope.CURRENT]: state.values[VersionFieldScope.CURRENT]?.version ?? null,
-        [VersionFieldScope.INHERITED]: state.values[VersionFieldScope.INHERITED]?.version ?? null
-    };
-    const ListFooter = (
-        <FieldFooter>
-            <div>
-                {attribute?.versions_conf?.versionable && (
-                    <ValuesVersionBtn
-                        versions={versions}
-                        activeScope={state.activeScope}
-                        onScopeChange={_handleScopeChange}
-                        basic
-                    />
-                )}
-                {!isReadOnly && !!activeValues.length && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
-                <ValueDetailsBtn attribute={attribute} value={null} size="small" basic />
-            </div>
-            {!!activeValues.length && canAddValue && (
-                <AddValueBtn
-                    activeScope={state.activeScope}
-                    onClick={_handleAddValue}
-                    disabled={state.isValuesAddVisible}
-                    linkField
-                />
-            )}
-        </FieldFooter>
-    );
-
-    const _handleCloseValuesAdd = () => {
-        dispatch({
-            type: LinkFieldReducerActionsType.SET_IS_VALUES_ADD_VISIBLE,
-            isValuesAddVisible: false
+            backendValues,
+            setBackendValues,
+            onValueSubmit,
+            onValueDelete,
+            onDeleteMultipleValues,
+            isReadOnly,
+            isFieldInError
         });
 
-        editRecordDispatch({
-            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            attribute: null
-        });
-    };
-
-    const _handleCloseError = () => {
-        dispatch({
-            type: LinkFieldReducerActionsType.CLEAR_ERROR_MESSAGE
-        });
-    };
-
-    const label = localizedTranslation(attribute.label, availableLangs);
+    const {TreeNodeList} = useDisplayTreeNode({
+        attribute,
+        backendValues,
+        removeTreeNode
+    });
 
     return (
-        <>
-            {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
-            <Wrapper $isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
-                <FieldLabel ellipsis={{rows: 1, tooltip: true}}>
-                    {label}
-                    {editRecordState.externalUpdate.updatedValues[attribute?.id] && <UpdatedFieldIcon />}
-                    {state.activeScope === VersionFieldScope.INHERITED && (
-                        <InheritedFieldLabel version={state.values[VersionFieldScope.INHERITED].version} />
-                    )}
-                </FieldLabel>
-                <List
-                    dataSource={data}
-                    renderItem={renderItem}
-                    split
-                    locale={{
-                        emptyText: <NoValue canAddValue={canAddValue} onAddValue={_handleAddValue} linkField />
-                    }}
-                    footer={ListFooter}
-                />
-                {state.isValuesAddVisible && (
-                    <ValuesAdd
-                        attribute={attribute}
-                        onAdd={_handleSubmitSelectTreeNodeModal}
-                        onClose={_handleCloseValuesAdd}
-                    />
-                )}
-            </Wrapper>
-            {state.errorMessage && (
-                <Popover
-                    placement="bottomLeft"
-                    open={!!state.errorMessage}
-                    content={<ErrorMessage error={state.errorMessage} onClose={_handleCloseError} />}
-                ></Popover>
-            )}
-        </>
+        <Wrapper $metadataEdit={metadataEdit}>
+            <AntForm.Item name={attribute.id} noStyle>
+                <KitInputWrapper
+                    id={TREE_FIELD_ID_PREFIX + attribute.id}
+                    label={label}
+                    required={attribute.required}
+                    bordered
+                    disabled={isReadOnly}
+                    status={isFieldInError ? 'error' : undefined}
+                    helper={isFieldInError ? String(fieldErrors[0]) : undefined}
+                    extra={
+                        <>
+                            <KitInputExtraAlignLeft>
+                                <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
+                            </KitInputExtraAlignLeft>
+                            {RemoveAllTreeNodes}
+                        </>
+                    }
+                >
+                    {TreeNodeList}
+                    <KitFieldFooterButton
+                        icon={<FaList />}
+                        onClick={openModal}
+                        size="m"
+                        $hasNoValue={!backendValues?.length}
+                    >
+                        {actionButtonLabel}
+                    </KitFieldFooterButton>
+                    {SelectTreeNodeModal}
+                </KitInputWrapper>
+            </AntForm.Item>
+        </Wrapper>
     );
-}
+};
 
 export default TreeField;

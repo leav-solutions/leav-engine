@@ -10,6 +10,7 @@ import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formConstants'
 
 export const useGetSubmitButtons = (
     buttons: possibleSubmitButtons,
+    id: string,
     isInCreateMode: boolean,
     onClickSubmit: (button: submitButtonsName) => void
 ) => {
@@ -24,7 +25,7 @@ export const useGetSubmitButtons = (
         headerSubmitButtons.push(
             <KitButton
                 key="create"
-                form={EDIT_OR_CREATE_RECORD_FORM_ID}
+                form={id ?? EDIT_OR_CREATE_RECORD_FORM_ID}
                 type={!buttons.includes('createAndEdit') ? 'primary' : 'secondary'}
                 htmlType="submit"
                 icon={<FontAwesomeIcon icon={faCheck} />}
@@ -39,7 +40,7 @@ export const useGetSubmitButtons = (
         headerSubmitButtons.push(
             <KitButton
                 key="createAndEdit"
-                form={EDIT_OR_CREATE_RECORD_FORM_ID}
+                form={id ?? EDIT_OR_CREATE_RECORD_FORM_ID}
                 type="primary"
                 htmlType="submit"
                 icon={<FontAwesomeIcon icon={faPenToSquare} />}

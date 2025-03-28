@@ -7,7 +7,7 @@ import {useGetSubmitButtons} from './useGetSubmitButtons';
 describe('useGetSubmitButtons', () => {
     test('Return 2 buttons', async () => {
         const TestComp = () => {
-            const buttons = useGetSubmitButtons(['create', 'createAndEdit'], true, jest.fn());
+            const buttons = useGetSubmitButtons(['create', 'createAndEdit'], 'create', true, jest.fn());
             return <div>{buttons}</div>;
         };
 
@@ -18,7 +18,7 @@ describe('useGetSubmitButtons', () => {
 
     test('Return "create" only', async () => {
         const TestComp = () => {
-            const buttons = useGetSubmitButtons(['create'], true, jest.fn());
+            const buttons = useGetSubmitButtons(['create'], 'create', true, jest.fn());
             return <div>{buttons}</div>;
         };
 
@@ -30,7 +30,7 @@ describe('useGetSubmitButtons', () => {
 
     test('Return "createAndEdit" only', async () => {
         const TestComp = () => {
-            const buttons = useGetSubmitButtons(['createAndEdit'], true, jest.fn());
+            const buttons = useGetSubmitButtons(['createAndEdit'], 'createAndEdit', true, jest.fn());
             return <div>{buttons}</div>;
         };
 
@@ -42,7 +42,7 @@ describe('useGetSubmitButtons', () => {
 
     test('If not in create mode, return nothing', async () => {
         const TestComp = () => {
-            const buttons = useGetSubmitButtons(['createAndEdit'], false, jest.fn());
+            const buttons = useGetSubmitButtons(['createAndEdit'], 'createAndEdit', false, jest.fn());
             return <div>{buttons}</div>;
         };
 

@@ -1,10 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import userEvent from '@testing-library/user-event';
-import {mockFormAttribute, mockFormAttributeTree} from '_ui/__mocks__/common/attribute';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {mockTreeRecord, mockTreeRecordChild} from '_ui/__mocks__/common/treeElements';
 import {mockRecordPropertyWithAttribute} from '_ui/__mocks__/common/value';
 import {render, screen} from '../../../_tests/testUtils';
 import {initialState} from '../editRecordReducer/editRecordReducer';
@@ -135,6 +132,7 @@ describe('EditRecordSidebar', () => {
                 </EditRecordReducerContext.Provider>
             );
 
+            expect(screen.getByText(attribute.label.fr)).toBeInTheDocument();
             expect(screen.getByText('attributes.format_text')).toBeInTheDocument();
             expect(screen.getByText(attribute.description.fr)).toBeInTheDocument();
         });

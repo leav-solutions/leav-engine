@@ -4,21 +4,37 @@
 import {render, screen} from '../../_tests/testUtils';
 import {SimpleErrorBoundary} from './SimpleErrorBoundary';
 
-describe('SimpleErrorBoundary', () => {
-    beforeAll(() => jest.spyOn(console, 'error').mockImplementation(jest.fn()));
-    afterAll(() => (console.error as jest.Mock).mockRestore());
+let isDevEnvMock: boolean;
+jest.mock('_ui/_utils/isDevEnv', () => ({
+    isDevEnv: () => isDevEnvMock
+}));
 
+describe('SimpleErrorBoundary', () => {
     const ComponentWithError = () => {
         throw new Error('boom!');
     };
 
-    test('Display error message', async () => {
+    test('Should display error', async () => {
+        isDevEnvMock = false;
         render(
             <SimpleErrorBoundary>
                 <ComponentWithError />
             </SimpleErrorBoundary>
         );
 
-        expect(await screen.findByText(/boom/)).toBeInTheDocument();
+        expect(screen.getByText(/error_occurred/)).toBeVisible();
+        expect(screen.queryByText(/boom!/)).not.toBeInTheDocument();
+    });
+
+    test('Should display details message on local only', async () => {
+        isDevEnvMock = true;
+        render(
+            <SimpleErrorBoundary>
+                <ComponentWithError />
+            </SimpleErrorBoundary>
+        );
+
+        expect(screen.getByText(/error_occurred/)).toBeVisible();
+        expect(screen.getByText(/boom!/)).toBeInTheDocument();
     });
 });

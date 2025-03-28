@@ -16,6 +16,8 @@ import Breadcrumb from './Breacrumb';
 import AttributeSummary from './AttributeSummary';
 import ValuesSummary from './ValuesSummary';
 import styled from 'styled-components';
+import {useLang} from '_ui/hooks';
+import {localizedTranslation} from '@leav/utils';
 
 interface IEditRecordSidebarProps {
     onMetadataSubmit: MetadataSubmitValueFunc;
@@ -59,9 +61,13 @@ export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
     sidebarContainer
 }) => {
     const {t} = useSharedTranslation();
+    const {lang} = useLang();
     const {state, dispatch} = useEditRecordReducer();
     const sidePanelRef = useRef<KitSidePanelRef | null>(null);
-    const sidePanelTitle = state.record?.label ?? state.record?.id ?? t('record_summary.new_record');
+    const sidePanelTitle =
+        state.sidebarContent === 'valueDetails'
+            ? localizedTranslation(state.activeAttribute?.attribute.label, lang)
+            : (state.record?.label ?? state.record?.id ?? t('record_summary.new_record'));
 
     const editRecordSidebarContent = (
         <StyledKitSidePanel

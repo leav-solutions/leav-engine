@@ -26,6 +26,7 @@ import styled from 'styled-components';
 interface IEditRecordContentProps {
     antdForm: FormInstance;
     formId?: string;
+    formElementId?: string;
     record: IRecordIdentityWhoAmI | null;
     library: string;
     onRecordSubmit: (attributes: RecordFormAttributeStandardAttributeFragment[]) => void;
@@ -43,6 +44,7 @@ const WrappedForm = styled(Form)`
 const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     antdForm,
     formId,
+    formElementId,
     record,
     library,
     pendingValues,
@@ -165,10 +167,14 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
     return (
         <WrappedForm
-            id={EDIT_OR_CREATE_RECORD_FORM_ID}
+            id={formElementId ?? EDIT_OR_CREATE_RECORD_FORM_ID}
             form={antdForm}
             initialValues={antdFormInitialValues}
-            onFinish={() => onRecordSubmit(recordForm.elements.map(element => element.attribute))}
+            onFinish={() =>
+                onRecordSubmit(
+                    recordForm.elements.filter(element => element.attribute?.id).map(element => element.attribute)
+                )
+            }
         >
             <RecordEditionContext.Provider
                 value={{
