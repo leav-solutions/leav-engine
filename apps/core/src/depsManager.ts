@@ -95,6 +95,8 @@ export async function initDI(additionalModulesToRegister?: {
 
     if (pluginsFolder) {
         await _registerModules(pluginsContainer, pluginsFolder, pluginsModulesGlob);
+        const pluginConf = await getConfig(pluginsFolder + '/plugin-leav');
+        pluginsContainer.register('pluginConfig', asValue(pluginConf));
     }
 
     // Register this at the very end because we don't want plugins to access the deps manager
