@@ -12,6 +12,7 @@ import {GET_TREE_BY_ID_trees_list} from '../../../../_gqlTypes/GET_TREE_BY_ID';
 import TreeInfosTab from './InfosTab';
 import PermissionsTab from './PermissionsTab';
 import TreeStructure from './TreeStructure';
+import CustomConfig from 'components/shared/CustomConfig/CustomConfig';
 
 export interface IEditTreeMatchParams {
     id: string;
@@ -75,6 +76,16 @@ function EditTreeTabs({tree, readonly}: IEditTreeTabsProps): JSX.Element {
             render: () => (
                 <Tab.Pane key="structure" className="grow">
                     <PermissionsTab tree={tree as GET_TREE_BY_ID_trees_list} readonly={readonly} />
+                </Tab.Pane>
+            )
+        },
+        {
+            key: 'custom-config',
+            mustBeDisplayed: !isCreationMode,
+            menuItem: 'Custom config',
+            render: () => (
+                <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
+                    <CustomConfig type="library" readOnly={readonly} />
                 </Tab.Pane>
             )
         }
