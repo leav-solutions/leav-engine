@@ -120,7 +120,7 @@ export interface ITreeRepo {
     }): Promise<IList<ITreeNode>>;
 
     /**
-     * Return all ancestors of an element, including element itself, but excluding tree root
+     * Return all ancestors of an element, from root to element, but excluding tree root
      *
      * @param treeId
      * @param element

@@ -8,11 +8,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {TreePaths} from '_types/tree';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsActions, PermissionsRelations, PermissionTypes} from '../../../_types/permissions';
-import {
-    IGetInheritedTreeBasedPermissionParams,
-    IGetTreeBasedPermissionParams,
-    PERMISSIONS_NULL_PLACEHOLDER
-} from '../_types';
+import {IGetInheritedTreeBasedPermissionParams, IGetTreeBasedPermissionParams} from '../_types';
 import {IDefaultPermissionHelper} from './defaultPermission';
 import getPermissionCacheKey from './getPermissionCacheKey';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
@@ -56,70 +52,40 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
         userGroupsPaths: TreePaths[];
         permTreeId: string;
         permTreeValues: string[];
+        getDefaultPermission: () => Promise<boolean> | boolean;
         ctx: IQueryInfos;
-    }): Promise<boolean | null> => {
-        const {type, action, applyTo, userGroupsPaths, permTreeId, permTreeValues, ctx} = params;
+    }): Promise<boolean> => {
+        const {type, action, applyTo, userGroupsPaths, permTreeId, permTreeValues, getDefaultPermission, ctx} = params;
 
-        if (permTreeValues.length) {
-            // Get permissions for all values, then check if we're allowed somewhere
-            const allValuesPermissions = await Promise.all(
-                permTreeValues.map(
-                    // Permissions for each values of tree attribute
-                    async (value): Promise<boolean | null> => {
-                        const permTreePath = await elementAncestorsHelper.getCachedElementAncestors({
-                            // Ancestors of value
-                            treeId: permTreeId,
-                            nodeId: value,
-                            ctx
-                        });
+        // Get permissions for all values, then check if we're allowed somewhere
+        const allValuesPermissions = await Promise.all(
+            // if there is no values, we get the tree target root permission
+            (permTreeValues.length ? permTreeValues : [null]).map(
+                // Permissions for each values of tree attribute
+                async (value): Promise<boolean> => {
+                    const targetPath = await elementAncestorsHelper.getCachedElementAncestors({
+                        treeId: permTreeId,
+                        nodeId: value,
+                        ctx
+                    });
 
-                        let perm: boolean | null = null;
-                        for (const pathElem of permTreePath.reverse()) {
-                            const valuePerm = await permByUserGroupsHelper.getPermissionByUserGroups({
-                                type,
-                                action,
-                                userGroupsPaths,
-                                applyTo,
-                                permissionTreeTarget: {
-                                    nodeId: pathElem.id,
-                                    tree: permTreeId
-                                },
-                                ctx
-                            });
+                    return permByUserGroupsHelper.getPermissionByUserGroups({
+                        type,
+                        action,
+                        userGroupsPaths,
+                        applyTo,
+                        treeTarget: {
+                            path: targetPath,
+                            tree: permTreeId
+                        },
+                        getDefaultPermission,
+                        ctx
+                    });
+                }
+            )
+        );
 
-                            if (valuePerm !== null) {
-                                perm = valuePerm;
-                                break;
-                            }
-                        }
-
-                        return perm;
-                    }
-                )
-            );
-
-            // Looks for a true somewhere, but keeps null if everything is null
-            const perm = reducePermissionsArrayHelper.reducePermissionsArray(allValuesPermissions);
-
-            if (perm !== null) {
-                return perm;
-            }
-        }
-
-        // Nothing found on tree or no value defined, return root level permission
-        const rootPerm = await permByUserGroupsHelper.getPermissionByUserGroups({
-            type,
-            action,
-            userGroupsPaths,
-            applyTo,
-            permissionTreeTarget: {
-                nodeId: null,
-                tree: permTreeId
-            },
-            ctx
-        });
-
-        return rootPerm;
+        return reducePermissionsArrayHelper.reducePermissionsArray(allValuesPermissions);
     };
 
     const getTreeBasedPermission = async (
@@ -137,59 +103,54 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             return values.length ? acc + `${acc.length ? '_' : ''}${values.join('_')}` : acc;
         }, '');
 
-        const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, key);
-        const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
-        let perm: boolean | null;
+        // disable cache temporary: const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, key);
+        // disable cache temporary: const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
+        // disable cache temporary: let perm: boolean;
 
-        if (permFromCache !== null) {
-            if (permFromCache === PERMISSIONS_NULL_PLACEHOLDER) {
-                perm = null;
-            } else {
-                perm = permFromCache === 'true';
-            }
-        } else {
-            const userGroupsPaths = !!ctx.groupsId
-                ? await Promise.all(
-                      ctx.groupsId.map(async groupId =>
-                          elementAncestorsHelper.getCachedElementAncestors({
-                              treeId: 'users_groups',
-                              nodeId: groupId,
-                              ctx
-                          })
-                      )
+        /* disable cache temporary: if (permFromCache !== null) {
+            perm = permFromCache === 'true';
+        } else { */
+        const userGroupsPaths = !!ctx.groupsId
+            ? await Promise.all(
+                  ctx.groupsId.map(async groupId =>
+                      elementAncestorsHelper.getCachedElementAncestors({
+                          treeId: 'users_groups',
+                          nodeId: groupId,
+                          ctx
+                      })
                   )
-                : [];
+              )
+            : [];
 
-            const treePerms = await Promise.all(
-                permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
-                    const permTreeAttrProps = await attributeDomain.getAttributeProperties({id: permTreeAttr, ctx});
-                    const treePerm = await _getPermTreePermission({
-                        type,
-                        action,
-                        applyTo,
-                        userGroupsPaths,
-                        permTreeId: permTreeAttrProps.linked_tree,
-                        permTreeValues: treeValues[permTreeAttr],
-                        ctx
-                    });
+        const treePerms = await Promise.all(
+            permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
+                const permTreeAttrProps = await attributeDomain.getAttributeProperties({id: permTreeAttr, ctx});
 
-                    return treePerm ?? getDefaultPermission({action, applyTo, userId});
-                })
-            );
+                return _getPermTreePermission({
+                    type,
+                    action,
+                    applyTo,
+                    userGroupsPaths,
+                    permTreeId: permTreeAttrProps.linked_tree,
+                    permTreeValues: treeValues[permTreeAttr],
+                    getDefaultPermission: () => getDefaultPermission({action, applyTo, userId}),
+                    ctx
+                });
+            })
+        );
 
-            perm = treePerms.reduce((globalPerm, treePerm) => {
-                if (globalPerm === null) {
-                    return treePerm;
-                }
+        const perm = treePerms.reduce((globalPerm, treePerm) => {
+            if (globalPerm === null) {
+                return treePerm;
+            }
 
-                return permissions_conf.relation === PermissionsRelations.AND
-                    ? globalPerm && treePerm
-                    : globalPerm || treePerm;
-            }, null);
+            return permissions_conf.relation === PermissionsRelations.AND
+                ? globalPerm && treePerm
+                : globalPerm || treePerm;
+        }, null);
 
-            const permToStore = perm === null ? PERMISSIONS_NULL_PLACEHOLDER : perm.toString();
-            await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: permToStore});
-        }
+        // disable cache temporary: await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: perm.toString()});
+        // }
 
         return perm;
     };
@@ -207,47 +168,38 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             ctx
         });
 
-        const parentPerm = await permByUserGroupsHelper.getPermissionByUserGroups({
-            type,
-            action,
-            userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
-            applyTo,
-            permissionTreeTarget,
-            ctx
-        });
-
-        if (parentPerm !== null) {
-            return parentPerm;
-        }
-
-        const treeElemAncestors = await elementAncestorsHelper.getCachedElementAncestors({
+        // get tree target path
+        const treeTargetPath = await elementAncestorsHelper.getCachedElementAncestors({
             treeId: permissionTreeTarget.tree,
             nodeId: permissionTreeTarget.nodeId,
             ctx
         });
 
-        const perm = await _getPermTreePermission({
-            type,
-            action,
-            applyTo,
-            userGroupsPaths: [groupAncestors],
-            permTreeId: permissionTreeTarget.tree,
-            permTreeValues: treeElemAncestors.map(anc => anc.id),
-            ctx
-        });
+        const [inheritedGroupTreeBasedPermission, inheritedTargetTreeBasedPermission] = await Promise.all([
+            permByUserGroupsHelper.getPermissionByUserGroups({
+                type,
+                action,
+                userGroupsPaths: [groupAncestors.slice(0, -1)],
+                applyTo,
+                treeTarget: {tree: permissionTreeTarget.tree, path: treeTargetPath},
+                getDefaultPermission: () => getDefaultPermission({action, applyTo, userGroups: [groupAncestors]}),
+                ctx
+            }),
+            permByUserGroupsHelper.getPermissionByUserGroups({
+                type,
+                action,
+                userGroupsPaths: [groupAncestors],
+                applyTo,
+                treeTarget: {
+                    tree: permissionTreeTarget.tree,
+                    path: treeTargetPath.slice(0, -1)
+                },
+                getDefaultPermission: () => getDefaultPermission({action, applyTo, userGroups: [groupAncestors]}),
+                ctx
+            })
+        ]);
 
-        if (perm !== null) {
-            return perm;
-        }
-
-        // Nothing found? Return library permission
-        const libPerm = await getDefaultPermission({
-            action,
-            applyTo,
-            userGroups: [groupAncestors]
-        });
-
-        return libPerm !== null ? libPerm : defaultPermHelper.getDefaultPermission();
+        return inheritedGroupTreeBasedPermission && inheritedTargetTreeBasedPermission;
     };
 
     return {

@@ -91,7 +91,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                 {}
             );
 
-            const perm = await treeBasedPermissionsHelper.getTreeBasedPermission(
+            return treeBasedPermissionsHelper.getTreeBasedPermission(
                 {
                     type: PermissionTypes.RECORD,
                     action,
@@ -109,8 +109,6 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                 },
                 ctx
             );
-
-            return perm;
         },
         async getInheritedRecordPermission({
             action,
@@ -120,19 +118,14 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
             permTreeNode,
             ctx
         }): Promise<boolean> {
-            const _getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
-                const {applyTo, userGroups} = params;
-
-                const libPerm = await permByUserGroupHelper.getPermissionByUserGroups({
+            const _getDefaultPermission = (params: IGetDefaultPermissionParams) =>
+                permByUserGroupHelper.getPermissionByUserGroups({
                     type: PermissionTypes.LIBRARY,
                     action,
-                    userGroupsPaths: userGroups,
-                    applyTo,
+                    userGroupsPaths: params.userGroups,
+                    applyTo: params.applyTo,
                     ctx
                 });
-
-                return libPerm !== null ? libPerm : defaultPermHelper.getDefaultPermission();
-            };
 
             return treeBasedPermissionsHelper.getInheritedTreeBasedPermission(
                 {
