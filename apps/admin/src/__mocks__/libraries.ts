@@ -32,6 +32,7 @@ export const mockLibrary: WithTypename<GET_LIB_BY_ID_libraries_list> = {
             __typename: 'Attribute'
         }
     ],
+    settings: {},
     permissions: {
         __typename: 'LibraryPermissions',
         admin_library: true,
