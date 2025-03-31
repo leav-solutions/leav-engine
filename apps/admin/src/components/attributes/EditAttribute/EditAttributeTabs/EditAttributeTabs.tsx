@@ -127,7 +127,7 @@ function EditAttributeTabs({
         }
         panes.push({
             key: 'custom-config',
-            menuItem: 'Custom config',
+            menuItem: t('attributes.custom-config'),
             render: () => (
                 <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
                     <CustomConfig onChange={_onChangeConfig} data={attribute.settings} />

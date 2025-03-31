@@ -101,7 +101,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
         {
             key: 'custom-config',
             mustBeDisplayed: !isCreationMode,
-            menuItem: 'Custom config',
+            menuItem: t('libraries.custom-config'),
             render: () => (
                 <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
                     <CustomConfig onChange={_onChangeConfig} data={library.settings} />

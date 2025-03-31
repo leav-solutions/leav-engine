@@ -85,7 +85,7 @@ function EditTreeTabs({tree, readonly}: IEditTreeTabsProps): JSX.Element {
         {
             key: 'custom-config',
             mustBeDisplayed: !isCreationMode,
-            menuItem: 'Custom config',
+            menuItem: t('trees.custom-config'),
             render: () => (
                 <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
                     <CustomConfig onChange={_onChangeConfig} data={tree.settings} />
