@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txtexport
 import {IViewSettingsState} from './viewSettingsReducer';
 
-export const defaultPageSizeOptions = [20, 50, 100];
+export const defaultPageSizeOptions = [20, 50];
 
 export const defaultMaxFilters = 3;
 
