@@ -92,7 +92,7 @@
             "warning": "La purge va supprimer définitivement tous les éléments inactifs.\n Il n'y a pas de retour en arrière possible.",
             "confirm": "Êtes-vous sûr de vouloir continuer?"
         },
-        "custom-config": "Config Perso",
+        "custom-config": "Custom config",
         "unknown_library": "Bibliothèque inconnue"
     },
     "attributes": {
@@ -175,7 +175,7 @@
         "linked_libraries": "Bibliothèques associées",
         "select_attributes": "Sélectionner des attributs",
         "version_profile": "Profil de version",
-        "custom-config": "Config Perso",
+        "custom-config": "Custom config",
         "example": "Exemple : "
     },
     "trees": {
@@ -207,7 +207,7 @@
         "no_children_allowed": "Aucun enfant autorisé",
         "root": "Racine de l'arbre",
         "no_root_libraries": "Glissez des bibliothèques ici pour les autoriser à la racine de l'arbre",
-        "custom-config": "Config Perso"
+        "custom-config": "Custom config"
     },
     "permissions": {
         "title": "Permissions application",
@@ -356,7 +356,7 @@
             "internal": "Interne",
             "external": "Externe"
         },
-        "settings": "Configuration",
+        "settings": "Custom config",
         "icon": "Icône"
     },
     "tasks": {
