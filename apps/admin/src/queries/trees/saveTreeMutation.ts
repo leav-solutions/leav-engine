@@ -31,6 +31,7 @@ export const saveTreeQuery = gql`
                     allowedChildren
                 }
             }
+            settings
             permissions_conf {
                 libraryId
                 permissionsConf {

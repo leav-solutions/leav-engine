@@ -18,6 +18,9 @@ import FormsTab from './FormsTab';
 import InfosTab from './InfosTab';
 import PermissionsTab from './PermissionsTab';
 import PurgeTab from './PurgeTab';
+import CustomConfig from '../../../shared/CustomConfig';
+import {SAVE_LIBRARY, SAVE_LIBRARYVariables} from '_gqlTypes/SAVE_LIBRARY';
+import {saveLibQuery} from 'queries/libraries/saveLibMutation';
 
 const Title = styled(Header)`
     display: flex;
@@ -60,40 +63,50 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
             mustBeDisplayed: !isCreationMode,
             menuItem: t('libraries.permissions'),
             render: () => (
-                    <Tab.Pane key="permissions" className="grow flex-col height100">
-                        <PermissionsTab library={library as GET_LIB_BY_ID_libraries_list} readonly={readOnly} />
-                    </Tab.Pane>
-                )
+                <Tab.Pane key="permissions" className="grow flex-col height100">
+                    <PermissionsTab library={library as GET_LIB_BY_ID_libraries_list} readonly={readOnly} />
+                </Tab.Pane>
+            )
         },
         {
             key: 'attributes',
             mustBeDisplayed: !isCreationMode,
             menuItem: t('libraries.attributes'),
             render: () => (
-                    <Tab.Pane key="attributes" className="grow">
-                        <AttributesTab library={library} readonly={readOnly} />
-                    </Tab.Pane>
-                )
+                <Tab.Pane key="attributes" className="grow">
+                    <AttributesTab library={library} readonly={readOnly} />
+                </Tab.Pane>
+            )
         },
         {
             key: 'forms',
             mustBeDisplayed: !isCreationMode,
             menuItem: t('forms.title'),
             render: () => (
-                    <Tab.Pane key="forms" className="height100" style={{padding: '0', border: '0px none'}}>
-                        <FormsTab libraryId={library!.id} readonly={readOnly} />
-                    </Tab.Pane>
-                )
+                <Tab.Pane key="forms" className="height100" style={{padding: '0', border: '0px none'}}>
+                    <FormsTab libraryId={library!.id} readonly={readOnly} />
+                </Tab.Pane>
+            )
         },
         {
             key: 'purge',
             mustBeDisplayed: !isCreationMode,
             menuItem: t('libraries.purge.title'),
             render: () => (
-                    <Tab.Pane key="purge" className="height100" style={{padding: '0', border: '0px none'}}>
-                        <PurgeTab library={library} readonly={readOnly} />
-                    </Tab.Pane>
-                )
+                <Tab.Pane key="purge" className="height100" style={{padding: '0', border: '0px none'}}>
+                    <PurgeTab library={library} readonly={readOnly} />
+                </Tab.Pane>
+            )
+        },
+        {
+            key: 'custom-config',
+            mustBeDisplayed: !isCreationMode,
+            menuItem: t('libraries.custom-config'),
+            render: () => (
+                <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
+                    <CustomConfig onChange={_onChangeConfig} data={library.settings} />
+                </Tab.Pane>
+            )
         }
     ].filter(p => p.mustBeDisplayed);
 
@@ -101,6 +114,23 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
     const [activeIndex, setActiveIndex] = useState<number | undefined>(
         tabName ? panes.findIndex(p => tabName === p.key) : 0
     );
+
+    const [saveLibrary, {error, loading}] = useMutation<SAVE_LIBRARY, SAVE_LIBRARYVariables>(saveLibQuery, {
+        // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
+        onError: () => undefined
+    });
+
+    const _onChangeConfig = (value: Record<string, any>) => {
+        const dataToSave = {
+            libData: {
+                id: library.id,
+                settings: value
+            }
+        };
+        saveLibrary({
+            variables: dataToSave
+        });
+    };
 
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {

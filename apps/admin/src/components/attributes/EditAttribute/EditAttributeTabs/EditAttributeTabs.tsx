@@ -17,6 +17,10 @@ import InfosTab from './InfosTab';
 import MetadataTab from './MetadataTab';
 import PermissionsTab from './PermissionsTab';
 import ValuesListTab from './ValuesListTab';
+import CustomConfig from '../../../shared/CustomConfig';
+import {useMutation} from '@apollo/client';
+import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '_gqlTypes/SAVE_ATTRIBUTE';
+import {saveAttributeQuery} from 'queries/attributes/saveAttributeMutation';
 
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
@@ -73,28 +77,28 @@ function EditAttributeTabs({
                 key: 'values_list',
                 menuItem: t('attributes.values_list'),
                 render: () => (
-                        <Tab.Pane key="values_list" className="grow flex-col height100">
-                            <ValuesListTab attributeId={attribute.id} />
-                        </Tab.Pane>
-                    )
+                    <Tab.Pane key="values_list" className="grow flex-col height100">
+                        <ValuesListTab attributeId={attribute.id} />
+                    </Tab.Pane>
+                )
             },
             {
                 key: 'permissions',
                 menuItem: t('attributes.permissions'),
                 render: () => (
-                        <Tab.Pane key="permissions" className="" style={{display: 'grid'}}>
-                            <PermissionsTab attribute={attribute} readonly={false} />
-                        </Tab.Pane>
-                    )
+                    <Tab.Pane key="permissions" className="" style={{display: 'grid'}}>
+                        <PermissionsTab attribute={attribute} readonly={false} />
+                    </Tab.Pane>
+                )
             },
             {
                 key: 'actions_list',
                 menuItem: t('attributes.action_list'),
                 render: () => (
-                        <Tab.Pane key="actions_list" className="grow flex-col height100">
-                            <ActionsListTab attribute={attribute} />
-                        </Tab.Pane>
-                    )
+                    <Tab.Pane key="actions_list" className="grow flex-col height100">
+                        <ActionsListTab attribute={attribute} />
+                    </Tab.Pane>
+                )
             }
         );
 
@@ -103,10 +107,10 @@ function EditAttributeTabs({
                 key: 'metadata',
                 menuItem: t('attributes.metadata'),
                 render: () => (
-                        <Tab.Pane key="metadata" className="grow flex-col">
-                            <MetadataTab attribute={attribute} readonly={false} />
-                        </Tab.Pane>
-                    )
+                    <Tab.Pane key="metadata" className="grow flex-col">
+                        <MetadataTab attribute={attribute} readonly={false} />
+                    </Tab.Pane>
+                )
             });
         }
 
@@ -115,18 +119,45 @@ function EditAttributeTabs({
                 key: 'embeddedFields',
                 menuItem: t('attributes.embedded_fields'),
                 render: () => (
-                        <Tab.Pane key="EmbeddedFields" className="grow flex-col">
-                            <EmbeddedFieldsTab attribute={attribute} />
-                        </Tab.Pane>
-                    )
+                    <Tab.Pane key="EmbeddedFields" className="grow flex-col">
+                        <EmbeddedFieldsTab attribute={attribute} />
+                    </Tab.Pane>
+                )
             });
         }
+        panes.push({
+            key: 'custom-config',
+            menuItem: t('attributes.custom-config'),
+            render: () => (
+                <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
+                    <CustomConfig onChange={_onChangeConfig} data={attribute.settings} />
+                </Tab.Pane>
+            )
+        });
     }
 
     const tabName = location ? location.hash.replace('#', '') : undefined;
     const [activeIndex, setActiveIndex] = useState<number | undefined>(
         tabName ? panes.findIndex(p => tabName === p.key) : 0
     );
+
+    const [saveAttribute, {error, loading}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery, {
+        // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
+        onError: () => undefined
+    });
+
+    const _onChangeConfig = (value: Record<string, any>) => {
+        const dataToSave = {
+            attrData: {
+                id: attribute.id,
+                settings: value
+            }
+        };
+
+        saveAttribute({
+            variables: dataToSave
+        });
+    };
 
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {

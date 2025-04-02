@@ -128,6 +128,7 @@ export interface IAmqp {
     exchange: string;
     type: string;
     prefetch?: number;
+    queues?: string[];
 }
 
 export interface IRedis {

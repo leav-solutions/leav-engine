@@ -56,6 +56,7 @@ const defaultAttributeData: AttributeInfosFormValues = {
     unique: null,
     permissions_conf: null,
     multiple_values: false,
+    settings: {},
     metadata_fields: null,
     versions_conf: {
         versionable: false,

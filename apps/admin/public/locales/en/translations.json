@@ -92,6 +92,7 @@
             "warning": "The purge is going to definitely delete inactive records. \n There is no way back.",
             "confirm": "Do you really want to continue?"
         },
+        "custom-config": "Custom config",
         "unknown_library": "Unknown library"
     },
     "attributes": {
@@ -174,6 +175,7 @@
         "linked_libraries": "Linked libraries",
         "select_attributes": "Select attributes",
         "version_profile": "Version profile",
+        "custom-config": "Custom config",
         "example": "Example: "
     },
     "trees": {
@@ -204,7 +206,8 @@
         "dependencies": "Dependencies",
         "no_children_allowed": "No children allowed",
         "root": "Tree root",
-        "no_root_libraries": "Drag libraries here to allow them at root"
+        "no_root_libraries": "Drag libraries here to allow them at root",
+        "custom-config": "Custom config"
     },
     "permissions": {
         "title": "App Permissions",
@@ -353,7 +356,7 @@
             "internal": "Internal",
             "external": "External"
         },
-        "settings": "Settings",
+        "settings": "Custom config",
         "icon": "Icon"
     },
     "tasks": {

@@ -12,6 +12,10 @@ import {GET_TREE_BY_ID_trees_list} from '../../../../_gqlTypes/GET_TREE_BY_ID';
 import TreeInfosTab from './InfosTab';
 import PermissionsTab from './PermissionsTab';
 import TreeStructure from './TreeStructure';
+import CustomConfig from '../../../shared/CustomConfig';
+import {SAVE_TREE, SAVE_TREEVariables} from '_gqlTypes/SAVE_TREE';
+import {saveTreeQuery} from 'queries/trees/saveTreeMutation';
+import {useMutation} from '@apollo/client';
 
 export interface IEditTreeMatchParams {
     id: string;
@@ -77,6 +81,16 @@ function EditTreeTabs({tree, readonly}: IEditTreeTabsProps): JSX.Element {
                     <PermissionsTab tree={tree as GET_TREE_BY_ID_trees_list} readonly={readonly} />
                 </Tab.Pane>
             )
+        },
+        {
+            key: 'custom-config',
+            mustBeDisplayed: !isCreationMode,
+            menuItem: t('trees.custom-config'),
+            render: () => (
+                <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
+                    <CustomConfig onChange={_onChangeConfig} data={tree.settings} />
+                </Tab.Pane>
+            )
         }
     ].filter(p => p.mustBeDisplayed);
 
@@ -84,6 +98,23 @@ function EditTreeTabs({tree, readonly}: IEditTreeTabsProps): JSX.Element {
     const [activeIndex, setActiveIndex] = useState<number | undefined>(
         tabName ? panes.findIndex(p => tabName === p.key) : 0
     );
+
+    const [saveTree, {error, loading}] = useMutation<SAVE_TREE, SAVE_TREEVariables>(saveTreeQuery, {
+        // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
+        onError: () => undefined
+    });
+
+    const _onChangeConfig = (value: Record<string, any>) => {
+        const dataToSave = {
+            treeData: {
+                id: tree.id,
+                settings: value
+            }
+        };
+        saveTree({
+            variables: dataToSave
+        });
+    };
 
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {

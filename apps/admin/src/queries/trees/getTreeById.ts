@@ -12,6 +12,7 @@ export const getTreeByIdQuery = gql`
                 label
                 system
                 behavior
+                settings
                 permissions_conf {
                     libraryId
                     permissionsConf {
