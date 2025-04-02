@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
 import {render, screen, within} from '_tests/testUtils';
 import {mockAttrAdv, mockAttrSimple} from '../../../../__mocks__/attributes';
 import EditAttributeTabs from './EditAttributeTabs';
@@ -12,56 +11,33 @@ jest.mock('../../../../utils/utils', () => ({
 
 jest.mock('../../../../hooks/useLang');
 
-jest.mock(
-    './ActionsListTab',
-    () =>
-        function ActionsListTab() {
-            return <div>ActionsListTab</div>;
-        }
-);
-jest.mock(
-    './EmbeddedFieldsTab',
-    () =>
-        function EmbeddedFieldsTab() {
-            return <div>EmbeddedFieldsTab</div>;
-        }
-);
-jest.mock(
-    './InfosTab',
-    () =>
-        function InfosTab() {
-            return <div>InfosTab</div>;
-        }
-);
-jest.mock(
-    './MetadataTab',
-    () =>
-        function MetadataTab() {
-            return <div>MetadataTab</div>;
-        }
-);
-jest.mock(
-    './PermissionsTab',
-    () =>
-        function PermissionsTab() {
-            return <div>PermissionsTab</div>;
-        }
-);
-jest.mock(
-    './ValuesListTab',
-    () =>
-        function ValuesListTab() {
-            return <div>ValuesListTab</div>;
-        }
-);
+jest.mock('./ActionsListTab', () => function ActionsListTab() {
+    return <div>ActionsListTab</div>;
+});
 
-jest.mock(
-    '../../../shared/CustomConfig',
-    () =>
-        function CustomConfig() {
-            return <div>CustomConfig</div>;
-        }
-);
+jest.mock('./EmbeddedFieldsTab',() => function EmbeddedFieldsTab() {
+    return <div>EmbeddedFieldsTab</div>;
+});
+
+jest.mock('./InfosTab', () => function InfosTab() {
+    return <div>InfosTab</div>;
+});
+
+jest.mock('./MetadataTab', () => function MetadataTab() {
+    return <div>MetadataTab</div>;
+});
+
+jest.mock('./PermissionsTab', () => function PermissionsTab() {
+    return <div>PermissionsTab</div>;
+});
+
+jest.mock('./ValuesListTab', () => function ValuesListTab() {
+    return <div>ValuesListTab</div>;
+});
+
+jest.mock('../../../shared/CustomConfig', () => function CustomConfig() {
+    return <div>CustomConfig</div>;
+});
 
 describe('EditAttributeTabs', () => {
     const mockAttribute = {...mockAttrSimple};

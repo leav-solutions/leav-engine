@@ -58,7 +58,6 @@ function CustomConfig({onChange, data}: ICustomConfigProps): JSX.Element {
             <JsonEditor
                 mode="tree"
                 value={data ?? ''}
-                // value={{test: {test1: {test: {test1: {test: {test1: {test: {test1: {}}}}}}}}}}
                 navigationBar={false}
                 statusBar={false}
                 onChange={onChange ? onChange : () => null}
