@@ -553,6 +553,11 @@ services:
   elasticsearch:
     profiles: ["logs"]
     image: elasticsearch:8.10.2
+    healthcheck:
+        test: [ "CMD-SHELL", "curl -s --fail http://elasticsearch:9200" ]
+        interval: 5s
+        timeout: 2s
+        retries: 15
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
