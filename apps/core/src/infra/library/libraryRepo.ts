@@ -137,7 +137,7 @@ export default function ({
             // Insert in libraries collection
             const col = dbService.db.collection(LIB_COLLECTION_NAME);
             const res = await dbService.execute({
-                query: aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`,
+                query: aql`UPDATE ${docToInsert} IN ${col} OPTIONS { mergeObjects: false } RETURN NEW`,
                 ctx
             });
 

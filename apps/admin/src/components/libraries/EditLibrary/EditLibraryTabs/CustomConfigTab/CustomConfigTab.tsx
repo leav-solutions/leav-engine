@@ -57,8 +57,6 @@ interface ICustomConfigTabProps {
 }
 
 function CustomConfigTab({library}: ICustomConfigTabProps): JSX.Element {
-    const customConfigData = useRef<SAVE_LIBRARYVariables | null>(null);
-
     const [saveLibrary, {error, loading}] = useMutation<SAVE_LIBRARY, SAVE_LIBRARYVariables>(saveLibQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         fetchPolicy: 'network-only',
@@ -66,20 +64,15 @@ function CustomConfigTab({library}: ICustomConfigTabProps): JSX.Element {
     });
 
     const _onChangeConfig = (value: Record<string, any>) => {
-        customConfigData.current = {
+        const dataToSave = {
             libData: {
                 id: library.id,
                 settings: {...value}
             }
         };
-    };
-
-    const _saveChange = () => {
-        if (customConfigData.current !== null) {
-            saveLibrary({
-                variables: customConfigData.current
-            });
-        }
+        saveLibrary({
+            variables: dataToSave
+        });
     };
 
     return (
@@ -90,7 +83,6 @@ function CustomConfigTab({library}: ICustomConfigTabProps): JSX.Element {
                 navigationBar={false}
                 statusBar={false}
                 onChange={_onChangeConfig}
-                onBlur={_saveChange}
                 allowedModes={['code', 'tree']}
             />
         </Wrapper>
