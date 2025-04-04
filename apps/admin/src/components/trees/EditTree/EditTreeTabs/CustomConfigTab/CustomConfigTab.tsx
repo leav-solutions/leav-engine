@@ -7,7 +7,6 @@ import {SAVE_TREEVariables, SAVE_TREE} from '_gqlTypes/SAVE_TREE';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
 import {saveTreeQuery} from 'queries/trees/saveTreeMutation';
-import {useRef} from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -57,29 +56,23 @@ interface ICustomConfigTabProps {
 }
 
 function CustomConfigTab({tree}: ICustomConfigTabProps): JSX.Element {
-    const customConfigData = useRef<SAVE_TREEVariables | null>(null);
-
     const [saveTree, {error, loading}] = useMutation<SAVE_TREE, SAVE_TREEVariables>(saveTreeQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: () => undefined
     });
 
     const _onChange = (value: Record<string, any>) => {
-        customConfigData.current = {
+        const dataToSave = {
             treeData: {
                 id: tree.id,
                 settings: value
             }
         };
+        saveTree({
+            variables: dataToSave
+        });
     };
 
-    const _saveChange = () => {
-        if (customConfigData.current !== null) {
-            saveTree({
-                variables: customConfigData.current
-            });
-        }
-    };
     return (
         <Wrapper>
             <JsonEditor
@@ -88,7 +81,6 @@ function CustomConfigTab({tree}: ICustomConfigTabProps): JSX.Element {
                 navigationBar={false}
                 statusBar={false}
                 onChange={_onChange}
-                onBlur={_saveChange}
                 allowedModes={['code', 'tree']}
             />
         </Wrapper>

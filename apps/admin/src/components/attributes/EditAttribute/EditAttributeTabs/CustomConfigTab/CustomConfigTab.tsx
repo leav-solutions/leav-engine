@@ -7,7 +7,6 @@ import {SAVE_ATTRIBUTEVariables, SAVE_ATTRIBUTE} from '_gqlTypes/SAVE_ATTRIBUTE'
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
 import {saveAttributeQuery} from 'queries/attributes/saveAttributeMutation';
-import {useRef} from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -57,29 +56,23 @@ interface ICustomConfigTabProps {
 }
 
 function CustomConfigTab({attribute}: ICustomConfigTabProps): JSX.Element {
-    const customConfigData = useRef<SAVE_ATTRIBUTEVariables | null>(null);
-
     const [saveAttribute, {error, loading}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: () => undefined
     });
 
     const _onChange = (value: Record<string, any>) => {
-        customConfigData.current = {
+        const dataToSave = {
             attrData: {
                 id: attribute.id,
                 settings: value
             }
         };
+        saveAttribute({
+            variables: dataToSave
+        });
     };
 
-    const _saveChange = () => {
-        if (customConfigData.current !== null) {
-            saveAttribute({
-                variables: customConfigData.current
-            });
-        }
-    };
     return (
         <Wrapper>
             <JsonEditor
@@ -88,7 +81,6 @@ function CustomConfigTab({attribute}: ICustomConfigTabProps): JSX.Element {
                 navigationBar={false}
                 statusBar={false}
                 onChange={_onChange}
-                onBlur={_saveChange}
                 allowedModes={['code', 'tree']}
             />
         </Wrapper>
