@@ -8,10 +8,10 @@ import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvi
 import EditTree from './EditTree';
 
 jest.mock(
-    '../../shared/CustomConfig',
+    './EditTreeTabs/CustomConfigTab',
     () =>
-        function CustomConfig() {
-            return <div>CustomConfig</div>;
+        function CustomConfigTab() {
+            return <div>CustomConfigTab</div>;
         }
 );
 

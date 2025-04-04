@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_tests/testUtils';
-import CustomConfig from './CustomConfig';
+import CustomConfigTab from './CustomConfigTab';
 
 jest.mock('jsoneditor-react', () => ({
     JsonEditor() {
@@ -12,7 +12,7 @@ jest.mock('jsoneditor-react', () => ({
 
 describe('CustomConfig', () => {
     test('Render test', async () => {
-        render(<CustomConfig />);
+        render(<CustomConfigTab library={null} />);
 
         expect(screen.getByText('JsonEditor')).toBeInTheDocument();
     });

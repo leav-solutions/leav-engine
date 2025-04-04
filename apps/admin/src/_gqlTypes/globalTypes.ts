@@ -263,6 +263,7 @@ export interface AttributeInput {
     actions_list?: ActionsListConfigurationInput | null;
     permissions_conf?: Treepermissions_confInput | null;
     multiple_values?: boolean | null;
+    settings?: {} | null;
     versions_conf?: ValuesVersionsConfInput | null;
     metadata_fields?: string[] | null;
     values_list?: ValuesListConfInput | null;
@@ -341,6 +342,7 @@ export interface LibraryInput {
     attributes?: string[] | null;
     fullTextAttributes?: string[] | null;
     behavior?: LibraryBehavior | null;
+    settings?: {} | null;
     permissions_conf?: Treepermissions_confInput | null;
     recordIdentityConf?: RecordIdentityConfInput | null;
     defaultView?: string | null;
@@ -449,6 +451,7 @@ export interface TreeInput {
     behavior?: TreeBehavior | null;
     label?: SystemTranslation | null;
     permissions_conf?: TreeNodePermissionsConfInput[] | null;
+    settings?: {} | null;
 }
 
 export interface TreeLibraryInput {

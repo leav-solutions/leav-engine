@@ -14,6 +14,7 @@ import {mockAttrAdv} from '__mocks__/attributes';
 import {mockRecord} from '__mocks__/common/records';
 import {mockVersionProfile} from '__mocks__/common/versionProfiles';
 import * as useUserData from '../../../hooks/useUserData';
+import CustomConfig from '../../attributes/EditAttribute/EditAttributeTabs/CustomConfigTab';
 import EditVersionProfile, {IEditVersionProfileMatchParams} from './EditVersionProfile';
 
 jest.mock(
@@ -25,10 +26,10 @@ jest.mock(
 );
 
 jest.mock(
-    '../../shared/CustomConfig',
+    '../../attributes/EditAttribute/EditAttributeTabs/CustomConfigTab',
     () =>
-        function CustomConfig() {
-            return <div>CustomConfig</div>;
+        function CustomConfigTab() {
+            return <div>CustomConfigTab</div>;
         }
 );
 
