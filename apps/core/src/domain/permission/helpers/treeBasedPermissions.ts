@@ -199,7 +199,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             })
         ]);
 
-        return inheritedGroupTreeBasedPermission && inheritedTargetTreeBasedPermission;
+        return inheritedGroupTreeBasedPermission || inheritedTargetTreeBasedPermission;
     };
 
     return {
