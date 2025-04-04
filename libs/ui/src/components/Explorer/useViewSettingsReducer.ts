@@ -22,11 +22,16 @@ import {
     _isValidFieldFilterThrough,
     useTransformFilters
 } from './manage-view-settings/_shared/useTransformFilters';
+import {ignore} from 'antd/es/theme/useToken';
 
 const _entrypointsAreEqual = (entrypoint1, entrypoint2) =>
     Object.keys(entrypoint1).every(key => entrypoint1[key] === entrypoint2[key]);
 
-export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettings: DefaultViewSettings = {}) => {
+export const useViewSettingsReducer = (
+    entrypoint: Entrypoint,
+    defaultViewSettings: DefaultViewSettings = {},
+    ignoreViewByDefault = false
+) => {
     const [loading, setLoading] = useState(true);
     const [libraryId, setLibraryId] = useState(entrypoint.type === 'library' ? entrypoint.libraryId : null);
     const [view, dispatch] = useReducer(viewSettingsReducer, viewSettingsInitialState);
@@ -62,17 +67,23 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
     // Take the last view from the array
     const userView = viewData?.views?.list?.at(-1);
 
-    const userViewFilters = toValidFilters(userView?.filters ?? []);
+    const userViewFilters = ignoreViewByDefault ? [] : toValidFilters(userView?.filters ?? []);
     const preparedDefaultFilters = toValidFilters(defaultViewSettings.filters ?? []);
+
+    const userAttributesToHydrate = ignoreViewByDefault
+        ? []
+        : [
+              ...userViewFilters,
+              ...(userView?.sort ?? []),
+              ...(userView?.attributes?.map(attribute => ({field: attribute.id})) ?? [])
+          ];
 
     const attributesToHydrate = [
         ...new Set(
             [
                 ...(preparedDefaultFilters ?? []),
                 ...(defaultViewSettings.sort ?? []),
-                ...userViewFilters,
-                ...(userView?.sort ?? []),
-                ...(userView?.attributes?.map(attribute => ({field: attribute.id})) ?? []),
+                ...userAttributesToHydrate,
                 ...(defaultViewSettings?.attributesIds?.map(attributeId => ({field: attributeId})) ?? [])
             ].map(({field}) => field)
         )
@@ -124,22 +135,30 @@ export const useViewSettingsReducer = (entrypoint: Entrypoint, defaultViewSettin
             );
             const allFilters = preparedDefaultFilters.length > 0 ? preparedDefaultFilters : userViewFilters;
             const defaultSorts = defaultViewSettings?.sort ?? [];
-            const userViewSorts = userView?.sort ?? [];
+            const userViewSorts = ignoreViewByDefault ? [] : (userView?.sort ?? []);
             const defaultattributesIds = (defaultViewSettings?.attributesIds ?? []).filter(
                 attr => attributesDataById[attr]
             );
-            const userViewAttributesIds = (userView?.attributes ?? [])
-                .map(attr => attr.id)
-                .filter(attr => attributesDataById[attr]);
+            const userViewAttributesIds = ignoreViewByDefault
+                ? []
+                : (userView?.attributes ?? []).map(attr => attr.id).filter(attr => attributesDataById[attr]);
+
+            let viewProps = {};
+            if (!ignoreViewByDefault) {
+                viewProps = {
+                    viewId: userView?.id ?? null,
+                    viewLabels: userView?.label ?? {},
+                    viewType: userView?.display
+                        ? mapViewTypeFromLegacyToExplorer[userView.display.type]
+                        : viewSettingsInitialState.viewType
+                };
+            }
+
             const hydratedSettings: IViewSettingsState = {
                 ...viewSettingsInitialState,
                 entrypoint,
                 libraryId,
-                viewId: userView?.id ?? null,
-                viewLabels: userView?.label ?? {},
-                viewType: userView?.display
-                    ? mapViewTypeFromLegacyToExplorer[userView.display.type]
-                    : viewSettingsInitialState.viewType,
+                ...viewProps,
                 savedViews,
                 ...defaultViewSettings,
                 attributesIds: defaultattributesIds.length > 0 ? defaultattributesIds : userViewAttributesIds,

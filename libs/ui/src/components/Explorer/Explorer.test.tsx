@@ -2899,5 +2899,21 @@ describe('Explorer', () => {
             await user.click(viewItem);
             waitFor(() => expect(manageViewsButton).toHaveTextContent('Second view'));
         });
+
+        test('Should ignore default view', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        enableConfigureView
+                        showFiltersAndSorts
+                        ignoreViewByDefault
+                        entrypoint={libraryEntrypoint}
+                        defaultPrimaryActions={[]}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByRole('button', {name: /My view/})).not.toBeInTheDocument();
+        });
     });
 });
