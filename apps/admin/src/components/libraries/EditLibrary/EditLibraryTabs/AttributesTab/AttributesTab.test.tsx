@@ -10,10 +10,10 @@ import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContex
 import AttributesTab from './AttributesTab';
 
 jest.mock(
-    '../../../../shared/CustomConfig',
+    '../../../../attributes/EditAttribute/EditAttributeTabs/CustomConfigTab',
     () =>
-        function CustomConfig() {
-            return <div>CustomConfig</div>;
+        function CustomConfigTab() {
+            return <div>CustomConfigTab</div>;
         }
 );
 

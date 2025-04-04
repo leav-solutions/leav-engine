@@ -17,10 +17,7 @@ import InfosTab from './InfosTab';
 import MetadataTab from './MetadataTab';
 import PermissionsTab from './PermissionsTab';
 import ValuesListTab from './ValuesListTab';
-import CustomConfig from '../../../shared/CustomConfig';
-import {useMutation} from '@apollo/client';
-import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '_gqlTypes/SAVE_ATTRIBUTE';
-import {saveAttributeQuery} from 'queries/attributes/saveAttributeMutation';
+import CustomConfigTab from './CustomConfigTab';
 
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
@@ -130,7 +127,7 @@ function EditAttributeTabs({
             menuItem: t('attributes.custom-config'),
             render: () => (
                 <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
-                    <CustomConfig onChange={_onChangeConfig} data={attribute.settings} />
+                    <CustomConfigTab attribute={attribute} />
                 </Tab.Pane>
             )
         });
@@ -140,24 +137,6 @@ function EditAttributeTabs({
     const [activeIndex, setActiveIndex] = useState<number | undefined>(
         tabName ? panes.findIndex(p => tabName === p.key) : 0
     );
-
-    const [saveAttribute, {error, loading}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery, {
-        // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
-        onError: () => undefined
-    });
-
-    const _onChangeConfig = (value: Record<string, any>) => {
-        const dataToSave = {
-            attrData: {
-                id: attribute.id,
-                settings: value
-            }
-        };
-
-        saveAttribute({
-            variables: dataToSave
-        });
-    };
 
     const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {
