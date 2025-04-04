@@ -10,9 +10,9 @@ import {mockGetLibraryDetailExtendedElement} from '_ui/__mocks__/mockQuery/mockG
 import {CreateNewRecordButton} from '_ui/components/LibraryItemsList/CreateNewRecordButton/CreateNewRecordButton';
 
 jest.mock('_ui/components', () => ({
-    EditRecordModal: ({onCreate}) => onCreate?.(),
-    UploadFiles: ({onCompleted}) => onCompleted?.(),
-    CreateDirectory: ({onCompleted}) => onCompleted?.()
+    EditRecordModal: ({onCreate}) => <button onClick={() => onCreate?.()}>close</button>,
+    UploadFiles: ({onCompleted}) => <button onClick={() => onCompleted?.()}>close</button>,
+    CreateDirectory: ({onCompleted}) => <button onClick={() => onCompleted?.()}>close</button>
 }));
 
 describe('<CreateNewRecordButton/>', () => {
@@ -51,6 +51,7 @@ describe('<CreateNewRecordButton/>', () => {
                 );
 
                 await userEvent.click(screen.getByRole('button', {name: `plus ${labelButton}`}));
+                await userEvent.click(screen.getByRole('button', {name: 'close'}));
 
                 expect(notifyNewCreationMock).toHaveBeenCalledTimes(1);
             }

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined} from '@ant-design/icons';
-import {Button, ButtonProps} from 'antd';
+import {App, Button, ButtonProps} from 'antd';
 import confirm from 'antd/lib/modal/confirm';
 import {SyntheticEvent} from 'react';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer/';
@@ -20,6 +20,7 @@ function DeactivateRecordBtn({record, ...buttonProps}: IDeactivateRecordBtnProps
     const {t} = useSharedTranslation();
 
     const {dispatch: searchDispatch} = useSearchReducer();
+    const {modal} = App.useApp();
 
     const [deactivateRecords] = useDeactivateRecordsMutation({
         variables: {
@@ -37,7 +38,7 @@ function DeactivateRecordBtn({record, ...buttonProps}: IDeactivateRecordBtnProps
     const _handleClick = async (e: SyntheticEvent) => {
         stopEvent(e);
 
-        confirm({
+        modal.confirm({
             content: t('records_deactivation.confirm_one'),
             okText: t('global.submit'),
             cancelText: t('global.cancel'),
