@@ -47,7 +47,7 @@ const getAccessPermissionsFilters: IGetAccesPermissions = async (groupsIds, libr
     ): any[] => {
         const result = treeContent.map(treeElem => {
             const treeElemWithPermission = {id: treeElem.id, children: [], permission: parentPermission};
-            treeElemWithPermission.permission = permissionsByTreeTarget[`${treeElem.id}`] ?? parentPermission;
+            treeElemWithPermission.permission = permissionsByTreeTarget[`nodeId:${treeElem.id}`] ?? parentPermission;
             treeElemWithPermission.children = _computePermissionTree(
                 treeElem.children,
                 treeElemWithPermission.permission,
@@ -76,10 +76,11 @@ const getAccessPermissionsFilters: IGetAccesPermissions = async (groupsIds, libr
             ctx
         });
         const permissionsByTreeTarget = permissions.reduce((acc, p) => {
-            acc[`${p.permissionTreeTarget.nodeId}`] = p.actions[`${RecordPermissionsActions.ACCESS_RECORD}`];
+            acc[`nodeId:${p.permissionTreeTarget.nodeId}`] = p.actions[`${RecordPermissionsActions.ACCESS_RECORD}`];
             return acc;
         }, {});
-        const rootPermission = permissionsByTreeTarget.null ?? true;
+        // null is used for "all elements" of the tree (root node)
+        const rootPermission = permissionsByTreeTarget['nodeId:null'] ?? true;
         const computedPermissionTree = _computePermissionTree(treeContent, rootPermission, permissionsByTreeTarget);
         const nodesIdsByPermission = _getNodesIdsByPermissionFromTree(computedPermissionTree);
         nodesIdsByPermission[rootPermission].push('null'); // add the null permission info for records not linked to the tree
