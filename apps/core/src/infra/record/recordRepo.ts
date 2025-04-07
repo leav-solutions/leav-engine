@@ -28,6 +28,9 @@ import {IDbUtils} from '../db/dbUtils';
 import {IFilterTypesHelper} from './helpers/filterTypes';
 import {GetSearchVariableName} from './helpers/getSearchVariableName';
 import {GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
+import {IGetAccesPermissionsValue} from 'domain/record/helpers/getAccessPermissionFilters';
+import {access} from 'fs';
+import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 
 export interface IFindRequestResult {
     initialVars: GeneratedAqlQuery[]; // Some "global" variables needed later on the query (eg. "classified in" subquery)
@@ -64,6 +67,7 @@ export interface IRecordRepo {
         retrieveInactive?: boolean;
         fulltextSearch?: string;
         ctx: IQueryInfos;
+        accessPermissionFilters?: IGetAccesPermissionsValue[];
     }): Promise<IListWithCursor<IRecord>>;
 }
 
@@ -125,6 +129,7 @@ export default function ({
             withCount,
             fulltextSearch,
             retrieveInactive = false,
+            accessPermissionFilters = [],
             ctx
         }): Promise<IListWithCursor<IRecord>> {
             const withCursorPagination = !!pagination && !!(pagination as ICursorPaginationParams).cursor;
@@ -240,6 +245,33 @@ export default function ({
                 queryParts.push(join(filterStatements, '\n'));
             }
 
+            if (accessPermissionFilters.length) {
+                for (const accessPermissionFilter of accessPermissionFilters) {
+                    //we get the tree node(s)
+                    const libraryAccessDefinedVariable = `${libraryId + '_access_defined_' + accessPermissionFilter.attribute.id}`;
+                    const libraryAccessVariable = `${libraryId + '_access_' + accessPermissionFilter.attribute.id}`;
+                    const libraryAccessAuthorizedVariable = `${libraryId + '_access_authorized_' + accessPermissionFilter.attribute.id}`;
+
+                    queryParts.push(aql`LET ${literal(libraryAccessDefinedVariable)}=
+                        FLATTEN(
+                        FOR rv, re IN 1 OUTBOUND r._id
+                        ${VALUES_LINKS_COLLECTION}
+                        FILTER re.attribute == ${accessPermissionFilter.attribute.id}
+                        RETURN rv._key
+                    )`);
+                    //if none, we set 'null'
+                    queryParts.push(aql`LET ${literal(libraryAccessVariable)} = 
+                        LENGTH(${literal(libraryAccessDefinedVariable)}) == 0 
+                        ? ['null'] 
+                        : ${literal(libraryAccessDefinedVariable)}`);
+                    // we get intersection between the list and the list of authorized ones
+                    queryParts.push(aql`LET ${literal(libraryAccessAuthorizedVariable)} = 
+                        INTERSECTION(${literal(libraryAccessVariable)}, ${accessPermissionFilter.permissions.true})`);
+                    // we keep if there is an intersedction
+                    queryParts.push(aql`FILTER LENGTH(${literal(libraryAccessAuthorizedVariable)}) > 0`);
+                }
+            }
+
             // If we have a full text search query and no specific sort, sorting by relevance is already handled.
             if (!fulltextSearchQuery && !sort?.length) {
                 queryParts.push(aql`SORT ${literal('TO_NUMBER(r._key) DESC')}`);
@@ -275,7 +307,6 @@ export default function ({
             queryParts.push(aql`RETURN MERGE(r, {library: ${libraryId}})`);
 
             const fullQuery = join(queryParts, '\n');
-
             const records = await dbService.execute<IExecuteWithCount | IDbDocument[]>({
                 query: fullQuery,
                 withTotalCount,

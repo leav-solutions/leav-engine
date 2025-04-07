@@ -75,6 +75,7 @@ const depsBase: ToAny<IRecordDomainDeps> = {
     'core.infra.cache.cacheService': jest.fn(),
     'core.utils': jest.fn(),
     'core.infra.form': jest.fn(),
+    'core.infra.permission': jest.fn(),
     translator: {}
 };
 
