@@ -59,6 +59,7 @@ import validateValue from '../value/helpers/validateValue';
 import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 import getAccessPermissionFilters from './helpers/getAccessPermissionFilters';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
+import {IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -192,6 +193,7 @@ export interface IRecordDomainDeps {
     'core.domain.permission.library': ILibraryPermissionDomain;
     'core.domain.permission.attribute': IAttributePermissionDomain;
     'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
+    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
@@ -215,6 +217,7 @@ export default function ({
     'core.domain.permission.library': libraryPermissionDomain,
     'core.domain.permission.attribute': attrPermissionDomain,
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
+    'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.helpers.validate': validateHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
@@ -1269,7 +1272,8 @@ export default function ({
                 {
                     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
                     'core.infra.tree': treeRepo,
-                    'core.infra.permission': permissionRepo
+                    'core.infra.permission': permissionRepo,
+                    'core.domain.permission.helpers.defaultPermission': defaultPermHelper
                 },
                 ctx
             );

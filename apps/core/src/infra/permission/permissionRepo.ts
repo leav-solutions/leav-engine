@@ -28,12 +28,14 @@ export interface IPermissionRepo {
         applyTo,
         actionKey,
         treeId,
+        groupsIds,
         ctx
     }: {
         type: PermissionTypes;
         applyTo: string;
         actionKey: PermissionsActions;
         treeId: string;
+        groupsIds: string[];
         ctx: IQueryInfos;
     }): Promise<IPermission[]>;
 }
@@ -113,14 +115,16 @@ export default function ({
 
             return res[0] ?? null;
         },
-        async getAllPermissionsForTree({type, applyTo, actionKey, treeId, ctx}): Promise<IPermission[]> {
+        async getAllPermissionsForTree({type, applyTo, actionKey, treeId, groupsIds, ctx}): Promise<IPermission[]> {
             const col = dbService.db.collection(PERM_COLLECTION_NAME);
 
+            // we add null to groupsIds to retrieve the "all users" permission
             const query = aql`
                 FOR p IN ${col}
                 FILTER p.type == ${type}
                     AND p.applyTo == ${applyTo}
                     AND p.permissionTreeTarget.tree == ${treeId}
+                    AND p.usersGroup IN ${[...groupsIds, null]}
                     AND HAS(p.actions, ${actionKey})
                 RETURN p
             `;
