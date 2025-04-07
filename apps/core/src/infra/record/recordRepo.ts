@@ -28,7 +28,7 @@ import {IDbUtils} from '../db/dbUtils';
 import {IFilterTypesHelper} from './helpers/filterTypes';
 import {GetSearchVariableName} from './helpers/getSearchVariableName';
 import {GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
-import {IGetAccesPermissionsValue} from 'domain/record/helpers/getAccessPermissionFilters';
+import {IGetAccessPermissionsValue} from 'domain/record/helpers/getAccessPermissionFilters';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 
 export interface IFindRequestResult {
@@ -66,7 +66,7 @@ export interface IRecordRepo {
         retrieveInactive?: boolean;
         fulltextSearch?: string;
         ctx: IQueryInfos;
-        accessPermissionFilters?: IGetAccesPermissionsValue[];
+        accessPermissionFilters?: IGetAccessPermissionsValue[];
     }): Promise<IListWithCursor<IRecord>>;
 }
 

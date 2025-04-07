@@ -19,7 +19,7 @@ interface IAccessPermissionFilterDeps {
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
 }
 
-export interface IGetAccesPermissionsValue {
+export interface IGetAccessPermissionsValue {
     treeId: string;
     attribute: IAttribute;
     permissions: {
@@ -28,14 +28,14 @@ export interface IGetAccesPermissionsValue {
     };
 }
 
-export type IGetAccesPermissions = (
+export type IGetAccessPermissions = (
     groupsIds: string[],
     library: string,
     deps: IAccessPermissionFilterDeps,
     ctx: IQueryInfos
-) => Promise<IGetAccesPermissionsValue[]>;
+) => Promise<IGetAccessPermissionsValue[]>;
 
-const getAccessPermissionsFilters: IGetAccesPermissions = async (groupsIds, library, deps, ctx) => {
+const getAccessPermissionsFilters: IGetAccessPermissions = async (groupsIds, library, deps, ctx) => {
     const {
         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
         'core.infra.tree': treeRepo,
@@ -116,7 +116,7 @@ const getAccessPermissionsFilters: IGetAccesPermissions = async (groupsIds, libr
     const libProps: ILibrary = await getCoreEntityById('library', library, ctx);
     const treeAttributes = libProps?.permissions_conf?.permissionTreeAttributes || [];
 
-    const result: IGetAccesPermissionsValue[] = [];
+    const result: IGetAccessPermissionsValue[] = [];
 
     for (const treeAttribute of treeAttributes) {
         const attributeProps: IAttribute = await getCoreEntityById('attribute', treeAttribute, ctx);
