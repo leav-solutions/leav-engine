@@ -29,7 +29,6 @@ import {IFilterTypesHelper} from './helpers/filterTypes';
 import {GetSearchVariableName} from './helpers/getSearchVariableName';
 import {GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
 import {IGetAccesPermissionsValue} from 'domain/record/helpers/getAccessPermissionFilters';
-import {access} from 'fs';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 
 export interface IFindRequestResult {
