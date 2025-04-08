@@ -18,7 +18,7 @@ export interface IPermissionByUserGroupsHelperDeps {
     'core.infra.permission'?: IPermissionRepo;
 }
 
-export interface IGetPermissionByUserGroupsParams {
+interface IGetPermissionByUserGroupsParams {
     type: PermissionTypes;
     action: PermissionsActions;
     userGroupsPaths: TreePaths[]; // from the most general to the most specific (no root required)
