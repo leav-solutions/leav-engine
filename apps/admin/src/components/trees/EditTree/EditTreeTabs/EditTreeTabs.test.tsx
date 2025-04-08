@@ -25,10 +25,10 @@ jest.mock(
 );
 
 jest.mock(
-    '../../../shared/CustomConfig',
+    './CustomConfigTab',
     () =>
-        function CustomConfig() {
-            return <div>CustomConfig</div>;
+        function CustomConfigTab() {
+            return <div>CustomConfigTab</div>;
         }
 );
 
