@@ -14,7 +14,7 @@ export interface IDefaultPermissionHelper {
 export default function ({config}: IDeps): IDefaultPermissionHelper {
     return {
         getDefaultPermission(): boolean {
-            return config.permissions.default ?? true; // TODO: essayer avec false ici plus tard
+            return config.permissions.default ?? true;
         }
     };
 }

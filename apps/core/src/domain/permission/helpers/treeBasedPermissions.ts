@@ -75,7 +75,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                         userGroupsPaths,
                         applyTo,
                         treeTarget: {
-                            path: targetPath,
+                            path: [{id: null}, ...targetPath],
                             tree: permTreeId
                         },
                         getDefaultPermission,
@@ -175,31 +175,38 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             ctx
         });
 
-        const [inheritedGroupTreeBasedPermission, inheritedTargetTreeBasedPermission] = await Promise.all([
-            permByUserGroupsHelper.getPermissionByUserGroups({
-                type,
-                action,
-                userGroupsPaths: [groupAncestors.slice(0, -1)],
-                applyTo,
-                treeTarget: {tree: permissionTreeTarget.tree, path: treeTargetPath},
-                getDefaultPermission: () => getDefaultPermission({action, applyTo, userGroups: [groupAncestors]}),
-                ctx
-            }),
-            permByUserGroupsHelper.getPermissionByUserGroups({
-                type,
-                action,
-                userGroupsPaths: [groupAncestors],
-                applyTo,
-                treeTarget: {
-                    tree: permissionTreeTarget.tree,
-                    path: treeTargetPath.slice(0, -1)
-                },
-                getDefaultPermission: () => getDefaultPermission({action, applyTo, userGroups: [groupAncestors]}),
-                ctx
-            })
-        ]);
+        const inheritedGroupTargetPermission = await permByUserGroupsHelper.getPermissionByUserGroups({
+            type,
+            action,
+            userGroupsPaths: [groupAncestors.slice(0, -1)],
+            applyTo,
+            treeTarget: {tree: permissionTreeTarget.tree, path: [{id: permissionTreeTarget.nodeId}]},
+            getDefaultPermission: () => null,
+            ctx
+        });
 
-        return inheritedGroupTreeBasedPermission || inheritedTargetTreeBasedPermission;
+        if (inheritedGroupTargetPermission !== null) {
+            return inheritedGroupTargetPermission;
+        }
+
+        const inheritedTargetPathPermission = await permByUserGroupsHelper.getPermissionByUserGroups({
+            type,
+            action,
+            userGroupsPaths: [groupAncestors],
+            applyTo,
+            treeTarget: {
+                tree: permissionTreeTarget.tree,
+                path: [{id: null}, ...treeTargetPath.slice(0, -1)]
+            },
+            getDefaultPermission: () => null,
+            ctx
+        });
+
+        if (inheritedTargetPathPermission !== null) {
+            return inheritedTargetPathPermission;
+        }
+
+        return getDefaultPermission({action, applyTo, userGroups: [groupAncestors]});
     };
 
     return {
