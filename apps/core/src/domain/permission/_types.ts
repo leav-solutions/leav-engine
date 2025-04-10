@@ -48,16 +48,6 @@ export interface IGetPermissionsByActionsParams {
 
 export type PermByActionsRes = {[name: string]: boolean | null} | null;
 
-export interface IGetPermissionByUserGroupsParams {
-    type: PermissionTypes;
-    action: PermissionsActions;
-    userGroupsPaths: TreePaths[];
-    applyTo?: string;
-    treeTarget?: {tree: string; path: ITreeNode[]};
-    getDefaultPermission?: () => Promise<boolean> | boolean;
-    ctx: IQueryInfos;
-}
-
 export interface IGetAdminPermissionParams {
     action: AdminPermissionsActions;
     userId: string;
