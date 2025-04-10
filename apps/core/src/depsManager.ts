@@ -72,7 +72,6 @@ export async function initDI(additionalModulesToRegister?: {
         .filter(existsSync);
 
     const modulesGlob = '+(app|domain|infra|interface|utils)/**/index.+(ts|js)';
-    const pluginsModulesGlob = `!(core)/${modulesGlob}`;
 
     /*** CORE ***/
     const coreContainer = createContainer({
