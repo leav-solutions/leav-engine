@@ -65,6 +65,7 @@ const depsBase: ToAny<IRecordDomainDeps> = {
     'core.domain.permission.library': jest.fn(),
     'core.domain.permission.attribute': jest.fn(),
     'core.domain.permission.recordAttribute': jest.fn(),
+    'core.domain.permission.helpers.defaultPermission': jest.fn(),
     'core.domain.helpers.getCoreEntityById': jest.fn(),
     'core.domain.helpers.validate': jest.fn(),
     'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
@@ -75,6 +76,7 @@ const depsBase: ToAny<IRecordDomainDeps> = {
     'core.infra.cache.cacheService': jest.fn(),
     'core.utils': jest.fn(),
     'core.infra.form': jest.fn(),
+    'core.infra.permission': jest.fn(),
     translator: {}
 };
 

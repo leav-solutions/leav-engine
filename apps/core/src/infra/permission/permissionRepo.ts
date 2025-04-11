@@ -4,7 +4,7 @@
 import {aql} from 'arangojs';
 import {IDbDocument} from 'infra/db/_types';
 import {IQueryInfos} from '_types/queryInfos';
-import {IPermission, IPermissionsTreeTarget, PermissionTypes} from '../../_types/permissions';
+import {IPermission, IPermissionsTreeTarget, PermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 
@@ -23,6 +23,21 @@ export interface IPermissionRepo {
         permissionTreeTarget?: IPermissionsTreeTarget;
         ctx: IQueryInfos;
     }): Promise<IPermission | null>;
+    getAllPermissionsForTree({
+        type,
+        applyTo,
+        actionKey,
+        treeId,
+        groupsIds,
+        ctx
+    }: {
+        type: PermissionTypes;
+        applyTo: string;
+        actionKey: PermissionsActions;
+        treeId: string;
+        groupsIds: string[];
+        ctx: IQueryInfos;
+    }): Promise<IPermission[]>;
 }
 
 type DbPermission = IDbDocument & IPermission;
@@ -99,6 +114,22 @@ export default function ({
             const res = await dbService.execute<DbPermission[]>({query, ctx});
 
             return res[0] ?? null;
+        },
+        async getAllPermissionsForTree({type, applyTo, actionKey, treeId, groupsIds, ctx}): Promise<IPermission[]> {
+            const col = dbService.db.collection(PERM_COLLECTION_NAME);
+
+            // we add null to groupsIds to retrieve the "all users" permission
+            const query = aql`
+                FOR p IN ${col}
+                FILTER p.type == ${type}
+                    AND p.applyTo == ${applyTo}
+                    AND p.permissionTreeTarget.tree == ${treeId}
+                    AND p.usersGroup IN ${[...groupsIds, null]}
+                    AND HAS(p.actions, ${actionKey})
+                RETURN p
+            `;
+            const res = await dbService.execute<DbPermission[]>({query, ctx});
+            return res;
         }
     };
 }

@@ -57,6 +57,9 @@ import {IFormRepo} from 'infra/form/formRepo';
 import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import validateValue from '../value/helpers/validateValue';
 import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
+import getAccessPermissionFilters from './helpers/getAccessPermissionFilters';
+import {IPermissionRepo} from 'infra/permission/permissionRepo';
+import {IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -190,6 +193,7 @@ export interface IRecordDomainDeps {
     'core.domain.permission.library': ILibraryPermissionDomain;
     'core.domain.permission.attribute': IAttributePermissionDomain;
     'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
+    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
@@ -197,6 +201,7 @@ export interface IRecordDomainDeps {
     'core.infra.tree': ITreeRepo;
     'core.infra.value': IValueRepo;
     'core.infra.form': IFormRepo;
+    'core.infra.permission': IPermissionRepo;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.cache.cacheService': ICachesService;
     'core.utils': IUtils;
@@ -212,6 +217,7 @@ export default function ({
     'core.domain.permission.library': libraryPermissionDomain,
     'core.domain.permission.attribute': attrPermissionDomain,
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
+    'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.helpers.validate': validateHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
@@ -219,6 +225,7 @@ export default function ({
     'core.infra.tree': treeRepo,
     'core.infra.value': valueRepo,
     'core.infra.form': formRepo,
+    'core.infra.permission': permissionRepo,
     'core.domain.eventsManager': eventsManager,
     'core.infra.cache.cacheService': cacheService,
     'core.utils': utils,
@@ -1259,6 +1266,18 @@ export default function ({
                 );
             }
 
+            const accessPermissionFilters = await getAccessPermissionFilters(
+                ctx.groupsId,
+                library,
+                {
+                    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+                    'core.infra.tree': treeRepo,
+                    'core.infra.permission': permissionRepo,
+                    'core.domain.permission.helpers.defaultPermission': defaultPermHelper
+                },
+                ctx
+            );
+
             return recordRepo.find({
                 libraryId: library,
                 filters: fullFilters,
@@ -1267,6 +1286,7 @@ export default function ({
                 withCount,
                 retrieveInactive,
                 fulltextSearch,
+                accessPermissionFilters,
                 ctx
             });
         },
