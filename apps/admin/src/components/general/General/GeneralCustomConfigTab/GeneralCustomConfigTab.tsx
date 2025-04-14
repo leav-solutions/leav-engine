@@ -1,12 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/client';
-import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {SAVE_ATTRIBUTEVariables, SAVE_ATTRIBUTE} from '_gqlTypes/SAVE_ATTRIBUTE';
+import {useMutation, useQuery} from '@apollo/client';
+import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {SAVE_GLOBAL_SETTINGS, SAVE_GLOBAL_SETTINGSVariables} from '_gqlTypes/SAVE_GLOBAL_SETTINGS';
+import Loading from 'components/shared/Loading';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
-import {saveAttributeQuery} from 'queries/attributes/saveAttributeMutation';
+import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
+import {saveGlobalSettingsQuery} from 'queries/globalSettings/saveGlobalSettingsMutation';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -51,21 +53,20 @@ const Wrapper = styled.div`
     }
 `;
 
-interface ICustomConfigTabProps {
-    attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
-}
-
-function CustomConfigTab({attribute}: ICustomConfigTabProps): JSX.Element {
-    const [saveAttribute, {error, loading}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery);
+function GeneralCustomConfigTab(): JSX.Element {
+    const {data, loading: getLoading, error: getError} = useQuery<GET_GLOBAL_SETTINGS>(getGlobalSettingsQuery);
+    const [saveGlobalSettings, {loading: saveLoading, error: saveError}] = useMutation<
+        SAVE_GLOBAL_SETTINGS,
+        SAVE_GLOBAL_SETTINGSVariables
+    >(saveGlobalSettingsQuery);
 
     const _onChange = (value: Record<string, any>) => {
         const dataToSave = {
-            attrData: {
-                id: attribute.id,
+            settings: {
                 settings: value
             }
         };
-        saveAttribute({
+        saveGlobalSettings({
             variables: dataToSave
         });
     };
@@ -74,7 +75,7 @@ function CustomConfigTab({attribute}: ICustomConfigTabProps): JSX.Element {
         <Wrapper>
             <JsonEditor
                 mode="tree"
-                value={attribute?.settings ?? ''}
+                value={data?.globalSettings?.settings ?? ''}
                 navigationBar={false}
                 statusBar={false}
                 onChange={_onChange}
@@ -84,4 +85,4 @@ function CustomConfigTab({attribute}: ICustomConfigTabProps): JSX.Element {
     );
 }
 
-export default CustomConfigTab;
+export default GeneralCustomConfigTab;
