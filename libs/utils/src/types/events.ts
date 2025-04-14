@@ -12,6 +12,7 @@ export interface IEvent {
 /*** Database events ***/
 
 export enum EventAction {
+    LOG_EXPORT_RECORD_SDO = 'LOG_EXPORT_RECORD_SDO',
     API_KEY_DELETE = 'API_KEY_DELETE',
     API_KEY_SAVE = 'API_KEY_SAVE',
     APP_DELETE = 'APP_DELETE',
