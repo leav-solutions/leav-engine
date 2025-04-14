@@ -58,8 +58,6 @@ import {initOIDCClient} from './infra/oidc';
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
 
-    await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
-
     const _createRequiredDirectories = async () => {
         if (!fs.existsSync('/files')) {
             await fs.promises.mkdir('/files');
