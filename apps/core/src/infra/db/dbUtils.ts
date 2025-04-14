@@ -6,7 +6,6 @@ import {GeneratedAqlQuery, join} from 'arangojs/aql';
 import {CollectionType} from 'arangojs/collection';
 import {AwilixContainer} from 'awilix';
 import {accessSync, constants, readdirSync} from 'fs';
-import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
 import * as path from 'path';
 import * as winston from 'winston';
 import {IAttribute} from '_types/attribute';
@@ -56,7 +55,6 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.cache.cacheService'?: ICachesService;
     'core.utils.logger'?: winston.Winston;
-    'core.infra.plugins'?: IPluginsRepo;
     config?: IConfig;
 }
 
@@ -64,7 +62,6 @@ export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.cache.cacheService': cacheService = null,
     'core.utils.logger': logger = null,
-    'core.infra.plugins': pluginsRepo = null,
     config = null
 }: IDeps = {}): IDbUtils {
     /**
@@ -167,21 +164,21 @@ export default function ({
             await _runMigrationFiles(migrationFiles, migrationsDir);
 
             /*** Plugins migrations ***/
-            const plugins = pluginsRepo.getRegisteredPlugins();
-            for (const plugin of plugins) {
-                const pluginMigrationFolder = path.resolve(plugin.path + '/infra/db/migrations');
+            for (const pluginPath of config.pluginsPath) {
+                const pluginMigrationFolderPath = path.resolve(`${__dirname}/../../${pluginPath}/infra/db/migrations`);
+                const pluginName = path.basename(pluginPath);
 
                 try {
-                    accessSync(pluginMigrationFolder, constants.R_OK);
+                    accessSync(pluginMigrationFolderPath, constants.R_OK);
                 } catch (e) {
                     continue;
                 }
 
-                const pluginMigrationFiles = readdirSync(pluginMigrationFolder).filter(
+                const pluginMigrationFiles = readdirSync(pluginMigrationFolderPath).filter(
                     file => file.indexOf('.map') === -1
                 );
 
-                await _runMigrationFiles(pluginMigrationFiles, pluginMigrationFolder, plugin.infos.name);
+                await _runMigrationFiles(pluginMigrationFiles, pluginMigrationFolderPath, pluginName);
             }
 
             /** Clear cache */
