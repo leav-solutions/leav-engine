@@ -48,5 +48,6 @@ module.exports = {
     debug: true,
     redis: {
         database: 1
-    }
+    },
+    pluginsPath: ['/plugins/fakeplugin']
 };

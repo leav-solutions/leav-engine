@@ -7,9 +7,10 @@ import * as fs from 'fs';
 import {IExtensionPoints} from '_types/extensionPoints';
 import {IAppModule} from '_types/shared';
 import {getConfig} from './config';
+import path from 'path';
 
-export const initPlugins = async (folder: string | null, depsManager: AwilixContainer) => {
-    if (!folder) {
+export const initPlugins = async (pluginsPath: string[], depsManager: AwilixContainer) => {
+    if (!pluginsPath.length) {
         return;
     }
 
@@ -33,10 +34,10 @@ export const initPlugins = async (folder: string | null, depsManager: AwilixCont
     );
 
     // Init plugins
-    const plugins = await fs.promises.readdir(folder);
-    for (const pluginName of plugins) {
+    for (const pluginPath of pluginsPath) {
         // Ignore files (like .gitignore or any other files)
-        const pluginFullPath = folder + '/' + pluginName;
+        const pluginFullPath = path.resolve(__dirname + '/' + pluginPath);
+        const pluginName = path.basename(pluginPath);
 
         if (
             !fs.existsSync(pluginFullPath) ||
@@ -45,11 +46,11 @@ export const initPlugins = async (folder: string | null, depsManager: AwilixCont
             continue;
         }
 
-        const importedPlugin = await import(folder + '/' + pluginName);
+        const importedPlugin = await import(pluginFullPath);
         const defaultExport = importedPlugin.default;
 
         // Load plugin config
-        const pluginConf = await getConfig(`${folder}/${pluginName}`);
+        const pluginConf = await getConfig(pluginFullPath);
         const newConf = {
             ...depsManager.cradle.config,
             plugins: {
@@ -57,6 +58,7 @@ export const initPlugins = async (folder: string | null, depsManager: AwilixCont
                 [pluginName]: pluginConf
             }
         };
+
         depsManager.register('config', asValue(newConf));
 
         // Default export must be a function that takes deps as the only parameter
@@ -67,9 +69,9 @@ export const initPlugins = async (folder: string | null, depsManager: AwilixCont
         }
 
         // Read plugins information in package.json to register it
-        const pluginPath = folder + '/' + pluginName;
-        const packageInfos = await import(pluginPath + '/package.json');
-        pluginsApp.registerPlugin(pluginPath, {
+        const packageInfos = await import(pluginFullPath + '/package.json');
+
+        pluginsApp.registerPlugin(pluginFullPath, {
             name: packageInfos.name,
             description: packageInfos.description,
             version: packageInfos.version,
