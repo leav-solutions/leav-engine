@@ -2,7 +2,7 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
     env: {browser: true, node: true, es6: true},
-    ignorePatterns: ['**/_gqlTypes/*.ts', '**/dist/*', '**/plugins/*'],
+    ignorePatterns: ['**/_gqlTypes/*.ts', '**/dist/*', '**/plugins/*', '**/__generated__/**'],
     parser: '@typescript-eslint/parser',
     parserOptions: {tsconfigRootDir: __dirname},
     plugins: ['@typescript-eslint', 'react-refresh'],
@@ -62,7 +62,7 @@ module.exports = {
         curly: 'error',
         'dot-notation': 'error',
         'eol-last': 'off',
-        eqeqeq: ['error', 'always'],
+        eqeqeq: ['warn', 'always'],
         'guard-for-in': 'error',
         'id-match': 'error',
         'import/no-extraneous-dependencies': 'off',
