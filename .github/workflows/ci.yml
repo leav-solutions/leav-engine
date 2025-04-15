@@ -107,7 +107,7 @@ jobs:
 
   workspace-unit-tests:
     runs-on: ubuntu-latest
-    name: Workspace ${{ matrix.name }}
+    name: Workspace unit tests ${{ matrix.name }}
     needs:
       - setup-workspaces-list-name
       - install
