@@ -58,8 +58,6 @@ import {initOIDCClient} from './infra/oidc';
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
 
-    await initPlugins(conf.pluginsPath, pluginsContainer);
-
     const _createRequiredDirectories = async () => {
         if (!fs.existsSync('/files')) {
             await fs.promises.mkdir('/files');
@@ -87,6 +85,7 @@ import {initOIDCClient} from './infra/oidc';
             case CoreMode.SERVER:
                 await server.init();
                 await server.initConsumers();
+                await initPlugins(conf.pluginsPath, pluginsContainer);
                 break;
             case CoreMode.MIGRATE:
                 // Run db migrations
