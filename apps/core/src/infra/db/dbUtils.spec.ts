@@ -7,7 +7,6 @@ import {asFunction, AwilixContainer} from 'awilix';
 import {resolve} from 'dns';
 import {readdirSync} from 'fs';
 import {ICachesService} from 'infra/cache/cacheService';
-import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
 import {Winston} from 'winston';
 import {IAttributeFilterOptions} from '_types/attribute';
 import {IConfig} from '_types/config';
@@ -20,7 +19,11 @@ import dbUtils, {IDbUtils} from './dbUtils';
 import loadMigrationFile from './helpers/loadMigrationFile';
 
 describe('dbUtils', () => {
-    const mockConf: Partial<IConfig> = {lang: {available: ['fr', 'en'], default: 'fr'}, defaultUserId: '1'};
+    const mockConf: Partial<IConfig> = {
+        lang: {available: ['fr', 'en'], default: 'fr'},
+        defaultUserId: '1',
+        pluginsPath: []
+    };
     const ctx = {
         userId: '0',
         queryId: '123456'
@@ -365,15 +368,10 @@ describe('dbUtils', () => {
                 info: jest.fn()
             };
 
-            const mockPluginsRepo: Mockify<IPluginsRepo> = {
-                getRegisteredPlugins: jest.fn().mockReturnValue([])
-            };
-
             const testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.cache.cacheService': mockCacheService as ICachesService,
                 'core.utils.logger': mockLogger as Winston,
-                'core.infra.plugins': mockPluginsRepo as IPluginsRepo,
                 config: mockConf as IConfig
             });
 
