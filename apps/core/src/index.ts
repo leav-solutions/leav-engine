@@ -83,9 +83,9 @@ import {initOIDCClient} from './infra/oidc';
 
         switch (conf.coreMode) {
             case CoreMode.SERVER:
+                await initPlugins(conf.pluginsPath, pluginsContainer);
                 await server.init();
                 await server.initConsumers();
-                await initPlugins(conf.pluginsPath, pluginsContainer);
                 break;
             case CoreMode.MIGRATE:
                 // Run db migrations
