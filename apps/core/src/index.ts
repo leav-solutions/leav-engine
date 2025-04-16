@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {amqpService} from '@leav/message-broker';
 import fs from 'fs';
-// import {IApplicationService} from 'infra/application/applicationService';
 import {IConfig, CoreMode} from './_types/config';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
@@ -59,8 +58,6 @@ import {initOIDCClient} from './infra/oidc';
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
 
-    await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
-
     const _createRequiredDirectories = async () => {
         if (!fs.existsSync('/files')) {
             await fs.promises.mkdir('/files');
@@ -86,6 +83,7 @@ import {initOIDCClient} from './infra/oidc';
 
         switch (conf.coreMode) {
             case CoreMode.SERVER:
+                await initPlugins(conf.pluginsPath, pluginsContainer);
                 await server.init();
                 await server.initConsumers();
                 break;

@@ -6,7 +6,6 @@ import {useEditApplicationContext} from 'context/EditApplicationContext';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
 import {saveApplicationMutation} from 'queries/applications/saveApplicationMutation';
-import React from 'react';
 import styled from 'styled-components';
 import {SAVE_APPLICATION, SAVE_APPLICATIONVariables} from '_gqlTypes/SAVE_APPLICATION';
 

@@ -27,8 +27,9 @@ interface IEditRecordPageProps {
     submitButtons?: possibleSubmitButtons;
     valuesVersion?: IValueVersion;
     showRefreshButton?: boolean;
+    showHeader?: boolean;
     withInfoButton?: boolean;
-    onClose: () => void;
+    onClose?: () => void;
     showSidebar?: boolean;
     sidebarContainer?: HTMLElement;
 }
@@ -44,6 +45,8 @@ const Header = styled.div`
     align-items: center;
 `;
 
+const emptyFunction = () => null;
+
 export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     record,
     library,
@@ -54,9 +57,10 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     valuesVersion,
     title,
     showRefreshButton = true,
+    showHeader = true,
     submitButtons = ['create'],
     withInfoButton,
-    onClose,
+    onClose = emptyFunction,
     showSidebar,
     sidebarContainer
 }) => {
@@ -110,31 +114,35 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
 
     return (
         <>
-            <Header>
-                {title !== undefined ? (
-                    title
-                ) : (
-                    <KitTypography.Title level="h2" style={{margin: 0}}>
-                        {currentRecord?.label ?? t('record_edition.new_record')}
-                    </KitTypography.Title>
-                )}
+            {showHeader && (
+                <>
+                    <Header>
+                        {title !== undefined ? (
+                            title
+                        ) : (
+                            <KitTypography.Title level="h2" style={{margin: 0}}>
+                                {currentRecord?.label ?? t('record_edition.new_record')}
+                            </KitTypography.Title>
+                        )}
 
-                <KitSpace>
-                    {showRefreshButton && (
-                        <KitButton
-                            ref={refreshButtonRef}
-                            aria-label="refresh"
-                            type="tertiary"
-                            icon={<FontAwesomeIcon icon={faRotateRight} />}
-                        />
-                    )}
-                    <KitButton onClick={_handleClose} icon={<FontAwesomeIcon icon={faXmark} />}>
-                        {closeButtonLabel}
-                    </KitButton>
-                    <KitSpace>{displayedSubmitButtons}</KitSpace>
-                </KitSpace>
-            </Header>
-            <KitDivider noMargin color="lightGrey" />
+                        <KitSpace>
+                            {showRefreshButton && (
+                                <KitButton
+                                    ref={refreshButtonRef}
+                                    aria-label="refresh"
+                                    type="tertiary"
+                                    icon={<FontAwesomeIcon icon={faRotateRight} />}
+                                />
+                            )}
+                            <KitButton onClick={_handleClose} icon={<FontAwesomeIcon icon={faXmark} />}>
+                                {closeButtonLabel}
+                            </KitButton>
+                            <KitSpace>{displayedSubmitButtons}</KitSpace>
+                        </KitSpace>
+                    </Header>
+                    <KitDivider noMargin color="lightGrey" />
+                </>
+            )}
             <EditRecord
                 antdForm={antdForm}
                 formId={formId}

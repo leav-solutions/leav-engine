@@ -167,7 +167,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 );
             }
 
-            await cacheService.getCache(ECacheType.RAM).deleteData(keys);
+            // disable cache temporary: await cacheService.getCache(ECacheType.RAM).deleteData(keys);
         }
     };
 

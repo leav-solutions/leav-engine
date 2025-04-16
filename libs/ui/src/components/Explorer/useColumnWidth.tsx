@@ -6,6 +6,8 @@ import {IExplorerData} from './_types';
 import {useEffect, useRef, useState} from 'react';
 import {AttributeFormat} from '_ui/_gqlTypes';
 
+const minmimumWidthForOneLineActionHeader = 60;
+
 const FieldColumnWidth = {
     TINY: 125,
     SMALL: 150,
@@ -52,6 +54,6 @@ export const useColumnWidth = () => {
         ref,
         getFieldColumnWidth: _getFieldColumWidth,
         columnWidth,
-        actionsColumnHeaderWidth: columnWidth - lastColumnsInlinePadding
+        actionsColumnHeaderWidth: Math.max(columnWidth - lastColumnsInlinePadding, minmimumWidthForOneLineActionHeader)
     };
 };

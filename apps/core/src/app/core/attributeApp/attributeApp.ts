@@ -139,6 +139,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                 metadata_fields: [StandardAttribute!],
                 libraries: [Library!],
                 compute: Boolean!,
+                settings: JSONObject,
 
                 # Permissions for this attribute.
                 # If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
@@ -228,7 +229,8 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         values_list: ValuesListConfInput,
                         reverse_link: String,
                         unique: Boolean,
-                        character_limit: Int
+                        character_limit: Int,
+                        settings: JSONObject
                     }
 
                     type EmbeddedAttribute {

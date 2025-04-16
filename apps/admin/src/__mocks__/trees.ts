@@ -19,6 +19,7 @@ export const mockTree: GET_TREE_BY_ID_trees_list = {
             settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: ['__all__']}
         }
     ],
+    settings: {},
     behavior: TreeBehavior.standard,
     label: {
         fr: 'TestTree',

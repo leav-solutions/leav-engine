@@ -6,6 +6,7 @@ import {IPreviewVersion} from './filesManager';
 import {ITreePermissionsConf} from './permissions';
 import {IRecordIdentityConf} from './record';
 import {ISystemTranslation} from './systemTranslation';
+import {IKeyValue} from './shared';
 
 export interface ILibrary extends ICoreEntity {
     system?: boolean;
@@ -42,6 +43,8 @@ export interface ILibrary extends ICoreEntity {
     };
 
     previewsSettings?: ILibraryPreviewsSettings[];
+
+    settings?: IKeyValue<any>;
 }
 
 export interface ILibraryFilterOptions extends ICoreEntityFilterOptions {

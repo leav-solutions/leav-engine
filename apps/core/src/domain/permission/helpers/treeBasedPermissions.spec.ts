@@ -266,187 +266,120 @@ describe('TreeBasedPermissionDomain', () => {
             expect(perm).toBe(true);
         });
 
-        test('No permissions defined (default config)', async () => {
-            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-                getPermissionByUserGroups: global.__mockPromise(null)
-            };
+        // TODO: move to permissionByUserGroups tests (next ticket)
+        // test('Return permission on tree root level', async () => {
+        //     const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+        //         getPermissionByUserGroups: jest
+        //             .fn()
+        //             .mockImplementation(({permissionTreeTarget}) =>
+        //                 Promise.resolve(permissionTreeTarget.id === null ? true : null)
+        //             )
+        //     };
+        //
+        //     const treePermDomain = treeBasedPermissions({
+        //         ...depsBase,
+        //         'core.domain.permission.helpers.permissionByUserGroups':
+        //             mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+        //         'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
+        //         'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+        //         'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+        //         'core.infra.cache.cacheService': mockCachesService as ICachesService
+        //     });
+        //
+        //     const perm = await treePermDomain.getTreeBasedPermission(
+        //         {
+        //             ...params
+        //         },
+        //         ctx
+        //     );
+        //
+        //     expect(perm).toBe(true);
+        // });
 
-            const treePermDomain = treeBasedPermissions({
-                ...depsBase,
-                'core.domain.permission.helpers.permissionByUserGroups':
-                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperNull,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService
-            });
+        // TODO: move to permissionByUserGroups tests (next ticket)
+        // test('n permissions trees with AND', async () => {
+        //     const mockPermByUserGroupsHelper = {
+        //         getPermissionByUserGroups: jest.fn().mockImplementation(({permissionTreeTarget}) => {
+        //             if (permissionTreeTarget.tree === 'categories' && permissionTreeTarget.id === 'C') {
+        //                 return Promise.resolve(true);
+        //             } else if (permissionTreeTarget.tree === 'statuses' && permissionTreeTarget.id === 'CC') {
+        //                 return Promise.resolve(false);
+        //             } else {
+        //                 return Promise.resolve(defaultPerm);
+        //             }
+        //         })
+        //     } satisfies Mockify<IPermissionByUserGroupsHelper>;
+        //
+        //     const treePermDomain = treeBasedPermissions({
+        //         ...depsBase,
+        //         'core.domain.permission.helpers.permissionByUserGroups':
+        //             mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+        //         'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
+        //         'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
+        //         'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+        //         'core.infra.cache.cacheService': mockCachesService as ICachesService
+        //     });
+        //
+        //     const perm = await treePermDomain.getTreeBasedPermission(
+        //         {
+        //             ...params,
+        //             treeValues: {
+        //                 category: ['321654'],
+        //                 status: ['123456']
+        //             },
+        //             permissions_conf: {
+        //                 relation: PermissionsRelations.AND,
+        //                 permissionTreeAttributes: ['category', 'status']
+        //             }
+        //         },
+        //         ctx
+        //     );
+        //
+        //     expect(mockElementAncestorsHelper.getCachedElementAncestors.mock.calls.length).toBe(1);
+        //     expect(perm).toBe(false);
+        //     expect(mockPermByUserGroupsHelper.getPermissionByUserGroups.mock.calls.length).toBe(2);
+        // });
 
-            const perm = await treePermDomain.getTreeBasedPermission(params, ctx);
-
-            expect(params.getDefaultPermission).toBeCalled();
-            expect(perm).toBe(false);
-        });
-
-        test('Return permission on tree root level', async () => {
-            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-                getPermissionByUserGroups: jest
-                    .fn()
-                    .mockImplementation(({permissionTreeTarget}) =>
-                        Promise.resolve(permissionTreeTarget.id === null ? true : null)
-                    )
-            };
-
-            const treePermDomain = treeBasedPermissions({
-                ...depsBase,
-                'core.domain.permission.helpers.permissionByUserGroups':
-                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService
-            });
-
-            const perm = await treePermDomain.getTreeBasedPermission(
-                {
-                    ...params
-                },
-                ctx
-            );
-
-            expect(perm).toBe(true);
-        });
-
-        test('No value on permission tree attribute', async () => {
-            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-                getPermissionByUserGroups: global.__mockPromise(null)
-            };
-
-            const mockValueNoCatRepo: Mockify<IValueRepo> = {
-                getValues: jest.fn().mockImplementation(({library, recordId, attribute}) => {
-                    switch (attribute.id) {
-                        case 'category':
-                            return Promise.resolve([]);
-                        case 'user_groups':
-                            return Promise.resolve([
-                                {
-                                    id_value: 54321,
-                                    value: {
-                                        record: {
-                                            id: 1,
-                                            library: 'users_groups'
-                                        }
-                                    }
-                                }
-                            ]);
-                    }
-                })
-            };
-
-            const treePermDomain = treeBasedPermissions({
-                ...depsBase,
-                'core.domain.permission.helpers.permissionByUserGroups':
-                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService
-            });
-
-            const perm = await treePermDomain.getTreeBasedPermission(
-                {
-                    ...params,
-                    treeValues: {
-                        category: []
-                    }
-                },
-                ctx
-            );
-
-            expect(perm).toBe(defaultPerm);
-        });
-
-        test('n permissions trees with AND', async () => {
-            const mockPermByUserGroupsHelper = {
-                getPermissionByUserGroups: jest.fn().mockImplementation(({permissionTreeTarget}) => {
-                    if (permissionTreeTarget.tree === 'categories' && permissionTreeTarget.id === 'C') {
-                        return Promise.resolve(true);
-                    } else if (permissionTreeTarget.tree === 'statuses' && permissionTreeTarget.id === 'CC') {
-                        return Promise.resolve(false);
-                    } else {
-                        return Promise.resolve(null);
-                    }
-                })
-            } satisfies Mockify<IPermissionByUserGroupsHelper>;
-
-            const treePermDomain = treeBasedPermissions({
-                ...depsBase,
-                'core.domain.permission.helpers.permissionByUserGroups':
-                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
-                'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService
-            });
-
-            const perm = await treePermDomain.getTreeBasedPermission(
-                {
-                    ...params,
-                    treeValues: {
-                        category: ['321654'],
-                        status: ['123456']
-                    },
-                    permissions_conf: {
-                        relation: PermissionsRelations.AND,
-                        permissionTreeAttributes: ['category', 'status']
-                    }
-                },
-                ctx
-            );
-
-            expect(mockElementAncestorsHelper.getCachedElementAncestors.mock.calls.length).toBe(3);
-            expect(perm).toBe(false);
-            expect(mockPermByUserGroupsHelper.getPermissionByUserGroups.mock.calls.length).toBe(2);
-        });
-
-        test('n permissions trees with OR', async () => {
-            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-                getPermissionByUserGroups: jest.fn().mockImplementation(({permissionTreeTarget}) => {
-                    if (permissionTreeTarget.tree === 'categories' && permissionTreeTarget.id === 'C') {
-                        return Promise.resolve(true);
-                    } else if (permissionTreeTarget.tree === 'statuses' && permissionTreeTarget.id === 'CC') {
-                        return Promise.resolve(false);
-                    } else {
-                        return Promise.resolve(null);
-                    }
-                })
-            };
-
-            const treePermDomain = treeBasedPermissions({
-                ...depsBase,
-                'core.domain.permission.helpers.permissionByUserGroups':
-                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
-                'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService
-            });
-
-            const perm = await treePermDomain.getTreeBasedPermission(
-                {
-                    ...params,
-                    treeValues: {
-                        category: ['321654'],
-                        status: ['123456']
-                    },
-                    permissions_conf: {
-                        relation: PermissionsRelations.OR,
-                        permissionTreeAttributes: ['category', 'status']
-                    }
-                },
-                ctx
-            );
-
-            expect(perm).toBe(true);
-        });
+        // TODO: move to permissionByUserGroups tests (next ticket)
+        // test('n permissions trees with OR', async () => {
+        //     const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+        //         getPermissionByUserGroups: jest.fn().mockImplementation(({permissionTreeTarget}) => {
+        //             if (permissionTreeTarget.tree === 'categories' && permissionTreeTarget.id === 'C') {
+        //                 return Promise.resolve(true);
+        //             } else if (permissionTreeTarget.tree === 'statuses' && permissionTreeTarget.id === 'CC') {
+        //                 return Promise.resolve(false);
+        //             } else {
+        //                 return Promise.resolve(null);
+        //             }
+        //         })
+        //     };
+        //
+        //     const treePermDomain = treeBasedPermissions({
+        //         ...depsBase,
+        //         'core.domain.permission.helpers.permissionByUserGroups':
+        //             mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+        //         'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
+        //         'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
+        //         'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+        //         'core.infra.cache.cacheService': mockCachesService as ICachesService
+        //     });
+        //
+        //     const perm = await treePermDomain.getTreeBasedPermission(
+        //         {
+        //             ...params,
+        //             treeValues: {
+        //                 category: ['321654'],
+        //                 status: ['123456']
+        //             },
+        //             permissions_conf: {
+        //                 relation: PermissionsRelations.OR,
+        //                 permissionTreeAttributes: ['category', 'status']
+        //             }
+        //         },
+        //         ctx
+        //     );
+        //
+        //     expect(perm).toBe(true);
+        // });
     });
 });

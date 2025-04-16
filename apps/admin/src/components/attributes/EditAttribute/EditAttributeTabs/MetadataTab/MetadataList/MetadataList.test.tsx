@@ -2,11 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
-import React from 'react';
 import {AttributeFormat, AttributeType} from '../../../../../../_gqlTypes/globalTypes';
 import MetadataList from './MetadataList';
 
 jest.mock('../../../../../../hooks/useLang');
+
+jest.mock(
+    '../../CustomConfigTab',
+    () =>
+        function CustomConfigTab() {
+            return <div>CustomConfigTab</div>;
+        }
+);
 
 describe('MetadataList', () => {
     const mockFields = [

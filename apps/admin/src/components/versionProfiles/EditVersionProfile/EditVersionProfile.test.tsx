@@ -14,11 +14,25 @@ import {mockAttrAdv} from '__mocks__/attributes';
 import {mockRecord} from '__mocks__/common/records';
 import {mockVersionProfile} from '__mocks__/common/versionProfiles';
 import * as useUserData from '../../../hooks/useUserData';
+import CustomConfig from '../../attributes/EditAttribute/EditAttributeTabs/CustomConfigTab';
 import EditVersionProfile, {IEditVersionProfileMatchParams} from './EditVersionProfile';
 
-jest.mock('components/attributes/AttributesSelectionModal', () => function AttributesSelectionModal() {
-        return <div>AttributesSelectionModal</div>;
-    });
+jest.mock(
+    'components/attributes/AttributesSelectionModal',
+    () =>
+        function AttributesSelectionModal() {
+            return <div>AttributesSelectionModal</div>;
+        }
+);
+
+jest.mock(
+    '../../attributes/EditAttribute/EditAttributeTabs/CustomConfigTab',
+    () =>
+        function CustomConfigTab() {
+            return <div>CustomConfigTab</div>;
+        }
+);
+
 describe('EditVersionProfile', () => {
     type matchType = match<IEditVersionProfileMatchParams>;
     const mockMatch: Mockify<matchType> = {
@@ -76,11 +90,11 @@ describe('EditVersionProfile', () => {
 
     test('If editing is not allowed, inputs are disabled', async () => {
         const spy = jest.spyOn(useUserData, 'default').mockImplementation(() => ({
-                id: '1',
-                name: 'Test',
-                whoAmI: mockRecord,
-                permissions: {admin_edit_version_profile: false}
-            }));
+            id: '1',
+            name: 'Test',
+            whoAmI: mockRecord,
+            permissions: {admin_edit_version_profile: false}
+        }));
 
         render(<EditVersionProfile match={mockMatch as matchType} />, {apolloMocks: mocks});
 
@@ -135,11 +149,11 @@ describe('EditVersionProfile', () => {
 
     test('Validate ID uniqueness', async () => {
         jest.spyOn(useUserData, 'default').mockImplementation(() => ({
-                id: '1',
-                name: 'Test',
-                whoAmI: mockRecord,
-                permissions: {admin_edit_version_profile: true}
-            }));
+            id: '1',
+            name: 'Test',
+            whoAmI: mockRecord,
+            permissions: {admin_edit_version_profile: true}
+        }));
 
         const mocksWithIdCheck = [
             ...mocks,

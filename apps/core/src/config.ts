@@ -185,7 +185,7 @@ export const validateConfig = (conf: IConfig) => {
         elasticSearch: Joi.object().keys({
             url: Joi.string().required()
         }),
-        pluginsPath: Joi.string().required()
+        pluginsPath: Joi.array().items(Joi.string()).required()
     });
 
     const isValid = configSchema.validate(conf);

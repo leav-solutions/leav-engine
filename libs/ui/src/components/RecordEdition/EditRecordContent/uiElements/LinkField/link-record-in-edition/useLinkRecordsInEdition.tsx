@@ -111,8 +111,7 @@ export const useLinkRecordsInEdition = ({
         }
 
         if (
-            !attribute.multiple_values ||
-            attribute.required ||
+            (!attribute.multiple_values && attribute.required) ||
             (attribute.multiple_values && backendValues.length === 1 && attribute.required)
         ) {
             return ['edit'];

@@ -99,7 +99,7 @@ exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attribut
 }
 `;
 
-exports[`LibraryRepo updateLibrary Should update library 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+exports[`LibraryRepo updateLibrary Should update library 1`] = `"UPDATE @value0 IN @@value1 OPTIONS { mergeObjects: false } RETURN NEW"`;
 
 exports[`LibraryRepo updateLibrary Should update library 2`] = `
 {

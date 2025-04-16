@@ -3,10 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
 import {render} from 'enzyme';
-import React from 'react';
 import MockedLangContextProvider from '../../../__mocks__/MockedLangContextProvider';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import EditTree from './EditTree';
+
+jest.mock(
+    './EditTreeTabs/CustomConfigTab',
+    () =>
+        function CustomConfigTab() {
+            return <div>CustomConfigTab</div>;
+        }
+);
 
 describe('EditTree', () => {
     test('Snapshot test', async () => {

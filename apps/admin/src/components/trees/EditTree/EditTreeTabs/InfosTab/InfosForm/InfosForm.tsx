@@ -47,6 +47,7 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
             fr: '',
             en: ''
         },
+        settings: {},
         behavior: TreeBehavior.standard,
         system: false,
         permissions_conf: null,

@@ -59,7 +59,7 @@ export const init = async (conf: IConfig): Promise<any> => {
     await cacheService.getCache(ECacheType.DISK).deleteAll();
     await cacheService.getCache(ECacheType.RAM).deleteAll();
 
-    await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
+    await initPlugins(conf.pluginsPath, pluginsContainer);
 
     return {coreContainer, dbUtils};
 };

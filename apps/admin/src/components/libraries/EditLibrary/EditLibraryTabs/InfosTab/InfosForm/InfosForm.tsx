@@ -60,6 +60,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             preview: null,
             treeColorPreview: null
         },
+        settings: {},
         permissions: {
             admin_library: true,
             access_library: true,

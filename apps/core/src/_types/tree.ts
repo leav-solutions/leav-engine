@@ -16,6 +16,7 @@ export interface ITree extends ICoreEntity {
     behavior?: TreeBehavior;
     system?: boolean;
     permissions_conf?: ITreeNodePermissionsConf;
+    settings?: IKeyValue<any>;
 }
 
 export interface ITreeFilterOptions extends ICoreEntityFilterOptions {

@@ -22,6 +22,7 @@ const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     type: AttributeType.simple,
     format: AttributeFormat.text,
     multiple_values: false,
+    settings: {},
     system: false,
     required: false,
     readonly: false,

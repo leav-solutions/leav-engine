@@ -6,7 +6,7 @@ import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
-import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
+import {ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {PERMISSIONS_NULL_PLACEHOLDER} from '../_types';
 import {IDefaultPermissionHelper} from './defaultPermission';
@@ -18,7 +18,7 @@ interface IGetGlobalPermissionParams {
     applyTo?: string;
     userId: string;
     action: PermissionsActions;
-    getDefaultPermission?: (params?: IGetDefaultGlobalPermissionParams) => boolean;
+    getDefaultPermission?: (params?: IGetDefaultGlobalPermissionParams) => Promise<boolean> | boolean;
 }
 
 interface IGetInheritedGlobalPermissionParams {
@@ -64,42 +64,38 @@ export default function ({
             {type, applyTo, userId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
             ctx
         ): Promise<boolean> {
-            const cacheKey = getPermissionCacheKey(ctx.groupsId ?? null, type, applyTo, action, '');
-            const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
-            let perm: boolean | null = null;
+            // disable cache temporary: const cacheKey = getPermissionCacheKey(ctx.groupsId ?? null, type, applyTo, action, '');
+            // disable cache temporary: const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
+            // disable cache temporary: let perm: boolean;
 
-            if (permFromCache !== null) {
-                if (permFromCache === PERMISSIONS_NULL_PLACEHOLDER) {
-                    perm = null;
-                } else {
-                    perm = permFromCache === 'true';
-                }
-            } else {
-                const userGroupsPaths = !!ctx.groupsId
-                    ? await Promise.all(
-                          ctx.groupsId.map(async groupId =>
-                              treeRepo.getElementAncestors({
-                                  treeId: 'users_groups',
-                                  nodeId: groupId,
-                                  ctx
-                              })
-                          )
+            /* disable cache temporary: if (permFromCache !== null) {
+                perm = permFromCache === 'true';
+            } else {*/
+            const userGroupsPaths = !!ctx.groupsId
+                ? await Promise.all(
+                      ctx.groupsId.map(async groupId =>
+                          treeRepo.getElementAncestors({
+                              treeId: 'users_groups',
+                              nodeId: groupId,
+                              ctx
+                          })
                       )
-                    : [];
+                  )
+                : [];
 
-                perm = await permByUserGroupsHelper.getPermissionByUserGroups({
-                    type,
-                    action,
-                    userGroupsPaths,
-                    applyTo,
-                    ctx
-                });
+            const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
+                type,
+                action,
+                userGroupsPaths,
+                applyTo,
+                getDefaultPermission,
+                ctx
+            });
 
-                const permToStore = perm === null ? PERMISSIONS_NULL_PLACEHOLDER : perm.toString();
-                await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: permToStore});
-            }
+            // disable cache temporary: await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: perm.toString()});
+            // }
 
-            return perm ?? getDefaultPermission({action, applyTo, type, userId, ctx});
+            return perm;
         },
         async getInheritedGlobalPermission(
             {type, applyTo, userGroupNodeId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
@@ -112,15 +108,14 @@ export default function ({
                 ctx
             });
 
-            const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
+            return permByUserGroupsHelper.getPermissionByUserGroups({
                 type,
                 action,
                 userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
                 applyTo,
+                getDefaultPermission,
                 ctx
             });
-
-            return perm !== null ? perm : getDefaultPermission();
         }
     };
 }

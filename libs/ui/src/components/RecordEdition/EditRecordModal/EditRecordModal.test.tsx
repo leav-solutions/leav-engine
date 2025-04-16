@@ -6,6 +6,7 @@ import {screen, render} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {EditRecordModal} from './EditRecordModal';
 import {Form} from 'antd';
+import ReactModal from 'react-modal';
 
 let user!: ReturnType<typeof userEvent.setup>;
 
@@ -28,6 +29,7 @@ jest.mock('../EditRecord', () => ({
 describe('EditRecordModal', () => {
     beforeEach(() => {
         user = userEvent.setup();
+        ReactModal.setAppElement(document.createElement('div'));
     });
 
     describe('create mode', () => {
@@ -103,7 +105,7 @@ describe('EditRecordModal', () => {
             render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={mockRecord} />);
 
             expect(screen.getByDisplayValue('EditRecord')).toBeInTheDocument();
-            expect(screen.getByRole('button', {name: /close/})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /close/, hidden: true})).toBeInTheDocument();
             expect(screen.queryByRole('button', {name: /submit/})).not.toBeInTheDocument();
         });
 
@@ -137,7 +139,7 @@ describe('EditRecordModal', () => {
                 screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'})
             ).not.toBeInTheDocument();
             await userEvent.type(screen.getByDisplayValue('EditRecord'), 'Something');
-            await userEvent.click(screen.getByRole('button', {name: 'global.close'}));
+            await userEvent.click(screen.getByRole('button', {name: /close/, hidden: true}));
 
             expect(screen.queryByText('record_edition.cancel_confirm_modal_title')).not.toBeInTheDocument();
             expect(mockOnClose).toHaveBeenCalled();

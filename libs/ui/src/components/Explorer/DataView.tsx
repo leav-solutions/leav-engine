@@ -59,6 +59,12 @@ const StyledTable = styled(KitTable)`
             height: auto !important;
             padding: 0 calc(var(--general-spacing-s) * 1px) 0 0;
         }
+
+        &.actions {
+            .ant-table-cell {
+                padding-right: 0;
+            }
+        }
     }
 
     .ant-table-tbody > tr {

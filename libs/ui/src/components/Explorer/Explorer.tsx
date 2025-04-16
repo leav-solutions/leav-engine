@@ -102,6 +102,7 @@ interface IExplorerProps {
     };
     showFiltersAndSorts?: boolean;
     enableConfigureView?: boolean;
+    ignoreViewByDefault?: boolean;
     showTitle?: boolean;
     showSearch?: boolean;
     disableSelection?: boolean;
@@ -140,6 +141,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             showSearch = false,
             hidePrimaryActions = false,
             hideTableHeader = false,
+            ignoreViewByDefault = false,
             defaultActionsForItem = ['edit', 'replaceLink', 'remove'],
             defaultPrimaryActions = ['create'],
             defaultMassActions = ['deactivate'],
@@ -152,7 +154,11 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {panelElement: settingsPanelElement} = useEditSettings();
 
-        const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(entrypoint, defaultViewSettings);
+        const {
+            loading: viewSettingsLoading,
+            view,
+            dispatch
+        } = useViewSettingsReducer(entrypoint, defaultViewSettings, ignoreViewByDefault);
 
         const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
 

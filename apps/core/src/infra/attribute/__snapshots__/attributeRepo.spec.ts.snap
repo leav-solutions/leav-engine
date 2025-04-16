@@ -88,7 +88,7 @@ exports[`AttributeRepo getLibraryFullTextAttributes Should get library full text
                     "
 `;
 
-exports[`AttributeRepo updateAttribute Should update an existing attribute 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+exports[`AttributeRepo updateAttribute Should update an existing attribute 1`] = `"UPDATE @value0 IN @@value1 OPTIONS { mergeObjects: false } RETURN NEW"`;
 
 exports[`AttributeRepo updateAttribute Should update an existing attribute 2`] = `
 {
