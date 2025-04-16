@@ -63,7 +63,8 @@ export default function ({
                 name: settings.name,
                 icon: settings.icon,
                 favicon: settings.favicon,
-                defaultApp: settings.defaultApp ?? DEFAULT_APPLICATION
+                defaultApp: settings.defaultApp ?? DEFAULT_APPLICATION,
+                settings: settings.settings
             };
         }
     };

@@ -32,7 +32,7 @@ export interface IConfig {
     dbProfiler: IDbProfilerConfig;
     instanceId: string;
     elasticSearch: IElasticSearchConfig;
-    pluginsPath: string;
+    pluginsPath: string[];
 }
 
 export enum CoreMode {

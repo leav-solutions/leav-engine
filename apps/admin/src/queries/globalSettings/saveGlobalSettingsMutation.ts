@@ -18,6 +18,7 @@ export const saveGlobalSettingsQuery = gql`
                 id
                 ...RecordIdentity
             }
+            settings
         }
     }
 `;

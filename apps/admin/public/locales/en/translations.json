@@ -40,6 +40,7 @@
         "admin_permissions": "Admin permissions",
         "version": "LEAV Engine {{version}}",
         "api_keys": "API keys",
+        "custom-config": "Custom config",
         "customization": {
             "title": "Customization",
             "name": "Name",

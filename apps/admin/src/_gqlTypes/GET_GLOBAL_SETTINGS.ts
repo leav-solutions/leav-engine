@@ -50,6 +50,7 @@ export interface GET_GLOBAL_SETTINGS_globalSettings {
     name: string;
     icon: GET_GLOBAL_SETTINGS_globalSettings_icon | null;
     favicon: GET_GLOBAL_SETTINGS_globalSettings_favicon | null;
+    settings: JSONObject | null;
 }
 
 export interface GET_GLOBAL_SETTINGS {

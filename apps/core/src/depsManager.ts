@@ -67,14 +67,11 @@ export async function initDI(additionalModulesToRegister?: {
     // Add a few extra dependencies
     const coreConf = await getConfig();
 
-    let pluginsFolder: string | null = path.resolve(__dirname + '/' + coreConf.pluginsPath);
-
-    if (!existsSync(pluginsFolder)) {
-        pluginsFolder = null;
-    }
+    const pluginsFolder: string[] = (coreConf.pluginsPath ?? [])
+        .map(pluginPath => path.resolve(__dirname + '/' + pluginPath))
+        .filter(existsSync);
 
     const modulesGlob = '+(app|domain|infra|interface|utils)/**/index.+(ts|js)';
-    const pluginsModulesGlob = `!(core)/${modulesGlob}`;
 
     /*** CORE ***/
     const coreContainer = createContainer({
@@ -84,7 +81,6 @@ export async function initDI(additionalModulesToRegister?: {
     await _registerModules(coreContainer, srcFolder, modulesGlob, 'core');
 
     coreContainer.register('config', asValue(coreConf));
-    coreContainer.register('pluginsFolder', asValue(pluginsFolder));
 
     for (const [modKey, mod] of Object.entries(additionalModulesToRegister)) {
         coreContainer.register(modKey, asValue(mod));
@@ -93,9 +89,11 @@ export async function initDI(additionalModulesToRegister?: {
     /*** PLUGINS ***/
     const pluginsContainer = coreContainer.createScope();
 
-    if (pluginsFolder) {
-        await _registerModules(pluginsContainer, pluginsFolder, pluginsModulesGlob);
-    }
+    await Promise.all(
+        pluginsFolder.map(pluginFolder =>
+            _registerModules(pluginsContainer, pluginFolder, modulesGlob, path.basename(pluginFolder))
+        )
+    );
 
     // Register this at the very end because we don't want plugins to access the deps manager
     coreContainer.register('core.depsManager', asValue(coreContainer));
