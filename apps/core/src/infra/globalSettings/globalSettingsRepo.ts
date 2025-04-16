@@ -29,6 +29,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                     INSERT ${settingsToSave}
                     UPDATE ${settingsToSave}
                     IN ${collec}
+                    OPTIONS { mergeObjects: false }
                     RETURN NEW
                 `,
                 ctx
@@ -38,7 +39,8 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 name: savedSettings?.[0]?.name ?? null,
                 icon: savedSettings?.[0]?.icon ?? null,
                 favicon: savedSettings?.[0]?.favicon ?? null,
-                defaultApp: savedSettings?.[0]?.defaultApp ?? null
+                defaultApp: savedSettings?.[0]?.defaultApp ?? null,
+                settings: settings?.[0]?.settings ?? null
             };
         },
         async getSettings(ctx) {
@@ -57,7 +59,8 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 name: settings?.[0]?.name ?? null,
                 icon: settings?.[0]?.icon ?? null,
                 favicon: settings?.[0]?.favicon ?? null,
-                defaultApp: settings?.[0]?.defaultApp ?? null
+                defaultApp: settings?.[0]?.defaultApp ?? null,
+                settings: settings?.[0]?.settings ?? null
             };
         }
     };

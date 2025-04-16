@@ -12,4 +12,5 @@ export interface IGlobalSettings {
         library: string;
         recordId: string;
     };
+    settings?: object;
 }

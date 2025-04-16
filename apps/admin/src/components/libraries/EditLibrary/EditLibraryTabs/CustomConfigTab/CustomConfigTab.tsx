@@ -7,7 +7,6 @@ import {SAVE_LIBRARYVariables, SAVE_LIBRARY} from '_gqlTypes/SAVE_LIBRARY';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
 import {saveLibQuery} from 'queries/libraries/saveLibMutation';
-import {useRef} from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -57,11 +56,7 @@ interface ICustomConfigTabProps {
 }
 
 function CustomConfigTab({library}: ICustomConfigTabProps): JSX.Element {
-    const [saveLibrary, {error, loading}] = useMutation<SAVE_LIBRARY, SAVE_LIBRARYVariables>(saveLibQuery, {
-        // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
-        fetchPolicy: 'network-only',
-        onError: () => undefined
-    });
+    const [saveLibrary, {error, loading}] = useMutation<SAVE_LIBRARY, SAVE_LIBRARYVariables>(saveLibQuery);
 
     const _onChangeConfig = (value: Record<string, any>) => {
         const dataToSave = {
