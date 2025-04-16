@@ -13053,7 +13053,7 @@ __metadata:
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
     uuid: "npm:7.0.3"
-    vite: "npm:4.5.6"
+    vite: "npm:4.5.13"
     vite-jest: "npm:0.1.4"
     yup: "npm:0.32.11"
   languageName: unknown
@@ -17373,7 +17373,7 @@ __metadata:
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
     uuid: "npm:9.0.0"
-    vite: "npm:4.5.6"
+    vite: "npm:4.5.13"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:0.4.9"
     vite-plugin-svgr: "npm:2.4.0"
@@ -25909,7 +25909,7 @@ __metadata:
     ts-jest: "npm:29.0.5"
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
-    vite: "npm:4.5.6"
+    vite: "npm:4.5.13"
     vite-plugin-dynamic-base: "npm:0.4.9"
     vite-plugin-rewrite-all: "npm:1.0.1"
     web-vitals: "npm:2.1.4"
@@ -28692,7 +28692,7 @@ __metadata:
     ts-jest: "npm:29.0.5"
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
-    vite: "npm:4.5.6"
+    vite: "npm:4.5.13"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:0.4.9"
   languageName: unknown
@@ -32396,7 +32396,7 @@ __metadata:
     ts-jest: "npm:29.0.5"
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
-    vite: "npm:4.5.6"
+    vite: "npm:4.5.13"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:0.4.9"
     vite-plugin-svgr: "npm:2.4.0"
@@ -35140,9 +35140,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:4.5.6":
-  version: 4.5.6
-  resolution: "vite@npm:4.5.6"
+"vite@npm:4.5.13":
+  version: 4.5.13
+  resolution: "vite@npm:4.5.13"
   dependencies:
     esbuild: "npm:^0.18.10"
     fsevents: "npm:~2.3.2"
@@ -35176,7 +35176,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 7126ce6cc409ee9659483c6f78f2c100f0b976d7550dd3ccf5d9405d313497d0b10071bf6bcc9065d14eba3294edc3f5a666c76e2e2bae9861076e0e62d15bdc
+  checksum: eddfc619d69272ed3abfd0f59de3d52656d3aafbfe474db2bcccbc0520e6f52678469c7c7977ea952b5e3d99492c5b93d5b15ddfa3159cce70fa37a7c92c290a
   languageName: node
   linkType: hard
 
