@@ -4,7 +4,7 @@
 import {ICalculationVariable} from 'domain/helpers/calculationVariable';
 import {Parser} from 'hot-formula-parser';
 import {IUtils} from 'utils/utils';
-import {IValue} from '_types/value';
+import {IStandardValue, IValue} from '_types/value';
 import {
     ActionsListIOTypes,
     ActionsListValueType,
@@ -29,7 +29,7 @@ export default function ({
         variable: string
     ): Promise<ActionsListExcelValueType> => {
         const variableValues = await calculationVariable.processVariableString(context, variable, initialValues);
-        return variableValues.flatMap(v => v.raw_payload ?? []).join(' ');
+        return variableValues.flatMap(v => v.payload ?? []).join(' ');
     };
 
     const _replaceAsync = async (
@@ -87,13 +87,13 @@ export default function ({
                 helper_value: '21*2'
             }
         ],
-        action: async (values, params, ctx) => {
+        action: async (values: IStandardValue[], params, ctx) => {
             const {Formula: formula} = params;
 
             const finalFormula = await _replaceVariables(
                 formula,
                 ctx,
-                values.map(v => v.payload)
+                values.map(v => v.raw_payload)
             );
 
             const parser = new Parser();
