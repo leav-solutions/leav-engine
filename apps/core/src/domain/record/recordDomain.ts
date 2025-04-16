@@ -28,8 +28,8 @@ import {getPreviewUrl} from '../../utils/preview/preview';
 import {TypeGuards} from '../../utils/typeGuards';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
-import {Errors, ErrorTypes} from '../../_types/errors';
-import {ILibrary, LibraryBehavior} from '../../_types/library';
+import {Errors} from '../../_types/errors';
+import {ILibrary, LibraryBehavior, USERS_LIBRARY} from '../../_types/library';
 import {
     AttributePermissionsActions,
     LibraryPermissionsActions,
@@ -58,7 +58,7 @@ import {IRecordAttributePermissionDomain} from '../permission/recordAttributePer
 import validateValue from '../value/helpers/validateValue';
 import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 import getAccessPermissionFilters from './helpers/getAccessPermissionFilters';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
+import {IPermissionRepo, USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
 import {IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
 
 /**
@@ -1266,8 +1266,19 @@ export default function ({
                 );
             }
 
+            let groupsId = ctx.groupsId;
+            if (!groupsId) {
+                const userGroups = (await valueDomain.getValues({
+                    library: USERS_LIBRARY,
+                    recordId: ctx.userId,
+                    attribute: USERS_GROUP_ATTRIBUTE_NAME,
+                    ctx
+                })) as ITreeValue[];
+                groupsId = userGroups.map(g => g.payload?.id);
+            }
+
             const accessPermissionFilters = await getAccessPermissionFilters(
-                ctx.groupsId,
+                groupsId,
                 library,
                 {
                     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
