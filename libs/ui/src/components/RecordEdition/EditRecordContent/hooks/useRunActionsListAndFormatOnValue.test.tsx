@@ -40,6 +40,15 @@ describe('useRunActionsListAndFormatOnValue', () => {
                     runActionsListAndFormatOnValue: [
                         {
                             __typename: 'GenericValue',
+                            isInherited: false,
+                            isCalculated: false,
+                            modified_at: null,
+                            modified_by: null,
+                            created_at: null,
+                            created_by: null,
+                            version: null,
+                            metadata: null,
+                            attribute: null,
                             id_value: null,
                             payload: 'TEST',
                             raw_payload: 'test'
@@ -73,10 +82,16 @@ describe('useRunActionsListAndFormatOnValue', () => {
         });
 
         expect(values).toEqual({
-            __typename: 'GenericValue',
-            id_value: null,
-            payload: 'TEST',
-            raw_payload: 'test'
+            isInherited: false,
+            isCalculated: false,
+            modified_at: null,
+            modified_by: null,
+            created_at: null,
+            created_by: null,
+            version: null,
+            metadata: null,
+            attribute: null,
+            id_value: null
         });
     });
 });

@@ -5,6 +5,7 @@ import {ErrorDisplay, Loading, useAppLang} from '@leav/ui';
 import {FunctionComponent, useEffect, useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from 'components/app';
+import {AntApp} from 'aristid-ds';
 import i18n from './i18n';
 
 import 'antd/dist/reset.css';
@@ -29,7 +30,13 @@ export const Index: FunctionComponent = () => {
         return <Loading />;
     }
 
-    return i18nIsInitialized && <App />;
+    return (
+        i18nIsInitialized && (
+            <AntApp>
+                <App />
+            </AntApp>
+        )
+    );
 };
 
 const root = createRoot(document.getElementById('root'));

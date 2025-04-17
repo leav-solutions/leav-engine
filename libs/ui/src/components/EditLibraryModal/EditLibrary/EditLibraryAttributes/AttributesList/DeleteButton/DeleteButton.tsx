@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
-import {Button, message, Popconfirm} from 'antd';
+import {App, Button, Popconfirm} from 'antd';
 import {useState} from 'react';
 import {LibraryAttributesFragment} from '../../../../../../_gqlTypes';
 import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';
@@ -17,13 +17,14 @@ function DeleteButton({attribute, readOnly, onDelete}: IDeleteButtonProps): JSX.
     const {t} = useSharedTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const isDisabled = readOnly || attribute.system;
+    const res = App.useApp();
 
     const _handleConfirm = async () => {
         setIsLoading(true);
         try {
             await onDelete(attribute);
         } catch (e) {
-            message.error(e.message);
+            res.message.error(e.message);
         }
         setIsLoading(false);
     };
