@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useState} from 'react';
+import {FunctionComponent, useEffect, useMemo, useState} from 'react';
 import ReactModal from 'react-modal';
 import {useQuery} from '@apollo/client';
 import {useTranslation} from 'react-i18next';
@@ -37,6 +37,11 @@ import {Router} from './routes/Router';
 import {getMe} from './graphQL/queries/userData/me';
 import {ME} from '_gqlTypes/ME';
 
+const getUserIdentity = ({name, familyName, label}: {name?: string; familyName?: string; label?: string}) => {
+    const noName = !name && !familyName;
+    return noName ? label : `${name} ${familyName}`;
+};
+
 export const AppInitializer: FunctionComponent = () => {
     const {t, i18n} = useTranslation();
 
@@ -59,6 +64,28 @@ export const AppInitializer: FunctionComponent = () => {
     const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
 
     const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
+
+    const userIdentity = useMemo(() => {
+        if (!userData?.me) {
+            return null;
+        }
+        const userProps: Record<string, string | null> = userData?.me?.properties.reduce((acc, property) => {
+            acc[property.attributeId] = property.values[0]?.payload;
+            return acc;
+        }, {});
+
+        return {
+            id: userData?.me?.whoAmI.id,
+            whoAmI: {
+                ...userData?.me?.whoAmI,
+                label: getUserIdentity({
+                    name: userProps?.first_name,
+                    familyName: userProps?.name,
+                    label: userData?.me?.whoAmI.label
+                })
+            }
+        };
+    }, [userData]);
 
     const {
         data: applicationData,
@@ -116,8 +143,8 @@ export const AppInitializer: FunctionComponent = () => {
     }
 
     const userContextData: IUserContext['userData'] = {
-        userId: userData?.me?.id,
-        userWhoAmI: userData?.me?.whoAmI
+        userId: userIdentity?.id,
+        userWhoAmI: userIdentity?.whoAmI
     };
 
     return (

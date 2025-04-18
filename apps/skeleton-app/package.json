@@ -57,6 +57,7 @@
         "jest-environment-jsdom": "29.4.1",
         "jest-fetch-mock": "3.0.3",
         "jest-styled-components": "7.1.1",
+        "lightningcss": "1.29.3",
         "styled-components": "6.0.8",
         "ts-jest": "29.0.5",
         "ts-jest-mock-import-meta": "1.0.0",

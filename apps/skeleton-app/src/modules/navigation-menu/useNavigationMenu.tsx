@@ -1,6 +1,9 @@
-import { useState } from 'react';
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useState} from 'react';
 
-interface UseNavigationMenu {
+interface IUseNavigationMenu {
     isMenuOpen: boolean;
     handleToggleMenu: (open: boolean) => void;
 }
@@ -15,7 +18,7 @@ const getLocalStorageMenuState = () => {
     return menuOpen === 'true';
 };
 
-export const useNavigationMenu = (): UseNavigationMenu => {
+export const useNavigationMenu = (): IUseNavigationMenu => {
     const [isMenuOpen, setMenuOpen] = useState(getLocalStorageMenuState());
 
     const handleToggleMenu = (open: boolean) => {
@@ -23,5 +26,5 @@ export const useNavigationMenu = (): UseNavigationMenu => {
         setMenuOpen(open);
     };
 
-    return { isMenuOpen, handleToggleMenu };
+    return {isMenuOpen, handleToggleMenu};
 };

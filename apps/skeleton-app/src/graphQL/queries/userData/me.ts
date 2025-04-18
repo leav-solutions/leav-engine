@@ -10,6 +10,15 @@ export const getMe = gql`
     query ME {
         me {
             ...RecordIdentity
+            properties(attributeIds: ["first_name", "name"]) {
+                attributeId
+                values {
+                    ... on Value {
+                        payload
+                        raw_payload
+                    }
+                }
+            }
         }
     }
 `;

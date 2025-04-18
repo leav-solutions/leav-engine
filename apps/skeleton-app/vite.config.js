@@ -15,6 +15,12 @@ export default () =>
                 transformIndexHtml: true
             })
         ],
+        css: {
+            transformer: 'lightningcss',
+            lightningcss: {
+                targets
+            }
+        },
         base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/skeleton-app',
         build: {
             rollupOptions: {

@@ -225,6 +225,17 @@ export type ApplicationsList = {
   totalCount: Scalars['Int'];
 };
 
+export type Asset = {
+  creative: Creative;
+  id: Scalars['String'];
+  key?: Maybe<Scalars['String']>;
+  processingId?: Maybe<Scalars['String']>;
+  processingIndex?: Maybe<Scalars['Int']>;
+  progressPercentage?: Maybe<Scalars['Int']>;
+  store?: Maybe<Store>;
+  template: Template;
+};
+
 export type Attribute = {
   actions_list?: Maybe<ActionsListConfiguration>;
   compute: Scalars['Boolean'];
@@ -347,6 +358,32 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type Campaign = {
+  assetsCount?: Maybe<Scalars['Int']>;
+  creatives: Array<Creative>;
+  deliveryPlatforms: Array<DeliveryPlatform>;
+  digram: Scalars['String'];
+  failedAssetsCount?: Maybe<Scalars['Int']>;
+  generationStartedAt?: Maybe<Scalars['String']>;
+  generationStatus?: Maybe<GenerationStatus>;
+  generationStatusUpdatedAt?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  imagePreview?: Maybe<ImagePreview>;
+  label: Scalars['String'];
+  offers: Array<Offer>;
+  stores: Array<Store>;
+  sublabel: Scalars['String'];
+  successfulAssetsCount?: Maybe<Scalars['Int']>;
+};
+
+export type CampaignAssetGenerationState = {
+  assetsCount: Scalars['Int'];
+  failedAssetsCount: Scalars['Int'];
+  generationStartedAt: Scalars['String'];
+  generationStatusUpdatedAt: Scalars['String'];
+  successfulAssetsCount: Scalars['Int'];
+};
+
 export type CreateRecordDataInput = {
   values?: InputMaybe<Array<ValueBatchInput>>;
   version?: InputMaybe<Array<ValueVersionInput>>;
@@ -357,6 +394,14 @@ export type CreateRecordResult = {
   valuesErrors?: Maybe<Array<ValueBatchError>>;
 };
 
+export type Creative = {
+  assets: Array<Asset>;
+  id: Scalars['String'];
+  label: Scalars['String'];
+  offers: Array<Offer>;
+  templates: Array<Template>;
+};
+
 export type DateRangeValue = {
   from?: Maybe<Scalars['String']>;
   to?: Maybe<Scalars['String']>;
@@ -365,6 +410,25 @@ export type DateRangeValue = {
 export type DeleteTaskInput = {
   archive: Scalars['Boolean'];
   id: Scalars['ID'];
+};
+
+export type DeliveryMedia = {
+  deliveryPlatform: DeliveryPlatform;
+  id: Scalars['String'];
+  label: Scalars['String'];
+  templates?: Maybe<Array<Template>>;
+};
+
+
+export type DeliveryMediaTemplatesArgs = {
+  campaignId?: InputMaybe<Scalars['String']>;
+};
+
+export type DeliveryPlatform = {
+  deliveryMedias?: Maybe<Array<DeliveryMedia>>;
+  id: Scalars['String'];
+  imagePreview?: Maybe<ImagePreview>;
+  label: Scalars['String'];
 };
 
 export type EmbeddedAttribute = {
@@ -506,6 +570,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GenericValue = {
   attribute: Attribute;
   created_at?: Maybe<Scalars['Int']>;
@@ -524,6 +599,7 @@ export type GlobalSettings = {
   favicon?: Maybe<Record>;
   icon?: Maybe<Record>;
   name: Scalars['String'];
+  settings?: Maybe<Scalars['JSONObject']>;
 };
 
 export type GlobalSettingsFileInput = {
@@ -536,6 +612,11 @@ export type GlobalSettingsInput = {
   favicon?: InputMaybe<GlobalSettingsFileInput>;
   icon?: InputMaybe<GlobalSettingsFileInput>;
   name?: InputMaybe<Scalars['String']>;
+  settings?: InputMaybe<Scalars['JSONObject']>;
+};
+
+export type Greeting = {
+  content: Scalars['String'];
 };
 
 export type HeritedPermissionAction = {
@@ -549,6 +630,14 @@ export enum IoTypes {
   object = 'object',
   string = 'string'
 }
+
+export type ImagePreview = {
+  big: Scalars['String'];
+  huge: Scalars['String'];
+  medium: Scalars['String'];
+  small: Scalars['String'];
+  tiny: Scalars['String'];
+};
 
 export enum ImportMode {
   insert = 'insert',
@@ -834,6 +923,8 @@ export type LogTopicRecordFilterInput = {
 
 export type Mutation = {
   cancelTask: Scalars['Boolean'];
+  createCreative: Creative;
+  createCreativesAuto?: Maybe<Array<Creative>>;
   createDirectory: Record;
   createRecord: CreateRecordResult;
   deactivateRecords: Array<Record>;
@@ -842,6 +933,7 @@ export type Mutation = {
   deleteAttribute: Attribute;
   deleteForm?: Maybe<Form>;
   deleteLibrary: Library;
+  deleteOffer?: Maybe<Scalars['Boolean']>;
   deleteRecord: Record;
   deleteTasks: Scalars['Boolean'];
   deleteTree: Tree;
@@ -849,11 +941,16 @@ export type Mutation = {
   deleteVersionProfile: VersionProfile;
   deleteView: View;
   forcePreviewsGeneration: Scalars['Boolean'];
+  generateAndSendJsonToDigitalHub?: Maybe<Scalars['Boolean']>;
+  generateCreativeMasterAssets: Array<Asset>;
+  generateCreativesAssets: Array<Asset>;
   importConfig: Scalars['ID'];
   importData: Scalars['ID'];
   importExcel: Scalars['ID'];
   indexRecords: Scalars['Boolean'];
+  linkOfferToCampaign?: Maybe<Scalars['Boolean']>;
   purgeInactiveRecords: Array<Record>;
+  rankOffers?: Maybe<Scalars['Boolean']>;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -877,6 +974,19 @@ export type Mutation = {
 
 export type MutationCancelTaskArgs = {
   taskId: Scalars['ID'];
+};
+
+
+export type MutationCreateCreativeArgs = {
+  campaignId: Scalars['String'];
+  deliveryMediaId: Scalars['String'];
+  offersIds: Array<Scalars['String']>;
+};
+
+
+export type MutationCreateCreativesAutoArgs = {
+  campaignId: Scalars['String'];
+  deliveryMediaIds: Array<Scalars['String']>;
 };
 
 
@@ -926,6 +1036,11 @@ export type MutationDeleteLibraryArgs = {
 };
 
 
+export type MutationDeleteOfferArgs = {
+  offerId: Scalars['String'];
+};
+
+
 export type MutationDeleteRecordArgs = {
   id?: InputMaybe<Scalars['ID']>;
   library?: InputMaybe<Scalars['ID']>;
@@ -969,6 +1084,21 @@ export type MutationForcePreviewsGenerationArgs = {
 };
 
 
+export type MutationGenerateAndSendJsonToDigitalHubArgs = {
+  campaignId: Scalars['String'];
+};
+
+
+export type MutationGenerateCreativeMasterAssetsArgs = {
+  creativeId: Scalars['String'];
+};
+
+
+export type MutationGenerateCreativesAssetsArgs = {
+  campaignId: Scalars['String'];
+};
+
+
 export type MutationImportConfigArgs = {
   clear?: InputMaybe<Scalars['Boolean']>;
   file: Scalars['Upload'];
@@ -994,8 +1124,20 @@ export type MutationIndexRecordsArgs = {
 };
 
 
+export type MutationLinkOfferToCampaignArgs = {
+  campaignId: Scalars['String'];
+  offerId: Scalars['String'];
+};
+
+
 export type MutationPurgeInactiveRecordsArgs = {
   libraryId: Scalars['String'];
+};
+
+
+export type MutationRankOffersArgs = {
+  campaignId: Scalars['String'];
+  orderedOfferIds: Array<Scalars['String']>;
 };
 
 
@@ -1105,6 +1247,14 @@ export type MutationUploadArgs = {
   files: Array<FileInput>;
   library: Scalars['String'];
   nodeId: Scalars['String'];
+};
+
+export type Offer = {
+  digram: Scalars['String'];
+  id: Scalars['String'];
+  imagePreview?: Maybe<ImagePreview>;
+  label: Scalars['String'];
+  sublabel: Scalars['String'];
 };
 
 export type Pagination = {
@@ -1264,12 +1414,19 @@ export type Query = {
   applicationsModules: Array<ApplicationModule>;
   attributes?: Maybe<AttributesList>;
   availableActions?: Maybe<Array<Action>>;
+  calculatedCampaignAssetsNumber?: Maybe<Scalars['Int']>;
+  campaign?: Maybe<Campaign>;
+  campaignMasterStore?: Maybe<Store>;
+  campaigns: Array<Campaign>;
+  creative?: Maybe<Creative>;
+  deliveryMedia?: Maybe<DeliveryMedia>;
   doesFileExistAsChild?: Maybe<Scalars['Boolean']>;
   export: Scalars['String'];
   forms?: Maybe<FormsList>;
   fullTreeContent?: Maybe<Scalars['FullTreeContent']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
+  greeting: Greeting;
   inheritedPermissions?: Maybe<Array<HeritedPermissionAction>>;
   isAllowed?: Maybe<Array<PermissionAction>>;
   langs: Array<Maybe<Scalars['String']>>;
@@ -1282,6 +1439,7 @@ export type Query = {
   recordForm?: Maybe<RecordForm>;
   records: RecordsList;
   runActionsListAndFormatOnValue: Array<Value>;
+  sayHello: SayHello;
   tasks: TasksList;
   treeContent: Array<TreeNode>;
   treeNodeChildren: TreeNodeLightList;
@@ -1312,6 +1470,31 @@ export type QueryAttributesArgs = {
   filters?: InputMaybe<AttributesFiltersInput>;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortAttributes>;
+};
+
+
+export type QueryCalculatedCampaignAssetsNumberArgs = {
+  campaignId: Scalars['String'];
+};
+
+
+export type QueryCampaignArgs = {
+  campaignId: Scalars['String'];
+};
+
+
+export type QueryCampaignMasterStoreArgs = {
+  campaignId: Scalars['String'];
+};
+
+
+export type QueryCreativeArgs = {
+  creativeId: Scalars['String'];
+};
+
+
+export type QueryDeliveryMediaArgs = {
+  deliveryMediaId: Scalars['String'];
 };
 
 
@@ -1643,6 +1826,10 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']>;
 };
 
+export type SayHello = {
+  message: Scalars['String'];
+};
+
 export type SheetInput = {
   keyIndex?: InputMaybe<Scalars['Int']>;
   keyToIndex?: InputMaybe<Scalars['Int']>;
@@ -1751,6 +1938,12 @@ export type StandardStringValuesListConf = {
 
 export type StandardValuesListConf = StandardDateRangeValuesListConf | StandardStringValuesListConf;
 
+export type Store = {
+  deliveryMedia: DeliveryMedia;
+  id: Scalars['String'];
+  label: Scalars['String'];
+};
+
 export type StreamProgress = {
   delta?: Maybe<Scalars['Int']>;
   eta?: Maybe<Scalars['Int']>;
@@ -1764,6 +1957,8 @@ export type StreamProgress = {
 
 export type Subscription = {
   applicationEvent: ApplicationEvent;
+  assetState?: Maybe<Scalars['String']>;
+  campaignAssetGenerationState?: Maybe<CampaignAssetGenerationState>;
   recordUpdate: RecordUpdateEvent;
   task: Task;
   treeEvent: TreeEvent;
@@ -1773,6 +1968,17 @@ export type Subscription = {
 
 export type SubscriptionApplicationEventArgs = {
   filters?: InputMaybe<ApplicationEventFiltersInput>;
+};
+
+
+export type SubscriptionAssetStateArgs = {
+  campaignId?: InputMaybe<Scalars['String']>;
+  creativeId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type SubscriptionCampaignAssetGenerationStateArgs = {
+  campaignId: Scalars['String'];
 };
 
 
@@ -1851,6 +2057,15 @@ export enum TaskType {
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int'];
+};
+
+export type Template = {
+  deliveryMedia: DeliveryMedia;
+  format: Scalars['String'];
+  id: Scalars['String'];
+  label: Scalars['String'];
+  offersCount: Scalars['Int'];
+  storeSpecific: Scalars['Boolean'];
 };
 
 export type Tree = {

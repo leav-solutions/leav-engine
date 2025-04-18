@@ -6,6 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { RecordProperty } from '__generated__';
 import {LibraryBehavior} from './globalTypes';
 
 // ====================================================
@@ -33,9 +34,18 @@ export interface ME_me_whoAmI {
     preview: Preview | null;
 }
 
+interface ME_Property {
+    attributeId: string;
+    values: Array<{
+        payload: string | null;
+        raw_payload: string | null;
+    }>;
+}
+
 export interface ME_me {
     login: string | null;
     id: string;
+    properties: Array<ME_Property>;
     whoAmI: ME_me_whoAmI;
 }
 

@@ -7,6 +7,7 @@ import {APP_ENDPOINT, APPS_ENDPOINT, Explorer, LangContext, UserContext} from '@
 import ApplicationRouting from '../modules/ApplicationRouting/ApplicationRouting';
 import {NotFoundPage} from '../pages/NotFoundPage/NotFoundPage';
 import {RootLayout} from '../modules/layout/RootLayout';
+import {ApplicationProvider} from '../modules/workspace-context/ApplicationProvider';
 
 export const Router: FunctionComponent = () => {
     const explorerContainerRef = useRef<HTMLDivElement>(null);
@@ -14,12 +15,14 @@ export const Router: FunctionComponent = () => {
     return (
         <BrowserRouter basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`}>
             <RootLayout>
-                <Explorer.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
-                    <Routes>
-                        <Route path={'/*'} element={<ApplicationRouting />} />
-                        <Route element={<NotFoundPage />} />
-                    </Routes>
-                </Explorer.EditSettingsContextProvider>
+                <ApplicationProvider>
+                    <Explorer.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
+                        <Routes>
+                            <Route path={'/*'} element={<ApplicationRouting />} />
+                            <Route element={<NotFoundPage />} />
+                        </Routes>
+                    </Explorer.EditSettingsContextProvider>
+                </ApplicationProvider>
             </RootLayout>
         </BrowserRouter>
     );

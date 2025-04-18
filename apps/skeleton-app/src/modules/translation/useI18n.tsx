@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useEffect, useState} from 'react';
 import {LeavServerError} from './LeavServerError';
 import {getLeavFallbackLanguage} from './translationService';
@@ -6,7 +9,7 @@ import {initI18n} from './initI18n';
 
 const LOCAL_STORAGE_LANG_KEY = 'i18nextLng';
 
-type UseI18n = () => { error: string | null; loading: boolean };
+type UseI18n = () => {error: string | null; loading: boolean};
 
 export const getLanguageRadical = (language: string) => language?.split('-')[0];
 const isSupportedLanguage = (language: string) =>
@@ -21,14 +24,12 @@ export const useI18n: UseI18n = () => {
     useEffect(() => {
         setLoading(true);
         getLeavFallbackLanguage()
-            .then(fallbackLanguage =>
-                initI18n(fallbackLanguage)
-            )
-            .catch((error: unknown): void | never => {
-                if (error instanceof LeavServerError) {
-                    setError(error.message);
+            .then(fallbackLanguage => initI18n(fallbackLanguage))
+            .catch((promiseError: unknown): void | never => {
+                if (promiseError instanceof LeavServerError) {
+                    setError(promiseError.message);
                 } else {
-                    throw error;
+                    throw promiseError;
                 }
             })
             .finally(() => {

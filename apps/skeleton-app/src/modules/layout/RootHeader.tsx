@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent} from 'react';
 import {KitButton, type KitDropDown, KitHeader} from 'aristid-ds';
 import {LanguageSelector} from '../switch-language/LanguageSelector';
@@ -11,19 +14,6 @@ import {useAuth, useUser} from '_ui/hooks';
 
 import {header, logo} from './layout.module.css';
 
-const getUserIdentity = ({
-    givenName,
-    familyName,
-    email
-}: {
-    givenName?: string;
-    familyName?: string;
-    email?: string;
-}) => {
-    const noName = !givenName && !familyName;
-    return noName ? email : `${givenName} ${familyName}`;
-};
-
 export const RootHeader: FunctionComponent = () => {
     // TODO: replace auth logic with leav logic
     const {logout} = useAuth();
@@ -34,20 +24,29 @@ export const RootHeader: FunctionComponent = () => {
     };
     const {t} = useTranslation();
 
-
     const profileMenuContent: ComponentProps<typeof KitDropDown>['menu'] = {
         items: [
             {
                 key: 'logout',
                 label: (
-                    <KitButton type="action" icon={<FontAwesomeIcon icon={faRightFromBracket} style={{color: 'var(--general-utilities-error-default)'}}/>}>{t('sign_out')}</KitButton>
+                    <KitButton
+                        type="action"
+                        icon={
+                            <FontAwesomeIcon
+                                icon={faRightFromBracket}
+                                style={{color: 'var(--general-utilities-error-default)'}}
+                            />
+                        }
+                    >
+                        {t('sign_out')}
+                    </KitButton>
                 ),
                 onClick: _handleLogout
             }
         ]
     };
 
-    const identity = getUserIdentity({givenName: userData?.userWhoAmI?.label, familyName: '', email: ''});
+    const identity = userData?.userWhoAmI?.label;
 
     const avatarProps: IKitAvatar = {
         src: 'images/portrait.png',
@@ -62,12 +61,7 @@ export const RootHeader: FunctionComponent = () => {
                     <img src={getAssetPath('logo-leavengine.svg')} alt="logo-leavengine" title="skeleton-app" />
                 </Link>
             }
-            profile={
-                <KitHeader.Profile
-                    menu={profileMenuContent}
-                    profileCardProps={{avatarProps, title: identity}}
-                />
-            }
+            profile={<KitHeader.Profile menu={profileMenuContent} profileCardProps={{avatarProps, title: identity}} />}
             langSwitcher={<LanguageSelector />}
         />
     );

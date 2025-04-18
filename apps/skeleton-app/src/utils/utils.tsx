@@ -3,11 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from 'graphql-tag';
 import {AvailableLanguage} from '../_types/types';
-import {APPS_ENDPOINT} from '@leav/ui';
-
-const XSTREAM_ENDPOINT = window.location.pathname.split('/').filter(e => e.length > 0)[1]; // Get endpoint app current from url /APPS_ENDPOINT/:XSTREAM_ENDPOINT
-
-const BASENAME = import.meta.env.PROD ? `/${APPS_ENDPOINT}/${XSTREAM_ENDPOINT}` : `/${APPS_ENDPOINT}/${XSTREAM_ENDPOINT}`;
+import {BASENAME} from './constants';
 
 export const localizedTranslation = (translations: any, availableLanguages: AvailableLanguage[] | string[]): string => {
     if (!translations) {
