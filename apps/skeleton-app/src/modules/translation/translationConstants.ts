@@ -1,3 +1,3 @@
-export const defaultLanguage = { language: 'en', label: 'English' };
+export const defaultLanguage = {language: 'en', label: 'English'};
 
-export const supportedLanguages = [defaultLanguage, { language: 'fr', label: 'Français' }] as const;
+export const supportedLanguages = [defaultLanguage, {language: 'fr', label: 'Français'}] as const;

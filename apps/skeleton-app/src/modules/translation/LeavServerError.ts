@@ -1,5 +1,5 @@
 export class LeavServerError extends Error {
-    constructor() {
+    public constructor() {
         super('Server Error, please make sure Leav is connected!');
     }
 }

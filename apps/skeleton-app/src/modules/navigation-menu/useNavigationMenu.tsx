@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import {useState} from 'react';
 
-interface UseNavigationMenu {
+interface IUseNavigationMenu {
     isMenuOpen: boolean;
     handleToggleMenu: (open: boolean) => void;
 }
@@ -15,7 +15,7 @@ const getLocalStorageMenuState = () => {
     return menuOpen === 'true';
 };
 
-export const useNavigationMenu = (): UseNavigationMenu => {
+export const useNavigationMenu = (): IUseNavigationMenu => {
     const [isMenuOpen, setMenuOpen] = useState(getLocalStorageMenuState());
 
     const handleToggleMenu = (open: boolean) => {
@@ -23,5 +23,5 @@ export const useNavigationMenu = (): UseNavigationMenu => {
         setMenuOpen(open);
     };
 
-    return { isMenuOpen, handleToggleMenu };
+    return {isMenuOpen, handleToggleMenu};
 };

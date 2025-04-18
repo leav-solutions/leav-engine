@@ -24,11 +24,11 @@ export const useI18n: UseI18n = () => {
             .then(fallbackLanguage =>
                 initI18n(fallbackLanguage)
             )
-            .catch((error: unknown): void | never => {
-                if (error instanceof LeavServerError) {
-                    setError(error.message);
+            .catch((promiseError: unknown): void | never => {
+                if (promiseError instanceof LeavServerError) {
+                    setError(promiseError.message);
                 } else {
-                    throw error;
+                    throw promiseError;
                 }
             })
             .finally(() => {

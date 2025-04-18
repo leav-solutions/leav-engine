@@ -1,7 +1,7 @@
-import { LeavServerError } from './LeavServerError';
+import {LeavServerError} from './LeavServerError';
 
 export const getLeavFallbackLanguage = (): Promise<string> | never =>
-    fetch('/global-lang', { method: 'GET' }).then(response => {
+    fetch('/global-lang', {method: 'GET'}).then(response => {
         if (response.ok) {
             return response.text();
         }

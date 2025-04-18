@@ -1,6 +1,6 @@
 import '@formatjs/intl-durationformat/polyfill';
-import { type FormatterOptions, isValidDurationStyle } from './_types';
-import { defaultLanguage } from '../../translationConstants';
+import {type IFormatterOptions, isValidDurationStyle} from './_types';
+import {defaultLanguage} from '../../translationConstants';
 
 const _getDurationBetweenTwoTimestamps = (timestamp1: number, timestamp2: number) => {
     const differenceInMilliseconds = Math.abs(timestamp2 - timestamp1);
@@ -13,7 +13,7 @@ const _getDurationBetweenTwoTimestamps = (timestamp1: number, timestamp2: number
     const days = Math.floor(differenceInHours / 24);
     const seconds = differenceInSeconds % 60;
 
-    return { days, hours, minutes, seconds };
+    return {days, hours, minutes, seconds};
 };
 
 const _getFormattedDuration = (params: {
@@ -22,11 +22,11 @@ const _getFormattedDuration = (params: {
     locale: string;
     style?: 'long' | 'short' | 'narrow';
 }) => {
-    const { startDate, endDate, locale, style = 'narrow' } = params;
-    const { days, hours, minutes, seconds } = _getDurationBetweenTwoTimestamps(Number(startDate), Number(endDate));
+    const {startDate, endDate, locale, style = 'narrow'} = params;
+    const {days, hours, minutes, seconds} = _getDurationBetweenTwoTimestamps(Number(startDate), Number(endDate));
 
     // @ts-expect-error TS doesn't know about the polyfill
-    const duration = new Intl.DurationFormat(locale, { style }).format({
+    const duration = new Intl.DurationFormat(locale, {style}).format({
         days,
         hours,
         minutes,
@@ -39,7 +39,7 @@ const _getFormattedDuration = (params: {
 export const durationFormatter = (
     _value: unknown,
     lng: string | undefined,
-    { startDate, endDate, style }: FormatterOptions
+    {startDate, endDate, style}: IFormatterOptions
 ) =>
     _getFormattedDuration({
         startDate: Number(startDate ?? 0),

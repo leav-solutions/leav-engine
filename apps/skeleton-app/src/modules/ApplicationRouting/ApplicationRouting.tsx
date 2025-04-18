@@ -15,7 +15,7 @@ const ApplicationRouting: FunctionComponent = () => {
     const application = data?.applications?.list[0].settings ?? null;
 
     const routing = useRoutes(
-        application == null
+        application === null
             ? []
             : [
                   {
@@ -35,7 +35,7 @@ const ApplicationRouting: FunctionComponent = () => {
               ]
     );
 
-    if (application == null) {
+    if (application === null) {
         return <Loading />;
     }
 

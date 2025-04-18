@@ -1,4 +1,4 @@
-import { durationFormatter } from './durationFormatter';
+import {durationFormatter} from './durationFormatter';
 
 describe('durationFormatter ', () => {
     it.each`
@@ -27,7 +27,7 @@ describe('durationFormatter ', () => {
             style: string;
             formattedDuration: string;
         }) => {
-            expect(durationFormatter(null, 'en', { startDate, endDate, style })).toBe(formattedDuration);
+            expect(durationFormatter(null, 'en', {startDate, endDate, style})).toBe(formattedDuration);
         }
     );
 });

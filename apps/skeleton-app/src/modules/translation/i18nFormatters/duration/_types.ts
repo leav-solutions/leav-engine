@@ -1,5 +1,5 @@
 export type DurationStyle = 'long' | 'short' | 'narrow';
-export interface FormatterOptions {
+export interface IFormatterOptions {
     startDate?: number | string;
     endDate?: number | string;
     style?: string;
