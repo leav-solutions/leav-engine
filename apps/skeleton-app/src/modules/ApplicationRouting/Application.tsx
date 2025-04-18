@@ -4,11 +4,28 @@
 import {FunctionComponent} from 'react';
 import type {IApplication} from './types';
 import {Outlet} from 'react-router-dom';
+import {NavigationMenu} from '../navigation-menu/NavigationMenu';
+import {useNavigationMenu} from '../navigation-menu/useNavigationMenu';
+import {PageLayout} from '../layout/PageLayout';
 
 interface IApplicationProps {
     application: IApplication;
 }
 
-export const Application: FunctionComponent<IApplicationProps> = ({application}) => (
-    <Outlet context={application.workspaces} />
-);
+export const Application: FunctionComponent<IApplicationProps> = ({application}) => {
+    const {isMenuOpen, handleToggleMenu} = useNavigationMenu();
+    const items = application.workspaces.map((workspace) => ({
+        key: workspace.id,
+        title: workspace.title,
+        icon: workspace.icon
+    }));
+
+    return (
+        <>
+            <NavigationMenu menuOpen={isMenuOpen} items={items} handleToggleMenu={handleToggleMenu} />
+            <PageLayout>
+                <Outlet context={application.workspaces} />
+            </PageLayout>
+        </>
+    );
+};

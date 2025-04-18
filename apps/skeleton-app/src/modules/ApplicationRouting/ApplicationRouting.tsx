@@ -40,12 +40,7 @@ const ApplicationRouting: FunctionComponent = () => {
     }
 
     return (
-        <main>
-            {routing}
-            <section>
-                <Outlet />
-            </section>
-        </main>
+        routing
     );
 };
 

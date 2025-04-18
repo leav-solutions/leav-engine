@@ -8,6 +8,8 @@ import {Explorer} from '@leav/ui';
 import {FaPlus} from 'react-icons/all';
 import {IItemData} from '_ui/components/Explorer/_types';
 
+import {iframe} from './panel.module.css';
+
 export const PanelComponent: FunctionComponent = () => {
     const {search} = useLocation();
     const {currentPanel, currentWorkspace} = useOutletContext<{currentPanel: Panel; currentWorkspace: IWorkspace}>();
@@ -20,7 +22,7 @@ export const PanelComponent: FunctionComponent = () => {
         }
         if (currentPanel.content.type === 'custom') {
             // TODO: give interaction from iframe to main app to change pages
-            return <iframe src={currentPanel.content.iframeSource} />;
+            return <iframe className={iframe} src={currentPanel.content.iframeSource} title={currentPanel.id} width="100%" height="100%"/>;
         }
         if (currentPanel.content.type === 'explorer') {
             if ('libraryId' in currentPanel.content) {

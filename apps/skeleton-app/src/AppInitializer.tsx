@@ -11,10 +11,12 @@ import {
     ErrorBoundary,
     ErrorDisplay,
     ErrorDisplayTypes,
+    IUserContext,
     LangContext,
     Loading,
     useAntdLocale,
-    useAppLang
+    useAppLang,
+    UserContext
 } from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {ConfigProvider} from 'antd';
@@ -32,6 +34,8 @@ import {
 import {GET_GLOBAL_SETTINGS} from './_gqlTypes/GET_GLOBAL_SETTINGS';
 import {GET_LANGS} from './_gqlTypes/GET_LANGS';
 import {Router} from './routes/Router';
+import {getMe} from './graphQL/queries/userData/me';
+import {ME} from '_gqlTypes/ME';
 
 export const AppInitializer: FunctionComponent = () => {
     const {t, i18n} = useTranslation();
@@ -53,6 +57,8 @@ export const AppInitializer: FunctionComponent = () => {
     };
 
     const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
+
+    const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
 
     const {
         data: applicationData,
@@ -92,11 +98,11 @@ export const AppInitializer: FunctionComponent = () => {
         setLang([i18n.language, fallbackLng]);
     };
 
-    if (applicationLoading || globalSettingsLoading || langsLoading || appLangLoading) {
+    if (meLoading || applicationLoading || globalSettingsLoading || langsLoading || appLangLoading) {
         return <Loading />;
     }
 
-    if (applicationError || globalSettingsError || langsError || appLangErr) {
+    if (meError || applicationError || globalSettingsError || langsError || appLangErr) {
         const error = applicationError || globalSettingsError;
         return <ErrorDisplay message={error?.message ?? appLangErr} />;
     }
@@ -109,28 +115,35 @@ export const AppInitializer: FunctionComponent = () => {
         return <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} showActionButton={false} />;
     }
 
+    const userContextData: IUserContext['userData'] = {
+        userId: userData?.me?.id,
+        userWhoAmI: userData?.me?.whoAmI
+    };
+
     return (
-        <LangContext.Provider
-            value={{
-                lang,
-                availableLangs: availableLangs.langs,
-                defaultLang: appLang,
-                setLang: _handleLanguageChange
-            }}
-        >
-            <ErrorBoundary>
-                <KitApp
-                    locale={{
-                        locale: localeByLang[lang[0]],
-                        ItemList: null,
-                        Image: null
-                    }}
-                >
-                    <ConfigProvider theme={customTheme} locale={locale}>
-                        <Router />
-                    </ConfigProvider>
-                </KitApp>
-            </ErrorBoundary>
-        </LangContext.Provider>
+        <UserContext.Provider value={{userData: userContextData}}>
+            <LangContext.Provider
+                value={{
+                    lang,
+                    availableLangs: availableLangs.langs,
+                    defaultLang: appLang,
+                    setLang: _handleLanguageChange
+                }}
+            >
+                <ErrorBoundary>
+                    <KitApp
+                        locale={{
+                            locale: localeByLang[lang[0]],
+                            ItemList: null,
+                            Image: null
+                        }}
+                    >
+                        <ConfigProvider theme={customTheme} locale={locale}>
+                            <Router />
+                        </ConfigProvider>
+                    </KitApp>
+                </ErrorBoundary>
+            </LangContext.Provider>
+        </UserContext.Provider>
     );
 };
