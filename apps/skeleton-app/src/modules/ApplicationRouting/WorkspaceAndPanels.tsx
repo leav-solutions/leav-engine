@@ -2,12 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
-import {Link, Outlet, useOutletContext, useParams} from 'react-router-dom';
+import {Link, Outlet, useNavigate, useOutletContext, useParams} from 'react-router-dom';
 import type {IWorkspace, Panel} from './types';
 import {getAllPanels} from './utils';
+import {Page} from '../layout/Page';
 
 export const WorkspaceAndPanels: FunctionComponent = () => {
     const {panelId} = useParams();
+    const navigate = useNavigate();
 
     const workspaces = useOutletContext<IWorkspace[]>();
 
@@ -21,22 +23,21 @@ export const WorkspaceAndPanels: FunctionComponent = () => {
 
     const [currentPanel, currentWorkspace] = tuplesPanelByWorkspace.find(([panel]) => panel.id === panelId);
 
+    const tabItems = currentParentTuple !== undefined && 'children' in currentParentTuple[0]
+        ? currentParentTuple[0].children.map(panel => ({
+            key: panel.id,
+            label: panel.id,
+            onClick: () => {
+                navigate(`/${panel.id}`);
+            }
+          }))
+        : null;
+
     return (
-        <>
-            {currentParentTuple !== undefined && 'children' in currentParentTuple[0] && (
-                <nav>
-                    <menu>
-                        {currentParentTuple[0].children.map(panel => (
-                            <li key={panel.id}>
-                                <Link to={'/' + panel.id}>{panel.id}</Link>
-                            </li>
-                        ))}
-                    </menu>
-                </nav>
-            )}
+        <Page title={currentPanel?.id} tabs={tabItems}>
             <Outlet
                 context={{currentPanel, currentWorkspace} satisfies {currentPanel: Panel; currentWorkspace: IWorkspace}}
-            />
-        </>
+        />
+        </Page>
     );
 };

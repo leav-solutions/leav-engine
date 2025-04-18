@@ -3,8 +3,7 @@ import path from 'path';
 import {splitVendorChunkPlugin} from 'vite';
 import svgr from 'vite-plugin-svgr';
 
-export const jsonHmr = () => {
-    return {
+export const jsonHmr = () => ({
         name: 'json-hmr',
         enforce: 'post',
         handleHotUpdate({file, server}) {
@@ -17,11 +16,9 @@ export const jsonHmr = () => {
                 });
             }
         }
-    };
-};
+    });
 
-export const commonConfig = rootPath => {
-    return {
+export const commonConfig = rootPath => ({
         root: '.',
         plugins: [svgr(), react(), jsonHmr(), splitVendorChunkPlugin()],
         resolve: {
@@ -47,9 +44,14 @@ export const commonConfig = rootPath => {
                 }
             ]
         },
+        css: {
+            transformer: 'lightningcss',
+            lightningcss: {
+                targets
+            }
+        },
         server: {
             port: 3000,
             host: true
         }
-    };
-};
+    });
