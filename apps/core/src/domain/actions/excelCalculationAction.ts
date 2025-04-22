@@ -87,13 +87,13 @@ export default function ({
                 helper_value: '21*2'
             }
         ],
-        action: async (values: IStandardValue[], params, ctx) => {
+        action: async (values: IStandardValue[] | IValue[], params, ctx) => {
             const {Formula: formula} = params;
 
             const finalFormula = await _replaceVariables(
                 formula,
                 ctx,
-                values.map(v => v.raw_payload)
+                values.map(v => v.raw_payload || v.payload)
             );
 
             const parser = new Parser();
