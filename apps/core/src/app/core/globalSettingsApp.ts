@@ -15,7 +15,7 @@ import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IAppModule} from '_types/shared';
 import {IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
-import {APP_DEFAULT_NAME} from '../../_constants/globalSettings';
+import {APP_DEFAULT_NAME, DEFAULT_APPLICATION} from '../../_constants/globalSettings';
 import {AttributeCondition} from '../../_types/record';
 
 export interface ICoreApp extends IAppModule {
@@ -107,6 +107,13 @@ export default function ({
                             }
 
                             return settings.name;
+                        },
+                        defaultApp: async (settings: IGlobalSettings) => {
+                            if (!settings.defaultApp) {
+                                return DEFAULT_APPLICATION;
+                            }
+
+                            return settings.defaultApp;
                         },
                         icon: async (settings: IGlobalSettings, _, ctx: IQueryInfos) =>
                             _getFileRecord(settings, 'icon', ctx),

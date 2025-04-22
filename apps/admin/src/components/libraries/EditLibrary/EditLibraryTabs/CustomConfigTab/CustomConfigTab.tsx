@@ -12,6 +12,9 @@ import styled from 'styled-components';
 const Wrapper = styled.div`
     .jsoneditor {
         border: none;
+        textarea.jsoneditor-text {
+            height: 70vh;
+        }
     }
 
     .jsoneditor-menu {

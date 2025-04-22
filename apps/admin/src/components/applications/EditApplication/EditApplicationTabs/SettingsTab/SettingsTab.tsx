@@ -12,6 +12,9 @@ import {SAVE_APPLICATION, SAVE_APPLICATIONVariables} from '_gqlTypes/SAVE_APPLIC
 const Wrapper = styled.div`
     .jsoneditor {
         border: none;
+        textarea.jsoneditor-text {
+            height: 70vh;
+        }
     }
 
     .jsoneditor-menu {
