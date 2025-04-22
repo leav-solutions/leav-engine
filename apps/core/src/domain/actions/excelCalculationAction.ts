@@ -4,7 +4,7 @@
 import {ICalculationVariable} from 'domain/helpers/calculationVariable';
 import {Parser} from 'hot-formula-parser';
 import {IUtils} from 'utils/utils';
-import {IStandardValue, IValue} from '_types/value';
+import {IValue} from '_types/value';
 import {
     ActionsListIOTypes,
     ActionsListValueType,
@@ -12,6 +12,7 @@ import {
     IActionsListFunction
 } from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
+import {isIStandardValue} from '../../plugins/xstream/apps/plugins/bff-xstream-creative/shared/utils';
 
 interface IDeps {
     'core.domain.helpers.calculationVariable'?: ICalculationVariable;
@@ -87,13 +88,13 @@ export default function ({
                 helper_value: '21*2'
             }
         ],
-        action: async (values: IStandardValue[] | IValue[], params, ctx) => {
+        action: async (values: IValue[], params, ctx) => {
             const {Formula: formula} = params;
 
             const finalFormula = await _replaceVariables(
                 formula,
                 ctx,
-                values.map(v => v.raw_payload || v.payload)
+                values.map(v => (isIStandardValue(v) ? v.raw_payload : v.payload))
             );
 
             const parser = new Parser();
