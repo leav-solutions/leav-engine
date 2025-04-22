@@ -40,7 +40,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 icon: savedSettings?.[0]?.icon ?? null,
                 favicon: savedSettings?.[0]?.favicon ?? null,
                 defaultApp: savedSettings?.[0]?.defaultApp ?? null,
-                settings: settings?.[0]?.settings ?? null
+                settings: savedSettings?.[0]?.settings ?? null
             };
         },
         async getSettings(ctx) {
