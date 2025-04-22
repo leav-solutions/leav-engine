@@ -1,4 +1,7 @@
 {
+    "skeleton": {
+        "explore": "Browse"
+    },
     "global": {
         "cancel": "Cancel",
         "close": "Close",

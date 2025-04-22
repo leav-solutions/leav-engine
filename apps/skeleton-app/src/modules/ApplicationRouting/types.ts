@@ -32,7 +32,11 @@ export type Panel = {
                     iframeSource: string;
                 }
               | {
-                    type: 'form';
+                    type: 'editionForm';
+                    formId: string;
+                }
+              | {
+                    type: 'creationForm';
                     formId: string;
                 };
       }

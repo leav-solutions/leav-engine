@@ -7,3 +7,5 @@ export const ORIGIN_URL = window.location.origin;
 export const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}`;
 
 export const UNAUTHENTICATED = 'UNAUTHENTICATED';
+
+export const SIDEBAR_CONTENT_ID = 'sidebar-content';

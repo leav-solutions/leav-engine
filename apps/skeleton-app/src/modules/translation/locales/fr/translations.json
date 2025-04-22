@@ -1,4 +1,7 @@
 {
+    "skeleton": {
+        "explore": "Naviguer"
+    },
     "global": {
         "cancel": "Annuler",
         "close": "Fermer",

@@ -18,7 +18,7 @@ import {
 } from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {ConfigProvider} from 'antd';
-import {KitApp} from 'aristid-ds';
+import {KitApp, KitGrid} from 'aristid-ds';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
 import 'dayjs/locale/fr';
@@ -32,6 +32,7 @@ import {
 import {GET_GLOBAL_SETTINGS} from './_gqlTypes/GET_GLOBAL_SETTINGS';
 import {GET_LANGS} from './_gqlTypes/GET_LANGS';
 import {Router} from './routes/Router';
+import {SIDEBAR_CONTENT_ID} from './constants';
 
 export const AppInitializer: FunctionComponent = () => {
     const {t, i18n} = useTranslation();
@@ -129,6 +130,9 @@ export const AppInitializer: FunctionComponent = () => {
                     <ConfigProvider theme={customTheme} locale={locale}>
                         <Router />
                     </ConfigProvider>
+                    <KitGrid.KitCol>
+                        <div id={SIDEBAR_CONTENT_ID} />
+                    </KitGrid.KitCol>
                 </KitApp>
             </ErrorBoundary>
         </LangContext.Provider>
