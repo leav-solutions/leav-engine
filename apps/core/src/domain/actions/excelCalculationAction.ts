@@ -12,6 +12,7 @@ import {
     IActionsListFunction
 } from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
+import {TypeGuards} from '../../utils';
 
 interface IDeps {
     'core.domain.helpers.calculationVariable'?: ICalculationVariable;
@@ -93,7 +94,7 @@ export default function ({
             const finalFormula = await _replaceVariables(
                 formula,
                 ctx,
-                values.map(v => v.payload)
+                values.map(v => (TypeGuards.isIStandardValue(v) ? v.raw_payload : v.payload))
             );
 
             const parser = new Parser();
