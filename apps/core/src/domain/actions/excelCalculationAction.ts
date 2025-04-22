@@ -12,7 +12,7 @@ import {
     IActionsListFunction
 } from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
-import {isIStandardValue} from '../../plugins/xstream/apps/plugins/bff-xstream-creative/shared/utils';
+import {TypeGuards} from '../../utils';
 
 interface IDeps {
     'core.domain.helpers.calculationVariable'?: ICalculationVariable;
@@ -94,7 +94,7 @@ export default function ({
             const finalFormula = await _replaceVariables(
                 formula,
                 ctx,
-                values.map(v => (isIStandardValue(v) ? v.raw_payload : v.payload))
+                values.map(v => (TypeGuards.isIStandardValue(v) ? v.raw_payload : v.payload))
             );
 
             const parser = new Parser();
