@@ -8,6 +8,7 @@ x-arango-image: &arango_image "arangodb:3.12"
 x-dir-core: &dir-core /app/apps/core
 x-dir-admin: &dir-admin /app/apps/admin
 x-dir-data_studio: &dir-data_studio /app/apps/data-studio
+x-dir-skeleton_app: &dir-skeleton_app /app/apps/skeleton-app
 x-dir-login: &dir-login /app/apps/login
 x-dir-portal: &dir-portal /app/apps/portal
 x-dir-automate_scan: &dir-automate_scan /app/apps/automate-scan
@@ -20,6 +21,7 @@ x-volume-shared-modules: &volume-shared-modules node_modules_shared:/app/node_mo
 x-volume-core-modules: &volume-core-modules node_modules_core:/app/apps/core/node_modules
 x-volume-admin-modules: &volume-admin-modules node_modules_admin:/app/apps/admin/node_modules
 x-volume-data_studio-modules: &volume-data_studio-modules node_modules_data-studio:/app/apps/data-studio/node_modules
+x-volume-skeleton_app-modules: &volume-skeleton_app-modules node_modules_skeleton-app:/app/apps/skeleton-app/node_modules
 x-volume-login-modules: &volume-login-modules node_modules_login:/app/apps/login/node_modules
 x-volume-portal-modules: &volume-portal-modules node_modules_portal:/app/apps/portal/node_modules
 x-volume-preview_generator-modules: &volume-preview_generator-modules node_modules_preview-generator:/app/apps/preview-generator/node_modules
@@ -294,6 +296,31 @@ services:
       - *volume-shared-modules
       - *volume-data_studio-modules
     working_dir: *dir-data_studio
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start"]
+
+  skeleton-app:
+    image: *node_image
+    stdin_open: true
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.skeleton-app.rule=(Host(`core.leav.localhost`) && Path(`/app/skeleton-app`, `/app/skeleton-app/{route:.*}`)) || Host(`skeleton-app.leav.localhost`)
+      - traefik.http.services.skeleton-app.loadbalancer.server.port=3000
+      - traefik.http.routers.skeleton-app.entrypoints=web
+    environment:
+      <<: [*env-react]
+      PUBLIC_URL: http://core.leav.localhost/app/skeleton-app
+      WDS_SOCKET_HOST: skeleton-app.leav.localhost
+      WDS_SOCKET_PORT: 80
+    volumes:
+      - *mount_point-repo
+      - *mount_point-scripts
+      - *volume-yarn-cache
+      - *volume-shared-modules
+      - *volume-skeleton_app-modules
+    working_dir: *dir-skeleton_app
     depends_on:
       core:
         condition: service_healthy
@@ -595,6 +622,8 @@ volumes:
   node_modules_admin:
     driver: local
   node_modules_data-studio:
+    driver: local
+  node_modules_skeleton-app:
     driver: local
   node_modules_login:
     driver: local

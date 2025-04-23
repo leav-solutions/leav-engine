@@ -74,5 +74,17 @@ checkExitCode
 mv $BUILD_DATA_STUDIO_DIR $DEST_DATA_STUDIO_DIR
 checkExitCode
 
+# skeleton-app
+echo '### Build skeleton-app ###'
+BUILD_SKELETON_APP_DIR="$BASEDIR/../apps/skeleton-app/dist"
+DEST_SKELETON_APP_DIR="$BASEDIR/../apps/core/applications/skeleton-app"
+yarn workspace skeleton-app build
+checkExitCode
+echo '### Move skeleton-app build to core applications folder ###'
+rm -rf $DEST_SKELETON_APP_DIR
+checkExitCode
+mv $BUILD_SKELETON_APP_DIR $DEST_SKELETON_APP_DIR
+checkExitCode
+
 echo '### Applications installed ###'
 exit 0

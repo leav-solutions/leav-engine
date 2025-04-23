@@ -8,7 +8,8 @@ find ./src/plugins -name package.json -not -path "*/node_modules/*" -exec sh -c 
   (cd $(dirname {}) && yarn install)
 ' \;
 
+echo "📚 Run migration scripts"
 yarn run db:migrate:dev
 
-# Start the server
+echo "🛒 Start the server in watch mode"
 yarn run start:watch

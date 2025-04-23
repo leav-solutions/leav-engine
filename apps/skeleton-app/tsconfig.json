@@ -1,0 +1,18 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": "src",
+        "outDir": "dist",
+        "module": "esnext",
+        "noEmit": true,
+        "skipLibCheck": true,
+        "types": [
+            "jest"
+        ],
+        "jsx": "react-jsx",
+        // TODO: "strictNullChecks": true
+    },
+    "include": [
+        "src"
+    ],
+}
