@@ -56,11 +56,11 @@ export const ApolloHandler: FunctionComponent<PropsWithChildren<{}>> = ({childre
         }
 
         if (networkError) {
-            // Check if error response is JSON
+            // Check if the error response is JSON
             try {
                 JSON.parse(networkError.message);
             } catch (e) {
-                // If not replace parsing error message with real one
+                // If not, replace a parsing error message with a real one
                 networkError.message = t('error.network_error_occured_details');
             }
         }

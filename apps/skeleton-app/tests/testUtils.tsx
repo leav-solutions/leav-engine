@@ -5,25 +5,57 @@
 import {FunctionComponent, PropsWithChildren, ReactElement} from 'react';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
 import {ILangContext, LangContext} from '@leav/ui';
-import {InMemoryCacheConfig} from '@apollo/client';
-import {MockedResponse} from '@apollo/client/testing';
-import {GET_APPLICATION_BY_ENDPOINT_applications_list} from '../src/_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
-import {GET_GLOBAL_SETTINGS_globalSettings} from '../src/_gqlTypes/GET_GLOBAL_SETTINGS';
-import MockedProviderWithFragments from '../src/__mocks__/MockedProviderWithFragments';
+import {InMemoryCache, InMemoryCacheConfig} from '@apollo/client';
+import {MockedProvider, MockedProviderProps, MockedResponse} from '@apollo/client/testing';
 
 export interface ICustomRenderOptions extends RenderOptions {
     apolloMocks?: readonly MockedResponse[];
     cacheSettings?: InMemoryCacheConfig;
-    currentApp?: GET_APPLICATION_BY_ENDPOINT_applications_list;
     [key: string]: any;
 }
 
 interface IProvidersProps {
     apolloMocks?: readonly MockedResponse[];
     cacheSettings?: InMemoryCacheConfig;
-    currentApp?: GET_APPLICATION_BY_ENDPOINT_applications_list;
-    globalSettings?: GET_GLOBAL_SETTINGS_globalSettings;
+    globalSettings?: {
+        name: string;
+        icon: {
+            id: string;
+            whoAmI: {
+                id: string;
+                label: string | null;
+                subLabel: string | null;
+                color: string | null;
+                library: {
+                    id: string;
+                    label: Record<string, string | null> | null;
+                    gqlNames: {
+                        query: string;
+                        type: string;
+                    };
+                };
+            };
+        } | null;
+    };
 }
+
+interface IMockedProviderWithFragmentsProps extends MockedProviderProps {
+    cacheSettings?: InMemoryCacheConfig;
+}
+
+const MockedProviderWithFragments: FunctionComponent<PropsWithChildren<IMockedProviderWithFragmentsProps>> = ({
+    children,
+    cacheSettings,
+    ...props
+}) => {
+    // Set a new cache for each test to avoid fetching data in cache and not in provided mocks
+    const mockCache = new InMemoryCache(cacheSettings);
+    return (
+        <MockedProvider cache={mockCache} addTypename {...props}>
+            {children as ReactElement}
+        </MockedProvider>
+    );
+};
 
 const Providers: FunctionComponent<PropsWithChildren<IProvidersProps>> = ({children, apolloMocks, cacheSettings}) => {
     const mockLang: ILangContext = {

@@ -3,10 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useEffect, useState} from 'react';
 import ReactModal from 'react-modal';
-import {useQuery} from '@apollo/client';
 import {useTranslation} from 'react-i18next';
 import {
-    APP_ENDPOINT,
     customTheme,
     ErrorBoundary,
     ErrorDisplay,
@@ -22,17 +20,9 @@ import {KitApp, KitGrid} from 'aristid-ds';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
 import 'dayjs/locale/fr';
-import {getApplicationByEndpointQuery} from './graphQL/queries/applications/getApplicationByEndpointQuery';
-import {getLangs} from './graphQL/queries/core/getLangs';
-import {getGlobalSettingsQuery} from './graphQL/queries/globalSettings/getGlobalSettingsQuery';
-import {
-    GET_APPLICATION_BY_ENDPOINT,
-    GET_APPLICATION_BY_ENDPOINTVariables
-} from './_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
-import {GET_GLOBAL_SETTINGS} from './_gqlTypes/GET_GLOBAL_SETTINGS';
-import {GET_LANGS} from './_gqlTypes/GET_LANGS';
 import {Router} from './routes/Router';
 import {SIDEBAR_CONTENT_ID} from './constants';
+import {useGetApplicationPermissionAndNameQuery, useGetLanguagesQuery} from './__generated__';
 
 export const AppInitializer: FunctionComponent = () => {
     const {t, i18n} = useTranslation();
@@ -53,33 +43,24 @@ export const AppInitializer: FunctionComponent = () => {
         en: 'enUS'
     };
 
-    const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
+    const {data: availableLangs, loading: langsLoading, error: langsError} = useGetLanguagesQuery();
 
     const {
         data: applicationData,
         loading: applicationLoading,
         error: applicationError
-    } = useQuery<GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables>(getApplicationByEndpointQuery, {
-        variables: {endpoint: APP_ENDPOINT}
-    });
-
-    const {
-        data: globalSettingsData,
-        loading: globalSettingsLoading,
-        error: globalSettingsError
-    } = useQuery<GET_GLOBAL_SETTINGS>(getGlobalSettingsQuery);
+    } = useGetApplicationPermissionAndNameQuery();
 
     const currentApp = applicationData?.applications?.list?.[0];
-    const globalSettings = globalSettingsData?.globalSettings;
 
-    // Triggered when lang change, to update document title
+    // Triggered when lang change to update the document title
     useEffect(() => {
-        if (!globalSettings || !currentApp) {
+        if (!currentApp) {
             return;
         }
 
-        document.title = `${globalSettings.name} - ${localizedTranslation(currentApp.label, lang)}`;
-    }, [currentApp, globalSettings, lang]);
+        document.title = localizedTranslation(currentApp.label, lang);
+    }, [currentApp, lang]);
 
     // To update language in some components such as date-picker
     useEffect(() => {
@@ -93,13 +74,12 @@ export const AppInitializer: FunctionComponent = () => {
         setLang([i18n.language, fallbackLng]);
     };
 
-    if (applicationLoading || globalSettingsLoading || langsLoading || appLangLoading) {
+    if (applicationLoading || langsLoading || appLangLoading) {
         return <Loading />;
     }
 
-    if (applicationError || globalSettingsError || langsError || appLangErr) {
-        const error = applicationError || globalSettingsError;
-        return <ErrorDisplay message={error?.message ?? appLangErr} />;
+    if (applicationError || langsError || appLangErr) {
+        return <ErrorDisplay message={applicationError?.message ?? appLangErr} />;
     }
 
     if (!currentApp) {
