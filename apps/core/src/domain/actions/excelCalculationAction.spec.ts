@@ -17,6 +17,7 @@ const mockCalculationsVariable = {
     ): Promise<IVariableValue[]> => [
         {
             payload: `${variable}Value`,
+            raw_payload: `${variable}RawValue`,
             recordId: '1',
             library: 'meh'
         }
@@ -95,8 +96,8 @@ describe('excelCalculationAction', () => {
             values: [
                 {
                     ...mockResultValueBase,
-                    payload: 'resultat totoValue tataValue titiValue',
-                    raw_payload: 'resultat totoValue tataValue titiValue'
+                    payload: 'resultat totoRawValue tataRawValue titiRawValue',
+                    raw_payload: 'resultat totoRawValue tataRawValue titiRawValue'
                 }
             ]
         });
@@ -121,8 +122,8 @@ describe('excelCalculationAction', () => {
                 mockStandardValue,
                 {
                     ...mockResultValueBase,
-                    payload: 'resultat totoValue tataValue titiValue',
-                    raw_payload: 'resultat totoValue tataValue titiValue'
+                    payload: 'resultat totoRawValue tataRawValue titiRawValue',
+                    raw_payload: 'resultat totoRawValue tataRawValue titiRawValue'
                 }
             ]
         });
