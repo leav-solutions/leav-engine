@@ -57,7 +57,13 @@ const Wrapper = styled.div`
 `;
 
 function GeneralCustomConfigTab(): JSX.Element {
-    const {data, loading: getLoading, error: getError} = useQuery<GET_GLOBAL_SETTINGS>(getGlobalSettingsQuery);
+    const {
+        data,
+        loading: getLoading,
+        error: getError
+    } = useQuery<GET_GLOBAL_SETTINGS>(getGlobalSettingsQuery, {
+        fetchPolicy: 'no-cache'
+    });
     const [saveGlobalSettings, {loading: saveLoading, error: saveError}] = useMutation<
         SAVE_GLOBAL_SETTINGS,
         SAVE_GLOBAL_SETTINGSVariables
@@ -73,6 +79,10 @@ function GeneralCustomConfigTab(): JSX.Element {
             variables: dataToSave
         });
     };
+
+    if (getLoading) {
+        return <Loading />;
+    }
 
     return (
         <Wrapper>
