@@ -12,7 +12,6 @@ import {
     IActionsListFunction
 } from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
-import {TypeGuards} from '../../utils';
 
 interface IDeps {
     'core.domain.helpers.calculationVariable'?: ICalculationVariable;
@@ -30,7 +29,7 @@ export default function ({
         variable: string
     ): Promise<ActionsListExcelValueType> => {
         const variableValues = await calculationVariable.processVariableString(context, variable, initialValues);
-        return variableValues.flatMap(v => v.payload ?? []).join(' ');
+        return variableValues.flatMap(v => v.raw_payload ?? []).join(' ');
     };
 
     const _replaceAsync = async (
@@ -94,7 +93,7 @@ export default function ({
             const finalFormula = await _replaceVariables(
                 formula,
                 ctx,
-                values.map(v => (TypeGuards.isIStandardValue(v) ? v.raw_payload : v.payload))
+                values.map(v => v.payload)
             );
 
             const parser = new Parser();
