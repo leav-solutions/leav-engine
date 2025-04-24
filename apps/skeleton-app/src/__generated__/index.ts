@@ -2327,6 +2327,11 @@ export type GetLanguagesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetLanguagesQuery = { langs: Array<string | null> };
 
+export type GetUserIdentityQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserIdentityQuery = { me?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } | null };
+
 export type GetApplicationSkeletonSettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2415,6 +2420,52 @@ export type GetLanguagesQueryHookResult = ReturnType<typeof useGetLanguagesQuery
 export type GetLanguagesLazyQueryHookResult = ReturnType<typeof useGetLanguagesLazyQuery>;
 export type GetLanguagesSuspenseQueryHookResult = ReturnType<typeof useGetLanguagesSuspenseQuery>;
 export type GetLanguagesQueryResult = Apollo.QueryResult<GetLanguagesQuery, GetLanguagesQueryVariables>;
+export const GetUserIdentityDocument = gql`
+    query getUserIdentity {
+  me {
+    id
+    whoAmI {
+      id
+      label
+      library {
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserIdentityQuery__
+ *
+ * To run a query within a React component, call `useGetUserIdentityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserIdentityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserIdentityQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserIdentityQuery(baseOptions?: Apollo.QueryHookOptions<GetUserIdentityQuery, GetUserIdentityQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserIdentityQuery, GetUserIdentityQueryVariables>(GetUserIdentityDocument, options);
+      }
+export function useGetUserIdentityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserIdentityQuery, GetUserIdentityQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserIdentityQuery, GetUserIdentityQueryVariables>(GetUserIdentityDocument, options);
+        }
+export function useGetUserIdentitySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserIdentityQuery, GetUserIdentityQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserIdentityQuery, GetUserIdentityQueryVariables>(GetUserIdentityDocument, options);
+        }
+export type GetUserIdentityQueryHookResult = ReturnType<typeof useGetUserIdentityQuery>;
+export type GetUserIdentityLazyQueryHookResult = ReturnType<typeof useGetUserIdentityLazyQuery>;
+export type GetUserIdentitySuspenseQueryHookResult = ReturnType<typeof useGetUserIdentitySuspenseQuery>;
+export type GetUserIdentityQueryResult = Apollo.QueryResult<GetUserIdentityQuery, GetUserIdentityQueryVariables>;
 export const GetApplicationSkeletonSettingsDocument = gql`
     query GetApplicationSkeletonSettings {
   applications(filters: {id: "skeleton-app"}) {

@@ -40,7 +40,7 @@ const ApplicationRouting: FunctionComponent = () => {
         return <Loading />;
     }
 
-    return <main>{routing}</main>;
+    return routing;
 };
 
 export default ApplicationRouting;

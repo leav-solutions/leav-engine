@@ -6,6 +6,7 @@
         "module": "esnext",
         "noEmit": true,
         "skipLibCheck": true,
+        "plugins": [{ "name": "typescript-plugin-css-modules" }],
         "types": [
             "jest"
         ],
