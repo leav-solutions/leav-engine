@@ -4,5 +4,5 @@
 export const recordSearchParamsName = 'recordId';
 
 export const routes = {
-    panel: '/:' + 'panelId'
+    panel: '/:panelId'
 };

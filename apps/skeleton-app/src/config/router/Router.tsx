@@ -4,9 +4,10 @@
 import {FunctionComponent, useRef} from 'react';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import {APP_ENDPOINT, APPS_ENDPOINT, Explorer} from '@leav/ui';
-import {AntLayout} from 'aristid-ds';
-import ApplicationRouting from '../modules/ApplicationRouting/ApplicationRouting';
-import {NotFoundPage} from '../pages/NotFoundPage/NotFoundPage';
+import {KitGrid, AntLayout} from 'aristid-ds';
+import ApplicationRouting from '../../modules/ApplicationRouting/ApplicationRouting';
+import {NotFoundPage} from '../../pages/NotFoundPage/NotFoundPage';
+import {SIDEBAR_CONTENT_ID} from '../../constants';
 
 export const Router: FunctionComponent = () => {
     const explorerContainerRef = useRef<HTMLDivElement>(null);
@@ -20,6 +21,9 @@ export const Router: FunctionComponent = () => {
                         <Route element={<NotFoundPage />} />
                     </Routes>
                 </Explorer.EditSettingsContextProvider>
+                <KitGrid.KitCol>
+                    <div id={SIDEBAR_CONTENT_ID} />
+                </KitGrid.KitCol>
             </AntLayout>
         </BrowserRouter>
     );

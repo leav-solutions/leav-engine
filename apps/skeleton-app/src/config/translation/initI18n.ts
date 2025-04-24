@@ -6,8 +6,9 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import resourcesToBackend from 'i18next-resources-to-backend';
 import {initReactI18next} from 'react-i18next';
 
-export const initI18n = (defaultLang: string) => {
-    i18n.use(initReactI18next)
+export const initI18n = (defaultLang: string) =>
+    i18n
+        .use(initReactI18next)
         .use(
             resourcesToBackend((language, namespace) => {
                 try {
@@ -26,4 +27,3 @@ export const initI18n = (defaultLang: string) => {
                 useSuspense: true
             }
         });
-};

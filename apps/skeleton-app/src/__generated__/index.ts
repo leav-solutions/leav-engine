@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
@@ -2314,11 +2317,6 @@ export type SaveValueBatchResult = {
   values?: Maybe<Array<GenericValue>>;
 };
 
-export type GetApplicationSkeletonSettingsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetApplicationSkeletonSettingsQuery = { applications?: { list: Array<{ settings?: any | null }> } | null };
-
 export type GetApplicationPermissionAndNameQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2329,48 +2327,12 @@ export type GetLanguagesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetLanguagesQuery = { langs: Array<string | null> };
 
+export type GetApplicationSkeletonSettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
-export const GetApplicationSkeletonSettingsDocument = gql`
-    query GetApplicationSkeletonSettings {
-  applications(filters: {id: "skeleton-app"}) {
-    list {
-      settings
-    }
-  }
-}
-    `;
 
-/**
- * __useGetApplicationSkeletonSettingsQuery__
- *
- * To run a query within a React component, call `useGetApplicationSkeletonSettingsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetApplicationSkeletonSettingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetApplicationSkeletonSettingsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetApplicationSkeletonSettingsQuery(baseOptions?: Apollo.QueryHookOptions<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>(GetApplicationSkeletonSettingsDocument, options);
-      }
-export function useGetApplicationSkeletonSettingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>(GetApplicationSkeletonSettingsDocument, options);
-        }
-export function useGetApplicationSkeletonSettingsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>(GetApplicationSkeletonSettingsDocument, options);
-        }
-export type GetApplicationSkeletonSettingsQueryHookResult = ReturnType<typeof useGetApplicationSkeletonSettingsQuery>;
-export type GetApplicationSkeletonSettingsLazyQueryHookResult = ReturnType<typeof useGetApplicationSkeletonSettingsLazyQuery>;
-export type GetApplicationSkeletonSettingsSuspenseQueryHookResult = ReturnType<typeof useGetApplicationSkeletonSettingsSuspenseQuery>;
-export type GetApplicationSkeletonSettingsQueryResult = Apollo.QueryResult<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>;
+export type GetApplicationSkeletonSettingsQuery = { applications?: { list: Array<{ settings?: any | null }> } | null };
+
+
 export const GetApplicationPermissionAndNameDocument = gql`
     query getApplicationPermissionAndName {
   applications(filters: {id: "skeleton-app"}) {
@@ -2453,3 +2415,44 @@ export type GetLanguagesQueryHookResult = ReturnType<typeof useGetLanguagesQuery
 export type GetLanguagesLazyQueryHookResult = ReturnType<typeof useGetLanguagesLazyQuery>;
 export type GetLanguagesSuspenseQueryHookResult = ReturnType<typeof useGetLanguagesSuspenseQuery>;
 export type GetLanguagesQueryResult = Apollo.QueryResult<GetLanguagesQuery, GetLanguagesQueryVariables>;
+export const GetApplicationSkeletonSettingsDocument = gql`
+    query GetApplicationSkeletonSettings {
+  applications(filters: {id: "skeleton-app"}) {
+    list {
+      settings
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetApplicationSkeletonSettingsQuery__
+ *
+ * To run a query within a React component, call `useGetApplicationSkeletonSettingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApplicationSkeletonSettingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetApplicationSkeletonSettingsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetApplicationSkeletonSettingsQuery(baseOptions?: Apollo.QueryHookOptions<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>(GetApplicationSkeletonSettingsDocument, options);
+      }
+export function useGetApplicationSkeletonSettingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>(GetApplicationSkeletonSettingsDocument, options);
+        }
+export function useGetApplicationSkeletonSettingsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>(GetApplicationSkeletonSettingsDocument, options);
+        }
+export type GetApplicationSkeletonSettingsQueryHookResult = ReturnType<typeof useGetApplicationSkeletonSettingsQuery>;
+export type GetApplicationSkeletonSettingsLazyQueryHookResult = ReturnType<typeof useGetApplicationSkeletonSettingsLazyQuery>;
+export type GetApplicationSkeletonSettingsSuspenseQueryHookResult = ReturnType<typeof useGetApplicationSkeletonSettingsSuspenseQuery>;
+export type GetApplicationSkeletonSettingsQueryResult = Apollo.QueryResult<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>;

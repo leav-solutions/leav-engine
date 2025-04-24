@@ -95,8 +95,6 @@ export const PanelComponent: FunctionComponent = () => {
             }
             return (
                 <Explorer
-                    showTitle
-                    showFiltersAndSorts
                     entrypoint={{
                         type: 'link',
                         linkAttributeId: currentPanel.content.attributeSource,

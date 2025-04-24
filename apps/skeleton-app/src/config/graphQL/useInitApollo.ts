@@ -1,51 +1,25 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, PropsWithChildren} from 'react';
-import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {useTranslation} from 'react-i18next';
-import {
-    ApolloClient,
-    ApolloProvider,
-    from,
-    HttpLink,
-    InMemoryCache,
-    Observable,
-    ServerError,
-    split
-} from '@apollo/client';
+import {createClient} from 'graphql-ws';
+import {gqlPossibleTypes} from '@leav/ui';
+import {ApolloClient, from, HttpLink, InMemoryCache, Observable, ServerError, split} from '@apollo/client';
+import {onError} from '@apollo/client/link/error';
+import {NextLink, Operation} from '@apollo/client/link/core';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
-import {onError} from '@apollo/client/link/error';
-import {createClient} from 'graphql-ws';
 import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 
-export const ApolloHandler: FunctionComponent<PropsWithChildren<{}>> = ({children}) => {
-    const {t, i18n} = useTranslation();
-    const {redirectToLogin} = useRedirectToLogin();
-
-    // This function will catch the errors from the exchange between Apollo Client and the server.
+export const useInitApollo = (
+    unauthorizedHandler: (forward: NextLink, operation: Operation) => Observable<unknown>
+) => {
     const errorLink = onError(({graphQLErrors, networkError, operation, forward, response}) => {
         if (
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? [])?.some(err => err?.extensions?.code === 'UNAUTHENTICATED')
         ) {
-            return new Observable(observer => {
-                (async () => {
-                    try {
-                        redirectToLogin();
-
-                        // Retry last failed request
-                        forward(operation).subscribe({
-                            next: observer.next.bind(observer),
-                            error: observer.error.bind(observer),
-                            complete: observer.complete.bind(observer)
-                        });
-                    } catch (err) {
-                        observer.error(err);
-                    }
-                })();
-            });
+            return unauthorizedHandler(forward, operation);
         }
 
         if (graphQLErrors && response?.data === null) {
@@ -61,7 +35,8 @@ export const ApolloHandler: FunctionComponent<PropsWithChildren<{}>> = ({childre
                 JSON.parse(networkError.message);
             } catch (e) {
                 // If not, replace a parsing error message with a real one
-                networkError.message = t('error.network_error_occured_details');
+                // TODO: get lang from context
+                networkError.message = 'Unable to connect to server. Please check your Internet connection.';
             }
         }
     });
@@ -72,8 +47,9 @@ export const ApolloHandler: FunctionComponent<PropsWithChildren<{}>> = ({childre
         })
     );
 
+    // TODO: get lang from context
     const httpLink = new HttpLink({
-        uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}`
+        uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=fr`
     });
 
     const splitLink = split(
@@ -85,7 +61,7 @@ export const ApolloHandler: FunctionComponent<PropsWithChildren<{}>> = ({childre
         httpLink
     );
 
-    const gqlClient = new ApolloClient({
+    const client = new ApolloClient({
         link: from([errorLink, splitLink]),
         connectToDevTools: import.meta.env.DEV,
         cache: new InMemoryCache({
@@ -93,5 +69,5 @@ export const ApolloHandler: FunctionComponent<PropsWithChildren<{}>> = ({childre
         })
     });
 
-    return <ApolloProvider client={gqlClient}>{children}</ApolloProvider>;
+    return {client};
 };
