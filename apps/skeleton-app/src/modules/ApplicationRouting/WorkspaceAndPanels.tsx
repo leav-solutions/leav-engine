@@ -2,12 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
-import {Link, Outlet, useOutletContext, useParams} from 'react-router-dom';
+import {generatePath, Link, Outlet, useLocation, useOutletContext, useParams} from 'react-router-dom';
 import type {IWorkspace, Panel} from './types';
 import {getAllPanels} from './utils';
+import {routes} from './routes';
 
 export const WorkspaceAndPanels: FunctionComponent = () => {
     const {panelId} = useParams();
+    const {search} = useLocation();
 
     const workspaces = useOutletContext<IWorkspace[]>();
 
@@ -28,7 +30,7 @@ export const WorkspaceAndPanels: FunctionComponent = () => {
                     <menu>
                         {currentParentTuple[0].children.map(panel => (
                             <li key={panel.id}>
-                                <Link to={'/' + panel.id}>{panel.id}</Link>
+                                <Link to={generatePath(routes.panel, {panelId: panel.id}) + search}>{panel.id}</Link>
                             </li>
                         ))}
                     </menu>

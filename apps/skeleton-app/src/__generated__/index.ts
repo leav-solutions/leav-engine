@@ -524,6 +524,7 @@ export type GlobalSettings = {
   favicon?: Maybe<Record>;
   icon?: Maybe<Record>;
   name: Scalars['String'];
+  settings?: Maybe<Scalars['JSONObject']>;
 };
 
 export type GlobalSettingsFileInput = {
@@ -536,6 +537,7 @@ export type GlobalSettingsInput = {
   favicon?: InputMaybe<GlobalSettingsFileInput>;
   icon?: InputMaybe<GlobalSettingsFileInput>;
   name?: InputMaybe<Scalars['String']>;
+  settings?: InputMaybe<Scalars['JSONObject']>;
 };
 
 export type HeritedPermissionAction = {
@@ -2315,12 +2317,104 @@ export type SaveValueBatchResult = {
   values?: Maybe<Array<GenericValue>>;
 };
 
+export type GetApplicationPermissionAndNameQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetApplicationPermissionAndNameQuery = { applications?: { list: Array<{ id: string, label: any, permissions: { access_application: boolean } }> } | null };
+
+export type GetLanguagesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLanguagesQuery = { langs: Array<string | null> };
+
 export type GetApplicationSkeletonSettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetApplicationSkeletonSettingsQuery = { applications?: { list: Array<{ settings?: any | null }> } | null };
 
 
+export const GetApplicationPermissionAndNameDocument = gql`
+    query getApplicationPermissionAndName {
+  applications(filters: {id: "skeleton-app"}) {
+    list {
+      id
+      label
+      permissions {
+        access_application
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetApplicationPermissionAndNameQuery__
+ *
+ * To run a query within a React component, call `useGetApplicationPermissionAndNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApplicationPermissionAndNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetApplicationPermissionAndNameQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetApplicationPermissionAndNameQuery(baseOptions?: Apollo.QueryHookOptions<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>(GetApplicationPermissionAndNameDocument, options);
+      }
+export function useGetApplicationPermissionAndNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>(GetApplicationPermissionAndNameDocument, options);
+        }
+export function useGetApplicationPermissionAndNameSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>(GetApplicationPermissionAndNameDocument, options);
+        }
+export type GetApplicationPermissionAndNameQueryHookResult = ReturnType<typeof useGetApplicationPermissionAndNameQuery>;
+export type GetApplicationPermissionAndNameLazyQueryHookResult = ReturnType<typeof useGetApplicationPermissionAndNameLazyQuery>;
+export type GetApplicationPermissionAndNameSuspenseQueryHookResult = ReturnType<typeof useGetApplicationPermissionAndNameSuspenseQuery>;
+export type GetApplicationPermissionAndNameQueryResult = Apollo.QueryResult<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>;
+export const GetLanguagesDocument = gql`
+    query getLanguages {
+  langs
+}
+    `;
+
+/**
+ * __useGetLanguagesQuery__
+ *
+ * To run a query within a React component, call `useGetLanguagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLanguagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLanguagesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetLanguagesQuery(baseOptions?: Apollo.QueryHookOptions<GetLanguagesQuery, GetLanguagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLanguagesQuery, GetLanguagesQueryVariables>(GetLanguagesDocument, options);
+      }
+export function useGetLanguagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLanguagesQuery, GetLanguagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLanguagesQuery, GetLanguagesQueryVariables>(GetLanguagesDocument, options);
+        }
+export function useGetLanguagesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLanguagesQuery, GetLanguagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLanguagesQuery, GetLanguagesQueryVariables>(GetLanguagesDocument, options);
+        }
+export type GetLanguagesQueryHookResult = ReturnType<typeof useGetLanguagesQuery>;
+export type GetLanguagesLazyQueryHookResult = ReturnType<typeof useGetLanguagesLazyQuery>;
+export type GetLanguagesSuspenseQueryHookResult = ReturnType<typeof useGetLanguagesSuspenseQuery>;
+export type GetLanguagesQueryResult = Apollo.QueryResult<GetLanguagesQuery, GetLanguagesQueryVariables>;
 export const GetApplicationSkeletonSettingsDocument = gql`
     query GetApplicationSkeletonSettings {
   applications(filters: {id: "skeleton-app"}) {

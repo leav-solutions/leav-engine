@@ -1,0 +1,11 @@
+query getApplicationPermissionAndName {
+    applications(filters: {id: "skeleton-app"}) {
+        list {
+            id
+            label
+            permissions {
+                access_application
+            }
+        }
+    }
+}
