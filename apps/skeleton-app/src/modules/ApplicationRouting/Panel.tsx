@@ -10,6 +10,8 @@ import {recordSearchParamsName, routes} from './routes';
 import {useTranslation} from 'react-i18next';
 import {SIDEBAR_CONTENT_ID} from '../../constants';
 
+import {iframe, explorerContainer} from './panel.module.css';
+
 export const PanelComponent: FunctionComponent = () => {
     const {t} = useTranslation();
     const {search} = useLocation();
@@ -60,7 +62,15 @@ export const PanelComponent: FunctionComponent = () => {
         }
         if (currentPanel.content.type === 'custom') {
             // TODO: give interaction from iframe to main app to change pages
-            return <iframe src={currentPanel.content.iframeSource} />;
+            return (
+                <iframe
+                    className={iframe}
+                    src={currentPanel.content.iframeSource}
+                    title={currentPanel.id}
+                    width="100%"
+                    height="100%"
+                />
+            );
         }
         if (currentPanel.content.type === 'explorer') {
             const itemActions: ComponentProps<typeof Explorer>['itemActions'] = currentPanel.content.actions.map(
@@ -77,32 +87,38 @@ export const PanelComponent: FunctionComponent = () => {
             if ('libraryId' in currentPanel.content) {
                 if (currentPanel.content.libraryId === '<props>') {
                     return (
-                        <Explorer
-                            entrypoint={{
-                                type: 'library',
-                                libraryId: currentWorkspace.entrypoint.libraryId
-                            }}
-                            itemActions={itemActions}
-                        />
+                        <div className={explorerContainer}>
+                            <Explorer
+                                entrypoint={{
+                                    type: 'library',
+                                    libraryId: currentWorkspace.entrypoint.libraryId
+                                }}
+                                itemActions={itemActions}
+                            />
+                        </div>
                     );
                 }
                 return (
-                    <Explorer
-                        entrypoint={{type: 'library', libraryId: currentPanel.content.libraryId}}
-                        itemActions={itemActions}
-                    />
+                    <div className={explorerContainer}>
+                        <Explorer
+                            entrypoint={{type: 'library', libraryId: currentPanel.content.libraryId}}
+                            itemActions={itemActions}
+                        />
+                    </div>
                 );
             }
             return (
-                <Explorer
-                    entrypoint={{
-                        type: 'link',
-                        linkAttributeId: currentPanel.content.attributeSource,
-                        parentLibraryId: currentWorkspace.entrypoint.libraryId,
-                        parentRecordId: searchParams.get(recordSearchParamsName)
-                    }}
-                    itemActions={itemActions}
-                />
+                <div className={explorerContainer}>
+                    <Explorer
+                        entrypoint={{
+                            type: 'link',
+                            linkAttributeId: currentPanel.content.attributeSource,
+                            parentLibraryId: currentWorkspace.entrypoint.libraryId,
+                            parentRecordId: searchParams.get(recordSearchParamsName)
+                        }}
+                        itemActions={itemActions}
+                    />
+                </div>
             );
         }
     }

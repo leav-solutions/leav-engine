@@ -8,15 +8,18 @@ import {InitTheme} from './config/theme/InitTheme';
 import {InitNetwork} from './config/network/InitNetwork';
 import {GuardApplicationAccess} from './config/authentification/GuardApplicationAccess';
 import {Router} from './config/router/Router';
+import {InitUser} from './config/user/InitUser';
 
 export const Index: FunctionComponent = () => (
     <InitNetwork>
         <InitTranslation>
-            <InitTheme>
-                <GuardApplicationAccess>
-                    <Router />
-                </GuardApplicationAccess>
-            </InitTheme>
+            <InitUser>
+                <InitTheme>
+                    <GuardApplicationAccess>
+                        <Router />
+                    </GuardApplicationAccess>
+                </InitTheme>
+            </InitUser>
         </InitTranslation>
     </InitNetwork>
 );

@@ -6,6 +6,10 @@
 import {defineConfig} from 'vite';
 import {commonConfig} from '../../vite-config-common';
 import {dynamicBase} from 'vite-plugin-dynamic-base';
+import {browserslistToTargets} from 'lightningcss';
+import browserslist from 'browserslist';
+
+const targets = browserslistToTargets(browserslist('>= 0.25%'));
 
 export default () =>
     defineConfig({
@@ -15,6 +19,12 @@ export default () =>
                 transformIndexHtml: true
             })
         ],
+        css: {
+            transformer: 'lightningcss',
+            lightningcss: {
+                targets
+            }
+        },
         base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/skeleton-app',
         build: {
             rollupOptions: {

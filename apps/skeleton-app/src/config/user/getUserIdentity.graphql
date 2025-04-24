@@ -1,0 +1,12 @@
+query getUserIdentity {
+    me {
+        id
+        whoAmI {
+            id
+            label
+            library {
+                id
+            }
+        }
+    }
+}

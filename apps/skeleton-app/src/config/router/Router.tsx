@@ -4,9 +4,9 @@
 import {FunctionComponent, useRef} from 'react';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import {APP_ENDPOINT, APPS_ENDPOINT, Explorer} from '@leav/ui';
-import {KitGrid, AntLayout} from 'aristid-ds';
 import ApplicationRouting from '../../modules/ApplicationRouting/ApplicationRouting';
 import {NotFoundPage} from '../../pages/NotFoundPage/NotFoundPage';
+import {RootLayout} from '../../modules/layout/RootLayout';
 import {SIDEBAR_CONTENT_ID} from '../../constants';
 
 export const Router: FunctionComponent = () => {
@@ -14,17 +14,16 @@ export const Router: FunctionComponent = () => {
 
     return (
         <BrowserRouter basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`}>
-            <AntLayout style={{height: '100vh', overflow: 'hidden', position: 'relative'}} ref={explorerContainerRef}>
-                <Explorer.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
+            <RootLayout ref={explorerContainerRef}>
+                <Explorer.EditSettingsContextProvider
+                    panelElement={() => document.getElementById(SIDEBAR_CONTENT_ID) ?? explorerContainerRef.current}
+                >
                     <Routes>
                         <Route path={'/*'} element={<ApplicationRouting />} />
                         <Route element={<NotFoundPage />} />
                     </Routes>
                 </Explorer.EditSettingsContextProvider>
-                <KitGrid.KitCol>
-                    <div id={SIDEBAR_CONTENT_ID} />
-                </KitGrid.KitCol>
-            </AntLayout>
+            </RootLayout>
         </BrowserRouter>
     );
 };
