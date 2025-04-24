@@ -121,7 +121,7 @@ export default function ({
                             _getFileRecord(settings, 'favicon', ctx)
                     },
                     Query: {
-                        globalSettings: async (_, args, ctx: IQueryInfos) => globalSettingsDomain.getSettings(ctx)
+                        globalSettings: (_, args, ctx: IQueryInfos) => globalSettingsDomain.getSettings(ctx)
                     },
                     Mutation: {
                         saveGlobalSettings: (_, {settings}: {settings: IGlobalSettings}, ctx: IQueryInfos) =>
