@@ -33,6 +33,8 @@ export default function ({
     'core.infra.cache.cacheService': cacheService,
     'core.utils': utils
 }: IGlobalSettingsDomainDeps): IGlobalSettingsDomain {
+    const globalSettingsCacheKey = utils.getGlobalSettingsCacheKey();
+
     const _getSettings = async (ctx: IQueryInfos) => {
         const _exec = async () => {
             const settings = await globalSettingsRepo.getSettings(ctx);
@@ -46,8 +48,7 @@ export default function ({
             };
         };
 
-        const cacheKey = utils.getGlobalSettingsCacheKey();
-        return cacheService.memoize({key: cacheKey, func: _exec, storeNulls: false, ctx});
+        return cacheService.memoize({key: globalSettingsCacheKey, func: _exec, storeNulls: false, ctx});
     };
 
     return {
@@ -67,8 +68,7 @@ export default function ({
             // Save settings
             const savedSettings = await globalSettingsRepo.saveSettings({settings, ctx});
 
-            const cacheKey = utils.getGlobalSettingsCacheKey();
-            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+            await cacheService.getCache(ECacheType.RAM).deleteData([globalSettingsCacheKey]);
 
             await eventsManagerDomain.sendDatabaseEvent(
                 {
