@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
+import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode, MultiLinkDisplayOption} from './globalTypes';
 
 // ====================================================
 // GraphQL fragment: AttributeDetails
@@ -75,6 +75,7 @@ export interface AttributeDetails_StandardAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     metadata_fields: AttributeDetails_StandardAttribute_metadata_fields[] | null;
     permissions_conf: AttributeDetails_StandardAttribute_permissions_conf | null;
     versions_conf: AttributeDetails_StandardAttribute_versions_conf | null;
@@ -149,6 +150,7 @@ export interface AttributeDetails_LinkAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     metadata_fields: AttributeDetails_LinkAttribute_metadata_fields[] | null;
     permissions_conf: AttributeDetails_LinkAttribute_permissions_conf | null;
     versions_conf: AttributeDetails_LinkAttribute_versions_conf | null;
@@ -224,6 +226,7 @@ export interface AttributeDetails_TreeAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     metadata_fields: AttributeDetails_TreeAttribute_metadata_fields[] | null;
     permissions_conf: AttributeDetails_TreeAttribute_permissions_conf | null;
     versions_conf: AttributeDetails_TreeAttribute_versions_conf | null;
