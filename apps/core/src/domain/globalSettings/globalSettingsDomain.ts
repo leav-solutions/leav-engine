@@ -10,6 +10,8 @@ import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {DEFAULT_APPLICATION} from '../../_constants/globalSettings';
+import {IUtils} from '../../utils/utils';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 
 export interface IGlobalSettingsDomain {
     saveSettings({settings, ctx}: {settings: IGlobalSettings; ctx: IQueryInfos}): Promise<IGlobalSettings>;
@@ -20,13 +22,35 @@ export interface IGlobalSettingsDomainDeps {
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.globalSettings': IGlobalSettingsRepo;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils': IUtils;
 }
 
 export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.eventsManager': eventsManagerDomain,
-    'core.infra.globalSettings': globalSettingsRepo
+    'core.infra.globalSettings': globalSettingsRepo,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils
 }: IGlobalSettingsDomainDeps): IGlobalSettingsDomain {
+    const globalSettingsCacheKey = utils.getGlobalSettingsCacheKey();
+
+    const _getSettings = async (ctx: IQueryInfos) => {
+        const _exec = async () => {
+            const settings = await globalSettingsRepo.getSettings(ctx);
+
+            return {
+                name: settings.name,
+                icon: settings.icon,
+                favicon: settings.favicon,
+                defaultApp: settings.defaultApp ?? DEFAULT_APPLICATION,
+                settings: settings.settings
+            };
+        };
+
+        return cacheService.memoize({key: globalSettingsCacheKey, func: _exec, storeNulls: false, ctx});
+    };
+
     return {
         async saveSettings({settings, ctx}) {
             const canSave = await adminPermissionDomain.getAdminPermission({
@@ -39,10 +63,12 @@ export default function ({
                 throw new PermissionError(AdminPermissionsActions.EDIT_GLOBAL_SETTINGS);
             }
 
-            const settingsBefore = await globalSettingsRepo.getSettings(ctx);
+            const settingsBefore = await _getSettings(ctx);
 
             // Save settings
             const savedSettings = await globalSettingsRepo.saveSettings({settings, ctx});
+
+            await cacheService.getCache(ECacheType.RAM).deleteData([globalSettingsCacheKey]);
 
             await eventsManagerDomain.sendDatabaseEvent(
                 {
@@ -56,16 +82,6 @@ export default function ({
 
             return savedSettings;
         },
-        async getSettings(ctx) {
-            const settings = await globalSettingsRepo.getSettings(ctx);
-
-            return {
-                name: settings.name,
-                icon: settings.icon,
-                favicon: settings.favicon,
-                defaultApp: settings.defaultApp ?? DEFAULT_APPLICATION,
-                settings: settings.settings
-            };
-        }
+        getSettings: _getSettings
     };
 }
