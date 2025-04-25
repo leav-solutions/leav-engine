@@ -150,6 +150,12 @@
         "validation_regex": "Validation Rule",
         "reverse_link": "Reverse link",
         "linked_attribute": "Linked attribute",
+        "multi_link_display_option": "Displayed option of linked values",
+        "multi_link_display_options": {
+            "avatar": "Avatar",
+            "tag": "Tag",
+            "badge_qty": "quantity Badge"
+        },
         "types": {
             "tree": "Tree",
             "advanced": "Advanced",

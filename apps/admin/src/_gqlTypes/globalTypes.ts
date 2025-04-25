@@ -56,6 +56,12 @@ export enum AttributeFormat {
     text = 'text'
 }
 
+export enum MultiLinkDisplayOption {
+    avatar = 'avatar',
+    tag = 'tag',
+    badge_qty = 'badge_qty'
+}
+
 export enum AttributeType {
     advanced = 'advanced',
     advanced_link = 'advanced_link',
@@ -264,6 +270,7 @@ export interface AttributeInput {
     actions_list?: ActionsListConfigurationInput | null;
     permissions_conf?: Treepermissions_confInput | null;
     multiple_values?: boolean | null;
+    multi_link_display_option?: MultiLinkDisplayOption | null;
     settings?: JSONObject | null;
     versions_conf?: ValuesVersionsConfInput | null;
     metadata_fields?: string[] | null;

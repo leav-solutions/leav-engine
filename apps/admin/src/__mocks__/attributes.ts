@@ -7,7 +7,7 @@ import {
     GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
     GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
 } from '../_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {AttributeFormat, AttributeType, ValueVersionMode} from '../_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, MultiLinkDisplayOption, ValueVersionMode} from '../_gqlTypes/globalTypes';
 
 const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     id: 'test_attribute',
@@ -32,7 +32,8 @@ const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     permissions_conf: null,
     versions_conf: {versionable: false, mode: ValueVersionMode.smart, profile: null},
     metadata_fields: null,
-    libraries: null
+    libraries: null,
+    multi_link_display_option: MultiLinkDisplayOption.avatar
 };
 
 export const mockAttrSimple = {...base, id: 'simple_attribute'};

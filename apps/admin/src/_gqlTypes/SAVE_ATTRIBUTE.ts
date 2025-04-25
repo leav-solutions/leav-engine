@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AttributeInput, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
+import {AttributeInput, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode, MultiLinkDisplayOption} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_ATTRIBUTE
@@ -100,6 +100,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     metadata_fields: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf | null;
@@ -199,6 +200,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     metadata_fields: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf | null;
@@ -326,6 +328,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     metadata_fields: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf | null;
