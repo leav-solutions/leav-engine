@@ -16,9 +16,17 @@ interface IPageProps {
     subtitle?: string;
     breadcrumb?: IKitBreadcrumb;
     tabs?: ITabProps[];
+    defaultActiveTabKey?: string;
 }
 
-export const Page: FunctionComponent<IPageProps> = ({title, subtitle, breadcrumb, tabs, children}) => {
+export const Page: FunctionComponent<IPageProps> = ({
+    title,
+    subtitle,
+    breadcrumb,
+    tabs,
+    defaultActiveTabKey,
+    children
+}) => {
     const onChangeTab: ComponentProps<typeof KitTabs>['onChange'] = key => {
         tabs.find(tab => tab.key === key)?.onClick?.();
     };
@@ -30,7 +38,7 @@ export const Page: FunctionComponent<IPageProps> = ({title, subtitle, breadcrumb
                     {breadcrumb && <div>{breadcrumb}</div>}
                     <KitIdCard size="large" title={title} description={subtitle} />
                 </div>
-                {tabs && <KitTabs items={tabs} onChange={onChangeTab} />}
+                {tabs && <KitTabs items={tabs} onChange={onChangeTab} defaultKey={defaultActiveTabKey} />}
             </div>
             <div className={content}>{children}</div>
         </>

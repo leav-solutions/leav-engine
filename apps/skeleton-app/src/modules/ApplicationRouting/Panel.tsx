@@ -65,6 +65,7 @@ export const PanelComponent: FunctionComponent = () => {
             return (
                 <iframe
                     className={iframe}
+                    name="testFrame"
                     src={currentPanel.content.iframeSource}
                     title={currentPanel.id}
                     width="100%"

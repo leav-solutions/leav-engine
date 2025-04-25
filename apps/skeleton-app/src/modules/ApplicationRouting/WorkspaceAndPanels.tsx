@@ -39,7 +39,7 @@ export const WorkspaceAndPanels: FunctionComponent = () => {
                 activeWorkspaceId={currentWorkspace.id}
             />
             <PageLayout>
-                <Page title={currentPanel?.id} tabs={tabItems}>
+                <Page title={currentPanel?.id} tabs={tabItems} defaultActiveTabKey={currentPanel?.id}>
                     <Outlet
                         context={
                             {currentPanel, currentWorkspace} satisfies {

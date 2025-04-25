@@ -10,7 +10,9 @@ export const InitUser: FunctionComponent = ({children}) => {
 
     const userIdentity = useMemo<IUserContext>(() => {
         if (userData?.me == null) {
-            return null;
+            return {
+                userData: null
+            };
         }
 
         return {

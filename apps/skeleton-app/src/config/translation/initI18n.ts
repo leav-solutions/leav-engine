@@ -27,3 +27,6 @@ export const initI18n = (defaultLang: string) =>
                 useSuspense: true
             }
         });
+
+/* i18n is a singleton, we can just export it and useit where we need */
+export {i18n};
