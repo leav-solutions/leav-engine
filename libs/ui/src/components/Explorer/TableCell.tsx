@@ -198,9 +198,9 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     content = (
                         <>
                             <StyledFaListAlt />
-                            <KitTypography.Text key={attributeProperties.id} ellipsis={{tooltip: textContent}}>
+                            <KitTypography.AdvancedText key={attributeProperties.id} ellipsis={{tooltip: textContent}}>
                                 {textContent}
-                            </KitTypography.Text>
+                            </KitTypography.AdvancedText>
                         </>
                     );
                     break;
@@ -209,9 +209,12 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     content = (
                         <>
                             <StyledColorChip $colorTextContent={color.toHexString()} />
-                            <KitTypography.Text key={attributeProperties.id} ellipsis={{tooltip: value.valuePayload}}>
+                            <KitTypography.AdvancedText
+                                key={attributeProperties.id}
+                                ellipsis={{tooltip: value.valuePayload}}
+                            >
                                 {value.valuePayload}
-                            </KitTypography.Text>
+                            </KitTypography.AdvancedText>
                         </>
                     );
                     break;
@@ -222,9 +225,9 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     const valueContent =
                         attributeProperties.format === AttributeFormat.encrypted ? '●●●●●●●●●●●●' : value.valuePayload;
                     content = (
-                        <KitTypography.Text key={attributeProperties.id} ellipsis={{tooltip: valueContent}}>
+                        <KitTypography.AdvancedText key={attributeProperties.id} ellipsis={{tooltip: valueContent}}>
                             {valueContent}
-                        </KitTypography.Text>
+                        </KitTypography.AdvancedText>
                     );
                     break;
             }

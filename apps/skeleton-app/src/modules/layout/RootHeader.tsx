@@ -4,7 +4,7 @@
 import {type ComponentProps, type FunctionComponent} from 'react';
 import {KitButton, type KitDropDown, KitHeader} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faRightFromBracket} from '@fortawesome/free-solid-svg-icons';
+import {faRightFromBracket, faUser} from '@fortawesome/free-solid-svg-icons';
 import {useTranslation} from 'react-i18next';
 import {type IKitAvatar} from 'aristid-ds/dist/Kit/DataDisplay/Avatar/types';
 import {Link} from 'react-router-dom';
@@ -43,7 +43,7 @@ export const RootHeader: FunctionComponent = () => {
     const identity = userData?.userWhoAmI?.label;
 
     const avatarProps: IKitAvatar = {
-        src: 'images/portrait.png',
+        icon: <FontAwesomeIcon icon={faUser} />,
         label: identity
     };
 

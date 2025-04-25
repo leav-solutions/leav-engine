@@ -17,7 +17,7 @@
         "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
         "antd": "5.22.2",
-        "aristid-ds": "13.0.0-b2fece3",
+        "aristid-ds": "13.0.0-d4d9bc3",
         "dayjs": "1.11.13",
         "graphql": "15.0.0",
         "graphql-tag": "2.12.6",
