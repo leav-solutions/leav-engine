@@ -104,6 +104,7 @@ export interface IValueDomain {
         values: IValue[];
         ctx: IQueryInfos;
         keepEmpty?: boolean;
+        skipPermission?: boolean;
     }): Promise<ISaveBatchValueResult>;
 
     deleteValue(params: IDeleteValueParams): Promise<IValue[]>;
@@ -686,6 +687,12 @@ const valueDomain = function ({
                 infos: ctx
             };
 
+            if (attributeProps.readonly) {
+                throw new ValidationError<IValue>({
+                    attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
+                });
+            }
+
             // Check permissions
             const {
                 canSave,
@@ -770,7 +777,14 @@ const valueDomain = function ({
 
             return allSavedValues;
         },
-        async saveValueBatch({library, recordId, values, ctx, keepEmpty = false}): Promise<ISaveBatchValueResult> {
+        async saveValueBatch({
+            library,
+            recordId,
+            values,
+            ctx,
+            keepEmpty = false,
+            skipPermission = false
+        }): Promise<ISaveBatchValueResult> {
             await validate.validateLibrary(library, ctx);
 
             for (const value of values) {
@@ -807,27 +821,29 @@ const valueDomain = function ({
                             keepEmpty
                         };
 
+                        if (attributeProps.readonly) {
+                            throw new ValidationError<IValue>({
+                                attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
+                            });
+                        }
+
                         // Check permissions
-                        const {canSave, reason: forbiddenSaveReason} = await canSaveRecordValue({
-                            ...valueChecksParams,
-                            ctx,
-                            deps: {
-                                recordPermissionDomain,
-                                recordAttributePermissionDomain,
-                                config
-                            }
-                        });
+                        if (!skipPermission) {
+                            const {canSave, reason: forbiddenSaveReason} = await canSaveRecordValue({
+                                ...valueChecksParams,
+                                ctx,
+                                deps: {
+                                    recordPermissionDomain,
+                                    recordAttributePermissionDomain,
+                                    config
+                                }
+                            });
 
-                        if (!canSave) {
-                            if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
-                                throw new ValidationError<IValue>({
-                                    attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
-                                });
+                            if (!canSave) {
+                                throw new PermissionError(
+                                    forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions
+                                );
                             }
-
-                            throw new PermissionError(
-                                forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions
-                            );
                         }
 
                         // Validate value
