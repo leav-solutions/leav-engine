@@ -18,6 +18,7 @@ import {ActionsListEvents} from '../../../_types/actionsList';
 import {
     AttributeFormats,
     AttributeTypes,
+    MultiLinkDisplayOption,
     IAttribute,
     IAttributeFilterOptions,
     IAttributeVersionsConf,
@@ -133,6 +134,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                 actions_list: ActionsListConfiguration,
                 permissions_conf: Treepermissions_conf,
                 multiple_values: Boolean!,
+                multi_link_display_option: MultiLinkDisplayOption
                 versions_conf: ValuesVersionsConf,
                 input_types: ActionListIOTypes!,
                 output_types: ActionListIOTypes!,
@@ -154,6 +156,10 @@ export default function (deps: IDeps): ICoreAttributeApp {
 
                     enum AttributeFormat {
                         ${Object.values(AttributeFormats).join(' ')}
+                    }
+
+                    enum MultiLinkDisplayOption {
+                        ${Object.values(MultiLinkDisplayOption).join(' ')}
                     }
 
                     enum ValueVersionMode {
@@ -231,6 +237,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         unique: Boolean,
                         character_limit: Int,
                         settings: JSONObject
+                        multi_link_display_option: MultiLinkDisplayOption
                     }
 
                     type EmbeddedAttribute {

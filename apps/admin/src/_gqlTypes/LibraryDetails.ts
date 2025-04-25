@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {LibraryBehavior, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
+import {LibraryBehavior, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode, MultiLinkDisplayOption} from './globalTypes';
 
 // ====================================================
 // GraphQL fragment: LibraryDetails
@@ -74,6 +74,7 @@ export interface LibraryDetails_attributes_StandardAttribute {
     required: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     multiple_values: boolean;
     metadata_fields: LibraryDetails_attributes_StandardAttribute_metadata_fields[] | null;
     permissions_conf: LibraryDetails_attributes_StandardAttribute_permissions_conf | null;
@@ -149,6 +150,7 @@ export interface LibraryDetails_attributes_LinkAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     metadata_fields: LibraryDetails_attributes_LinkAttribute_metadata_fields[] | null;
     permissions_conf: LibraryDetails_attributes_LinkAttribute_permissions_conf | null;
     versions_conf: LibraryDetails_attributes_LinkAttribute_versions_conf | null;
@@ -224,6 +226,7 @@ export interface LibraryDetails_attributes_TreeAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     metadata_fields: LibraryDetails_attributes_TreeAttribute_metadata_fields[] | null;
     permissions_conf: LibraryDetails_attributes_TreeAttribute_permissions_conf | null;
     versions_conf: LibraryDetails_attributes_TreeAttribute_versions_conf | null;
