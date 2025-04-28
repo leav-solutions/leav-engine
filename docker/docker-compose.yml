@@ -1,4 +1,3 @@
-
 ##### Common properties #####
 x-node-image: &node_image node:18-alpine
 x-message-broker-image: &message_broker_image "rabbitmq:3.13-management-alpine"
