@@ -37,6 +37,7 @@ describe('InfosTab', () => {
             type: mockAttrAdv.type,
             format: mockAttrAdv.format,
             multiple_values: mockAttrAdv.multiple_values,
+            multi_link_display_option: mockAttrAdv.multi_link_display_option,
             linked_library: null,
             linked_tree: null,
             reverse_link: null,
