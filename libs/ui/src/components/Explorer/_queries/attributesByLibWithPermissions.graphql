@@ -10,6 +10,7 @@ fragment AttributesByLibAttributeWithPermissions on Attribute {
     format
     label
     multiple_values
+    multi_link_display_option
     system
     readonly
     permissions {
