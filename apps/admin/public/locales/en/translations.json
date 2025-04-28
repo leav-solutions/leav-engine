@@ -154,7 +154,7 @@
         "multi_link_display_options": {
             "avatar": "Avatar",
             "tag": "Tag",
-            "badge_qty": "quantity Badge"
+            "badge_qty": "Quantity badge"
         },
         "types": {
             "tree": "Tree",
