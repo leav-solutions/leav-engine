@@ -9,7 +9,8 @@ import {
     PropertyValueFragment,
     PropertyValueLinkValueFragment,
     PropertyValueTreeValueFragment,
-    PropertyValueValueFragment
+    PropertyValueValueFragment,
+    MultiLinkDisplayOption
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FaArrowRight, FaCalendar, FaListAlt} from 'react-icons/fa';
@@ -145,25 +146,49 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
             });
             return <TableTagGroup tags={tags} />;
         } else if (isLinkValues(values, attributeProperties)) {
-            return (
-                <KitAvatar.Group max={{count: 5}}>
-                    {values.map((value, index) => {
-                        if (!isLinkValue(value, attributeProperties)) {
-                            return null;
-                        }
+            switch (attributeProperties.multi_link_display_option) {
+                case MultiLinkDisplayOption.avatar:
+                    return (
+                        <KitAvatar.Group max={{count: 5}}>
+                            {values.map((value, index) => {
+                                if (!isLinkValue(value, attributeProperties)) {
+                                    return null;
+                                }
 
-                        return (
-                            <KitAvatar
-                                key={index}
-                                label={String(value?.linkPayload?.whoAmI.label)}
-                                src={value?.linkPayload?.whoAmI.preview?.small}
-                                color="primary"
-                                secondaryColorInvert
-                            />
-                        );
-                    })}
-                </KitAvatar.Group>
-            );
+                                return (
+                                    <KitAvatar
+                                        key={index}
+                                        label={String(value?.linkPayload?.whoAmI.label)}
+                                        src={value?.linkPayload?.whoAmI.preview?.small}
+                                        color="primary"
+                                        secondaryColorInvert
+                                    />
+                                );
+                            })}
+                        </KitAvatar.Group>
+                    );
+                case MultiLinkDisplayOption.tag:
+                    return (
+                        <TableTagGroup
+                            tags={values.map<IKitTagConfig>(value => ({
+                                type: 'primary',
+                                idCardProps: {description: value?.linkPayload?.whoAmI.label ?? undefined}
+                            }))}
+                        />
+                    );
+                case MultiLinkDisplayOption.badge_qty:
+                    return (
+                        <KitTag
+                            type="primary"
+                            idCardProps={{
+                                description: `${values.length}`,
+                                disableTooltip: true
+                            }}
+                        />
+                    );
+                default:
+                    return null;
+            }
         } else {
             // TODO: handle multiple tree values
             return null;
