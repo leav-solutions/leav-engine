@@ -217,7 +217,10 @@ describe('formDomain', () => {
             });
 
             const newLabel = {fr: 'New label'};
-            await domain.saveForm({form: {id: mockForm.id, library: mockForm.library, label: newLabel}, ctx});
+            await domain.saveForm({
+                form: {id: mockForm.id, library: mockForm.library, label: newLabel, sidePanel: mockForm.sidePanel},
+                ctx
+            });
 
             expect(mockFormRepo.updateForm).toBeCalled();
             expect(mockFormRepo.updateForm.mock.calls[0][0].formData).toEqual({

@@ -174,7 +174,12 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 {
                     elements: finalElements
                 }
-            ]
+            ],
+            // TODO add an external default value for this?
+            sidePanel: {
+                enable: true,
+                isOpenByDefault: true
+            }
         };
     };
 
@@ -352,7 +357,8 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 system: formProps.system,
                 library: libraryId,
                 dependencyAttributes: formProps.dependencyAttributes,
-                elements: formElements
+                elements: formElements,
+                sidePanel: formProps.sidePanel
             };
         },
         async getFormProperties({library, id, ctx}): Promise<IForm> {
@@ -378,7 +384,11 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 system: false,
                 dependencyAttributes: [],
                 label: {fr: '', en: ''},
-                elements: []
+                elements: [],
+                sidePanel: {
+                    enable: true,
+                    isOpenByDefault: true
+                }
             };
 
             const filters: IFormFilterOptions = {library: form.library, id: form.id};

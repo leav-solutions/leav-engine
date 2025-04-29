@@ -30,5 +30,9 @@ export const mockForm: IFormStrict = {
     system: false,
     dependencyAttributes: [],
     label: {fr: 'Test Form'},
-    elements: [{elements: [formField, formLayoutElement]}]
+    elements: [{elements: [formField, formLayoutElement]}],
+    sidePanel: {
+        enable: false,
+        isOpenByDefault: false
+    }
 };
