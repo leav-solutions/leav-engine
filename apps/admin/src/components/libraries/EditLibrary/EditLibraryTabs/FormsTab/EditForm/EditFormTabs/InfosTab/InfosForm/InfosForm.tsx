@@ -14,6 +14,7 @@ import AttributeSelector from '../../../../../../../../attributes/AttributeSelec
 import FormFieldWrapper from '../../../../../../../../shared/FormFieldWrapper';
 import {useEditFormModalButtonsContext} from '../../../../EditFormModal/useEditFormModalButtonsContext';
 import {useEditFormContext} from '../../../hooks/useEditFormContext';
+import CheckboxField from '../../ContentTab/uiElements/fields/CheckboxField';
 
 interface IInfosFormProps {
     onSubmit: (formData: FormInput) => void;
@@ -181,6 +182,45 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                         disabled={readonly}
                     />
                 </FormFieldWrapper>
+                <Form.Group grouped>
+                    <label>{t('forms.side_panel.title')}</label>
+                    <FormFieldWrapper error={_getErrorByField('dependencyAttributes')}>
+                        <Form.Checkbox
+                            label={t('forms.side_panel.displayed')}
+                            disabled={values.system || readonly}
+                            width="8"
+                            toggle
+                            name="enable_side_panel"
+                            aria-label="enable_side_panel"
+                            onChange={_handleChangeWithSubmit}
+                            onBlur={_handleBlur}
+                            checked={true}
+                        />
+                    </FormFieldWrapper>
+                    {true && (
+                        <FormFieldWrapper>
+                            <Form.Select
+                                label={t('forms.side_panel.default')}
+                                disabled={values.system || readonly}
+                                width="4"
+                                name="versions_conf.mode"
+                                aria-label="versions_conf.mode"
+                                onChange={_handleChangeWithSubmit}
+                                options={[
+                                    {
+                                        text: t('forms.side_panel.opened'),
+                                        value: true
+                                    },
+                                    {
+                                        text: t('forms.side_panel.closed'),
+                                        value: false
+                                    }
+                                ]}
+                                value={true}
+                            />
+                        </FormFieldWrapper>
+                    )}
+                </Form.Group>
             </Form>
         );
     };
