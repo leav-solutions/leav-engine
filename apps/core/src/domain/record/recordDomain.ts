@@ -995,6 +995,7 @@ export default function ({
                     library,
                     recordId: newRecord.id,
                     values: cleanValues,
+                    skipPermission: true,
                     ctx
                 });
                 valuesErrors = errors;

@@ -73,10 +73,6 @@ const _canSaveMetadata = async (
 export default async (params: ICanSaveRecordValueParams): Promise<ICanSaveRecordValueRes> => {
     const {attributeProps, value, library, recordId, ctx, deps, keepEmpty = false} = params;
 
-    if (attributeProps.readonly) {
-        return {canSave: false, reason: Errors.READONLY_ATTRIBUTE};
-    }
-
     const valueExists = doesValueExist(value, attributeProps);
 
     // Check permission
