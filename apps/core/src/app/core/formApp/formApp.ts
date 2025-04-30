@@ -135,7 +135,7 @@ export default function ({
                         label: SystemTranslation,
                         dependencyAttributes: [ID!],
                         elements: [FormElementsByDepsInput!]
-                        sidePanel: FormSidePanelInput!
+                        sidePanel: FormSidePanelInput
                     }
 
                     type FormSidePanel {
