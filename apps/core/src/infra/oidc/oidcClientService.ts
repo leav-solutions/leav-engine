@@ -21,7 +21,7 @@ export interface IOIDCClientService {
     oidcClient?: OidcClient;
     getTokensFromCodes: (params: {authorizationCode: string; queryId: string}) => Promise<TokenSet>;
     getAuthorizationUrl: (params: {redirectUri: string; queryId: string}) => Promise<string>;
-    getLogoutUrl: (params: {userId: string}) => Promise<string>;
+    getLogoutUrl: (params: {userId: string | null}) => Promise<string>;
     saveOIDCTokens: (params: {userId: string; tokens: TokenSet}) => Promise<void>;
     checkTokensValidity: (params: {userId: string}) => Promise<void> | never;
     saveOriginalUrl: (params: {originalUrl: string; queryId: string}) => Promise<void>;
@@ -139,7 +139,7 @@ export default function ({
                 post_logout_redirect_uri: config.auth.oidc.postLogoutRedirectUri
             };
 
-            if (config.auth.oidc.skipLogoutConfirmationPage) {
+            if (config.auth.oidc.skipLogoutConfirmationPage && userId) {
                 payload.id_token_hint = await _getTokenSetByUserId(userId);
             }
 
