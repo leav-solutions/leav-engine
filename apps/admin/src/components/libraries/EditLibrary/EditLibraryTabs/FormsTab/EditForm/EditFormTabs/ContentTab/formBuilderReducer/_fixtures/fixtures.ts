@@ -110,6 +110,10 @@ export const formData: GET_FORM_forms_list = {
         en: 'OK!',
         fr: 'Formulaire édition'
     },
+    sidePanel: {
+        enable: true,
+        isOpenByDefault: false
+    },
     elements: [
         {
             dependencyValue: null,

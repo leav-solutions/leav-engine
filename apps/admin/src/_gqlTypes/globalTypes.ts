@@ -306,6 +306,13 @@ export interface FormElementSettingsInput {
     value: Any;
 }
 
+
+export interface FormSidePanelInput {
+    enable: boolean,
+    isOpenByDefault: boolean
+}
+
+
 export interface FormElementsByDepsInput {
     dependencyValue?: FormDependencyValueInput | null;
     elements: FormElementInput[];
@@ -317,6 +324,7 @@ export interface FormInput {
     label?: SystemTranslation | null;
     dependencyAttributes?: string[] | null;
     elements?: FormElementsByDepsInput[] | null;
+    sidePanel?: FormSidePanelInput | null;
 }
 
 export interface GlobalSettingsFileInput {

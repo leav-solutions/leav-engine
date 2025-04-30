@@ -14,12 +14,10 @@ export default function ({'core.infra.form': formRepo = null, config = null}: ID
     return {
         async run(ctx) {
             const formsList = await formRepo.getForms({ctx});
-
-            // update form to remove attribute
             await Promise.all(
                 formsList.list.map(form => {
                     form.sidePanel = form.sidePanel ?? {
-                        enable: false,
+                        enable: true,
                         isOpenByDefault: false
                     };
                     return formRepo.updateForm({formData: form as IFormStrict, ctx});
