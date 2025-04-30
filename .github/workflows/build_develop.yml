@@ -5,6 +5,11 @@ on:
     branches:
       - develop
   workflow_dispatch:
+    inputs:
+      build_arm64:
+        description: 'Include arm64 platform in the build'
+        required: false
+        default: 'false'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,7 +39,7 @@ jobs:
                 uses: docker/build-push-action@v4
                 with:
                     context: .
-                    platforms: linux/amd64, linux/arm64/v8
+                    platforms: ${{ github.event.inputs.build_arm64 == 'true' && 'linux/amd64,linux/arm64/v8' || 'linux/amd64' }}
                     push: true
                     no-cache: true
                     file: docker/DOCKERFILES/build/core.dev.Dockerfile
@@ -66,7 +71,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
-                    platforms: linux/amd64, linux/arm64/v8
+                    platforms: ${{ github.event.inputs.build_arm64 == 'true' && 'linux/amd64,linux/arm64/v8' || 'linux/amd64' }}
                     push: true
                     target: runner-preview-generator
                     file: docker/DOCKERFILES/build/generic.Dockerfile
@@ -100,7 +105,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
-                    platforms: linux/amd64, linux/arm64/v8
+                    platforms: ${{ github.event.inputs.build_arm64 == 'true' && 'linux/amd64,linux/arm64/v8' || 'linux/amd64' }}
                     push: true
                     target: runner
                     file: docker/DOCKERFILES/build/generic.Dockerfile
@@ -134,7 +139,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
-                    platforms: linux/amd64, linux/arm64/v8
+                    platforms: ${{ github.event.inputs.build_arm64 == 'true' && 'linux/amd64,linux/arm64/v8' || 'linux/amd64' }}
                     push: true
                     target: runner
                     file: docker/DOCKERFILES/build/generic.Dockerfile
@@ -168,7 +173,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
-                    platforms: linux/amd64, linux/arm64/v8
+                    platforms: ${{ github.event.inputs.build_arm64 == 'true' && 'linux/amd64,linux/arm64/v8' || 'linux/amd64' }}
                     push: true
                     target: runner
                     file: docker/DOCKERFILES/build/generic.Dockerfile
