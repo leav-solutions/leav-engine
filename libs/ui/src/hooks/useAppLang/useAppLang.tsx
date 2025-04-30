@@ -4,9 +4,9 @@
 import {useEffect, useState} from 'react';
 
 export default function useAppLang() {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string>();
-    const [lang, setLang] = useState<string>('');
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | undefined>();
+    const [lang, setLang] = useState('');
 
     const _fetchLang = async () => {
         try {

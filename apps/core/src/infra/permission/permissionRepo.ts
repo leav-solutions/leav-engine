@@ -124,7 +124,7 @@ export default function ({
                 FILTER p.type == ${type}
                     AND p.applyTo == ${applyTo}
                     AND p.permissionTreeTarget.tree == ${treeId}
-                    AND p.usersGroup IN ${[...groupsIds, null]}
+                    AND p.usersGroup IN ${[...(groupsIds ?? []), null]}
                     AND HAS(p.actions, ${actionKey})
                 RETURN p
             `;

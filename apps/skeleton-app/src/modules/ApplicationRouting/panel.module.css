@@ -1,0 +1,8 @@
+.iframe {
+    width: 100%;
+    border: none;
+}
+
+.explorerContainer {
+    padding: calc(var(--general-spacing-xs) * 1px);
+}

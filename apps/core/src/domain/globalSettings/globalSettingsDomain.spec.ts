@@ -9,11 +9,22 @@ import {mockGlobalSettings} from '../../__tests__/mocks/globalSettings';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {default as globalSettingsDomain, IGlobalSettingsDomainDeps} from './globalSettingsDomain';
 import {ToAny} from 'utils/utils';
+import {Mockify} from '@leav/utils';
+import {ICachesService} from '../../infra/cache/cacheService';
+import {IAttributeDomainDeps} from '../attribute/attributeDomain';
+import {mockCachesService, mockCacheService} from '../../__tests__/mocks/cache';
+import {IUtils} from '../../utils/utils';
+
+const mockUtils: Mockify<IUtils> = {
+    getGlobalSettingsCacheKey: jest.fn(() => 'globalSettingsCacheKey')
+};
 
 const depsBase: ToAny<IGlobalSettingsDomainDeps> = {
     'core.domain.permission.admin': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
-    'core.infra.globalSettings': jest.fn()
+    'core.infra.globalSettings': jest.fn(),
+    'core.infra.cache.cacheService': mockCachesService,
+    'core.utils': mockUtils
 };
 
 describe('getSettingsRepo', () => {
@@ -37,15 +48,17 @@ describe('getSettingsRepo', () => {
             };
 
             const domain = globalSettingsDomain({
-                'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
-                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                'core.infra.globalSettings': mockGlobalSettingsRepo as IGlobalSettingsRepo
-            });
+                ...depsBase,
+                'core.domain.permission.admin': mockAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager,
+                'core.infra.globalSettings': mockGlobalSettingsRepo
+            } as ToAny<IGlobalSettingsDomainDeps>);
 
             const savedSettings = await domain.saveSettings({settings: mockGlobalSettings, ctx: mockCtx});
 
             expect(mockGlobalSettingsRepo.saveSettings.mock.calls.length).toBe(1);
             expect(savedSettings).toMatchObject(mockGlobalSettings);
+            expect(mockCacheService.deleteData).toHaveBeenCalled();
         });
 
         test('Should throw if no permission', async () => {
@@ -54,6 +67,7 @@ describe('getSettingsRepo', () => {
             };
 
             const domain = globalSettingsDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.globalSettings': mockGlobalSettingsRepo as IGlobalSettingsRepo
@@ -80,6 +94,7 @@ describe('getSettingsRepo', () => {
 
             expect(mockGlobalSettingsRepo.getSettings.mock.calls.length).toBe(1);
             expect(settings).toMatchObject(mockGlobalSettings);
+            expect(mockCachesService.memoize).toHaveBeenCalled();
         });
     });
 });

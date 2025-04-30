@@ -74,7 +74,8 @@ export default function ({
                         defaultApp: String!,
                         name: String!,
                         icon: Record,
-                        favicon: Record
+                        favicon: Record,
+                        settings: JSONObject
                     }
 
                     input GlobalSettingsFileInput {
@@ -85,8 +86,9 @@ export default function ({
                     input GlobalSettingsInput {
                         defaultApp: String,
                         name: String,
-                        icon: GlobalSettingsFileInput
-                        favicon: GlobalSettingsFileInput
+                        icon: GlobalSettingsFileInput,
+                        favicon: GlobalSettingsFileInput,
+                        settings: JSONObject
                     }
 
                     extend type Query {
@@ -106,17 +108,20 @@ export default function ({
 
                             return settings.name;
                         },
+                        defaultApp: async (settings: IGlobalSettings) => {
+                            if (!settings.defaultApp) {
+                                return DEFAULT_APPLICATION;
+                            }
+
+                            return settings.defaultApp;
+                        },
                         icon: async (settings: IGlobalSettings, _, ctx: IQueryInfos) =>
                             _getFileRecord(settings, 'icon', ctx),
                         favicon: async (settings: IGlobalSettings, _, ctx: IQueryInfos) =>
                             _getFileRecord(settings, 'favicon', ctx)
                     },
                     Query: {
-                        globalSettings: async (_, args, ctx: IQueryInfos) => {
-                            const settings = await globalSettingsDomain.getSettings(ctx);
-
-                            return settings;
-                        }
+                        globalSettings: (_, args, ctx: IQueryInfos) => globalSettingsDomain.getSettings(ctx)
                     },
                     Mutation: {
                         saveGlobalSettings: (_, {settings}: {settings: IGlobalSettings}, ctx: IQueryInfos) =>

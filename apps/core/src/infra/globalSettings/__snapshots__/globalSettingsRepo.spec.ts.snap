@@ -20,6 +20,7 @@ exports[`getSettingsRepo saveSettings Should save settings 1`] = `
                     INSERT @value1
                     UPDATE @value1
                     IN @@value2
+                    OPTIONS { mergeObjects: false }
                     RETURN NEW
                 "
 `;

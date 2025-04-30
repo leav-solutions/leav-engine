@@ -1,0 +1,15 @@
+.flagIcon {
+    border-radius: 100%;
+}
+
+.select {
+    width: 130px;
+}
+
+.select :global(.kit-select-option-icon):has(.flagIcon) {
+    margin-left: 2px;
+}
+
+:global(.kit-select-option-icon):has(.flagIcon) {
+    background-color: transparent;
+}

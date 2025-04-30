@@ -1,6 +1,6 @@
 {
   "name": "portal",
-  "version": "1.0.0-beta21",
+  "version": "1.0.0-beta22",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "5.2.6",
@@ -38,7 +38,7 @@
     "ts-jest": "29.0.5",
     "ts-jest-mock-import-meta": "1.0.0",
     "typescript": "5.5.3",
-    "vite": "4.5.6",
+    "vite": "4.5.13",
     "vite-jest": "0.1.4",
     "vite-plugin-dynamic-base": "0.4.9"
   },
