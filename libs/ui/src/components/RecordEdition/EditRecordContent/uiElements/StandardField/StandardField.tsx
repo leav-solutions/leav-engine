@@ -12,7 +12,7 @@ import StandardFieldValue from './StandardFieldValue';
 import {Form, FormInstance, FormListOperation} from 'antd';
 import {KitButton, KitInputWrapper, KitTooltip} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
-import {FaPlus, FaTrash} from 'react-icons/fa';
+import {FaLock, FaPlus, FaTrash} from 'react-icons/fa';
 import {DeleteAllValuesButton} from '../shared/DeleteAllValuesButton';
 import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
 import {useGetPresentationValues} from './useGetPresentationValues';
@@ -322,7 +322,6 @@ const StandardField: FunctionComponent<
                 id={STANDARD_FIELD_ID_PREFIX + attribute.id}
                 label={label}
                 required={attribute.required}
-                disabled={isReadOnly}
                 bordered={attribute.multiple_values}
                 status={isFieldInError ? 'error' : undefined}
                 extra={
@@ -330,12 +329,8 @@ const StandardField: FunctionComponent<
                         <KitInputExtraAlignLeft>
                             <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
                         </KitInputExtraAlignLeft>
-                        {canDeleteAllValues && (
-                            <DeleteAllValuesButton
-                                handleDelete={_handleDeleteAllValues}
-                                disabled={isReadOnly}
-                                danger={isFieldInError}
-                            />
+                        {canDeleteAllValues && !isReadOnly && (
+                            <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} danger={isFieldInError} />
                         )}
                     </>
                 }
@@ -384,7 +379,7 @@ const StandardField: FunctionComponent<
                                                         removeLastValueOfMultivalues={() => remove(index)}
                                                     />
                                                 </StandardFieldValueWrapper>
-                                                {fields.length > 1 && (
+                                                {fields.length > 1 && !isReadOnly && (
                                                     <KitDeleteValueButton
                                                         type="tertiary"
                                                         title={t('record_edition.delete_value')}
@@ -397,7 +392,6 @@ const StandardField: FunctionComponent<
                                                                 index
                                                             )
                                                         }
-                                                        disabled={isReadOnly}
                                                     />
                                                 )}
                                             </RowValueWrapper>

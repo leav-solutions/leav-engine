@@ -107,7 +107,7 @@ describe('DSInputWrapper', () => {
         expect(input).toHaveValue(value);
     });
 
-    test('Should be disabled when readonly', async () => {
+    test('Should not be disabled when readonly', async () => {
         render(
             <AntForm>
                 <AntForm.Item>
@@ -126,7 +126,7 @@ describe('DSInputWrapper', () => {
         );
 
         const input = screen.getByRole('textbox');
-        expect(input).toBeDisabled();
+        expect(input).toBeEnabled();
     });
 
     test('Should call handleSubmit on blur with new value', async () => {
