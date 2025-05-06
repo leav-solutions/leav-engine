@@ -199,7 +199,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {editItemAction, editItemModal} = useEditItemAction({
             isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit'),
             onEdit: defaultCallbacks?.item?.edit,
-            formId: editionFormId
+            formId: editionFormId,
+            refetch
         });
 
         const totalCount = data?.totalCount ?? 0;
