@@ -266,15 +266,14 @@ export default function ({
                             ctx: IQueryInfos
                         ): Promise<IRecordForm> {
                             const formattedVersion = convertVersionFromGqlFormat(version);
-                            const recordForm = await formDomain.getRecordForm({
+
+                            return formDomain.getRecordForm({
                                 recordId,
                                 libraryId,
                                 formId,
                                 version: formattedVersion,
                                 ctx
                             });
-
-                            return recordForm;
                         }
                     },
                     Mutation: {
