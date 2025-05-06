@@ -65,6 +65,7 @@ function InfosTab({library, readonly}: IInfosTabProps): JSX.Element {
                 libData.recordIdentityConf !== null
                     ? {
                           label: libData.recordIdentityConf.label,
+                          subLabel: libData.recordIdentityConf.subLabel,
                           preview: libData.recordIdentityConf.preview,
                           color: libData.recordIdentityConf.color,
                           treeColorPreview: libData.recordIdentityConf.treeColorPreview
@@ -89,7 +90,7 @@ function InfosTab({library, readonly}: IInfosTabProps): JSX.Element {
             library={library}
             onSubmit={_handleSubmit}
             readonly={readonly}
-            errors={(formErrors as unknown) as IFormError}
+            errors={formErrors as unknown as IFormError}
             onCheckIdExists={_handleCheckIdExists}
         />
     );

@@ -71,6 +71,7 @@
         "link_existing_attribute": "Link existing attribute",
         "record_identity": "Records identity card",
         "record_identity_label": "Label",
+        "record_identity_sub_label": "Sub Label",
         "record_identity_color": "Color",
         "record_identity_preview": "Preview",
         "record_identity_dependent_color_and_preview": "Tree for default color and preview",
