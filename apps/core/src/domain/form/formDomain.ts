@@ -130,9 +130,8 @@ export default function (deps: IFormDomainDeps): IFormDomain {
         ];
 
         const attributes = await attributeDomain.getLibraryAttributes(library, ctx);
-        const nonReadonlyAttributes = attributes.filter(att => !att?.readonly);
 
-        const attributesElements = nonReadonlyAttributes.map((att, index): IFormElement => {
+        const attributesElements = attributes.map((att, index): IFormElement => {
             const data: IFormElement = {
                 id: uniqueId(),
                 containerId: FORM_ROOT_CONTAINER_ID,
@@ -346,6 +345,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
             };
 
             const formElements = _filterEmptyContainers(elementsTree).children;
+
             return {
                 id: formId,
                 recordId,
