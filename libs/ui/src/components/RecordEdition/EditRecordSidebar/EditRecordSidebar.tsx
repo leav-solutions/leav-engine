@@ -72,7 +72,7 @@ export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
     const editRecordSidebarContent = (
         <StyledKitSidePanel
             ref={sidePanelRef}
-            initialOpen={open}
+            initialOpen={false}
             idCardProps={{title: sidePanelTitle}}
             id={EDIT_RECORD_SIDEBAR_ID}
             headerExtra={<Breadcrumb />}
@@ -82,17 +82,29 @@ export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
         </StyledKitSidePanel>
     );
 
-    useEffect(() => {
-        if (sidePanelRef.current) {
-            if (open) {
-                sidePanelRef.current.open();
+    console.log('SIDEBAR', {
+        open,
+        sidebarContent: state.sidebarContent,
+        default: state.sidebarDefaultHidden,
+        enable: state.sidebarEnabled
+    });
 
-                dispatch({
-                    type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-                    content: state.sidebarContent === 'none' ? 'summary' : state.sidebarContent
-                });
+    useEffect(() => {
+        if (sidePanelRef.current && state.sidebarEnabled) {
+            // on manual mode frome the outside, we ignore reducer state...
+            const isOpen = open !== undefined ? open : state.sidebarContent !== 'none';
+            if (isOpen) {
+                sidePanelRef.current.open();
             } else {
                 sidePanelRef.current.close();
+            }
+
+            // ...but keep updating it for prevent unexpected behavior
+            if (open !== undefined) {
+                dispatch({
+                    type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
+                    content: open ? state.sidebarContent : 'none'
+                });
             }
         }
     }, [open]);
