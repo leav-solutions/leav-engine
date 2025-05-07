@@ -1702,12 +1702,14 @@ describe('Explorer', () => {
                 }
             }
         };
-        jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
-            ({variables}) =>
-                (variables?.searchQuery
-                    ? mockExplorerLibraryDataQueryResultWithSearch
-                    : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
-        );
+        const spy = jest
+            .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+            .mockImplementation(
+                ({variables}) =>
+                    (variables?.searchQuery
+                        ? mockExplorerLibraryDataQueryResultWithSearch
+                        : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
+            );
 
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1715,6 +1717,9 @@ describe('Explorer', () => {
                     entrypoint={libraryEntrypoint}
                     primaryActions={customPrimaryActions}
                     defaultPrimaryActions={[]}
+                    defaultViewSettings={{
+                        pageSize: 1
+                    }}
                     showSearch
                 />
             </Explorer.EditSettingsContextProvider>
@@ -1729,6 +1734,24 @@ describe('Explorer', () => {
         await user.click(clearButton);
 
         expect(screen.getByText('Halloween 2025')).toBeVisible();
+
+        // GO TO PAge 2, then perform search and check we call useExplorerData with page 1
+        const pagination = screen.getByRole('list', {name: /pagination/});
+        const secondPageButton = within(pagination).getByRole('listitem', {name: '2'});
+        await userEvent.click(secondPageButton);
+
+        expect(secondPageButton).toHaveClass('ant-pagination-item-active');
+
+        await userEvent.type(searchInput, 'Christ{Enter}');
+        expect(spy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                variables: expect.objectContaining({
+                    pagination: expect.objectContaining({
+                        offset: 0
+                    })
+                })
+            })
+        );
     });
 
     describe('With filters', () => {

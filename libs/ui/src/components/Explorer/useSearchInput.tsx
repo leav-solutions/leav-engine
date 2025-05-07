@@ -12,6 +12,7 @@ import {
     ViewSettingsActionTypes
 } from './manage-view-settings/store-view-settings/viewSettingsReducer';
 import {MASS_SELECTION_ALL} from './_constants';
+import {SetNewPage} from './_types';
 
 /**
  * Hook used to handle a full search text in a library
@@ -23,10 +24,12 @@ import {MASS_SELECTION_ALL} from './_constants';
  */
 export const useSearchInput = ({
     view,
-    dispatch
+    dispatch,
+    setNewPage
 }: {
     view: IViewSettingsState;
     dispatch: Dispatch<IViewSettingsAction>;
+    setNewPage: SetNewPage;
 }) => {
     const {t} = useSharedTranslation();
     const [search, setSearch] = useState<string>(view.fulltextSearch);
@@ -43,6 +46,7 @@ export const useSearchInput = ({
     const _handleSubmit: DOMAttributes<HTMLFormElement>['onSubmit'] = e => {
         e.preventDefault();
         dispatch({type: ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH, payload: {search}});
+        setNewPage(1, 0);
     };
 
     return {

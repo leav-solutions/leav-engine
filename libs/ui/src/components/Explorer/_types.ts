@@ -181,3 +181,5 @@ export interface IDataViewOnAction {
     id: string | null;
     label: Record<string, string> | null;
 }
+
+export type SetNewPage = (newCurrentPage: number, ignoredPageSize: number) => void;
