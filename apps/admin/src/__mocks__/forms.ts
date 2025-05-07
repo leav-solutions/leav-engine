@@ -33,6 +33,6 @@ export const mockFormFull: GET_FORM_forms_list = {
     elements: [{dependencyValue: null, elements: [{...myField}]}],
     sidePanel: {
         enable: true,
-        isOpenByDefault: false
+        isOpenByDefault: true
     }
 };

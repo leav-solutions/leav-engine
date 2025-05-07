@@ -296,10 +296,10 @@
         "dependency_attributes": "Depends on",
         "side_panel": {
             "title": "Side panel",
-            "displayed": "Display side panel",
+            "display_side_panel": "Display side panel",
             "default": "Default state",
-            "opened": "Open",
-            "closed": "Close"
+            "open": "Open",
+            "close": "Close"
         },
         "confirm_delete": "Do you really want to delete form {{formLabel}}?",
         "select_attribute": "Select an attribute",

@@ -10,7 +10,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function ({'core.infra.form': formRepo = null, config = null}: IDeps = {}): IMigration {
+export default function ({'core.infra.form': formRepo}: IDeps = {}): IMigration {
     return {
         async run(ctx) {
             const formsList = await formRepo.getForms({ctx});
@@ -18,7 +18,7 @@ export default function ({'core.infra.form': formRepo = null, config = null}: ID
                 formsList.list.map(form => {
                     form.sidePanel = form.sidePanel ?? {
                         enable: true,
-                        isOpenByDefault: false
+                        isOpenByDefault: true
                     };
                     return formRepo.updateForm({formData: form as IFormStrict, ctx});
                 })

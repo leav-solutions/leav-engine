@@ -193,7 +193,7 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                     <label>{t('forms.side_panel.title')}</label>
                     <FormFieldWrapper error={_getErrorByField('sidePanel')}>
                         <Form.Checkbox
-                            label={t('forms.side_panel.displayed')}
+                            label={t('forms.side_panel.display_side_panel')}
                             disabled={readonly}
                             width="8"
                             toggle
@@ -215,11 +215,11 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                                 onChange={_handleChangeWithSubmit}
                                 options={[
                                     {
-                                        text: t('forms.side_panel.opened'),
+                                        text: t('forms.side_panel.open'),
                                         value: true
                                     },
                                     {
-                                        text: t('forms.side_panel.closed'),
+                                        text: t('forms.side_panel.close'),
                                         value: false
                                     }
                                 ]}

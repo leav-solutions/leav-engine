@@ -175,7 +175,6 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                     elements: finalElements
                 }
             ],
-            // TODO add an external default value for this?
             sidePanel: {
                 enable: true,
                 isOpenByDefault: true

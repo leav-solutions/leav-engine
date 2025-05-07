@@ -296,10 +296,10 @@
         "dependency_attributes": "Dépend de",
         "side_panel": {
             "title": "Panneau latéral",
-            "displayed": "Afficher le panneau latéral",
+            "display_side_panel": "Afficher le panneau latéral",
             "default": "État par défaut",
-            "opened": "Ouvert",
-            "closed": "Fermé"
+            "open": "Ouvert",
+            "close": "Fermé"
         },
         "confirm_delete": "Êtes-vous sûr de vouloir supprimer le formulaire {{formLabel}}?",
         "select_attribute": "Sélectionner un attribut",

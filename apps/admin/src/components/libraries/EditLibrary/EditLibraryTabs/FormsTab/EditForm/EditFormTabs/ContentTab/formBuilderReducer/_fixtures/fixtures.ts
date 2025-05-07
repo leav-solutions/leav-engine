@@ -112,7 +112,7 @@ export const formData: GET_FORM_forms_list = {
     },
     sidePanel: {
         enable: true,
-        isOpenByDefault: false
+        isOpenByDefault: true
     },
     elements: [
         {
