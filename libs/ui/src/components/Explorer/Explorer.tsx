@@ -262,7 +262,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {viewSettingsButton, viewListButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
 
-        const {searchInput} = useSearchInput({view, dispatch});
+        const {searchInput} = useSearchInput({view, dispatch, setNewPage});
 
         useImperativeHandle(
             ref,
