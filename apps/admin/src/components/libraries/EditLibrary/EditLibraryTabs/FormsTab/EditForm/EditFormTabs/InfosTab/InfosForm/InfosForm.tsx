@@ -19,7 +19,7 @@ interface IInfosFormProps {
     onSubmit: (formData: FormInput) => void;
 }
 
-type FormValues = Pick<GET_FORM_forms_list, 'id' | 'system' | 'label'> & {
+type FormValues = Pick<GET_FORM_forms_list, 'id' | 'system' | 'label' | 'sidePanel'> & {
     dependencyAttributes: string[];
 };
 
@@ -40,7 +40,11 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
         id: '',
         system: false,
         label: null,
-        dependencyAttributes: []
+        dependencyAttributes: [],
+        sidePanel: {
+            enable: true,
+            isOpenByDefault: false
+        }
     };
 
     const [formValues, setFormValues] = useState<FormValues>(defaultForm);
@@ -68,7 +72,7 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
         }
 
         setFormValues({
-            ...pick(form as GET_FORM_forms_list, ['id', 'system', 'label']),
+            ...pick(form as GET_FORM_forms_list, ['id', 'system', 'label', 'sidePanel']),
             dependencyAttributes: arrayPick(form?.dependencyAttributes || [], 'id')
         });
     }, [form]);
@@ -77,7 +81,12 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
         const valuesToSubmit: FormInput = {
             ...omit(values, ['system']),
             label: (values?.label as SystemTranslation) ?? null,
-            library
+            library,
+            ...(values?.sidePanel && {
+                sidePanel: omit(values.sidePanel, [
+                    '__typename' as keyof typeof values.sidePanel
+                ]) as typeof values.sidePanel
+            })
         };
 
         return onSubmit(valuesToSubmit);
@@ -99,7 +108,6 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
 
             const {name, value} = data;
             const [field, subfield] = name.split('.');
-
             // On new attribute, automatically generate an ID based on label
             if (!existingForm && field === 'label' && subfield === defaultLang) {
                 setFieldValue('id', formatIDString(value));
@@ -135,7 +143,7 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
             }
         };
 
-        const {id, label, dependencyAttributes} = values;
+        const {id, label, dependencyAttributes, sidePanel} = values;
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<FormValues>(fieldName, touched, {}, inputErrors);
@@ -181,6 +189,45 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                         disabled={readonly}
                     />
                 </FormFieldWrapper>
+                <Form.Group grouped>
+                    <label>{t('forms.side_panel.title')}</label>
+                    <FormFieldWrapper error={_getErrorByField('sidePanel')}>
+                        <Form.Checkbox
+                            label={t('forms.side_panel.display_side_panel')}
+                            disabled={readonly}
+                            width="8"
+                            toggle
+                            name="sidePanel.enable"
+                            aria-label="sidePanel.enable"
+                            onChange={_handleChangeWithSubmit}
+                            onBlur={_handleBlur}
+                            checked={sidePanel.enable}
+                        />
+                    </FormFieldWrapper>
+                    {sidePanel.enable && (
+                        <FormFieldWrapper>
+                            <Form.Select
+                                label={t('forms.side_panel.default')}
+                                disabled={readonly}
+                                width="4"
+                                name="sidePanel.isOpenByDefault"
+                                aria-label="sidePanel.isOpenByDefault"
+                                onChange={_handleChangeWithSubmit}
+                                options={[
+                                    {
+                                        text: t('forms.side_panel.open'),
+                                        value: true
+                                    },
+                                    {
+                                        text: t('forms.side_panel.close'),
+                                        value: false
+                                    }
+                                ]}
+                                value={sidePanel.isOpenByDefault}
+                            />
+                        </FormFieldWrapper>
+                    )}
+                </Form.Group>
             </Form>
         );
     };

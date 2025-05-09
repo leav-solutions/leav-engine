@@ -85,6 +85,24 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         version: state.valuesVersion
     });
 
+    useEffect(() => {
+        if (!loading && recordForm) {
+            console.log({BACK_RECORD_SIDE: recordForm.sidePanel});
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_SIDEBAR_ENABLED,
+                enabled: recordForm.sidePanel.enable
+            });
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_SIDEBAR_DEFAULT_HIDDEN,
+                value: recordForm.sidePanel.isOpenByDefault
+            });
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
+                content: recordForm.sidePanel.isOpenByDefault ? 'none' : 'valueDetails'
+            });
+        }
+    }, [recordForm]);
+
     const {
         data: computeFieldsData,
         error: computeFieldsError,

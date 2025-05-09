@@ -24,6 +24,7 @@ export interface IEditRecordReducerState {
     libraryLabel: SystemTranslation | null;
     activeAttribute: IRecordPropertyWithAttribute;
     sidebarContent: 'summary' | 'valueDetails' | 'valuesVersions' | 'none';
+    sidebarEnabled: boolean;
     sidebarDefaultHidden?: boolean;
     valuesVersion: IValueVersion;
     originValuesVersion: IValueVersion;
@@ -41,7 +42,9 @@ export enum EditRecordReducerActionsTypes {
     SET_RECORD = 'SET_RECORD',
     SET_LIBRARY_LABEL = 'SET_LIBRARY_LABEL',
     SET_ACTIVE_VALUE = 'SET_ACTIVE_VALUE',
+    SET_SIDEBAR_ENABLED = 'SET_SIDEBAR_ENABLED',
     SET_SIDEBAR_CONTENT = 'SET_SIDEBAR_CONTENT',
+    SET_SIDEBAR_DEFAULT_HIDDEN = 'SET_SIDEBAR_DEFAULT_HIDDEN',
     SET_VALUES_VERSION = 'SET_VALUES_VERSION',
     REQUEST_REFRESH = 'REQUEST_REFRESH',
     REFRESH_DONE = 'REFRESH_DONE',
@@ -67,8 +70,16 @@ export type IEditRecordReducerActions =
               | RecordFormElementsValueTreeValue[];
       }
     | {
+          type: EditRecordReducerActionsTypes.SET_SIDEBAR_ENABLED;
+          enabled: IEditRecordReducerState['sidebarEnabled'];
+      }
+    | {
           type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT;
           content: IEditRecordReducerState['sidebarContent'];
+      }
+    | {
+          type: EditRecordReducerActionsTypes.SET_SIDEBAR_DEFAULT_HIDDEN;
+          value: IEditRecordReducerState['sidebarDefaultHidden'];
       }
     | {
           type: EditRecordReducerActionsTypes.SET_VALUES_VERSION;
@@ -96,7 +107,8 @@ export const initialState: IEditRecordReducerState = {
     libraryId: null,
     libraryLabel: null,
     activeAttribute: null,
-    sidebarContent: 'summary',
+    sidebarEnabled: false,
+    sidebarContent: 'none',
     sidebarDefaultHidden: false,
     valuesVersion: null,
     originValuesVersion: null,
@@ -117,6 +129,12 @@ const editRecordReducer = (
             return {...state, record: action.record};
         case EditRecordReducerActionsTypes.SET_LIBRARY_LABEL:
             return {...state, libraryLabel: action.label};
+        case EditRecordReducerActionsTypes.SET_SIDEBAR_ENABLED:
+            console.log('SET_SIDEBAR_ENABLED:', action.enabled);
+            return {...state, sidebarEnabled: action.enabled};
+        case EditRecordReducerActionsTypes.SET_SIDEBAR_DEFAULT_HIDDEN:
+            console.log('SET_SIDEBAR_DEFAULT_HIDDEN:', action.value);
+            return {...state, sidebarDefaultHidden: action.value};
         case EditRecordReducerActionsTypes.SET_ACTIVE_VALUE:
             const newSidebarContent =
                 action.attribute !== null ? 'valueDetails' : state.sidebarDefaultHidden ? 'none' : 'summary';
@@ -162,6 +180,8 @@ const editRecordReducer = (
                 sidebarContent: newSidebarContent
             };
         case EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT:
+            console.log('SET_SIDEBAR_CONTENT:', action.content);
+
             return {...state, sidebarContent: action.content};
         case EditRecordReducerActionsTypes.SET_VALUES_VERSION:
             return {...state, valuesVersion: action.valuesVersion};

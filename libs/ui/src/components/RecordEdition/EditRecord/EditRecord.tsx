@@ -64,9 +64,10 @@ interface IEditRecordProps {
     withInfoButton: boolean;
     // Here we're not in charge of buttons position. It might on a modal footer or pretty much anywhere.
     // We're using refs to still be able to handle the click on the buttons
-    buttonsRefs: {
+    buttonsRefs?: {
         refresh?: React.RefObject<HTMLButtonElement>;
         valuesVersions?: React.RefObject<HTMLButtonElement>;
+        sideBarState?: React.RefObject<HTMLButtonElement>;
     };
 }
 
@@ -96,7 +97,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     library: libraryId,
     onCreate,
     valuesVersion,
-    showSidebar = false,
+    showSidebar,
     sidebarContainer,
     containerStyle,
     withInfoButton,
@@ -112,7 +113,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         valuesVersion,
         originValuesVersion: valuesVersion,
         sidebarContent: showSidebar ? 'summary' : 'none',
-        sidebarDefaultHidden: !showSidebar,
         withInfoButton
     });
 
@@ -499,6 +499,23 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             dispatch({
                 type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
                 content: state.sidebarContent === 'valuesVersions' ? 'summary' : 'valuesVersions'
+            });
+        },
+        sideBarState: () => {
+            const isOpen = state.sidebarContent !== 'none';
+            console.log('before', {
+                raw: state.sidebarContent,
+                isOpen,
+                isDefaultHidden: state.sidebarDefaultHidden,
+                isEnabled: state.sidebarEnabled,
+                isOpenDataset: buttonsRefs.sideBarState.current?.dataset.isOpen,
+                NEW_STATE: !isOpen
+            });
+            buttonsRefs.sideBarState.current.dataset.isOpen = `${!isOpen}`;
+
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
+                content: isOpen ? 'none' : 'summary'
             });
         }
     };

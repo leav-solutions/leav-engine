@@ -217,7 +217,10 @@ describe('formDomain', () => {
             });
 
             const newLabel = {fr: 'New label'};
-            await domain.saveForm({form: {id: mockForm.id, library: mockForm.library, label: newLabel}, ctx});
+            await domain.saveForm({
+                form: {id: mockForm.id, library: mockForm.library, label: newLabel, sidePanel: mockForm.sidePanel},
+                ctx
+            });
 
             expect(mockFormRepo.updateForm).toBeCalled();
             expect(mockFormRepo.updateForm.mock.calls[0][0].formData).toEqual({
@@ -456,6 +459,7 @@ describe('formDomain', () => {
                 recordId: '123456',
                 system: false,
                 dependencyAttributes: [],
+                sidePanel: mockForm.sidePanel,
                 elements: [
                     {...mockContainer, valueError: null, values: null},
                     {...field1, valueError: null, values: [mockStandardValue]},
@@ -503,6 +507,7 @@ describe('formDomain', () => {
                 recordId: '123456',
                 system: false,
                 dependencyAttributes: [],
+                sidePanel: mockForm.sidePanel,
                 elements: [
                     {...mockContainer, valueError: null, values: null},
                     {...field1, values: null, valueError: 'boom!'}
@@ -547,6 +552,7 @@ describe('formDomain', () => {
                 recordId: '123456',
                 system: false,
                 dependencyAttributes: [],
+                sidePanel: mockForm.sidePanel,
                 elements: [
                     {...mockContainer, valueError: null, values: null},
                     {...field1, values: null, valueError: 'boom!'}
@@ -622,6 +628,7 @@ describe('formDomain', () => {
                 recordId: '123456',
                 system: false,
                 dependencyAttributes: [],
+                sidePanel: mockForm.sidePanel,
                 elements: [
                     {...formField, containerId: FORM_ROOT_CONTAINER_ID, valueError: null, values: [mockStandardValue]},
                     {...mockDepField1, valueError: null, values: [mockStandardValue]}
@@ -700,6 +707,7 @@ describe('formDomain', () => {
                 recordId: '123456',
                 system: false,
                 dependencyAttributes: [],
+                sidePanel: mockForm.sidePanel,
                 elements: [
                     {...formField, containerId: FORM_ROOT_CONTAINER_ID, valueError: null, values: [mockStandardValue]},
                     {...mockDepField1, valueError: null, values: [mockStandardValue]},
@@ -794,6 +802,7 @@ describe('formDomain', () => {
                 recordId: '123456',
                 system: false,
                 dependencyAttributes: [],
+                sidePanel: mockForm.sidePanel,
                 elements: [
                     {...filledContainer, valueError: null, values: null},
                     {...mockField1, valueError: null, values: [mockStandardValue]}
@@ -919,6 +928,7 @@ describe('formDomain', () => {
                 recordId: '123456',
                 system: false,
                 dependencyAttributes: [],
+                sidePanel: mockForm.sidePanel,
                 elements: [
                     {
                         ...mockTabs1,

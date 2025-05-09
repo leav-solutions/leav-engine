@@ -22,5 +22,9 @@ export const formDetailsFragment = gql`
                 }
             }
         }
+        sidePanel {
+            enable
+            isOpenByDefault
+        }
     }
 `;
