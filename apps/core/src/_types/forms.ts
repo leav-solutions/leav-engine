@@ -9,6 +9,12 @@ export interface IForm extends ICoreEntity {
     system?: boolean;
     dependencyAttributes?: string[];
     elements?: IFormDependentElements[];
+    sidePanel: IFormSidePanel;
+}
+
+export interface IFormSidePanel {
+    enable: boolean;
+    isOpenByDefault: boolean;
 }
 
 export interface IRecordForm {
@@ -18,6 +24,7 @@ export interface IRecordForm {
     recordId: string;
     dependencyAttributes?: string[];
     elements: IFormElementWithValues[];
+    sidePanel: IFormSidePanel;
 }
 
 export enum FormElementTypes {

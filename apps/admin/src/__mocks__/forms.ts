@@ -30,5 +30,9 @@ export const mockFormFull: GET_FORM_forms_list = {
     system: false,
     dependencyAttributes: [],
     label: {fr: 'Test Form'},
-    elements: [{dependencyValue: null, elements: [{...myField}]}]
+    elements: [{dependencyValue: null, elements: [{...myField}]}],
+    sidePanel: {
+        enable: true,
+        isOpenByDefault: true
+    }
 };
