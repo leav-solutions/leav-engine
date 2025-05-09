@@ -9,10 +9,19 @@ jest.mock('_ui/_utils/isDevEnv', () => ({
     isDevEnv: () => isDevEnvMock
 }));
 
+let consoleSpy;
+
 describe('SimpleErrorBoundary', () => {
     const ComponentWithError = () => {
         throw new Error('boom!');
     };
+
+    beforeEach(() => {
+        consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => null);
+    });
+    afterEach(() => {
+        consoleSpy.mockRestore();
+    });
 
     test('Should display error', async () => {
         isDevEnvMock = false;

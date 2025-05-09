@@ -50,7 +50,7 @@ jest.mock('../shared/useOutsideInteractionDetector', () => ({
 jest.mock('aristid-ds', () => ({
     ...jest.requireActual('aristid-ds'),
     AntForm: {
-        Item: ({children, ...props}: any) => (
+        Item: ({children, noStyle, ...props}: any) => (
             <div data-testid="form-item" {...props}>
                 {children}
             </div>
