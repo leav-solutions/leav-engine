@@ -10,6 +10,7 @@ import {
     AttributeFormat,
     AttributeType,
     AvailableLanguage,
+    MultiLinkDisplayOption,
     LibraryBehavior,
     LibraryInput,
     PermissionsRelation,
@@ -83,6 +84,7 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     metadata_fields: SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_permissions_conf | null;
     versions_conf: SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_versions_conf | null;
@@ -157,6 +159,7 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     metadata_fields: SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_permissions_conf | null;
     versions_conf: SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_versions_conf | null;
@@ -232,6 +235,7 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     metadata_fields: SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_permissions_conf | null;
     versions_conf: SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_versions_conf | null;
