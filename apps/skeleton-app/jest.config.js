@@ -31,7 +31,6 @@ module.exports = {
         '^.+\\.js$': ['babel-jest', {rootMode: 'upward'}]
     },
     transformIgnorePatterns: ['node_modules/(?!(antd|@babel/runtime|@uidotdev/usehooks)/)'],
-    testRegex: '.test.(ts|tsx)$',
     moduleNameMapper: {
         '^@leav/(.*)$': '<rootDir>/../../libs/$1/src',
         '^_ui/(.*)': '<rootDir>/../../libs/ui/src/$1'

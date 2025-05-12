@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMemo} from 'react';
-import {getAllPanels} from '../ApplicationRouting/utils';
-import {IWorkspace, Panel} from '../ApplicationRouting/types';
+import {getAllPanels} from './utils';
+import {IApplicationMatchingContext, IWorkspace, Panel} from './types';
 
-export const useWorkspacesAndPanels = (workspaces: IWorkspace[], panelId: string) => {
-    const {currentParentTuple, currentPanel, currentWorkspace} = useMemo(() => {
+export const useApplicationMatching = (workspaces: IWorkspace[], panelId: string): IApplicationMatchingContext =>
+    useMemo(() => {
         const _tuplesPanelByWorkspace: Array<[Panel, IWorkspace]> = workspaces
             .map<[Panel[], IWorkspace]>(workspace => [getAllPanels(workspace), workspace])
             .flatMap(([panels, workspace]) => panels.map<[Panel, IWorkspace]>(panel => [panel, workspace]));
@@ -15,18 +15,14 @@ export const useWorkspacesAndPanels = (workspaces: IWorkspace[], panelId: string
             'children' in panel ? panel.children.find(({id}) => id === panelId) : false
         );
 
-        const [_currentPanel, _currentWorkspace] = _tuplesPanelByWorkspace.find(([panel]) => panel.id === panelId);
+        const [_currentPanel, _currentWorkspace] = _tuplesPanelByWorkspace.find(([panel]) => panel.id === panelId) ?? [
+            null,
+            null
+        ];
 
         return {
-            currentParentTuple: _currentParentTuple ?? undefined,
-            currentPanel: _currentPanel ?? undefined,
-            currentWorkspace: _currentWorkspace ?? undefined
+            currentParentTuple: _currentParentTuple ?? null,
+            currentPanel: _currentPanel ?? null,
+            currentWorkspace: _currentWorkspace ?? null
         };
     }, [workspaces, panelId]);
-
-    return {
-        currentParentTuple,
-        currentPanel,
-        currentWorkspace
-    };
-};

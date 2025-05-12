@@ -3,20 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
 import {generatePath, Navigate, useLocation, useNavigate, useOutletContext} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
 import {EditRecordPage, Explorer} from '@leav/ui';
 import {FaPlus} from 'react-icons/all';
-import type {IWorkspace, Panel} from './types';
+import type {IApplicationMatchingContext} from './types';
 import {recordSearchParamsName, routes} from './routes';
-import {useTranslation} from 'react-i18next';
 import {SIDEBAR_CONTENT_ID} from '../../constants';
 
-import {iframe, explorerContainer} from './panel.module.css';
+import {iframe, explorerContainer} from './PanelContent.module.css';
 
-export const PanelComponent: FunctionComponent = () => {
+export const PanelContent: FunctionComponent = () => {
     const {t} = useTranslation();
     const {search} = useLocation();
     const searchParams = new URLSearchParams(search);
-    const {currentPanel, currentWorkspace} = useOutletContext<{currentPanel: Panel; currentWorkspace: IWorkspace}>();
+    const {currentPanel, currentWorkspace} =
+        useOutletContext<Omit<IApplicationMatchingContext, 'currentParentTuple'>>();
 
     const navigate = useNavigate();
 
@@ -66,7 +67,7 @@ export const PanelComponent: FunctionComponent = () => {
                 <iframe
                     className={iframe}
                     name="testFrame"
-                    src={currentPanel.content.iframeSource}
+                    src={currentPanel.content.iframeSource + search}
                     title={currentPanel.id}
                     width="100%"
                     height="100%"

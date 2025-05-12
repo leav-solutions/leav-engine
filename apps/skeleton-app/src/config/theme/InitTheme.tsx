@@ -13,14 +13,13 @@ KitModal.setAppElement(document.body);
 export const InitTheme: FunctionComponent = ({children}) => {
     const {lang} = useContext(LangContext);
 
-    // TODO: manage <Explorer /> panel ref
     // TODO: manage sidebar <EditRecordPage /> panel ref
 
     return (
         <KitApp
             locale={{
                 // TODO: get lang from context
-                locale: lang[0] == 'fr' ? 'frFR' : 'enUS',
+                locale: lang[0] === 'fr' ? 'frFR' : 'enUS',
                 ItemList: null,
                 Image: null
             }}

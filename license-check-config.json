@@ -50,6 +50,7 @@
         "**/*tsconfig*",
         "**/*.tsbuildinfo",
         ".idea",
+        "**/ADR.md",
         "**/docs/adr/*.md"
     ]
 }

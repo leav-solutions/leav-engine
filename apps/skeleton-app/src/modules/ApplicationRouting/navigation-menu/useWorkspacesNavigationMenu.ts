@@ -3,14 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
 
-interface IUseNavigationMenu {
-    isMenuOpen: boolean;
-    handleToggleMenu: (open: boolean) => void;
-}
-
 export const SIDE_MENU_STATE_KEY = 'sideMenuOpen';
 
-const getLocalStorageMenuState = () => {
+const getLocalStorageMenuState = (): boolean => {
     const menuOpen = localStorage.getItem(SIDE_MENU_STATE_KEY);
     if (menuOpen === null) {
         return true;
@@ -18,10 +13,10 @@ const getLocalStorageMenuState = () => {
     return menuOpen === 'true';
 };
 
-export const useNavigationMenu = (): IUseNavigationMenu => {
+export const useWorkspacesNavigationMenu = () => {
     const [isMenuOpen, setMenuOpen] = useState(getLocalStorageMenuState());
 
-    const handleToggleMenu = (open: boolean) => {
+    const handleToggleMenu = (open: boolean): void => {
         localStorage.setItem(SIDE_MENU_STATE_KEY, open.toString());
         setMenuOpen(open);
     };
