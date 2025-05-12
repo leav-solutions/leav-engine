@@ -140,7 +140,7 @@ export default function ({
 
                     type FormSidePanel {
                         enable: Boolean!,
-                        isOpenByDefault: Boolean!
+                        isOpenByDefault: Boolean
                     }
 
                     input FormSidePanelInput {

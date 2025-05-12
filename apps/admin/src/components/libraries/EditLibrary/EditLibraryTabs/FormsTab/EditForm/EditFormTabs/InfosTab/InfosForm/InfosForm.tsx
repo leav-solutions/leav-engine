@@ -27,7 +27,9 @@ type FormValues = Pick<GET_FORM_forms_list, 'id' | 'system' | 'label' | 'sidePan
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
-
+const Legend = styled.legend`
+    font-weight: bold;
+`;
 function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
     const {defaultLang, availableLangs} = useLang();
     const {form, library, readonly} = useEditFormContext();
@@ -190,7 +192,7 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                     />
                 </FormFieldWrapper>
                 <Form.Group grouped>
-                    <label>{t('forms.side_panel.title')}</label>
+                    <Legend>{t('forms.side_panel.title')}</Legend>
                     <FormFieldWrapper error={_getErrorByField('sidePanel')}>
                         <Form.Checkbox
                             label={t('forms.side_panel.display_side_panel')}

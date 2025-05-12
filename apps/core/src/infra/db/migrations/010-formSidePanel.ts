@@ -13,9 +13,9 @@ interface IDeps {
 export default function ({'core.infra.form': formRepo}: IDeps = {}): IMigration {
     return {
         async run(ctx) {
-            const formsList = await formRepo.getForms({ctx});
+            const forms = await formRepo.getForms({ctx});
             await Promise.all(
-                formsList.list.map(form => {
+                forms.list.map(form => {
                     form.sidePanel = form.sidePanel ?? {
                         enable: true,
                         isOpenByDefault: true

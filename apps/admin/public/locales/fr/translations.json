@@ -296,7 +296,7 @@
         "dependency_attributes": "Dépend de",
         "side_panel": {
             "title": "Panneau latéral",
-            "display_side_panel": "Afficher le panneau latéral",
+            "display_side_panel": "Afficher",
             "default": "État par défaut",
             "open": "Ouvert",
             "close": "Fermé"

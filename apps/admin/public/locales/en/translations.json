@@ -296,7 +296,7 @@
         "dependency_attributes": "Depends on",
         "side_panel": {
             "title": "Side panel",
-            "display_side_panel": "Display side panel",
+            "display_side_panel": "Display",
             "default": "Default state",
             "open": "Open",
             "close": "Close"
