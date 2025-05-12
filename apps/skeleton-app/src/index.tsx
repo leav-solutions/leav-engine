@@ -3,6 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
 import {createRoot} from 'react-dom/client';
+import {BrowserRouter} from 'react-router-dom';
+import {APP_ENDPOINT, APPS_ENDPOINT} from '@leav/ui';
 import {InitTranslation} from './config/translation/InitTranslation';
 import {InitTheme} from './config/theme/InitTheme';
 import {InitNetwork} from './config/network/InitNetwork';
