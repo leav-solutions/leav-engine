@@ -35,6 +35,7 @@ export const libraryDetailsFragment = gql`
         }
         recordIdentityConf {
             label
+            subLabel
             color
             preview
             treeColorPreview

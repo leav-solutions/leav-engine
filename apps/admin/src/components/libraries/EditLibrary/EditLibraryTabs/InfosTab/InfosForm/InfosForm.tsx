@@ -56,6 +56,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         fullTextAttributes: [],
         recordIdentityConf: {
             label: null,
+            subLabel: null,
             color: null,
             preview: null,
             treeColorPreview: null
@@ -126,6 +127,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             .object()
             .shape({
                 label: yup.string().nullable(),
+                subLabel: yup.string().nullable(),
                 color: yup.string().nullable(),
                 preview: yup.string().nullable(),
                 treeColorPreview: yup.string().nullable()
@@ -293,6 +295,18 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                                 disabled={readonly}
                                 label={t('libraries.record_identity_label')}
                                 value={recordIdentityConf && recordIdentityConf.label ? recordIdentityConf.label : ''}
+                                onChange={_handleChangeWithSubmit}
+                            />
+                        </FormFieldWrapper>
+                        <FormFieldWrapper error={_getErrorByField('recordIdentityConf.subLabel')}>
+                            <Form.Dropdown
+                                search
+                                selection
+                                options={libAttributesOptions}
+                                name="recordIdentityConf.subLabel"
+                                disabled={readonly}
+                                label={t('libraries.record_identity_sub_label')}
+                                value={recordIdentityConf?.subLabel ?? ''}
                                 onChange={_handleChangeWithSubmit}
                             />
                         </FormFieldWrapper>
