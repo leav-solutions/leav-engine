@@ -306,9 +306,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                                 name="recordIdentityConf.subLabel"
                                 disabled={readonly}
                                 label={t('libraries.record_identity_sub_label')}
-                                value={
-                                    recordIdentityConf && recordIdentityConf.subLabel ? recordIdentityConf.subLabel : ''
-                                }
+                                value={recordIdentityConf?.subLabel ?? ''}
                                 onChange={_handleChangeWithSubmit}
                             />
                         </FormFieldWrapper>
