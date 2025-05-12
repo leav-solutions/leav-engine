@@ -7,8 +7,10 @@ import {InitTranslation} from './config/translation/InitTranslation';
 import {InitTheme} from './config/theme/InitTheme';
 import {InitNetwork} from './config/network/InitNetwork';
 import {GuardApplicationAccess} from './config/authentification/GuardApplicationAccess';
-import {Router} from './config/router/Router';
 import {InitUser} from './config/user/InitUser';
+import {InitRouting} from './config/router/InitRouting';
+import {InitLayout} from './modules/layout/InitLayout';
+import {InitApplicationRouter} from './modules/ApplicationRouting/InitApplicationRouter';
 
 export const Index: FunctionComponent = () => (
     <InitNetwork>
@@ -16,7 +18,11 @@ export const Index: FunctionComponent = () => (
             <InitUser>
                 <InitTheme>
                     <GuardApplicationAccess>
-                        <Router />
+                        <InitRouting>
+                            <InitLayout>
+                                <InitApplicationRouter />
+                            </InitLayout>
+                        </InitRouting>
                     </GuardApplicationAccess>
                 </InitTheme>
             </InitUser>

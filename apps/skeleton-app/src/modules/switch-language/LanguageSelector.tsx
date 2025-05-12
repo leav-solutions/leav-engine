@@ -2,21 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitSelect} from 'aristid-ds';
-import {useContext, type FunctionComponent} from 'react';
+import {useContext, type FunctionComponent, ComponentProps} from 'react';
 import {FlagIcon} from 'react-flag-kit';
-import {select, flagIcon} from './LanguageSelector.module.css';
 import {LangContext} from '@leav/ui';
 import {getLanguageRadical} from '../../config/translation/utils';
 import {i18n} from '../../config/translation/initI18n';
 
+import {select, flagIcon} from './LanguageSelector.module.css';
+
 const flagWidth = 20;
 
-const getFlagCode = lang => (lang === 'en' ? 'GB' : lang.toUpperCase());
+const getFlagCode = (lang: string): ComponentProps<typeof FlagIcon>['code'] =>
+    lang === 'EN' ? 'GB' : (lang as ComponentProps<typeof FlagIcon>['code']);
 
-const getLanguageOptions = availableLangages =>
+const getLanguageOptions = (availableLangages: string[]): ComponentProps<typeof KitSelect>['options'] =>
     availableLangages.map(lang => ({
-        value: lang,
-        label: lang.toUpperCase(),
+        value: lang.toLowerCase(),
+        label: lang,
         icon: <FlagIcon code={getFlagCode(lang)} size={flagWidth} className={flagIcon} />
     }));
 
@@ -25,7 +27,7 @@ export const LanguageSelector: FunctionComponent = () => {
 
     // i18n returns a string in 'en' or 'en-GB' format
     const defaultLanguage = getLanguageRadical(i18n.language);
-    const options = getLanguageOptions(availableLangs);
+    const options = getLanguageOptions(availableLangs.map(lang => lang.toUpperCase()));
 
     return (
         <KitSelect

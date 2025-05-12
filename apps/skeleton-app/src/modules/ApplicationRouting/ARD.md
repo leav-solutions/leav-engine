@@ -15,15 +15,15 @@ We need to give some data to the panel, as the record selected.
 
 We can do it:
 
-* inside URL with a **queryParam** => we need to check if on LEAV login redirection it's kept
-* inside **storage** (local or session) => impossible because not sharable
-* using **props** during router declaration, on the fly => impossible because not sharable
-* using **outlet context** (https://reactrouter.com/6.30.0/hooks/use-outlet-context), on the fly => impossible because
+* inside URL with a **queryParam** ⇒ we need to check if on LEAV login redirection it's kept
+* inside **storage** (local or session) ⇒ impossible because not sharable
+* using **props** during router declaration, on the fly ⇒ impossible because not sharable
+* using **outlet context** (https://reactrouter.com/6.30.0/hooks/use-outlet-context), on the fly ⇒ impossible because
   not sharable
 
 ### Decision
 
-We will check for redirection with LEAV in order to use **queryParams** solution.
+We will check for redirection with LEAV to use **queryParams** solution.
 
 ### Tips
 
@@ -33,8 +33,8 @@ We can use the JSON config file to name the **queryParams**
 
 ### Needs
 
-We need to keep it simple. Simple to write (use `:dynamicRoute`) and simple to use (use `useParams()`) and simple to
-navigate (use `generatePath()`).
+We need to keep it simple. The simplest to write (use `:dynamicRoute`) and the simplest to use (use `useParams()`) and
+the simplest to navigate (use `generatePath()`).
 
 ### Solutions
 
@@ -42,13 +42,13 @@ We may do:
 
 * explore all the structure to find all possible to create explicitly its (ex:
   `/workspace/home/panel/PACs/panel/cadrage`) => hard to parse url to get params, using REGEX
-* explore all the structure to find the number of panels level to create its (ex:
-  `/workspace/:workspaceId/panel/:panelId/panel/:panelId`) => hard to find the number of max level
+* explore all the structure to find the number of panels' level to create its (ex:
+  `/workspace/:workspaceId/panel/:panelId/panel/:panelId`) => hard to find the number of max levels
 * froze the level of recursive panel (ex: `/workspace/:workspaceId/(panel/:panelId)*5`) => should be changes later and
   could not suit every case
-* try simple by using only the panel (ex: `/:panelId`) => may be hard to find where we are inside the structure
+* try simple by using only the panel (ex: `/:panelId`) => maybe hard to find where we are inside the structure
 
 ### Decision
 
-We will try the simplest solution: `{path: "/:panelId"}` with the issue to print all needed components. We assume
+We will try the simplest solution: `{path: "/:panelId"}` with the issue to print all necessary elements. We assume
 uniqueness about panel id inside an application.

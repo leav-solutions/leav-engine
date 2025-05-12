@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent} from 'react';
-import {KitButton, type KitDropDown, KitHeader} from 'aristid-ds';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faRightFromBracket, faUser} from '@fortawesome/free-solid-svg-icons';
 import {useTranslation} from 'react-i18next';
-import {type IKitAvatar} from 'aristid-ds/dist/Kit/DataDisplay/Avatar/types';
 import {Link} from 'react-router-dom';
 import {useAuth, useUser} from '@leav/ui';
+import {KitButton, type KitDropDown, KitHeader} from 'aristid-ds';
+import {type IKitAvatar} from 'aristid-ds/dist/Kit/DataDisplay/Avatar/types';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faRightFromBracket, faUser} from '@fortawesome/free-solid-svg-icons';
 import {LanguageSelector} from '../switch-language/LanguageSelector';
 import {header, logo} from './layout.module.css';
 
