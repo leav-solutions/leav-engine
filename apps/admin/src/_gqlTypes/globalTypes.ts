@@ -84,7 +84,8 @@ export enum IOTypes {
 export enum LibraryBehavior {
     directories = 'directories',
     files = 'files',
-    standard = 'standard'
+    standard = 'standard',
+    join = 'join'
 }
 
 export enum PermissionTypes {

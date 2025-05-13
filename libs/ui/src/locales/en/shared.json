@@ -76,6 +76,7 @@
         "behavior_standard": "Standard",
         "behavior_files": "Files",
         "behavior_directories": "Directories",
+        "behavior_join": "Join",
         "record_identity": "ID card of records",
         "preview": "Preview",
         "color": "Color",
@@ -715,7 +716,7 @@
             "deactivate_message": "{{count, number}}/{{total, number}} element for which you have permissions have been deleted. Others remain unchanged.",
             "deactivate_message_zero": "No element deleted, you don't have sufficient permissions.",
             "add-link": "Add",
-            "replace-link": "Replace", 
+            "replace-link": "Replace",
             "toggle_selection": {
                 "select_page_one": "Select visible item ({{count, number}})",
                 "select_page_other": "Select visible items ({{count, number}})",

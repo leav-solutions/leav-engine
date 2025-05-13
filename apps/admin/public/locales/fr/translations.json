@@ -84,6 +84,7 @@
         "behavior_files": "Fichiers",
         "behavior_standard": "Standard",
         "behavior_directories": "Dossiers",
+        "behavior_join": "Jointure",
         "default_view": "Vue par défaut",
         "fulltext_attributes": "Attributs de recherche fulltext",
         "index_fulltext_search": "Rafraichir index fulltext",

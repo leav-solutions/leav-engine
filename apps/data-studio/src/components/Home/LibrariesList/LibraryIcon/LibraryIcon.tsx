@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FileOutlined, FolderOutlined, PictureOutlined} from '@ant-design/icons';
+import {FileOutlined, FolderOutlined, PictureOutlined, TableOutlined} from '@ant-design/icons';
 import {EntityPreview} from '@leav/ui';
 import styled from 'styled-components';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
@@ -23,7 +23,8 @@ function LibraryIcon({library}: ILibraryIconProps): JSX.Element {
     const iconNameByBehavior: {[key in LibraryBehavior]: JSX.Element} = {
         [LibraryBehavior.files]: <PictureOutlined style={{fontSize: iconSize}} />,
         [LibraryBehavior.directories]: <FolderOutlined style={{fontSize: iconSize}} />,
-        [LibraryBehavior.standard]: <FileOutlined style={{fontSize: iconSize}} />
+        [LibraryBehavior.standard]: <FileOutlined style={{fontSize: iconSize}} />,
+        [LibraryBehavior.join]: <TableOutlined style={{fontSize: iconSize}} />
     };
 
     const behavior = library?.behavior ?? LibraryBehavior.standard;

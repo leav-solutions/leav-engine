@@ -54,6 +54,7 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
     const _handleClickNew = () => {
         switch (libraryBehavior) {
             case LibraryBehavior.standard:
+            case LibraryBehavior.join:
                 setIsRecordCreationVisible(true);
                 break;
             case LibraryBehavior.files:

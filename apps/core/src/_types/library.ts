@@ -60,8 +60,9 @@ export interface ILibraryPreviewsSettings {
 
 export enum LibraryBehavior {
     STANDARD = 'standard',
+    DIRECTORIES = 'directories',
     FILES = 'files',
-    DIRECTORIES = 'directories'
+    JOIN = 'join'
 }
 
 export const USERS_LIBRARY = 'users';
