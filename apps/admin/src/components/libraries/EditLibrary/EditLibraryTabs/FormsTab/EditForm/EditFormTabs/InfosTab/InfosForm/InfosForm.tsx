@@ -200,7 +200,6 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                             width="8"
                             toggle
                             name="sidePanel.enable"
-                            aria-label="sidePanel.enable"
                             onChange={_handleChangeWithSubmit}
                             onBlur={_handleBlur}
                             checked={sidePanel.enable}
@@ -213,7 +212,6 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                                 disabled={readonly}
                                 width="4"
                                 name="sidePanel.isOpenByDefault"
-                                aria-label="sidePanel.isOpenByDefault"
                                 onChange={_handleChangeWithSubmit}
                                 options={[
                                     {

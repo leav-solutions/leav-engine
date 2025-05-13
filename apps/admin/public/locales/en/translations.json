@@ -298,8 +298,8 @@
             "title": "Side panel",
             "display_side_panel": "Display",
             "default": "Default state",
-            "open": "Open",
-            "close": "Close"
+            "open": "Opened",
+            "close": "Closed"
         },
         "confirm_delete": "Do you really want to delete form {{formLabel}}?",
         "select_attribute": "Select an attribute",
