@@ -53,6 +53,18 @@ describe('EditRecordSidebar', () => {
         }
     };
 
+    const mockReducerWithEnableSideBar: IEditRecordReducerContext = {
+        ...mockReducer,
+        state: {
+            ...mockReducer.state,
+            record: mockRecord,
+            sidebarContent: EditRecordSidebarContentTypeMap.SUMMARY,
+            enableSidebar: true,
+            sidebarDefaultHidden: false,
+            isOpenSidebar: true
+        }
+    };
+
     const mockReducerWithValueSimple: IEditRecordReducerContext = {
         ...mockReducerWithValue,
         state: {
@@ -82,7 +94,7 @@ describe('EditRecordSidebar', () => {
         document.body.appendChild(sidebarContainer);
 
         render(
-            <EditRecordReducerContext.Provider value={mockReducer}>
+            <EditRecordReducerContext.Provider value={mockReducerWithEnableSideBar}>
                 <EditRecordSidebar
                     onMetadataSubmit={mockHandleMetadataSubmit}
                     sidebarContainer={sidebarContainer}
@@ -97,7 +109,7 @@ describe('EditRecordSidebar', () => {
     describe('Record summary', () => {
         it('should display record summary', async () => {
             render(
-                <EditRecordReducerContext.Provider value={mockReducer}>
+                <EditRecordReducerContext.Provider value={mockReducerWithEnableSideBar}>
                     <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
                 </EditRecordReducerContext.Provider>
             );
@@ -108,8 +120,8 @@ describe('EditRecordSidebar', () => {
 
         it('should display record summary with new record', async () => {
             const mockReducerWithoutRecord = {
-                ...mockReducer,
-                state: {...mockReducer.state, record: null}
+                ...mockReducerWithEnableSideBar,
+                state: {...mockReducerWithEnableSideBar.state, record: null}
             };
 
             render(
