@@ -11,15 +11,14 @@ export const InitUser: FunctionComponent = ({children}) => {
     const userIdentity = useMemo<IUserContext>(() => {
         if (userData?.me) {
             return {
-                userData: null
+                userData: {
+                    userId: userData.me.whoAmI.id,
+                    userWhoAmI: userData.me.whoAmI
+                }
             };
         }
-
         return {
-            userData: {
-                userId: userData.me.whoAmI.id,
-                userWhoAmI: userData.me.whoAmI
-            }
+            userData: null
         };
     }, [userData]);
 
