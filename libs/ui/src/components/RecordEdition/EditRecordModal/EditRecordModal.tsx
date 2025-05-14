@@ -15,6 +15,7 @@ import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 import {v4 as uuidv4} from 'uuid';
+import {ToggleSidebarButton} from '../EditRecordBtn/SidebarButton';
 
 export interface IEditRecordModalProps {
     className?: string;
@@ -29,6 +30,7 @@ export interface IEditRecordModalProps {
     submitButtons?: possibleSubmitButtons;
     withInfoButton?: boolean;
     valuesVersion?: IValueVersion;
+    showSidebar?: boolean;
 }
 
 const MODAL_HEIGHT = '80vh';
@@ -79,6 +81,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     onCreate,
     onCreateAndEdit,
     valuesVersion,
+    showSidebar,
     submitButtons = ['create'],
     withInfoButton = true
 }) => {
@@ -90,6 +93,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     // Create refs for the buttons to pass them to the EditRecord component
     const refreshButtonRef = useRef<HTMLButtonElement>(null);
     const valuesVersionsButtonRef = useRef<HTMLButtonElement>(null);
+    const sideBarButtonRef = useRef<HTMLButtonElement>(null);
 
     const formElementId = useRef(uuidv4());
     const isCreation = !currentRecord;
@@ -154,6 +158,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                             type="tertiary"
                             icon={<FontAwesomeIcon icon={faRotateRight} />}
                         />
+                        <ToggleSidebarButton outOfContextReferences={sideBarButtonRef} />
                     </KitSpace>
                 </KitSpace>
             }
@@ -186,9 +191,10 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                 valuesVersion={valuesVersion}
                 buttonsRefs={{
                     refresh: refreshButtonRef,
-                    valuesVersions: valuesVersionsButtonRef
+                    valuesVersions: valuesVersionsButtonRef,
+                    sideBarState: sideBarButtonRef
                 }}
-                showSidebar
+                showSidebar={showSidebar}
                 withInfoButton={withInfoButton}
             />
         </KitModalStyled>

@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useRef} from 'react';
+import {FunctionComponent, useEffect, useMemo, useRef} from 'react';
 import {MetadataSubmitValueFunc} from '../EditRecordContent/_types';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import RecordSummary from './RecordSummary';
 import ValuesVersions from './ValuesVersions';
 import {createPortal} from 'react-dom';
-import {EditRecordReducerActionsTypes, IEditRecordReducerState} from '../editRecordReducer/editRecordReducer';
+import {EditRecordSidebarContentTypeMap, IEditRecordReducerState} from '../editRecordReducer/editRecordReducer';
 import {KitSidePanel, KitSpace} from 'aristid-ds';
 import {KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -21,6 +21,7 @@ import {localizedTranslation} from '@leav/utils';
 
 interface IEditRecordSidebarProps {
     onMetadataSubmit: MetadataSubmitValueFunc;
+    enable?: boolean;
     open: boolean;
     sidebarContainer?: HTMLElement;
 }
@@ -47,55 +48,65 @@ const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubm
     }
 };
 
-const StyledKitSidePanel = styled(KitSidePanel)<{$hideBoxShadow: boolean}>`
+const StyledKitSidePanel = styled(KitSidePanel)<{$hideBoxShadow: boolean; $isOpen: boolean}>`
     ${({$hideBoxShadow}) =>
         $hideBoxShadow &&
         `&&& section {
             box-shadow: none;
         }`}
+    grid-area: sidebar;
+    display: ${({$isOpen}) => ($isOpen ? 'block' : 'none')};
 `;
 
 export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
     onMetadataSubmit,
     open,
-    sidebarContainer
+    sidebarContainer,
+    enable = true
 }) => {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
-    const {state, dispatch} = useEditRecordReducer();
+    const {state} = useEditRecordReducer();
     const sidePanelRef = useRef<KitSidePanelRef | null>(null);
     const sidePanelTitle =
-        state.sidebarContent === 'valueDetails'
+        state.sidebarContent === EditRecordSidebarContentTypeMap.VALUE_DETAILS
             ? localizedTranslation(state.activeAttribute?.attribute.label, lang)
             : (state.record?.label ?? state.record?.id ?? t('record_summary.new_record'));
+
+    const isEnabled = useMemo(
+        () => (enable !== undefined ? enable : state.enableSidebar),
+        [enable, state.enableSidebar]
+    );
+
+    const isOpen = useMemo(() => (open !== undefined ? open : state.isOpenSidebar), [open, state.isOpenSidebar]);
 
     const editRecordSidebarContent = (
         <StyledKitSidePanel
             ref={sidePanelRef}
-            initialOpen={open}
+            initialOpen={isOpen && isEnabled}
             idCardProps={{title: sidePanelTitle}}
             id={EDIT_RECORD_SIDEBAR_ID}
             headerExtra={<Breadcrumb />}
             $hideBoxShadow={!sidebarContainer}
+            $isOpen={isOpen}
         >
             {_getRecordSidebarContent(state, onMetadataSubmit)}
         </StyledKitSidePanel>
     );
 
     useEffect(() => {
-        if (sidePanelRef.current) {
-            if (open) {
+        if (sidePanelRef.current && isEnabled) {
+            if (isOpen) {
                 sidePanelRef.current.open();
-
-                dispatch({
-                    type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-                    content: state.sidebarContent === 'none' ? 'summary' : state.sidebarContent
-                });
             } else {
                 sidePanelRef.current.close();
             }
         }
-    }, [open]);
+    }, [isEnabled, isOpen, sidePanelRef.current]);
+
+    if (!isEnabled) {
+        return null;
+    }
 
     return sidebarContainer === undefined
         ? editRecordSidebarContent

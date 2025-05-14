@@ -85,6 +85,21 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         version: state.valuesVersion
     });
 
+    useEffect(() => {
+        if (!loading && recordForm) {
+            dispatch({
+                type: EditRecordReducerActionsTypes.INITIALIZE_SIDEBAR,
+                enabled: recordForm.sidePanel.enable,
+                isOpenByDefault: recordForm.sidePanel.isOpenByDefault
+            });
+
+            const sidebarBtn = document.getElementById('edit-record-side-bar-open-button');
+            if (sidebarBtn && !recordForm.sidePanel.enable) {
+                sidebarBtn.style.display = 'none';
+            }
+        }
+    }, [recordForm]);
+
     const {
         data: computeFieldsData,
         error: computeFieldsError,
