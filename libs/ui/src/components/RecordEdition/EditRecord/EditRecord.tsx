@@ -39,7 +39,11 @@ import {
     MetadataSubmitValueFunc,
     SubmitValueFunc
 } from '../EditRecordContent/_types';
-import editRecordReducer, {EditRecordReducerActionsTypes, initialState} from '../editRecordReducer/editRecordReducer';
+import editRecordReducer, {
+    EditRecordReducerActionsTypes,
+    initialState,
+    EditRecordSidebarContentTypeMap
+} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
 import CreationErrorContext, {ICreationErrorByField} from './creationErrorContext';
 import {FormInstance} from 'antd/lib/form/Form';
@@ -59,6 +63,7 @@ interface IEditRecordProps {
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
     valuesVersion?: IValueVersion;
     showSidebar?: boolean;
+    enableSidebar?: boolean;
     sidebarContainer?: HTMLElement;
     containerStyle?: CSSObject;
     withInfoButton: boolean;
@@ -67,6 +72,7 @@ interface IEditRecordProps {
     buttonsRefs: {
         refresh?: React.RefObject<HTMLButtonElement>;
         valuesVersions?: React.RefObject<HTMLButtonElement>;
+        sideBarState?: React.RefObject<HTMLButtonElement>;
     };
 }
 
@@ -96,11 +102,12 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     library: libraryId,
     onCreate,
     valuesVersion,
-    showSidebar = false,
+    showSidebar,
     sidebarContainer,
     containerStyle,
     withInfoButton,
-    buttonsRefs
+    buttonsRefs,
+    enableSidebar
 }) => {
     const isCreationMode = !record;
 
@@ -111,8 +118,9 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         libraryLabel: null,
         valuesVersion,
         originValuesVersion: valuesVersion,
-        sidebarContent: showSidebar ? 'summary' : 'none',
-        sidebarDefaultHidden: !showSidebar,
+        enableSidebar: enableSidebar ?? true,
+        isOpenSidebar: showSidebar ?? false,
+        sidebarContent: showSidebar ? EditRecordSidebarContentTypeMap.SUMMARY : EditRecordSidebarContentTypeMap.NONE,
         withInfoButton
     });
 
@@ -157,6 +165,31 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         }
     }, [record]);
 
+    // On click actions for out of current context buttons
+    const listenersByButtonsName: Record<keyof IEditRecordProps['buttonsRefs'], () => void> = {
+        refresh: () => {
+            dispatch({
+                type: EditRecordReducerActionsTypes.REQUEST_REFRESH
+            });
+        },
+        valuesVersions: () => {
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
+                content:
+                    state.sidebarContent === EditRecordSidebarContentTypeMap.VALUES_VERSIONS
+                        ? EditRecordSidebarContentTypeMap.SUMMARY
+                        : EditRecordSidebarContentTypeMap.VALUES_VERSIONS
+            });
+        },
+        sideBarState: () => {
+            const isOpen = state.sidebarContent !== EditRecordSidebarContentTypeMap.NONE;
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN,
+                isOpen: !isOpen
+            });
+        }
+    };
+
     // Add events listeners on buttons (submit, close, refresh...)
     useEffect(() => {
         for (const buttonName of Object.keys(buttonsRefs)) {
@@ -168,7 +201,12 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                 buttonsRefs[buttonName]?.current?.removeEventListener('click', listenersByButtonsName[buttonName]);
             }
         };
-    }, [buttonsRefs]);
+    }, [
+        buttonsRefs.refresh?.current,
+        buttonsRefs.sideBarState?.current,
+        buttonsRefs.valuesVersions?.current,
+        listenersByButtonsName
+    ]);
 
     // Keep pendingValuesRef in sync with the state
     useEffect(() => {
@@ -489,21 +527,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         };
     };
 
-    const listenersByButtonsName: Record<keyof IEditRecordProps['buttonsRefs'], () => void> = {
-        refresh: () => {
-            dispatch({
-                type: EditRecordReducerActionsTypes.REQUEST_REFRESH
-            });
-        },
-        valuesVersions: () => {
-            dispatch({
-                type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-                content: state.sidebarContent === 'valuesVersions' ? 'summary' : 'valuesVersions'
-            });
-        }
-    };
-
-    const shouldUseLayoutWithSidebar = state.sidebarContent !== 'none' && sidebarContainer === undefined && showSidebar;
+    const shouldUseLayoutWithSidebar = state.enableSidebar && state.isOpenSidebar && sidebarContainer === undefined;
 
     return (
         <ErrorBoundary>
@@ -533,6 +557,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                         </Content>
                         <EditRecordSidebar
                             onMetadataSubmit={_handleMetadataSubmit}
+                            enable={enableSidebar}
                             open={showSidebar}
                             sidebarContainer={sidebarContainer}
                         />

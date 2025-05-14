@@ -6,6 +6,7 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockRecordPropertyWithAttribute} from '_ui/__mocks__/common/value';
 import editRecordReducer, {
     EditRecordReducerActionsTypes,
+    EditRecordSidebarContentTypeMap,
     IEditRecordReducerState,
     initialState
 } from './editRecordReducer';
@@ -63,7 +64,7 @@ describe('editRecordReducer', () => {
         expect(
             editRecordReducer(mockInitialState, {
                 type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-                content: 'valueDetails'
+                content: EditRecordSidebarContentTypeMap.VALUE_DETAILS
             }).sidebarContent
         ).toBe('valueDetails');
     });

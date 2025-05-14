@@ -4,7 +4,7 @@
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockRecordPropertyWithAttribute} from '_ui/__mocks__/common/value';
 import {render, screen} from '../../../_tests/testUtils';
-import {initialState} from '../editRecordReducer/editRecordReducer';
+import {EditRecordSidebarContentTypeMap, initialState} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext, IEditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
 import EditRecordSidebar from './EditRecordSidebar';
 import {IUseGetRecordColumnsValuesQueryHook} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
@@ -40,7 +40,7 @@ describe('EditRecordSidebar', () => {
             ...mockReducer.state,
             record: mockRecord,
             activeAttribute: mockRecordPropertyWithAttribute,
-            sidebarContent: 'valueDetails'
+            sidebarContent: EditRecordSidebarContentTypeMap.VALUE_DETAILS
         }
     };
 
@@ -49,7 +49,7 @@ describe('EditRecordSidebar', () => {
         state: {
             ...mockReducer.state,
             record: mockRecord,
-            sidebarContent: 'none'
+            sidebarContent: EditRecordSidebarContentTypeMap.NONE
         }
     };
 

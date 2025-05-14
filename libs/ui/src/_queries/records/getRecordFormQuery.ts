@@ -59,6 +59,10 @@ export const getRecordFormQuery = gql`
             elements {
                 ...RecordFormElement
             }
+            sidePanel {
+                enable
+                isOpenByDefault
+            }
         }
     }
 `;

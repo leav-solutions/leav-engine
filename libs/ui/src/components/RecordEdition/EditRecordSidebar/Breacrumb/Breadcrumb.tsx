@@ -6,7 +6,10 @@ import {KitBreadcrumb} from 'aristid-ds';
 import {IKitBreadcrumbItem} from 'aristid-ds/dist/Kit/Navigation/Breadcrumb/types';
 import {FunctionComponent} from 'react';
 import {useEditRecordReducer} from '../../editRecordReducer/useEditRecordReducer';
-import {EditRecordReducerActionsTypes} from '../../editRecordReducer/editRecordReducer';
+import {
+    EditRecordReducerActionsTypes,
+    EditRecordSidebarContentTypeMap
+} from '../../editRecordReducer/editRecordReducer';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 
@@ -32,7 +35,7 @@ export const Breadcrumb: FunctionComponent = () => {
                         e.preventDefault();
                         dispatch({
                             type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-                            content: 'summary'
+                            content: EditRecordSidebarContentTypeMap.SUMMARY
                         });
                     }
                 },
