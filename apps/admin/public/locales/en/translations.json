@@ -295,6 +295,13 @@
         "layout": "Layout",
         "fields": "Input fields",
         "dependency_attributes": "Depends on",
+        "side_panel": {
+            "title": "Side panel",
+            "display_side_panel": "Display",
+            "default": "Default state",
+            "open": "Opened",
+            "close": "Closed"
+        },
         "confirm_delete": "Do you really want to delete form {{formLabel}}?",
         "select_attribute": "Select an attribute",
         "select_tree_element": "Select an element",

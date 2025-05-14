@@ -115,6 +115,7 @@ export default function ({
                         label(lang: [AvailableLanguage!]): SystemTranslation,
                         dependencyAttributes: [Attribute!],
                         elements: [FormElementsByDeps!]!
+                        sidePanel: FormSidePanel,
                     }
 
                     type RecordForm {
@@ -125,6 +126,7 @@ export default function ({
                         label(lang: [AvailableLanguage!]): SystemTranslation,
                         elements: [FormElementWithValues!]!,
                         dependencyAttributes: [Attribute!],
+                        sidePanel: FormSidePanel,
                     }
 
                     input FormInput {
@@ -133,6 +135,17 @@ export default function ({
                         label: SystemTranslation,
                         dependencyAttributes: [ID!],
                         elements: [FormElementsByDepsInput!]
+                        sidePanel: FormSidePanelInput
+                    }
+
+                    type FormSidePanel {
+                        enable: Boolean!,
+                        isOpenByDefault: Boolean
+                    }
+
+                    input FormSidePanelInput {
+                        enable: Boolean!,
+                        isOpenByDefault: Boolean!
                     }
 
                     type FormDependencyValue {
