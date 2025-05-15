@@ -21,8 +21,6 @@ import {localizedTranslation} from '@leav/utils';
 
 interface IEditRecordSidebarProps {
     onMetadataSubmit: MetadataSubmitValueFunc;
-    enable?: boolean;
-    open: boolean;
     sidebarContainer?: HTMLElement;
 }
 
@@ -58,12 +56,7 @@ const StyledKitSidePanel = styled(KitSidePanel)<{$hideBoxShadow: boolean; $isOpe
     display: ${({$isOpen}) => ($isOpen ? 'block' : 'none')};
 `;
 
-export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
-    onMetadataSubmit,
-    open,
-    sidebarContainer,
-    enable = true
-}) => {
+export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({onMetadataSubmit, sidebarContainer}) => {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
     const {state} = useEditRecordReducer();
@@ -73,38 +66,31 @@ export const EditRecordSidebar: FunctionComponent<IEditRecordSidebarProps> = ({
             ? localizedTranslation(state.activeAttribute?.attribute.label, lang)
             : (state.record?.label ?? state.record?.id ?? t('record_summary.new_record'));
 
-    const isEnabled = useMemo(
-        () => (enable !== undefined ? enable : state.enableSidebar),
-        [enable, state.enableSidebar]
-    );
-
-    const isOpen = useMemo(() => (open !== undefined ? open : state.isOpenSidebar), [open, state.isOpenSidebar]);
-
     const editRecordSidebarContent = (
         <StyledKitSidePanel
             ref={sidePanelRef}
-            initialOpen={isOpen && isEnabled}
+            initialOpen={state.isOpenSidebar && state.enableSidebar}
             idCardProps={{title: sidePanelTitle}}
             id={EDIT_RECORD_SIDEBAR_ID}
             headerExtra={<Breadcrumb />}
             $hideBoxShadow={!sidebarContainer}
-            $isOpen={isOpen}
+            $isOpen={state.isOpenSidebar}
         >
             {_getRecordSidebarContent(state, onMetadataSubmit)}
         </StyledKitSidePanel>
     );
 
     useEffect(() => {
-        if (sidePanelRef.current && isEnabled) {
-            if (isOpen) {
+        if (sidePanelRef.current && state.enableSidebar) {
+            if (state.isOpenSidebar) {
                 sidePanelRef.current.open();
             } else {
                 sidePanelRef.current.close();
             }
         }
-    }, [isEnabled, isOpen, sidePanelRef.current]);
+    }, [state.enableSidebar, state.isOpenSidebar, sidePanelRef.current]);
 
-    if (!isEnabled) {
+    if (!state.enableSidebar) {
         return null;
     }
 
