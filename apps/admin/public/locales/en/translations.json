@@ -85,6 +85,7 @@
         "behavior_standard": "Standard",
         "behavior_directories": "Directories",
         "behavior_join": "Join",
+        "mandatory_attribute": "Mandatory Attribute",
         "default_view": "Default view",
         "fulltext_attributes": "Fulltext search attributes",
         "index_fulltext_search": "Refresh fulltext index",

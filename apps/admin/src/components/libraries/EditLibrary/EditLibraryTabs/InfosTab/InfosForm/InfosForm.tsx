@@ -50,6 +50,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         },
         icon: null,
         behavior: LibraryBehavior.standard,
+        mandatoryAttribute: null,
         attributes: [],
         permissions_conf: null,
         defaultView: null,
@@ -195,7 +196,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             });
         };
 
-        const {id, label, behavior, recordIdentityConf, defaultView, fullTextAttributes} = values;
+        const {id, label, behavior, mandatoryAttribute, recordIdentityConf, defaultView, fullTextAttributes} = values;
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<LibraryFormValues>(fieldName, touched, serverValidationErrors || {}, inputErrors);
@@ -205,6 +206,14 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             value: b,
             text: t(`libraries.behavior_${b}`)
         }));
+
+        const mandatoryAttributeOptions = library.attributes
+            .filter(attr => attr.type !== AttributeType.simple && attr.type !== AttributeType.advanced)
+            .map(attr => ({
+                key: attr.id,
+                value: attr.id,
+                text: localizedLabel(attr.label, lang)
+            }));
 
         const _onSubmit = () => handleSubmit();
 
@@ -250,6 +259,19 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                         options={behaviorOptions}
                     />
                 </FormFieldWrapper>
+                {isExistingLib && (
+                    <FormFieldWrapper error={_getErrorByField('libraries.mandatory_attribute')}>
+                        <Form.Select
+                            label={t('libraries.mandatory_attribute')}
+                            name="mandatoryAttribute"
+                            aria-label="mandatoryAttribute"
+                            onChange={_handleChangeWithSubmit}
+                            onBlur={_handleBlur}
+                            value={mandatoryAttribute.id}
+                            options={mandatoryAttributeOptions}
+                        />
+                    </FormFieldWrapper>
+                )}
                 {isExistingLib && (
                     <FormFieldWrapper error={_getErrorByField('libraries.fulltext_attributes')}>
                         <Form.Dropdown

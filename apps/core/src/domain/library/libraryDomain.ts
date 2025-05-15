@@ -144,6 +144,7 @@ export default function ({
                 id: '',
                 system: false,
                 behavior: LibraryBehavior.STANDARD,
+                mandatoryAttribute: null,
                 label: {fr: '', en: ''}
             };
 

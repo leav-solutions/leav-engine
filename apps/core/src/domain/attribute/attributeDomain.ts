@@ -50,6 +50,8 @@ export interface IAttributeDomain {
      */
     getLibraryAttributes(libraryId: string, ctx: IQueryInfos): Promise<IAttribute[]>;
 
+    getLibraryMandatoryAttribute(libraryId: string, ctx: IQueryInfos): Promise<IAttribute>;
+
     getLibraryFullTextAttributes(libraryId: string, ctx: IQueryInfos): Promise<IAttribute[]>;
 
     /**
@@ -143,6 +145,15 @@ export default function ({
             );
         },
         getLibraryAttributes: _getLibraryAttributes,
+        async getLibraryMandatoryAttribute(libraryId: string, ctx: IQueryInfos): Promise<IAttribute> {
+            const {list: libs} = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});
+
+            if (!libs.length) {
+                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+            }
+
+            return getCoreEntityById<IAttribute>('attribute', libs[0].mandatoryAttribute, ctx);
+        },
         async getFormAttributes(libraryId: string, formId: string, ctx): Promise<IAttribute[]> {
             const library = await getCoreEntityById('library', libraryId, ctx);
             if (!library) {

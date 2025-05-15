@@ -345,6 +345,7 @@ export type LibraryIconInput = {
 export type LibraryInput = {
   attributes?: InputMaybe<Array<Scalars['ID']>>;
   behavior?: InputMaybe<LibraryBehavior>;
+  mandatoryAttribute?: InputMaybe<Scalars['ID']>;
   defaultView?: InputMaybe<Scalars['ID']>;
   fullTextAttributes?: InputMaybe<Array<Scalars['ID']>>;
   icon?: InputMaybe<LibraryIconInput>;
