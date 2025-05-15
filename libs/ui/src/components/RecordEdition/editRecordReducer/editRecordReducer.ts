@@ -154,7 +154,7 @@ const editRecordReducer = (
             return {...state, libraryLabel: action.label};
         case EditRecordReducerActionsTypes.INITIALIZE_SIDEBAR: {
             const {enabled, isOpenByDefault} = action;
-            // If the sidebar is not enabled, don"t check for isOpenByDefault
+            // If the sidebar is not enabled, don't check for isOpenByDefault
             const isOpen = enabled && isOpenByDefault;
             return {
                 ...state,

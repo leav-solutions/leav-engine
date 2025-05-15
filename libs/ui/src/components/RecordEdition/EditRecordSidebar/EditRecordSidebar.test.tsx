@@ -80,11 +80,7 @@ describe('EditRecordSidebar', () => {
     const mockHandleMetadataSubmit = jest.fn();
 
     it("shouldn't display sidebar content if none", async () => {
-        render(
-            <EditRecordReducerContext.Provider value={mockReducerWithoutValue}>
-                <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
-            </EditRecordReducerContext.Provider>
-        );
+        render(<EditRecordReducerContext.Provider value={mockReducerWithoutValue}></EditRecordReducerContext.Provider>);
 
         expect(screen.queryByText(/Informations/)).not.toBeInTheDocument();
     });
@@ -95,11 +91,7 @@ describe('EditRecordSidebar', () => {
 
         render(
             <EditRecordReducerContext.Provider value={mockReducerWithEnableSideBar}>
-                <EditRecordSidebar
-                    onMetadataSubmit={mockHandleMetadataSubmit}
-                    sidebarContainer={sidebarContainer}
-                    open
-                />
+                <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} sidebarContainer={sidebarContainer} />
             </EditRecordReducerContext.Provider>
         );
 
@@ -109,9 +101,9 @@ describe('EditRecordSidebar', () => {
     describe('Record summary', () => {
         it('should display record summary', async () => {
             render(
-                <EditRecordReducerContext.Provider value={mockReducerWithEnableSideBar}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
-                </EditRecordReducerContext.Provider>
+                <EditRecordReducerContext.Provider
+                    value={mockReducerWithEnableSideBar}
+                ></EditRecordReducerContext.Provider>
             );
 
             expect(screen.getByText('Informations')).toBeInTheDocument();
@@ -125,9 +117,7 @@ describe('EditRecordSidebar', () => {
             };
 
             render(
-                <EditRecordReducerContext.Provider value={mockReducerWithoutRecord}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
-                </EditRecordReducerContext.Provider>
+                <EditRecordReducerContext.Provider value={mockReducerWithoutRecord}></EditRecordReducerContext.Provider>
             );
 
             expect(screen.getByText('Informations')).toBeInTheDocument();
@@ -139,9 +129,9 @@ describe('EditRecordSidebar', () => {
         test('Display active value details', async () => {
             const {attribute} = mockReducerWithValue.state.activeAttribute;
             render(
-                <EditRecordReducerContext.Provider value={mockReducerWithValueSimple}>
-                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} open />
-                </EditRecordReducerContext.Provider>
+                <EditRecordReducerContext.Provider
+                    value={mockReducerWithValueSimple}
+                ></EditRecordReducerContext.Provider>
             );
 
             expect(screen.getByText(attribute.label.fr)).toBeInTheDocument();
