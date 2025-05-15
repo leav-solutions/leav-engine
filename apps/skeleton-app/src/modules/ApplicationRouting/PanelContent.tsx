@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
+import {ComponentProps, FunctionComponent, useContext, useEffect, useState} from 'react';
 import {generatePath, Navigate, useLocation, useNavigate, useOutletContext} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {EditRecordPage, Explorer} from '@leav/ui';
@@ -11,6 +11,7 @@ import {recordSearchParamsName, routes} from './routes';
 import {SIDEBAR_CONTENT_ID} from '../../constants';
 
 import {iframe, explorerContainer} from './PanelContent.module.css';
+import {SidePanelContext} from '../../config/sidePanel/SidePanelContext';
 
 export const PanelContent: FunctionComponent = () => {
     const {t} = useTranslation();
@@ -18,6 +19,8 @@ export const PanelContent: FunctionComponent = () => {
     const searchParams = new URLSearchParams(search);
     const {currentPanel, currentWorkspace} =
         useOutletContext<Omit<IApplicationMatchingContext, 'currentParentTuple'>>();
+
+    const {iFrameRef} = useContext(SidePanelContext);
 
     const navigate = useNavigate();
 
@@ -65,6 +68,8 @@ export const PanelContent: FunctionComponent = () => {
             // TODO: give interaction from iframe to main app to change pages
             return (
                 <iframe
+                    ref={iFrameRef}
+                    id="iframe"
                     className={iframe}
                     name="testFrame"
                     src={currentPanel.content.iframeSource + search}

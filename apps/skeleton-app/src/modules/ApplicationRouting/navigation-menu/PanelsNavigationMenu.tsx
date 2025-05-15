@@ -8,6 +8,7 @@ import type {IApplicationMatchingContext} from '../types';
 import {routes} from '../routes';
 
 import {content, headerContent, page, pageHeader} from './panelsNavigationMenu.module.css';
+import {InitSidePanel} from '../../../config/sidePanel/InitSidePanel';
 
 export const PanelsNavigationMenu: FunctionComponent = () => {
     const {currentPanel, currentWorkspace, currentParentTuple} = useOutletContext<IApplicationMatchingContext>();
@@ -31,24 +32,26 @@ export const PanelsNavigationMenu: FunctionComponent = () => {
 
     return (
         <section className={page}>
-            <div className={pageHeader}>
-                <div className={headerContent}>
-                    <KitIdCard size="large" title={currentPanel.id} />
+            <InitSidePanel>
+                <div className={pageHeader}>
+                    <div className={headerContent}>
+                        <KitIdCard size="large" title={currentPanel.id} />
+                    </div>
+                    {tabItems != null && (
+                        <KitTabs items={tabItems} onChange={onChangeTab} defaultKey={currentPanel.id} />
+                    )}
                 </div>
-                {tabItems.length !== 0 && (
-                    <KitTabs items={tabItems} onChange={onChangeTab} defaultKey={currentPanel.id} />
-                )}
-            </div>
-            <div className={content}>
-                <Outlet
-                    context={
-                        {currentPanel, currentWorkspace} satisfies Omit<
-                            IApplicationMatchingContext,
-                            'currentParentTuple'
-                        >
-                    }
-                />
-            </div>
+                <div className={content}>
+                    <Outlet
+                        context={
+                            {currentPanel, currentWorkspace} satisfies Omit<
+                                IApplicationMatchingContext,
+                                'currentParentTuple'
+                            >
+                        }
+                    />
+                </div>
+            </InitSidePanel>
         </section>
     );
 };

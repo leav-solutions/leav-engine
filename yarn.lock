@@ -32906,6 +32906,7 @@ __metadata:
     ts-jest-mock-import-meta: "npm:1.0.0"
     typescript: "npm:5.5.3"
     typescript-plugin-css-modules: "npm:5.1.0"
+    use-iframe: "npm:1.0.4"
     vite: "npm:4.5.14"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:0.4.9"
@@ -35452,6 +35453,15 @@ __metadata:
   peerDependencies:
     react: ">=16.8.0"
   checksum: ec3d3e58241d92424da757cab65ae8a9db46114c8dd828cadb5a0f10991d5d562cf696d32a6db2885d32035fb8097726b84a4fcbef3cb4b1b4c3a3560a2ce0c5
+  languageName: node
+  linkType: hard
+
+"use-iframe@npm:1.0.4":
+  version: 1.0.4
+  resolution: "use-iframe@npm:1.0.4"
+  peerDependencies:
+    react: ^16.12.0
+  checksum: ce82af431265e31e89519813f1c9f2f814e4f0c128c200b345d200895e1649f05899540af51fb3fb21181864a8d75722a425b06e11088fd62469146ff66cfcde
   languageName: node
   linkType: hard
 
