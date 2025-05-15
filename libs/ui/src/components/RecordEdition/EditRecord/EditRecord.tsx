@@ -557,8 +557,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                         </Content>
                         <EditRecordSidebar
                             onMetadataSubmit={_handleMetadataSubmit}
-                            enable={enableSidebar}
-                            open={showSidebar}
                             sidebarContainer={sidebarContainer}
                         />
                     </Container>

@@ -11,7 +11,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useDatasetObserver} from '../hooks/useDatasetObserver';
 import {EDIT_RECORD_SIDEBAR_TOGGLE_BUTON_ID} from '../constants';
 
-export interface ISidebarButtonProps {
+interface ISidebarButtonProps {
     outOfContextReferences?: RefObject<HTMLElement>;
 }
 
