@@ -73,7 +73,8 @@ describe('EditRecordSidebar', () => {
             activeAttribute: {
                 ...mockRecordPropertyWithAttribute,
                 attribute: mockRecordPropertyWithAttribute.attribute
-            }
+            },
+            enableSidebar: true
         }
     };
 
@@ -101,9 +102,9 @@ describe('EditRecordSidebar', () => {
     describe('Record summary', () => {
         it('should display record summary', async () => {
             render(
-                <EditRecordReducerContext.Provider
-                    value={mockReducerWithEnableSideBar}
-                ></EditRecordReducerContext.Provider>
+                <EditRecordReducerContext.Provider value={mockReducerWithEnableSideBar}>
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                </EditRecordReducerContext.Provider>
             );
 
             expect(screen.getByText('Informations')).toBeInTheDocument();
@@ -117,7 +118,9 @@ describe('EditRecordSidebar', () => {
             };
 
             render(
-                <EditRecordReducerContext.Provider value={mockReducerWithoutRecord}></EditRecordReducerContext.Provider>
+                <EditRecordReducerContext.Provider value={mockReducerWithoutRecord}>
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                </EditRecordReducerContext.Provider>
             );
 
             expect(screen.getByText('Informations')).toBeInTheDocument();
@@ -129,9 +132,9 @@ describe('EditRecordSidebar', () => {
         test('Display active value details', async () => {
             const {attribute} = mockReducerWithValue.state.activeAttribute;
             render(
-                <EditRecordReducerContext.Provider
-                    value={mockReducerWithValueSimple}
-                ></EditRecordReducerContext.Provider>
+                <EditRecordReducerContext.Provider value={mockReducerWithValueSimple}>
+                    <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                </EditRecordReducerContext.Provider>
             );
 
             expect(screen.getByText(attribute.label.fr)).toBeInTheDocument();
