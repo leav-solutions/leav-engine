@@ -104,7 +104,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                 isOpenByDefault: recordForm.sidePanel.isOpenByDefault
             });
         }
-    }, [recordForm]);
+    }, [recordForm, loading]);
 
     const {
         data: computeFieldsData,
