@@ -207,13 +207,14 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             text: t(`libraries.behavior_${b}`)
         }));
 
-        const mandatoryAttributeOptions = library.attributes
-            .filter(attr => attr.type !== AttributeType.simple && attr.type !== AttributeType.advanced)
-            .map(attr => ({
-                key: attr.id,
-                value: attr.id,
-                text: localizedLabel(attr.label, lang)
-            }));
+        const mandatoryAttributeOptions =
+            library?.attributes
+                .filter(attr => attr.type !== AttributeType.simple && attr.type !== AttributeType.advanced)
+                .map(attr => ({
+                    key: attr.id,
+                    value: attr.id,
+                    text: localizedLabel(attr.label, lang)
+                })) ?? [];
 
         const _onSubmit = () => handleSubmit();
 
@@ -267,7 +268,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                             aria-label="mandatoryAttribute"
                             onChange={_handleChangeWithSubmit}
                             onBlur={_handleBlur}
-                            value={mandatoryAttribute.id}
+                            value={mandatoryAttribute?.id ?? ''}
                             options={mandatoryAttributeOptions}
                         />
                     </FormFieldWrapper>
