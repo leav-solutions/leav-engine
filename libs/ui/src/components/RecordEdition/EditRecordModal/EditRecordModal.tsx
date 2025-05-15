@@ -31,6 +31,7 @@ export interface IEditRecordModalProps {
     withInfoButton?: boolean;
     valuesVersion?: IValueVersion;
     showSidebar?: boolean;
+    enableSidebar?: boolean;
 }
 
 const MODAL_HEIGHT = '80vh';
@@ -82,6 +83,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     onCreateAndEdit,
     valuesVersion,
     showSidebar,
+    enableSidebar,
     submitButtons = ['create'],
     withInfoButton = true
 }) => {
@@ -195,6 +197,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                     sideBarState: sideBarButtonRef
                 }}
                 showSidebar={showSidebar}
+                enableSidebar={enableSidebar}
                 withInfoButton={withInfoButton}
             />
         </KitModalStyled>

@@ -102,12 +102,12 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     library: libraryId,
     onCreate,
     valuesVersion,
-    showSidebar,
+    enableSidebar = true,
+    showSidebar = false,
     sidebarContainer,
     containerStyle,
     withInfoButton,
-    buttonsRefs,
-    enableSidebar
+    buttonsRefs
 }) => {
     const isCreationMode = !record;
 
@@ -118,9 +118,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         libraryLabel: null,
         valuesVersion,
         originValuesVersion: valuesVersion,
-        enableSidebar: enableSidebar ?? true,
-        isOpenSidebar: showSidebar ?? false,
-        sidebarContent: showSidebar ? EditRecordSidebarContentTypeMap.SUMMARY : EditRecordSidebarContentTypeMap.NONE,
         withInfoButton
     });
 
@@ -164,6 +161,20 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             });
         }
     }, [record]);
+
+    useEffect(() => {
+        dispatch({
+            type: EditRecordReducerActionsTypes.SET_ENABLE_SIDEBAR,
+            enabled: enableSidebar
+        });
+    }, [enableSidebar]);
+
+    useEffect(() => {
+        dispatch({
+            type: EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN,
+            isOpen: showSidebar
+        });
+    }, [showSidebar]);
 
     // On click actions for out of current context buttons
     const listenersByButtonsName: Record<keyof IEditRecordProps['buttonsRefs'], () => void> = {
