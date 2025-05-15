@@ -22,6 +22,7 @@ import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordC
 import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import EditRecordSkeleton from '../EditRecordSkeleton';
 import styled from 'styled-components';
+import {EDIT_RECORD_SIDEBAR_TOGGLE_BUTON_ID} from '../constants';
 
 interface IEditRecordContentProps {
     antdForm: FormInstance;
@@ -87,16 +88,21 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
     useEffect(() => {
         if (!loading && recordForm) {
+            const sidebarBtn = document.getElementById(EDIT_RECORD_SIDEBAR_TOGGLE_BUTON_ID);
+            if (sidebarBtn) {
+                if (recordForm.sidePanel.enable) {
+                    sidebarBtn.dataset.isOpen = recordForm.sidePanel.isOpenByDefault.toString();
+                } else {
+                    sidebarBtn.dataset.isOpen = 'false';
+                    sidebarBtn.style.display = 'none';
+                }
+            }
+
             dispatch({
                 type: EditRecordReducerActionsTypes.INITIALIZE_SIDEBAR,
                 enabled: recordForm.sidePanel.enable,
                 isOpenByDefault: recordForm.sidePanel.isOpenByDefault
             });
-
-            const sidebarBtn = document.getElementById('edit-record-side-bar-open-button');
-            if (sidebarBtn && !recordForm.sidePanel.enable) {
-                sidebarBtn.style.display = 'none';
-            }
         }
     }, [recordForm]);
 

@@ -8,6 +8,8 @@ import {faAngleLeft, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useDatasetObserver} from '../hooks/useDatasetObserver';
+import {EDIT_RECORD_SIDEBAR_TOGGLE_BUTON_ID} from '../constants';
 
 export interface ISidebarButtonProps {
     outOfContextReferences?: RefObject<HTMLElement>;
@@ -16,32 +18,32 @@ export interface ISidebarButtonProps {
 export const ToggleSidebarButton: FunctionComponent<ISidebarButtonProps> = ({outOfContextReferences}) => {
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
-    const [isOpen, setIsOpen] = useState(
-        outOfContextReferences && outOfContextReferences.current
-            ? outOfContextReferences.current.dataset.isOpen === 'true'
-            : state.isOpenSidebar
-    );
+    const isOpen = useDatasetObserver(outOfContextReferences, 'isOpen', state.isOpenSidebar ?? false);
 
     const toggleSidebar = () => {
-        setIsOpen(!isOpen);
+        const newIsOpen = !isOpen;
 
-        if (outOfContextReferences && outOfContextReferences.current) {
-            outOfContextReferences.current.dataset.isOpen = (!isOpen).toString();
-            return;
+        // Update dataset if available
+        if (outOfContextReferences?.current) {
+            outOfContextReferences.current.dataset.isOpen = newIsOpen.toString();
         }
 
-        dispatch({
-            type: EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN,
-            isOpen: !isOpen
-        });
+        // Try updating global state (if in context)
+        try {
+            dispatch?.({
+                type: EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN,
+                isOpen: newIsOpen
+            });
+        } catch (e) {
+            // safe fail: this component can run outside of context
+        }
     };
 
     const buttonLabel = isOpen ? t('record_edition.close_sidebar') : t('record_edition.open_sidebar');
-    const buttonId = 'edit-record-side-bar-open-button';
     return (
         <KitTooltip title={buttonLabel} mouseEnterDelay={1}>
             <KitButton
-                id={buttonId}
+                id={EDIT_RECORD_SIDEBAR_TOGGLE_BUTON_ID}
                 type="tertiary"
                 ref={outOfContextReferences}
                 icon={<FontAwesomeIcon icon={isOpen ? faAngleRight : faAngleLeft} />}
