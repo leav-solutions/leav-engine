@@ -21,6 +21,7 @@ export default (behavior: LibraryBehavior, libraryId: string): string[] => {
 
     const behaviorSpecificAttr = {
         [LibraryBehavior.STANDARD]: [],
+        [LibraryBehavior.JOIN]: [],
         [LibraryBehavior.FILES]: [
             ...Object.values(FilesAttributes),
             getPreviewsAttributeName(libraryId),

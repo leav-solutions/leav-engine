@@ -154,6 +154,7 @@ export type AttributeInput = {
   readonly?: InputMaybe<Scalars['Boolean']>;
   required?: InputMaybe<Scalars['Boolean']>;
   reverse_link?: InputMaybe<Scalars['String']>;
+  settings?: InputMaybe<Scalars['JSONObject']>;
   type?: InputMaybe<AttributeType>;
   unique?: InputMaybe<Scalars['Boolean']>;
   values_list?: InputMaybe<ValuesListConfInput>;
@@ -294,6 +295,7 @@ export type GlobalSettingsInput = {
   favicon?: InputMaybe<GlobalSettingsFileInput>;
   icon?: InputMaybe<GlobalSettingsFileInput>;
   name?: InputMaybe<Scalars['String']>;
+  settings?: InputMaybe<Scalars['JSONObject']>;
 };
 
 export enum IoTypes {
@@ -331,6 +333,7 @@ export enum LibrariesSortableFields {
 export enum LibraryBehavior {
   directories = 'directories',
   files = 'files',
+  join = 'join',
   standard = 'standard'
 }
 
@@ -350,6 +353,7 @@ export type LibraryInput = {
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
   previewsSettings?: InputMaybe<Array<LibraryPreviewsSettingsInput>>;
   recordIdentityConf?: InputMaybe<RecordIdentityConfInput>;
+  settings?: InputMaybe<Scalars['JSONObject']>;
 };
 
 export type LibraryPreviewsSettingsInput = {
@@ -378,6 +382,7 @@ export enum LogAction {
   PERMISSION_SAVE = 'PERMISSION_SAVE',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
+  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -725,6 +730,7 @@ export type TreeInput = {
   label?: InputMaybe<Scalars['SystemTranslation']>;
   libraries?: InputMaybe<Array<TreeLibraryInput>>;
   permissions_conf?: InputMaybe<Array<TreeNodePermissionsConfInput>>;
+  settings?: InputMaybe<Scalars['JSONObject']>;
 };
 
 export type TreeLibraryInput = {
@@ -775,12 +781,14 @@ export type ValueBatchInput = {
   attribute?: InputMaybe<Scalars['ID']>;
   id_value?: InputMaybe<Scalars['ID']>;
   metadata?: InputMaybe<Array<InputMaybe<ValueMetadataInput>>>;
+  /**  Use "\__empty_value__" to set an empty value  */
   payload?: InputMaybe<Scalars['String']>;
 };
 
 export type ValueInput = {
   id_value?: InputMaybe<Scalars['ID']>;
   metadata?: InputMaybe<Array<InputMaybe<ValueMetadataInput>>>;
+  /**  Use "\__empty_value__" to set an empty value  */
   payload?: InputMaybe<Scalars['String']>;
   version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
 };
