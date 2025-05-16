@@ -9,13 +9,13 @@ import {IValueVersion} from '_ui/types';
 import {RecordIdentityFragment} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faXmark, faRotateRight, faLayerGroup} from '@fortawesome/free-solid-svg-icons';
+import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {possibleSubmitButtons, submitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 import {v4 as uuidv4} from 'uuid';
-import {ToggleSidebarButton} from '../EditRecordBtn/SidebarButton';
+import {EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS} from '../constants';
 
 export interface IEditRecordModalProps {
     className?: string;
@@ -92,11 +92,6 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
     const [clickedSubmitButton, setClickedSubmitButton] = useState<submitButtonsName | null>(null);
 
-    // Create refs for the buttons to pass them to the EditRecord component
-    const refreshButtonRef = useRef<HTMLButtonElement>(null);
-    const valuesVersionsButtonRef = useRef<HTMLButtonElement>(null);
-    const sideBarButtonRef = useRef<HTMLButtonElement>(null);
-
     const formElementId = useRef(uuidv4());
     const isCreation = !currentRecord;
     const closeButtonLabel = isCreation ? t('global.cancel') : t('global.close');
@@ -149,19 +144,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                     <KitTypography.Title level="h2" style={{margin: 0}}>
                         {currentRecord?.label ?? t('record_edition.new_record')}
                     </KitTypography.Title>
-                    <KitSpace size="xxs">
-                        <KitButton
-                            ref={valuesVersionsButtonRef}
-                            type="tertiary"
-                            icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                        />
-                        <KitButton
-                            ref={refreshButtonRef}
-                            type="tertiary"
-                            icon={<FontAwesomeIcon icon={faRotateRight} />}
-                        />
-                        <ToggleSidebarButton outOfContextReferences={sideBarButtonRef} />
-                    </KitSpace>
+                    <div id={EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS} />
                 </KitSpace>
             }
             footer={
@@ -191,11 +174,6 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                 library={library}
                 onCreate={_handleCreate}
                 valuesVersion={valuesVersion}
-                buttonsRefs={{
-                    refresh: refreshButtonRef,
-                    valuesVersions: valuesVersionsButtonRef,
-                    sideBarState: sideBarButtonRef
-                }}
                 showSidebar={showSidebar}
                 enableSidebar={enableSidebar}
                 withInfoButton={withInfoButton}
