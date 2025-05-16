@@ -14,7 +14,7 @@ interface ISimpleErrorBoundaryState {
 }
 
 export class SimpleErrorBoundary extends Component<ISimpleErrorBoundaryProps, ISimpleErrorBoundaryState> {
-    private constructor(props) {
+    public constructor(props) {
         super(props);
         this.state = {error: null, errorInfo: null};
     }

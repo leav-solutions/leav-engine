@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {useAttributeInformations} from './useAttributeInformations';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@testing-library/react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 

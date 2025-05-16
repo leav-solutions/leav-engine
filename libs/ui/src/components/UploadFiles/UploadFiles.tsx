@@ -4,6 +4,7 @@
 import {CheckCircleTwoTone, FileOutlined, InboxOutlined, LoadingOutlined} from '@ant-design/icons';
 import {
     Alert,
+    App,
     Button,
     Checkbox,
     Divider,
@@ -34,8 +35,6 @@ import {
 } from '_ui/_gqlTypes';
 import {SelectTreeNode} from '../SelectTreeNode';
 
-const {confirm} = Modal;
-
 interface IUploadFilesProps {
     defaultSelectedNode?: {id: string; recordId?: string};
     libraryId: string;
@@ -54,6 +53,7 @@ function UploadFiles({
     const {t} = useSharedTranslation();
     const {token} = theme.useToken();
     const {userData} = useUser();
+    const {modal} = App.useApp();
 
     const [selectedNode, setSelectedNode] = useState<{id: string; recordId?: string}>(defaultSelectedNode);
     const [selectedDir, setSelectedDir] = useState<{path: string; name: string} | null>();
@@ -265,7 +265,7 @@ function UploadFiles({
         new Promise(res => {
             let applyToAll = false;
 
-            confirm({
+            modal.confirm({
                 className: 'confirm-replace-modal',
                 closable: true,
                 open: true,

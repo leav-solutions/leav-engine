@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, Input, Modal, StepProps, Steps, theme} from 'antd';
+import {App, Button, Input, Modal, StepProps, Steps, theme} from 'antd';
 import {useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ITreeNodeWithRecord} from '_ui/types/trees';
@@ -13,8 +13,6 @@ import {
     useGetTreeLibrariesQuery
 } from '_ui/_gqlTypes';
 import {SelectTreeNode} from '../SelectTreeNode';
-
-const {warning} = Modal;
 
 interface ICreateDirectoryProps {
     defaultSelectedKey?: string;
@@ -31,6 +29,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
     const [status, setStatus] = useState<StepProps['status']>('wait');
     const [currentStep, setCurrentStep] = useState(!!defaultSelectedKey ? 1 : 0);
     const [treeId, setTreeId] = useState<string>();
+    const {modal} = App.useApp();
 
     const [runDoesFileExistAsChild] = useDoesFileExistAsChildLazyQuery({
         fetchPolicy: 'no-cache'
@@ -123,7 +122,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
     };
 
     const showDuplicateNameModal = () => {
-        warning({
+        modal.warning({
             className: 'warning-duplicate-modal',
             closable: true,
             open: true,
