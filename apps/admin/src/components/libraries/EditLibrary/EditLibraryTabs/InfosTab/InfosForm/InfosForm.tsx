@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import * as yup from 'yup';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import useLang from '../../../../../../hooks/useLang';
-import {formatIDString, getFieldError, localizedLabel} from '../../../../../../utils';
+import {formatIDString, getFieldError, isLinkAttribute, localizedLabel, isTreeAttribute} from '../../../../../../utils';
 import {GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, LibraryBehavior} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
@@ -25,8 +25,12 @@ interface IInfosFormProps {
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
-type LibraryFormValues = Omit<GET_LIB_BY_ID_libraries_list, 'fullTextAttributes' | 'defaultView'> & {
+type LibraryFormValues = Omit<
+    GET_LIB_BY_ID_libraries_list,
+    'fullTextAttributes' | 'mandatoryAttribute' | 'defaultView'
+> & {
     defaultView?: string | null;
+    mandatoryAttribute: string | null;
     fullTextAttributes: string[];
 };
 
@@ -79,8 +83,19 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             : {
                   ...library,
                   defaultView: library?.defaultView?.id ?? null,
+                  mandatoryAttribute: library?.mandatoryAttribute?.id ?? null,
                   fullTextAttributes: library?.fullTextAttributes ? library.fullTextAttributes.map(a => a.id) : []
               };
+
+    const mandatoryAttributeOptions = initialValues.attributes
+        ? initialValues.attributes
+              .filter(attr => isLinkAttribute(attr) || isTreeAttribute(attr))
+              .map(attr => ({
+                  key: attr.id,
+                  value: attr.id,
+                  text: localizedLabel(attr.label, lang)
+              }))
+        : [];
 
     const libAttributesOptions = initialValues.attributes
         ? initialValues.attributes.map(a => ({
@@ -207,15 +222,6 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             text: t(`libraries.behavior_${b}`)
         }));
 
-        const mandatoryAttributeOptions =
-            library?.attributes
-                .filter(attr => attr.type !== AttributeType.simple && attr.type !== AttributeType.advanced)
-                .map(attr => ({
-                    key: attr.id,
-                    value: attr.id,
-                    text: localizedLabel(attr.label, lang)
-                })) ?? [];
-
         const _onSubmit = () => handleSubmit();
 
         return (
@@ -266,9 +272,10 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                             label={t('libraries.mandatory_attribute')}
                             name="mandatoryAttribute"
                             aria-label="mandatoryAttribute"
+                            disabled={readonly}
                             onChange={_handleChangeWithSubmit}
                             onBlur={_handleBlur}
-                            value={mandatoryAttribute?.id ?? ''}
+                            value={mandatoryAttribute}
                             options={mandatoryAttributeOptions}
                         />
                     </FormFieldWrapper>

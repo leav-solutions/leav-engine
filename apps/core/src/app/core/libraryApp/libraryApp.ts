@@ -224,7 +224,7 @@ export default function ({
                         attributes: async (parent, args, ctx, info): Promise<ILibrary[]> =>
                             attributeDomain.getLibraryAttributes(parent.id, ctx),
                         mandatoryAttribute: async (parent, args, ctx, info) =>
-                            attributeDomain.getLibraryMandatoryAttribute(parent.id, ctx),
+                            attributeDomain.getAttributeProperties({id: parent.mandatoryAttribute, ctx}),
                         fullTextAttributes: async (parent, args, ctx, info) =>
                             attributeDomain.getLibraryFullTextAttributes(parent.id, ctx),
                         /**
