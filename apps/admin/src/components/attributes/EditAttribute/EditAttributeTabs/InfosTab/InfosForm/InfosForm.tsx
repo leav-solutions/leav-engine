@@ -459,13 +459,12 @@ function InfosForm({
                             disabled={readonly}
                             width="4"
                             name="multi_link_display_option"
-                            aria-label="multi_link_display_option"
                             onChange={_handleChangeWithSubmit}
-                            options={Object.keys(MultiLinkDisplayOption).map(f => ({
-                                text: t('attributes.multi_link_display_options.' + f),
-                                value: f
+                            options={Object.keys(MultiLinkDisplayOption).map(format => ({
+                                text: t('attributes.multi_link_display_options.' + format),
+                                value: format
                             }))}
-                            value={values.multi_link_display_option || ''}
+                            value={values.multi_link_display_option ?? ''}
                         />
                     </FormFieldWrapper>
                 )}
