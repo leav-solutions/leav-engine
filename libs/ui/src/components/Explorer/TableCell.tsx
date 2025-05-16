@@ -170,7 +170,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                 case MultiLinkDisplayOption.tag:
                     return (
                         <TableTagGroup
-                            tags={values.map<IKitTagConfig>(value => ({
+                            tags={values.map(value => ({
                                 type: 'primary',
                                 idCardProps: {description: value?.linkPayload?.whoAmI.label ?? undefined}
                             }))}
@@ -181,7 +181,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         <KitTag
                             type="primary"
                             idCardProps={{
-                                description: `${values.length}`,
+                                description: values.length.toString(),
                                 disableTooltip: true
                             }}
                         />
