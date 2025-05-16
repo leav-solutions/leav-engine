@@ -53,6 +53,7 @@ import EditRecordSkeleton from '../EditRecordSkeleton';
 import {useQuery} from '@apollo/client';
 import {getLibraryByIdQuery} from '_ui/_queries/libraries/getLibraryByIdQuery';
 import useExecuteCreateRecordMutation from '../EditRecordContent/hooks/useCreateRecordMutation';
+import EditRecordButtons from '../EditRecordButtons';
 
 interface IEditRecordProps {
     antdForm: FormInstance;
@@ -67,13 +68,6 @@ interface IEditRecordProps {
     sidebarContainer?: HTMLElement;
     containerStyle?: CSSObject;
     withInfoButton: boolean;
-    // Here we're not in charge of buttons position. It might on a modal footer or pretty much anywhere.
-    // We're using refs to still be able to handle the click on the buttons
-    buttonsRefs: {
-        refresh?: React.RefObject<HTMLButtonElement>;
-        valuesVersions?: React.RefObject<HTMLButtonElement>;
-        sideBarState?: React.RefObject<HTMLButtonElement>;
-    };
 }
 
 const sidebarWidth = '352px';
@@ -106,8 +100,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     showSidebar = false,
     sidebarContainer,
     containerStyle,
-    withInfoButton,
-    buttonsRefs
+    withInfoButton
 }) => {
     const isCreationMode = !record;
 
@@ -175,49 +168,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             isOpen: showSidebar
         });
     }, [showSidebar]);
-
-    // On click actions for out of current context buttons
-    const listenersByButtonsName: Record<keyof IEditRecordProps['buttonsRefs'], () => void> = {
-        refresh: () => {
-            dispatch({
-                type: EditRecordReducerActionsTypes.REQUEST_REFRESH
-            });
-        },
-        valuesVersions: () => {
-            dispatch({
-                type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-                content:
-                    state.sidebarContent === EditRecordSidebarContentTypeMap.VALUES_VERSIONS
-                        ? EditRecordSidebarContentTypeMap.SUMMARY
-                        : EditRecordSidebarContentTypeMap.VALUES_VERSIONS
-            });
-        },
-        sideBarState: () => {
-            const isOpen = state.sidebarContent !== EditRecordSidebarContentTypeMap.NONE;
-            dispatch({
-                type: EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN,
-                isOpen: !isOpen
-            });
-        }
-    };
-
-    // Add events listeners on buttons (submit, close, refresh...)
-    useEffect(() => {
-        for (const buttonName of Object.keys(buttonsRefs)) {
-            buttonsRefs[buttonName]?.current?.addEventListener('click', listenersByButtonsName[buttonName]);
-        }
-
-        return () => {
-            for (const buttonName of Object.keys(buttonsRefs)) {
-                buttonsRefs[buttonName]?.current?.removeEventListener('click', listenersByButtonsName[buttonName]);
-            }
-        };
-    }, [
-        buttonsRefs.refresh?.current,
-        buttonsRefs.sideBarState?.current,
-        buttonsRefs.valuesVersions?.current,
-        listenersByButtonsName
-    ]);
 
     // Keep pendingValuesRef in sync with the state
     useEffect(() => {
@@ -545,6 +495,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             <EditRecordReducerContext.Provider value={{state, dispatch}}>
                 <CreationErrorContext.Provider value={creationErrors}>
                     <Container $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar} style={containerStyle}>
+                        <EditRecordButtons />
                         <Content $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar}>
                             {permissionsLoading ? (
                                 <EditRecordSkeleton rows={5} />
