@@ -24,6 +24,10 @@ export const ToggleSidebarButton: FunctionComponent = () => {
 
     const buttonLabel = isOpen ? t('record_edition.close_sidebar') : t('record_edition.open_sidebar');
 
+    if (!state.enableSidebar) {
+        return null;
+    }
+
     return (
         <KitTooltip title={buttonLabel} mouseEnterDelay={1}>
             <KitButton
