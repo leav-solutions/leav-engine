@@ -10,6 +10,7 @@ import {
     AttributeFormat,
     AttributeType,
     AvailableLanguage,
+    MultiLinkDisplayOption,
     LibraryBehavior,
     PermissionsRelation,
     ValueVersionMode
@@ -82,6 +83,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     settings: JSONObject | null;
     metadata_fields: GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_metadata_fields[] | null;
     permissions_conf: GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_permissions_conf | null;
@@ -158,6 +160,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     settings: JSONObject | null;
     metadata_fields: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_metadata_fields[] | null;
     permissions_conf: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_permissions_conf | null;
@@ -234,6 +237,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute {
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
+    multi_link_display_option: MultiLinkDisplayOption | null;
     settings: JSONObject | null;
     metadata_fields: GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_metadata_fields[] | null;
     permissions_conf: GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_permissions_conf | null;

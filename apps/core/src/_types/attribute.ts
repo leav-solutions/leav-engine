@@ -29,6 +29,7 @@ export interface IAttribute extends ICoreEntity {
     unique?: boolean; // only on simple attribute
     description?: ISystemTranslation;
     settings?: IKeyValue<any>;
+    multi_link_display_option?: MultiLinkDisplayOption;
 }
 
 export enum ValueVersionMode {
@@ -100,6 +101,12 @@ export enum AttributeFormats {
     EXTENDED = 'extended',
     COLOR = 'color',
     RICH_TEXT = 'rich_text'
+}
+
+export enum MultiLinkDisplayOption {
+    AVATAR = 'avatar',
+    TAG = 'tag',
+    BADGE_QTY = 'badge_qty'
 }
 
 export enum IOTypes {
