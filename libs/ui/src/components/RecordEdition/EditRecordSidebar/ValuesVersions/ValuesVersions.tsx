@@ -49,8 +49,8 @@ function ValuesVersions(): JSX.Element {
 
     const _handleClosePanel = () => {
         dispatch({
-            type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-            content: state.sidebarDefaultHidden ? 'none' : 'summary'
+            type: EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN,
+            isOpen: !state.isOpenSidebar
         });
     };
 

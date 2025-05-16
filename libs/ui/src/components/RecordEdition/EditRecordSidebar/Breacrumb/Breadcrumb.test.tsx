@@ -5,7 +5,11 @@ import userEvent from '@testing-library/user-event';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockRecordPropertyWithAttribute} from '_ui/__mocks__/common/value';
 import Breadcrumb from './Breadcrumb';
-import {EditRecordReducerActionsTypes, initialState} from '../../editRecordReducer/editRecordReducer';
+import {
+    EditRecordReducerActionsTypes,
+    EditRecordSidebarContentTypeMap,
+    initialState
+} from '../../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext, IEditRecordReducerContext} from '../../editRecordReducer/editRecordReducerContext';
 import {render, screen} from '../../../../_tests/testUtils';
 
@@ -22,7 +26,7 @@ describe('Breadcrumb', () => {
             ...mockReducer.state,
             record: mockRecord,
             activeAttribute: mockRecordPropertyWithAttribute,
-            sidebarContent: 'valueDetails'
+            sidebarContent: EditRecordSidebarContentTypeMap.VALUE_DETAILS
         }
     };
 
@@ -31,7 +35,7 @@ describe('Breadcrumb', () => {
         state: {
             ...mockReducer.state,
             record: mockRecord,
-            sidebarContent: 'none'
+            sidebarContent: EditRecordSidebarContentTypeMap.NONE
         }
     };
 
@@ -40,7 +44,7 @@ describe('Breadcrumb', () => {
         state: {
             ...mockReducer.state,
             record: mockRecord,
-            sidebarContent: 'summary'
+            sidebarContent: EditRecordSidebarContentTypeMap.SUMMARY
         }
     };
 

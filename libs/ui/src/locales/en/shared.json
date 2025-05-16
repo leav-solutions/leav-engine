@@ -486,7 +486,9 @@
             "end_date": "End date",
             "select_an_option": "Select an option"
         },
-        "replace-by-existing-item": "Replace by an existing item"
+        "replace-by-existing-item": "Replace by an existing item",
+        "open_sidebar": "Open sidebar",  
+        "close_sidebar": "Close sidebar"  
     },
     "record_summary": {
         "preview_title": "Click here to visualize preview.",
