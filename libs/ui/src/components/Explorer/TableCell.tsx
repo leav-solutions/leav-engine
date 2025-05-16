@@ -15,7 +15,7 @@ import {
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FaArrowRight, FaCalendar, FaListAlt} from 'react-icons/fa';
 import DOMPurify from 'dompurify';
-import {KitAvatar, KitSpace, KitTag, KitTypography} from 'aristid-ds';
+import {KitAvatar, KitBadge, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
@@ -177,15 +177,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         />
                     );
                 case MultiLinkDisplayOption.badge_qty:
-                    return (
-                        <KitTag
-                            type="primary"
-                            idCardProps={{
-                                description: values.length.toString(),
-                                disableTooltip: true
-                            }}
-                        />
-                    );
+                    return <KitBadge count={values.length} color="primary" />;
                 default:
                     return null;
             }
