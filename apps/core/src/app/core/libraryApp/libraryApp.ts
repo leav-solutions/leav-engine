@@ -95,6 +95,7 @@ export default function ({
                         label(lang: [AvailableLanguage!]): SystemTranslation,
                         icon: Record,
                         behavior: LibraryBehavior!,
+                        mandatoryAttribute: Attribute,
                         attributes: [Attribute!],
                         fullTextAttributes: [Attribute!],
                         permissions_conf: Treepermissions_conf,
@@ -135,6 +136,7 @@ export default function ({
                         attributes: [ID!],
                         fullTextAttributes: [ID!],
                         behavior: LibraryBehavior,
+                        mandatoryAttribute: ID,
                         permissions_conf: Treepermissions_confInput,
                         recordIdentityConf: RecordIdentityConfInput,
                         defaultView: ID,
@@ -221,6 +223,8 @@ export default function ({
                     Library: {
                         attributes: async (parent, args, ctx, info): Promise<ILibrary[]> =>
                             attributeDomain.getLibraryAttributes(parent.id, ctx),
+                        mandatoryAttribute: async (parent, args, ctx, info) =>
+                            attributeDomain.getAttributeProperties({id: parent.mandatoryAttribute, ctx}),
                         fullTextAttributes: async (parent, args, ctx, info) =>
                             attributeDomain.getLibraryFullTextAttributes(parent.id, ctx),
                         /**

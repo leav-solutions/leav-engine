@@ -16,6 +16,7 @@ export const mockLibrary: WithTypename<GET_LIB_BY_ID_libraries_list> = {
         fr: 'Produits'
     },
     behavior: LibraryBehavior.standard,
+    mandatoryAttribute: null,
     permissions_conf: null,
     recordIdentityConf: null,
     defaultView: null,
