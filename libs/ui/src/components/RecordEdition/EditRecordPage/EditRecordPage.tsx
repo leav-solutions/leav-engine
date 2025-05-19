@@ -122,7 +122,10 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                                 {currentRecord?.label ?? t('record_edition.new_record')}
                             </KitTypography.Title>
                         )}
-                        <div id={EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS} />
+                        <div
+                            id={EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS}
+                            data-testid={EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS}
+                        />
                         <KitButton onClick={_handleClose} icon={<FontAwesomeIcon icon={faXmark} />}>
                             {closeButtonLabel}
                         </KitButton>
