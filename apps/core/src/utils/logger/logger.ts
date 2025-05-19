@@ -16,7 +16,7 @@ export default function ({config = null}: IDeps = {}) {
             } else if (transport === 'file') {
                 return new logger.transports.File({
                     filename: config.logs.destinationFile,
-                    json: false
+                    json: config.logs.useJsonFormat
                 });
             }
         });

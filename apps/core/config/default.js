@@ -74,7 +74,8 @@ module.exports = {
     logs: {
         level: process.env.LOG_LEVEL || 'info',
         transport: process.env.LOG_TRANSPORT || 'console,file', // Comma separated list of transport, including : console, file
-        destinationFile: process.env.LOG_FILE // If logging in file
+        destinationFile: process.env.LOG_FILE, // If logging in file
+        useJsonFormat: process.env.LOG_FILE_USE_JSON || false // If logging in file and using json format
     },
     permissions: {default: true},
     amqp: {
