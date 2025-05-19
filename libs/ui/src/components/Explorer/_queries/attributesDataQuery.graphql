@@ -26,7 +26,6 @@ query ExplorerLinkAttribute($id: ID!) {
         list {
             id
             multiple_values
-            multi_link_display_option
             permissions {
                 access_attribute
                 edit_value
