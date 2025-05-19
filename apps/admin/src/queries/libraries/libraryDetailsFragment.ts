@@ -13,6 +13,10 @@ export const libraryDetailsFragment = gql`
         system
         label
         behavior
+        mandatoryAttribute {
+            id
+            label
+        }
         attributes {
             ...AttributeDetails
         }

@@ -12,6 +12,8 @@ export interface ILibrary extends ICoreEntity {
     system?: boolean;
     behavior?: LibraryBehavior;
 
+    mandatoryAttribute?: string;
+
     /**
      * List of attributes usable in this library
      */
