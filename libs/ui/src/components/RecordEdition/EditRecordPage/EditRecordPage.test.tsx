@@ -36,7 +36,7 @@ describe('EditRecordPage', () => {
 
             expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
             expect(screen.getByText(/new_record/)).toBeInTheDocument();
-            expect(screen.getByLabelText('refresh')).toBeInTheDocument();
+            expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
             expect(screen.queryByRole('button', {name: /create_and_edit/})).not.toBeInTheDocument();
@@ -52,7 +52,7 @@ describe('EditRecordPage', () => {
                 />
             );
 
-            expect(screen.getByLabelText('refresh')).toBeInTheDocument();
+            expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /create_and_edit/})).toBeInTheDocument();
@@ -68,7 +68,7 @@ describe('EditRecordPage', () => {
                 />
             );
 
-            expect(screen.getByLabelText('refresh')).toBeInTheDocument();
+            expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
             expect(screen.queryByRole('button', {name: /create$/})).not.toBeInTheDocument();
             expect(screen.getByRole('button', {name: /create_and_edit/})).toBeInTheDocument();
@@ -107,7 +107,7 @@ describe('EditRecordPage', () => {
 
             expect(screen.getByDisplayValue('EditRecord')).toBeInTheDocument();
             expect(screen.getByText(mockRecord.label)).toBeInTheDocument();
-            expect(screen.getByLabelText('refresh')).toBeInTheDocument();
+            expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /close/})).toBeInTheDocument();
             expect(screen.queryByRole('button', {name: /submit/})).not.toBeInTheDocument();
         });
@@ -146,7 +146,7 @@ describe('EditRecordPage', () => {
                 />
             );
 
-            expect(screen.getByLabelText('refresh')).toBeInTheDocument();
+            expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
             expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
 
             await user.click(screen.getByText('simulate_create_record'));

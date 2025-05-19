@@ -486,7 +486,9 @@
             "end_date": "Date de fin",
             "select_an_option": "Sélectionner une option"
         },
-        "replace-by-existing-item": "Remplacer par un élément existant"
+        "replace-by-existing-item": "Remplacer par un élément existant",
+        "open_sidebar": "Ouvrir le panneau latéral",
+        "close_sidebar": "Fermer le panneau latéral"
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",

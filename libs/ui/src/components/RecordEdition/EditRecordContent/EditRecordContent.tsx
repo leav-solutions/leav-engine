@@ -85,6 +85,16 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         version: state.valuesVersion
     });
 
+    useEffect(() => {
+        if (!loading && recordForm) {
+            dispatch({
+                type: EditRecordReducerActionsTypes.INITIALIZE_SIDEBAR,
+                enabled: recordForm.sidePanel.enable,
+                isOpenByDefault: recordForm.sidePanel.isOpenByDefault
+            });
+        }
+    }, [recordForm, loading]);
+
     const {
         data: computeFieldsData,
         error: computeFieldsError,
