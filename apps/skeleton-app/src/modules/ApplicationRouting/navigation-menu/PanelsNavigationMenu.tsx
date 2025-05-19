@@ -8,6 +8,7 @@ import type {IApplicationMatchingContext} from '../types';
 import {routes} from '../routes';
 
 import {content, headerContent, page, pageHeader} from './panelsNavigationMenu.module.css';
+import {SidePanel} from '../../display-sidePanel/SidePanel';
 
 export const PanelsNavigationMenu: FunctionComponent = () => {
     const {currentPanel, currentWorkspace, currentParentTuple} = useOutletContext<IApplicationMatchingContext>();
@@ -49,6 +50,7 @@ export const PanelsNavigationMenu: FunctionComponent = () => {
                     }
                 />
             </div>
+            <SidePanel />
         </section>
     );
 };
