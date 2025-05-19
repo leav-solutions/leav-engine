@@ -16,7 +16,7 @@ import useAppLang from './hooks/useAppLang';
 import i18n from './i18n';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
-import {AntApp} from 'aristid-ds';
+// import {AntApp} from 'aristid-ds';
 
 export function Index() {
     const {lang, loading, error} = useAppLang();
@@ -42,9 +42,10 @@ export function Index() {
             <Suspense fallback={<Loader active inline="centered" style={{margin: '15rem auto'}} />}>
                 <ReduxProvider store={store}>
                     <ApolloHandler>
-                        <AntApp>
-                            <App />
-                        </AntApp>
+                        {/* TODO UPDATE REACT AND TEST */}
+                        {/* <AntApp> */}
+                        <App />
+                        {/* </AntApp> */}
                     </ApolloHandler>
                 </ReduxProvider>
             </Suspense>
