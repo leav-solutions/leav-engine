@@ -120,7 +120,8 @@ describe('EditRecordContent', () => {
                 recordId: '123456',
                 library: mockRecordForm.library,
                 system: false,
-                elements: mockRecordForm.elements
+                elements: mockRecordForm.elements,
+                sidePanel: mockRecordForm.sidePanel
             },
             refetch: jest.fn()
         }));

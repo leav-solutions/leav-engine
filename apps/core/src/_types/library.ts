@@ -12,6 +12,8 @@ export interface ILibrary extends ICoreEntity {
     system?: boolean;
     behavior?: LibraryBehavior;
 
+    mandatoryAttribute?: string;
+
     /**
      * List of attributes usable in this library
      */
@@ -60,8 +62,9 @@ export interface ILibraryPreviewsSettings {
 
 export enum LibraryBehavior {
     STANDARD = 'standard',
+    DIRECTORIES = 'directories',
     FILES = 'files',
-    DIRECTORIES = 'directories'
+    JOIN = 'join'
 }
 
 export const USERS_LIBRARY = 'users';

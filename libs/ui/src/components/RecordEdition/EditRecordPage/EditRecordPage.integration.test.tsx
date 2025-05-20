@@ -13,6 +13,11 @@ import {
 } from '_ui/__mocks__/common/form';
 import {mockAttributeSimple, mockFormAttributeCompute} from '_ui/__mocks__/common/attribute';
 import {APICallStatus} from '../EditRecordContent/_types';
+import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
+import {getUserDataQuery} from '_ui/_queries/userData/getUserData';
+import * as gqlTypes from '_ui/_gqlTypes';
+import {getLibraryByIdQuery} from '_ui/_queries/libraries/getLibraryByIdQuery';
+import {mockLibraryWithDetails} from '_ui/__mocks__/common/library';
 
 let user!: ReturnType<typeof userEvent.setup>;
 const useGetRecordFormMock = jest.fn();
@@ -48,6 +53,68 @@ jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useRunActionsLis
         runActionsListAndFormatOnValue: useRunActionsListAndFormatOnValueMock
     })
 }));
+
+const mocks = [
+    {
+        request: {
+            query: getUserDataQuery,
+            variables: {keys: ['records_consultation_record_lib']}
+        },
+        result: {
+            data: {
+                userData: {
+                    global: false,
+                    data: []
+                }
+            }
+        }
+    },
+    {
+        request: {
+            query: gqlTypes.SaveUserDataDocument,
+            variables: {
+                key: 'records_consultation_record_lib',
+                value: ['123456'],
+                global: false
+            }
+        },
+        result: {
+            data: {
+                saveUserData: {
+                    data: {
+                        records_consultation_record_lib: ['123456']
+                    },
+                    global: false
+                }
+            }
+        }
+    },
+    {
+        request: {
+            query: getLibraryByIdQuery,
+            variables: {id: [mockRecord.library.id]}
+        },
+        result: {
+            data: {
+                libraries: {
+                    __typename: 'LibrariesList',
+                    totalCount: 0,
+                    list: [
+                        {
+                            ...mockLibraryWithDetails,
+                            id: mockRecord.library.id
+                        }
+                    ]
+                }
+            }
+        }
+    }
+];
+
+const useGetRecordUpdatesSubscriptionMock = jest.spyOn(
+    useGetRecordUpdatesSubscription,
+    'useGetRecordUpdatesSubscription'
+);
 
 const calculatedValues = (value: string) => [
     {
@@ -96,6 +163,9 @@ describe('EditRecordPage', () => {
         deleteValueMock.mockClear();
         useGetRecordFormMock.mockClear();
         useGetRecordValuesQueryMock.mockClear();
+        useGetRecordUpdatesSubscriptionMock.mockReturnValue({
+            loading: false
+        });
     });
 
     afterEach(() => {
@@ -105,7 +175,7 @@ describe('EditRecordPage', () => {
     test('Should render an input component', () => {
         useGetRecordFormMock.mockReturnValue({loading: false, recordForm: mockRecordForm, refetch: jest.fn()});
         useGetRecordValuesQueryMock.mockReturnValue({});
-        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />);
+        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
 
         expect(screen.getByPlaceholderText('record_edition.placeholder.enter_a_text'));
     });
@@ -137,7 +207,7 @@ describe('EditRecordPage', () => {
             refetch: refetchMock
         });
 
-        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />);
+        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
 
         const calculatedInput = screen.getByRole('textbox', {name: 'calculated attribute'});
         const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
@@ -181,7 +251,7 @@ describe('EditRecordPage', () => {
             refetch: refetchMock
         });
 
-        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />);
+        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
 
         expect(screen.getAllByRole('textbox')).toHaveLength(1);
         expect(screen.queryByRole('textbox', {name: 'calculated attribute'})).not.toBeInTheDocument();
@@ -225,7 +295,7 @@ describe('EditRecordPage', () => {
                 error: 'Attribute is required'
             });
 
-            render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />);
+            render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
 
             const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
 
@@ -275,7 +345,8 @@ describe('EditRecordPage', () => {
                     library={mockRecord.library.id}
                     onClose={jest.fn()}
                     record={null}
-                />
+                />,
+                {mocks}
             );
 
             const multipleInput = screen.getByRole('textbox', {name: 'multiple attribute'});
@@ -304,7 +375,18 @@ describe('EditRecordPage', () => {
             refetch: jest.fn()
         });
 
-        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} showSidebar record={mockRecord} />);
+        render(
+            <EditRecordPage
+                library={mockRecord.library.id}
+                onClose={jest.fn()}
+                showSidebar
+                enableSidebar
+                record={mockRecord}
+            />,
+            {
+                mocks
+            }
+        );
 
         const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
 

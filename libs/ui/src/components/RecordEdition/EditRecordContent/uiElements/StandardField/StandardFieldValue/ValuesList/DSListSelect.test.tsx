@@ -9,6 +9,7 @@ import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordRe
 import {AntForm} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';
 import {RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
+import {act} from '@testing-library/react';
 import {
     EditRecordReducerActionsTypes,
     IEditRecordReducerState
@@ -181,9 +182,11 @@ describe('<DSListSelect />', () => {
 
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
-            await userEvent.type(select, 'r');
+            await act(async () => {
+                await userEvent.type(select, 'r');
+            });
 
-            await new Promise(resolve => setTimeout(resolve, 3000)); // 3 sec
+            // await new Promise(resolve => setTimeout(resolve, 3000)); // 3 sec
 
             expect(screen.getByText('record_edition.press_enter_to')).toBeVisible();
             expect(screen.getByText('record_edition.select_this_value')).toBeVisible();

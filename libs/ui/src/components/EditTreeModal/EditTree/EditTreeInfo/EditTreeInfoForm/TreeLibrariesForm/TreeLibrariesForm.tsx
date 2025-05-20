@@ -4,7 +4,7 @@
 import {CloseOutlined, PlusOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Collapse, Form, List, Select, Space, Switch} from 'antd';
-import {ReactNode, useState} from 'react';
+import {ComponentProps, ReactNode, useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {LibraryLightFragment, TreeDetailsFragment} from '../../../../../../_gqlTypes';
 import {PreviewSize} from '../../../../../../constants';
@@ -142,20 +142,12 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
             }
         ];
 
-        return (
-            <List.Item style={{flexDirection: 'column', padding: '5px 1rem'}}>
-                <ListItemPart style={{justifyContent: 'space-between'}}>
-                    <EntityCard entity={itemIdentity} size={PreviewSize.small} />
-                    {!readOnly && (
-                        <RemoveButton
-                            role="button"
-                            aria-label="delete-library"
-                            onClick={_handleRemoveLibrary(item.library.id)}
-                        />
-                    )}
-                </ListItemPart>
-                <Collapse size="small" style={{width: '100%', margin: '0.5rem'}}>
-                    <Collapse.Panel header={t('trees.advanced_settings')} key="settings">
+        const collapseItems: ComponentProps<typeof Collapse>['items'] = [
+            {
+                key: 'settings',
+                label: t('trees.advanced_settings'),
+                children: (
+                    <>
                         <ListItemPart>
                             <Form.Item
                                 name={['libraries', index, 'settings', 'allowMultiplePositions']}
@@ -198,8 +190,24 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
                                 />
                             </Form.Item>
                         </ListItemPart>
-                    </Collapse.Panel>
-                </Collapse>
+                    </>
+                )
+            }
+        ];
+
+        return (
+            <List.Item style={{flexDirection: 'column', padding: '5px 1rem'}}>
+                <ListItemPart style={{justifyContent: 'space-between'}}>
+                    <EntityCard entity={itemIdentity} size={PreviewSize.small} />
+                    {!readOnly && (
+                        <RemoveButton
+                            role="button"
+                            aria-label="delete-library"
+                            onClick={_handleRemoveLibrary(item.library.id)}
+                        />
+                    )}
+                </ListItemPart>
+                <Collapse size="small" style={{width: '100%', margin: '0.5rem'}} items={collapseItems} />
             </List.Item>
         );
     };

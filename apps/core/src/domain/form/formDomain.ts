@@ -41,6 +41,7 @@ import {
 } from '../../_types/permissions';
 import {getElementValues} from './helpers/getElementValues';
 import {mustIncludeElement} from './helpers/mustIncludeElement';
+import {baseAttributes} from '../../_constants/attributes';
 
 export interface IFormDomain {
     getFormsByLib({
@@ -129,10 +130,11 @@ export default function (deps: IFormDomainDeps): IFormDomain {
             }
         ];
 
-        const attributes = await attributeDomain.getLibraryAttributes(library, ctx);
-        const nonReadonlyAttributes = attributes.filter(att => !att?.readonly);
+        const attributes = (await attributeDomain.getLibraryAttributes(library, ctx)).filter(
+            attr => !baseAttributes.includes(attr?.id)
+        );
 
-        const attributesElements = nonReadonlyAttributes.map((att, index): IFormElement => {
+        const attributesElements = attributes.map((att, index): IFormElement => {
             const data: IFormElement = {
                 id: uniqueId(),
                 containerId: FORM_ROOT_CONTAINER_ID,
@@ -174,7 +176,11 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 {
                     elements: finalElements
                 }
-            ]
+            ],
+            sidePanel: {
+                enable: true,
+                isOpenByDefault: true
+            }
         };
     };
 
@@ -346,13 +352,15 @@ export default function (deps: IFormDomainDeps): IFormDomain {
             };
 
             const formElements = _filterEmptyContainers(elementsTree).children;
+
             return {
                 id: formId,
                 recordId,
                 system: formProps.system,
                 library: libraryId,
                 dependencyAttributes: formProps.dependencyAttributes,
-                elements: formElements
+                elements: formElements,
+                sidePanel: formProps.sidePanel
             };
         },
         async getFormProperties({library, id, ctx}): Promise<IForm> {
@@ -378,7 +386,11 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 system: false,
                 dependencyAttributes: [],
                 label: {fr: '', en: ''},
-                elements: []
+                elements: [],
+                sidePanel: {
+                    enable: true,
+                    isOpenByDefault: true
+                }
             };
 
             const filters: IFormFilterOptions = {library: form.library, id: form.id};

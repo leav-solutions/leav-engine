@@ -19,7 +19,8 @@ describe('InfosTab', () => {
             id: 'products',
             label: {fr: 'My new label', en: 'Products'},
             icon: {libraryId: 'library-id', recordId: 'record-id'},
-            behavior: 'standard',
+            behavior: LibraryBehavior.standard,
+            mandatoryAttribute: null,
             defaultView: null,
             fullTextAttributes: [],
             recordIdentityConf: null

@@ -40,6 +40,7 @@
         "admin_permissions": "Permissions administration",
         "version": "LEAV Engine {{version}}",
         "api_keys": "Clés d'API",
+        "custom-config": "Custom config",
         "customization": {
             "title": "Personnalisation",
             "name": "Nom",
@@ -70,6 +71,7 @@
         "link_existing_attribute": "Ajout attribut existant",
         "record_identity": "Carte d'identité des éléments",
         "record_identity_label": "Libellé",
+        "record_identity_sub_label": "Sous-libellé",
         "record_identity_color": "Couleur",
         "record_identity_preview": "Aperçu",
         "record_identity_dependent_color_and_preview": "Arbre pour couleur et aperçu par défaut",
@@ -82,6 +84,8 @@
         "behavior_files": "Fichiers",
         "behavior_standard": "Standard",
         "behavior_directories": "Dossiers",
+        "behavior_join": "Jointure",
+        "mandatory_attribute": "Attribut obligatoire",
         "default_view": "Vue par défaut",
         "fulltext_attributes": "Attributs de recherche fulltext",
         "index_fulltext_search": "Rafraichir index fulltext",
@@ -293,6 +297,13 @@
         "layout": "Agencement",
         "fields": "Champs de saisie",
         "dependency_attributes": "Dépend de",
+        "side_panel": {
+            "title": "Panneau latéral",
+            "display_side_panel": "Afficher",
+            "default": "État par défaut",
+            "open": "Ouvert",
+            "close": "Fermé"
+        },
         "confirm_delete": "Êtes-vous sûr de vouloir supprimer le formulaire {{formLabel}}?",
         "select_attribute": "Sélectionner un attribut",
         "select_tree_element": "Sélectionner un élément",

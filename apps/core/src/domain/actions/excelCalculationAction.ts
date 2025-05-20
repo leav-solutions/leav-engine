@@ -29,7 +29,7 @@ export default function ({
         variable: string
     ): Promise<ActionsListExcelValueType> => {
         const variableValues = await calculationVariable.processVariableString(context, variable, initialValues);
-        return variableValues.flatMap(v => v.payload ?? []).join(' ');
+        return variableValues.flatMap(v => v.raw_payload ?? []).join(' ');
     };
 
     const _replaceAsync = async (

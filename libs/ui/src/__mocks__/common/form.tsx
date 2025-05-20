@@ -322,5 +322,9 @@ export const mockRecordForm: IRecordForm = {
     },
     recordId: '123456',
     dependencyAttributes: [],
-    elements: [{...mockFormElementInput, settings: [{key: 'my_settings', value: 'value'}]}]
+    elements: [{...mockFormElementInput, settings: [{key: 'my_settings', value: 'value'}]}],
+    sidePanel: {
+        enable: true,
+        isOpenByDefault: true
+    }
 };

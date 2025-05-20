@@ -12,6 +12,9 @@ import styled from 'styled-components';
 const Wrapper = styled.div`
     .jsoneditor {
         border: none;
+        textarea.jsoneditor-text {
+            height: 70vh;
+        }
     }
 
     .jsoneditor-menu {
@@ -56,10 +59,7 @@ interface ICustomConfigTabProps {
 }
 
 function CustomConfigTab({attribute}: ICustomConfigTabProps): JSX.Element {
-    const [saveAttribute, {error, loading}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery, {
-        // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
-        onError: () => undefined
-    });
+    const [saveAttribute, {error, loading}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery);
 
     const _onChange = (value: Record<string, any>) => {
         const dataToSave = {

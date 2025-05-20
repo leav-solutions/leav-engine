@@ -76,6 +76,7 @@
         "behavior_standard": "Standard",
         "behavior_files": "Fichiers",
         "behavior_directories": "Dossiers",
+        "behavior_join": "Jointure",
         "record_identity": "Carte d'identité des éléments",
         "preview": "Aperçu",
         "color": "Couleur",
@@ -485,7 +486,9 @@
             "end_date": "Date de fin",
             "select_an_option": "Sélectionner une option"
         },
-        "replace-by-existing-item": "Remplacer par un élément existant"
+        "replace-by-existing-item": "Remplacer par un élément existant",
+        "open_sidebar": "Ouvrir le panneau latéral",
+        "close_sidebar": "Fermer le panneau latéral"
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",
@@ -715,7 +718,7 @@
             "deactivate_message": "{{count, number}}/{{total, number}} éléments pour lesquels vous disposez des permissions nécessaires ont été supprimés. Les autres éléments restent inchangés.",
             "deactivate_message_zero": "Aucun élément n’a été supprimé, vous ne disposez pas des permissions nécessaires.",
             "add-link": "Ajouter",
-            "replace-link": "Remplacer", 
+            "replace-link": "Remplacer",
             "toggle_selection": {
                 "select_page_one": "Sélectionner l’éléments visible ({{count, number}})",
                 "select_page_other": "Sélectionner les éléments visibles ({{count, number}})",

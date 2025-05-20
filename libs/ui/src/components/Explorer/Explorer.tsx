@@ -199,7 +199,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {editItemAction, editItemModal} = useEditItemAction({
             isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit'),
             onEdit: defaultCallbacks?.item?.edit,
-            formId: editionFormId
+            formId: editionFormId,
+            refetch
         });
 
         const totalCount = data?.totalCount ?? 0;
@@ -261,7 +262,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {viewSettingsButton, viewListButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
 
-        const {searchInput} = useSearchInput({view, dispatch});
+        const {searchInput} = useSearchInput({view, dispatch, setNewPage});
 
         useImperativeHandle(
             ref,

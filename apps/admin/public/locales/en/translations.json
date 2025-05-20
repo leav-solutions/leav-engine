@@ -40,6 +40,7 @@
         "admin_permissions": "Admin permissions",
         "version": "LEAV Engine {{version}}",
         "api_keys": "API keys",
+        "custom-config": "Custom config",
         "customization": {
             "title": "Customization",
             "name": "Name",
@@ -70,6 +71,7 @@
         "link_existing_attribute": "Link existing attribute",
         "record_identity": "Records identity card",
         "record_identity_label": "Label",
+        "record_identity_sub_label": "Sub Label",
         "record_identity_color": "Color",
         "record_identity_preview": "Preview",
         "record_identity_dependent_color_and_preview": "Tree for default color and preview",
@@ -82,6 +84,8 @@
         "behavior_files": "Files",
         "behavior_standard": "Standard",
         "behavior_directories": "Directories",
+        "behavior_join": "Join",
+        "mandatory_attribute": "Mandatory Attribute",
         "default_view": "Default view",
         "fulltext_attributes": "Fulltext search attributes",
         "index_fulltext_search": "Refresh fulltext index",
@@ -293,6 +297,13 @@
         "layout": "Layout",
         "fields": "Input fields",
         "dependency_attributes": "Depends on",
+        "side_panel": {
+            "title": "Side panel",
+            "display_side_panel": "Display",
+            "default": "Default state",
+            "open": "Opened",
+            "close": "Closed"
+        },
         "confirm_delete": "Do you really want to delete form {{formLabel}}?",
         "select_attribute": "Select an attribute",
         "select_tree_element": "Select an element",

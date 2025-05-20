@@ -205,7 +205,9 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
             title: col,
             dataIndex: col,
             onCell: _setStyleOnMappingRow,
-            render: value => <KitTypography.Paragraph ellipsis={{rows: 2}}>{value}</KitTypography.Paragraph>
+            render: value => (
+                <KitTypography.AdvancedParagraph ellipsis={{rows: 2}}>{value}</KitTypography.AdvancedParagraph>
+            )
         }));
 
         sheetColumns.unshift({

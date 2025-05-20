@@ -55,12 +55,19 @@ export type SAVE_FORM_saveForm_dependencyAttributes =
     | SAVE_FORM_saveForm_dependencyAttributes_StandardAttribute
     | SAVE_FORM_saveForm_dependencyAttributes_TreeAttribute;
 
+export type SAVE_FORM_saveForm_sidePanelAttributes ={
+    enable: boolean;
+    isOpenByDefault: boolean;
+}
+
 export interface SAVE_FORM_saveForm {
     id: string;
     label: SystemTranslation | null;
     system: boolean;
     elements: SAVE_FORM_saveForm_elements[];
     dependencyAttributes: SAVE_FORM_saveForm_dependencyAttributes[] | null;
+    sidePanel: SAVE_FORM_saveForm_sidePanelAttributes | null;
+
 }
 
 export interface SAVE_FORM {

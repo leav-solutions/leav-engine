@@ -1,0 +1,29 @@
+.page {
+    flex: 1;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-s) * 1px);
+    padding: calc(var(--general-spacing-m) * 1px);
+    display: flex;
+    overflow: hidden;
+}
+
+.pageHeader {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-s) * 1px);
+
+    .headerContent {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.content {
+    flex: 1;
+    background: var(--general-utilities-light);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+    box-shadow: var(--general-utilities-shadow-light);
+    overflow: hidden;
+}
+
+

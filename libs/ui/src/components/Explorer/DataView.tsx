@@ -289,6 +289,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                 {paginationProps && (
                     <div className="pagination">
                         <KitPagination
+                            aria-label="pagination"
                             showSizeChanger
                             showTotal={(total, [from, to]) =>
                                 t('explorer.pagination-total-number', {from, to, count: total})

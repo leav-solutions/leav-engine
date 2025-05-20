@@ -84,7 +84,8 @@ export enum IOTypes {
 export enum LibraryBehavior {
     directories = 'directories',
     files = 'files',
-    standard = 'standard'
+    standard = 'standard',
+    join = 'join'
 }
 
 export enum PermissionTypes {
@@ -263,7 +264,7 @@ export interface AttributeInput {
     actions_list?: ActionsListConfigurationInput | null;
     permissions_conf?: Treepermissions_confInput | null;
     multiple_values?: boolean | null;
-    settings?: {} | null;
+    settings?: JSONObject | null;
     versions_conf?: ValuesVersionsConfInput | null;
     metadata_fields?: string[] | null;
     values_list?: ValuesListConfInput | null;
@@ -306,6 +307,13 @@ export interface FormElementSettingsInput {
     value: Any;
 }
 
+
+export interface FormSidePanelInput {
+    enable: boolean,
+    isOpenByDefault: boolean
+}
+
+
 export interface FormElementsByDepsInput {
     dependencyValue?: FormDependencyValueInput | null;
     elements: FormElementInput[];
@@ -317,6 +325,7 @@ export interface FormInput {
     label?: SystemTranslation | null;
     dependencyAttributes?: string[] | null;
     elements?: FormElementsByDepsInput[] | null;
+    sidePanel?: FormSidePanelInput | null;
 }
 
 export interface GlobalSettingsFileInput {
@@ -328,6 +337,7 @@ export interface GlobalSettingsInput {
     name?: string | null;
     icon?: GlobalSettingsFileInput | null;
     favicon?: GlobalSettingsFileInput | null;
+    settings?: JSONObject | null
 }
 
 export interface LibraryIconInput {
@@ -342,7 +352,7 @@ export interface LibraryInput {
     attributes?: string[] | null;
     fullTextAttributes?: string[] | null;
     behavior?: LibraryBehavior | null;
-    settings?: {} | null;
+    settings?: JSONObject | null;
     permissions_conf?: Treepermissions_confInput | null;
     recordIdentityConf?: RecordIdentityConfInput | null;
     defaultView?: string | null;
@@ -451,7 +461,7 @@ export interface TreeInput {
     behavior?: TreeBehavior | null;
     label?: SystemTranslation | null;
     permissions_conf?: TreeNodePermissionsConfInput[] | null;
-    settings?: {} | null;
+    settings?: JSONObject | null;
 }
 
 export interface TreeLibraryInput {

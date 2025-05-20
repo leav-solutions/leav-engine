@@ -1,0 +1,29 @@
+.layout {
+    --header-height: 64px;
+    --padding-bottom-height: var(--general-spacing-s);
+    background-color: var(--general-colors-primary-50);
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    flex: 0 0 var(--header-height);
+
+    .logo {
+        width: 200px;
+        display: flex;
+        align-items: center;
+    }
+}
+
+
+.mainContent {
+    flex: auto;
+    display: flex;
+    overflow: hidden;
+    height: calc(100vh - var(--header-height));
+}
+
+.sidebarContent {
+    position: relative;
+}

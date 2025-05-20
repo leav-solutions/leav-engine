@@ -11,6 +11,7 @@ import GeneralAdminPermissionsTab from './GeneralAdminPermissionsTab';
 import GeneralApiKeysTab from './GeneralApiKeysTab';
 import GeneralCustomizationTab from './GeneralCustomizationTab';
 import GeneralInfosTab from './GeneralInfosTab';
+import GeneralCustomConfigTab from './GeneralCustomConfigTab';
 
 function General(): JSX.Element {
     const {t} = useTranslation();
@@ -35,10 +36,10 @@ function General(): JSX.Element {
             key: 'admin_permissions',
             menuItem: t('general.admin_permissions'),
             render: () => (
-                    <Tab.Pane key="permissions" className="grow flex-col height100">
-                        <GeneralAdminPermissionsTab />
-                    </Tab.Pane>
-                )
+                <Tab.Pane key="permissions" className="grow flex-col height100">
+                    <GeneralAdminPermissionsTab />
+                </Tab.Pane>
+            )
         });
     }
 
@@ -47,10 +48,10 @@ function General(): JSX.Element {
             key: 'customization',
             menuItem: t('general.customization.title'),
             render: () => (
-                    <Tab.Pane key="customization" className="grow flex-col height100">
-                        <GeneralCustomizationTab />
-                    </Tab.Pane>
-                )
+                <Tab.Pane key="customization" className="grow flex-col height100">
+                    <GeneralCustomizationTab />
+                </Tab.Pane>
+            )
         });
     }
 
@@ -59,12 +60,22 @@ function General(): JSX.Element {
             key: 'api_keys',
             menuItem: t('general.api_keys'),
             render: () => (
-                    <Tab.Pane key="api_keys" className="grow flex-col">
-                        <GeneralApiKeysTab />
-                    </Tab.Pane>
-                )
+                <Tab.Pane key="api_keys" className="grow flex-col">
+                    <GeneralApiKeysTab />
+                </Tab.Pane>
+            )
         });
     }
+
+    panes.push({
+        key: 'custom-config',
+        menuItem: t('general.custom-config'),
+        render: () => (
+            <Tab.Pane key="custom-config" className="height100" style={{padding: '0', border: '0px none'}}>
+                <GeneralCustomConfigTab />
+            </Tab.Pane>
+        )
+    });
 
     const tabName = location?.hash?.replace('#', '');
     const [activeIndex, setActiveIndex] = useState<number>(

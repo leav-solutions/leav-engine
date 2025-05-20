@@ -3,11 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Dispatch, useState} from 'react';
 import {IViewSettingsAction, ViewSettingsActionTypes} from './manage-view-settings';
+import {SetNewPage} from './_types';
 
 export const usePagination = (dispatch: Dispatch<IViewSettingsAction>) => {
     const [currentPage, setCurrentPage] = useState(1);
 
-    const setNewPage = (newCurrentPage: number, ignoredPageSize: number) => {
+    const setNewPage: SetNewPage = (newCurrentPage: number, ignoredPageSize: number) => {
         setCurrentPage(newCurrentPage);
     };
 

@@ -1702,12 +1702,14 @@ describe('Explorer', () => {
                 }
             }
         };
-        jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
-            ({variables}) =>
-                (variables?.searchQuery
-                    ? mockExplorerLibraryDataQueryResultWithSearch
-                    : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
-        );
+        const spy = jest
+            .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+            .mockImplementation(
+                ({variables}) =>
+                    (variables?.searchQuery
+                        ? mockExplorerLibraryDataQueryResultWithSearch
+                        : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult
+            );
 
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1715,6 +1717,9 @@ describe('Explorer', () => {
                     entrypoint={libraryEntrypoint}
                     primaryActions={customPrimaryActions}
                     defaultPrimaryActions={[]}
+                    defaultViewSettings={{
+                        pageSize: 1
+                    }}
                     showSearch
                 />
             </Explorer.EditSettingsContextProvider>
@@ -1729,6 +1734,24 @@ describe('Explorer', () => {
         await user.click(clearButton);
 
         expect(screen.getByText('Halloween 2025')).toBeVisible();
+
+        // GO TO PAge 2, then perform search and check we call useExplorerData with page 1
+        const pagination = screen.getByRole('list', {name: /pagination/});
+        const secondPageButton = within(pagination).getByRole('listitem', {name: '2'});
+        await userEvent.click(secondPageButton);
+
+        expect(secondPageButton).toHaveClass('ant-pagination-item-active');
+
+        await userEvent.type(searchInput, 'Christ{Enter}');
+        expect(spy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                variables: expect.objectContaining({
+                    pagination: expect.objectContaining({
+                        offset: 0
+                    })
+                })
+            })
+        );
     });
 
     describe('With filters', () => {
@@ -2706,6 +2729,8 @@ describe('Explorer', () => {
                 () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
             );
 
+            jest.spyOn(console, 'warn').mockImplementationOnce(() => jest.fn());
+
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
@@ -2745,6 +2770,8 @@ describe('Explorer', () => {
                     />
                 </Explorer.EditSettingsContextProvider>
             );
+
+            expect(console.warn).toHaveBeenCalledWith(expect.stringContaining(booleanMockAttribute.id));
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
@@ -2818,7 +2845,31 @@ describe('Explorer', () => {
         });
 
         test('Should not display linked items if entrypoint is of type link and the user does not have access to the attribute', async () => {
-            jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockRestore();
+            const mockExplorerLinkDataQueryEmptyResult: Mockify<typeof gqlTypes.useExplorerLinkDataQuery> = {
+                loading: false,
+                called: true,
+                refetch: jest.fn(),
+                data: {
+                    records: {
+                        list: [
+                            {
+                                id: '612694174',
+                                whoAmI: {
+                                    id: '612694174',
+                                    library: {
+                                        id: 'campaigns'
+                                    }
+                                },
+                                property: []
+                            }
+                        ]
+                    }
+                }
+            };
+
+            jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
+                () => mockExplorerLinkDataQueryEmptyResult as gqlTypes.ExplorerLinkDataQueryResult
+            );
 
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>

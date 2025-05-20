@@ -22,10 +22,12 @@ import {EDIT_RECORD_MODAL_CLASSNAME} from '../_constants';
 export const useEditItemAction = ({
     isEnabled,
     formId,
-    onEdit
+    onEdit,
+    refetch
 }: FeatureHook<{
     onEdit?: IItemAction['callback'];
     formId?: string;
+    refetch: () => void;
 }>) => {
     const {t} = useSharedTranslation();
 
@@ -42,6 +44,7 @@ export const useEditItemAction = ({
     };
 
     const _handleEditModalClose = (item: IItemData) => {
+        refetch();
         refreshItem({
             variables: {
                 libraryId: item.libraryId,

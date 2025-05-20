@@ -278,6 +278,7 @@ export interface GET_LIB_BY_ID_libraries_list_permissions_conf {
 
 export interface GET_LIB_BY_ID_libraries_list_recordIdentityConf {
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     preview: string | null;
     treeColorPreview: string | null;
@@ -326,6 +327,7 @@ export interface GET_LIB_BY_ID_libraries_list {
     system: boolean | null;
     label: SystemTranslation | null;
     behavior: LibraryBehavior;
+    mandatoryAttribute: GET_LIB_BY_ID_libraries_list_attributes | null;
     settings: JSONObject | null;
     attributes: GET_LIB_BY_ID_libraries_list_attributes[] | null;
     fullTextAttributes: GET_LIB_BY_ID_libraries_list_fullTextAttributes[] | null;

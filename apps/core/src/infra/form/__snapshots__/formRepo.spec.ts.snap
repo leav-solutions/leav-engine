@@ -37,6 +37,10 @@ exports[`FormRepo Create form 2`] = `
       "fr": "Test Form",
     },
     "library": "my_lib",
+    "sidePanel": {
+      "enable": false,
+      "isOpenByDefault": false,
+    },
     "system": false,
   },
 }
@@ -79,6 +83,10 @@ exports[`FormRepo Delete form 2`] = `
       "fr": "Test Form",
     },
     "library": "my_lib",
+    "sidePanel": {
+      "enable": false,
+      "isOpenByDefault": false,
+    },
     "system": false,
   },
 }
@@ -121,6 +129,10 @@ exports[`FormRepo Update form 2`] = `
       "fr": "Test Form",
     },
     "library": "my_lib",
+    "sidePanel": {
+      "enable": false,
+      "isOpenByDefault": false,
+    },
     "system": false,
   },
 }

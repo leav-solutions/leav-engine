@@ -55,12 +55,18 @@ export type GET_FORM_forms_list_dependencyAttributes =
     | GET_FORM_forms_list_dependencyAttributes_StandardAttribute
     | GET_FORM_forms_list_dependencyAttributes_TreeAttribute;
 
+export type GET_FORM_forms_list_sidePanelAttribute = {
+    enable: boolean;
+    isOpenByDefault: boolean;
+}
+
 export interface GET_FORM_forms_list {
     id: string;
     label: SystemTranslation | null;
     system: boolean;
     elements: GET_FORM_forms_list_elements[];
     dependencyAttributes: GET_FORM_forms_list_dependencyAttributes[] | null;
+    sidePanel: GET_FORM_forms_list_sidePanelAttribute | null;
 }
 
 export interface GET_FORM_forms {

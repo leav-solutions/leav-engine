@@ -8,13 +8,14 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IValueVersion} from '_ui/types';
 import {RecordIdentityFragment} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faXmark, faRotateRight} from '@fortawesome/free-solid-svg-icons';
 import {possibleSubmitButtons, submitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 import {v4 as uuidv4} from 'uuid';
+import {EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS} from '../constants';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faXmark} from '@fortawesome/free-solid-svg-icons';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
@@ -31,6 +32,7 @@ interface IEditRecordPageProps {
     withInfoButton?: boolean;
     onClose?: () => void;
     showSidebar?: boolean;
+    enableSidebar?: boolean;
     sidebarContainer?: HTMLElement;
 }
 
@@ -61,6 +63,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     submitButtons = ['create'],
     withInfoButton,
     onClose = emptyFunction,
+    enableSidebar,
     showSidebar,
     sidebarContainer
 }) => {
@@ -90,9 +93,6 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
 
         return onClose();
     };
-
-    // Create refs for the buttons to pass them to the EditRecord component
-    const refreshButtonRef = useRef<HTMLButtonElement>(null);
 
     const closeButtonLabel = isCreation ? t('global.cancel') : t('global.close');
 
@@ -124,21 +124,14 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                                 {currentRecord?.label ?? t('record_edition.new_record')}
                             </KitTypography.Title>
                         )}
-
-                        <KitSpace>
-                            {showRefreshButton && (
-                                <KitButton
-                                    ref={refreshButtonRef}
-                                    aria-label="refresh"
-                                    type="tertiary"
-                                    icon={<FontAwesomeIcon icon={faRotateRight} />}
-                                />
-                            )}
-                            <KitButton onClick={_handleClose} icon={<FontAwesomeIcon icon={faXmark} />}>
-                                {closeButtonLabel}
-                            </KitButton>
-                            <KitSpace>{displayedSubmitButtons}</KitSpace>
-                        </KitSpace>
+                        <div
+                            id={EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS}
+                            data-testid={EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS}
+                        />
+                        <KitButton onClick={_handleClose} icon={<FontAwesomeIcon icon={faXmark} />}>
+                            {closeButtonLabel}
+                        </KitButton>
+                        <KitSpace>{displayedSubmitButtons}</KitSpace>
                     </Header>
                     <KitDivider noMargin color="lightGrey" />
                 </>
@@ -151,9 +144,9 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                 library={library}
                 valuesVersion={valuesVersion}
                 onCreate={_handleCreate}
-                buttonsRefs={{refresh: refreshButtonRef}}
                 containerStyle={{height: 'calc(100% - 82px)'}}
                 withInfoButton={withInfoButton}
+                enableSidebar={enableSidebar}
                 showSidebar={showSidebar}
                 sidebarContainer={sidebarContainer}
             />

@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import * as yup from 'yup';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import useLang from '../../../../../../hooks/useLang';
-import {formatIDString, getFieldError, localizedLabel} from '../../../../../../utils';
+import {formatIDString, getFieldError, isLinkAttribute, localizedLabel, isTreeAttribute} from '../../../../../../utils';
 import {GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, LibraryBehavior} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
@@ -25,8 +25,12 @@ interface IInfosFormProps {
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
-type LibraryFormValues = Omit<GET_LIB_BY_ID_libraries_list, 'fullTextAttributes' | 'defaultView'> & {
+type LibraryFormValues = Omit<
+    GET_LIB_BY_ID_libraries_list,
+    'fullTextAttributes' | 'mandatoryAttribute' | 'defaultView'
+> & {
     defaultView?: string | null;
+    mandatoryAttribute: string | null;
     fullTextAttributes: string[];
 };
 
@@ -50,12 +54,14 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         },
         icon: null,
         behavior: LibraryBehavior.standard,
+        mandatoryAttribute: null,
         attributes: [],
         permissions_conf: null,
         defaultView: null,
         fullTextAttributes: [],
         recordIdentityConf: {
             label: null,
+            subLabel: null,
             color: null,
             preview: null,
             treeColorPreview: null
@@ -77,8 +83,19 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             : {
                   ...library,
                   defaultView: library?.defaultView?.id ?? null,
+                  mandatoryAttribute: library?.mandatoryAttribute?.id ?? null,
                   fullTextAttributes: library?.fullTextAttributes ? library.fullTextAttributes.map(a => a.id) : []
               };
+
+    const mandatoryAttributeOptions = initialValues.attributes
+        ? initialValues.attributes
+              .filter(attr => isLinkAttribute(attr) || isTreeAttribute(attr))
+              .map(attr => ({
+                  key: attr.id,
+                  value: attr.id,
+                  text: localizedLabel(attr.label, lang)
+              }))
+        : [];
 
     const libAttributesOptions = initialValues.attributes
         ? initialValues.attributes.map(a => ({
@@ -126,6 +143,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             .object()
             .shape({
                 label: yup.string().nullable(),
+                subLabel: yup.string().nullable(),
                 color: yup.string().nullable(),
                 preview: yup.string().nullable(),
                 treeColorPreview: yup.string().nullable()
@@ -193,7 +211,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             });
         };
 
-        const {id, label, behavior, recordIdentityConf, defaultView, fullTextAttributes} = values;
+        const {id, label, behavior, mandatoryAttribute, recordIdentityConf, defaultView, fullTextAttributes} = values;
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<LibraryFormValues>(fieldName, touched, serverValidationErrors || {}, inputErrors);
@@ -249,6 +267,20 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                     />
                 </FormFieldWrapper>
                 {isExistingLib && (
+                    <FormFieldWrapper error={_getErrorByField('libraries.mandatory_attribute')}>
+                        <Form.Select
+                            label={t('libraries.mandatory_attribute')}
+                            name="mandatoryAttribute"
+                            aria-label="mandatoryAttribute"
+                            disabled={readonly}
+                            onChange={_handleChangeWithSubmit}
+                            onBlur={_handleBlur}
+                            value={mandatoryAttribute}
+                            options={mandatoryAttributeOptions}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {isExistingLib && (
                     <FormFieldWrapper error={_getErrorByField('libraries.fulltext_attributes')}>
                         <Form.Dropdown
                             search
@@ -293,6 +325,18 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                                 disabled={readonly}
                                 label={t('libraries.record_identity_label')}
                                 value={recordIdentityConf && recordIdentityConf.label ? recordIdentityConf.label : ''}
+                                onChange={_handleChangeWithSubmit}
+                            />
+                        </FormFieldWrapper>
+                        <FormFieldWrapper error={_getErrorByField('recordIdentityConf.subLabel')}>
+                            <Form.Dropdown
+                                search
+                                selection
+                                options={libAttributesOptions}
+                                name="recordIdentityConf.subLabel"
+                                disabled={readonly}
+                                label={t('libraries.record_identity_sub_label')}
+                                value={recordIdentityConf?.subLabel ?? ''}
                                 onChange={_handleChangeWithSubmit}
                             />
                         </FormFieldWrapper>

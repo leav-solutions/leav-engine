@@ -51,7 +51,7 @@ import TextFilter from './FilterInput/TextFilter';
 import {getDefaultFilterValueByFormat} from '_ui/components/LibraryItemsList/FiltersPanel/Filter/Filter.utils';
 
 interface IWrapperProps {
-    active: boolean;
+    $active: boolean;
 }
 
 const Wrapper = styled.div<IWrapperProps>`
@@ -63,8 +63,8 @@ const Wrapper = styled.div<IWrapperProps>`
     margin-bottom: 8px;
     border: 2px solid transparent;
 
-    ${({active}) =>
-        active
+    ${({$active}) =>
+        $active
             ? `
         &:hover,
         &:active {
@@ -468,7 +468,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                     canSelectRoot
                 />
             )}
-            <Wrapper data-testid="filter" active={filter.active}>
+            <Wrapper data-testid="filter" $active={filter.active}>
                 <Handle className="filter-handle" {...handleProps} />
                 <Content $hasParent={hasParent}>
                     {hasParent && (

@@ -18,12 +18,24 @@ export interface IRecordPropertyWithAttribute {
     calculatedValue?: RecordFormElementsValueStandardValue['payload'];
 }
 
+export const EditRecordSidebarContentTypeMap = {
+    SUMMARY: 'summary',
+    VALUE_DETAILS: 'valueDetails',
+    VALUES_VERSIONS: 'valuesVersions',
+    NONE: 'none'
+} as const;
+
+export type EditRecordSidebarContentType =
+    (typeof EditRecordSidebarContentTypeMap)[keyof typeof EditRecordSidebarContentTypeMap];
+
 export interface IEditRecordReducerState {
     record: IRecordIdentityWhoAmI;
     libraryId: string;
     libraryLabel: SystemTranslation | null;
     activeAttribute: IRecordPropertyWithAttribute;
-    sidebarContent: 'summary' | 'valueDetails' | 'valuesVersions' | 'none';
+    sidebarContent: EditRecordSidebarContentType;
+    enableSidebar: boolean;
+    isOpenSidebar: boolean;
     sidebarDefaultHidden?: boolean;
     valuesVersion: IValueVersion;
     originValuesVersion: IValueVersion;
@@ -41,7 +53,11 @@ export enum EditRecordReducerActionsTypes {
     SET_RECORD = 'SET_RECORD',
     SET_LIBRARY_LABEL = 'SET_LIBRARY_LABEL',
     SET_ACTIVE_VALUE = 'SET_ACTIVE_VALUE',
+    INITIALIZE_SIDEBAR = 'INITIALIZE_SIDEBAR',
+    SET_ENABLE_SIDEBAR = 'SET_ENABLE_SIDEBAR',
     SET_SIDEBAR_CONTENT = 'SET_SIDEBAR_CONTENT',
+    SET_SIDEBAR_IS_OPEN = 'SET_SIDEBAR_IS_OPEN',
+    SET_SIDEBAR_DEFAULT_HIDDEN = 'SET_SIDEBAR_DEFAULT_HIDDEN',
     SET_VALUES_VERSION = 'SET_VALUES_VERSION',
     REQUEST_REFRESH = 'REQUEST_REFRESH',
     REFRESH_DONE = 'REFRESH_DONE',
@@ -67,8 +83,25 @@ export type IEditRecordReducerActions =
               | RecordFormElementsValueTreeValue[];
       }
     | {
+          type: EditRecordReducerActionsTypes.INITIALIZE_SIDEBAR;
+          enabled: IEditRecordReducerState['enableSidebar'];
+          isOpenByDefault: IEditRecordReducerState['sidebarDefaultHidden'];
+      }
+    | {
+          type: EditRecordReducerActionsTypes.SET_ENABLE_SIDEBAR;
+          enabled: IEditRecordReducerState['enableSidebar'];
+      }
+    | {
+          type: EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN;
+          isOpen: IEditRecordReducerState['isOpenSidebar'];
+      }
+    | {
           type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT;
           content: IEditRecordReducerState['sidebarContent'];
+      }
+    | {
+          type: EditRecordReducerActionsTypes.SET_SIDEBAR_DEFAULT_HIDDEN;
+          value: IEditRecordReducerState['sidebarDefaultHidden'];
       }
     | {
           type: EditRecordReducerActionsTypes.SET_VALUES_VERSION;
@@ -96,7 +129,9 @@ export const initialState: IEditRecordReducerState = {
     libraryId: null,
     libraryLabel: null,
     activeAttribute: null,
-    sidebarContent: 'summary',
+    enableSidebar: false,
+    isOpenSidebar: false,
+    sidebarContent: EditRecordSidebarContentTypeMap.NONE,
     sidebarDefaultHidden: false,
     valuesVersion: null,
     originValuesVersion: null,
@@ -117,9 +152,29 @@ const editRecordReducer = (
             return {...state, record: action.record};
         case EditRecordReducerActionsTypes.SET_LIBRARY_LABEL:
             return {...state, libraryLabel: action.label};
+        case EditRecordReducerActionsTypes.INITIALIZE_SIDEBAR: {
+            const {enabled, isOpenByDefault} = action;
+            // If the sidebar is not enabled, don't check for isOpenByDefault
+            const isOpen = enabled && isOpenByDefault;
+            return {
+                ...state,
+                enableSidebar: enabled,
+                sidebarDefaultHidden: !isOpenByDefault,
+                sidebarContent: isOpen ? EditRecordSidebarContentTypeMap.SUMMARY : EditRecordSidebarContentTypeMap.NONE,
+                isOpenSidebar: isOpen
+            };
+        }
+        case EditRecordReducerActionsTypes.SET_ENABLE_SIDEBAR:
+            return {...state, enableSidebar: action.enabled};
+        case EditRecordReducerActionsTypes.SET_SIDEBAR_DEFAULT_HIDDEN:
+            return {...state, sidebarDefaultHidden: action.value};
         case EditRecordReducerActionsTypes.SET_ACTIVE_VALUE:
             const newSidebarContent =
-                action.attribute !== null ? 'valueDetails' : state.sidebarDefaultHidden ? 'none' : 'summary';
+                action.attribute !== null
+                    ? EditRecordSidebarContentTypeMap.VALUE_DETAILS
+                    : state.sidebarDefaultHidden
+                      ? EditRecordSidebarContentTypeMap.NONE
+                      : EditRecordSidebarContentTypeMap.SUMMARY;
             return {
                 ...state,
                 activeAttribute: {
@@ -163,6 +218,14 @@ const editRecordReducer = (
             };
         case EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT:
             return {...state, sidebarContent: action.content};
+        case EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN:
+            return {
+                ...state,
+                sidebarContent: action.isOpen
+                    ? EditRecordSidebarContentTypeMap.SUMMARY
+                    : EditRecordSidebarContentTypeMap.NONE,
+                isOpenSidebar: action.isOpen
+            };
         case EditRecordReducerActionsTypes.SET_VALUES_VERSION:
             return {...state, valuesVersion: action.valuesVersion};
         case EditRecordReducerActionsTypes.REQUEST_REFRESH:
@@ -195,6 +258,7 @@ const editRecordReducer = (
         case EditRecordReducerActionsTypes.CLEAR_EXTERNAL_UPDATE:
             return {...state, externalUpdate: {...initialState.externalUpdate}};
         default:
+            console.warn('Unknown action type in editRecordReducer:', action);
             return state;
     }
 };

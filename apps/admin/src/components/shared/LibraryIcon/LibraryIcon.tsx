@@ -14,6 +14,7 @@ interface ILibraryIconProps {
 function LibraryIcon({library}: ILibraryIconProps): JSX.Element {
     const iconNameByBehavior: {[key in LibraryBehavior]: SemanticICONS} = {
         [LibraryBehavior.files]: 'images outline',
+        [LibraryBehavior.join]: 'table',
         [LibraryBehavior.directories]: 'folder outline',
         [LibraryBehavior.standard]: 'file alternate outline'
     };

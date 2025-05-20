@@ -11,10 +11,19 @@ jest.mock('_ui/_utils/isDevEnv', () => ({
     isDevEnv: () => isDevEnvMock
 }));
 
+let consoleSpy;
+
 describe('ErrorBoundary', () => {
     const ComponentWithError: FunctionComponent = () => {
         throw new Error('boom!');
     };
+
+    beforeEach(() => {
+        consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => null);
+    });
+    afterEach(() => {
+        consoleSpy.mockRestore();
+    });
 
     describe('in production build', () => {
         beforeEach(() => {

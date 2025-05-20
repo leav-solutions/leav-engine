@@ -13,6 +13,10 @@ export const libraryDetailsFragment = gql`
         system
         label
         behavior
+        mandatoryAttribute {
+            id
+            label
+        }
         attributes {
             ...AttributeDetails
         }
@@ -35,6 +39,7 @@ export const libraryDetailsFragment = gql`
         }
         recordIdentityConf {
             label
+            subLabel
             color
             preview
             treeColorPreview

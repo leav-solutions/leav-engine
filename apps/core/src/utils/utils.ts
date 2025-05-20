@@ -119,6 +119,8 @@ export interface IUtils {
 
     getRecordsCacheKey(libraryId: string, recordId: string): string;
 
+    getGlobalSettingsCacheKey(): string;
+
     generateExplicitValidationError<T>(
         field: keyof T,
         message: ErrorFieldDetailMessage,
@@ -295,6 +297,9 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         },
         getRecordsCacheKey(libraryId, recordId) {
             return `records:${libraryId}:${recordId}`;
+        },
+        getGlobalSettingsCacheKey(): string {
+            return 'globalSettings';
         },
         generateExplicitValidationError<T>(
             field: keyof T,
