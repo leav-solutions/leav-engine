@@ -375,9 +375,18 @@ describe('EditRecordPage', () => {
             refetch: jest.fn()
         });
 
-        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} showSidebar record={mockRecord} />, {
-            mocks
-        });
+        render(
+            <EditRecordPage
+                library={mockRecord.library.id}
+                onClose={jest.fn()}
+                showSidebar
+                enableSidebar
+                record={mockRecord}
+            />,
+            {
+                mocks
+            }
+        );
 
         const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
 
