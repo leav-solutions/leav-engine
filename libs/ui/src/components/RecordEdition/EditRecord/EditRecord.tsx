@@ -96,7 +96,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     library: libraryId,
     onCreate,
     valuesVersion,
-    enableSidebar = true,
+    enableSidebar = false,
     showSidebar = false,
     sidebarContainer,
     containerStyle,

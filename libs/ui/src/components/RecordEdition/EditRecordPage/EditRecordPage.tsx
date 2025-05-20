@@ -32,6 +32,7 @@ interface IEditRecordPageProps {
     withInfoButton?: boolean;
     onClose?: () => void;
     showSidebar?: boolean;
+    enableSidebar?: boolean;
     sidebarContainer?: HTMLElement;
 }
 
@@ -62,6 +63,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     submitButtons = ['create'],
     withInfoButton,
     onClose = emptyFunction,
+    enableSidebar,
     showSidebar,
     sidebarContainer
 }) => {
@@ -144,6 +146,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                 onCreate={_handleCreate}
                 containerStyle={{height: 'calc(100% - 82px)'}}
                 withInfoButton={withInfoButton}
+                enableSidebar={enableSidebar}
                 showSidebar={showSidebar}
                 sidebarContainer={sidebarContainer}
             />
