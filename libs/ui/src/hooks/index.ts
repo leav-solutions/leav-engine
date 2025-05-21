@@ -16,3 +16,4 @@ export {default as useLoginChecker} from './useLoginChecker';
 export {default as useRedirectToLogin} from './useRedirectToLogin';
 export {useUser} from './useUser';
 export {useValuesCacheUpdate} from './useValuesCacheUpdate';
+export {useIFrameMessenger} from './useIFrameMessenger/useIFrameMessenger';

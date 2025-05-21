@@ -9,8 +9,9 @@ import {FaPlus} from 'react-icons/all';
 import type {IApplicationMatchingContext} from './types';
 import {recordSearchParamsName, routes} from './routes';
 import {SIDEBAR_CONTENT_ID} from '../../constants';
+import {PanelCustom} from './PanelCustom';
 
-import {iframe, explorerContainer} from './PanelContent.module.css';
+import {explorerContainer} from './PanelContent.module.css';
 
 export const PanelContent: FunctionComponent = () => {
     const {t} = useTranslation();
@@ -62,16 +63,8 @@ export const PanelContent: FunctionComponent = () => {
             );
         }
         if (currentPanel.content.type === 'custom') {
-            // TODO: give interaction from iframe to main app to change pages
             return (
-                <iframe
-                    className={iframe}
-                    name="testFrame"
-                    src={currentPanel.content.iframeSource + search}
-                    title={currentPanel.id}
-                    width="100%"
-                    height="100%"
-                />
+                <PanelCustom source={currentPanel.content.iframeSource} searchQuery={search} title={currentPanel.id} />
             );
         }
         if (currentPanel.content.type === 'explorer') {
