@@ -147,7 +147,21 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
             return <TableTagGroup tags={tags} />;
         } else if (isLinkValues(values, attributeProperties)) {
             switch (attributeProperties.multi_link_display_option) {
+                case MultiLinkDisplayOption.tag:
+                    return (
+                        <TableTagGroup
+                            tags={values.map(value => ({
+                                type: 'primary',
+                                idCardProps: {description: value.linkPayload?.whoAmI.label ?? undefined}
+                            }))}
+                        />
+                    );
+
+                case MultiLinkDisplayOption.badge_qty:
+                    return <KitBadge count={values.length} color="primary" />;
+
                 case MultiLinkDisplayOption.avatar:
+                default:
                     return (
                         <KitAvatar.Group max={{count: 5}}>
                             {values.map((value, index) => {
@@ -158,8 +172,8 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                                 return (
                                     <KitAvatar
                                         key={index}
-                                        label={String(value?.linkPayload?.whoAmI.label)}
-                                        src={value?.linkPayload?.whoAmI.preview?.small}
+                                        label={String(value.linkPayload?.whoAmI.label)}
+                                        src={value.linkPayload?.whoAmI.preview?.small}
                                         color="primary"
                                         secondaryColorInvert
                                     />
@@ -167,19 +181,6 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                             })}
                         </KitAvatar.Group>
                     );
-                case MultiLinkDisplayOption.tag:
-                    return (
-                        <TableTagGroup
-                            tags={values.map(value => ({
-                                type: 'primary',
-                                idCardProps: {description: value?.linkPayload?.whoAmI.label ?? undefined}
-                            }))}
-                        />
-                    );
-                case MultiLinkDisplayOption.badge_qty:
-                    return <KitBadge count={values.length} color="primary" />;
-                default:
-                    return null;
             }
         } else {
             // TODO: handle multiple tree values
