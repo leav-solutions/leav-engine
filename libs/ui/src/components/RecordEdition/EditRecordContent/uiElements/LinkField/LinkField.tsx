@@ -22,6 +22,7 @@ import {
     EDIT_RECORD_MODAL_CLASSNAME,
     LINK_RECORDS_MODAL_CLASSNAME
 } from '_ui/components/Explorer/_constants';
+import {IFormLinkFieldSettings} from '@leav/utils/src/types/forms';
 
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 
@@ -54,7 +55,7 @@ const KitInputWrapperStyled = styled(KitInputWrapper)`
 `;
 
 type LinkFieldProps = IFormElementProps<
-    ICommonFieldsSettings & {
+    IFormLinkFieldSettings & {
         columns?: Array<{
             id: string;
             label: Record<string, string>;
@@ -147,6 +148,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         isHookUsed: formIdToLoad !== 'creation',
         isReadOnly,
         isFieldInError,
+        tagDisplayMode: settings.tagDisplayMode,
         hasNoValue: backendValues.length === 0,
         onDeleteMultipleValues
     });

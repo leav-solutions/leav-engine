@@ -12,13 +12,16 @@ import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {DeleteMultipleValuesFunc} from '../../../_types';
 import {RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
-import {AntForm} from 'aristid-ds';
+import {AntForm, KitSelect} from 'aristid-ds';
 import {
     EditRecordReducerActionsTypes,
     IEditRecordReducerActions,
     IRecordPropertyWithAttribute
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useLinkRecords} from './useLinkRecords';
+import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
+import {GetRecordColumnsValuesRecord, IRecordColumnValueLink} from '_ui/_queries/records/getRecordColumnsValues';
+import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 
 interface ILinkRecordsInCreationProps {
     libraryId: string;
@@ -32,6 +35,7 @@ interface ILinkRecordsInCreationProps {
     isHookUsed: boolean;
     isReadOnly: boolean;
     isFieldInError: boolean;
+    tagDisplayMode: boolean;
     hasNoValue: boolean;
     onDeleteMultipleValues: DeleteMultipleValuesFunc;
 }
@@ -53,6 +57,7 @@ export const useLinkRecordsInEdition = ({
     isHookUsed,
     isReadOnly,
     isFieldInError,
+    tagDisplayMode,
     hasNoValue,
     onDeleteMultipleValues
 }: ILinkRecordsInCreationProps) => {
@@ -95,6 +100,28 @@ export const useLinkRecordsInEdition = ({
         }
     }, [backendValues]);
 
+    const {data: fieldValues} = useGetRecordValuesQuery(libraryId, [attribute.id], [recordId], !tagDisplayMode);
+
+    const selectOptions = (
+        (fieldValues?.[recordId] as GetRecordColumnsValuesRecord<IRecordColumnValueLink>)?.[attribute.id] ?? []
+    ).map(
+        ({linkValue: record}) =>
+            ({
+                value: record.id,
+                label: record.whoAmI.label ?? record.whoAmI.id,
+                idCard: {
+                    description: record.whoAmI.label ?? record.whoAmI.id,
+                    avatarProps: {
+                        size: 'small',
+                        shape: 'square',
+                        imageFit: 'contain',
+                        src: record.whoAmI.preview?.small,
+                        label: record.whoAmI.label ?? record.whoAmI.id
+                    }
+                }
+            }) satisfies IKitOption
+    );
+
     const _handleExplorerRef = (ref: IExplorerRef) => {
         if (_shouldUpdateExplorerActions(ref, explorerActions)) {
             setExplorerActions({
@@ -120,6 +147,11 @@ export const useLinkRecordsInEdition = ({
         return ['edit', 'remove'];
     };
 
+    console.log(
+        'defaultValue',
+        selectOptions.map(({label}) => label)
+    );
+
     return {
         UnlinkAllRecordsInEdition: isHookUsed &&
             backendValues.length > 1 &&
@@ -131,62 +163,72 @@ export const useLinkRecordsInEdition = ({
                     danger={isFieldInError}
                 />
             ),
-        LinkRecordsInEditionExplorer: isHookUsed && recordId && (
-            <>
-                <ExplorerWrapper>
-                    <Explorer
-                        ref={_handleExplorerRef}
-                        defaultViewSettings={{
-                            attributesIds: columnsToDisplay
-                        }}
-                        entrypoint={{
-                            type: 'link',
-                            parentLibraryId: libraryId,
-                            parentRecordId: recordId,
-                            linkAttributeId: attribute.id
-                        }}
-                        defaultCallbacks={{
-                            item: {
-                                remove: handleExplorerRemoveValue
-                            },
-                            mass: {
-                                deactivate: handleExplorerMassDeactivateValues
-                            },
-                            primary: {
-                                link: handleExplorerLinkValue,
-                                create: handleExplorerCreateValue
+        LinkRecordsInEditionExplorer:
+            isHookUsed &&
+            recordId &&
+            (tagDisplayMode ? (
+                <KitSelect
+                    placeholder="Select a status"
+                    options={selectOptions}
+                    value={selectOptions.map(({value}) => value)}
+                    mode="multiple"
+                ></KitSelect>
+            ) : (
+                <>
+                    <ExplorerWrapper>
+                        <Explorer
+                            ref={_handleExplorerRef}
+                            defaultViewSettings={{
+                                attributesIds: columnsToDisplay
+                            }}
+                            entrypoint={{
+                                type: 'link',
+                                parentLibraryId: libraryId,
+                                parentRecordId: recordId,
+                                linkAttributeId: attribute.id
+                            }}
+                            defaultCallbacks={{
+                                item: {
+                                    remove: handleExplorerRemoveValue
+                                },
+                                mass: {
+                                    deactivate: handleExplorerMassDeactivateValues
+                                },
+                                primary: {
+                                    link: handleExplorerLinkValue,
+                                    create: handleExplorerCreateValue
+                                }
+                            }}
+                            showTitle={false}
+                            showSearch={false}
+                            selectionMode={attribute.multiple_values ? 'multiple' : 'simple'}
+                            disableSelection={
+                                isReadOnly ||
+                                !attribute.multiple_values ||
+                                (attribute.required && attribute.multiple_values && backendValues.length === 1)
                             }
+                            defaultActionsForItem={_getExplorerItemActions()}
+                            hidePrimaryActions
+                            hideTableHeader
+                            iconsOnlyItemActions
+                        />
+                    </ExplorerWrapper>
+                    <LinkActionsButtons
+                        createButtonProps={{
+                            icon: explorerActions?.createAction?.icon,
+                            label: explorerActions?.createAction?.label,
+                            callback: explorerActions?.createAction?.callback,
+                            disabled: isReadOnly || explorerActions?.createAction?.disabled
                         }}
-                        showTitle={false}
-                        showSearch={false}
-                        selectionMode={attribute.multiple_values ? 'multiple' : 'simple'}
-                        disableSelection={
-                            isReadOnly ||
-                            !attribute.multiple_values ||
-                            (attribute.required && attribute.multiple_values && backendValues.length === 1)
-                        }
-                        defaultActionsForItem={_getExplorerItemActions()}
-                        hidePrimaryActions
-                        hideTableHeader
-                        iconsOnlyItemActions
+                        linkButtonProps={{
+                            icon: <FaList />,
+                            label: explorerActions?.linkAction?.label,
+                            callback: explorerActions?.linkAction?.callback,
+                            disabled: isReadOnly || (attribute.multiple_values && explorerActions?.linkAction?.disabled)
+                        }}
+                        hasNoValue={hasNoValue}
                     />
-                </ExplorerWrapper>
-                <LinkActionsButtons
-                    createButtonProps={{
-                        icon: explorerActions?.createAction?.icon,
-                        label: explorerActions?.createAction?.label,
-                        callback: explorerActions?.createAction?.callback,
-                        disabled: isReadOnly || explorerActions?.createAction?.disabled
-                    }}
-                    linkButtonProps={{
-                        icon: <FaList />,
-                        label: explorerActions?.linkAction?.label,
-                        callback: explorerActions?.linkAction?.callback,
-                        disabled: isReadOnly || (attribute.multiple_values && explorerActions?.linkAction?.disabled)
-                    }}
-                    hasNoValue={hasNoValue}
-                />
-            </>
-        )
+                </>
+            ))
     };
 };
