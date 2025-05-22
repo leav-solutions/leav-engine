@@ -25,6 +25,10 @@ describe('RedirectToFirstPanelOnHome', () => {
         workspaces: [
             {
                 id: '1',
+                title: {
+                    en: 'Workspace 1',
+                    fr: 'Espace de travail 1'
+                },
                 entrypoint: {
                     type: 'library',
                     libraryId: 'libraryTest'
@@ -32,6 +36,10 @@ describe('RedirectToFirstPanelOnHome', () => {
                 panels: [
                     {
                         id: 'panel1',
+                        name: {
+                            en: 'Panel 1',
+                            fr: 'Panneau 1'
+                        },
                         content: {
                             type: 'explorer',
                             libraryId: 'libraryTest',

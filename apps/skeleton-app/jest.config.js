@@ -32,6 +32,7 @@ module.exports = {
     },
     transformIgnorePatterns: ['node_modules/(?!(antd|@babel/runtime|@uidotdev/usehooks)/)'],
     moduleNameMapper: {
+        '\\.module.css$': 'identity-obj-proxy',
         '^@leav/(.*)$': '<rootDir>/../../libs/$1/src',
         '^_ui/(.*)': '<rootDir>/../../libs/ui/src/$1'
     }

@@ -3,10 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 type PanelId = string;
 type WorkspaceId = string;
+type Language = string;
 
 export type Panel = {
     // panel details
     id: PanelId;
+    name: Record<Language, string>;
 } & (
     | {
           content:
@@ -47,7 +49,7 @@ export type Panel = {
 
 export interface IWorkspace {
     id: WorkspaceId;
-    title?: string; // TODO: remove ?
+    title: Record<Language, string>;
     description?: string;
     color?: string;
     icon?: string;
