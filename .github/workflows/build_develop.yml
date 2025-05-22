@@ -37,7 +37,7 @@ jobs:
                     platforms: linux/amd64
                     push: true
                     no-cache: true
-                    file: docker/DOCKERFILES/build/core.dev.Dockerfile
+                    file: docker/DOCKERFILES/build/core.Dockerfile
                     labels:
                         LEAV Engine
                         Core
