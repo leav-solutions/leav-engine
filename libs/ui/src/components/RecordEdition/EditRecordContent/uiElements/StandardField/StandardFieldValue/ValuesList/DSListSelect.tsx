@@ -6,7 +6,6 @@ import {KitSelect, KitTypography} from 'aristid-ds';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
 import {AttributeFormat, useSaveAttributeMutation} from '_ui/_gqlTypes';
 import {Form} from 'antd';
-import moment from 'moment';
 import {stringifyDateRangeValue} from '_ui/_utils';
 import {IDateRangeValuesListConf, IStringValuesListConf} from './_types';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
@@ -14,6 +13,7 @@ import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReduc
 import {IStandFieldValueContentProps} from '../_types';
 import {IKitSelect} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 import {EMPTY_INITIAL_VALUE_STRING} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
+import dayjs from 'dayjs';
 
 interface IOption {
     label: string;
@@ -77,8 +77,8 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
 
             values = valuesList.map(v => {
                 const rangeValue = {
-                    from: moment(Number(v.from) * 1000).format('L'),
-                    to: moment(Number(v.to) * 1000).format('L')
+                    from: dayjs.unix(Number(v.from)).format('DD-MM-YYYY'),
+                    to: dayjs.unix(Number(v.to)).format('DD-MM-YYYY')
                 };
                 return {
                     value: stringifyDateRangeValue(rangeValue, t),
