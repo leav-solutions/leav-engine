@@ -86,7 +86,7 @@ export const validateConfig = (conf: IConfig) => {
             level: Joi.string().required(),
             transport: Joi.string().required(),
             destinationFile: Joi.string(),
-            fileType: Joi.string().valid('json', 'text')
+            useJsonFormat: Joi.boolean()
         }),
         permissions: Joi.object().keys({
             default: Joi.boolean().required()
