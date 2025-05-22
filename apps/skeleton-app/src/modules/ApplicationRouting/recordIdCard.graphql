@@ -1,0 +1,14 @@
+query GetRecordIdCard($id: String, $libraryId: ID!) {
+    records(library: $libraryId, filters: [{field: "id", condition: EQUAL, value: $id}]) {
+        list {
+            id
+            whoAmI {
+                id
+                color
+                label
+                subLabel
+                preview
+            }
+        }
+    }
+}

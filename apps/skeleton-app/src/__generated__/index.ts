@@ -406,6 +406,7 @@ export type Form = {
   id: Scalars['ID'];
   label?: Maybe<Scalars['SystemTranslation']>;
   library: Library;
+  sidePanel?: Maybe<FormSidePanel>;
   system: Scalars['Boolean'];
 };
 
@@ -493,6 +494,17 @@ export type FormInput = {
   id: Scalars['ID'];
   label?: InputMaybe<Scalars['SystemTranslation']>;
   library: Scalars['ID'];
+  sidePanel?: InputMaybe<FormSidePanelInput>;
+};
+
+export type FormSidePanel = {
+  enable: Scalars['Boolean'];
+  isOpenByDefault?: Maybe<Scalars['Boolean']>;
+};
+
+export type FormSidePanelInput = {
+  enable: Scalars['Boolean'];
+  isOpenByDefault: Scalars['Boolean'];
 };
 
 export type FormsList = {
@@ -596,6 +608,7 @@ export type Library = {
   id: Scalars['ID'];
   label?: Maybe<Scalars['SystemTranslation']>;
   linkedTrees?: Maybe<Array<Tree>>;
+  mandatoryAttribute?: Maybe<Attribute>;
   permissions?: Maybe<LibraryPermissions>;
   permissions_conf?: Maybe<TreepermissionsConf>;
   previewsSettings?: Maybe<Array<LibraryPreviewsSettings>>;
@@ -612,6 +625,7 @@ export type LibraryLabelArgs = {
 export enum LibraryBehavior {
   directories = 'directories',
   files = 'files',
+  join = 'join',
   standard = 'standard'
 }
 
@@ -636,6 +650,7 @@ export type LibraryInput = {
   icon?: InputMaybe<LibraryIconInput>;
   id: Scalars['ID'];
   label?: InputMaybe<Scalars['SystemTranslation']>;
+  mandatoryAttribute?: InputMaybe<Scalars['ID']>;
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
   previewsSettings?: InputMaybe<Array<LibraryPreviewsSettingsInput>>;
   recordIdentityConf?: InputMaybe<RecordIdentityConfInput>;
@@ -1551,6 +1566,7 @@ export type RecordForm = {
   label?: Maybe<Scalars['SystemTranslation']>;
   library: Library;
   recordId?: Maybe<Scalars['ID']>;
+  sidePanel?: Maybe<FormSidePanel>;
   system: Scalars['Boolean'];
 };
 
@@ -2337,6 +2353,14 @@ export type GetApplicationSkeletonSettingsQueryVariables = Exact<{ [key: string]
 
 export type GetApplicationSkeletonSettingsQuery = { applications?: { list: Array<{ settings?: any | null }> } | null };
 
+export type GetRecordIdCardQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']>;
+  libraryId: Scalars['ID'];
+}>;
+
+
+export type GetRecordIdCardQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, color?: string | null, label?: string | null, subLabel?: string | null, preview?: any | null } }> } };
+
 
 export const GetApplicationPermissionAndNameDocument = gql`
     query getApplicationPermissionAndName {
@@ -2507,3 +2531,56 @@ export type GetApplicationSkeletonSettingsQueryHookResult = ReturnType<typeof us
 export type GetApplicationSkeletonSettingsLazyQueryHookResult = ReturnType<typeof useGetApplicationSkeletonSettingsLazyQuery>;
 export type GetApplicationSkeletonSettingsSuspenseQueryHookResult = ReturnType<typeof useGetApplicationSkeletonSettingsSuspenseQuery>;
 export type GetApplicationSkeletonSettingsQueryResult = Apollo.QueryResult<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>;
+export const GetRecordIdCardDocument = gql`
+    query GetRecordIdCard($id: String, $libraryId: ID!) {
+  records(
+    library: $libraryId
+    filters: [{field: "id", condition: EQUAL, value: $id}]
+  ) {
+    list {
+      id
+      whoAmI {
+        id
+        color
+        label
+        subLabel
+        preview
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRecordIdCardQuery__
+ *
+ * To run a query within a React component, call `useGetRecordIdCardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRecordIdCardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRecordIdCardQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      libraryId: // value for 'libraryId'
+ *   },
+ * });
+ */
+export function useGetRecordIdCardQuery(baseOptions: Apollo.QueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>(GetRecordIdCardDocument, options);
+      }
+export function useGetRecordIdCardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>(GetRecordIdCardDocument, options);
+        }
+export function useGetRecordIdCardSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>(GetRecordIdCardDocument, options);
+        }
+export type GetRecordIdCardQueryHookResult = ReturnType<typeof useGetRecordIdCardQuery>;
+export type GetRecordIdCardLazyQueryHookResult = ReturnType<typeof useGetRecordIdCardLazyQuery>;
+export type GetRecordIdCardSuspenseQueryHookResult = ReturnType<typeof useGetRecordIdCardSuspenseQuery>;
+export type GetRecordIdCardQueryResult = Apollo.QueryResult<GetRecordIdCardQuery, GetRecordIdCardQueryVariables>;
