@@ -3,13 +3,20 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
-import {KitButton, KitDivider, KitSelect} from 'aristid-ds';
+import {KitButton, KitDivider, KitSelect, KitSpace} from 'aristid-ds';
 import styled from 'styled-components';
 import {useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 
 interface ILinkSelectProps {
     tagDisplay: boolean;
+    options: IKitOption[];
+    defaultValues: string[];
+    hideAdvancedSearch?: boolean;
+    onUpdateSelection: (value: string[]) => void;
+    onCreate: (value: string) => void;
+    onAdvanceSearch: () => void;
 }
 
 const StyledDivider = styled(KitDivider)`
@@ -17,11 +24,7 @@ const StyledDivider = styled(KitDivider)`
 `;
 
 const StyledContainer = styled.div`
-    display: grid;
-    justify-content: center;
-`;
-
-const StyledButton = styled(KitButton)`
+    display: flex;
     justify-content: center;
 `;
 
@@ -31,74 +34,90 @@ const StyledKitSelect = styled(KitSelect)`
     }
 `;
 
-function LinkSelect({tagDisplay = false}: ILinkSelectProps): JSX.Element {
+function LinkSelect({
+    tagDisplay = false,
+    options,
+    defaultValues,
+    hideAdvancedSearch = false,
+    onUpdateSelection,
+    onCreate,
+    onAdvanceSearch
+}: ILinkSelectProps): JSX.Element {
     const {t} = useSharedTranslation();
 
     const [openSelect, setOpenSelect] = useState(false);
     const [currentSearch, setCurrentSearch] = useState('');
-    const items = [
-        {
-            value: 'chartreuse jaune',
-            label: 'Chartreuse Jaune'
-        },
-        {
-            value: 'chartreuse vep',
-            label: 'Chartreuse VEP'
-        },
-        {
-            value: 'chartreuse verte',
-            label: 'Chartreuse Verte'
-        }
-    ];
-    const [options, setOptions] = useState(items);
-    const [values, setValues] = useState([items[0], items[1]]);
+    const [emptyResults, setEmptyResults] = useState(false);
 
-    const _handleChange = (selection: any) => {
-        setValues(selection);
-        console.log({selection});
+    const _handleChange = (selection: string[]) => {
+        onUpdateSelection(selection);
     };
 
     const _handleSearch = (value: string) => {
         setCurrentSearch(value);
-        console.log({value});
-        if (value === '') {
-            setOptions(items);
+        const optionsFiltered = options.filter(option => option.label.toLowerCase().includes(value.toLowerCase()));
+        if (optionsFiltered.length === 0 && value !== '') {
+            setEmptyResults(true);
         } else {
-            setOptions(options.filter(item => item.label.toLowerCase().includes(value.toLowerCase())));
+            setEmptyResults(false);
         }
-        console.log({options});
     };
 
     const dropdownButtons = (menu: React.ReactNode) => (
         <>
             {menu}
-            <StyledDivider />
-            <StyledContainer>
-                <StyledButton
-                    type="secondary"
-                    icon={<FontAwesomeIcon icon={faPlus} />}
-                    onClick={() => console.log(`Creation for ${currentSearch}`)}
-                >
-                    {`${t('Créer')} "${currentSearch}"`}
-                </StyledButton>
-                <KitButton type="tertiary" block icon={<FontAwesomeIcon icon={faMagnifyingGlass} />}>
-                    {t('Recherche avancée')}
-                </KitButton>
-            </StyledContainer>
+            {(emptyResults || !hideAdvancedSearch) && (
+                <>
+                    <StyledDivider />
+                    <StyledContainer>
+                        <KitSpace align="center" direction="vertical" size="xs">
+                            {emptyResults && (
+                                <KitButton
+                                    type="secondary"
+                                    icon={<FontAwesomeIcon icon={faPlus} />}
+                                    onClick={() => onCreate(currentSearch)}
+                                >
+                                    {`${t('Créer')} "${currentSearch}"`}
+                                </KitButton>
+                            )}
+                            {!hideAdvancedSearch && (
+                                <KitButton
+                                    type="tertiary"
+                                    icon={<FontAwesomeIcon icon={faMagnifyingGlass} />}
+                                    onClick={() => onAdvanceSearch()}
+                                >
+                                    {t('Recherche avancée')}
+                                </KitButton>
+                            )}
+                        </KitSpace>
+                    </StyledContainer>
+                </>
+            )}
         </>
     );
 
     return (
         <>
             {tagDisplay ? (
+                <KitSelect
+                    placeholder="Select"
+                    mode="multiple"
+                    defaultValue={defaultValues}
+                    options={options}
+                    optionFilterProp="label"
+                    showSearch
+                    onChange={value => _handleChange(value)}
+                    onSearch={value => _handleSearch(value)}
+                    dropdownRender={dropdownButtons}
+                />
+            ) : (
                 <StyledKitSelect
                     open={openSelect}
                     placeholder="Select"
                     mode="multiple"
-                    defaultValue={values}
+                    defaultValue={defaultValues}
                     options={options}
                     optionFilterProp="label"
-                    value={values}
                     showSearch
                     suffixIcon={<div />}
                     allowClear={false}
@@ -110,20 +129,6 @@ function LinkSelect({tagDisplay = false}: ILinkSelectProps): JSX.Element {
                     }}
                     onChange={value => _handleChange(value)}
                     onSearch={value => _handleSearch(value)}
-                    dropdownRender={dropdownButtons}
-                />
-            ) : (
-                <KitSelect
-                    open={true}
-                    placeholder="Select"
-                    mode="multiple"
-                    defaultValue={values}
-                    options={options}
-                    optionFilterProp="label"
-                    value={values}
-                    showSearch
-                    onSearch={value => _handleSearch(value)}
-                    onChange={value => _handleChange(value)}
                     dropdownRender={dropdownButtons}
                 />
             )}

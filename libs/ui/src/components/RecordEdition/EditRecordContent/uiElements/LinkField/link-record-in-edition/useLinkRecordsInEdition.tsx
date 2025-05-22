@@ -22,6 +22,7 @@ import {useLinkRecords} from './useLinkRecords';
 import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import {GetRecordColumnsValuesRecord, IRecordColumnValueLink} from '_ui/_queries/records/getRecordColumnsValues';
 import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
+import LinkSelect from '_ui/components/LinkSelect';
 
 interface ILinkRecordsInCreationProps {
     libraryId: string;
@@ -100,7 +101,7 @@ export const useLinkRecordsInEdition = ({
         }
     }, [backendValues]);
 
-    const {data: fieldValues} = useGetRecordValuesQuery(libraryId, [attribute.id], [recordId], !tagDisplayMode);
+    const {data: fieldValues} = useGetRecordValuesQuery(libraryId, [attribute.id], [recordId]);
 
     const selectOptions = (
         (fieldValues?.[recordId] as GetRecordColumnsValuesRecord<IRecordColumnValueLink>)?.[attribute.id] ?? []
@@ -147,11 +148,6 @@ export const useLinkRecordsInEdition = ({
         return ['edit', 'remove'];
     };
 
-    console.log(
-        'defaultValue',
-        selectOptions.map(({label}) => label)
-    );
-
     return {
         UnlinkAllRecordsInEdition: isHookUsed &&
             backendValues.length > 1 &&
@@ -167,12 +163,14 @@ export const useLinkRecordsInEdition = ({
             isHookUsed &&
             recordId &&
             (tagDisplayMode ? (
-                <KitSelect
-                    placeholder="Select a status"
+                <LinkSelect
+                    tagDisplay={true}
                     options={selectOptions}
-                    value={selectOptions.map(({value}) => value)}
-                    mode="multiple"
-                ></KitSelect>
+                    defaultValues={selectOptions.map(({value}) => value)}
+                    onUpdateSelection={() => null}
+                    onCreate={() => null}
+                    onAdvanceSearch={() => null}
+                ></LinkSelect>
             ) : (
                 <>
                     <ExplorerWrapper>
@@ -228,6 +226,15 @@ export const useLinkRecordsInEdition = ({
                         }}
                         hasNoValue={hasNoValue}
                     />
+                    {/* KEEP for dev in progress
+                     <LinkSelect
+                        tagDisplay={false}
+                        options={selectOptions}
+                        defaultValues={selectOptions.map(({value}) => value)}
+                        onUpdateSelection={() => null}
+                        onCreate={() => null}
+                        onAdvanceSearch={() => null}
+                    ></LinkSelect> */}
                 </>
             ))
     };
