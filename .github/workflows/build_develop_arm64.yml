@@ -1,14 +1,14 @@
-name: Build develop
+name: Build develop ARM64
 
 on:
-  push:
-    branches:
-      - develop
-  workflow_dispatch:
+    push:
+        branches:
+            - develop
+    workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: false
 
 jobs:
     # Build core and deploy it to Docker Hub
@@ -18,8 +18,8 @@ jobs:
             - uses: actions/checkout@v4
             - name: Set version # Write version to package.json and manifest.json
               run: |
-                    echo "Setting version to \"develop (${{ github.sha }})\""
-                    find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"develop (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
+                  echo "Setting version to \"develop (${{ github.sha }})\""
+                  find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"develop (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
             -
                 name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v2
@@ -34,7 +34,7 @@ jobs:
                 uses: docker/build-push-action@v4
                 with:
                     context: .
-                    platforms: linux/amd64
+                    platforms: linux/arm64/v8
                     push: true
                     no-cache: true
                     file: docker/DOCKERFILES/build/core.dev.Dockerfile
@@ -50,8 +50,8 @@ jobs:
             - uses: actions/checkout@v4
             - name: Set version # Write version to package.json and manifest.json
               run: |
-                    echo "Setting version to \"develop (${{ github.sha }})\""
-                    find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"develop (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
+                  echo "Setting version to \"develop (${{ github.sha }})\""
+                  find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"develop (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
             -
                 name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v2
@@ -66,7 +66,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
-                    platforms: linux/amd64
+                    platforms: linux/arm64/v8
                     push: true
                     target: runner-preview-generator
                     file: docker/DOCKERFILES/build/generic.Dockerfile
@@ -84,8 +84,8 @@ jobs:
             - uses: actions/checkout@v4
             - name: Set version # Write version to package.json and manifest.json
               run: |
-                    echo "Setting version to \"develop (${{ github.sha }})\""
-                    find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"develop (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
+                  echo "Setting version to \"develop (${{ github.sha }})\""
+                  find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"develop (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
             -
                 name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v2
@@ -100,7 +100,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
-                    platforms: linux/amd64
+                    platforms: linux/arm64/v8
                     push: true
                     target: runner
                     file: docker/DOCKERFILES/build/generic.Dockerfile
@@ -118,8 +118,8 @@ jobs:
             - uses: actions/checkout@v4
             - name: Set version # Write version to package.json and manifest.json
               run: |
-                    echo "Setting version to \"develop (${{ github.sha }})\""
-                    find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"develop (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
+                  echo "Setting version to \"develop (${{ github.sha }})\""
+                  find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"develop (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
             -
                 name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v2
@@ -134,7 +134,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
-                    platforms: linux/amd64
+                    platforms: linux/arm64/v8
                     push: true
                     target: runner
                     file: docker/DOCKERFILES/build/generic.Dockerfile
@@ -152,8 +152,8 @@ jobs:
             - uses: actions/checkout@v4
             - name: Set version # Write version to package.json and manifest.json
               run: |
-                    echo "Setting version to \"develop (${{ github.sha }})\""
-                    find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"develop (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
+                  echo "Setting version to \"develop (${{ github.sha }})\""
+                  find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"develop (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
             -
                 name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v2
@@ -168,7 +168,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
-                    platforms: linux/amd64
+                    platforms: linux/arm64/v8
                     push: true
                     target: runner
                     file: docker/DOCKERFILES/build/generic.Dockerfile
