@@ -35,7 +35,7 @@ const StyledKitSelect = styled(KitSelect)`
 `;
 
 function LinkSelect({
-    tagDisplay = false,
+    tagDisplay,
     options,
     defaultValues,
     hideAdvancedSearch = false,
@@ -45,7 +45,7 @@ function LinkSelect({
 }: ILinkSelectProps): JSX.Element {
     const {t} = useSharedTranslation();
 
-    const [openSelect, setOpenSelect] = useState(false);
+    const [openSelect, setOpenSelect] = useState(tagDisplay);
     const [currentSearch, setCurrentSearch] = useState('');
     const [emptyResults, setEmptyResults] = useState(false);
 
@@ -105,6 +105,9 @@ function LinkSelect({
                     defaultValue={defaultValues}
                     options={options}
                     optionFilterProp="label"
+                    filterOption={(input, option) =>
+                        option?.value?.toString().toLowerCase().includes(input.toLowerCase())
+                    }
                     showSearch
                     onChange={value => _handleChange(value)}
                     onSearch={value => _handleSearch(value)}
@@ -118,6 +121,9 @@ function LinkSelect({
                     defaultValue={defaultValues}
                     options={options}
                     optionFilterProp="label"
+                    filterOption={(input, option) =>
+                        option?.value?.toString().toLowerCase().includes(input.toLowerCase())
+                    }
                     showSearch
                     suffixIcon={<div />}
                     allowClear={false}
