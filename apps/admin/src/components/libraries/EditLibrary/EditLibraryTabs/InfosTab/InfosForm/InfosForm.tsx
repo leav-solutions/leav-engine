@@ -96,6 +96,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                   text: localizedLabel(attr.label, lang)
               }))
         : [];
+    mandatoryAttributeOptions.unshift({key: '', value: '', text: ''});
 
     const libAttributesOptions = initialValues.attributes
         ? initialValues.attributes.map(a => ({
