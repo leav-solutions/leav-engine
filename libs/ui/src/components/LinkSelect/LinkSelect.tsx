@@ -77,7 +77,7 @@ function LinkSelect({
                                     icon={<FontAwesomeIcon icon={faPlus} />}
                                     onClick={() => onCreate(currentSearch)}
                                 >
-                                    {`${t('Créer')} "${currentSearch}"`}
+                                    {`${t('record_edition.new_record')} "${currentSearch}"`}
                                 </KitButton>
                             )}
                             {!hideAdvancedSearch && (
@@ -86,7 +86,7 @@ function LinkSelect({
                                     icon={<FontAwesomeIcon icon={faMagnifyingGlass} />}
                                     onClick={() => onAdvanceSearch()}
                                 >
-                                    {t('Recherche avancée')}
+                                    {t('record_edition.advanced_search')}
                                 </KitButton>
                             )}
                         </KitSpace>
@@ -100,7 +100,7 @@ function LinkSelect({
         <>
             {tagDisplay ? (
                 <KitSelect
-                    placeholder="Select"
+                    placeholder={t('record_edition.select')}
                     mode="multiple"
                     defaultValue={defaultValues}
                     options={options}
@@ -113,7 +113,7 @@ function LinkSelect({
             ) : (
                 <StyledKitSelect
                     open={openSelect}
-                    placeholder="Select"
+                    placeholder={t('record_edition.select')}
                     mode="multiple"
                     defaultValue={defaultValues}
                     options={options}
