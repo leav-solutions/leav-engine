@@ -1,9 +1,6 @@
 name: Build develop ARM64
 
 on:
-    push:
-        branches:
-            - develop
     workflow_dispatch:
 
 concurrency:
