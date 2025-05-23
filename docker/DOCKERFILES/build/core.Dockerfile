@@ -1,4 +1,4 @@
-# This Dockerfile is meant to build the core of LEAV-Engine with a watch on plugin to allow hot reload when plugin changes
+# This Dockerfile is meant to build the core of LEAV-Engine.
 # We're using the "multi-stage build" feature of Docker in order to limit the size of the final image.
 
 ### CORE BUILDER ###
