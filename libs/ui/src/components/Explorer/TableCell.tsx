@@ -9,12 +9,13 @@ import {
     PropertyValueFragment,
     PropertyValueLinkValueFragment,
     PropertyValueTreeValueFragment,
-    PropertyValueValueFragment
+    PropertyValueValueFragment,
+    MultiLinkDisplayOption
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FaArrowRight, FaCalendar, FaListAlt} from 'react-icons/fa';
 import DOMPurify from 'dompurify';
-import {KitAvatar, KitSpace, KitTag, KitTypography} from 'aristid-ds';
+import {KitAvatar, KitBadge, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
@@ -145,25 +146,42 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
             });
             return <TableTagGroup tags={tags} />;
         } else if (isLinkValues(values, attributeProperties)) {
-            return (
-                <KitAvatar.Group max={{count: 5}}>
-                    {values.map((value, index) => {
-                        if (!isLinkValue(value, attributeProperties)) {
-                            return null;
-                        }
+            switch (attributeProperties.multi_link_display_option) {
+                case MultiLinkDisplayOption.tag:
+                    return (
+                        <TableTagGroup
+                            tags={values.map(value => ({
+                                type: 'primary',
+                                idCardProps: {description: value.linkPayload?.whoAmI.label ?? undefined}
+                            }))}
+                        />
+                    );
 
-                        return (
-                            <KitAvatar
-                                key={index}
-                                label={String(value?.linkPayload?.whoAmI.label)}
-                                src={value?.linkPayload?.whoAmI.preview?.small}
-                                color="primary"
-                                secondaryColorInvert
-                            />
-                        );
-                    })}
-                </KitAvatar.Group>
-            );
+                case MultiLinkDisplayOption.badge_qty:
+                    return <KitBadge count={values.length} color="primary" />;
+
+                case MultiLinkDisplayOption.avatar:
+                default:
+                    return (
+                        <KitAvatar.Group max={{count: 5}}>
+                            {values.map((value, index) => {
+                                if (!isLinkValue(value, attributeProperties)) {
+                                    return null;
+                                }
+
+                                return (
+                                    <KitAvatar
+                                        key={index}
+                                        label={String(value.linkPayload?.whoAmI.label)}
+                                        src={value.linkPayload?.whoAmI.preview?.small}
+                                        color="primary"
+                                        secondaryColorInvert
+                                    />
+                                );
+                            })}
+                        </KitAvatar.Group>
+                    );
+            }
         } else {
             // TODO: handle multiple tree values
             return null;
