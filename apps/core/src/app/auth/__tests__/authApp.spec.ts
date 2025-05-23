@@ -19,6 +19,7 @@ import {ToAny} from '../../../utils/utils';
 
 const depsBase: ToAny<IAuthAppDeps> = {
     'core.domain.value': jest.fn(),
+    'core.infra.record': jest.fn(),
     'core.domain.record': jest.fn(),
     'core.domain.apiKey': jest.fn(),
     'core.domain.user': jest.fn(),
