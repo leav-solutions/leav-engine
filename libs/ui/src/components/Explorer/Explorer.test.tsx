@@ -115,6 +115,7 @@ const multivalLinkMockAttribute = {
         en: 'My link attribute multi-valued'
     },
     multiple_values: true
+    // multi_link_display_option: gqlTypes.MultiLinkDisplayOption.avatar // default value
 } satisfies gqlTypes.AttributePropertiesFragment;
 
 const simpleRichTextMockAttribute = {
