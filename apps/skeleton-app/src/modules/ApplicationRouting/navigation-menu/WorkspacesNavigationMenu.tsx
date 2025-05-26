@@ -2,8 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitSideMenu} from 'aristid-ds';
-import {useMemo, type FunctionComponent, ComponentProps} from 'react';
+import {useMemo, type FunctionComponent, ComponentProps, useContext} from 'react';
 import {useNavigate, generatePath, useParams, Outlet} from 'react-router-dom';
+import {localizedTranslation} from '@leav/utils';
+import {LangContext} from '_ui/contexts';
 import {IApplication} from '../types';
 import {routes} from '../routes';
 import {useApplicationMatching} from '../useApplicationMatching';
@@ -19,18 +21,19 @@ export const WorkspacesNavigationMenu: FunctionComponent<IWorkspacesNavigationMe
 
     const applicationMatching = useApplicationMatching(application.workspaces, panelId);
     const navigate = useNavigate();
+    const {lang} = useContext(LangContext);
 
     const items: ComponentProps<typeof KitSideMenu>['items'] = useMemo(
         () =>
             application.workspaces.map(workspace => ({
                 key: workspace.id,
-                title: workspace.title,
+                title: localizedTranslation(workspace.title, lang) ?? workspace.id,
                 icon: workspace.icon,
                 onClick: () => {
                     navigate(generatePath(routes.panel, {panelId: workspace.panels?.[0]?.id ?? ''}));
                 }
             })),
-        [application.workspaces]
+        [application.workspaces, lang]
     );
 
     return (
