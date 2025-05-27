@@ -148,14 +148,16 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                             {actions.map(({label, icon, isDanger, iconOnly, callback, disabled}, actionIndex) => (
                                 <KitButton
                                     key={actionIndex}
-                                    title={label}
-                                    icon={icon}
+                                    title={typeof label === 'function' ? label(item) : label}
+                                    icon={typeof icon === 'function' ? icon(item) : icon}
                                     onClick={callback}
                                     danger={isDanger}
                                     size="m"
                                     disabled={typeof disabled === 'function' ? disabled(item) : disabled}
                                 >
-                                    {!iconsOnlyItemActions && !iconOnly && label}
+                                    {!iconsOnlyItemActions && !iconOnly && typeof label === 'function'
+                                        ? label(item)
+                                        : label}
                                 </KitButton>
                             ))}
                         </>
@@ -163,8 +165,10 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                         <>
                             <KitButton
                                 type="tertiary"
-                                icon={actions[0].icon}
-                                title={actions[0].label}
+                                icon={typeof actions[0].icon === 'function' ? actions[0].icon(item) : actions[0].icon}
+                                title={
+                                    typeof actions[0].label === 'function' ? actions[0].label(item) : actions[0].label
+                                }
                                 onClick={actions[0].callback}
                                 danger={actions[0].isDanger}
                                 disabled={
@@ -175,9 +179,11 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                             />
                             <KitButton
                                 type="tertiary"
-                                icon={actions[1].icon}
+                                icon={typeof actions[1].icon === 'function' ? actions[1].icon(item) : actions[1].icon}
                                 onClick={actions[1].callback}
-                                title={actions[1].label}
+                                title={
+                                    typeof actions[1].label === 'function' ? actions[1].label(item) : actions[1].label
+                                }
                                 danger={actions[1].isDanger}
                                 disabled={
                                     typeof actions[1].disabled === 'function'
@@ -188,12 +194,16 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                             <KitDropDown
                                 menu={{
                                     items: actions.slice(2).map(({callback, icon, label, isDanger, disabled}) => ({
-                                        key: label,
-                                        title: label,
+                                        key: typeof label === 'function' ? label(item) : label,
+                                        title: typeof label === 'function' ? label(item) : label,
                                         danger: isDanger,
                                         disabled: typeof disabled === 'function' ? disabled(item) : disabled,
-                                        label,
-                                        icon: icon ? cloneElement(icon, {size: '2em'}) : null, // TODO: find better tuning
+                                        label: typeof label === 'function' ? label(item) : label,
+                                        icon: icon
+                                            ? cloneElement(typeof icon === 'function' ? icon(item) : icon, {
+                                                  size: '2em'
+                                              })
+                                            : null, // TODO: find better tuning
                                         onClick: callback
                                     }))
                                 }}

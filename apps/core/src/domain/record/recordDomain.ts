@@ -181,6 +181,13 @@ export interface IRecordDomain {
         ctx: IQueryInfos;
     }): Promise<IRecord[]>;
 
+    activateRecordsBatch(params: {
+        libraryId: string;
+        recordsIds?: string[];
+        filters?: IRecordFilterLight[];
+        ctx: IQueryInfos;
+    }): Promise<IRecord[]>;
+
     purgeInactiveRecords(params: {libraryId: string; ctx: IQueryInfos}): Promise<IRecord[]>;
 }
 
@@ -1412,6 +1419,48 @@ export default function ({
             });
 
             return {...record, active: savedValues[0].payload};
+        },
+        async activateRecordsBatch({libraryId, recordsIds, filters, ctx}) {
+            let recordsToActivate: string[] = recordsIds ?? [];
+
+            if (filters) {
+                const records = await this.find({
+                    params: {
+                        library: libraryId,
+                        filters,
+                        options: {forceArray: true, forceGetAllValues: true},
+                        retrieveInactive: true,
+                        withCount: false
+                    },
+                    ctx
+                });
+                recordsToActivate = records.list.map(record => record.id);
+            }
+
+            recordsToActivate = await Promise.all(
+                recordsToActivate.map(async recordId => {
+                    const hasCreatePermission = await recordPermissionDomain.getRecordPermission({
+                        action: RecordPermissionsActions.CREATE_RECORD,
+                        userId: ctx.userId,
+                        library: libraryId,
+                        recordId,
+                        ctx
+                    });
+
+                    return hasCreatePermission ? recordId : null;
+                })
+            );
+            recordsToActivate = recordsToActivate.filter(recordId => recordId !== null);
+
+            if (!recordsToActivate.length) {
+                return [];
+            }
+
+            const activeRecords = await Promise.all(
+                recordsToActivate.map(recordId => this.activateRecord({id: recordId, library: libraryId}, ctx))
+            );
+
+            return activeRecords;
         },
         async deactivateRecordsBatch({libraryId, recordsIds, filters, ctx}) {
             let recordsToDeactivate: string[] = recordsIds ?? [];

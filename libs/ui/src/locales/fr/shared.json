@@ -581,6 +581,9 @@
             "applyToAll": "Appliquer à tous"
         }
     },
+    "records_activation": {
+        "confirm_one": "Êtes-vous sûr de vouloir activer cet élément ?"
+    },
     "records_deactivation": {
         "title": "Désactiver les éléments",
         "title_one": "Désactiver",
@@ -651,6 +654,7 @@
         "actions": "Actions",
         "more-actions": "Voir plus",
         "deactivate-item": "Désactiver",
+        "activate-item": "Activer",
         "delete-item": "Supprimer",
         "replace-item": "Remplacer",
         "edit-item": "Afficher",
