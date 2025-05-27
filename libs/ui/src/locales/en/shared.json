@@ -581,6 +581,9 @@
             "applyToAll": "Apply to all"
         }
     },
+    "records_activation": {
+        "confirm_one": "Do you really want to activate this record?"
+    },
     "records_deactivation": {
         "title": "Deactivate records",
         "title_one": "Deactivate",

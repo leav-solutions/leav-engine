@@ -84,8 +84,9 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
                 // same link id can be duplicated, so we add the index to the key
                 key: linkValue.payload.whoAmI.id + index, // For <KitTable /> only
                 itemId: linkValue.payload.whoAmI.id, // For <KitTable /> only
-                canActivate: true, // FIXME: à voir
+                canActivate: true,
                 canDelete: true,
+                active: true,
                 whoAmI: {
                     label: null,
                     subLabel: null,

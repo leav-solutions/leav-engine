@@ -1227,8 +1227,8 @@ describe('Explorer', () => {
             ...mockExplorerLibraryDataQueryResult,
             data: {
                 records: {
-                    totalCount: mockExplorerLibraryDataQueryResult.data.records.totalCount,
-                    list: mockRecords.map(mockRecord => ({...mockRecord, active: false}))
+                    totalCount: mockRecords.length,
+                    list: mockRecords.map(record => ({...record, active: false}))
                 }
             }
         });
