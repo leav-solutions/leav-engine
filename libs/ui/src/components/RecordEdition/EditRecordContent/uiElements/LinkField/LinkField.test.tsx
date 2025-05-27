@@ -69,6 +69,14 @@ describe('LinkField', () => {
             ...mockFormElementLink,
             settings: {
                 ...mockFormElementLink.settings,
+                columns: [
+                    {
+                        id: 'id',
+                        label: {fr: 'tata', en: 'toto'}
+                    }
+                ],
+                displayRecordIdentity: true,
+                tagDisplayMode: false,
                 label: {fr: 'tata', en: 'toto'}
             },
             attribute: {
@@ -281,7 +289,7 @@ describe('LinkField', () => {
             expect(callArgs.libraryId).toBe(linkFieldDefaultProps.element.attribute.linked_library.id);
             expect(callArgs.recordId).toBe(mockRecord.id);
             expect(callArgs.attribute).toBe(linkFieldDefaultProps.element.attribute);
-            expect(callArgs.columnsToDisplay).toBe(undefined);
+            expect(callArgs.columnsToDisplay).toEqual([linkFieldDefaultProps.element.settings.columns[0].id]);
             expect(callArgs.backendValues).toEqual([mockLinkValue]);
             expect(callArgs.activeAttribute).toBe(null);
             expect(callArgs.isHookUsed).toBe(true);
