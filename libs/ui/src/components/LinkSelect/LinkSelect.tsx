@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
 import {KitButton, KitDivider, KitSelect, KitSpace} from 'aristid-ds';
 import styled from 'styled-components';
-import {useState} from 'react';
+import {ReactNode, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 
@@ -56,14 +56,10 @@ function LinkSelect({
     const _handleSearch = (value: string) => {
         setCurrentSearch(value);
         const optionsFiltered = options.filter(option => option.label.toLowerCase().includes(value.toLowerCase()));
-        if (optionsFiltered.length === 0 && value !== '') {
-            setEmptyResults(true);
-        } else {
-            setEmptyResults(false);
-        }
+        setEmptyResults(optionsFiltered.length === 0 && value !== '');
     };
 
-    const dropdownButtons = (menu: React.ReactNode) => (
+    const dropdownButtons = (menu: ReactNode) => (
         <>
             {menu}
             {(emptyResults || !hideAdvancedSearch) && (
