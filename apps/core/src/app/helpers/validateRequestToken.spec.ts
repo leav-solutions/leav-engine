@@ -68,6 +68,7 @@ describe('validateRequestToken', () => {
     const authAppdepsBase: ToAny<IAuthAppDeps> = {
         'core.domain.value': jest.fn(),
         'core.domain.record': jest.fn(),
+        'core.infra.record': jest.fn(),
         'core.domain.apiKey': jest.fn(),
         'core.domain.user': jest.fn(),
         'core.infra.cache.cacheService': jest.fn(),
