@@ -52,7 +52,7 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
 import {isRecordWithId, SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
-import {ICreateRecordResult, IFindRecordParams} from './_types';
+import {ICreateRecordResult, ICreateRecordValueError, IFindRecordParams} from './_types';
 import {IFormRepo} from 'infra/form/formRepo';
 import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import validateValue from '../value/helpers/validateValue';
@@ -890,14 +890,19 @@ export default function ({
                 if (missingAttributes.length) {
                     return {
                         record: null,
-                        valuesErrors: missingAttributes.map(attribute => ({
-                            type: Errors.REQUIRED_ATTRIBUTE,
-                            attribute: attribute.id,
-                            message: utils.translateError(
-                                {msg: Errors.REQUIRED_ATTRIBUTE, vars: {attribute: attributeLabel(attribute.label)}},
-                                ctx.lang
-                            )
-                        }))
+                        valuesErrors: missingAttributes.map(
+                            (attribute): ICreateRecordValueError => ({
+                                type: Errors.REQUIRED_ATTRIBUTE,
+                                attribute: attribute.id,
+                                message: utils.translateError(
+                                    {
+                                        msg: Errors.REQUIRED_ATTRIBUTE,
+                                        vars: {attribute: attributeLabel(attribute.label)}
+                                    },
+                                    ctx.lang
+                                )
+                            })
+                        )
                     };
                 }
             }
@@ -966,8 +971,7 @@ export default function ({
 
                 const errors = res
                     .filter(r => r.status === 'rejected')
-                    .map(err => {
-                        const rejection = err as PromiseRejectedResult;
+                    .map((rejection: PromiseRejectedResult): ICreateRecordValueError => {
                         const errorAttribute = rejection.reason.fields?.attribute;
                         const errorReason = rejection.reason.fields?.[errorAttribute];
 
