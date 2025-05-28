@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorTypes} from '@leav/utils';
+import {Errors} from '_types/errors';
 import {ICursorPaginationParams, IPaginationParams} from '_types/list';
 import {IRecord, IRecordFilterLight, IRecordSortLight} from '_types/record';
 import {IValue, IValuesOptions, IValueVersion} from '_types/value';
@@ -26,10 +27,10 @@ export interface ICreateRecordParams {
 }
 
 export interface ICreateRecordValueError {
-    attributeId: string;
-    type: ErrorTypes;
+    // Should correspond to GraphQL ValueBatchError
+    attribute: string;
+    type: ErrorTypes | Errors;
     message: string;
-    id_value?: string;
     input?: any;
 }
 
