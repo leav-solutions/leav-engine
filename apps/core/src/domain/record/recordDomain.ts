@@ -972,8 +972,14 @@ export default function ({
                 const errors = res
                     .filter(r => r.status === 'rejected')
                     .map((rejection: PromiseRejectedResult): ICreateRecordValueError => {
-                        const errorAttribute = rejection.reason.fields?.attribute;
-                        const errorReason = rejection.reason.fields?.[errorAttribute];
+                        const errorAttribute =
+                            rejection.reason.fields?.attribute ||
+                            // coming from attributeDomain.getAttributeProperties
+                            rejection.reason.fields?.id?.vars?.attribute;
+                        const errorReason =
+                            rejection.reason.fields?.[errorAttribute] ||
+                            // coming from attributeDomain.getAttributeProperties
+                            rejection.reason.fields?.id;
 
                         return {
                             type: rejection.reason.type,
