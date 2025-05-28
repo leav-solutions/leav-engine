@@ -27,7 +27,7 @@ export const WorkspacesNavigationMenu: FunctionComponent<IWorkspacesNavigationMe
         () =>
             application.workspaces.map(workspace => ({
                 key: workspace.id,
-                title: localizedTranslation(workspace.title, lang) ?? workspace.id,
+                title: localizedTranslation(workspace.title, lang),
                 icon: workspace.icon,
                 onClick: () => {
                     navigate(generatePath(routes.panel, {panelId: workspace.panels?.[0]?.id ?? ''}));

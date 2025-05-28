@@ -6,8 +6,4 @@ import {SIDEBAR_CONTENT_ID} from '../../constants';
 
 import {sidebarContent} from './layout.module.css';
 
-export const SidebarContent: FunctionComponent = ({children}) => (
-    <div id={SIDEBAR_CONTENT_ID} className={sidebarContent}>
-        {children}
-    </div>
-);
+export const SidebarContent: FunctionComponent = () => <div id={SIDEBAR_CONTENT_ID} className={sidebarContent} />;
