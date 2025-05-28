@@ -43,6 +43,7 @@ import recordDomain, {IRecordDomainDeps} from './recordDomain';
 import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 import {IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
 import * as ValidateValue from '../value/helpers/validateValue';
+import {ICreateRecordValueError} from './_types';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
@@ -343,7 +344,7 @@ describe('RecordDomain', () => {
                     message: 'mock error',
                     input: 'some other value'
                 }
-            ]);
+            ] as ICreateRecordValueError[]);
         });
 
         test('Should return errors and not create record when try to add no unique value on unique attribute', async () => {
@@ -417,7 +418,7 @@ describe('RecordDomain', () => {
                     message: 'mock error',
                     input: 'some_unique_value'
                 }
-            ]);
+            ] as ICreateRecordValueError[]);
         });
     });
 
