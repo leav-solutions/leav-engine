@@ -4,14 +4,14 @@
 import {type ComponentProps, FunctionComponent, useContext} from 'react';
 import {generatePath, Outlet, useLocation, useNavigate, useOutletContext} from 'react-router-dom';
 import {KitTabs} from 'aristid-ds';
-import type {IApplicationMatchingContext} from '../types';
-import {recordSearchParamsName, routes} from '../routes';
-
-import {content, headerContent, page, pageHeader} from './panelsNavigationMenu.module.css';
-import {SidePanel} from '../../display-sidePanel/SidePanel';
-import {PanelIdCard} from '../PanelIdCard';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '_ui/contexts';
+import type {IApplicationMatchingContext} from '../types';
+import {recordSearchParamsName, routes} from '../routes';
+import {SidePanelContent} from '../../layout/SidePanelContent';
+import {PanelIdCard} from '../PanelIdCard';
+
+import {content, headerContent, page, pageHeader} from './panelsNavigationMenu.module.css';
 
 export const PanelsNavigationMenu: FunctionComponent = () => {
     const {currentPanel, currentWorkspace, currentParentTuple} = useOutletContext<IApplicationMatchingContext>();
@@ -24,7 +24,7 @@ export const PanelsNavigationMenu: FunctionComponent = () => {
         currentParentTuple && 'children' in currentParentTuple[0]
             ? currentParentTuple[0].children.map(panel => ({
                   key: panel.id,
-                  label: localizedTranslation(panel.name, lang) ?? panel.id
+                  label: localizedTranslation(panel.name, lang)
               }))
             : [];
 
@@ -58,7 +58,7 @@ export const PanelsNavigationMenu: FunctionComponent = () => {
                     }
                 />
             </div>
-            <SidePanel />
+            <SidePanelContent />
         </section>
     );
 };

@@ -1,20 +1,26 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    type Callbacks,
-    type CallCbFunction,
-    type Message,
-    type IUseIFrameMessengerOptions,
-    type MessageDispatcher
-} from './types';
-import {useCallback, useEffect, useRef} from 'react';
-import {encodeMessage, decodeMessage, getExposedMethods, initClientHandlers} from './messageHandlers';
+import {useCallback, useContext, useEffect, useRef} from 'react';
 import {v4 as uuid} from 'uuid';
+import {LangContext} from '_ui/contexts';
+import {type Callbacks, type CallCbFunction, type IUseIFrameMessengerOptions, type MessageDispatcher} from './types';
+import {encodeMessage, decodeMessage, getExposedMethods, initClientHandlers} from './messageHandlers';
 
 export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
     const registry = useRef<Record<string, Window>>({});
-    const selfId = useRef<string>(options?.id ?? uuid());
+    const selfId = useRef(options?.id ?? uuid());
+
+    const {setLang} = useContext(LangContext);
+    const changeLangInAllFrames = (newLanguage: string) => {
+        dispatch(
+            {
+                type: 'change-language',
+                language: newLanguage
+            },
+            'all'
+        );
+    };
 
     const dispatch = useCallback<MessageDispatcher>(
         (message, frameId) => {
@@ -25,6 +31,10 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
                     encodeMessage({...message, __frameId: selfId.current}),
                     '*'
                 );
+            } else if (frameId === 'all') {
+                Object.values(registry.current).forEach(frame => {
+                    frame.postMessage(encodeMessage({...message, __frameId: selfId.current}), '*');
+                });
             }
         },
         [registry.current]
@@ -43,24 +53,27 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
     useEffect(() => {
         const clientHandlers = initClientHandlers(callCb, {...options, id: selfId.current}, callbacksStore);
         const onMessage = (event: MessageEvent) => {
-            const message = decodeMessage(event.data) as unknown as Message;
+            const message = decodeMessage(event.data);
 
-            if (!message) {
+            if (message === undefined) {
                 return;
             }
 
-            if (message && message.type === 'register') {
+            if (message.type === 'register') {
                 const frames = window.frames;
-                if (window.frames.length) {
-                    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-                    for (let i = 0; i < frames.length; i++) {
-                        if (event.source === frames[i]) {
-                            registry.current[message.id] = frames[i];
-                        }
+                // Due to weak typing on Window, we cannot iterate directly on window.frames
+                // eslint-disable-next-line @typescript-eslint/prefer-for-of
+                for (let i = 0; i < frames.length; i++) {
+                    if (event.source === frames[i]) {
+                        registry.current[message.id] = frames[i];
                     }
                 }
             } else {
-                clientHandlers(message, dispatch);
+                if (message.type === 'change-language') {
+                    setLang(message.language);
+                } else {
+                    clientHandlers(message, dispatch);
+                }
             }
         };
 
@@ -76,5 +89,5 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
         };
     }, []);
 
-    return methods.current;
+    return {...methods.current, changeLangInAllFrames};
 };
