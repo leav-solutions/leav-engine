@@ -488,8 +488,8 @@
             "select_an_option": "Select an option"
         },
         "replace-by-existing-item": "Replace by an existing item",
-        "open_sidebar": "Open sidebar",  
-        "close_sidebar": "Close sidebar"  
+        "open_sidebar": "Open sidebar",
+        "close_sidebar": "Close sidebar"
     },
     "record_summary": {
         "preview_title": "Click here to visualize preview.",
@@ -582,6 +582,9 @@
             "applyToAll": "Apply to all"
         }
     },
+    "records_activation": {
+        "confirm_one": "Do you really want to activate this record?"
+    },
     "records_deactivation": {
         "title": "Deactivate records",
         "title_one": "Deactivate",
@@ -652,6 +655,7 @@
         "actions": "Actions",
         "more-actions": "Show more",
         "deactivate-item": "Deactivate",
+        "activate-item": "Activate",
         "delete-item": "Delete",
         "replace-item": "Replace",
         "edit-item": "Show",

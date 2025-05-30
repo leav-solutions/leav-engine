@@ -34,10 +34,12 @@ const _mappingLibrary = (
           }, {})
         : {};
 
-    const records = data.records.list.map(({whoAmI, permissions, properties}) => ({
+    const records = data.records.list.map(({whoAmI, active, permissions, properties}) => ({
         libraryId,
         key: whoAmI.id, // For <KitTable /> only
         itemId: whoAmI.id, // For <KitTable /> only
+        active,
+        canActivate: permissions.create_record,
         canDelete: permissions.delete_record,
         whoAmI: {
             label: null,
@@ -82,7 +84,9 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
                 // same link id can be duplicated, so we add the index to the key
                 key: linkValue.payload.whoAmI.id + index, // For <KitTable /> only
                 itemId: linkValue.payload.whoAmI.id, // For <KitTable /> only
+                canActivate: true,
                 canDelete: true,
+                active: true,
                 whoAmI: {
                     label: null,
                     subLabel: null,

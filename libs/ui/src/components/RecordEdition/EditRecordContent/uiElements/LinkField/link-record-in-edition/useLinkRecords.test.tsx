@@ -163,7 +163,9 @@ describe('useLinkRecords', () => {
                     whoAmI: {...mockBackendValue.linkValue.whoAmI},
                     id_value: mockBackendValue.linkValue.id,
                     propertiesById: {},
-                    canDelete: true
+                    canDelete: true,
+                    canActivate: true,
+                    active: true
                 });
             });
 
@@ -193,7 +195,9 @@ describe('useLinkRecords', () => {
                     whoAmI: {...mockBackendValue.linkValue.whoAmI},
                     id_value: mockBackendValue.linkValue.id,
                     propertiesById: {},
-                    canDelete: true
+                    canDelete: true,
+                    canActivate: true,
+                    active: true
                 });
             });
 

@@ -2,14 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Dispatch, useMemo} from 'react';
-import {FaTrash} from 'react-icons/fa';
+import {FaTrash, FaTrashRestore} from 'react-icons/fa';
 import {KitModal} from 'aristid-ds';
-import {useDeactivateRecordsMutation, useDeleteValueMutation} from '_ui/_gqlTypes';
+import {
+    ActivateRecordsMutation,
+    DeactivateRecordsMutation,
+    useActivateRecordsMutation,
+    useDeactivateRecordsMutation,
+    useDeleteValueMutation
+} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
 import {FeatureHook, Entrypoint, IEntrypointLink, IItemAction, IItemData} from '../_types';
 import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {MASS_SELECTION_ALL} from '../_constants';
+import {FetchResult} from '@apollo/client';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -23,7 +30,7 @@ import {MASS_SELECTION_ALL} from '../_constants';
  * @param entrypoint - represent the current entrypoint
  * @param canDeleteLinkValues - check permission to delete link values
  */
-export const useRemoveItemAction = ({
+export const useEditStatusItemAction = ({
     isEnabled,
     canDeleteLinkValues,
     store: {view, dispatch},
@@ -61,6 +68,26 @@ export const useRemoveItemAction = ({
         }
     });
 
+    const [activateRecordsMutation] = useActivateRecordsMutation({
+        update(cache, activatedRecords) {
+            activatedRecords.data?.activateRecords.forEach(record => {
+                cache.evict({
+                    id: cache.identify(record)
+                });
+            });
+            cache.modify({
+                fields: {
+                    records: prev => ({
+                        ...prev,
+                        totalCount: prev.totalCount - 1
+                    })
+                },
+                broadcast: false
+            });
+            cache.gc();
+        }
+    });
+
     const [deleteRecordLinkMutation] = useDeleteValueMutation({
         update: (_, deletedRecord) => {
             const parentRecord = {
@@ -73,40 +100,79 @@ export const useRemoveItemAction = ({
         }
     });
 
-    const _removeItemAction: IItemAction = useMemo(
+    const _deactivateItem = async (item: IItemData): Promise<FetchResult<DeactivateRecordsMutation>> => {
+        const libRes = await deactivateRecordsMutation({
+            variables: {
+                libraryId: item.libraryId,
+                recordsIds: [item.itemId]
+            }
+        });
+
+        if (view.massSelection !== MASS_SELECTION_ALL) {
+            dispatch({
+                type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
+                payload: view.massSelection.filter(key => key !== item.itemId)
+            });
+        }
+
+        onRemove?.(item);
+
+        return libRes;
+    };
+
+    const _activateItem = async (item: IItemData): Promise<FetchResult<ActivateRecordsMutation>> => {
+        const libRes = await activateRecordsMutation({
+            variables: {
+                libraryId: item.libraryId,
+                recordsIds: [item.itemId]
+            }
+        });
+
+        if (view.massSelection !== MASS_SELECTION_ALL) {
+            dispatch({
+                type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
+                payload: view.massSelection.filter(key => key !== item.itemId)
+            });
+        }
+
+        return libRes;
+    };
+
+    const _editStatusItemAction: IItemAction = useMemo(
         () => ({
-            label: entrypoint.type === 'library' ? t('explorer.deactivate-item') : t('explorer.delete-item'),
-            icon: <FaTrash />,
+            label: (item: IItemData) =>
+                entrypoint.type === 'library'
+                    ? item.active
+                        ? t('explorer.deactivate-item')
+                        : t('explorer.activate-item')
+                    : t('explorer.delete-item'),
+            icon: (item: IItemData) =>
+                entrypoint.type === 'library' ? item.active ? <FaTrash /> : <FaTrashRestore /> : <FaTrash />,
             isDanger: true,
-            disabled: (item: IItemData) => (entrypoint.type === 'link' ? !canDeleteLinkValues : !item.canDelete),
+            disabled: (item: IItemData) =>
+                entrypoint.type === 'link' ? !canDeleteLinkValues : item.active ? !item.canDelete : !item.canActivate,
             callback: item => {
-                const {itemId, libraryId, id_value} = item;
+                const {itemId, id_value} = item;
+
                 KitModal.confirm({
                     type: 'confirm',
                     dangerConfirm: true,
                     content:
                         entrypoint.type === 'library'
-                            ? t('records_deactivation.confirm_one')
+                            ? item.active
+                                ? t('records_deactivation.confirm_one')
+                                : t('records_activation.confirm_one')
                             : t('record_edition.delete_link_confirm'),
                     okText: t('global.submit') ?? undefined,
                     cancelText: t('global.cancel') ?? undefined,
                     onOk: async () => {
                         switch (entrypoint.type) {
                             case 'library':
-                                const libRes = await deactivateRecordsMutation({
-                                    variables: {
-                                        libraryId,
-                                        recordsIds: [itemId]
-                                    }
-                                });
-                                if (view.massSelection !== MASS_SELECTION_ALL) {
-                                    dispatch({
-                                        type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                                        payload: view.massSelection.filter(key => key !== itemId)
-                                    });
+                                if (item.active) {
+                                    return _deactivateItem(item);
                                 }
-                                onRemove?.(item);
-                                return libRes;
+
+                                return _activateItem(item);
                             case 'link':
                                 const linkRes = await deleteRecordLinkMutation({
                                     variables: {
@@ -132,6 +198,7 @@ export const useRemoveItemAction = ({
             t,
             deactivateRecordsMutation,
             deleteRecordLinkMutation,
+            activateRecordsMutation,
             canDeleteLinkValues,
             entrypoint.type,
             view.massSelection,
@@ -140,6 +207,6 @@ export const useRemoveItemAction = ({
     );
 
     return {
-        removeItemAction: isEnabled ? _removeItemAction : null
+        editStatusItemAction: isEnabled ? _editStatusItemAction : null
     };
 };

@@ -38,7 +38,9 @@ query ExplorerLibraryData(
         totalCount
         list {
             ...RecordIdentity
+            active
             permissions {
+                create_record
                 delete_record
             }
             properties(attributeIds: $attributeIds) {

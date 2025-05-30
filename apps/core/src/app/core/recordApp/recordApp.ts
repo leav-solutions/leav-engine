@@ -110,6 +110,11 @@ export default function ({
 
                     type Record {
                         id: ID!,
+                        created_at: Int!,
+                        created_by: Record!,
+                        modified_at: Int!,
+                        modified_by: Record!,
+                        active: Boolean!,
                         library: Library!,
                         whoAmI: RecordIdentity!,
                         property(attribute: ID!): [GenericValue!]!,
@@ -255,6 +260,7 @@ export default function ({
                         createRecord(library: ID!, data: CreateRecordDataInput): CreateRecordResult!
                         deleteRecord(library: ID, id: ID): Record!
                         indexRecords(libraryId: String!, records: [String!]): Boolean!
+                        activateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!]): [Record!]!
                         deactivateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!]): [Record!]!
                         purgeInactiveRecords(libraryId: String!): [Record!]!
                     }
@@ -354,6 +360,9 @@ export default function ({
                             await indexationManagerApp.indexDatabase(ctx, libraryId, records);
 
                             return true;
+                        },
+                        async activateRecords(parent, {libraryId, recordsIds, filters}, ctx): Promise<IRecord[]> {
+                            return recordDomain.activateRecordsBatch({libraryId, recordsIds, filters, ctx});
                         },
                         async deactivateRecords(parent, {libraryId, recordsIds, filters}, ctx): Promise<IRecord[]> {
                             return recordDomain.deactivateRecordsBatch({libraryId, recordsIds, filters, ctx});
