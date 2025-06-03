@@ -7,7 +7,9 @@ export default function useRedirectToLogin() {
     return {
         redirectToLogin: async () => {
             if (isDevEnv()) {
-                return window.location.replace(`${window.location.origin}/app/login/?dest=${window.location.pathname}`);
+                return window.location.replace(
+                    `${window.location.origin}/app/login/?dest=${encodeURIComponent(window.location.toString())}`
+                );
             }
             return window.location.reload();
         }

@@ -3,16 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQueryParams} from 'hooks/useQueryParams';
 
-export interface IUseRedirectToDestHook {
-    redirectToDest: () => void;
-}
-
 export default function useRedirectToDest() {
     const params = useQueryParams();
 
     return {
         redirectToDest: () => {
-            const redirectTo = params.dest ?? '/';
+            const redirectTo = params.dest ? decodeURIComponent(params.dest) : '/';
             window.location.replace(redirectTo);
         }
     };
