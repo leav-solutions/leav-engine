@@ -1394,7 +1394,7 @@ describe('Explorer', () => {
         });
 
         test('Should display the list of records with a lot of custom actions', async () => {
-            const customActions: IItemAction[] = [
+            const customActions = [
                 {
                     label: 'Test 1',
                     icon: <FaBeer />,
@@ -1415,7 +1415,8 @@ describe('Explorer', () => {
                     icon: <FaJs />,
                     callback: jest.fn()
                 }
-            ];
+            ] satisfies IItemAction[];
+
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} itemActions={customActions} />
@@ -1432,7 +1433,7 @@ describe('Explorer', () => {
                 expect(screen.getByRole('menuitem', {name: /Test 4/})).toBeVisible();
             });
 
-            await user.click(screen.getByRole('menuitem', {name: customActions[0].label as string}));
+            await user.click(screen.getByRole('menuitem', {name: customActions[0].label}));
 
             expect(customActions[0].callback).toHaveBeenCalled();
         });
