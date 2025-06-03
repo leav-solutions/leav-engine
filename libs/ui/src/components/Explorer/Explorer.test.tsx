@@ -1184,7 +1184,7 @@ describe('Explorer', () => {
     });
 
     test('Should be able to deactivate a record with default actions', async () => {
-        const mockDeactivateMutation = jest.fn().mockReturnValue({
+        const mockDeactivateMutation = jest.fn().mockResolvedValue({
             data: {
                 deactivateRecords: [
                     {
@@ -1233,7 +1233,7 @@ describe('Explorer', () => {
             }
         });
 
-        const mockActivateMutation = jest.fn().mockReturnValue({
+        const mockActivateMutation = jest.fn().mockResolvedValue({
             data: {
                 activateRecords: [
                     {
@@ -1375,11 +1375,12 @@ describe('Explorer', () => {
 
     describe('Item actions', () => {
         test('Should display the list of records with custom actions', async () => {
-            const customAction: IItemAction = {
+            const customAction = {
                 icon: <Fa500Px />,
                 label: 'Custom action',
                 callback: jest.fn()
-            };
+            } satisfies IItemAction;
+
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} itemActions={[customAction]} />
@@ -1387,7 +1388,7 @@ describe('Explorer', () => {
             );
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
-            await user.click(within(firstRecordRow).getByRole('button', {name: customAction.label as string}));
+            await user.click(within(firstRecordRow).getByRole('button', {name: customAction.label}));
 
             expect(customAction.callback).toHaveBeenCalled();
         });

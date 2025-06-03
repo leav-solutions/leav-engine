@@ -1450,11 +1450,8 @@ export default function ({
                     return hasCreatePermission ? recordId : null;
                 })
             );
-            recordsToActivate = recordsToActivate.filter(recordId => recordId !== null);
 
-            if (!recordsToActivate.length) {
-                return [];
-            }
+            recordsToActivate = recordsToActivate.filter(recordId => recordId !== null);
 
             const activeRecords = await Promise.all(
                 recordsToActivate.map(recordId => this.activateRecord({id: recordId, library: libraryId}, ctx))
@@ -1492,10 +1489,6 @@ export default function ({
                 })
             );
             recordsToDeactivate = recordsToDeactivate.filter(recordId => recordId !== null);
-
-            if (!recordsToDeactivate.length) {
-                return [];
-            }
 
             const inactiveRecords = await Promise.all(
                 recordsToDeactivate.map(recordId => this.deactivateRecord({id: recordId, library: libraryId}, ctx))

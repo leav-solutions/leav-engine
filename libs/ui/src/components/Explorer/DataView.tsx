@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {cloneElement, ComponentProps, FunctionComponent, Key, memo, ReactNode} from 'react';
+import {cloneElement, ComponentProps, FunctionComponent, Key, memo, ReactElement, ReactNode} from 'react';
 import {KitButton, KitDropDown, KitPagination, KitTable} from 'aristid-ds';
 import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import {FaEllipsisH} from 'react-icons/fa';
@@ -118,6 +118,9 @@ const arePropsEqual = (prevProps: IDataViewProps, nextProps: IDataViewProps) =>
         }
     );
 
+export const resolveItemActionProp = (itemData: IItemData, itemActionProp: IItemAction[keyof IItemAction]) =>
+    typeof itemActionProp === 'function' ? itemActionProp(itemData) : itemActionProp;
+
 export const DataView: FunctionComponent<IDataViewProps> = memo(
     ({
         dataGroupedFilteredSorted,
@@ -148,12 +151,12 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                             {actions.map(({label, icon, isDanger, iconOnly, callback, disabled}, actionIndex) => (
                                 <KitButton
                                     key={actionIndex}
-                                    title={typeof label === 'function' ? label(item) : label}
-                                    icon={typeof icon === 'function' ? icon(item) : icon}
+                                    title={resolveItemActionProp(item, label) as string}
+                                    icon={resolveItemActionProp(item, icon) as ReactElement}
                                     onClick={callback}
                                     danger={isDanger}
                                     size="m"
-                                    disabled={typeof disabled === 'function' ? disabled(item) : disabled}
+                                    disabled={resolveItemActionProp(item, disabled) as boolean}
                                 >
                                     {!iconsOnlyItemActions && !iconOnly && typeof label === 'function'
                                         ? label(item)
@@ -165,42 +168,30 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                         <>
                             <KitButton
                                 type="tertiary"
-                                icon={typeof actions[0].icon === 'function' ? actions[0].icon(item) : actions[0].icon}
-                                title={
-                                    typeof actions[0].label === 'function' ? actions[0].label(item) : actions[0].label
-                                }
+                                icon={resolveItemActionProp(item, actions[0].icon) as ReactNode}
+                                title={resolveItemActionProp(item, actions[0].label) as string}
                                 onClick={actions[0].callback}
                                 danger={actions[0].isDanger}
-                                disabled={
-                                    typeof actions[0].disabled === 'function'
-                                        ? actions[0].disabled(item)
-                                        : actions[0].disabled
-                                }
+                                disabled={resolveItemActionProp(item, actions[0].disabled) as boolean}
                             />
                             <KitButton
                                 type="tertiary"
-                                icon={typeof actions[1].icon === 'function' ? actions[1].icon(item) : actions[1].icon}
+                                icon={resolveItemActionProp(item, actions[1].icon) as ReactElement}
                                 onClick={actions[1].callback}
-                                title={
-                                    typeof actions[1].label === 'function' ? actions[1].label(item) : actions[1].label
-                                }
+                                title={resolveItemActionProp(item, actions[1].label) as string}
                                 danger={actions[1].isDanger}
-                                disabled={
-                                    typeof actions[1].disabled === 'function'
-                                        ? actions[1].disabled(item)
-                                        : actions[1].disabled
-                                }
+                                disabled={resolveItemActionProp(item, actions[1].disabled) as boolean}
                             />
                             <KitDropDown
                                 menu={{
                                     items: actions.slice(2).map(({callback, icon, label, isDanger, disabled}) => ({
-                                        key: typeof label === 'function' ? label(item) : label,
-                                        title: typeof label === 'function' ? label(item) : label,
+                                        key: resolveItemActionProp(item, label) as string,
+                                        title: resolveItemActionProp(item, label) as string,
                                         danger: isDanger,
-                                        disabled: typeof disabled === 'function' ? disabled(item) : disabled,
-                                        label: typeof label === 'function' ? label(item) : label,
+                                        disabled: resolveItemActionProp(item, disabled) as boolean,
+                                        label: resolveItemActionProp(item, label) as string,
                                         icon: icon
-                                            ? cloneElement(typeof icon === 'function' ? icon(item) : icon, {
+                                            ? cloneElement(resolveItemActionProp(item, icon) as ReactElement, {
                                                   size: '2em'
                                               })
                                             : null, // TODO: find better tuning
