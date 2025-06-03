@@ -1,6 +1,6 @@
 {
     "name": "preview-generator",
-    "version": "1.0.0-beta23",
+    "version": "1.0.0-beta24",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
