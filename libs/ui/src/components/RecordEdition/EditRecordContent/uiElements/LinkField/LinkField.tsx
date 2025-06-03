@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
+import {localizedTranslation} from '@leav/utils';
 import {FunctionComponent, useEffect, useState} from 'react';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
@@ -22,6 +22,7 @@ import {
     EDIT_RECORD_MODAL_CLASSNAME,
     LINK_RECORDS_MODAL_CLASSNAME
 } from '_ui/components/Explorer/_constants';
+import {IFormLinkFieldSettings} from '@leav/utils/src/types/forms';
 
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 
@@ -54,7 +55,7 @@ const KitInputWrapperStyled = styled(KitInputWrapper)`
 `;
 
 type LinkFieldProps = IFormElementProps<
-    ICommonFieldsSettings & {
+    IFormLinkFieldSettings & {
         columns?: Array<{
             id: string;
             label: Record<string, string>;
@@ -147,6 +148,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         isHookUsed: formIdToLoad !== 'creation',
         isReadOnly,
         isFieldInError,
+        tagDisplayMode: settings.tagDisplayMode,
         hasNoValue: backendValues.length === 0,
         onDeleteMultipleValues
     });

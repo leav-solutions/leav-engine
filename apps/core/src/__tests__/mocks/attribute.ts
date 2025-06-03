@@ -2,7 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
+import {
+    AttributeFormats,
+    AttributeTypes,
+    MultiLinkDisplayOption,
+    IAttribute,
+    ValueVersionMode
+} from '../../_types/attribute';
 import {mockActionValidateFormat} from './actionsList';
 
 const base: IAttribute = {
@@ -21,7 +27,8 @@ const base: IAttribute = {
     actions_list: null,
     permissions_conf: null,
     versions_conf: {versionable: false},
-    required: false
+    required: false,
+    multi_link_display_option: MultiLinkDisplayOption.AVATAR
 };
 
 export const mockAttrSimple: IAttribute = {...base, id: 'simple_attribute'};

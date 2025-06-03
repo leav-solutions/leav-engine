@@ -70,6 +70,7 @@ export interface IFormLinkFieldSettings extends ICommonFieldsSettings {
         label: Record<string, string>;
     }>;
     displayRecordIdentity: boolean;
+    tagDisplayMode: boolean;
 }
 
 export const FORM_ROOT_CONTAINER_ID = '__root';

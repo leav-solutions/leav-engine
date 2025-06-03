@@ -32,6 +32,7 @@ export interface IEditRecordModalProps {
     valuesVersion?: IValueVersion;
     showSidebar?: boolean;
     enableSidebar?: boolean;
+    autoHeight?: boolean;
 }
 
 const MODAL_HEIGHT = '80vh';
@@ -85,7 +86,8 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     showSidebar,
     enableSidebar,
     submitButtons = ['create'],
-    withInfoButton = true
+    withInfoButton = true,
+    autoHeight = false
 }) => {
     const {t} = useSharedTranslation();
     const [antdForm] = useForm();
@@ -135,7 +137,8 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     return (
         <KitModalStyled
             className={className}
-            height={MODAL_HEIGHT}
+            height={autoHeight ? 'auto' : MODAL_HEIGHT}
+            maxHeight={autoHeight ? MODAL_HEIGHT : undefined}
             width={MODAL_WIDTH}
             isOpen={open}
             close={_handleClose}

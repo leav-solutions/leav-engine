@@ -1,10 +1,9 @@
 {
     "name": "core",
-    "version": "1.0.0-beta23",
+    "version": "1.0.0-beta24",
     "description": "",
     "scripts": {
         "start": "node .",
-        "watch-dev": "nodemon --watch dist/plugins",
         "start:watch": "npm run start:dev",
         "start:files": "ts-node-dev --inspect=0.0.0.0:9230 --respawn src/ --filesManager",
         "start:indexation": "ts-node-dev --respawn src/ --indexationManager",

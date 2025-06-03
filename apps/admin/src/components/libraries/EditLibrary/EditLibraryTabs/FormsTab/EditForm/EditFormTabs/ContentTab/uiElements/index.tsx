@@ -154,6 +154,11 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
                 name: 'displayRecordIdentity',
                 inputType: FormElementSettingsInputTypes.CHECKBOX,
                 defaultValue: true
+            },
+            {
+                name: 'tagDisplayMode',
+                inputType: FormElementSettingsInputTypes.CHECKBOX,
+                defaultValue: false
             }
         ],
         canDrop: () => false

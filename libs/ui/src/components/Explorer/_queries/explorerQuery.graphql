@@ -23,6 +23,7 @@ fragment AttributeProperties on Attribute {
     type
     format
     multiple_values
+    multi_link_display_option
 }
 
 query ExplorerLibraryData(

@@ -9,3 +9,4 @@ export const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}:/
 export const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
 export const SIDEBAR_CONTENT_ID = 'sidebar-content';
+export const SIDE_PANEL_CONTENT_ID = 'side-panel-content';

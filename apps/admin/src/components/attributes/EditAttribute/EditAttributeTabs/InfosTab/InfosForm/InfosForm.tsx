@@ -18,7 +18,12 @@ import {
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
-import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../../../../_gqlTypes/globalTypes';
+import {
+    AttributeFormat,
+    AttributeType,
+    ValueVersionMode,
+    MultiLinkDisplayOption
+} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
@@ -63,7 +68,8 @@ const defaultAttributeData: AttributeInfosFormValues = {
         mode: ValueVersionMode.smart,
         profile: null
     },
-    libraries: []
+    libraries: [],
+    multi_link_display_option: MultiLinkDisplayOption.avatar
 };
 
 const FormWrapper = styled(Form)`
@@ -210,6 +216,7 @@ function InfosForm({
         const isLinkAttribute = [AttributeType.advanced_link, AttributeType.simple_link].includes(values.type);
         const isStandardAttribute = [AttributeType.advanced, AttributeType.simple].includes(values.type);
         const isTextAttribute = [AttributeFormat.text, AttributeFormat.rich_text].includes(values.format);
+        const isMultiValuesLinkAttribute = AttributeType.advanced_link === values.type && !!values.multiple_values;
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<GET_ATTRIBUTES_attributes_list>(
@@ -442,6 +449,22 @@ function InfosForm({
                             onChange={_handleChangeWithSubmit}
                             onBlur={_handleBlur}
                             checked={!!values.multiple_values}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {isMultiValuesLinkAttribute && (
+                    <FormFieldWrapper error={_getErrorByField('multi_link_display_option')}>
+                        <Form.Select
+                            label={t('attributes.multi_link_display_option')}
+                            disabled={readonly}
+                            width="4"
+                            name="multi_link_display_option"
+                            onChange={_handleChangeWithSubmit}
+                            options={Object.keys(MultiLinkDisplayOption).map(format => ({
+                                text: t('attributes.multi_link_display_options.' + format),
+                                value: format
+                            }))}
+                            value={values.multi_link_display_option ?? ''}
                         />
                     </FormFieldWrapper>
                 )}

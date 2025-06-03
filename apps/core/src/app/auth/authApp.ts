@@ -27,6 +27,8 @@ import {IOIDCClientService} from '../../infra/oidc/oidcClientService';
 import {InitQueryContextFunc} from '../helpers/initQueryContext';
 import {IConvertOIDCIdentifier} from '../helpers/convertOIDCIdentifier';
 import {IncomingHttpHeaders} from 'http';
+import {IRecordRepo} from '../../infra/record/recordRepo';
+import {AttributeTypes} from '../../_types/attribute';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -54,6 +56,7 @@ interface IAccessTokenPayload extends jwt.JwtPayload {
 export interface IAuthAppDeps {
     'core.domain.value': IValueDomain;
     'core.domain.record': IRecordDomain;
+    'core.infra.record': IRecordRepo;
     'core.domain.apiKey': IApiKeyDomain;
     'core.domain.user': IUserDomain;
     'core.infra.cache.cacheService': ICachesService;
@@ -69,6 +72,7 @@ type authCookieName = typeof ACCESS_TOKEN_COOKIE_NAME | typeof REFRESH_TOKEN_COO
 export default function ({
     'core.domain.value': valueDomain,
     'core.domain.record': recordDomain,
+    'core.infra.record': recordRepo,
     'core.domain.apiKey': apiKeyDomain,
     'core.domain.user': userDomain,
     'core.utils.logger': logger,
@@ -183,14 +187,18 @@ export default function ({
                 `,
             resolvers: {
                 Query: {
-                    async me(parent, args, ctx, info): Promise<IRecord> {
-                        const users = await recordDomain.find({
-                            params: {
-                                library: 'users',
-                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: ctx.userId}],
-                                withCount: false,
-                                retrieveInactive: true
-                            },
+                    async me(parent, args, ctx: IQueryInfos, info): Promise<IRecord> {
+                        const users = await recordRepo.find({
+                            libraryId: USERS_LIBRARY,
+                            filters: [
+                                {
+                                    attributes: [{id: 'id', type: AttributeTypes.SIMPLE}],
+                                    condition: AttributeCondition.EQUAL,
+                                    value: ctx.userId
+                                }
+                            ],
+                            withCount: false,
+                            retrieveInactive: true,
                             ctx
                         });
 
