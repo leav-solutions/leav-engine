@@ -3,21 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MutableRefObject} from 'react';
 import {
-    type Callbacks,
-    type Message,
-    type IUseIFrameMessengerOptions,
-    type CallCbFunction,
-    type CallbackFunction,
-    type SidePanelFormMessage,
-    type ModalConfirmMessage,
-    type MessageDispatcher,
-    type ModalFormMessage,
     type AlertMessage,
-    type NotificationMessage,
-    SimpleMessage,
-    MessageHandler,
+    type CallbackFunction,
+    type Callbacks,
+    type CallCbFunction,
     IEncodedMessage,
-    packetId
+    type IUseIFrameMessengerOptions,
+    type Message,
+    type MessageDispatcher,
+    MessageHandler,
+    type ModalConfirmMessage,
+    type ModalFormMessage,
+    type NotificationMessage,
+    packetId,
+    type SidePanelFormMessage,
+    SimpleMessage
 } from './types';
 
 export const encodeMessage = (message: Message): string =>
@@ -30,8 +30,7 @@ export const decodeMessage = (raw: string): Message | undefined => {
     try {
         const decoded: IEncodedMessage = JSON.parse(raw) as unknown as IEncodedMessage;
         if (packetId in decoded && decoded[packetId] === true) {
-            const message = JSON.parse(decoded.payload) as Message;
-            return message;
+            return JSON.parse(decoded.payload) as Message;
         }
     } catch (e) {
         return undefined;
@@ -73,7 +72,7 @@ export const initClientHandlers: (
     callCb: CallCbFunction,
     options?: IUseIFrameMessengerOptions,
     callbacksList?: MutableRefObject<Callbacks>
-) => MessageHandler<Message> = (callCb, options, callbacksList) => (message, dispatch) => {
+) => MessageHandler = (callCb, options, callbacksList) => (message, dispatch) => {
     switch (message.type) {
         case 'sidepanel-form':
             options?.handlers?.onSidePanelForm?.(
@@ -149,7 +148,7 @@ export const initClientHandlers: (
             break;
         case 'on-call-callback':
             // TODO How to know if handler can be removed from callbacksList ?
-            getCallback(message.path, callbacksList)?.(message.data as never);
+            getCallback(message.path, callbacksList)?.(...(message.data as never[]));
             break;
         default:
             break;

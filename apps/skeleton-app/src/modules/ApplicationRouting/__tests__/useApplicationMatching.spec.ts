@@ -21,6 +21,10 @@ describe('useApplicationMatching', () => {
     it('should return panel infos on panelId found without parent', async () => {
         const panelUsers: Panel = {
             id: 'users',
+            name: {
+                en: 'Users',
+                fr: 'Utilisateurs'
+            },
             content: {
                 type: 'explorer',
                 libraryId: '<props>',
@@ -29,7 +33,10 @@ describe('useApplicationMatching', () => {
         };
         const usersWorkspace: IWorkspace = {
             id: 'home',
-            title: 'Home',
+            title: {
+                en: 'Home',
+                fr: 'Accueil'
+            },
             entrypoint: {
                 type: 'library',
                 libraryId: 'users'
@@ -50,6 +57,10 @@ describe('useApplicationMatching', () => {
     it('should return panel infos on panelId found with parent', async () => {
         const panelUsers: Panel = {
             id: 'users',
+            name: {
+                en: 'Users',
+                fr: 'Utilisateurs'
+            },
             content: {
                 type: 'explorer',
                 libraryId: '<props>',
@@ -58,10 +69,18 @@ describe('useApplicationMatching', () => {
         };
         const unreachablePanel: Panel = {
             id: 'unreachablePanel',
+            name: {
+                en: 'Unreachable Panel',
+                fr: 'Panneau Inaccessible'
+            },
             children: [
                 panelUsers,
                 {
                     id: 'test',
+                    name: {
+                        en: 'Test',
+                        fr: 'Test'
+                    },
                     content: {
                         type: 'custom',
                         iframeSource: 'https://www.google.com'
@@ -71,7 +90,10 @@ describe('useApplicationMatching', () => {
         };
         const usersWorkspace: IWorkspace = {
             id: 'home',
-            title: 'Home',
+            title: {
+                en: 'Home',
+                fr: 'Accueil'
+            },
             entrypoint: {
                 type: 'library',
                 libraryId: 'users'

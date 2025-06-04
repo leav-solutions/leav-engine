@@ -1,10 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {EditRecordPage} from '_ui/components/RecordEdition/EditRecordPage';
-import {type KitNotification, type KitAlert} from 'aristid-ds';
+import {type KitNotification} from 'aristid-ds';
 import {type IKitConfirmDialog} from 'aristid-ds/dist/Kit/Feedback/Modal/types';
 import {type RefObject, type ComponentProps, type Key, type JSXElementConstructor} from 'react';
+import {EditRecordModal} from '_ui/components';
+import {type ToastedAlertProps} from 'aristid-ds/dist/Kit/Feedback/Alert/types';
 
 export const packetId = '__fromIframeMessenger';
 
@@ -26,7 +27,7 @@ export interface IMessageBase {
 export type SidePanelFormMessage = IMessageBase & {
     type: 'sidepanel-form';
     id: string;
-    data: ComponentPropsWithKey<typeof EditRecordPage>;
+    data: ComponentPropsWithKey<typeof EditRecordModal>;
     overrides?: string[];
 };
 export type ModalConfirmMessage = IMessageBase & {
@@ -38,13 +39,13 @@ export type ModalConfirmMessage = IMessageBase & {
 export type ModalFormMessage = IMessageBase & {
     type: 'modal-form';
     id: string;
-    data: ComponentPropsWithKey<typeof EditRecordPage>;
+    data: ComponentPropsWithKey<typeof EditRecordModal> | {open: false};
     overrides?: string[];
 };
 export type AlertMessage = IMessageBase & {
     type: 'alert';
     id: string;
-    data: ComponentPropsWithKey<typeof KitAlert>;
+    data: ToastedAlertProps;
     overrides?: string[];
 };
 export type NotificationMessage = IMessageBase & {
@@ -52,6 +53,10 @@ export type NotificationMessage = IMessageBase & {
     id: string;
     data: ComponentPropsWithKey<typeof KitNotification>;
     overrides?: string[];
+};
+export type ChangeLanguageMessage = IMessageBase & {
+    type: 'change-language';
+    language: string;
 };
 
 export type SimpleMessage = IMessageBase & {
@@ -72,7 +77,8 @@ export type MessageToParent =
     | AlertMessage
     | NotificationMessage
     | SimpleMessage
-    | RegisterMessage;
+    | RegisterMessage
+    | ChangeLanguageMessage;
 
 export type MessageFromParent = IMessageBase & {
     type: 'on-call-callback';

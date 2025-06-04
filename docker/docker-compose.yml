@@ -136,8 +136,8 @@ x-env-build-core: &env-build-core
 ############################
 
 services:
-  # The core is in charge of installing dependencies for ALL services. Each service must for wait the core, and then
-  # just do their job, not having to handle install.
+  # The core is in charge of installing dependencies for ALL services. Each service must for wait the core and then
+  # just do their job, not having to handle installation.
   core:
     build: *env-build-core
     stdin_open: true
@@ -149,7 +149,7 @@ services:
     environment:
       <<: [*env-core, *env-amqp]
       CORE_MODE: server
-    volumes: # We must load every volumes for install
+    volumes: # We must load every volume for installation
       - *mount_point-repo
       - *mount_point-files
       - *mount_point-previews

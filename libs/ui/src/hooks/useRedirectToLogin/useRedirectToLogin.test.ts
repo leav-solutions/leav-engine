@@ -20,14 +20,18 @@ describe('useRedirectToLogin', () => {
                 reload: reloadMock,
                 replace: replaceMock,
                 origin: 'test://core.test',
-                pathname: 'app/test'
+                pathname: 'app/test',
+                search: '?recordId=7769990&query=1',
+                toString: () => 'test://core.test/app/test?recordId=7769990&query=1'
             } as any;
             isDevEnvMock = true;
 
             const replaceResult = await result.current.redirectToLogin();
 
             expect(replaceMock).toHaveBeenCalledTimes(1);
-            expect(replaceMock).toHaveBeenCalledWith('test://core.test/app/login/?dest=app/test');
+            expect(replaceMock).toHaveBeenCalledWith(
+                'test://core.test/app/login/?dest=test%3A%2F%2Fcore.test%2Fapp%2Ftest%3FrecordId%3D7769990%26query%3D1'
+            );
             expect(reloadMock).toHaveBeenCalledTimes(0);
             expect(replaceResult).toBe('replaceResult');
         });

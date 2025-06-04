@@ -117,7 +117,7 @@ describe('ApplicationApp', () => {
             const authHandler = getAppsUrl[1];
 
             const req = {
-                originalUrl: 'originalUrl',
+                originalUrl: 'test://mock.domain.application/fake/path?query=1&requestId=1',
                 params: {endpoint: 'test'},
                 path: '/app/application-test',
                 query: {lang: 'fr'},
@@ -131,7 +131,9 @@ describe('ApplicationApp', () => {
 
             expect(next).not.toHaveBeenCalled();
             expect(res.redirect).toHaveBeenCalled();
-            expect(res.redirect).toHaveBeenCalledWith(`/app/login/?dest=${req.originalUrl}`);
+            expect(res.redirect).toHaveBeenCalledWith(
+                '/app/login/?dest=test%3A%2F%2Fmock.domain.application%2Ffake%2Fpath%3Fquery%3D1%26requestId%3D1'
+            );
         });
     });
 
@@ -160,7 +162,7 @@ describe('ApplicationApp', () => {
             const authHandler = getAppsUrl[1];
 
             const req = {
-                originalUrl: 'originalUrl',
+                originalUrl: 'test://mock.domain.application/fake/path?query=1&requestId=1',
                 params: {endpoint: 'login'},
                 query: {lang: 'fr'},
                 body: {requestId: 'requestId'}
@@ -194,7 +196,7 @@ describe('ApplicationApp', () => {
             const authHandler = getAppsUrl[1];
 
             const req = {
-                originalUrl: 'originalUrl',
+                originalUrl: 'test://mock.domain.application/fake/path?query=1&requestId=1',
                 params: {endpoint: 'login'},
                 query: {lang: 'fr'},
                 body: {requestId: 'requestId'},
