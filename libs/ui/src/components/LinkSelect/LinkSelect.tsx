@@ -2,21 +2,24 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPlus, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
+import {faMagnifyingGlass, faPlus} from '@fortawesome/free-solid-svg-icons';
 import {KitButton, KitDivider, KitSelect, KitSpace} from 'aristid-ds';
 import styled from 'styled-components';
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
+import './LinkSelect.css';
 
 interface ILinkSelectProps {
     tagDisplay: boolean;
     options: IKitOption[];
     defaultValues: string[];
     hideAdvancedSearch?: boolean;
-    onUpdateSelection: (value: string[]) => void;
-    onCreate: (value: string) => void;
-    onAdvanceSearch: () => void;
+    onUpdateSelection?: (value: string[]) => void;
+    onCreate?: (value: string) => void;
+    onBlur?: (itemsToLink: Set<string>, itemsToDelete: Set<string>) => void;
+    onParentDeselect?: (itemId: string) => any;
+    onAdvanceSearch?: () => void;
 }
 
 const StyledDivider = styled(KitDivider)`
@@ -28,26 +31,31 @@ const StyledContainer = styled.div`
     justify-content: center;
 `;
 
-const StyledKitSelect = styled(KitSelect)`
-    .ant-select-selection-overflow-item:not(.ant-select-selection-overflow-item-suffix) {
-        display: none;
-    }
-`;
-
 function LinkSelect({
     tagDisplay,
     options,
     defaultValues,
     hideAdvancedSearch = false,
-    onUpdateSelection,
-    onCreate,
-    onAdvanceSearch
+    onUpdateSelection = () => null,
+    onCreate = () => null,
+    onBlur = (itemsToLink: Set<string>, itemsToDelete: Set<string>) => null,
+    onAdvanceSearch = () => null
 }: ILinkSelectProps): JSX.Element {
     const {t} = useSharedTranslation();
 
-    const [openSelect, setOpenSelect] = useState(tagDisplay);
+    const [itemsToLink, setItemToLink] = useState(new Set<string>());
+    const [itemsToDelete, setItemToDelete] = useState(new Set<string>());
+
+    const dropdownRef = useRef(null);
+    const [isOpen, setIsOpen] = useState(false);
     const [currentSearch, setCurrentSearch] = useState('');
     const [emptyResults, setEmptyResults] = useState(false);
+
+    useEffect(() => {
+        if (!tagDisplay) {
+            setIsOpen(true);
+        }
+    }, []);
 
     const _handleChange = (selection: string[]) => {
         onUpdateSelection(selection);
@@ -63,8 +71,36 @@ function LinkSelect({
         }
     };
 
+    const onCreateClicked = () => {
+        onCreate(currentSearch);
+        // console.log('itemCreated', itemCreated);
+    };
+
+    const _onBlur = () => {
+        onBlur(itemsToLink, itemsToDelete);
+        setIsOpen(false);
+    };
+
+    const _onSelect = (itemId: string) => {
+        // remove itemToDelete if exists
+        itemsToDelete.delete(itemId);
+        itemsToLink.add(itemId);
+    };
+
+    const _onDeselect = async (itemId: any) => {
+        // if we had an item in select, we don't need to delete it
+        // because the link has not been created yet
+        if (itemsToLink.has(itemId)) {
+            // Remove item to link if exists
+            itemsToLink.delete(itemId);
+            return;
+        }
+
+        itemsToDelete.add(itemId);
+    };
+
     const dropdownButtons = (menu: React.ReactNode) => (
-        <>
+        <div className="dropdown-custom" ref={dropdownRef}>
             {menu}
             {(emptyResults || !hideAdvancedSearch) && (
                 <>
@@ -75,7 +111,9 @@ function LinkSelect({
                                 <KitButton
                                     type="secondary"
                                     icon={<FontAwesomeIcon icon={faPlus} />}
-                                    onClick={() => onCreate(currentSearch)}
+                                    onClick={onCreateClicked}
+                                    // @ts-ignore: required to avoid the click propagation that will automatically close the dropdown modal
+                                    onMouseDown={e => e.preventDefault()}
                                 >
                                     {`${t('record_edition.new_record')} "${currentSearch}"`}
                                 </KitButton>
@@ -93,52 +131,31 @@ function LinkSelect({
                     </StyledContainer>
                 </>
             )}
-        </>
+        </div>
     );
 
     return (
-        <>
-            {tagDisplay ? (
-                <KitSelect
-                    placeholder={t('record_edition.select')}
-                    mode="multiple"
-                    defaultValue={defaultValues}
-                    options={options}
-                    optionFilterProp="label"
-                    filterOption={(input, option) =>
-                        option?.value?.toString().toLowerCase().includes(input.toLowerCase())
-                    }
-                    showSearch
-                    onChange={value => _handleChange(value)}
-                    onSearch={value => _handleSearch(value)}
-                    dropdownRender={dropdownButtons}
-                />
-            ) : (
-                <StyledKitSelect
-                    open={openSelect}
-                    placeholder={t('record_edition.select')}
-                    mode="multiple"
-                    defaultValue={defaultValues}
-                    options={options}
-                    optionFilterProp="label"
-                    filterOption={(input, option) =>
-                        option?.value?.toString().toLowerCase().includes(input.toLowerCase())
-                    }
-                    showSearch
-                    suffixIcon={<div />}
-                    allowClear={false}
-                    onBlur={() => {
-                        setOpenSelect(false);
-                    }}
-                    onFocus={() => {
-                        setOpenSelect(true);
-                    }}
-                    onChange={value => _handleChange(value)}
-                    onSearch={value => _handleSearch(value)}
-                    dropdownRender={dropdownButtons}
-                />
-            )}
-        </>
+        <KitSelect
+            className={tagDisplay ? '' : 'select-without-tags'}
+            placeholder={t('record_edition.select')}
+            mode="multiple"
+            open={isOpen}
+            defaultValue={defaultValues}
+            options={options}
+            optionFilterProp="label"
+            filterOption={(input, option) => option?.value?.toString().toLowerCase().includes(input.toLowerCase())}
+            showSearch
+            onChange={value => _handleChange(value)}
+            onSearch={value => _handleSearch(value)}
+            onBlur={_onBlur}
+            onFocus={() => setIsOpen(true)}
+            onDeselect={_onDeselect}
+            onSelect={_onSelect}
+            dropdownRender={dropdownButtons}
+            autoFocus={!tagDisplay}
+            suffixIcon={tagDisplay ? '' : <div />}
+            allowClear={tagDisplay}
+        />
     );
 }
 

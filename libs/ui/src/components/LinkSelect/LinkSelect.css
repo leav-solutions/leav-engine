@@ -1,0 +1,6 @@
+/*Used to hide the tags inside the KitSelect*/
+.select-without-tags {
+    .ant-select-selection-overflow-item:not(.ant-select-selection-overflow-item-suffix) {
+        display: none;
+    }
+}

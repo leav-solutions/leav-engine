@@ -1,0 +1,21 @@
+query getRecordsFromLibrary(
+    $libraryId: ID!,
+    $attributeIds: [ID!]!,
+    $pagination: RecordsPagination,
+    $filters: [RecordFilterInput],
+    $multipleSort: [RecordSortInput!],
+    $searchQuery: String
+) {
+    records(library: $libraryId, filters: $filters, pagination: $pagination, multipleSort: $multipleSort, searchQuery: $searchQuery) {
+        totalCount
+        list {
+            ...RecordIdentity
+            permissions {
+                delete_record
+            }
+            properties(attributeIds: $attributeIds) {
+                attributeId
+            }
+        }
+    }
+}
