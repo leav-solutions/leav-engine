@@ -8,7 +8,6 @@ import styled from 'styled-components';
 import {useEffect, useRef, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
-import './LinkSelect.css';
 
 interface ILinkSelectProps {
     tagDisplay: boolean;
