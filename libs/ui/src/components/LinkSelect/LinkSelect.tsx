@@ -31,6 +31,14 @@ const StyledContainer = styled.div`
     justify-content: center;
 `;
 
+const StyledLinkSelect = styled(KitSelect)`
+    &.select-without-tags {
+        .ant-select-selection-overflow-item:not(.ant-select-selection-overflow-item-suffix) {
+            display: none;
+        }
+    }
+`;
+
 function LinkSelect({
     tagDisplay,
     options,
@@ -55,7 +63,7 @@ function LinkSelect({
         if (!tagDisplay) {
             setIsOpen(true);
         }
-    }, []);
+    }, [tagDisplay]);
 
     const _handleChange = (selection: string[]) => {
         onUpdateSelection(selection);
@@ -64,16 +72,12 @@ function LinkSelect({
     const _handleSearch = (value: string) => {
         setCurrentSearch(value);
         const optionsFiltered = options.filter(option => option.label.toLowerCase().includes(value.toLowerCase()));
-        if (optionsFiltered.length === 0 && value !== '') {
-            setEmptyResults(true);
-        } else {
-            setEmptyResults(false);
-        }
+        const isEmptyResults = optionsFiltered.length === 0 && value !== '';
+        setEmptyResults(isEmptyResults);
     };
 
     const onCreateClicked = () => {
         onCreate(currentSearch);
-        // console.log('itemCreated', itemCreated);
     };
 
     const _onBlur = () => {
@@ -87,7 +91,7 @@ function LinkSelect({
         itemsToLink.add(itemId);
     };
 
-    const _onDeselect = async (itemId: any) => {
+    const _onDeselect = (itemId: any) => {
         // if we had an item in select, we don't need to delete it
         // because the link has not been created yet
         if (itemsToLink.has(itemId)) {
@@ -135,7 +139,7 @@ function LinkSelect({
     );
 
     return (
-        <KitSelect
+        <StyledLinkSelect
             className={tagDisplay ? '' : 'select-without-tags'}
             placeholder={t('record_edition.select')}
             mode="multiple"
