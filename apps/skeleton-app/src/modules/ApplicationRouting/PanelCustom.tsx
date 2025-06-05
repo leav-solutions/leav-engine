@@ -19,9 +19,9 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, searc
     const {kitNotification} = useKitNotification();
 
     const [sidePanelContent, setSidePanelContent] = useState<ReactNode | null>(null);
-    const [editRecordModalProps, setEditRecordModalProps] = useState<ComponentPropsWithKey<
-        typeof EditRecordModal
-    > | null>(null);
+    const [editRecordModalProps, setEditRecordModalProps] = useState<
+        ComponentPropsWithKey<typeof EditRecordModal> | {open: false} | null
+    >(null);
 
     const {changeLangInAllFrames} = useIFrameMessenger({
         handlers: {
@@ -41,15 +41,19 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, searc
                 });
             },
             onModalForm(data) {
-                setEditRecordModalProps({
-                    ...data,
-                    open: true,
-                    key: Date.now(),
-                    onClose: () => {
-                        setEditRecordModalProps(null);
-                        data.onClose();
-                    }
-                });
+                if (data.open === false) {
+                    setEditRecordModalProps(null);
+                } else {
+                    setEditRecordModalProps({
+                        ...data,
+                        open: true,
+                        key: Date.now(),
+                        onClose: () => {
+                            setEditRecordModalProps(null);
+                            data.onClose();
+                        }
+                    });
+                }
             },
             onAlert(data) {
                 KitAlert[data.type]?.({

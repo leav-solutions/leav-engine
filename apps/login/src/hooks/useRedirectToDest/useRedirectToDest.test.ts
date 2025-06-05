@@ -24,7 +24,8 @@ describe('useRedirectToDest', () => {
     });
 
     it('should redirect to the destination when it is present in the query params', () => {
-        jest.spyOn(useQueryParams, 'useQueryParams').mockReturnValue({dest: '/dashboard'});
+        const dest = encodeURIComponent('/dashboard?query=1&params=2');
+        jest.spyOn(useQueryParams, 'useQueryParams').mockReturnValue({dest});
 
         const {result} = renderHook(() => useRedirectToDest());
 
@@ -32,7 +33,7 @@ describe('useRedirectToDest', () => {
             result.current.redirectToDest();
         });
 
-        expect(replaceMock).toHaveBeenCalledWith('/dashboard');
+        expect(replaceMock).toHaveBeenCalledWith('/dashboard?query=1&params=2');
     });
 
     it('should redirect to the default destination when it is not present in the query params', () => {

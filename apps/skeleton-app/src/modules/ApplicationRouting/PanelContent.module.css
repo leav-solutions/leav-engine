@@ -1,3 +1,4 @@
 .explorerContainer {
+    height: 100%;
     padding: calc(var(--general-spacing-xs) * 1px);
 }
