@@ -33,7 +33,9 @@ export interface IItemData {
     key: string;
     itemId: string;
     whoAmI: Required<RecordIdentityFragment['whoAmI']>;
+    canActivate: boolean;
     canDelete: boolean;
+    active: boolean;
     propertiesById: {
         [attributeId: string]: PropertyValueFragment[];
     };
@@ -45,8 +47,8 @@ export interface IItemData {
 
 export interface IItemAction {
     callback: (item: IItemData) => void;
-    icon: ReactElement;
-    label: string;
+    icon: ReactElement | ((item: IItemData) => ReactElement);
+    label: string | ((item: IItemData) => string);
     iconOnly?: boolean;
     isDanger?: boolean;
     disabled?: boolean | ((item: IItemData) => boolean);
