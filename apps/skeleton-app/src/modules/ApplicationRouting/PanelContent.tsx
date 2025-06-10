@@ -68,6 +68,7 @@ export const PanelContent: FunctionComponent = () => {
             );
         }
         if (currentPanel.content.type === 'explorer') {
+            const {actions, type, viewId, ...explorerProps} = currentPanel.content;
             const itemActions: ComponentProps<typeof Explorer>['itemActions'] = currentPanel.content.actions.map(
                 action => ({
                     icon: <FaPlus />,
@@ -79,8 +80,9 @@ export const PanelContent: FunctionComponent = () => {
                 })
             );
 
-            if ('libraryId' in currentPanel.content) {
-                if (currentPanel.content.libraryId === '<props>') {
+            if ('libraryId' in explorerProps) {
+                const {libraryId, ...restExplorerProps} = explorerProps;
+                if (explorerProps.libraryId === '<props>') {
                     return (
                         <div className={explorerContainer}>
                             <Explorer
@@ -89,6 +91,10 @@ export const PanelContent: FunctionComponent = () => {
                                     libraryId: currentWorkspace.entrypoint.libraryId
                                 }}
                                 itemActions={itemActions}
+                                {...restExplorerProps}
+                                defaultViewSettings={{
+                                    viewId
+                                }}
                             />
                         </div>
                     );
@@ -96,20 +102,29 @@ export const PanelContent: FunctionComponent = () => {
                 return (
                     <div className={explorerContainer}>
                         <Explorer
-                            entrypoint={{type: 'library', libraryId: currentPanel.content.libraryId}}
+                            entrypoint={{type: 'library', libraryId}}
                             itemActions={itemActions}
+                            {...restExplorerProps}
+                            defaultViewSettings={{
+                                viewId
+                            }}
                         />
                     </div>
                 );
             }
+            const {attributeSource, ...restExplorerProps} = explorerProps;
             return (
                 <div className={explorerContainer}>
                     <Explorer
                         entrypoint={{
                             type: 'link',
-                            linkAttributeId: currentPanel.content.attributeSource,
+                            linkAttributeId: attributeSource,
                             parentLibraryId: currentWorkspace.entrypoint.libraryId,
                             parentRecordId: searchParams.get(recordSearchParamsName)
+                        }}
+                        {...restExplorerProps}
+                        defaultViewSettings={{
+                            viewId
                         }}
                         itemActions={itemActions}
                     />

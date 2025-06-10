@@ -64,8 +64,14 @@ export const useViewSettingsReducer = (
             libraryId: libraryId as string
         }
     });
-    // Take the last view from the array
-    const userView = viewData?.views?.list?.at(-1);
+
+    let userView;
+    if (defaultViewSettings?.viewId) {
+        userView = viewData?.views?.list?.find(viewItem => viewItem.id === defaultViewSettings.viewId);
+    }
+
+    // Take the last view from the array if not defined in defaultView Settings
+    userView = userView ?? viewData?.views?.list?.at(-1);
 
     const userViewFilters = ignoreViewByDefault ? [] : toValidFilters(userView?.filters ?? []);
     const preparedDefaultFilters = toValidFilters(defaultViewSettings.filters ?? []);

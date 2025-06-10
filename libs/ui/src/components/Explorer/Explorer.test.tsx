@@ -3064,5 +3064,23 @@ describe('Explorer', () => {
 
             expect(screen.queryByRole('button', {name: /My view/})).not.toBeInTheDocument();
         });
+
+        test('Should load a specific view', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        enableConfigureView
+                        showFiltersAndSorts
+                        entrypoint={libraryEntrypoint}
+                        defaultPrimaryActions={[]}
+                        defaultViewSettings={{
+                            viewId: '43'
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByRole('button', {name: /Second view/})).toBeInTheDocument();
+        });
     });
 });
