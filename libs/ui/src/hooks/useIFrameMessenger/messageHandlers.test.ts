@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {decodeMessage, encodeMessage, getExposedMethods} from './messageHandlers';
-import {Message} from './types';
+import {Message, type NavigateToPanelMessage} from './types';
 
 describe('MessageHandlers', () => {
     describe('getExposedMethods', () => {
@@ -12,6 +12,20 @@ describe('MessageHandlers', () => {
 
         beforeEach(() => {
             dispatchMock.mockClear();
+        });
+
+        it('Should provide 7 methods', async () => {
+            const providedMethods = getExposedMethods({current: null}, jest.fn());
+
+            expect(providedMethods).toEqual({
+                showSidePanelForm: expect.any(Function),
+                showModalConfirm: expect.any(Function),
+                showModalForm: expect.any(Function),
+                showAlert: expect.any(Function),
+                showNotification: expect.any(Function),
+                messageToParent: expect.any(Function),
+                navigateToPanel: expect.any(Function)
+            });
         });
 
         it('Should expose method showSidePanelForm which dispatch to parent', async () => {
@@ -110,6 +124,15 @@ describe('MessageHandlers', () => {
             messageToParent(data);
 
             expect(dispatchMock).toHaveBeenCalledWith({type: 'message', data, id: String(fakeTime)});
+        });
+
+        it('should expose method navigateToPanel which dispatch to the parent', async () => {
+            const data: NavigateToPanelMessage['data'] = {panelId: 'panelId'};
+
+            const {navigateToPanel} = getExposedMethods({current: null}, dispatchMock);
+            navigateToPanel(data);
+
+            expect(dispatchMock).toHaveBeenCalledWith({type: 'navigate-to-panel', data});
         });
     });
 
