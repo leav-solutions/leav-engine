@@ -1,11 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type KitNotification} from 'aristid-ds';
+import {type KitNotification, type KitAlert} from 'aristid-ds';
 import {type IKitConfirmDialog} from 'aristid-ds/dist/Kit/Feedback/Modal/types';
 import {type RefObject, type ComponentProps, type Key, type JSXElementConstructor} from 'react';
 import {EditRecordModal} from '_ui/components';
-import {type ToastedAlertProps} from 'aristid-ds/dist/Kit/Feedback/Alert/types';
 
 export const packetId = '__fromIframeMessenger';
 
@@ -45,7 +44,7 @@ export type ModalFormMessage = IMessageBase & {
 export type AlertMessage = IMessageBase & {
     type: 'alert';
     id: string;
-    data: ToastedAlertProps;
+    data: ComponentPropsWithKey<typeof KitAlert>;
     overrides?: string[];
 };
 export type NotificationMessage = IMessageBase & {
@@ -70,6 +69,11 @@ export type RegisterMessage = IMessageBase & {
     id: string;
 };
 
+export type NavigateToPanelMessage = IMessageBase & {
+    type: 'navigate-to-panel';
+    data: {panelId: string};
+};
+
 export type MessageToParent =
     | SidePanelFormMessage
     | ModalConfirmMessage
@@ -78,13 +82,15 @@ export type MessageToParent =
     | NotificationMessage
     | SimpleMessage
     | RegisterMessage
-    | ChangeLanguageMessage;
+    | NavigateToPanelMessage;
 
-export type MessageFromParent = IMessageBase & {
-    type: 'on-call-callback';
-    path: string;
-    data: unknown;
-};
+export type MessageFromParent =
+    | (IMessageBase & {
+          type: 'on-call-callback';
+          path: string;
+          data: unknown;
+      })
+    | ChangeLanguageMessage;
 
 export type Message = MessageToParent | MessageFromParent;
 
@@ -125,5 +131,6 @@ export interface IUseIFrameMessengerOptions {
             callCb: CallCbFunction
         ) => void;
         onMessage?: (data: unknown, id: string, dispatch: MessageDispatcher, callCb: CallCbFunction) => void;
+        onNavigateToPanel?: (data: NavigateToPanelMessage['data']) => void;
     };
 }
