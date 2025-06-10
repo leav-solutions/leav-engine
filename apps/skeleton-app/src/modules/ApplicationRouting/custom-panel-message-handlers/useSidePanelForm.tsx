@@ -13,7 +13,21 @@ export const useSidePanelForm = () => {
 
     const closeSidePanelForm = () => setSidePanelContent(null);
     const openSidePanelForm: IUseIFrameMessengerOptions['handlers']['onSidePanelForm'] = data => {
-        setSidePanelContent(<EditRecordPage {...data} showRefreshButton={false} onClose={closeSidePanelForm} />);
+        setSidePanelContent(
+            <EditRecordPage
+                {...data}
+                showRefreshButton={false}
+                onClose={() => {
+                    closeSidePanelForm();
+
+                    console.log('data', data);
+
+                    //TODO: onClose pas dans data ??? Il faudrait que le onClose soit jouer dans closeSidePanelForm pour être iso entre les deux boutons
+                    // (même si un des deux va partir)
+                    data.onClose();
+                }}
+            />
+        );
     };
 
     return {
@@ -22,7 +36,7 @@ export const useSidePanelForm = () => {
             sidePanelContent === null
                 ? null
                 : createPortal(
-                      <KitSidePanel floating closable size="m" onClose={closeSidePanelForm}>
+                      <KitSidePanel initialOpen floating closable size="m" onClose={closeSidePanelForm}>
                           <div style={{height: '100%'}}>{sidePanelContent}</div>
                       </KitSidePanel>,
                       document.getElementById(SIDE_PANEL_CONTENT_ID)

@@ -8,6 +8,8 @@ import {type Callbacks, type CallCbFunction, type IUseIFrameMessengerOptions, ty
 import {encodeMessage, decodeMessage, getExposedMethods, initClientHandlers} from './messageHandlers';
 
 export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
+    console.log('useIFrameMessenger', options);
+
     const registry = useRef<Record<string, Window>>({});
     const selfId = useRef(options?.id ?? uuid());
 
@@ -72,6 +74,7 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
                 if (message.type === 'change-language') {
                     setLang(message.language);
                 } else {
+                    console.log('message', message);
                     clientHandlers(message, dispatch);
                 }
             }
