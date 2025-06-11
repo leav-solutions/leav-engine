@@ -84,6 +84,7 @@ export const initClientHandlers: (
                     callCb,
                     message.overrides
                 ) as SidePanelFormMessage['data'],
+                message.id,
                 dispatch,
                 callCb
             );
@@ -180,7 +181,9 @@ const storeCallbacks = (
 
 export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, dispatch?: MessageDispatcher) => ({
     showSidePanelForm: (data: SidePanelFormMessage['data']) => {
-        dispatch?.({type: 'sidepanel-form', data, id: Date.now().toString()});
+        const id = Date.now().toString();
+        const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
+        dispatch?.({type: 'sidepanel-form', data: nextData as SidePanelFormMessage['data'], id, overrides});
     },
     showModalConfirm: (data: ModalConfirmMessage['data']) => {
         const id = Date.now().toString();

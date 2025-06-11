@@ -108,6 +108,7 @@ export interface IUseIFrameMessengerOptions {
     handlers?: {
         onSidePanelForm?: (
             data: SidePanelFormMessage['data'],
+            id: string,
             dispatch: MessageDispatcher,
             callCb: CallCbFunction
         ) => void;
