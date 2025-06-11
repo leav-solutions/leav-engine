@@ -29,12 +29,24 @@ describe('MessageHandlers', () => {
         });
 
         it('Should expose method showSidePanelForm which dispatch to parent', async () => {
-            const data: any = {someField: 'someValue'};
+            const data: any = {someField: 'someValue', someCallback: jest.fn()};
+            const callbacksStore = {current: {}};
 
-            const {showSidePanelForm} = getExposedMethods({current: null}, dispatchMock);
+            const {showSidePanelForm} = getExposedMethods(callbacksStore, dispatchMock);
             showSidePanelForm(data);
 
-            expect(dispatchMock).toHaveBeenCalledWith({type: 'sidepanel-form', data, id: String(fakeTime)});
+            expect(dispatchMock).toHaveBeenCalledWith({
+                type: 'sidepanel-form',
+                data,
+                id: String(fakeTime),
+                overrides: ['someCallback']
+            });
+
+            expect(callbacksStore.current).toEqual({
+                [String(fakeTime)]: {
+                    someCallback: data.someCallback
+                }
+            });
         });
 
         it('Should expose method showModalConfirm which dispatch to parent and store callback', async () => {
