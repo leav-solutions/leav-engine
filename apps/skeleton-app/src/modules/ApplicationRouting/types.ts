@@ -5,6 +5,25 @@ type PanelId = string;
 type WorkspaceId = string;
 type Language = string;
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export type CommonExplorerProps = {
+    showSearch?: boolean;
+    defaultActionsForItem?: Array<'edit' | 'replaceLink' | 'remove' | 'activate'>;
+    defaultPrimaryActions?: Array<'create'>;
+    defaultMassActions?: Array<'deactivate'>;
+    showFiltersAndSorts?: boolean;
+    freezeView?: boolean;
+    hideTableHeader?: boolean;
+    creationFormId?: string;
+    editionFormId?: string;
+};
+
+export type LinkExplorerProps = {} & CommonExplorerProps;
+
+export type LibraryExplorerProps = {
+    noPagination?: true;
+} & CommonExplorerProps;
+
 export type Panel = {
     // panel details
     id: PanelId;
@@ -16,6 +35,7 @@ export type Panel = {
                     type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
                     // TODO: later add behavior on click on explorer item
                     attributeSource: string;
+                    explorerProps?: LinkExplorerProps;
                     actions: Array<{
                         what: Panel; // | WorkspaceId
                         where: 'popup' | 'slider' | 'fullpage';
@@ -24,6 +44,7 @@ export type Panel = {
               | {
                     type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
                     libraryId: '<props>' | string;
+                    explorerProps?: LibraryExplorerProps;
                     actions: Array<{
                         what: Panel; // | WorkspaceId
                         where: 'popup' | 'slider' | 'fullpage';
