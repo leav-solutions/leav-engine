@@ -10,6 +10,8 @@ import {SIDE_PANEL_CONTENT_ID} from '../../../constants';
 import {EditRecordPage} from '@leav/ui';
 import {IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
 
+const NO_RENDER_KEY = 0;
+
 export const useSidePanelForm = () => {
     const sidePanelPropsRef = useRef<ComponentProps<typeof KitSidePanel> | null>(null);
     const [keyToForceRerender, setKeyToForceRerender] = useState(0);
@@ -20,7 +22,7 @@ export const useSidePanelForm = () => {
         }
 
         sidePanelPropsRef.current = null;
-        setKeyToForceRerender(0);
+        setKeyToForceRerender(NO_RENDER_KEY);
     };
 
     const openSidePanelForm: IUseIFrameMessengerOptions['handlers']['onSidePanelForm'] = data => {
@@ -31,7 +33,7 @@ export const useSidePanelForm = () => {
     return {
         openSidePanelForm,
         CustomSidePanelForm:
-            keyToForceRerender === 0
+            keyToForceRerender === NO_RENDER_KEY
                 ? null
                 : createPortal(
                       <KitSidePanel initialOpen floating closable size="m" onClose={closeSidePanelForm}>
