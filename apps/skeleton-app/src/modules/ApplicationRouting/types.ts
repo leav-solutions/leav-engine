@@ -1,44 +1,36 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
 
-import {IExplorerProps} from '_ui/components/Explorer/Explorer';
+import {Explorer} from '_ui/components/Explorer/Explorer';
+import {ComponentProps} from 'react';
 
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 type PanelId = string;
 type WorkspaceId = string;
 type Language = string;
 
-type ExplorerPanelProps = Omit<
-    IExplorerProps,
-    | 'entrypoint'
-    | 'itemActions'
-    | 'primaryActions'
-    | 'massActions'
-    | 'emptyPlaceholder'
-    | 'defaultCallbacks'
-    | 'defaultViewSetings'
-> & {
-    viewId?: string;
-    actions: Array<{
-        what: Panel; // | WorkspaceId
-        where: 'popup' | 'slider' | 'fullpage';
-    }>;
-};
+export interface ICommonExplorerProps {
+    showSearch?: boolean;
+    defaultActionsForItem?: ComponentProps<typeof Explorer>['defaultActionsForItem'];
+    defaultPrimaryActions?: ComponentProps<typeof Explorer>['defaultPrimaryActions'];
+    defaultMassActions?: ComponentProps<typeof Explorer>['defaultMassActions'];
+    showFiltersAndSorts?: boolean;
+    freezeView?: boolean;
+    showAttributeLabels?: boolean;
+    creationFormId?: string;
+    editionFormId?: string;
+}
 
-type LibraryExplorerPanelProps = ExplorerPanelProps & {
-    type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
-    // TODO: later add behavior on click on explorer item
-    libraryId: string; // '<props>' | string;
-};
+export type LinkExplorerProps = ICommonExplorerProps;
 
-type AttributeExplorerPanelProps = ExplorerPanelProps & {
-    type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
-    // TODO: later add behavior on click on explorer item
-    attributeSource: string; // '<props>' | string;
-};
+export type LibraryExplorerProps = {
+    noPagination?: true;
+} & ICommonExplorerProps;
+
+export type ItemActions = Array<{
+    what: Panel; // | WorkspaceId
+    where: 'popup' | 'slider' | 'fullpage';
+}>;
 
 export type Panel = {
     // panel details
@@ -47,8 +39,19 @@ export type Panel = {
 } & (
     | {
           content:
-              | AttributeExplorerPanelProps
-              | LibraryExplorerPanelProps
+              | {
+                    type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
+                    // TODO: later add behavior on click on explorer item
+                    attributeSource: string;
+                    explorerProps?: LinkExplorerProps;
+                    actions: ItemActions;
+                }
+              | {
+                    type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
+                    libraryId: '<props>' | string;
+                    explorerProps?: LibraryExplorerProps;
+                    actions: ItemActions;
+                }
               | {
                     type: 'custom';
                     iframeSource: string;
