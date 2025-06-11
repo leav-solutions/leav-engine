@@ -66,7 +66,7 @@ const ExplorerEmptyDataStyled = styled.div`
     justify-content: center;
 `;
 
-interface IExplorerProps {
+export interface IExplorerProps {
     entrypoint: Entrypoint;
     noPagination?: true;
     itemActions?: IItemAction[];
