@@ -103,7 +103,7 @@ const useGetRecordForm = ({
         : null;
 
     const {loading, error, refetch} = useRecordFormQuery({
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
         notifyOnNetworkStatusChange: true,
         variables: {
             libraryId,
