@@ -12,7 +12,7 @@ const NO_RENDER_KEY = 0;
 
 export const useSidePanelForm = () => {
     const sidePanelPropsRef = useRef<ComponentProps<typeof KitSidePanel> | null>(null);
-    const [keyToForceRerender, setKeyToForceRerender] = useState(0);
+    const [keyToForceRerender, setKeyToForceRerender] = useState(NO_RENDER_KEY);
 
     const closeSidePanelForm = () => {
         if (sidePanelPropsRef.current && sidePanelPropsRef.current.onClose) {
