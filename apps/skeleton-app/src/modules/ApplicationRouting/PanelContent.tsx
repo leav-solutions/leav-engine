@@ -82,7 +82,7 @@ export const PanelContent: FunctionComponent = () => {
 
             if ('libraryId' in explorerProps) {
                 const {libraryId, ...restExplorerProps} = explorerProps;
-                if (explorerProps.libraryId === '<props>') {
+                if (libraryId === '<props>') {
                     return (
                         <div className={explorerContainer}>
                             <Explorer
