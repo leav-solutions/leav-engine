@@ -6,7 +6,7 @@ import {generatePath, Navigate, useLocation, useNavigate, useOutletContext} from
 import {useTranslation} from 'react-i18next';
 import {EditRecordPage, Explorer} from '@leav/ui';
 import {FaPlus} from 'react-icons/all';
-import type {IApplicationMatchingContext} from './types';
+import type {IApplicationMatchingContext, CommonExplorerProps, LibraryExplorerProps} from './types';
 import {recordSearchParamsName, routes} from './routes';
 import {SIDEBAR_CONTENT_ID} from '../../constants';
 import {PanelCustom} from './PanelCustom';
@@ -79,7 +79,34 @@ export const PanelContent: FunctionComponent = () => {
                 })
             );
 
+            const isBoolean = (val: unknown) => 'boolean' === typeof val;
+
+            const commonExplorerProps = {
+                showSearch: isBoolean(currentPanel.content.explorerProps.showSearch)
+                    ? currentPanel.content.explorerProps.showSearch
+                    : undefined,
+                defaultPrimaryActions: currentPanel.content.explorerProps.defaultPrimaryActions,
+                defaultActionsForItem: currentPanel.content.explorerProps.defaultActionsForItem,
+                defaultMassActions: currentPanel.content.explorerProps.defaultMassActions,
+                showFiltersAndSorts: currentPanel.content.explorerProps.showFiltersAndSorts,
+                enableConfigureView: isBoolean(currentPanel.content.explorerProps.freezeView)
+                    ? !currentPanel.content.explorerProps.freezeView
+                    : undefined,
+                ignoreViewByDefault: isBoolean(currentPanel.content.explorerProps.freezeView)
+                    ? currentPanel.content.explorerProps.freezeView
+                    : undefined,
+                hideTableHeader: isBoolean(currentPanel.content.explorerProps.showSearch)
+                    ? currentPanel.content.explorerProps.showSearch
+                    : undefined,
+                creationFormId: currentPanel.content.explorerProps.creationFormId,
+                editionFormId: currentPanel.content.explorerProps.creationFormId
+            };
+
             if ('libraryId' in currentPanel.content) {
+                const libraryExplorerProps: {noPagination?: true} = {
+                    noPagination: currentPanel.content.explorerProps.noPagination ?? undefined
+                };
+
                 if (currentPanel.content.libraryId === '<props>') {
                     return (
                         <div className={explorerContainer}>
@@ -89,6 +116,8 @@ export const PanelContent: FunctionComponent = () => {
                                     libraryId: currentWorkspace.entrypoint.libraryId
                                 }}
                                 itemActions={itemActions}
+                                {...commonExplorerProps}
+                                {...libraryExplorerProps}
                             />
                         </div>
                     );
@@ -98,6 +127,8 @@ export const PanelContent: FunctionComponent = () => {
                         <Explorer
                             entrypoint={{type: 'library', libraryId: currentPanel.content.libraryId}}
                             itemActions={itemActions}
+                            {...commonExplorerProps}
+                            {...libraryExplorerProps}
                         />
                     </div>
                 );
@@ -112,6 +143,7 @@ export const PanelContent: FunctionComponent = () => {
                             parentRecordId: searchParams.get(recordSearchParamsName)
                         }}
                         itemActions={itemActions}
+                        {...commonExplorerProps}
                     />
                 </div>
             );
