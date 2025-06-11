@@ -91,8 +91,6 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
             return showCancelConfirm();
         }
 
-        console.log('-> LEAV onClose()', onClose);
-
         return onClose();
     };
 

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ReactNode, useState} from 'react';
+import {ComponentProps, ReactNode, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {KitSidePanel} from 'aristid-ds';
 import {SIDE_PANEL_CONTENT_ID} from '../../../constants';
@@ -10,24 +11,20 @@ import {IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
 
 export const useSidePanelForm = () => {
     const [sidePanelContent, setSidePanelContent] = useState<ReactNode | null>(null);
+    const sidePanelPropsRef = useRef<ComponentProps<typeof KitSidePanel> | null>(null);
 
-    const closeSidePanelForm = () => setSidePanelContent(null);
+    const closeSidePanelForm = () => {
+        if (sidePanelPropsRef.current && sidePanelPropsRef.current.onClose) {
+            sidePanelPropsRef.current.onClose();
+        }
+
+        sidePanelPropsRef.current = null;
+        setSidePanelContent(null);
+    };
+
     const openSidePanelForm: IUseIFrameMessengerOptions['handlers']['onSidePanelForm'] = data => {
-        setSidePanelContent(
-            <EditRecordPage
-                {...data}
-                showRefreshButton={false}
-                onClose={() => {
-                    closeSidePanelForm();
-
-                    console.log('data', data);
-
-                    //TODO: onClose pas dans data ??? Il faudrait que le onClose soit jouer dans closeSidePanelForm pour être iso entre les deux boutons
-                    // (même si un des deux va partir)
-                    data.onClose();
-                }}
-            />
-        );
+        sidePanelPropsRef.current = data;
+        setSidePanelContent(<EditRecordPage {...data} showRefreshButton={false} onClose={closeSidePanelForm} />);
     };
 
     return {

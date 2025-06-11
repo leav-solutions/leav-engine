@@ -76,8 +76,6 @@ export const initClientHandlers: (
 ) => MessageHandler = (callCb, options, callbacksList) => (message, dispatch) => {
     switch (message.type) {
         case 'sidepanel-form':
-            console.log('message', message);
-
             options?.handlers?.onSidePanelForm?.(
                 setCallbacks(
                     message.id,
@@ -152,7 +150,6 @@ export const initClientHandlers: (
             break;
         case 'on-call-callback':
             // TODO How to know if handler can be removed from callbacksList ?
-            console.log('on-call-callback', message);
             getCallback(message.path, callbacksList)?.(...(message.data as never[]));
             break;
         case 'navigate-to-panel':
@@ -186,10 +183,6 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
     showSidePanelForm: (data: SidePanelFormMessage['data']) => {
         const id = Date.now().toString();
         const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
-
-        console.log('showSidePanelForm', data, nextData, overrides);
-        alert('showSidePanelForm');
-
         dispatch?.({type: 'sidepanel-form', data: nextData as SidePanelFormMessage['data'], id, overrides});
     },
     showModalConfirm: (data: ModalConfirmMessage['data']) => {
@@ -198,7 +191,6 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
         dispatch?.({type: 'modal-confirm', data: nextData as ModalConfirmMessage['data'], id, overrides});
     },
     showModalForm: (data: ModalFormMessage['data']) => {
-        console.log('showModalForm', data);
         const id = Date.now().toString();
         const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
         dispatch?.({type: 'modal-form', data: nextData as ModalFormMessage['data'], id, overrides});
