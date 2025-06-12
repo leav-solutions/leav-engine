@@ -130,6 +130,7 @@ export const useCreatePrimaryAction = ({
             );
             break;
         case LibraryBehavior.standard:
+        case LibraryBehavior.join:
             _createModal = (
                 <EditRecordModal
                     className={CREATE_RECORD_MODAL_CLASSNAME}
