@@ -1,9 +1,44 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+
+import {IExplorerProps} from '_ui/components/Explorer/Explorer';
+
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 type PanelId = string;
 type WorkspaceId = string;
 type Language = string;
+
+type ExplorerPanelProps = Omit<
+    IExplorerProps,
+    | 'entrypoint'
+    | 'itemActions'
+    | 'primaryActions'
+    | 'massActions'
+    | 'emptyPlaceholder'
+    | 'defaultCallbacks'
+    | 'defaultViewSetings'
+> & {
+    viewId?: string;
+    actions: Array<{
+        what: Panel; // | WorkspaceId
+        where: 'popup' | 'slider' | 'fullpage';
+    }>;
+};
+
+type LibraryExplorerPanelProps = ExplorerPanelProps & {
+    type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
+    // TODO: later add behavior on click on explorer item
+    libraryId: string; // '<props>' | string;
+};
+
+type AttributeExplorerPanelProps = ExplorerPanelProps & {
+    type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
+    // TODO: later add behavior on click on explorer item
+    attributeSource: string; // '<props>' | string;
+};
 
 export type Panel = {
     // panel details
@@ -12,23 +47,8 @@ export type Panel = {
 } & (
     | {
           content:
-              | {
-                    type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
-                    // TODO: later add behavior on click on explorer item
-                    attributeSource: string;
-                    actions: Array<{
-                        what: Panel; // | WorkspaceId
-                        where: 'popup' | 'slider' | 'fullpage';
-                    }>;
-                }
-              | {
-                    type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
-                    libraryId: '<props>' | string;
-                    actions: Array<{
-                        what: Panel; // | WorkspaceId
-                        where: 'popup' | 'slider' | 'fullpage';
-                    }>;
-                }
+              | AttributeExplorerPanelProps
+              | LibraryExplorerPanelProps
               | {
                     type: 'custom';
                     iframeSource: string;

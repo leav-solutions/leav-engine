@@ -8,6 +8,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ExplorerWrapper} from '../shared/ExplorerWrapper';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {DeleteMultipleValuesFunc, ISubmitMultipleResult} from '../../../_types';
+// todo regenerate types
 import {
     RecordFilterCondition,
     RecordFormAttributeLinkAttributeFragment,

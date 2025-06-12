@@ -184,6 +184,7 @@ describe('Explorer', () => {
     const mockRecords = [
         {
             id: '613982168',
+            active: true,
             whoAmI: {
                 id: '613982168',
                 label: 'Halloween 2025',
@@ -199,6 +200,7 @@ describe('Explorer', () => {
                 preview: null
             },
             permissions: {
+                create_record: true,
                 delete_record: true
             },
             properties: [
@@ -316,6 +318,7 @@ describe('Explorer', () => {
         },
         {
             id: '612694174',
+            active: true,
             whoAmI: {
                 id: '612694174',
                 label: 'Foire aux vins 2024 - semaine 1',
@@ -331,6 +334,7 @@ describe('Explorer', () => {
                 preview: null
             },
             permissions: {
+                create_record: true,
                 delete_record: true
             },
             properties: [
@@ -1180,7 +1184,7 @@ describe('Explorer', () => {
     });
 
     test('Should be able to deactivate a record with default actions', async () => {
-        const mockDeactivateMutation = jest.fn().mockReturnValue({
+        const mockDeactivateMutation = jest.fn().mockResolvedValue({
             data: {
                 deactivateRecords: [
                     {
@@ -1217,6 +1221,50 @@ describe('Explorer', () => {
                 itemId: mockRecords[1].id
             })
         );
+    });
+    test('Should be able to activate a record with default actions', async () => {
+        spyUseExplorerLibraryDataQuery.mockReturnValue({
+            ...mockExplorerLibraryDataQueryResult,
+            data: {
+                records: {
+                    totalCount: mockRecords.length,
+                    list: mockRecords.map(record => ({...record, active: false}))
+                }
+            }
+        });
+
+        const mockActivateMutation = jest.fn().mockResolvedValue({
+            data: {
+                activateRecords: [
+                    {
+                        id: 42,
+                        whoAmI: mockRecord
+                    }
+                ]
+            }
+        });
+
+        jest.spyOn(gqlTypes, 'useActivateRecordsMutation').mockImplementation(() => [
+            mockActivateMutation,
+            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+        ]);
+
+        const onRemove = jest.fn();
+
+        render(
+            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />
+            </Explorer.EditSettingsContextProvider>
+        );
+
+        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.activate-item'}));
+
+        expect(screen.getByText('records_activation.confirm_one')).toBeVisible();
+        await user.click(screen.getByText('global.submit'));
+
+        expect(mockActivateMutation).toHaveBeenCalled();
+        expect(onRemove).not.toHaveBeenCalled();
     });
 
     test('Should be able to delete a linked record with default actions', async () => {
@@ -1327,11 +1375,12 @@ describe('Explorer', () => {
 
     describe('Item actions', () => {
         test('Should display the list of records with custom actions', async () => {
-            const customAction: IItemAction = {
+            const customAction = {
                 icon: <Fa500Px />,
                 label: 'Custom action',
                 callback: jest.fn()
-            };
+            } satisfies IItemAction;
+
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} itemActions={[customAction]} />
@@ -1345,7 +1394,7 @@ describe('Explorer', () => {
         });
 
         test('Should display the list of records with a lot of custom actions', async () => {
-            const customActions: IItemAction[] = [
+            const customActions = [
                 {
                     label: 'Test 1',
                     icon: <FaBeer />,
@@ -1366,7 +1415,8 @@ describe('Explorer', () => {
                     icon: <FaJs />,
                     callback: jest.fn()
                 }
-            ];
+            ] satisfies IItemAction[];
+
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} itemActions={customActions} />
@@ -2661,6 +2711,53 @@ describe('Explorer', () => {
             expect(within(secondRecordRow).getByRole('button', {name: 'explorer.deactivate-item'})).not.toBeEnabled();
         });
 
+        test('Should disable activate action on record without create_record Permission', async () => {
+            const mockExplorerLibraryDataQueryWithPermissionsResult: Mockify<
+                typeof gqlTypes.useExplorerLibraryDataQuery
+            > = {
+                loading: false,
+                called: true,
+                refetch: jest.fn(),
+                data: {
+                    records: {
+                        totalCount: mockRecords.length,
+                        list: [
+                            {...mockRecords[0], active: false},
+                            {
+                                ...mockRecords[1],
+                                active: false,
+                                permissions: {create_record: false}
+                            }
+                        ]
+                    }
+                }
+            };
+            jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
+                () => mockExplorerLibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerLibraryDataQueryResult
+            );
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        enableConfigureView
+                        showFiltersAndSorts
+                        entrypoint={libraryEntrypoint}
+                        defaultPrimaryActions={[]}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.getByRole('table')).toBeVisible();
+            expect(screen.getAllByRole('row')).toHaveLength(mockRecords.length); // 2 records
+            const [record1, record2] = mockRecords;
+            expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
+            expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
+
+            const [firstRecordRow, secondRecordRow] = screen.getAllByRole('row');
+            expect(within(firstRecordRow).getByRole('button', {name: 'explorer.activate-item'})).toBeEnabled();
+            expect(within(secondRecordRow).getByRole('button', {name: 'explorer.activate-item'})).not.toBeEnabled();
+        });
+
         test('Should disable delete link action on record without edit_value Permission on Link Attribute', async () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -2966,6 +3063,24 @@ describe('Explorer', () => {
             );
 
             expect(screen.queryByRole('button', {name: /My view/})).not.toBeInTheDocument();
+        });
+
+        test('Should load a specific view', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        enableConfigureView
+                        showFiltersAndSorts
+                        entrypoint={libraryEntrypoint}
+                        defaultPrimaryActions={[]}
+                        defaultViewSettings={{
+                            viewId: '43'
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(screen.queryByRole('button', {name: /Second view/})).toBeInTheDocument();
         });
     });
 });

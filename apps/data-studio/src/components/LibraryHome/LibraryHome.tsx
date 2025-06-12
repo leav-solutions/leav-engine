@@ -152,7 +152,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 showSearch
                 enableConfigureView
                 showFiltersAndSorts
-                defaultActionsForItem={['edit', 'remove']}
+                defaultActionsForItem={['edit', 'remove', 'activate']}
                 defaultPrimaryActions={['create']}
                 defaultMassActions={['deactivate']}
                 itemActions={

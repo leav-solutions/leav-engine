@@ -7,17 +7,18 @@ import {
     type CallbackFunction,
     type Callbacks,
     type CallCbFunction,
-    IEncodedMessage,
+    type IEncodedMessage,
     type IUseIFrameMessengerOptions,
     type Message,
     type MessageDispatcher,
-    MessageHandler,
+    type MessageHandler,
     type ModalConfirmMessage,
     type ModalFormMessage,
+    type NavigateToPanelMessage,
     type NotificationMessage,
     packetId,
     type SidePanelFormMessage,
-    SimpleMessage
+    type SimpleMessage
 } from './types';
 
 export const encodeMessage = (message: Message): string =>
@@ -83,6 +84,7 @@ export const initClientHandlers: (
                     callCb,
                     message.overrides
                 ) as SidePanelFormMessage['data'],
+                message.id,
                 dispatch,
                 callCb
             );
@@ -150,6 +152,9 @@ export const initClientHandlers: (
             // TODO How to know if handler can be removed from callbacksList ?
             getCallback(message.path, callbacksList)?.(...(message.data as never[]));
             break;
+        case 'navigate-to-panel':
+            options?.handlers?.onNavigateToPanel?.(message.data);
+            break;
         default:
             break;
     }
@@ -176,7 +181,9 @@ const storeCallbacks = (
 
 export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, dispatch?: MessageDispatcher) => ({
     showSidePanelForm: (data: SidePanelFormMessage['data']) => {
-        dispatch?.({type: 'sidepanel-form', data, id: Date.now().toString()});
+        const id = Date.now().toString();
+        const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
+        dispatch?.({type: 'sidepanel-form', data: nextData as SidePanelFormMessage['data'], id, overrides});
     },
     showModalConfirm: (data: ModalConfirmMessage['data']) => {
         const id = Date.now().toString();
@@ -201,5 +208,8 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
     messageToParent: (data: SimpleMessage['data']) => {
         const id = Date.now().toString();
         dispatch?.({type: 'message', data, id});
+    },
+    navigateToPanel: (data: NavigateToPanelMessage['data']) => {
+        dispatch?.({type: 'navigate-to-panel', data});
     }
 });

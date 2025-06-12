@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {decodeMessage, encodeMessage, getExposedMethods} from './messageHandlers';
-import {Message} from './types';
+import {Message, type NavigateToPanelMessage} from './types';
 
 describe('MessageHandlers', () => {
     describe('getExposedMethods', () => {
@@ -14,13 +14,39 @@ describe('MessageHandlers', () => {
             dispatchMock.mockClear();
         });
 
-        it('Should expose method showSidePanelForm which dispatch to parent', async () => {
-            const data: any = {someField: 'someValue'};
+        it('Should provide 7 methods', async () => {
+            const providedMethods = getExposedMethods({current: null}, jest.fn());
 
-            const {showSidePanelForm} = getExposedMethods({current: null}, dispatchMock);
+            expect(providedMethods).toEqual({
+                showSidePanelForm: expect.any(Function),
+                showModalConfirm: expect.any(Function),
+                showModalForm: expect.any(Function),
+                showAlert: expect.any(Function),
+                showNotification: expect.any(Function),
+                messageToParent: expect.any(Function),
+                navigateToPanel: expect.any(Function)
+            });
+        });
+
+        it('Should expose method showSidePanelForm which dispatch to parent', async () => {
+            const data: any = {someField: 'someValue', someCallback: jest.fn()};
+            const callbacksStore = {current: {}};
+
+            const {showSidePanelForm} = getExposedMethods(callbacksStore, dispatchMock);
             showSidePanelForm(data);
 
-            expect(dispatchMock).toHaveBeenCalledWith({type: 'sidepanel-form', data, id: String(fakeTime)});
+            expect(dispatchMock).toHaveBeenCalledWith({
+                type: 'sidepanel-form',
+                data,
+                id: String(fakeTime),
+                overrides: ['someCallback']
+            });
+
+            expect(callbacksStore.current).toEqual({
+                [String(fakeTime)]: {
+                    someCallback: data.someCallback
+                }
+            });
         });
 
         it('Should expose method showModalConfirm which dispatch to parent and store callback', async () => {
@@ -110,6 +136,15 @@ describe('MessageHandlers', () => {
             messageToParent(data);
 
             expect(dispatchMock).toHaveBeenCalledWith({type: 'message', data, id: String(fakeTime)});
+        });
+
+        it('should expose method navigateToPanel which dispatch to the parent', async () => {
+            const data: NavigateToPanelMessage['data'] = {panelId: 'panelId'};
+
+            const {navigateToPanel} = getExposedMethods({current: null}, dispatchMock);
+            navigateToPanel(data);
+
+            expect(dispatchMock).toHaveBeenCalledWith({type: 'navigate-to-panel', data});
         });
     });
 

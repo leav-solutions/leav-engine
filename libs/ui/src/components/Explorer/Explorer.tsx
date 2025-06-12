@@ -8,12 +8,12 @@ import styled from 'styled-components';
 import {Loading} from '_ui/components/Loading';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {DefaultViewSettings, Entrypoint, IItemAction, IMassActions, IPrimaryAction} from './_types';
+import {DefaultViewSettings, Entrypoint, IMassActions, IPrimaryAction, IItemData, IItemAction} from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
 import {ExplorerTitle} from './ExplorerTitle';
 import {ExplorerToolbar} from './ExplorerToolbar';
-import {useRemoveItemAction} from './actions-item/useRemoveItemAction';
+import {useEditStatusItemAction} from './actions-item/useEditStatusItemAction';
 import {useEditItemAction} from './actions-item/useEditItemAction';
 import {usePrimaryActionsButton} from './actions-primary/usePrimaryActions';
 import {useCreatePrimaryAction} from './actions-primary/useCreatePrimaryAction';
@@ -66,7 +66,7 @@ const ExplorerEmptyDataStyled = styled.div`
     justify-content: center;
 `;
 
-interface IExplorerProps {
+export interface IExplorerProps {
     entrypoint: Entrypoint;
     noPagination?: true;
     itemActions?: IItemAction[];
@@ -76,7 +76,7 @@ interface IExplorerProps {
     title?: string;
     selectionMode?: 'multiple' | 'simple';
     emptyPlaceholder?: ReactNode;
-    defaultActionsForItem?: Array<'edit' | 'replaceLink' | 'remove'>;
+    defaultActionsForItem?: Array<'edit' | 'replaceLink' | 'remove' | 'activate'>;
     defaultPrimaryActions?: Array<'create'>;
     defaultMassActions?: Array<'deactivate'>;
     defaultViewSettings?: DefaultViewSettings;
@@ -142,7 +142,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             hidePrimaryActions = false,
             hideTableHeader = false,
             ignoreViewByDefault = false,
-            defaultActionsForItem = ['edit', 'replaceLink', 'remove'],
+            defaultActionsForItem = ['edit', 'replaceLink', 'remove', 'activate'],
             defaultPrimaryActions = ['create'],
             defaultMassActions = ['deactivate'],
             defaultCallbacks,
@@ -182,8 +182,10 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
         const isLink = entrypoint.type === 'link';
 
-        const {removeItemAction} = useRemoveItemAction({
-            isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('remove'),
+        const {editStatusItemAction} = useEditStatusItemAction({
+            isEnabled:
+                isNotEmpty(defaultActionsForItem) &&
+                (defaultActionsForItem.includes('remove') || defaultActionsForItem.includes('activate')),
             onRemove: defaultCallbacks?.item?.remove,
             canDeleteLinkValues: canEditLinkAttributeValues,
             store: {view, dispatch},
@@ -334,7 +336,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                       }
                                     : undefined
                             }
-                            itemActions={[editItemAction, replaceItemAction, removeItemAction, ...itemActions]
+                            itemActions={[editItemAction, replaceItemAction, editStatusItemAction, ...itemActions]
                                 .filter(Boolean)
                                 .map(action => ({
                                     ...action,
