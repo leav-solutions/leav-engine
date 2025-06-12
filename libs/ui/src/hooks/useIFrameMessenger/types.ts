@@ -5,6 +5,7 @@ import {type KitNotification, type KitAlert} from 'aristid-ds';
 import {type IKitConfirmDialog} from 'aristid-ds/dist/Kit/Feedback/Modal/types';
 import {type RefObject, type ComponentProps, type Key, type JSXElementConstructor} from 'react';
 import {EditRecordModal} from '_ui/components';
+import {ToastedAlertProps} from 'aristid-ds/dist/Kit/Feedback/Alert/types';
 
 export const packetId = '__fromIframeMessenger';
 
@@ -44,7 +45,7 @@ export type ModalFormMessage = IMessageBase & {
 export type AlertMessage = IMessageBase & {
     type: 'alert';
     id: string;
-    data: ComponentPropsWithKey<typeof KitAlert>;
+    data: ToastedAlertProps;
     overrides?: string[];
 };
 export type NotificationMessage = IMessageBase & {
