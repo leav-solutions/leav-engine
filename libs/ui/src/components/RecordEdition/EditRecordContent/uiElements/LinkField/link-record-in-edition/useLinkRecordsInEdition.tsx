@@ -9,10 +9,11 @@ import {ExplorerWrapper} from '../shared/ExplorerWrapper';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {DeleteMultipleValuesFunc, ISubmitMultipleResult} from '../../../_types';
 import {
+    RecordFilterCondition,
     RecordFormAttributeLinkAttributeFragment,
     useDeleteValueMutation,
     useGetLinksWithDataQuery,
-    useGetRecordsFromLibraryQuery
+    useGetRecordsFromLibraryLazyQuery
 } from '_ui/_gqlTypes';
 
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
@@ -72,7 +73,7 @@ export const useLinkRecordsInEdition = ({
     const [isExplorerAddButtonClicked, setIsExplorerAddButtonClicked] = useState(false);
     const [explorerActions, setExplorerActions] = useState<IExplorerRef | null>(null);
     const [linkedIds, setLinkIds] = useState([]);
-    const [selectOptions, setSelectOptions] = useState(null);
+    const [selectOptions, setSelectOptions] = useState([]);
 
     const {
         handleDeleteAllValues,
@@ -86,6 +87,54 @@ export const useLinkRecordsInEdition = ({
         setBackendValues,
         onDeleteMultipleValues
     });
+
+    // Query to get all records from the linked library
+    // Network-only is useful to avoid caching, we have a side effect otherwise
+    // When the record is created, if we call getRecordsFromLibrary(), the previous records are returned
+    const [getRecordsFromLibrary, {data: libraryItems, loading: libraryLoading}] = useGetRecordsFromLibraryLazyQuery({
+        fetchPolicy: 'network-only'
+    });
+
+    // Function to refetch data with current parameters
+    const libraryRefetch = (customVariables = {}) =>
+        getRecordsFromLibrary({
+            variables: {
+                libraryId: attribute.linked_library.id,
+                attributeIds: ['label'],
+                pagination: {limit: 10, offset: 0},
+                ...customVariables
+            }
+        });
+
+    useEffect(() => {
+        // Load library record data when the component is mounted
+        libraryRefetch();
+    }, []);
+
+    // Update options for LinkSelect when libraryItems update
+    useEffect(() => {
+        if (libraryItems?.records?.list) {
+            setSelectOptions(
+                libraryItems.records.list.map(
+                    record =>
+                        ({
+                            value: record.id,
+                            label: record.whoAmI.label ?? record.whoAmI.id,
+                            idCard: {
+                                description: record.whoAmI.label ?? record.whoAmI.id,
+                                avatarProps: {
+                                    size: 'small',
+                                    shape: 'square',
+                                    imageFit: 'contain',
+                                    src: record.whoAmI.preview?.small,
+                                    label: record.whoAmI.label ?? record.whoAmI.id
+                                }
+                            }
+                        }) satisfies IKitOption
+                )
+            );
+        }
+    }, [libraryItems]);
 
     useEffect(() => {
         if (isHookUsed && backendValues.length === 0 && attribute.required) {
@@ -110,7 +159,15 @@ export const useLinkRecordsInEdition = ({
 
     useEffect(() => {
         // Extract all linkIds as an array of string
-        setLinkIds(libraryLinkedData?.records.list[0].property.map((linkData: any) => linkData.payload?.id) || []);
+        if (libraryLinkedData?.records?.list?.length > 0 && libraryLinkedData.records.list[0]?.property) {
+            setLinkIds(
+                libraryLinkedData.records.list[0].property
+                    .filter((linkData: any) => linkData?.payload?.id)
+                    .map((linkData: any) => linkData.payload.id)
+            );
+        } else {
+            setLinkIds([]);
+        }
     }, [libraryLinkedData]);
 
     useEffect(() => {
@@ -122,40 +179,6 @@ export const useLinkRecordsInEdition = ({
             });
         }
     }, [backendValues]);
-
-    const {
-        data: libraryData,
-        loading: libraryLoading,
-        refetch: libraryRefetch
-    } = useGetRecordsFromLibraryQuery({
-        variables: {
-            libraryId: attribute.linked_library.id,
-            attributeIds: [],
-            pagination: {limit: 10, offset: 0}
-        }
-    });
-
-    useEffect(() => {
-        setSelectOptions(
-            (libraryData?.records?.list || []).map(
-                record =>
-                    ({
-                        value: record.id,
-                        label: record.whoAmI.label ?? record.whoAmI.id,
-                        idCard: {
-                            description: record.whoAmI.label ?? record.whoAmI.id,
-                            avatarProps: {
-                                size: 'small',
-                                shape: 'square',
-                                imageFit: 'contain',
-                                src: record.whoAmI.preview?.small,
-                                label: record.whoAmI.label ?? record.whoAmI.id
-                            }
-                        }
-                    }) satisfies IKitOption
-            )
-        );
-    }, [libraryData]);
 
     const _handleExplorerRef = (ref: IExplorerRef) => {
         if (_shouldUpdateExplorerActions(ref, explorerActions)) {
@@ -175,27 +198,42 @@ export const useLinkRecordsInEdition = ({
 
     const _onBlurLinkSelect = async (itemsToLink: Set<string>, itemsToDelete: Set<string>) => {
         const promises = [];
-        promises.push(linkItemRequest(Array.from(itemsToLink)));
-        promises.push(deleteLinkItemRequest(Array.from(itemsToDelete)));
 
-        await Promise.all(promises);
+        // Only add non-empty requests to promises array
+        if (itemsToLink.size > 0) {
+            promises.push(_linkItem(Array.from(itemsToLink)));
+        }
 
-        // Refresh dropdown list elements
-        await refetchLibraryLinkedData();
-        await libraryRefetch();
+        if (itemsToDelete.size > 0) {
+            promises.push(_removeLinkItem(Array.from(itemsToDelete)));
+        }
+
+        if (promises.length > 0) {
+            await Promise.all(promises);
+
+            // Refresh dropdown list elements
+            await refetchLibraryLinkedData();
+            await libraryRefetch();
+        }
         setIsExplorerAddButtonClicked(false);
     };
 
     const {saveValues} = useSaveValueBatchMutation();
 
-    const linkItemRequest = async (itemsToLink: string[]) => {
+    // Send mutation to add a link to libraryId
+    const _linkItem = async (itemsToLink: string[]) => {
+        if (!itemsToLink || itemsToLink.length === 0) {
+            return;
+        }
+
         const values = itemsToLink.map(item => ({
             attribute: attribute.id,
             idValue: null,
             value: item
         }));
+
         // Send mutation to add a link to libraryId
-        await saveValues(
+        return saveValues(
             {
                 id: recordId,
                 library: {
@@ -206,15 +244,32 @@ export const useLinkRecordsInEdition = ({
         );
     };
 
-    const deleteLinkItemRequest = async (itemsId: string[]) => {
-        if (!libraryLinkedData) {
+    // After ths 500ms debounce we search records that match the text entered in the search bar
+    const _onLinkSelectSearch = async (text: string) => {
+        await libraryRefetch({
+            filters: [
+                {
+                    condition: RecordFilterCondition.CONTAINS,
+                    field: 'label',
+                    value: text
+                }
+            ]
+        });
+    };
+
+    const _removeLinkItem = async (itemsId: string[]) => {
+        if (!libraryLinkedData || itemsId.length === 0) {
             return;
         }
 
-        return itemsId.map(async itemId => {
+        const deletePromises = itemsId.map(async itemId => {
             const link = libraryLinkedData?.records?.list[0].property.find(
                 (linkData: any) => linkData.payload?.id === itemId
             );
+
+            if (!link) {
+                return;
+            }
 
             return deleteRecordLinkMutation({
                 variables: {
@@ -222,12 +277,13 @@ export const useLinkRecordsInEdition = ({
                     attribute: attribute.id,
                     recordId,
                     value: {
-                        payload: itemId,
                         id_value: link.id_value
                     }
                 }
             });
         });
+
+        return Promise.all(deletePromises);
     };
 
     const _onCreateLinkSelect = async () => {
@@ -243,20 +299,31 @@ export const useLinkRecordsInEdition = ({
         recordIdCreated: string;
         saveValuesResultOnLink?: ISubmitMultipleResult;
     }) => {
+        // Call the original handler
         handleExplorerCreateValue({
             recordIdCreated,
             saveValuesResultOnLink
         });
-        await refetchLibraryLinkedData();
+
         await libraryRefetch();
+        await refetchLibraryLinkedData();
     };
 
     const _onDeselect = (itemId: string) => {
-        // find id_value in backendValues
-        const {id_value} = backendValues.find(bv => bv.linkValue?.id === itemId);
+        if (!libraryLinkedData?.records?.list?.length || !libraryLinkedData.records.list[0]?.property) {
+            return null;
+        }
+
+        const link = libraryLinkedData.records.list[0].property.find(
+            (linkData: any) => linkData.payload?.id === itemId
+        );
+
+        if (!link) {
+            return null;
+        }
 
         return {
-            id_value,
+            id_value: link.id_value,
             libraryId,
             attribute,
             recordId
@@ -277,8 +344,6 @@ export const useLinkRecordsInEdition = ({
         LinkRecordsInEditionExplorer:
             isHookUsed &&
             recordId &&
-            linkedIds &&
-            !libraryLoading &&
             (tagDisplayMode ? (
                 <LinkSelect tagDisplay={true} options={selectOptions} defaultValues={linkedIds}></LinkSelect>
             ) : (
@@ -330,11 +395,10 @@ export const useLinkRecordsInEdition = ({
                             tagDisplay={false}
                             options={selectOptions}
                             defaultValues={linkedIds}
-                            onUpdateSelection={() => null}
-                            onCreate={_onCreateLinkSelect}
+                            onClickCreateButton={_onCreateLinkSelect}
                             onBlur={_onBlurLinkSelect}
                             onParentDeselect={_onDeselect}
-                            onAdvanceSearch={() => null}
+                            onSearch={_onLinkSelectSearch}
                         />
                     )}
                 </>

@@ -3,10 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faMagnifyingGlass, faPlus} from '@fortawesome/free-solid-svg-icons';
-import {KitButton, KitDivider, KitSelect, KitSpace} from 'aristid-ds';
+import {KitButton, KitDivider, KitLoader, KitSelect, KitSpace} from 'aristid-ds';
 import styled from 'styled-components';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useDebouncedValue} from '_ui/hooks/useDebouncedValue';
 import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 
 interface ILinkSelectProps {
@@ -15,10 +16,11 @@ interface ILinkSelectProps {
     defaultValues: string[];
     hideAdvancedSearch?: boolean;
     onUpdateSelection?: (value: string[]) => void;
-    onCreate?: (value: string) => void;
+    onClickCreateButton?: (value: string) => void;
     onBlur?: (itemsToLink: Set<string>, itemsToDelete: Set<string>) => void;
     onParentDeselect?: (itemId: string) => any;
     onAdvanceSearch?: () => void;
+    onSearch?: (searchValue: string) => Promise<void>;
 }
 
 const StyledDivider = styled(KitDivider)`
@@ -44,19 +46,21 @@ function LinkSelect({
     defaultValues,
     hideAdvancedSearch = false,
     onUpdateSelection = () => null,
-    onCreate = () => null,
+    onClickCreateButton = () => null,
     onBlur = (itemsToLink: Set<string>, itemsToDelete: Set<string>) => null,
-    onAdvanceSearch = () => null
+    onAdvanceSearch = () => null,
+    onSearch = () => null
 }: ILinkSelectProps): JSX.Element {
     const {t} = useSharedTranslation();
 
     const [itemsToLink, setItemToLink] = useState(new Set<string>());
     const [itemsToDelete, setItemToDelete] = useState(new Set<string>());
 
-    const dropdownRef = useRef(null);
     const [isOpen, setIsOpen] = useState(false);
     const [currentSearch, setCurrentSearch] = useState('');
+    const debouncedSearch = useDebouncedValue(currentSearch, 500);
     const [emptyResults, setEmptyResults] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (!tagDisplay) {
@@ -64,19 +68,33 @@ function LinkSelect({
         }
     }, [tagDisplay]);
 
+    useEffect(() => {
+        // Call API search when debounced search value changes
+        (async () => {
+            await onSearch(debouncedSearch);
+            setIsLoading(false);
+        })();
+    }, [debouncedSearch]);
+
+    useEffect(() => {
+        const optionsFiltered = options.filter(option =>
+            option.label?.toLowerCase().includes(debouncedSearch?.toLowerCase())
+        );
+        const isEmptyResults = optionsFiltered.length === 0 && debouncedSearch !== '';
+        setEmptyResults(isEmptyResults);
+    }, [options, debouncedSearch]);
+
     const _handleChange = (selection: string[]) => {
         onUpdateSelection(selection);
     };
 
     const _handleSearch = (value: string) => {
+        setIsLoading(true);
         setCurrentSearch(value);
-        const optionsFiltered = options.filter(option => option.label.toLowerCase().includes(value.toLowerCase()));
-        const isEmptyResults = optionsFiltered.length === 0 && value !== '';
-        setEmptyResults(isEmptyResults);
     };
 
-    const onCreateClicked = () => {
-        onCreate(currentSearch);
+    const _onClickCreateButton = () => {
+        onClickCreateButton(debouncedSearch);
     };
 
     const _onBlur = () => {
@@ -103,34 +121,37 @@ function LinkSelect({
     };
 
     const dropdownButtons = (menu: React.ReactNode) => (
-        <div className="dropdown-custom" ref={dropdownRef}>
+        <div className="dropdown-custom">
             {menu}
             {(emptyResults || !hideAdvancedSearch) && (
                 <>
                     <StyledDivider />
                     <StyledContainer>
-                        <KitSpace align="center" direction="vertical" size="xs">
-                            {emptyResults && (
-                                <KitButton
-                                    type="secondary"
-                                    icon={<FontAwesomeIcon icon={faPlus} />}
-                                    onClick={onCreateClicked}
-                                    // @ts-ignore: required to avoid the click propagation that will automatically close the dropdown modal
-                                    onMouseDown={e => e.preventDefault()}
-                                >
-                                    {`${t('record_edition.new_record')} "${currentSearch}"`}
-                                </KitButton>
-                            )}
-                            {!hideAdvancedSearch && (
-                                <KitButton
-                                    type="tertiary"
-                                    icon={<FontAwesomeIcon icon={faMagnifyingGlass} />}
-                                    onClick={() => onAdvanceSearch()}
-                                >
-                                    {t('record_edition.advanced_search')}
-                                </KitButton>
-                            )}
-                        </KitSpace>
+                        {isLoading && <KitLoader />}
+                        {!isLoading && (
+                            <KitSpace align="center" direction="vertical" size="xs">
+                                {emptyResults && (
+                                    <KitButton
+                                        type="secondary"
+                                        icon={<FontAwesomeIcon icon={faPlus} />}
+                                        onClick={_onClickCreateButton}
+                                        // @ts-ignore: required to avoid the click propagation that will automatically close the dropdown modal
+                                        onMouseDown={e => e.preventDefault()}
+                                    >
+                                        {`${t('record_edition.new_record')} "${debouncedSearch}"`}
+                                    </KitButton>
+                                )}
+                                {!hideAdvancedSearch && (
+                                    <KitButton
+                                        type="tertiary"
+                                        icon={<FontAwesomeIcon icon={faMagnifyingGlass} />}
+                                        onClick={() => onAdvanceSearch()}
+                                    >
+                                        {t('record_edition.advanced_search')}
+                                    </KitButton>
+                                )}
+                            </KitSpace>
+                        )}
                     </StyledContainer>
                 </>
             )}
@@ -146,7 +167,7 @@ function LinkSelect({
             defaultValue={defaultValues}
             options={options}
             optionFilterProp="label"
-            filterOption={(input, option) => option?.value?.toString().toLowerCase().includes(input.toLowerCase())}
+            filterOption={(input, option) => option?.rawLabel?.toLowerCase().includes(input?.toLowerCase())}
             showSearch
             onChange={value => _handleChange(value)}
             onSearch={value => _handleSearch(value)}
@@ -156,7 +177,6 @@ function LinkSelect({
             onSelect={_onSelect}
             dropdownRender={dropdownButtons}
             autoFocus={!tagDisplay}
-            suffixIcon={tagDisplay ? '' : <div />}
             allowClear={tagDisplay}
         />
     );
