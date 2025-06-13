@@ -35,6 +35,7 @@ import {ICreateRecordParams, IRecordsQueryVariables} from './_types';
 import {IFindRecordParams} from 'domain/record/_types';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import { LibraryBehavior } from '../../../_types/library';
+import { cli } from 'winston';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -94,10 +95,17 @@ export default function ({
                         },
                         ctx
                     });
+                    console.log('previous rec :>> ', JSON.stringify(rec, null, 2));
+                    console.log('joinValueRecord :>> ', JSON.stringify(joinValueRecord, null, 2));
+                    const firstLinkId = rec.id_value; // first link between campaign to structure_item
                     // TODO get id_value of linked (which ?) for delete
                     // Here, suppose mandatory attribute in libProps is simple link !
-                    return joinValueRecord[0];
+                    return {
+                        ...joinValueRecord[0],
+                        id_value: firstLinkId // keep the id_value of the link, for deletion
+                    };
                 }
+
                 return rec;
             }));
         } catch (error) {
