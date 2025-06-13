@@ -26,10 +26,19 @@ export const useSidePanelForm = () => {
     };
 
     const openSidePanelForm: IUseIFrameMessengerOptions['handlers']['onSidePanelForm'] = data => {
-        setEditRecordPageInSidePanelProps(({key}) => ({
-            ...data,
-            key: key === closedSidePanel.key ? 0 : key + 1
-        }));
+        setEditRecordPageInSidePanelProps(prevEditRecordPageInSidePanelProps => {
+            if (prevEditRecordPageInSidePanelProps.key !== closedSidePanel.key) {
+                prevEditRecordPageInSidePanelProps.onClose?.();
+            }
+
+            return {
+                ...data,
+                key:
+                    prevEditRecordPageInSidePanelProps.key === closedSidePanel.key
+                        ? 0
+                        : prevEditRecordPageInSidePanelProps.key + 1
+            };
+        });
     };
 
     return {
