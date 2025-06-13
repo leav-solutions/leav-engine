@@ -1,0 +1,25 @@
+query getLinksWithData(
+    $attributeIds: [ID!]!,
+    $parentLibraryId: ID!,
+    $parentRecordId: String,
+    $linkAttributeId: ID!,
+) {
+    records(library: $parentLibraryId, filters: [{
+        field: "id",
+        condition: EQUAL,
+        value: $parentRecordId
+    }]) {
+        list {
+            id
+            whoAmI {
+                id
+                library {
+                    id
+                }
+            }
+            property(attribute: $linkAttributeId) {
+                ...LinkProperty
+            }
+        }
+    }
+}
