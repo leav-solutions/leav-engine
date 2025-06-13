@@ -1081,6 +1081,7 @@ export default function ({
                 throw new PermissionError(RecordPermissionsActions.DELETE_RECORD);
             }
 
+            // why because values are directly in record data ?
             const simpleLinkedRecords = await _getSimpleLinkedRecords(library, id, ctx);
 
             // delete simple linked values

@@ -859,7 +859,19 @@ const valueDomain = function ({
                 async (promPrevRes: Promise<ISaveBatchValueResult>, value: IValue): Promise<ISaveBatchValueResult> => {
                     const prevRes = await promPrevRes;
                     try {
+                        const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
+
                         if (value.payload === null && !keepEmpty) {
+
+                            const joinLibId = attributeProps.linked_library; // structure_item
+                            const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
+    
+                            if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
+                                const joinAttributeProps = await attributeDomain.getAttributeProperties({id: joinLibProps.mandatoryAttribute, ctx});
+                                if (joinAttributeProps.type === AttributeTypes.SIMPLE_LINK || (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)) { // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
+                                    // delete join record
+                                }
+                            }
                             const deletedValues = await _executeDeleteValue({
                                 library,
                                 value,
@@ -873,7 +885,6 @@ const valueDomain = function ({
                             return prevRes;
                         }
 
-                        const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
 
                         // here check attributeProps.linked_library is join library
 
