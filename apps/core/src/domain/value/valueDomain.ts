@@ -166,7 +166,7 @@ const valueDomain = function ({
     'core.domain.actionsList': actionsListDomain,
     'core.domain.attribute': attributeDomain,
     // 'core.domain.library': libraryDomain,
-    // 'core.domain.record': recordDomain,
+    // 'core.domain.record': recordDomain, // not possible, cycling deps
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.eventsManager': eventsManager,
@@ -909,6 +909,19 @@ const valueDomain = function ({
                                     recordData: joinRecordData,
                                     ctx
                                 });
+                                await eventsManager.sendDatabaseEvent(
+                                    {
+                                        action: EventAction.RECORD_SAVE,
+                                        topic: {
+                                            record: {
+                                                id: joinRec.id,
+                                                libraryId: joinRec.library
+                                            }
+                                        },
+                                        after: joinRec
+                                    },
+                                    ctx
+                                );
                                 console.log('Created join record :>> ', JSON.stringify(joinRec, null, 2));
                                 const joinVal = await this.saveValue({
                                     library: joinLibId,
