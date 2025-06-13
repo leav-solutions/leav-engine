@@ -420,6 +420,11 @@ export default function (deps: IDeps): ICoreAttributeApp {
                                 return null;
                             }
 
+                            // Here, get lib props, check if join behavior
+                            // then get mandatoryAttribute props, get linkedf library
+                            if (attributeData.linked_library === 'structure_item') {
+                                return libraryDomain.getLibraryProperties('thematic', ctx);
+                            }
                             return libraryDomain.getLibraryProperties(attributeData.linked_library, ctx);
                         },
                         values_list: async (attributeData: IAttribute, a2, ctx) => {

@@ -34,6 +34,7 @@ import {IIndexationManagerApp} from '../indexationManagerApp';
 import {ICreateRecordParams, IRecordsQueryVariables} from './_types';
 import {IFindRecordParams} from 'domain/record/_types';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import { LibraryBehavior } from '../../../_types/library';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -68,7 +69,7 @@ export default function ({
 }: IDeps): ICoreRecordApp {
     const _getPropertyValues = async (parent: IRecord, attributeId: string, ctx: IQueryInfos) => {
         try {
-            return recordDomain.getRecordFieldValue({
+            const record = await recordDomain.getRecordFieldValue({
                 library: parent.library,
                 record: parent,
                 attributeId,
@@ -78,6 +79,27 @@ export default function ({
                 },
                 ctx
             });
+            // change values in case property is link to join library behavior,
+            // replace values with the linked record by join library record
+            return await Promise.all(record.map(async rec => {
+                const libProps = await libraryDomain.getLibraryProperties(rec.payload?.library, ctx);
+                if (libProps.behavior === LibraryBehavior.JOIN) {
+                    const joinValueRecord = await recordDomain.getRecordFieldValue({
+                        library: libProps.id,
+                        record: rec.payload,
+                        attributeId: libProps.mandatoryAttribute,
+                        options: {
+                            version: ctx.version,
+                            forceArray: true
+                        },
+                        ctx
+                    });
+                    // TODO get id_value of linked (which ?) for delete
+                    // Here, suppose mandatory attribute in libProps is simple link !
+                    return joinValueRecord[0];
+                }
+                return rec;
+            }));
         } catch (error) {
             if (error instanceof LeavError) {
                 ctx.errors = [...(ctx.errors ?? []), error];

@@ -14,6 +14,7 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
+import moment from 'moment';
 import * as Config from '_types/config';
 import {IRecord} from '_types/record';
 import PermissionError from '../../errors/PermissionError';
@@ -23,7 +24,7 @@ import {AttributeFormats, AttributeTypes, IAttribute, ValueVersionMode} from '..
 import {Errors, ErrorTypes} from '../../_types/errors';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {IFindValueTree, IStandardValue, IValue, IValuesOptions} from '../../_types/value';
+import {IFindValueTree, ILinkValue, IStandardValue, IValue, IValuesOptions} from '../../_types/value';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
@@ -35,6 +36,11 @@ import prepareValue from './helpers/prepareValue';
 import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
 import {IDeleteValueParams, IRunActionListParams} from './_types';
+import libraryDomain, {ILibraryDomain} from 'domain/library/libraryDomain';
+import {ILibrary, LibraryBehavior} from '../../_types/library';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import { ILibraryRepo } from 'infra/library/libraryRepo';
+import { GetCoreEntityByIdFunc } from 'domain/helpers/getCoreEntityById';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -134,10 +140,13 @@ export interface IValueDomainDeps {
     config: Config.IConfig;
     'core.domain.actionsList': IActionsListDomain;
     'core.domain.attribute': IAttributeDomain;
+    // 'core.domain.library': ILibraryDomain;
+    // 'core.domain.record': IRecordDomain;
     'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.helpers.updateRecordLastModif': UpdateRecordLastModifFunc;
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
@@ -145,6 +154,7 @@ export interface IValueDomainDeps {
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.infra.record': IRecordRepo;
     'core.infra.tree': ITreeRepo;
+    // 'core.infra.library': ILibraryRepo;
     'core.infra.value': IValueRepo;
     'core.utils': IUtils;
     'core.utils.logger': winston.Winston;
@@ -155,10 +165,13 @@ const valueDomain = function ({
     config,
     'core.domain.actionsList': actionsListDomain,
     'core.domain.attribute': attributeDomain,
+    // 'core.domain.library': libraryDomain,
+    // 'core.domain.record': recordDomain,
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.eventsManager': eventsManager,
     'core.domain.helpers.validate': validate,
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif,
     'core.domain.tree.helpers.elementAncestors': elementAncestors,
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
@@ -166,6 +179,7 @@ const valueDomain = function ({
     'core.domain.versionProfile': versionProfileDomain,
     'core.infra.record': recordRepo,
     'core.infra.tree': treeRepo,
+    // 'core.infra.library': libraryRepo,
     'core.infra.value': valueRepo,
     'core.utils': utils,
     'core.utils.logger': logger
@@ -673,6 +687,8 @@ const valueDomain = function ({
             return actionsListRes;
         },
         async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue[]> {
+
+            console.log('saveValue :>> ', JSON.stringify({library, recordId, attribute, value}, null, 2));
             await validate.validateLibrary(library, ctx);
             const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
             await validate.validateLibraryAttribute(library, attribute, ctx);
@@ -718,6 +734,51 @@ const valueDomain = function ({
                     fields
                 );
             }
+
+
+            // use getCoreEntityById
+
+
+            // if (attributeProps.type === AttributeTypes.ADVANCED_LINK) {
+            //     const linkedLibid = attributeProps.linked_library; // structure_item
+            //     const linkedLibProps = await libraryDomain.getLibraryProperties(linkedLibid, ctx);
+            //     if (linkedLibProps.behavior === LibraryBehavior.JOIN && linkedLibProps.mandatoryAttribute) {
+            //         // create SI
+            //         // get
+            //         console.log('Create link with join library', library, linkedLibid);
+            //         const newJoinBackLink: ILinkValue = {
+            //                 attribute: linkedLibProps.mandatoryAttribute, // structure item thematic
+            //                 payload: {
+            //                     id: (value as ILinkValue).payload.id
+            //                     // library: linkedLibid
+
+            //                 }
+            //                 // id_value // needed ?
+            //             };
+            //         const res = await recordDomain.createRecord({
+            //             library: linkedLibid,
+            //             values: [newJoinBackLink],
+            //             verifyRequiredAttributes: true,
+            //             ctx
+            //         });
+
+            //         console.log('res :>> ', JSON.stringify(res, null, 2));
+
+            //         // this.saveValue({
+            //         //     library: linkedLibid,
+            //         //     recordId: linkedLibProps.default_record,
+            //         //     attribute: attributeProps.id,
+            //         //     value: {
+            //         //         ...value,
+            //         //         payload: {
+            //         //             ...value.payload,
+            //         //             library: linkedLibid
+            //         //         }
+            //         //     },
+            //         //     ctx
+            //         // })
+            //     }
+            // }
 
             // Validate value
             const validationErrors = await validateValue({
@@ -785,6 +846,7 @@ const valueDomain = function ({
             keepEmpty = false,
             skipPermission = false
         }): Promise<ISaveBatchValueResult> {
+            console.log('saveValueBatch :>> ', JSON.stringify({library, recordId, values}, null, 2));
             await validate.validateLibrary(library, ctx);
 
             for (const value of values) {
@@ -813,6 +875,44 @@ const valueDomain = function ({
 
                         const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
 
+                        // here check attributeProps.linked_library is join library
+
+                        const joinLibId = attributeProps.linked_library; // structure_item
+                        const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
+   
+                        if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
+                            const joinAttributeProps = await attributeDomain.getAttributeProperties({id: joinLibProps.mandatoryAttribute, ctx});
+                            if (joinAttributeProps.type === AttributeTypes.SIMPLE_LINK || (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)) { // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
+                                // use recoardDomain.createRecord (cyclie dep ?)
+                                const joinRecordData = {
+                                    created_at: moment().unix(),
+                                    created_by: String(ctx.userId),
+                                    modified_at: moment().unix(),
+                                    modified_by: String(ctx.userId),
+                                    active: true,
+                                    // [joinLibProps.mandatoryAttribute]: value.payload // saveValue instead ?
+                                };
+                                console.log('Create join record in join library', joinLibId);
+                                const joinRec = await recordRepo.createRecord({
+                                    libraryId: joinLibId,
+                                    recordData: joinRecordData,
+                                    ctx
+                                });
+                                console.log('Created join record :>> ', JSON.stringify(joinRec, null, 2));
+                                const joinVal = await this.saveValue({
+                                    library: joinLibId,
+                                    recordId: joinRec.id,
+                                    attribute: joinLibProps.mandatoryAttribute,
+                                    value: {
+                                        payload: value.payload // simple link from join record to "thematic"
+                                    },
+                                    ctx
+                                });
+                                console.log('joinVal :>> ', JSON.stringify(joinVal, null, 2));
+
+                                value.payload = joinRec.id;
+                            }
+                        }
                         const valueChecksParams = {
                             attributeProps,
                             library,
@@ -846,6 +946,7 @@ const valueDomain = function ({
                             }
                         }
 
+                        console.log('validateValue :>> ', JSON.stringify({...valueChecksParams, attributeProps}, null, 2));
                         // Validate value
                         const validationErrors = await validateValue({
                             ...{...valueChecksParams, attributeProps},
@@ -872,6 +973,7 @@ const valueDomain = function ({
                             },
                             ctx
                         });
+                        console.log('valuesToSave :>> ', JSON.stringify(valuesToSave, null, 2));
 
                         const saveResult = await valuesToSave.reduce<Promise<IValue[]>>(async (acc, valueToSave) => {
                             const prevAcc = await acc;
@@ -893,6 +995,7 @@ const valueDomain = function ({
 
                         prevRes.values.push(...saveResult);
                     } catch (e) {
+                        console.error('Error while saving value', e);
                         if (
                             !e.type ||
                             (e.type !== ErrorTypes.VALIDATION_ERROR && e.type !== ErrorTypes.PERMISSION_ERROR)
