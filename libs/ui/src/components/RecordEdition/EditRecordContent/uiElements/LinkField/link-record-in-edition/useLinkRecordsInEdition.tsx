@@ -346,7 +346,7 @@ export const useLinkRecordsInEdition = ({
             isHookUsed &&
             recordId &&
             (tagDisplayMode ? (
-                <LinkSelect tagDisplay={true} options={selectOptions} defaultValues={linkedIds}></LinkSelect>
+                <LinkSelect tagDisplay options={selectOptions} defaultValues={linkedIds} />
             ) : (
                 <>
                     <ExplorerWrapper>
