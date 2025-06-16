@@ -31,7 +31,6 @@ export const PanelContent: FunctionComponent = () => {
         const commonFormProps: Partial<ComponentProps<typeof EditRecordPage>> = {
             showRefreshButton: false,
             showHeader: false,
-            showSidebar: false,
             sidebarContainer
         };
         if (currentPanel.content.type === 'creationForm') {
