@@ -1,7 +1,7 @@
 query getLinksWithData(
     $attributeIds: [ID!]!,
     $parentLibraryId: ID!,
-    $parentRecordId: String,
+    $parentRecordId: String!,
     $linkAttributeId: ID!,
 ) {
     records(library: $parentLibraryId, filters: [{
