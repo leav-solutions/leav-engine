@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render} from '_ui/_tests/testUtils';
 import {RedirectToFirstPanelOnHome} from '../RedirectToFirstPanelOnHome';
-import {IApplication, Panel} from '../../types';
+import {IApplication} from '../../types';
 import * as ReactRouter from 'react-router-dom';
 
 jest.mock('react-router-dom', () => ({
