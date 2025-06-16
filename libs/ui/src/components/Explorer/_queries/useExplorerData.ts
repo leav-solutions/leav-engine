@@ -146,8 +146,6 @@ export const useExplorerData = ({
         }
     });
 
-    // check how to get thematic lib here instead of structure_item
-    // if decide to do US in front for get explorer data
     const isLinkAttributeAllowed = attributeData?.attributes?.list?.[0]?.permissions?.access_attribute;
     const {
         data: linkData,

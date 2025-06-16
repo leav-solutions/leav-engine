@@ -739,51 +739,6 @@ const valueDomain = function ({
                 );
             }
 
-
-            // use getCoreEntityById
-
-
-            // if (attributeProps.type === AttributeTypes.ADVANCED_LINK) {
-            //     const linkedLibid = attributeProps.linked_library; // structure_item
-            //     const linkedLibProps = await libraryDomain.getLibraryProperties(linkedLibid, ctx);
-            //     if (linkedLibProps.behavior === LibraryBehavior.JOIN && linkedLibProps.mandatoryAttribute) {
-            //         // create SI
-            //         // get
-            //         console.log('Create link with join library', library, linkedLibid);
-            //         const newJoinBackLink: ILinkValue = {
-            //                 attribute: linkedLibProps.mandatoryAttribute, // structure item thematic
-            //                 payload: {
-            //                     id: (value as ILinkValue).payload.id
-            //                     // library: linkedLibid
-
-            //                 }
-            //                 // id_value // needed ?
-            //             };
-            //         const res = await recordDomain.createRecord({
-            //             library: linkedLibid,
-            //             values: [newJoinBackLink],
-            //             verifyRequiredAttributes: true,
-            //             ctx
-            //         });
-
-            //         console.log('res :>> ', JSON.stringify(res, null, 2));
-
-            //         // this.saveValue({
-            //         //     library: linkedLibid,
-            //         //     recordId: linkedLibProps.default_record,
-            //         //     attribute: attributeProps.id,
-            //         //     value: {
-            //         //         ...value,
-            //         //         payload: {
-            //         //             ...value.payload,
-            //         //             library: linkedLibid
-            //         //         }
-            //         //     },
-            //         //     ctx
-            //         // })
-            //     }
-            // }
-
             // Validate value
             const validationErrors = await validateValue({
                 ...valueChecksParams,
@@ -850,7 +805,6 @@ const valueDomain = function ({
             keepEmpty = false,
             skipPermission = false
         }): Promise<ISaveBatchValueResult> {
-            console.log('saveValueBatch :>> ', JSON.stringify({library, recordId, values}, null, 2));
             await validate.validateLibrary(library, ctx);
 
             for (const value of values) {
@@ -877,6 +831,7 @@ const valueDomain = function ({
 
                             prevRes.values.push(...deletedValues);
 
+                            // TODO move in _executeDeleteValue ?
                             if (attributeProps.linked_library) {
                                 const joinLibId = attributeProps.linked_library; // structure_item
                                 const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
@@ -889,7 +844,7 @@ const valueDomain = function ({
                                             // should we unlink record attributes, or done in deleteRecordHelper ?
 
                                             const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
-                                            console.log('Deleted join record :>> ', JSON.stringify(deleteJoinRecord, null, 2));
+                                            logger.debug(`Deleted join record: ${JSON.stringify(deleteJoinRecord, null, 2)}`);
                                         }));
                                     }
                                 }
@@ -898,9 +853,7 @@ const valueDomain = function ({
                             return prevRes;
                         }
 
-
-                        // here check attributeProps.linked_library is join library
-
+                        // TODO move in _executeSaveValue ?
                         if (attributeProps.linked_library) {
                             const joinLibId = attributeProps.linked_library; // structure_item
                             const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
@@ -913,7 +866,7 @@ const valueDomain = function ({
                                         ctx
                                     });
 
-                                    console.log('Created join record :>> ', JSON.stringify(joinRecord, null, 2));
+                                    logger.debug(`Created join record: ${JSON.stringify(joinRecord, null, 2)}`);
                                     await this.saveValue({
                                         library: joinLibId,
                                         recordId: joinRecord.id,
@@ -961,7 +914,6 @@ const valueDomain = function ({
                             }
                         }
 
-                        console.log('validateValue :>> ', JSON.stringify({...valueChecksParams, attributeProps}, null, 2));
                         // Validate value
                         const validationErrors = await validateValue({
                             ...{...valueChecksParams, attributeProps},
@@ -988,7 +940,6 @@ const valueDomain = function ({
                             },
                             ctx
                         });
-                        console.log('valuesToSave :>> ', JSON.stringify(valuesToSave, null, 2));
 
                         const saveResult = await valuesToSave.reduce<Promise<IValue[]>>(async (acc, valueToSave) => {
                             const prevAcc = await acc;
