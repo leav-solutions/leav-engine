@@ -53,6 +53,8 @@ export default function ({
         }
 
         // why because values are directly in record data ?
+        // to execute delete value action,
+        // but why not for advanced link and tree ?
 
         // const simpleLinkedRecords = await _getSimpleLinkedRecords(library, id, ctx);
 
