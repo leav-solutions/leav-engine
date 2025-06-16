@@ -39,9 +39,9 @@ import {IDeleteValueParams, IRunActionListParams} from './_types';
 import libraryDomain, {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IRecordDomain} from 'domain/record/recordDomain';
-import { ILibraryRepo } from 'infra/library/libraryRepo';
-import { GetCoreEntityByIdFunc } from 'domain/helpers/getCoreEntityById';
-import { DeleteRecordHelper } from 'domain/record/helpers/deleteRecord';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
+import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
+import {DeleteRecordHelper} from 'domain/record/helpers/deleteRecord';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -864,55 +864,33 @@ const valueDomain = function ({
 
                         if (value.payload === null && !keepEmpty) {
 
+                            const deletedValues = await _executeDeleteValue({
+                                library,
+                                value,
+                                recordId,
+                                attribute: value.attribute,
+                                ctx
+                            });
+
+                            prevRes.values.push(...deletedValues);
+
                             if (attributeProps.linked_library) {
                                 const joinLibId = attributeProps.linked_library; // structure_item
                                 const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
-        
+
                                 if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
                                     const joinAttributeProps = await attributeDomain.getAttributeProperties({id: joinLibProps.mandatoryAttribute, ctx});
                                     if (joinAttributeProps.type === AttributeTypes.SIMPLE_LINK || (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)) { // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
-                                        const id_value = value.id_value;
-                                        console.log('DELETE JOIN RECORD', joinLibId, id_value);
 
-                                        const joinRecordValue = await valueRepo.getValueById({
-                                            library,
-                                            recordId,
-                                            attribute: attributeProps,
-                                            valueId: id_value,
-                                            ctx});
-                                        // TODO find record id (structure item id) from core_edge_values_links id_value !
+                                        await Promise.all(deletedValues.map(async deletedValue => {
+                                            // should we unlink record attributes, or done in deleteRecordHelper ?
 
-                                        console.log('joinRecordValue :>> ', JSON.stringify(joinRecordValue, null, 2));
-
-                                        // delete campaign -> structure item link before delete structure item
-                                        const deletedValues = await _executeDeleteValue({
-                                            library,
-                                            value,
-                                            recordId,
-                                            attribute: value.attribute,
-                                            ctx
-                                        });
-                                        console.log('deletedValues :>> ', JSON.stringify(deletedValues, null, 2));
-
-                                        prevRes.values.push(...deletedValues);
-
-                                        // delete join record
-                                        const deleteRecord = await deleteRecordHelper(joinLibId, joinRecordValue.payload.id, ctx);
-                                        console.log('deletedRecord :>> ', JSON.stringify(deleteRecord, null, 2));
+                                            const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
+                                            console.log('deleted join record :>> ', JSON.stringify(deleteJoinRecord, null, 2));
+                                        }));
                                     }
                                 }
-                            } else {
-                                const deletedValues = await _executeDeleteValue({
-                                    library,
-                                    value,
-                                    recordId,
-                                    attribute: value.attribute,
-                                    ctx
-                                });
-
-                                prevRes.values.push(...deletedValues);
                             }
-
 
                             return prevRes;
                         }
@@ -923,7 +901,7 @@ const valueDomain = function ({
                         if (attributeProps.linked_library) {
                             const joinLibId = attributeProps.linked_library; // structure_item
                             const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
-    
+
                             console.log('joinLibId :>> ', joinLibId);
                             console.log('joinLibProps :>> ', JSON.stringify(joinLibProps, null, 2));
                             if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
@@ -935,7 +913,7 @@ const valueDomain = function ({
                                         created_by: String(ctx.userId),
                                         modified_at: moment().unix(),
                                         modified_by: String(ctx.userId),
-                                        active: true,
+                                        active: true
                                         // [joinLibProps.mandatoryAttribute]: value.payload // saveValue instead ?
                                     };
                                     console.log('Create join record in join library', joinLibId);
