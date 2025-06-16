@@ -95,14 +95,12 @@ export default function ({
                         },
                         ctx
                     });
-                    // console.log('previous rec :>> ', JSON.stringify(rec, null, 2));
-                    // console.log('joinValueRecord :>> ', JSON.stringify(joinValueRecord, null, 2));
-                    const firstLinkId = rec.id_value; // first link between campaign to structure_item
-                    // TODO get id_value of linked (which ?) for delete
+                    const linkIdToJointure = rec.id_value; // first link between campaign to structure_item
                     // Here, suppose mandatory attribute in libProps is simple link !
+                    // TODO check with tree attribute type !
                     return {
                         ...joinValueRecord[0],
-                        id_value: firstLinkId // keep the id_value of the link, for deletion
+                        id_value: linkIdToJointure // keep the id_value of the link, for deletion
                     };
                 }
 
