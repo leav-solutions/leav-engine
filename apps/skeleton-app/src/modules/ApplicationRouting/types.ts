@@ -44,12 +44,14 @@ export type Panel = {
                     // TODO: later add behavior on click on explorer item
                     attributeSource: string;
                     explorerProps?: LinkExplorerProps;
+                    viewId?: string | null;
                     actions: ItemActions;
                 }
               | {
                     type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
                     libraryId: '<props>' | string;
                     explorerProps?: LibraryExplorerProps;
+                    viewId?: string | null;
                     actions: ItemActions;
                 }
               | {

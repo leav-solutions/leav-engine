@@ -70,6 +70,7 @@ export const PanelContent: FunctionComponent = () => {
                     return (
                         <PanelLibraryExplorer
                             libraryId={currentWorkspace.entrypoint.libraryId}
+                            viewId={currentPanel.content.viewId}
                             explorerProps={currentPanel.content.explorerProps}
                             actions={currentPanel.content.actions}
                         />
@@ -78,16 +79,17 @@ export const PanelContent: FunctionComponent = () => {
                 return (
                     <PanelLibraryExplorer
                         libraryId={currentPanel.content.libraryId}
+                        viewId={currentPanel.content.viewId}
                         explorerProps={currentPanel.content.explorerProps}
                         actions={currentPanel.content.actions}
                     />
                 );
             }
-            const {attributeSource, ...restExplorerProps} = explorerProps;
             return (
                 <PanelAttributeExplorer
                     libraryId={currentWorkspace.entrypoint.libraryId}
                     attributeSource={currentPanel.content.attributeSource}
+                    viewId={currentPanel.content.viewId}
                     explorerProps={currentPanel.content.explorerProps}
                     actions={currentPanel.content.actions}
                 />

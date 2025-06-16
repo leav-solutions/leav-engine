@@ -1,10 +1,13 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Explorer} from '_ui/components';
 import {ComponentProps} from 'react';
 import {LibraryExplorerProps} from '../types';
 
 const isBoolean = (val: unknown) => 'boolean' === typeof val;
 
-type CommonOverrablePropsByUser =
+type CommonOverridablePropsByUser =
     | 'showSearch'
     | 'defaultPrimaryActions'
     | 'defaultActionsForItem'
@@ -16,10 +19,10 @@ type CommonOverrablePropsByUser =
     | 'creationFormId'
     | 'editionFormId';
 
-type LibraryOverrablePropsByUser = 'noPagination';
+type LibraryOverridablePropsByUser = 'noPagination';
 
 export const useExplorerProps = ({explorerProps}: {explorerProps: LibraryExplorerProps}) => {
-    const commonExplorerProps: Pick<ComponentProps<typeof Explorer>, CommonOverrablePropsByUser> = {
+    const commonExplorerProps: Pick<ComponentProps<typeof Explorer>, CommonOverridablePropsByUser> = {
         showSearch: isBoolean(explorerProps?.showSearch) ? explorerProps.showSearch : undefined,
         defaultPrimaryActions: explorerProps?.defaultPrimaryActions,
         defaultActionsForItem: explorerProps?.defaultActionsForItem,
@@ -32,7 +35,7 @@ export const useExplorerProps = ({explorerProps}: {explorerProps: LibraryExplore
         editionFormId: explorerProps?.editionFormId
     };
 
-    const libraryExplorerProps: Pick<ComponentProps<typeof Explorer>, LibraryOverrablePropsByUser> = {
+    const libraryExplorerProps: Pick<ComponentProps<typeof Explorer>, LibraryOverridablePropsByUser> = {
         noPagination: explorerProps?.noPagination ?? undefined
     };
 

@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
 import {Explorer} from '_ui/components';
 import {explorerContainer} from './PanelContent.module.css';
@@ -10,6 +13,7 @@ import {useLocation} from 'react-router-dom';
 interface IPanelExplorerProps {
     libraryId: string;
     attributeSource: string;
+    viewId: string | null;
     explorerProps: LibraryExplorerProps;
     actions: ItemActions;
 }
@@ -17,6 +21,7 @@ interface IPanelExplorerProps {
 export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
     libraryId,
     attributeSource,
+    viewId,
     explorerProps,
     actions
 }) => {
@@ -33,6 +38,9 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                     linkAttributeId: attributeSource,
                     parentLibraryId: libraryId,
                     parentRecordId: searchParams.get(recordSearchParamsName)
+                }}
+                defaultViewSettings={{
+                    viewId
                 }}
                 itemActions={itemActions}
                 {...commonExplorerProps}
