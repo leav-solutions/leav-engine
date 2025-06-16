@@ -92,7 +92,7 @@ export const useLinkRecordsInEdition = ({
     // Query to get all records from the linked library
     // Network-only is useful to avoid caching, we have a side effect otherwise
     // When the record is created, if we call getRecordsFromLibrary(), the previous records are returned
-    const [getRecordsFromLibrary, {data: libraryItems, loading: libraryLoading}] = useGetRecordsFromLibraryLazyQuery({
+    const [getRecordsFromLibrary, {data: libraryItems}] = useGetRecordsFromLibraryLazyQuery({
         fetchPolicy: 'network-only'
     });
 
