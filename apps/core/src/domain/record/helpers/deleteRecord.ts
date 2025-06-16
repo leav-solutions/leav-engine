@@ -36,6 +36,7 @@ export default function ({
     'core.infra.tree': treeRepo,
     'core.infra.value': valueRepo
 }: IDeps): DeleteRecordHelper {
+
     return async (library, id, ctx) => {
         await validateHelper.validateLibrary(library, ctx);
 
@@ -52,23 +53,7 @@ export default function ({
             throw new PermissionError(RecordPermissionsActions.DELETE_RECORD);
         }
 
-        // why because values are directly in record data ?
-        // to execute delete value action,
-        // but why not for advanced link and tree ?
-
-        // const simpleLinkedRecords = await _getSimpleLinkedRecords(library, id, ctx);
-
-        // // delete simple linked values
-        // for (const e of simpleLinkedRecords) {
-        //     for (const r of e.records) {
-        //         await valueDomain.deleteValue({
-        //             library: r.library,
-        //             recordId: r.id,
-        //             attribute: e.attribute,
-        //             ctx
-        //         });
-        //     }
-        // }
+        // simple link attribute value are directly in record data in db, so will be deleted with record
 
         // Delete linked values (advanced, advanced link and tree)
         await valueRepo.deleteAllValuesByRecord({libraryId: library, recordId: id, ctx});

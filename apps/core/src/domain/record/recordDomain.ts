@@ -27,8 +27,8 @@ import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {TypeGuards} from '../../utils/typeGuards';
 import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
-import {Errors, ErrorTypes} from '../../_types/errors';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {
     AttributePermissionsActions,
@@ -334,58 +334,6 @@ export default function ({
         if (stackSize !== 1) {
             throw new ValidationError({id: Errors.INVALID_FILTERS_EXPRESSION});
         }
-    };
-
-    const _getSimpleLinkedRecords = async (
-        library: string,
-        value: string,
-        ctx: IQueryInfos
-    ): Promise<Array<{attribute: string; records: IRecord[]}>> => {
-        const filters: IAttributeFilterOptions = {type: [AttributeTypes.SIMPLE_LINK], linked_library: library};
-        // get all attributes linked to the library param
-        const attributes = await attributeDomain.getAttributes({
-            params: {
-                filters
-            },
-            ctx
-        });
-
-        const linkedValuesToDel: Array<{records: IRecord[]; attribute: string}> = [];
-        const libraryAttributes: {[library: string]: IAttribute[]} = {};
-
-        // Get libraries using link attributes
-        for (const attr of attributes.list) {
-            const libs = await libraryRepo.getLibrariesUsingAttribute(attr.id, ctx);
-            for (const l of libs) {
-                libraryAttributes[l] = !!libraryAttributes[l] ? [...libraryAttributes[l], attr] : [attr];
-            }
-        }
-
-        for (const [lib, attrs] of Object.entries(libraryAttributes)) {
-            for (const attr of attrs) {
-                let reverseLink: IAttribute;
-                if (!!attr.reverse_link) {
-                    reverseLink = await attributeDomain.getAttributeProperties({
-                        id: attr.reverse_link as string,
-                        ctx
-                    });
-                }
-
-                const records = await recordRepo.find({
-                    libraryId: lib,
-                    filters: [
-                        {attributes: [{...attr, reverse_link: reverseLink}], condition: AttributeCondition.EQUAL, value}
-                    ],
-                    ctx
-                });
-
-                if (records.list.length) {
-                    linkedValuesToDel.push({records: records.list, attribute: attr.id});
-                }
-            }
-        }
-
-        return linkedValuesToDel;
     };
 
     const _isRelativeDateCondition = (condition: AttributeCondition): boolean =>
