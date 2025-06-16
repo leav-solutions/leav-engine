@@ -116,7 +116,7 @@ export const useLinkRecordsInEdition = ({
     useEffect(() => {
         if (libraryItems?.records?.list) {
             setSelectOptions(
-                libraryItems.records.list.map(
+                libraryItems.records.list.map<IKitOption>(
                     record =>
                         ({
                             value: record.id,
@@ -131,7 +131,7 @@ export const useLinkRecordsInEdition = ({
                                     label: record.whoAmI.label ?? record.whoAmI.id
                                 }
                             }
-                        }) satisfies IKitOption
+                        })
                 )
             );
         }
