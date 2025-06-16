@@ -60,6 +60,7 @@ import {IAttributePermissionDomain} from '../permission/attributePermissionDomai
 import getAccessPermissionFilters from './helpers/getAccessPermissionFilters';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
+import {DeleteRecordHelper} from './helpers/deleteRecord';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -203,6 +204,7 @@ export interface IRecordDomainDeps {
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.infra.library': ILibraryRepo;
     'core.infra.tree': ITreeRepo;
@@ -227,6 +229,7 @@ export default function ({
     'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.helpers.validate': validateHelper,
+    'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.infra.library': libraryRepo,
     'core.infra.tree': treeRepo,
@@ -1066,90 +1069,92 @@ export default function ({
             return savedRecord;
         },
         async deleteRecord({library, id, ctx}): Promise<IRecord> {
-            await validateHelper.validateLibrary(library, ctx);
+            return deleteRecordHelper(library, id, ctx);
 
-            // Check permission
-            const canDelete = await recordPermissionDomain.getRecordPermission({
-                action: RecordPermissionsActions.DELETE_RECORD,
-                userId: ctx.userId,
-                library,
-                recordId: id,
-                ctx
-            });
+            // await validateHelper.validateLibrary(library, ctx);
 
-            if (!canDelete) {
-                throw new PermissionError(RecordPermissionsActions.DELETE_RECORD);
-            }
+            // // Check permission
+            // const canDelete = await recordPermissionDomain.getRecordPermission({
+            //     action: RecordPermissionsActions.DELETE_RECORD,
+            //     userId: ctx.userId,
+            //     library,
+            //     recordId: id,
+            //     ctx
+            // });
 
-            // why because values are directly in record data ?
-            const simpleLinkedRecords = await _getSimpleLinkedRecords(library, id, ctx);
+            // if (!canDelete) {
+            //     throw new PermissionError(RecordPermissionsActions.DELETE_RECORD);
+            // }
 
-            // delete simple linked values
-            for (const e of simpleLinkedRecords) {
-                for (const r of e.records) {
-                    await valueDomain.deleteValue({
-                        library: r.library,
-                        recordId: r.id,
-                        attribute: e.attribute,
-                        ctx
-                    });
-                }
-            }
+            // // why because values are directly in record data ?
+            // const simpleLinkedRecords = await _getSimpleLinkedRecords(library, id, ctx);
 
-            // Delete linked values (advanced, advanced link and tree)
-            await valueRepo.deleteAllValuesByRecord({libraryId: library, recordId: id, ctx});
+            // // delete simple linked values
+            // for (const e of simpleLinkedRecords) {
+            //     for (const r of e.records) {
+            //         await valueDomain.deleteValue({
+            //             library: r.library,
+            //             recordId: r.id,
+            //             attribute: e.attribute,
+            //             ctx
+            //         });
+            //     }
+            // }
 
-            // Remove element from all trees
-            const libraryTrees = await treeRepo.getTrees({
-                params: {
-                    filters: {
-                        library
-                    }
-                },
-                ctx
-            });
+            // // Delete linked values (advanced, advanced link and tree)
+            // await valueRepo.deleteAllValuesByRecord({libraryId: library, recordId: id, ctx});
 
-            // For each tree, get all record nodes
-            await Promise.all(
-                libraryTrees.list.map(async tree => {
-                    const nodes = await treeRepo.getNodesByRecord({
-                        treeId: tree.id,
-                        record: {
-                            id,
-                            library
-                        },
-                        ctx
-                    });
+            // // Remove element from all trees
+            // const libraryTrees = await treeRepo.getTrees({
+            //     params: {
+            //         filters: {
+            //             library
+            //         }
+            //     },
+            //     ctx
+            // });
 
-                    for (const node of nodes) {
-                        await treeRepo.deleteElement({
-                            treeId: tree.id,
-                            nodeId: node,
-                            deleteChildren: true,
-                            ctx
-                        });
-                    }
-                })
-            );
+            // // For each tree, get all record nodes
+            // await Promise.all(
+            //     libraryTrees.list.map(async tree => {
+            //         const nodes = await treeRepo.getNodesByRecord({
+            //             treeId: tree.id,
+            //             record: {
+            //                 id,
+            //                 library
+            //             },
+            //             ctx
+            //         });
 
-            // Everything is clean, we can actually delete the record
-            const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
+            //         for (const node of nodes) {
+            //             await treeRepo.deleteElement({
+            //                 treeId: tree.id,
+            //                 nodeId: node,
+            //                 deleteChildren: true,
+            //                 ctx
+            //             });
+            //         }
+            //     })
+            // );
 
-            await eventsManager.sendDatabaseEvent(
-                {
-                    action: EventAction.RECORD_DELETE,
-                    topic: {
-                        record: {
-                            libraryId: deletedRecord.library,
-                            id: deletedRecord.id
-                        }
-                    },
-                    before: deletedRecord
-                },
-                ctx
-            );
+            // // Everything is clean, we can actually delete the record
+            // const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
 
-            return deletedRecord;
+            // await eventsManager.sendDatabaseEvent(
+            //     {
+            //         action: EventAction.RECORD_DELETE,
+            //         topic: {
+            //             record: {
+            //                 libraryId: deletedRecord.library,
+            //                 id: deletedRecord.id
+            //             }
+            //         },
+            //         before: deletedRecord
+            //     },
+            //     ctx
+            // );
+
+            // return deletedRecord;
         },
         async find({params, ctx}) {
             const {library, sort, pagination, withCount, retrieveInactive = false} = params;

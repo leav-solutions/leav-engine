@@ -95,8 +95,8 @@ export default function ({
                         },
                         ctx
                     });
-                    console.log('previous rec :>> ', JSON.stringify(rec, null, 2));
-                    console.log('joinValueRecord :>> ', JSON.stringify(joinValueRecord, null, 2));
+                    // console.log('previous rec :>> ', JSON.stringify(rec, null, 2));
+                    // console.log('joinValueRecord :>> ', JSON.stringify(joinValueRecord, null, 2));
                     const firstLinkId = rec.id_value; // first link between campaign to structure_item
                     // TODO get id_value of linked (which ?) for delete
                     // Here, suppose mandatory attribute in libProps is simple link !
