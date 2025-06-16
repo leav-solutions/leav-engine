@@ -42,6 +42,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {DeleteRecordHelper} from 'domain/record/helpers/deleteRecord';
+import {CreateRecordHelper} from 'domain/record/helpers/createRecord';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -152,6 +153,7 @@ export interface IValueDomainDeps {
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
+    'core.domain.record.helpers.createRecord': CreateRecordHelper;
     'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.infra.record': IRecordRepo;
@@ -177,6 +179,7 @@ const valueDomain = function ({
     'core.domain.tree.helpers.elementAncestors': elementAncestors,
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
+    'core.domain.record.helpers.createRecord': createRecordHelper,
     'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
     'core.domain.versionProfile': versionProfileDomain,
     'core.infra.record': recordRepo,
@@ -886,7 +889,7 @@ const valueDomain = function ({
                                             // should we unlink record attributes, or done in deleteRecordHelper ?
 
                                             const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
-                                            console.log('deleted join record :>> ', JSON.stringify(deleteJoinRecord, null, 2));
+                                            console.log('Deleted join record :>> ', JSON.stringify(deleteJoinRecord, null, 2));
                                         }));
                                     }
                                 }
@@ -902,52 +905,26 @@ const valueDomain = function ({
                             const joinLibId = attributeProps.linked_library; // structure_item
                             const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
 
-                            console.log('joinLibId :>> ', joinLibId);
-                            console.log('joinLibProps :>> ', JSON.stringify(joinLibProps, null, 2));
                             if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
                                 const joinAttributeProps = await attributeDomain.getAttributeProperties({id: joinLibProps.mandatoryAttribute, ctx});
                                 if (joinAttributeProps.type === AttributeTypes.SIMPLE_LINK || (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)) { // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
-                                    // use recoardDomain.createRecord (cyclie dep ?)
-                                    const joinRecordData = {
-                                        created_at: moment().unix(),
-                                        created_by: String(ctx.userId),
-                                        modified_at: moment().unix(),
-                                        modified_by: String(ctx.userId),
-                                        active: true
-                                        // [joinLibProps.mandatoryAttribute]: value.payload // saveValue instead ?
-                                    };
-                                    console.log('Create join record in join library', joinLibId);
-                                    const joinRec = await recordRepo.createRecord({
-                                        libraryId: joinLibId,
-                                        recordData: joinRecordData,
+                                    const {record: joinRecord, valuesErrors} = await createRecordHelper({
+                                        library: joinLibId,
                                         ctx
                                     });
-                                    await eventsManager.sendDatabaseEvent(
-                                        {
-                                            action: EventAction.RECORD_SAVE,
-                                            topic: {
-                                                record: {
-                                                    id: joinRec.id,
-                                                    libraryId: joinRec.library
-                                                }
-                                            },
-                                            after: joinRec
-                                        },
-                                        ctx
-                                    );
-                                    console.log('Created join record :>> ', JSON.stringify(joinRec, null, 2));
-                                    const joinVal = await this.saveValue({
+
+                                    console.log('Created join record :>> ', JSON.stringify(joinRecord, null, 2));
+                                    await this.saveValue({
                                         library: joinLibId,
-                                        recordId: joinRec.id,
+                                        recordId: joinRecord.id,
                                         attribute: joinLibProps.mandatoryAttribute,
                                         value: {
                                             payload: value.payload // simple link from join record to "thematic"
                                         },
                                         ctx
                                     });
-                                    console.log('joinVal :>> ', JSON.stringify(joinVal, null, 2));
 
-                                    value.payload = joinRec.id;
+                                    value.payload = joinRecord.id;
                                 }
                             }
                         }
