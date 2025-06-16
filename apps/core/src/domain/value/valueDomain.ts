@@ -41,6 +41,7 @@ import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import { ILibraryRepo } from 'infra/library/libraryRepo';
 import { GetCoreEntityByIdFunc } from 'domain/helpers/getCoreEntityById';
+import { DeleteRecordHelper } from 'domain/record/helpers/deleteRecord';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -151,10 +152,10 @@ export interface IValueDomainDeps {
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
+    'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.infra.record': IRecordRepo;
     'core.infra.tree': ITreeRepo;
-    // 'core.infra.library': ILibraryRepo;
     'core.infra.value': IValueRepo;
     'core.utils': IUtils;
     'core.utils.logger': winston.Winston;
@@ -176,10 +177,10 @@ const valueDomain = function ({
     'core.domain.tree.helpers.elementAncestors': elementAncestors,
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
+    'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
     'core.domain.versionProfile': versionProfileDomain,
     'core.infra.record': recordRepo,
     'core.infra.tree': treeRepo,
-    // 'core.infra.library': libraryRepo,
     'core.infra.value': valueRepo,
     'core.utils': utils,
     'core.utils.logger': logger
@@ -863,24 +864,55 @@ const valueDomain = function ({
 
                         if (value.payload === null && !keepEmpty) {
 
-                            const joinLibId = attributeProps.linked_library; // structure_item
-                            const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
-    
-                            if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
-                                const joinAttributeProps = await attributeDomain.getAttributeProperties({id: joinLibProps.mandatoryAttribute, ctx});
-                                if (joinAttributeProps.type === AttributeTypes.SIMPLE_LINK || (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)) { // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
-                                    // delete join record
-                                }
-                            }
-                            const deletedValues = await _executeDeleteValue({
-                                library,
-                                value,
-                                recordId,
-                                attribute: value.attribute,
-                                ctx
-                            });
+                            if (attributeProps.linked_library) {
+                                const joinLibId = attributeProps.linked_library; // structure_item
+                                const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
+        
+                                if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
+                                    const joinAttributeProps = await attributeDomain.getAttributeProperties({id: joinLibProps.mandatoryAttribute, ctx});
+                                    if (joinAttributeProps.type === AttributeTypes.SIMPLE_LINK || (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)) { // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
+                                        const id_value = value.id_value;
+                                        console.log('DELETE JOIN RECORD', joinLibId, id_value);
 
-                            prevRes.values.push(...deletedValues);
+                                        const joinRecordValue = await valueRepo.getValueById({
+                                            library,
+                                            recordId,
+                                            attribute: attributeProps,
+                                            valueId: id_value,
+                                            ctx});
+                                        // TODO find record id (structure item id) from core_edge_values_links id_value !
+
+                                        console.log('joinRecordValue :>> ', JSON.stringify(joinRecordValue, null, 2));
+
+                                        // delete campaign -> structure item link before delete structure item
+                                        const deletedValues = await _executeDeleteValue({
+                                            library,
+                                            value,
+                                            recordId,
+                                            attribute: value.attribute,
+                                            ctx
+                                        });
+                                        console.log('deletedValues :>> ', JSON.stringify(deletedValues, null, 2));
+
+                                        prevRes.values.push(...deletedValues);
+
+                                        // delete join record
+                                        const deleteRecord = await deleteRecordHelper(joinLibId, joinRecordValue.payload.id, ctx);
+                                        console.log('deletedRecord :>> ', JSON.stringify(deleteRecord, null, 2));
+                                    }
+                                }
+                            } else {
+                                const deletedValues = await _executeDeleteValue({
+                                    library,
+                                    value,
+                                    recordId,
+                                    attribute: value.attribute,
+                                    ctx
+                                });
+
+                                prevRes.values.push(...deletedValues);
+                            }
+
 
                             return prevRes;
                         }
@@ -888,53 +920,57 @@ const valueDomain = function ({
 
                         // here check attributeProps.linked_library is join library
 
-                        const joinLibId = attributeProps.linked_library; // structure_item
-                        const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
-   
-                        if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
-                            const joinAttributeProps = await attributeDomain.getAttributeProperties({id: joinLibProps.mandatoryAttribute, ctx});
-                            if (joinAttributeProps.type === AttributeTypes.SIMPLE_LINK || (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)) { // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
-                                // use recoardDomain.createRecord (cyclie dep ?)
-                                const joinRecordData = {
-                                    created_at: moment().unix(),
-                                    created_by: String(ctx.userId),
-                                    modified_at: moment().unix(),
-                                    modified_by: String(ctx.userId),
-                                    active: true,
-                                    // [joinLibProps.mandatoryAttribute]: value.payload // saveValue instead ?
-                                };
-                                console.log('Create join record in join library', joinLibId);
-                                const joinRec = await recordRepo.createRecord({
-                                    libraryId: joinLibId,
-                                    recordData: joinRecordData,
-                                    ctx
-                                });
-                                await eventsManager.sendDatabaseEvent(
-                                    {
-                                        action: EventAction.RECORD_SAVE,
-                                        topic: {
-                                            record: {
-                                                id: joinRec.id,
-                                                libraryId: joinRec.library
-                                            }
+                        if (attributeProps.linked_library) {
+                            const joinLibId = attributeProps.linked_library; // structure_item
+                            const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
+    
+                            console.log('joinLibId :>> ', joinLibId);
+                            console.log('joinLibProps :>> ', JSON.stringify(joinLibProps, null, 2));
+                            if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
+                                const joinAttributeProps = await attributeDomain.getAttributeProperties({id: joinLibProps.mandatoryAttribute, ctx});
+                                if (joinAttributeProps.type === AttributeTypes.SIMPLE_LINK || (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)) { // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
+                                    // use recoardDomain.createRecord (cyclie dep ?)
+                                    const joinRecordData = {
+                                        created_at: moment().unix(),
+                                        created_by: String(ctx.userId),
+                                        modified_at: moment().unix(),
+                                        modified_by: String(ctx.userId),
+                                        active: true,
+                                        // [joinLibProps.mandatoryAttribute]: value.payload // saveValue instead ?
+                                    };
+                                    console.log('Create join record in join library', joinLibId);
+                                    const joinRec = await recordRepo.createRecord({
+                                        libraryId: joinLibId,
+                                        recordData: joinRecordData,
+                                        ctx
+                                    });
+                                    await eventsManager.sendDatabaseEvent(
+                                        {
+                                            action: EventAction.RECORD_SAVE,
+                                            topic: {
+                                                record: {
+                                                    id: joinRec.id,
+                                                    libraryId: joinRec.library
+                                                }
+                                            },
+                                            after: joinRec
                                         },
-                                        after: joinRec
-                                    },
-                                    ctx
-                                );
-                                console.log('Created join record :>> ', JSON.stringify(joinRec, null, 2));
-                                const joinVal = await this.saveValue({
-                                    library: joinLibId,
-                                    recordId: joinRec.id,
-                                    attribute: joinLibProps.mandatoryAttribute,
-                                    value: {
-                                        payload: value.payload // simple link from join record to "thematic"
-                                    },
-                                    ctx
-                                });
-                                console.log('joinVal :>> ', JSON.stringify(joinVal, null, 2));
+                                        ctx
+                                    );
+                                    console.log('Created join record :>> ', JSON.stringify(joinRec, null, 2));
+                                    const joinVal = await this.saveValue({
+                                        library: joinLibId,
+                                        recordId: joinRec.id,
+                                        attribute: joinLibProps.mandatoryAttribute,
+                                        value: {
+                                            payload: value.payload // simple link from join record to "thematic"
+                                        },
+                                        ctx
+                                    });
+                                    console.log('joinVal :>> ', JSON.stringify(joinVal, null, 2));
 
-                                value.payload = joinRec.id;
+                                    value.payload = joinRec.id;
+                                }
                             }
                         }
                         const valueChecksParams = {
