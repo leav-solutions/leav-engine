@@ -83,7 +83,7 @@ export default function ({
 
         return {
             record: newRecord,
-            valuesErrors: []
+            valuesErrors: null
         };
     };
 }
