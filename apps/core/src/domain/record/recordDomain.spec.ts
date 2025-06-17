@@ -44,6 +44,7 @@ import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttribut
 import {IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
 import * as ValidateValue from '../value/helpers/validateValue';
 import {ICreateRecordValueError} from './_types';
+import {createRecord as createRecordHelper, deleteRecord as deleteRecordHelper} from './helpers';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
@@ -69,6 +70,8 @@ const depsBase: ToAny<IRecordDomainDeps> = {
     'core.domain.permission.helpers.defaultPermission': jest.fn(),
     'core.domain.helpers.getCoreEntityById': jest.fn(),
     'core.domain.helpers.validate': jest.fn(),
+    'core.domain.record.helpers.createRecord': jest.fn(),
+    'core.domain.record.helpers.deleteRecord': jest.fn(),
     'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
     'core.infra.library': jest.fn(),
     'core.infra.tree': jest.fn(),
@@ -136,7 +139,7 @@ describe('RecordDomain', () => {
     });
 
     describe('createRecord', () => {
-        test('Should create a new record', async function () {
+        test.only('Should create a new record', async function () {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -165,10 +168,16 @@ describe('RecordDomain', () => {
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.permission.attribute': mockAtrrPermissionDomain as IAttributePermissionDomain
+                'core.domain.permission.attribute': mockAtrrPermissionDomain as IAttributePermissionDomain,
+                'core.domain.record.helpers.createRecord': createRecordHelper({
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.infra.record': recRepo as IRecordRepo
+                })
             });
 
             const createdRecord = await recDomain.createRecord({library: 'test', ctx});
+            console.log('createdRecord :>> ', JSON.stringify(createdRecord, null, 2));
 
             expect(recRepo.createRecord.mock.calls.length).toBe(1);
             expect(typeof recRepo.createRecord.mock.calls[0][0]).toBe('object');
@@ -217,7 +226,12 @@ describe('RecordDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                 'core.infra.record': recRepo as IRecordRepo,
-                'core.domain.permission.attribute': mockAtrrPermissionDomain as IAttributePermissionDomain
+                'core.domain.permission.attribute': mockAtrrPermissionDomain as IAttributePermissionDomain,
+                'core.domain.record.helpers.createRecord': createRecordHelper({
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.infra.record': recRepo as IRecordRepo,
+                })
             });
 
             const createdRecord = await recDomain.createRecord({
@@ -306,7 +320,12 @@ describe('RecordDomain', () => {
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                 'core.domain.permission.attribute': mockAtrrPermissionDomain as IAttributePermissionDomain,
                 'core.infra.record': recRepo as IRecordRepo,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
+                'core.domain.record.helpers.createRecord': createRecordHelper({
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.infra.record': recRepo as IRecordRepo,
+                })
             });
 
             // Assert that create record throw an exception with two fields: some_attribute and other_attribute
@@ -390,7 +409,12 @@ describe('RecordDomain', () => {
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                 'core.domain.permission.attribute': mockAtrrPermissionDomain as IAttributePermissionDomain,
                 'core.infra.record': recRepo as IRecordRepo,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
+                'core.domain.record.helpers.createRecord': createRecordHelper({
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.infra.record': recRepo as IRecordRepo,
+                })
             });
 
             // Assert that create record throw an exception with two fields: some_attribute and other_attribute
@@ -490,14 +514,14 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
-                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                'core.infra.record': recRepo as IRecordRepo,
-                'core.infra.library': libRepo as ILibraryRepo,
-                'core.infra.value': mockValueRepo as IValueRepo,
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.attribute': attrDomain as IAttributeDomain,
-                'core.domain.permission.record': recordPermDomain as IRecordPermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.record.helpers.deleteRecord': deleteRecordHelper({
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.permission.record': recordPermDomain as IRecordPermissionDomain,
+                    'core.infra.record': recRepo as IRecordRepo,
+                    'core.infra.tree': mockTreeRepo as ITreeRepo,
+                    'core.infra.value': mockValueRepo as IValueRepo
+                })
             });
 
             await recDomain.deleteRecord({library: 'test', id: recordData.id, ctx});
