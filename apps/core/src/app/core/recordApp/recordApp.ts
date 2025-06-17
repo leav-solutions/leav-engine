@@ -80,7 +80,8 @@ export default function ({
                 },
                 ctx
             });
-            // change values in case property is link to join library behavior,
+            return record;
+            /* // change values in case property is link to join library behavior,
             // replace values with the linked record by join library record
             return await Promise.all(record.map(async rec => {
                 const libProps = await libraryDomain.getLibraryProperties(rec.payload?.library, ctx);
@@ -105,7 +106,7 @@ export default function ({
                 }
 
                 return rec;
-            }));
+            })); */
         } catch (error) {
             if (error instanceof LeavError) {
                 ctx.errors = [...(ctx.errors ?? []), error];

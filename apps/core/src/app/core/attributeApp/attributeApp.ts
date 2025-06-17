@@ -421,17 +421,17 @@ export default function (deps: IDeps): ICoreAttributeApp {
                                 return null;
                             }
 
-                            const libProps = await libraryDomain.getLibraryProperties(attributeData.linked_library, ctx);
-                            if (libProps.behavior === LibraryBehavior.JOIN && libProps.mandatoryAttribute) {
-                                const joinMandatoryAttribute = await attributeDomain?.getAttributeProperties({
-                                    id: libProps.mandatoryAttribute,
-                                    ctx
-                                });
+                            // const libProps = await libraryDomain.getLibraryProperties(attributeData.linked_library, ctx);
+                            // if (libProps.behavior === LibraryBehavior.JOIN && libProps.mandatoryAttribute) {
+                            //     const joinMandatoryAttribute = await attributeDomain?.getAttributeProperties({
+                            //         id: libProps.mandatoryAttribute,
+                            //         ctx
+                            //     });
 
-                                if (joinMandatoryAttribute.linked_library && joinMandatoryAttribute.type === AttributeTypes.SIMPLE_LINK || (joinMandatoryAttribute.type === AttributeTypes.TREE && !joinMandatoryAttribute.multiple_values)) {
-                                    return libraryDomain.getLibraryProperties(joinMandatoryAttribute.linked_library, ctx);
-                                }
-                            }
+                            //     if (joinMandatoryAttribute.linked_library && joinMandatoryAttribute.type === AttributeTypes.SIMPLE_LINK || (joinMandatoryAttribute.type === AttributeTypes.TREE && !joinMandatoryAttribute.multiple_values)) {
+                            //         return libraryDomain.getLibraryProperties(joinMandatoryAttribute.linked_library, ctx);
+                            //     }
+                            // }
 
                             return libraryDomain.getLibraryProperties(attributeData.linked_library, ctx);
                         },
