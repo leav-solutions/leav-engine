@@ -117,7 +117,7 @@ export const useLinkRecordsInEdition = ({
     useEffect(() => {
         if (libraryItems?.records?.list) {
             setSelectOptions(
-                libraryItems.records.list.map(
+                libraryItems.records.list.map<IKitOption>(
                     record =>
                         ({
                             value: record.id,
@@ -132,7 +132,7 @@ export const useLinkRecordsInEdition = ({
                                     label: record.whoAmI.label ?? record.whoAmI.id
                                 }
                             }
-                        }) satisfies IKitOption
+                        })
                 )
             );
         }
@@ -306,7 +306,7 @@ export const useLinkRecordsInEdition = ({
             isHookUsed &&
             recordId &&
             (tagDisplayMode ? (
-                <LinkSelect tagDisplay={true} options={selectOptions} defaultValues={linkedIds}></LinkSelect>
+                <LinkSelect tagDisplay options={selectOptions} defaultValues={linkedIds} />
             ) : (
                 <>
                     <ExplorerWrapper>
