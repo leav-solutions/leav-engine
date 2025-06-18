@@ -25,13 +25,15 @@ describe('LinkSelect', () => {
         const input = 'Chartreuse';
         await user.type(searchInput, input);
 
-        // Used to wait for the debounce to be triggered
-        await act(async () => {
-            await new Promise(resolve => setTimeout(resolve, 600));
-        });
+        // // Used to wait for the debounce to be triggered
+        // await act(async () => {
+        //     await new Promise(resolve => setTimeout(resolve, 600));
+        // });
 
-        expect(screen.getByRole('button', {name: /Chartreuse/})).toBeVisible();
-        expect(screen.getByRole('button', {name: /advanced_search/})).toBeVisible();
+        await waitFor(() => {
+            expect(screen.getByRole('button', {name: /Chartreuse/})).toBeVisible();
+            expect(screen.getByRole('button', {name: /advanced_search/})).toBeVisible();
+        });
     });
 
     it('should display the selected default tags', async () => {
