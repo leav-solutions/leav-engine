@@ -16,7 +16,7 @@ import {
 } from '_ui/_gqlTypes';
 
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
-import {RecordFormElementsValueLinkValue, RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
+import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {AntForm, KitButton} from 'aristid-ds';
 import {
     EditRecordReducerActionsTypes,
@@ -117,23 +117,20 @@ export const useLinkRecordsInEdition = ({
     useEffect(() => {
         if (libraryItems?.records?.list) {
             setSelectOptions(
-                libraryItems.records.list.map<IKitOption>(
-                    record =>
-                        ({
-                            value: record.id,
-                            label: record.whoAmI.label ?? record.whoAmI.id,
-                            idCard: {
-                                description: record.whoAmI.label ?? record.whoAmI.id,
-                                avatarProps: {
-                                    size: 'small',
-                                    shape: 'square',
-                                    imageFit: 'contain',
-                                    src: record.whoAmI.preview?.small,
-                                    label: record.whoAmI.label ?? record.whoAmI.id
-                                }
-                            }
-                        })
-                )
+                libraryItems.records.list.map<IKitOption>(record => ({
+                    value: record.id,
+                    label: record.whoAmI.label ?? record.whoAmI.id,
+                    idCard: {
+                        description: record.whoAmI.label ?? record.whoAmI.id,
+                        avatarProps: {
+                            size: 'small',
+                            shape: 'square',
+                            imageFit: 'contain',
+                            src: record.whoAmI.preview?.small,
+                            label: record.whoAmI.label ?? record.whoAmI.id
+                        }
+                    }
+                }))
             );
         }
     }, [libraryItems]);
@@ -180,19 +177,23 @@ export const useLinkRecordsInEdition = ({
         itemsToLink: Set<string>,
         itemsToDelete: Set<string>
     ) => {
-        // 1. If there is no value to link or to remove, return early
+        // If there is no value to link or to remove, return early
         if (itemsToLink.size === 0 && itemsToDelete.size === 0) {
             setIsExplorerAddButtonClicked(false);
             return;
         }
 
-        // 2. Construct an array of values to remove
-        const idValuesToRemove = backendValues.filter(bv => itemsToDelete.has(bv.linkValue.id)).map(bv => bv.id_value);
+        // Convert itemsToLink Set to Array once to avoid repeated conversions
+        const itemsToLinkArray = Array.from(itemsToLink);
 
-        // 3. Prepare updated values to send to the backend
+        // Find values to remove and prepare payload for backend
+        const valuesToRemove = backendValues.filter(bv => itemsToDelete.has(bv.linkValue.id));
+        const idValuesToRemove = valuesToRemove.map(bv => bv.id_value);
+
+        // Prepare batch operation payload
         const values = [
             // Items to link (create new links)
-            ...Array.from(itemsToLink).map(item => ({
+            ...itemsToLinkArray.map(item => ({
                 attribute: attribute.id,
                 idValue: null,
                 value: item
@@ -205,46 +206,29 @@ export const useLinkRecordsInEdition = ({
             }))
         ];
 
-        // 4. If there are no values to process, return early
-        if (!values.length) {
-            return;
-        }
-
-        // 5. Send the values to the backend
-        const res = await saveValues(
-            {
-                id: recordId,
-                library: {
-                    id: libraryId
-                }
-            },
-            values,
-            undefined,
-            true
-        );
+        // Send the values to the backend
+        const res = await saveValues({id: recordId, library: {id: libraryId}}, values, undefined, true);
 
         const resValues = res.values as ValueDetailsLinkValueFragment[];
 
-        // 6. Redefine  idsLink, keep value idsLink, add itemsToLink then remove itemsToDelete
-        const idsLink = [...linkedIds, ...Array.from(itemsToLink)].filter(id => !itemsToDelete.has(id));
-        setLinkIds(idsLink);
+        // Update linked IDs: add new links and remove deleted ones
+        const updatedLinkedIds = linkedIds.filter(id => !itemsToDelete.has(id)).concat(itemsToLinkArray);
+        setLinkIds(updatedLinkedIds);
 
-        // 7. Remove backend values from deselected items
-        const resItemsAdded = resValues.filter(v =>
-            Array.from(itemsToLink).includes(v.linkValue!.id)
-        ) as unknown as RecordFormElementsValueStandardValue[];
+        // Extract newly added values from response
+        const newlyAddedValues = resValues.filter(v =>
+            itemsToLink.has(v.linkValue!.id)
+        ) as unknown as RecordFormElementsValueLinkValue[];
 
-        setBackendValues([
-            ...backendValues.filter(bv => !Array.from(itemsToDelete).includes(bv.linkValue.id)),
-            ...resItemsAdded
-        ]);
+        // Update backend values: remove deleted ones and add new ones
+        setBackendValues([...backendValues.filter(bv => !itemsToDelete.has(bv.linkValue.id)), ...newlyAddedValues]);
 
-        // 8. Hide linkSelect
+        // Hide linkSelect
         setIsExplorerAddButtonClicked(false);
     };
 
     // After 500 ms, debounce the search records that match the text typed in the search bar
-    const _onLinkSelectSearch = async (text: string) => {
+    const _onLinkSelectSearch: ComponentProps<typeof LinkSelect>['onSearch'] = async (text: string) => {
         await libraryRefetch({
             filters: [
                 {
@@ -256,12 +240,12 @@ export const useLinkRecordsInEdition = ({
         });
     };
 
-    const _onCreateLinkSelect = async () => {
+    const _onCreateLinkSelect: ComponentProps<typeof LinkSelect>['onClickCreateButton'] = async () => {
         setIsExplorerAddButtonClicked(false);
         explorerActions?.createAction?.callback();
     };
 
-    // Wrap callback when the value is created, to force a refresh of the dropdown list
+    // Wrap callback when the value is created to force a refresh of the dropdown list
     const wrapHandleExplorerCreateValue = async ({
         recordIdCreated,
         saveValuesResultOnLink
@@ -276,7 +260,7 @@ export const useLinkRecordsInEdition = ({
         });
     };
 
-    const _onDeselect = (linkId: string) => {
+    const _onDeselect: ComponentProps<typeof LinkSelect>['onParentDeselect'] = (linkId: string) => {
         const item = backendValues.find(bv => bv.linkValue.id === linkId);
 
         if (!item) {
