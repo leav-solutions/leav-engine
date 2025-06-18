@@ -496,6 +496,15 @@ describe('Explorer', () => {
             }
         }
     };
+    const mockJoinLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
+        loading: false,
+        called: true,
+        data: {
+            libraries: {
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.join}]
+            }
+        }
+    };
 
     const mockExplorerAttributesQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
         loading: false,
@@ -1480,6 +1489,26 @@ describe('Explorer', () => {
             expect(screen.getByText(CreateDirectoryMock)).toBeVisible();
         });
         test('Should be able to create a new record when library has standard behavior', async () => {
+            const onCreate = jest.fn();
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+
+            expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+            const createRecordButton = screen.getByRole('button', {name: 'create-record'});
+            await user.click(createRecordButton);
+
+            expect(onCreate).toHaveBeenCalledWith({recordIdCreated: 987654});
+        });
+
+        test('Should be able to create a new record when library has join behavior', async () => {
+            jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+                () => mockJoinLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
+            );
             const onCreate = jest.fn();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>

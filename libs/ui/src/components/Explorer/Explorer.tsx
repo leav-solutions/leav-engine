@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import {Loading} from '_ui/components/Loading';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {DefaultViewSettings, Entrypoint, IMassActions, IPrimaryAction, IItemData, IItemAction} from './_types';
+import {DefaultViewSettings, Entrypoint, IMassActions, IPrimaryAction, IItemAction} from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
 import {ExplorerTitle} from './ExplorerTitle';

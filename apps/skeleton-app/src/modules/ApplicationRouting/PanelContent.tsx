@@ -3,24 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
 import {generatePath, Navigate, useLocation, useNavigate, useOutletContext} from 'react-router-dom';
-import {useTranslation} from 'react-i18next';
 import {EditRecordPage, Explorer} from '@leav/ui';
-import {FaPlus} from 'react-icons/all';
 import type {IApplicationMatchingContext} from './types';
 import {recordSearchParamsName, routes} from './routes';
 import {SIDEBAR_CONTENT_ID} from '../../constants';
 import {PanelCustom} from './PanelCustom';
 
 import {explorerContainer} from './PanelContent.module.css';
+import {PanelLibraryExplorer} from './PanelLibraryExplorer';
+import {PanelAttributeExplorer} from './PanelAttributeExplorer';
 
 export const PanelContent: FunctionComponent = () => {
-    const {t} = useTranslation();
     const {search} = useLocation();
     const searchParams = new URLSearchParams(search);
     const {currentPanel, currentWorkspace} =
         useOutletContext<Omit<IApplicationMatchingContext, 'currentParentTuple'>>();
-
-    const navigate = useNavigate();
 
     const [sidebarContainer, setSidebarContainer] = useState<HTMLElement>();
     useEffect(() => {
@@ -34,7 +31,6 @@ export const PanelContent: FunctionComponent = () => {
         const commonFormProps: Partial<ComponentProps<typeof EditRecordPage>> = {
             showRefreshButton: false,
             showHeader: false,
-            showSidebar: false,
             sidebarContainer
         };
         if (currentPanel.content.type === 'creationForm') {
@@ -68,67 +64,34 @@ export const PanelContent: FunctionComponent = () => {
             );
         }
         if (currentPanel.content.type === 'explorer') {
-            const {actions, type, viewId, ...explorerProps} = currentPanel.content;
-            const itemActions: ComponentProps<typeof Explorer>['itemActions'] = currentPanel.content.actions.map(
-                action => ({
-                    icon: <FaPlus />,
-                    label: t('skeleton.explore'),
-                    callback: item => {
-                        const query = new URLSearchParams({[recordSearchParamsName]: item.itemId});
-                        navigate(generatePath(routes.panel, {panelId: action.what.id}) + '?' + query.toString());
-                    }
-                })
-            );
-
-            if ('libraryId' in explorerProps) {
-                const {libraryId, ...restExplorerProps} = explorerProps;
-                if (libraryId === '<props>') {
+            if ('libraryId' in currentPanel.content) {
+                if (currentPanel.content.libraryId === '<props>') {
                     return (
-                        <div className={explorerContainer}>
-                            <Explorer
-                                entrypoint={{
-                                    type: 'library',
-                                    libraryId: currentWorkspace.entrypoint.libraryId
-                                }}
-                                itemActions={itemActions}
-                                {...restExplorerProps}
-                                defaultViewSettings={{
-                                    viewId
-                                }}
-                            />
-                        </div>
+                        <PanelLibraryExplorer
+                            libraryId={currentWorkspace.entrypoint.libraryId}
+                            viewId={currentPanel.content.viewId}
+                            explorerProps={currentPanel.content.explorerProps}
+                            actions={currentPanel.content.actions}
+                        />
                     );
                 }
                 return (
-                    <div className={explorerContainer}>
-                        <Explorer
-                            entrypoint={{type: 'library', libraryId}}
-                            itemActions={itemActions}
-                            {...restExplorerProps}
-                            defaultViewSettings={{
-                                viewId
-                            }}
-                        />
-                    </div>
+                    <PanelLibraryExplorer
+                        libraryId={currentPanel.content.libraryId}
+                        viewId={currentPanel.content.viewId}
+                        explorerProps={currentPanel.content.explorerProps}
+                        actions={currentPanel.content.actions}
+                    />
                 );
             }
-            const {attributeSource, ...restExplorerProps} = explorerProps;
             return (
-                <div className={explorerContainer}>
-                    <Explorer
-                        entrypoint={{
-                            type: 'link',
-                            linkAttributeId: attributeSource,
-                            parentLibraryId: currentWorkspace.entrypoint.libraryId,
-                            parentRecordId: searchParams.get(recordSearchParamsName)
-                        }}
-                        {...restExplorerProps}
-                        defaultViewSettings={{
-                            viewId
-                        }}
-                        itemActions={itemActions}
-                    />
-                </div>
+                <PanelAttributeExplorer
+                    libraryId={currentWorkspace.entrypoint.libraryId}
+                    attributeSource={currentPanel.content.attributeSource}
+                    viewId={currentPanel.content.viewId}
+                    explorerProps={currentPanel.content.explorerProps}
+                    actions={currentPanel.content.actions}
+                />
             );
         }
     }
