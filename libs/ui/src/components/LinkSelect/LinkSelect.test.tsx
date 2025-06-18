@@ -5,7 +5,6 @@
 import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import LinkSelect from './LinkSelect';
 import userEvent from '@testing-library/user-event';
-import {act} from '@testing-library/react';
 
 let user: ReturnType<typeof userEvent.setup>;
 
@@ -24,11 +23,6 @@ describe('LinkSelect', () => {
 
         const input = 'Chartreuse';
         await user.type(searchInput, input);
-
-        // // Used to wait for the debounce to be triggered
-        // await act(async () => {
-        //     await new Promise(resolve => setTimeout(resolve, 600));
-        // });
 
         await waitFor(() => {
             expect(screen.getByRole('button', {name: /Chartreuse/})).toBeVisible();
@@ -79,15 +73,11 @@ describe('LinkSelect', () => {
         await user.click(input);
         await user.type(input, 'NewItem');
 
-        // Used to wait for the debounce to be triggered
-        await act(async () => {
-            await new Promise(resolve => setTimeout(resolve, 600));
+        await waitFor(async () => {
+            const createBtn = screen.getByRole('button', {name: /NewItem/});
+            await user.click(createBtn);
+            expect(handleCreate).toHaveBeenCalledWith('NewItem');
         });
-
-        const createBtn = screen.getByRole('button', {name: /NewItem/});
-        await user.click(createBtn);
-
-        expect(handleCreate).toHaveBeenCalledWith('NewItem');
     });
 
     it('should call onAdvanceSearch when clicking the button', async () => {
