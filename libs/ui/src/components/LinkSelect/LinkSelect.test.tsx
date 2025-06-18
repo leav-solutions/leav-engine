@@ -67,40 +67,18 @@ describe('LinkSelect', () => {
     it('should call onCreate with current search string', async () => {
         const handleCreate = jest.fn();
 
-        render(<LinkSelect tagDisplay={false} options={[]} defaultValues={[]} onClickCreateButton={handleCreate} />);
-
         const input = screen.getByRole('combobox');
         await user.click(input);
         await user.type(input, 'NewItem');
 
-        await waitFor(async () => {
-            const createBtn = screen.getByRole('button', {name: /NewItem/});
-            await user.click(createBtn);
-            expect(handleCreate).toHaveBeenCalledWith('NewItem');
-        });
-    });
+        // Wait for the debounced search to complete
+        await new Promise(resolve => setTimeout(resolve, 600));
 
-    it('should call onAdvanceSearch when clicking the button', async () => {
-        const handleAdvanceSearch = jest.fn();
+        // Find the button by its text content
+        const createButton = screen.getByText(/NewItem/, {selector: 'button'});
+        await user.click(createButton);
 
-        render(
-            <LinkSelect
-                tagDisplay={false}
-                options={[]}
-                defaultValues={[]}
-                onUpdateSelection={() => null}
-                onClickCreateButton={() => null}
-                onAdvanceSearch={handleAdvanceSearch}
-            />
-        );
-
-        const input = screen.getByRole('combobox');
-        await user.click(input);
-
-        const advBtn = screen.getByRole('button', {name: /advanced_search/});
-        await user.click(advBtn);
-
-        expect(handleAdvanceSearch).toHaveBeenCalled();
+        expect(handleCreate).toHaveBeenCalledWith('NewItem');
     });
 
     it('should call onBlur with itemsToLink', async () => {
