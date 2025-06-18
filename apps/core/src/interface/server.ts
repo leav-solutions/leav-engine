@@ -32,10 +32,12 @@ import ValidationError from '../errors/ValidationError';
 import type {ValidateRequestTokenFunc} from '../app/helpers/validateRequestToken';
 import {HandleGraphqlErrorFunc} from './helpers/handleGraphqlError';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
+import {IRecordDomain} from '../domain/record/recordDomain';
 
 export interface IServer {
     init(): Promise<void>;
     initConsumers(): Promise<void>;
+    addCampaignOnStartup(): any;
 }
 
 interface IDeps {
@@ -50,6 +52,7 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
     'core.depsManager'?: AwilixContainer;
+    'core.domain.record'?: IRecordDomain;
 }
 
 export default function ({
@@ -63,7 +66,8 @@ export default function ({
     'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null,
-    'core.depsManager': depsManager = null
+    'core.depsManager': depsManager = null,
+    'core.domain.record': recordDomain
 }: IDeps = {}): IServer {
     const _checkAuth = async (req, res, next) => {
         try {
@@ -252,7 +256,10 @@ export default function ({
                                             ...contextValue.dbProfiler,
                                             // Transform queries hash map into an array, sort queries by count
                                             queries: Object.values(contextValue.dbProfiler.queries)
-                                                .map(q => ({...q, callers: [...q.callers]})) // Transform callers Set into Array
+                                                .map(q => ({
+                                                    ...q,
+                                                    callers: [...q.callers]
+                                                })) // Transform callers Set into Array
                                                 .sort((a: any, b: any) => b.count - a.count)
                                         }
                                     };
@@ -348,6 +355,32 @@ export default function ({
         },
         async initConsumers() {
             await coreApp.initPubSubEventsConsumer();
+        },
+        async addCampaignOnStartup() {
+            try {
+                // Check if we already have a campaign with this label to avoid duplicates
+                const campaignLabel = 'Demo Campaign';
+
+                // PAC ID to attach the campaign to
+                const pacId = '5006773';
+
+                await recordDomain.createRecord({
+                    library: 'campaigns',
+                    values: [
+                        {
+                            payload: {
+                                campaigns_label: campaignLabel,
+                                active: true
+                            }
+                        }
+                    ],
+                    ctx: {userId: '1'}
+                });
+
+                console.log('Campaign created');
+            } catch (error) {
+                console.error('Error creating campaign:', error);
+            }
         }
     };
 }
