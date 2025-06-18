@@ -71,8 +71,8 @@ export const useLinkRecordsInEdition = ({
 
     const [isExplorerAddButtonClicked, setIsExplorerAddButtonClicked] = useState(false);
     const [explorerActions, setExplorerActions] = useState<IExplorerRef | null>(null);
-    const [linkedIds, setLinkIds] = useState([]);
-    const [selectOptions, setSelectOptions] = useState([]);
+    const [linkedIds, setLinkIds] = useState<string[]>([]);
+    const [selectOptions, setSelectOptions] = useState<IKitOption[]>([]);
 
     const {
         handleDeleteAllValues,

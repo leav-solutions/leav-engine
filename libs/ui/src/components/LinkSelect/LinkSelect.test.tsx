@@ -67,18 +67,27 @@ describe('LinkSelect', () => {
     it('should call onCreate with current search string', async () => {
         const handleCreate = jest.fn();
 
+        const options = [
+            {value: 'foo', label: 'Foo'},
+            {value: 'bar', label: 'Bar'}
+        ];
+
+        render(
+            <LinkSelect tagDisplay={false} options={options} defaultValues={[]} onClickCreateButton={handleCreate} />
+        );
+
         const input = screen.getByRole('combobox');
         await user.click(input);
         await user.type(input, 'NewItem');
 
-        // Wait for the debounced search to complete
-        await new Promise(resolve => setTimeout(resolve, 600));
+        await waitFor(async () => {
+            const createButton = await screen.findByRole('button', {name: /NewItem/});
+            await user.click(createButton);
+        });
 
-        // Find the button by its text content
-        const createButton = screen.getByText(/NewItem/, {selector: 'button'});
-        await user.click(createButton);
-
-        expect(handleCreate).toHaveBeenCalledWith('NewItem');
+        await waitFor(() => {
+            expect(handleCreate).toHaveBeenCalledWith('NewItem');
+        });
     });
 
     it('should call onBlur with itemsToLink', async () => {

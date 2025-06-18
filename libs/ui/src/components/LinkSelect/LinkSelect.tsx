@@ -5,10 +5,11 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faMagnifyingGlass, faPlus} from '@fortawesome/free-solid-svg-icons';
 import {KitButton, KitDivider, KitLoader, KitSelect, KitSpace} from 'aristid-ds';
 import styled from 'styled-components';
-import {useEffect, useState} from 'react';
+import {ComponentProps, useEffect, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useDebouncedValue} from '_ui/hooks/useDebouncedValue';
 import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
+import {FaChevronDown} from 'react-icons/fa';
 
 interface ILinkSelectProps {
     tagDisplay: boolean;
@@ -84,31 +85,31 @@ function LinkSelect({
         setEmptyResults(isEmptyResults);
     }, [options, debouncedSearch]);
 
-    const _handleChange = (selection: string[]) => {
+    const _handleChange: ComponentProps<typeof KitSelect>['onChange'] = (selection: string[]) => {
         onUpdateSelection(selection);
     };
 
-    const _handleSearch = (value: string) => {
+    const _handleSearch: ComponentProps<typeof KitSelect>['onSearch'] = (value: string) => {
         setIsLoading(true);
         setCurrentSearch(value);
     };
 
-    const _onClickCreateButton = () => {
+    const _onClickCreateButton: ComponentProps<typeof KitButton>['onClick'] = () => {
         onClickCreateButton(debouncedSearch);
     };
 
-    const _onBlur = () => {
+    const _onBlur: ComponentProps<typeof KitSelect>['onBlur'] = () => {
         onBlur(itemsToLink, itemsToDelete);
         setIsOpen(false);
     };
 
-    const _onSelect = (itemId: string) => {
+    const _onSelect: ComponentProps<typeof KitSelect>['onSelect'] = (itemId: string) => {
         // remove itemToDelete if exists
         itemsToDelete.delete(itemId);
         itemsToLink.add(itemId);
     };
 
-    const _onDeselect = (itemId: any) => {
+    const _onDeselect: ComponentProps<typeof KitSelect>['onDeselect'] = (itemId: any) => {
         // if we had an item in select, we don't need to delete it
         // because the link has not been created yet
         if (itemsToLink.has(itemId)) {
@@ -178,6 +179,7 @@ function LinkSelect({
             dropdownRender={dropdownButtons}
             autoFocus={!tagDisplay}
             allowClear={tagDisplay}
+            suffixIcon={tagDisplay ? <FaChevronDown /> : <div />}
         />
     );
 }
