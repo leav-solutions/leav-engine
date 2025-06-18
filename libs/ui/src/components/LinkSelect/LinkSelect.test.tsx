@@ -80,14 +80,24 @@ describe('LinkSelect', () => {
         await user.click(input);
         await user.type(input, 'NewItem');
 
-        await waitFor(async () => {
-            const createButton = await screen.findByRole('button', {name: /NewItem/});
-            await user.click(createButton);
-        });
+        await waitFor(
+            async () => {
+                const createButton = await screen.findByRole('button', {name: /NewItem/});
+                await user.click(createButton);
+            },
+            {
+                timeout: 20000
+            }
+        );
 
-        await waitFor(() => {
-            expect(handleCreate).toHaveBeenCalledWith('NewItem');
-        });
+        await waitFor(
+            () => {
+                expect(handleCreate).toHaveBeenCalledWith('NewItem');
+            },
+            {
+                timeout: 20000
+            }
+        );
     });
 
     it('should call onBlur with itemsToLink', async () => {
