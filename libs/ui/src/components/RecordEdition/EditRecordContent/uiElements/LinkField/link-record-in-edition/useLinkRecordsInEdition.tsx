@@ -9,6 +9,7 @@ import {ExplorerWrapper} from '../shared/ExplorerWrapper';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {DeleteMultipleValuesFunc} from '../../../_types';
 import {
+    JoinLibraryContextFragment,
     RecordFilterCondition,
     RecordFilterOperator,
     RecordFormAttributeLinkAttributeFragment,
@@ -36,6 +37,7 @@ interface ILinkRecordsInCreationProps {
     libraryId: string;
     recordId: string;
     attribute: RecordFormAttributeLinkAttributeFragment;
+    joinLibraryContext: JoinLibraryContextFragment;
     columnsToDisplay: ComponentProps<typeof Explorer>['defaultViewSettings']['attributesIds'];
     backendValues: RecordFormElementsValueLinkValue[];
     setBackendValues: Dispatch<SetStateAction<RecordFormElementsValueLinkValue[]>>;
@@ -58,6 +60,7 @@ export const useLinkRecordsInEdition = ({
     libraryId,
     recordId,
     attribute,
+    joinLibraryContext,
     columnsToDisplay,
     backendValues,
     setBackendValues,
@@ -329,6 +332,7 @@ export const useLinkRecordsInEdition = ({
                                 (attribute.required && attribute.multiple_values && backendValues.length === 1)
                             }
                             defaultActionsForItem={[]}
+                            joinLibraryContext={joinLibraryContext}
                             hidePrimaryActions
                             hideTableHeader
                             iconsOnlyItemActions

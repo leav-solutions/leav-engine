@@ -6,10 +6,10 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IFormDomain} from 'domain/form/formDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
-import {IAttribute} from '_types/attribute';
-import {IForm, IFormDependentElements, IFormElement, IRecordForm} from '_types/forms';
+import {AttributeTypes, IAttribute} from '../../../_types/attribute';
+import {IForm, IFormDependentElements, IFormElement, IFormElementJoinLibraryContext, IRecordForm} from '_types/forms';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {ILibrary} from '_types/library';
+import {ILibrary, LibraryBehavior} from '../../../_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {
@@ -96,7 +96,43 @@ export default function ({
                     key: settingsKey,
                     value: settingsValue
                 };
-            })
+            }),
+        joinLibraryContext: async (
+            formElement: IFormElement,
+            _,
+            ctx: IQueryInfos
+        ): Promise<IFormElementJoinLibraryContext> | null => {
+            const attributeId = formElement?.settings?.attribute;
+
+            if (!attributeId) {
+                return null;
+            }
+
+            const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
+            if (attrProps.linked_library) {
+                const libProps = await libraryDomain.getLibraryProperties(attrProps.linked_library, ctx);
+                if (libProps.behavior === LibraryBehavior.JOIN && libProps.mandatoryAttribute) {
+                    const mandatoryAttributeProps = await attributeDomain?.getAttributeProperties({
+                        id: libProps.mandatoryAttribute,
+                        ctx
+                    });
+                    if (
+                        (mandatoryAttributeProps.linked_library &&
+                            mandatoryAttributeProps.type === AttributeTypes.SIMPLE_LINK) ||
+                        (mandatoryAttributeProps.type === AttributeTypes.TREE &&
+                            !mandatoryAttributeProps.multiple_values)
+                    ) {
+                        return {
+                            multipleValues: attrProps.multiple_values,
+                            linkedLibrary: mandatoryAttributeProps.linked_library,
+                            mandatoryAttribute: mandatoryAttributeProps.id
+                        };
+                    }
+                }
+            }
+
+            return null;
+        }
     };
 
     return {
@@ -173,6 +209,12 @@ export default function ({
                         value: Any!
                     }
 
+                    type FormElementJoinLibraryContext {
+                        multipleValues: Boolean
+                        linkedLibrary: ID,
+                        mandatoryAttribute: ID,
+                    }
+
                     input FormElementSettingsInput {
                         key: String!,
                         value: Any!
@@ -186,6 +228,7 @@ export default function ({
                         type: FormElementTypes!,
                         attribute: Attribute,
                         settings: [FormElementSettings!]!
+                        joinLibraryContext: FormElementJoinLibraryContext
                     }
 
                     type FormElementWithValues {
@@ -196,6 +239,7 @@ export default function ({
                         type: FormElementTypes!,
                         attribute: Attribute,
                         settings: [FormElementSettings!]!
+                        joinLibraryContext: FormElementJoinLibraryContext
                         values: [GenericValue!]
                         valueError: String
                     }

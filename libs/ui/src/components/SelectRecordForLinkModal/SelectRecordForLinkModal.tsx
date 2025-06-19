@@ -9,7 +9,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {FaExchangeAlt, FaPlus} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ExplorerSelectionIdsQuery, useExplorerSelectionIdsLazyQuery} from '_ui/_gqlTypes';
+import {ExplorerSelectionIdsQuery, JoinLibraryContextFragment, useExplorerSelectionIdsLazyQuery} from '_ui/_gqlTypes';
 import {Explorer} from '_ui/components/Explorer';
 
 const modalMaxWidth = 1_200;
@@ -56,6 +56,8 @@ interface ISelectRecordForLinkModalProps {
     open: boolean;
     childLibraryId: string;
     replacementMode: boolean;
+
+    joinLibraryContext?: JoinLibraryContextFragment;
     selectionMode: ComponentProps<typeof Explorer>['selectionMode'];
     hideSelectAllAction: ComponentProps<typeof Explorer>['hideSelectAllAction'];
     onSelectionCompleted: (data: ExplorerSelectionIdsQuery) => void;
@@ -68,6 +70,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
     childLibraryId,
     replacementMode,
     selectionMode,
+    joinLibraryContext,
     hideSelectAllAction,
     onSelectionCompleted,
     onClose
@@ -146,6 +149,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                         defaultMassActions={[]}
                         itemActions={[]}
                         defaultPrimaryActions={[]}
+                        joinLibraryContext={joinLibraryContext}
                         showSearch
                     />
                     {/* TODO: avoid getting last view for user */}

@@ -7,7 +7,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {Entrypoint, FeatureHook, IEntrypointLink, IPrimaryAction} from '../_types';
 import {LinkModal} from '../link-item/LinkModal';
-import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
+import {JoinLibraryContextFragment, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -26,12 +26,14 @@ export const useLinkPrimaryAction = ({
     entrypoint,
     linkId,
     canAddLinkValue,
+    joinLibraryContext,
     onLink
 }: FeatureHook<{
     entrypoint: Entrypoint;
     linkId?: string;
     maxItemsLeft: number | null;
     canAddLinkValue: boolean;
+    joinLibraryContext?: JoinLibraryContextFragment;
     onLink?: (saveValuesResult: ISubmitMultipleResult) => void;
 }>) => {
     const {t} = useSharedTranslation();
@@ -44,14 +46,18 @@ export const useLinkPrimaryAction = ({
     useExplorerLinkAttributeQuery({
         skip: entrypoint.type !== 'link',
         variables: {
-            id: (entrypoint as IEntrypointLink).linkAttributeId
+            id: joinLibraryContext?.mandatoryAttribute || (entrypoint as IEntrypointLink).linkAttributeId
         },
         onCompleted: data => {
             const attributeData = data?.attributes?.list?.[0];
             if (!attributeData) {
                 throw new Error('Unknown link attribute');
             }
-            setIsMultivalues(attributeData.multiple_values);
+            setIsMultivalues(
+                joinLibraryContext?.mandatoryAttribute
+                    ? joinLibraryContext.multipleValues || false
+                    : attributeData.multiple_values
+            );
         }
     });
 
@@ -72,6 +78,7 @@ export const useLinkPrimaryAction = ({
             <LinkModal
                 open
                 onLink={onLink}
+                joinLibraryContext={joinLibraryContext}
                 linkId={replacementMode ? linkId : undefined}
                 onClose={() => {
                     setIsLinkModalVisible(false);

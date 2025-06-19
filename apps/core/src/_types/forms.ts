@@ -51,6 +51,7 @@ export interface IFormElement {
     uiElementType: string;
     containerId: string;
     settings?: IKeyValue<any>;
+    joinLibraryContext?: IFormElementJoinLibraryContext;
 }
 
 export interface IFormElementWithValues extends IFormElement {
@@ -67,4 +68,10 @@ export type IFormElementWithValuesAndChildren = IFormElementWithValues & {
  */
 export interface IFormFilterOptions extends ICoreEntityFilterOptions {
     library?: string;
+}
+
+export interface IFormElementJoinLibraryContext {
+    multipleValues: boolean;
+    linkedLibrary: string;
+    mandatoryAttribute: string;
 }

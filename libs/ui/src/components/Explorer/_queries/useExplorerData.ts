@@ -145,7 +145,6 @@ export const useExplorerData = ({
             id: (entrypoint as IEntrypointLink).linkAttributeId
         }
     });
-    console.log('attributeData :>> ', attributeData);
 
     const isLinkAttributeAllowed = attributeData?.attributes?.list?.[0]?.permissions?.access_attribute;
     const {
@@ -163,7 +162,6 @@ export const useExplorerData = ({
         }
     });
 
-    console.log('linkData :>> ', linkData);
     const {
         data: libraryData,
         loading: libraryLoading,

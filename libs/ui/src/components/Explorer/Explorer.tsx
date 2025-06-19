@@ -33,6 +33,7 @@ import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {MASS_SELECTION_ALL} from './_constants';
 import {useDeleteLinkValues} from './actions-mass/useDeleteLinkValues';
 import {useReplaceItemAction} from './actions-item/useReplaceItemAction';
+import {JoinLibraryContextFragment} from '_ui/_gqlTypes';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -111,6 +112,7 @@ export interface IExplorerProps {
     hideTableHeader?: boolean;
     creationFormId?: string;
     editionFormId?: string;
+    joinLibraryContext?: JoinLibraryContextFragment;
 }
 
 export interface IExplorerRef {
@@ -146,7 +148,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             defaultPrimaryActions = ['create'],
             defaultMassActions = ['deactivate'],
             defaultCallbacks,
-            defaultViewSettings
+            defaultViewSettings,
+            joinLibraryContext
         },
         ref
     ) => {
@@ -212,6 +215,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             libraryId: view.libraryId,
             canCreateAndLinkValue: canEditLinkAttributeValues,
             onCreate: defaultCallbacks?.primary?.create,
+            joinLibraryContext,
             entrypoint,
             totalCount,
             formId: creationFormId,
@@ -220,6 +224,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
             entrypoint,
             isEnabled: isLink,
+            joinLibraryContext,
             canAddLinkValue: canEditLinkAttributeValues,
             onLink: defaultCallbacks?.primary?.link,
             linkId: data?.totalCount === 0 ? undefined : data?.records[0]?.id_value,

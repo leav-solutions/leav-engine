@@ -8,7 +8,12 @@ import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {LibraryBehavior, useExplorerLibraryDetailsQuery, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
+import {
+    JoinLibraryContextFragment,
+    LibraryBehavior,
+    useExplorerLibraryDetailsQuery,
+    useExplorerLinkAttributeQuery
+} from '_ui/_gqlTypes';
 import {FeatureHook, Entrypoint, IEntrypointLink, IPrimaryAction} from '../_types';
 import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
 
@@ -34,6 +39,7 @@ export const useCreatePrimaryAction = ({
     canCreateAndLinkValue,
     onCreate,
     formId,
+    joinLibraryContext,
     refetch
 }: FeatureHook<{
     libraryId: string;
@@ -47,6 +53,7 @@ export const useCreatePrimaryAction = ({
         recordIdCreated: string;
         saveValuesResultOnLink?: ISubmitMultipleResult;
     }) => void;
+    joinLibraryContext?: JoinLibraryContextFragment;
     formId?: string;
     refetch: () => void;
 }>) => {
@@ -60,18 +67,25 @@ export const useCreatePrimaryAction = ({
     useExplorerLinkAttributeQuery({
         skip: entrypoint.type !== 'link',
         variables: {
-            id: (entrypoint as IEntrypointLink).linkAttributeId
+            id: joinLibraryContext?.mandatoryAttribute || (entrypoint as IEntrypointLink).linkAttributeId
         },
         onCompleted: data => {
             const attributeData = data?.attributes?.list?.[0];
             if (!attributeData) {
                 throw new Error('Unknown link attribute');
             }
-            setIsMultivalues(attributeData.multiple_values);
+            setIsMultivalues(
+                joinLibraryContext?.mandatoryAttribute
+                    ? joinLibraryContext.multipleValues || false
+                    : attributeData.multiple_values
+            );
         }
     });
 
-    const {data, loading, error} = useExplorerLibraryDetailsQuery({variables: {libraryId}, skip: !isEnabled});
+    const {data, loading, error} = useExplorerLibraryDetailsQuery({
+        variables: {libraryId: joinLibraryContext?.linkedLibrary || libraryId},
+        skip: !isEnabled
+    });
 
     if (error || loading) {
         return {createPrimaryAction: null, createModal: null};
@@ -136,7 +150,7 @@ export const useCreatePrimaryAction = ({
                     className={CREATE_RECORD_MODAL_CLASSNAME}
                     open
                     record={null}
-                    library={libraryId}
+                    library={joinLibraryContext?.linkedLibrary || libraryId}
                     creationFormId={formId}
                     onClose={() => {
                         setIsModalCreationVisible(false);
