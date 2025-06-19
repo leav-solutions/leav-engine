@@ -5,7 +5,7 @@ import {localizedTranslation} from '@leav/utils';
 import {FunctionComponent, useEffect, useState} from 'react';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
-import {RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
+import {JoinLibraryContextFragment, RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
 import {ILinkFieldState} from '../../reducers/linkFieldReducer/linkFieldReducer';
 import {IFormElementProps} from '../../_types';
 import {AntForm, KitInputWrapper} from 'aristid-ds';
@@ -77,8 +77,13 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
     const {lang} = useLang();
     const {
         settings,
-        attribute
-    }: {settings: typeof element.settings; attribute?: RecordFormAttributeLinkAttributeFragment} = element;
+        attribute,
+        joinLibraryContext
+    }: {
+        settings: typeof element.settings;
+        attribute?: RecordFormAttributeLinkAttributeFragment;
+        joinLibraryContext?: JoinLibraryContextFragment;
+    } = element;
 
     const attributesPendingDefaultValues = pendingValues?.[attribute.id]
         ? (Object.values(pendingValues?.[attribute.id]) as unknown as RecordFormElementsValueLinkValue[])
@@ -140,6 +145,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         libraryId: state.libraryId,
         recordId: state.record?.id,
         attribute,
+        joinLibraryContext,
         columnsToDisplay,
         backendValues,
         setBackendValues,

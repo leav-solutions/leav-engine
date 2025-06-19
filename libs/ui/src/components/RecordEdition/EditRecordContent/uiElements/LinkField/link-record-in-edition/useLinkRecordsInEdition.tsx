@@ -10,7 +10,7 @@ import {ExplorerWrapper} from '../shared/ExplorerWrapper';
 import {LinkActionsButtons} from '../shared/LinkActionsButtons';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {DeleteMultipleValuesFunc} from '../../../_types';
-import {RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
+import {JoinLibraryContextFragment, RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {AntForm, KitSelect} from 'aristid-ds';
 import {
@@ -28,6 +28,7 @@ interface ILinkRecordsInCreationProps {
     libraryId: string;
     recordId: string;
     attribute: RecordFormAttributeLinkAttributeFragment;
+    joinLibraryContext: JoinLibraryContextFragment;
     columnsToDisplay: ComponentProps<typeof Explorer>['defaultViewSettings']['attributesIds'];
     backendValues: RecordFormElementsValueLinkValue[];
     setBackendValues: Dispatch<SetStateAction<RecordFormElementsValueLinkValue[]>>;
@@ -50,6 +51,7 @@ export const useLinkRecordsInEdition = ({
     libraryId,
     recordId,
     attribute,
+    joinLibraryContext,
     columnsToDisplay,
     backendValues,
     setBackendValues,
@@ -205,6 +207,7 @@ export const useLinkRecordsInEdition = ({
                                 !attribute.multiple_values ||
                                 (attribute.required && attribute.multiple_values && backendValues.length === 1)
                             }
+                            joinLibraryContext={joinLibraryContext}
                             defaultActionsForItem={_getExplorerItemActions()}
                             hidePrimaryActions
                             hideTableHeader

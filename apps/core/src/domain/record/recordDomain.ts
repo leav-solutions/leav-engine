@@ -1,19 +1,18 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {EventAction, localizedTranslation} from '@leav/utils';
+import {ErrorTypes, EventAction, localizedTranslation} from '@leav/utils';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IValidateHelper} from 'domain/helpers/validate';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
+import {ISaveBatchValueError, IValueDomain} from 'domain/value/valueDomain';
 import type {i18n} from 'i18next';
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import moment from 'moment';
 import {join} from 'path';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
@@ -27,8 +26,8 @@ import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {TypeGuards} from '../../utils/typeGuards';
 import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
-import {Errors, ErrorTypes} from '../../_types/errors';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {
     AttributePermissionsActions,
@@ -60,6 +59,8 @@ import {IAttributePermissionDomain} from '../permission/attributePermissionDomai
 import getAccessPermissionFilters from './helpers/getAccessPermissionFilters';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
+import {DeleteRecordHelper} from './helpers/deleteRecord';
+import {CreateRecordHelper} from './helpers/createRecord';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -203,6 +204,8 @@ export interface IRecordDomainDeps {
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.record.helpers.createRecord': CreateRecordHelper;
+    'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.infra.library': ILibraryRepo;
     'core.infra.tree': ITreeRepo;
@@ -227,6 +230,8 @@ export default function ({
     'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.helpers.validate': validateHelper,
+    'core.domain.record.helpers.createRecord': createRecordHelper,
+    'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.infra.library': libraryRepo,
     'core.infra.tree': treeRepo,
@@ -331,58 +336,6 @@ export default function ({
         if (stackSize !== 1) {
             throw new ValidationError({id: Errors.INVALID_FILTERS_EXPRESSION});
         }
-    };
-
-    const _getSimpleLinkedRecords = async (
-        library: string,
-        value: string,
-        ctx: IQueryInfos
-    ): Promise<Array<{attribute: string; records: IRecord[]}>> => {
-        const filters: IAttributeFilterOptions = {type: [AttributeTypes.SIMPLE_LINK], linked_library: library};
-        // get all attributes linked to the library param
-        const attributes = await attributeDomain.getAttributes({
-            params: {
-                filters
-            },
-            ctx
-        });
-
-        const linkedValuesToDel: Array<{records: IRecord[]; attribute: string}> = [];
-        const libraryAttributes: {[library: string]: IAttribute[]} = {};
-
-        // Get libraries using link attributes
-        for (const attr of attributes.list) {
-            const libs = await libraryRepo.getLibrariesUsingAttribute(attr.id, ctx);
-            for (const l of libs) {
-                libraryAttributes[l] = !!libraryAttributes[l] ? [...libraryAttributes[l], attr] : [attr];
-            }
-        }
-
-        for (const [lib, attrs] of Object.entries(libraryAttributes)) {
-            for (const attr of attrs) {
-                let reverseLink: IAttribute;
-                if (!!attr.reverse_link) {
-                    reverseLink = await attributeDomain.getAttributeProperties({
-                        id: attr.reverse_link as string,
-                        ctx
-                    });
-                }
-
-                const records = await recordRepo.find({
-                    libraryId: lib,
-                    filters: [
-                        {attributes: [{...attr, reverse_link: reverseLink}], condition: AttributeCondition.EQUAL, value}
-                    ],
-                    ctx
-                });
-
-                if (records.list.length) {
-                    linkedValuesToDel.push({records: records.list, attribute: attr.id});
-                }
-            }
-        }
-
-        return linkedValuesToDel;
     };
 
     const _isRelativeDateCondition = (condition: AttributeCondition): boolean =>
@@ -846,194 +799,178 @@ export default function ({
 
     const ret: IRecordDomain = {
         async createRecord({library, values, ctx, verifyRequiredAttributes}) {
-            const recordData = {
-                created_at: moment().unix(),
-                created_by: String(ctx.userId),
-                modified_at: moment().unix(),
-                modified_by: String(ctx.userId),
-                active: true
-            };
 
-            const canCreate = await libraryPermissionDomain.getLibraryPermission({
-                action: LibraryPermissionsActions.CREATE_RECORD,
-                userId: ctx.userId,
-                libraryId: library,
+            const {record, valuesErrors} = await createRecordHelper({
+                library,
+                preCreateCallback: async () => {
+                    const valuesByAttribute = (values ??= []).reduce<Record<string, IValue[]>>((acc, value) => {
+                        if (!acc[value.attribute]) {
+                            acc[value.attribute] = [];
+                        }
+                        acc[value.attribute].push(value);
+                        return acc;
+                    }, {});
+
+                    if (verifyRequiredAttributes) {
+                        const creationForm = (
+                            await formRepo.getForms({
+                                params: {filters: {id: 'creation', library}, strictFilters: true, withCount: false},
+                                ctx
+                            })
+                        ).list[0];
+
+                        const requiredAttributes = (
+                            creationForm
+                                ? await attributeDomain.getFormAttributes(library, 'creation', ctx)
+                                : await attributeDomain.getLibraryAttributes(library, ctx)
+                        ).filter(attribute => attribute.required);
+
+                        const missingAttributes = requiredAttributes.filter(
+                            attribute => !Object.keys(valuesByAttribute).includes(attribute.id)
+                        );
+
+                        const attributeLabel = label =>
+                            typeof label === 'string' ? label : localizedTranslation(label, [ctx.lang]);
+
+                        if (missingAttributes.length) {
+                            return missingAttributes.map(
+                                (attribute): ICreateRecordValueError => ({
+                                    type: Errors.REQUIRED_ATTRIBUTE,
+                                    attribute: attribute.id,
+                                    message: utils.translateError(
+                                        {
+                                            msg: Errors.REQUIRED_ATTRIBUTE,
+                                            vars: {attribute: attributeLabel(attribute.label)}
+                                        },
+                                        ctx.lang
+                                    )
+                                })
+                            );
+                        }
+                    }
+
+                    if (Object.keys(valuesByAttribute).length) {
+                        // First, check if values are ok. If not, we won't create the record at all
+                        const res = await Promise.allSettled(
+                            Object.entries(valuesByAttribute).map(async ([attributeId, attributeValues]) => {
+                                const canEditAttr = await attrPermissionDomain.getAttributePermission({
+                                    action: AttributePermissionsActions.EDIT_VALUE,
+                                    attributeId,
+                                    ctx
+                                });
+
+                                if (!canEditAttr) {
+                                    throw new PermissionError<IValue>(AttributePermissionsActions.EDIT_VALUE, {
+                                        attribute: attributeId,
+                                        [attributeId]: 'Permission denied'
+                                    });
+                                }
+
+                                const attributeProps = await attributeDomain.getAttributeProperties({
+                                    id: attributeId,
+                                    ctx
+                                });
+
+                                const valueChecksParams = {
+                                    attributeProps,
+                                    library,
+                                    keepEmpty: false,
+                                    infos: ctx
+                                };
+
+                                const [validationErrors] = await Promise.all(
+                                    attributeValues.map(value =>
+                                        validateValue({
+                                            ...valueChecksParams,
+                                            value,
+                                            deps: {
+                                                attributeDomain,
+                                                recordRepo,
+                                                valueRepo,
+                                                treeRepo
+                                            },
+                                            ctx
+                                        })
+                                    )
+                                );
+
+                                if (Object.keys(validationErrors).length > 0) {
+                                    throw new ValidationError<IValue>(validationErrors, 'Validation error', false, {
+                                        attribute: attributeProps.id,
+                                        values: attributeValues
+                                    });
+                                }
+
+                                return valueDomain.runActionsList({
+                                    listName: ActionsListEvents.SAVE_VALUE,
+                                    values: attributeValues,
+                                    attribute: attributeProps,
+                                    library,
+                                    ctx
+                                });
+                            })
+                        );
+
+                        const errors = res
+                            .filter(r => r.status === 'rejected')
+                            .map((rejection: PromiseRejectedResult): ICreateRecordValueError => {
+                                const errorAttribute =
+                                    rejection.reason.fields?.attribute ||
+                                    // coming from attributeDomain.getAttributeProperties
+                                    rejection.reason.fields?.id?.vars?.attribute;
+                                const errorReason =
+                                    rejection.reason.fields?.[errorAttribute] ||
+                                    // coming from attributeDomain.getAttributeProperties
+                                    rejection.reason.fields?.id;
+
+                                return {
+                                    type: rejection.reason.type,
+                                    attribute: errorAttribute,
+                                    input: rejection.reason.context?.values[0].payload,
+                                    message: utils.translateError(errorReason, ctx.lang)
+                                };
+                            });
+
+                        if (errors.length > 0) {
+                            return errors;
+                        }
+                    }
+                },
                 ctx
             });
 
-            if (!canCreate) {
-                throw new PermissionError(LibraryPermissionsActions.CREATE_RECORD);
+            if (valuesErrors?.length) {
+                return {
+                    record: null,
+                    valuesErrors
+                };
             }
-
-            const valuesByAttribute = (values ??= []).reduce<Record<string, IValue[]>>((acc, value) => {
-                if (!acc[value.attribute]) {
-                    acc[value.attribute] = [];
-                }
-                acc[value.attribute].push(value);
-                return acc;
-            }, {});
-
-            if (verifyRequiredAttributes) {
-                const creationForm = (
-                    await formRepo.getForms({
-                        params: {filters: {id: 'creation', library}, strictFilters: true, withCount: false},
-                        ctx
-                    })
-                ).list[0];
-
-                const requiredAttributes = (
-                    creationForm
-                        ? await attributeDomain.getFormAttributes(library, 'creation', ctx)
-                        : await attributeDomain.getLibraryAttributes(library, ctx)
-                ).filter(attribute => attribute.required);
-
-                const missingAttributes = requiredAttributes.filter(
-                    attribute => !Object.keys(valuesByAttribute).includes(attribute.id)
-                );
-
-                const attributeLabel = label =>
-                    typeof label === 'string' ? label : localizedTranslation(label, [ctx.lang]);
-
-                if (missingAttributes.length) {
-                    return {
-                        record: null,
-                        valuesErrors: missingAttributes.map(
-                            (attribute): ICreateRecordValueError => ({
-                                type: Errors.REQUIRED_ATTRIBUTE,
-                                attribute: attribute.id,
-                                message: utils.translateError(
-                                    {
-                                        msg: Errors.REQUIRED_ATTRIBUTE,
-                                        vars: {attribute: attributeLabel(attribute.label)}
-                                    },
-                                    ctx.lang
-                                )
-                            })
-                        )
-                    };
-                }
-            }
-
-            if (Object.keys(valuesByAttribute).length) {
-                // First, check if values are ok. If not, we won't create the record at all
-                const res = await Promise.allSettled(
-                    Object.entries(valuesByAttribute).map(async ([attributeId, attributeValues]) => {
-                        const canEditAttr = await attrPermissionDomain.getAttributePermission({
-                            action: AttributePermissionsActions.EDIT_VALUE,
-                            attributeId,
-                            ctx
-                        });
-
-                        if (!canEditAttr) {
-                            throw new PermissionError<IValue>(AttributePermissionsActions.EDIT_VALUE, {
-                                attribute: attributeId,
-                                [attributeId]: 'Permission denied'
-                            });
-                        }
-
-                        const attributeProps = await attributeDomain.getAttributeProperties({
-                            id: attributeId,
-                            ctx
-                        });
-
-                        const valueChecksParams = {
-                            attributeProps,
-                            library,
-                            keepEmpty: false,
-                            infos: ctx
-                        };
-
-                        const [validationErrors] = await Promise.all(
-                            attributeValues.map(value =>
-                                validateValue({
-                                    ...valueChecksParams,
-                                    value,
-                                    deps: {
-                                        attributeDomain,
-                                        recordRepo,
-                                        valueRepo,
-                                        treeRepo
-                                    },
-                                    ctx
-                                })
-                            )
-                        );
-
-                        if (Object.keys(validationErrors).length > 0) {
-                            throw new ValidationError<IValue>(validationErrors, 'Validation error', false, {
-                                attribute: attributeProps.id,
-                                values: attributeValues
-                            });
-                        }
-
-                        return valueDomain.runActionsList({
-                            listName: ActionsListEvents.SAVE_VALUE,
-                            values: attributeValues,
-                            attribute: attributeProps,
-                            library,
-                            ctx
-                        });
-                    })
-                );
-
-                const errors = res
-                    .filter(r => r.status === 'rejected')
-                    .map((rejection: PromiseRejectedResult): ICreateRecordValueError => {
-                        const errorAttribute =
-                            rejection.reason.fields?.attribute ||
-                            // coming from attributeDomain.getAttributeProperties
-                            rejection.reason.fields?.id?.vars?.attribute;
-                        const errorReason =
-                            rejection.reason.fields?.[errorAttribute] ||
-                            // coming from attributeDomain.getAttributeProperties
-                            rejection.reason.fields?.id;
-
-                        return {
-                            type: rejection.reason.type,
-                            attribute: errorAttribute,
-                            input: rejection.reason.context?.values[0].payload,
-                            message: utils.translateError(errorReason, ctx.lang)
-                        };
-                    });
-
-                if (errors.length > 0) {
-                    return {record: null, valuesErrors: errors};
-                }
-            }
-
-            const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
-
-            let valuesErrors = null;
             if (values?.length) {
                 // Make sure we don't have any id_value hanging on as we're on creation here
                 const cleanValues = values.map(v => ({...v, id_value: null}));
 
                 const {errors} = await valueDomain.saveValueBatch({
                     library,
-                    recordId: newRecord.id,
+                    recordId: record.id,
                     values: cleanValues,
                     skipPermission: true,
                     ctx
                 });
-                valuesErrors = errors;
+                return {
+                    record,
+                    valuesErrors: errors?.map((e: ISaveBatchValueError): ICreateRecordValueError => ({
+                        type: e.type as ErrorTypes | Errors,
+                        attribute: e.attribute,
+                        message: e.message,
+                        input: e.input
+                    }))
+                };
             }
+            return {
+                record,
+                valuesErrors: []
+            };
 
-            // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
-            await eventsManager.sendDatabaseEvent(
-                {
-                    action: EventAction.RECORD_SAVE,
-                    topic: {
-                        record: {
-                            id: newRecord.id,
-                            libraryId: newRecord.library
-                        }
-                    },
-                    after: newRecord
-                },
-                ctx
-            );
-
-            return {record: newRecord, valuesErrors};
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
             const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({
@@ -1066,89 +1003,7 @@ export default function ({
             return savedRecord;
         },
         async deleteRecord({library, id, ctx}): Promise<IRecord> {
-            await validateHelper.validateLibrary(library, ctx);
-
-            // Check permission
-            const canDelete = await recordPermissionDomain.getRecordPermission({
-                action: RecordPermissionsActions.DELETE_RECORD,
-                userId: ctx.userId,
-                library,
-                recordId: id,
-                ctx
-            });
-
-            if (!canDelete) {
-                throw new PermissionError(RecordPermissionsActions.DELETE_RECORD);
-            }
-
-            const simpleLinkedRecords = await _getSimpleLinkedRecords(library, id, ctx);
-
-            // delete simple linked values
-            for (const e of simpleLinkedRecords) {
-                for (const r of e.records) {
-                    await valueDomain.deleteValue({
-                        library: r.library,
-                        recordId: r.id,
-                        attribute: e.attribute,
-                        ctx
-                    });
-                }
-            }
-
-            // Delete linked values (advanced, advanced link and tree)
-            await valueRepo.deleteAllValuesByRecord({libraryId: library, recordId: id, ctx});
-
-            // Remove element from all trees
-            const libraryTrees = await treeRepo.getTrees({
-                params: {
-                    filters: {
-                        library
-                    }
-                },
-                ctx
-            });
-
-            // For each tree, get all record nodes
-            await Promise.all(
-                libraryTrees.list.map(async tree => {
-                    const nodes = await treeRepo.getNodesByRecord({
-                        treeId: tree.id,
-                        record: {
-                            id,
-                            library
-                        },
-                        ctx
-                    });
-
-                    for (const node of nodes) {
-                        await treeRepo.deleteElement({
-                            treeId: tree.id,
-                            nodeId: node,
-                            deleteChildren: true,
-                            ctx
-                        });
-                    }
-                })
-            );
-
-            // Everything is clean, we can actually delete the record
-            const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
-
-            await eventsManager.sendDatabaseEvent(
-                {
-                    action: EventAction.RECORD_DELETE,
-                    topic: {
-                        record: {
-                            libraryId: deletedRecord.library,
-                            id: deletedRecord.id
-                        }
-                    },
-                    before: deletedRecord
-                },
-                ctx
-            );
-
-            return deletedRecord;
+            return deleteRecordHelper(library, id, ctx);
         },
         async find({params, ctx}) {
             const {library, sort, pagination, withCount, retrieveInactive = false} = params;

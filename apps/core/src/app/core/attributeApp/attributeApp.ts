@@ -30,6 +30,7 @@ import {AttributeCondition, IRecord} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {Override} from '@leav/utils';
+import {LibraryBehavior} from '../../../_types/library';
 
 export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -415,10 +416,22 @@ export default function (deps: IDeps): ICoreAttributeApp {
                     },
                     LinkAttribute: {
                         ...commonResolvers,
-                        linked_library: (attributeData: IAttribute, _, ctx: IQueryInfos) => {
+                        linked_library: async (attributeData: IAttribute, _, ctx: IQueryInfos) => {
                             if (!attributeData.linked_library) {
                                 return null;
                             }
+
+                            // const libProps = await libraryDomain.getLibraryProperties(attributeData.linked_library, ctx);
+                            // if (libProps.behavior === LibraryBehavior.JOIN && libProps.mandatoryAttribute) {
+                            //     const joinMandatoryAttribute = await attributeDomain?.getAttributeProperties({
+                            //         id: libProps.mandatoryAttribute,
+                            //         ctx
+                            //     });
+
+                            //     if (joinMandatoryAttribute.linked_library && joinMandatoryAttribute.type === AttributeTypes.SIMPLE_LINK || (joinMandatoryAttribute.type === AttributeTypes.TREE && !joinMandatoryAttribute.multiple_values)) {
+                            //         return libraryDomain.getLibraryProperties(joinMandatoryAttribute.linked_library, ctx);
+                            //     }
+                            // }
 
                             return libraryDomain.getLibraryProperties(attributeData.linked_library, ctx);
                         },
