@@ -71,10 +71,9 @@ function LinkSelect({
 
     useEffect(() => {
         // Call API search when debounced search value changes
-        onSearch(debouncedSearch)
-            .then(() => {
-                setIsLoading(false);
-            });
+        onSearch(debouncedSearch).then(() => {
+            setIsLoading(false);
+        });
     }, [debouncedSearch]);
 
     useEffect(() => {
@@ -126,9 +125,9 @@ function LinkSelect({
                 <>
                     <StyledDivider />
                     <StyledContainer>
-                        {isLoading 
-                           ? <KitLoader />
-                           : (
+                        {isLoading ? (
+                            <KitLoader />
+                        ) : (
                             <KitSpace align="center" direction="vertical" size="xs">
                                 {emptyResults && (
                                     <KitButton
@@ -159,7 +158,7 @@ function LinkSelect({
     );
 
     return (
-        <StyledLinkSelect
+        <StyledKitSelect
             className={tagDisplay ? undefined : 'select-without-tags'}
             placeholder={t('record_edition.select')}
             mode="multiple"
