@@ -80,7 +80,7 @@ describe('LinkSelect', () => {
                 options={options}
                 defaultValues={[]}
                 onClickCreateButton={handleCreate}
-                onSearch={jest.fn().resolveValueOnce()}
+                onSearch={async () => null}
             />
         );
 
