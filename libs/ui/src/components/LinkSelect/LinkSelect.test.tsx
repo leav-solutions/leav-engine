@@ -5,6 +5,7 @@
 import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import LinkSelect from './LinkSelect';
 import userEvent from '@testing-library/user-event';
+import {act} from '@testing-library/react';
 
 let user: ReturnType<typeof userEvent.setup>;
 
@@ -59,7 +60,7 @@ describe('LinkSelect', () => {
         await user.type(input, 'Foo');
 
         const fooOption = screen.getAllByText('Foo')[1];
-        await userEvent.click(fooOption);
+        await user.click(fooOption);
 
         expect(handleUpdate).toHaveBeenCalledWith(['foo']);
     });
@@ -86,7 +87,7 @@ describe('LinkSelect', () => {
                 await user.click(createButton);
             },
             {
-                timeout: 20000
+                timeout: 20_000
             }
         );
 
@@ -95,7 +96,7 @@ describe('LinkSelect', () => {
                 expect(handleCreate).toHaveBeenCalledWith('NewItem');
             },
             {
-                timeout: 20000
+                timeout: 20_000
             }
         );
     });
@@ -116,7 +117,7 @@ describe('LinkSelect', () => {
         await user.type(input, 'alpha');
 
         const alphaOption = screen.getByText('Alpha');
-        await userEvent.click(alphaOption);
+        await user.click(alphaOption);
         await user.click(document.body);
 
         await waitFor(() => {
@@ -139,8 +140,8 @@ describe('LinkSelect', () => {
         await user.click(input);
         await user.type(input, 'alpha');
 
-        const [ignoreOption, alphaOption] = screen.getAllByText('Alpha');
-        await userEvent.click(alphaOption);
+        const [ignoreNonDisplayedTag, alphaOption] = screen.getAllByText('Alpha');
+        await user.click(alphaOption);
         await user.click(document.body);
 
         await waitFor(() => {

@@ -46,11 +46,11 @@ function LinkSelect({
     options,
     defaultValues,
     hideAdvancedSearch = false,
-    onUpdateSelection = () => null,
-    onClickCreateButton = () => null,
-    onBlur = (itemsToLink: Set<string>, itemsToDelete: Set<string>) => null,
-    onAdvanceSearch = () => null,
-    onSearch = () => null
+    onUpdateSelection,
+    onClickCreateButton,
+    onBlur,
+    onAdvanceSearch,
+    onSearch
 }: ILinkSelectProps): JSX.Element {
     const {t} = useSharedTranslation();
 
@@ -71,12 +71,21 @@ function LinkSelect({
 
     useEffect(() => {
         // Call API search when debounced search value changes
-        onSearch(debouncedSearch).then(() => {
+        onSearch?.(debouncedSearch).then(() => {
             setIsLoading(false);
         });
     }, [debouncedSearch]);
 
     useEffect(() => {
+        // if (debouncedSearch === '') {
+        //     setEmptyResults(false);
+        // } else {
+        //     const optionsFiltered = options.filter(option =>
+        //         option.label?.toLowerCase().includes(debouncedSearch.toLowerCase())
+        //     );
+        //     setEmptyResults(optionsFiltered.length === 0);
+        // }
+
         const optionsFiltered = options.filter(option =>
             option.label?.toLowerCase().includes(debouncedSearch.toLowerCase())
         );
@@ -85,7 +94,7 @@ function LinkSelect({
     }, [options, debouncedSearch]);
 
     const _handleChange: ComponentProps<typeof KitSelect>['onChange'] = (selection: string[]) => {
-        onUpdateSelection(selection);
+        onUpdateSelection?.(selection);
     };
 
     const _handleSearch: ComponentProps<typeof KitSelect>['onSearch'] = (value: string) => {
@@ -94,11 +103,11 @@ function LinkSelect({
     };
 
     const _onClickCreateButton: ComponentProps<typeof KitButton>['onClick'] = () => {
-        onClickCreateButton(debouncedSearch);
+        onClickCreateButton?.(debouncedSearch);
     };
 
     const _onBlur: ComponentProps<typeof KitSelect>['onBlur'] = () => {
-        onBlur(itemsToLink, itemsToDelete);
+        onBlur?.(itemsToLink, itemsToDelete);
         setIsOpen(false);
     };
 

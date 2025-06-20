@@ -12,6 +12,7 @@ import {
     RecordFilterCondition,
     RecordFormAttributeLinkAttributeFragment,
     useGetRecordsFromLibraryLazyQuery,
+    useGetRecordsFromLibraryQuery,
     ValueDetailsLinkValueFragment
 } from '_ui/_gqlTypes';
 
@@ -90,24 +91,17 @@ export const useLinkRecordsInEdition = ({
     // Query to get all records from the linked library
     // Network-only is useful to avoid caching, we have a side effect otherwise
     // When the record is created, if we call getRecordsFromLibrary(), the previous records are returned
-    const [getRecordsFromLibrary, {data: libraryItems}] = useGetRecordsFromLibraryLazyQuery({
+    const {data: libraryItems, refetch: getRecordsFromLibrary} = useGetRecordsFromLibraryQuery({
         fetchPolicy: 'network-only'
     });
 
     // Function to refetch data with current parameters
     const libraryRefetch = (customVariables = {}) =>
         getRecordsFromLibrary({
-            variables: {
-                libraryId: attribute.linked_library.id,
-                pagination: {limit: 10, offset: 0},
-                ...customVariables
-            }
+            libraryId: attribute.linked_library.id,
+            pagination: {limit: 10, offset: 0},
+            ...customVariables
         });
-
-    useEffect(() => {
-        // Load library record data when the component is mounted
-        libraryRefetch();
-    }, []);
 
     useEffect(() => {
         setLinkIds(backendValues.map(bv => bv.linkValue.id));
@@ -173,10 +167,7 @@ export const useLinkRecordsInEdition = ({
 
     const {saveValues} = useSaveValueBatchMutation();
 
-    const _onBlurLinkSelect: ComponentProps<typeof LinkSelect>['onBlur'] = async (
-        itemsToLink: Set<string>,
-        itemsToDelete: Set<string>
-    ) => {
+    const _onBlurLinkSelect: ComponentProps<typeof LinkSelect>['onBlur'] = async (itemsToLink, itemsToDelete) => {
         // If there is no value to link or to remove, return early
         if (itemsToLink.size === 0 && itemsToDelete.size === 0) {
             setIsExplorerAddButtonClicked(false);
@@ -228,7 +219,7 @@ export const useLinkRecordsInEdition = ({
     };
 
     // After 500 ms, debounce the search records that match the text typed in the search bar
-    const _onLinkSelectSearch: ComponentProps<typeof LinkSelect>['onSearch'] = async (text: string) => {
+    const _onLinkSelectSearch: ComponentProps<typeof LinkSelect>['onSearch'] = async text => {
         await libraryRefetch({
             filters: [
                 {
@@ -260,7 +251,7 @@ export const useLinkRecordsInEdition = ({
         });
     };
 
-    const _onDeselect: ComponentProps<typeof LinkSelect>['onParentDeselect'] = (linkId: string) => {
+    const _onDeselect: ComponentProps<typeof LinkSelect>['onParentDeselect'] = linkId => {
         const item = backendValues.find(bv => bv.linkValue.id === linkId);
 
         if (!item) {
