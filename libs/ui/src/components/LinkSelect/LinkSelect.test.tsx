@@ -15,7 +15,7 @@ describe('LinkSelect', () => {
     });
 
     it('should display the select without data and display create button when searching', async () => {
-        render(<LinkSelect tagDisplay={false} options={[]} defaultValues={[]} />);
+        render(<LinkSelect tagDisplay={false} options={[]} defaultValues={[]} onSearch={async () => null} />);
 
         const searchInput = screen.getByRole('combobox');
         await user.click(searchInput);
@@ -25,10 +25,11 @@ describe('LinkSelect', () => {
         const input = 'Chartreuse';
         await user.type(searchInput, input);
 
-        await waitFor(() => {
-            expect(screen.getByRole('button', {name: /Chartreuse/})).toBeVisible();
-            expect(screen.getByRole('button', {name: /advanced_search/})).toBeVisible();
-        });
+        const btnChartreuse = await screen.findByRole('button', {name: /Chartreuse/});
+        const btnAdvancedSearch = await screen.findByRole('button', {name: /advanced_search/});
+
+        expect(btnChartreuse).toBeVisible();
+        expect(btnAdvancedSearch).toBeVisible();
     });
 
     it('should display the selected default tags', async () => {
@@ -74,31 +75,23 @@ describe('LinkSelect', () => {
         ];
 
         render(
-            <LinkSelect tagDisplay={false} options={options} defaultValues={[]} onClickCreateButton={handleCreate} />
+            <LinkSelect
+                tagDisplay={false}
+                options={options}
+                defaultValues={[]}
+                onClickCreateButton={handleCreate}
+                onSearch={async () => null}
+            />
         );
 
         const input = screen.getByRole('combobox');
         await user.click(input);
         await user.type(input, 'NewItem');
 
-        await waitFor(
-            async () => {
-                const createButton = await screen.findByRole('button', {name: /NewItem/});
-                await user.click(createButton);
-            },
-            {
-                timeout: 20_000
-            }
-        );
+        const createButton = await screen.findByRole('button', {name: /NewItem/});
+        await user.click(createButton);
 
-        await waitFor(
-            () => {
-                expect(handleCreate).toHaveBeenCalledWith('NewItem');
-            },
-            {
-                timeout: 20_000
-            }
-        );
+        expect(handleCreate).toHaveBeenCalledWith('NewItem');
     });
 
     it('should call onBlur with itemsToLink', async () => {
