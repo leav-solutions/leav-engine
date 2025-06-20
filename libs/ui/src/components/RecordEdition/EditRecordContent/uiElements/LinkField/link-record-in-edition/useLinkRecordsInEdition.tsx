@@ -236,21 +236,6 @@ export const useLinkRecordsInEdition = ({
         explorerActions?.createAction?.callback();
     };
 
-    // Wrap callback when the value is created to force a refresh of the dropdown list
-    const wrapHandleExplorerCreateValue = async ({
-        recordIdCreated,
-        saveValuesResultOnLink
-    }: {
-        recordIdCreated: string;
-        saveValuesResultOnLink?: ISubmitMultipleResult;
-    }) => {
-        // Call the original handler
-        handleExplorerCreateValue({
-            recordIdCreated,
-            saveValuesResultOnLink
-        });
-    };
-
     const _onDeselect: ComponentProps<typeof LinkSelect>['onParentDeselect'] = linkId => {
         const item = backendValues.find(bv => bv.linkValue.id === linkId);
 
@@ -305,7 +290,7 @@ export const useLinkRecordsInEdition = ({
                                 },
                                 primary: {
                                     link: handleExplorerLinkValue,
-                                    create: wrapHandleExplorerCreateValue
+                                    create: handleExplorerCreateValue
                                 }
                             }}
                             showTitle={false}

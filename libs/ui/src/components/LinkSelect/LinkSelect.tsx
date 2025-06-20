@@ -77,20 +77,14 @@ function LinkSelect({
     }, [debouncedSearch]);
 
     useEffect(() => {
-        // if (debouncedSearch === '') {
-        //     setEmptyResults(false);
-        // } else {
-        //     const optionsFiltered = options.filter(option =>
-        //         option.label?.toLowerCase().includes(debouncedSearch.toLowerCase())
-        //     );
-        //     setEmptyResults(optionsFiltered.length === 0);
-        // }
-
-        const optionsFiltered = options.filter(option =>
-            option.label?.toLowerCase().includes(debouncedSearch.toLowerCase())
-        );
-        const isEmptyResults = optionsFiltered.length === 0 && debouncedSearch !== '';
-        setEmptyResults(isEmptyResults);
+        if (debouncedSearch === '') {
+            setEmptyResults(false);
+        } else {
+            const optionsFiltered = options.filter(option =>
+                option.label?.toLowerCase().includes(debouncedSearch.toLowerCase())
+            );
+            setEmptyResults(optionsFiltered.length === 0);
+        }
     }, [options, debouncedSearch]);
 
     const _handleChange: ComponentProps<typeof KitSelect>['onChange'] = (selection: string[]) => {
@@ -127,7 +121,7 @@ function LinkSelect({
         itemsToDelete.add(itemId);
     };
 
-    const dropdownButtons = (menu: React.ReactNode) => (
+    const dropdownButtons: ComponentProps<typeof KitSelect>['dropdownRender'] = menu => (
         <div className="dropdown-custom">
             {menu}
             {(emptyResults || !hideAdvancedSearch) && (
