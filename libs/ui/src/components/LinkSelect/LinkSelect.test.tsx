@@ -139,7 +139,7 @@ describe('LinkSelect', () => {
         await user.click(input);
         await user.type(input, 'alpha');
 
-        const alphaOption = screen.getAllByText('Alpha')[1];
+        const [ignoreOption, alphaOption] = screen.getAllByText('Alpha');
         await userEvent.click(alphaOption);
         await user.click(document.body);
 

@@ -71,10 +71,10 @@ function LinkSelect({
 
     useEffect(() => {
         // Call API search when debounced search value changes
-        (async () => {
-            await onSearch(debouncedSearch);
-            setIsLoading(false);
-        })();
+        onSearch(debouncedSearch)
+            .then(() => {
+                setIsLoading(false);
+            });
     }, [debouncedSearch]);
 
     useEffect(() => {
@@ -126,8 +126,9 @@ function LinkSelect({
                 <>
                     <StyledDivider />
                     <StyledContainer>
-                        {isLoading && <KitLoader />}
-                        {!isLoading && (
+                        {isLoading 
+                           ? <KitLoader />
+                           : (
                             <KitSpace align="center" direction="vertical" size="xs">
                                 {emptyResults && (
                                     <KitButton
@@ -168,8 +169,8 @@ function LinkSelect({
             optionFilterProp="label"
             filterOption={(input, option) => option?.rawLabel?.toLowerCase().includes(input?.toLowerCase())}
             showSearch
-            onChange={value => _handleChange(value)}
-            onSearch={value => _handleSearch(value)}
+            onChange={_handleChange}
+            onSearch={_handleSearch}
             onBlur={_onBlur}
             onFocus={() => setIsOpen(true)}
             onDeselect={_onDeselect}
