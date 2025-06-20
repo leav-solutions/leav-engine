@@ -128,8 +128,9 @@ function LinkSelect({
                 <>
                     <StyledDivider />
                     <StyledContainer>
-                        {isLoading && <KitLoader />}
-                        {!isLoading && (
+                        {isLoading 
+                           ? <KitLoader />
+                           : (
                             <KitSpace align="center" direction="vertical" size="xs">
                                 {emptyResults && (
                                     <KitButton
