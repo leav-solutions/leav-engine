@@ -33,7 +33,7 @@ const StyledContainer = styled.div`
     justify-content: center;
 `;
 
-const StyledLinkSelect = styled(KitSelect)`
+const StyledKitSelect = styled(KitSelect)`
     &.select-without-tags {
         .ant-select-selection-overflow-item:not(.ant-select-selection-overflow-item-suffix) {
             display: none;
@@ -79,7 +79,7 @@ function LinkSelect({
 
     useEffect(() => {
         const optionsFiltered = options.filter(option =>
-            option.label?.toLowerCase().includes(debouncedSearch?.toLowerCase())
+            option.label?.toLowerCase().includes(debouncedSearch.toLowerCase())
         );
         const isEmptyResults = optionsFiltered.length === 0 && debouncedSearch !== '';
         setEmptyResults(isEmptyResults);
@@ -110,8 +110,6 @@ function LinkSelect({
     };
 
     const _onDeselect: ComponentProps<typeof KitSelect>['onDeselect'] = (itemId: any) => {
-        // if we had an item in select, we don't need to delete it
-        // because the link has not been created yet
         if (itemsToLink.has(itemId)) {
             // Remove item to link if exists
             itemsToLink.delete(itemId);
@@ -136,7 +134,7 @@ function LinkSelect({
                                         type="secondary"
                                         icon={<FontAwesomeIcon icon={faPlus} />}
                                         onClick={_onClickCreateButton}
-                                        // @ts-ignore: required to avoid the click propagation that will automatically close the dropdown modal
+                                        // @ts-ignore: required to avoid the click propagation that will automatically close the dropdown modal - https://aristid.atlassian.net/browse/DS-339
                                         onMouseDown={e => e.preventDefault()}
                                     >
                                         {`${t('record_edition.new_record')} "${debouncedSearch}"`}
@@ -161,7 +159,7 @@ function LinkSelect({
 
     return (
         <StyledLinkSelect
-            className={tagDisplay ? '' : 'select-without-tags'}
+            className={tagDisplay ? undefined : 'select-without-tags'}
             placeholder={t('record_edition.select')}
             mode="multiple"
             open={isOpen}
