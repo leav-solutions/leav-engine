@@ -102,7 +102,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     } = useGetRecordValuesQuery(
         library,
         recordForm
-            ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
+            ? recordForm.elements?.filter(element => element.attribute?.compute).map(element => element.attribute.id)
             : [],
         [record?.id],
         true

@@ -56,7 +56,6 @@ import {initOIDCClient} from './infra/oidc';
     const indexationManager: IIndexationManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
     const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
-    const db = coreContainer.cradle['core.infra.db'];
     const cli = coreContainer.cradle['core.interface.cli'];
 
     const _createRequiredDirectories = async () => {
@@ -88,7 +87,10 @@ import {initOIDCClient} from './infra/oidc';
                 // Add a campaign on startup
                 await server.init();
                 await server.initConsumers();
-                await server.addCampaignOnStartup();
+                // for (let i = 0; i < 1500; i++) {
+                //     await server.addCampaignOnStartup();
+                // }
+                // setTimeout(() => server.addCampaignOnStartup(), 5000);
                 break;
             case CoreMode.MIGRATE:
                 // Run db migrations
