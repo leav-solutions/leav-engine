@@ -171,8 +171,8 @@ function LinkSelect({
             optionFilterProp="label"
             filterOption={(input, option) => option?.rawLabel?.toLowerCase().includes(input?.toLowerCase())}
             showSearch
-            onChange={value => _handleChange(value)}
-            onSearch={value => _handleSearch(value)}
+            onChange={_handleChange}
+            onSearch={_handleSearch}
             onBlur={_onBlur}
             onFocus={() => setIsOpen(true)}
             onDeselect={_onDeselect}
