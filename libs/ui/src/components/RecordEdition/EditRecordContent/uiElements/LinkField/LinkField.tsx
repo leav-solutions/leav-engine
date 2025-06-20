@@ -119,7 +119,8 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
             '.kit-modal-wrapper',
             `.${CREATE_RECORD_MODAL_CLASSNAME}`,
             `.${LINK_RECORDS_MODAL_CLASSNAME}`,
-            `.${EDIT_RECORD_MODAL_CLASSNAME}`
+            `.${EDIT_RECORD_MODAL_CLASSNAME}`,
+            '.kit-select-dropdown-content'
         ]
     });
 

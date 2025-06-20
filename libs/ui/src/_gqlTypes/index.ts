@@ -292,17 +292,6 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
-}
-
 export type GlobalSettingsFileInput = {
   library: Scalars['String'];
   recordId: Scalars['String'];
@@ -401,9 +390,7 @@ export enum LogAction {
   PERMISSION_SAVE = 'PERMISSION_SAVE',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
-  SDO_LOG_ERROR = 'SDO_LOG_ERROR',
   SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
-  SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -1290,6 +1277,15 @@ export type RecordUpdateSubscriptionVariables = Exact<{
 
 
 export type RecordUpdateSubscription = { recordUpdate: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, modified_by: Array<{ value?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }> }, updatedValues: Array<{ attribute: string, value: { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, linkValue?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null } | { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, treeValue?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null } | { payload?: any | null, raw_payload?: any | null, value?: any | null, raw_value?: any | null, id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null } }> } };
+
+export type GetRecordsFromLibraryQueryVariables = Exact<{
+  libraryId: Scalars['ID'];
+  pagination?: InputMaybe<RecordsPagination>;
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+}>;
+
+
+export type GetRecordsFromLibraryQuery = { records: { totalCount?: number | null, list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> } };
 
 export type IndexRecordsMutationVariables = Exact<{
   libraryId: Scalars['String'];
@@ -3604,6 +3600,46 @@ export function useRecordUpdateSubscription(baseOptions?: Apollo.SubscriptionHoo
       }
 export type RecordUpdateSubscriptionHookResult = ReturnType<typeof useRecordUpdateSubscription>;
 export type RecordUpdateSubscriptionResult = Apollo.SubscriptionResult<RecordUpdateSubscription>;
+export const GetRecordsFromLibraryDocument = gql`
+    query getRecordsFromLibrary($libraryId: ID!, $pagination: RecordsPagination, $filters: [RecordFilterInput]) {
+  records(library: $libraryId, filters: $filters, pagination: $pagination) {
+    totalCount
+    list {
+      ...RecordIdentity
+    }
+  }
+}
+    ${RecordIdentityFragmentDoc}`;
+
+/**
+ * __useGetRecordsFromLibraryQuery__
+ *
+ * To run a query within a React component, call `useGetRecordsFromLibraryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRecordsFromLibraryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRecordsFromLibraryQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *      pagination: // value for 'pagination'
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useGetRecordsFromLibraryQuery(baseOptions: Apollo.QueryHookOptions<GetRecordsFromLibraryQuery, GetRecordsFromLibraryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRecordsFromLibraryQuery, GetRecordsFromLibraryQueryVariables>(GetRecordsFromLibraryDocument, options);
+      }
+export function useGetRecordsFromLibraryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRecordsFromLibraryQuery, GetRecordsFromLibraryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRecordsFromLibraryQuery, GetRecordsFromLibraryQueryVariables>(GetRecordsFromLibraryDocument, options);
+        }
+export type GetRecordsFromLibraryQueryHookResult = ReturnType<typeof useGetRecordsFromLibraryQuery>;
+export type GetRecordsFromLibraryLazyQueryHookResult = ReturnType<typeof useGetRecordsFromLibraryLazyQuery>;
+export type GetRecordsFromLibraryQueryResult = Apollo.QueryResult<GetRecordsFromLibraryQuery, GetRecordsFromLibraryQueryVariables>;
 export const IndexRecordsDocument = gql`
     mutation INDEX_RECORDS($libraryId: String!, $records: [String!]) {
   indexRecords(libraryId: $libraryId, records: $records)

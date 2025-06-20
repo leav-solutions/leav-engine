@@ -4,25 +4,31 @@
 import {Explorer} from '_ui/components/Explorer';
 import {IExplorerRef} from '_ui/components/Explorer/Explorer';
 import {ComponentProps, Dispatch, SetStateAction, useEffect, useState} from 'react';
-import {FaList} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ExplorerWrapper} from '../shared/ExplorerWrapper';
-import {LinkActionsButtons} from '../shared/LinkActionsButtons';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
-import {DeleteMultipleValuesFunc} from '../../../_types';
-import {RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
+import {DeleteMultipleValuesFunc, ISubmitMultipleResult} from '../../../_types';
+import {
+    RecordFilterCondition,
+    RecordFormAttributeLinkAttributeFragment,
+    useGetRecordsFromLibraryLazyQuery,
+    useGetRecordsFromLibraryQuery,
+    ValueDetailsLinkValueFragment
+} from '_ui/_gqlTypes';
+
+import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
-import {AntForm, KitSelect} from 'aristid-ds';
+import {AntForm, KitButton} from 'aristid-ds';
 import {
     EditRecordReducerActionsTypes,
     IEditRecordReducerActions,
     IRecordPropertyWithAttribute
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useLinkRecords} from './useLinkRecords';
-import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
-import {GetRecordColumnsValuesRecord, IRecordColumnValueLink} from '_ui/_queries/records/getRecordColumnsValues';
 import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 import LinkSelect from '_ui/components/LinkSelect';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faPlus} from '@fortawesome/free-solid-svg-icons';
 
 interface ILinkRecordsInCreationProps {
     libraryId: string;
@@ -59,12 +65,15 @@ export const useLinkRecordsInEdition = ({
     isReadOnly,
     isFieldInError,
     tagDisplayMode,
-    hasNoValue,
     onDeleteMultipleValues
 }: ILinkRecordsInCreationProps) => {
     const {t} = useSharedTranslation();
-    const [explorerActions, setExplorerActions] = useState<IExplorerRef | null>(null);
     const form = AntForm.useFormInstance();
+
+    const [isExplorerAddButtonClicked, setIsExplorerAddButtonClicked] = useState(false);
+    const [explorerActions, setExplorerActions] = useState<IExplorerRef | null>(null);
+    const [linkedIds, setLinkIds] = useState<string[]>([]);
+    const [selectOptions, setSelectOptions] = useState<IKitOption[]>([]);
 
     const {
         handleDeleteAllValues,
@@ -78,6 +87,47 @@ export const useLinkRecordsInEdition = ({
         setBackendValues,
         onDeleteMultipleValues
     });
+
+    // Query to get all records from the linked library
+    // Network-only is useful to avoid caching, we have a side effect otherwise
+    // When the record is created, if we call getRecordsFromLibrary(), the previous records are returned
+    const {data: libraryItems, refetch: getRecordsFromLibrary} = useGetRecordsFromLibraryQuery({
+        fetchPolicy: 'network-only'
+    });
+
+    // Function to refetch data with current parameters
+    const libraryRefetch = (customVariables = {}) =>
+        getRecordsFromLibrary({
+            libraryId: attribute.linked_library.id,
+            pagination: {limit: 10, offset: 0},
+            ...customVariables
+        });
+
+    useEffect(() => {
+        setLinkIds(backendValues.map(bv => bv.linkValue.id));
+    }, [backendValues]);
+
+    // Update options for LinkSelect when libraryItems update
+    useEffect(() => {
+        if (libraryItems?.records?.list) {
+            setSelectOptions(
+                libraryItems.records.list.map<IKitOption>(record => ({
+                    value: record.id,
+                    label: record.whoAmI.label ?? record.whoAmI.id,
+                    idCard: {
+                        description: record.whoAmI.label ?? record.whoAmI.id,
+                        avatarProps: {
+                            size: 'small',
+                            shape: 'square',
+                            imageFit: 'contain',
+                            src: record.whoAmI.preview?.small,
+                            label: record.whoAmI.label ?? record.whoAmI.id
+                        }
+                    }
+                }))
+            );
+        }
+    }, [libraryItems]);
 
     useEffect(() => {
         if (isHookUsed && backendValues.length === 0 && attribute.required) {
@@ -101,28 +151,6 @@ export const useLinkRecordsInEdition = ({
         }
     }, [backendValues]);
 
-    const {data: fieldValues} = useGetRecordValuesQuery(libraryId, [attribute.id], [recordId]);
-
-    const selectOptions = (
-        (fieldValues?.[recordId] as GetRecordColumnsValuesRecord<IRecordColumnValueLink>)?.[attribute.id] ?? []
-    ).map(
-        ({linkValue: record}) =>
-            ({
-                value: record.id,
-                label: record.whoAmI.label ?? record.whoAmI.id,
-                idCard: {
-                    description: record.whoAmI.label ?? record.whoAmI.id,
-                    avatarProps: {
-                        size: 'small',
-                        shape: 'square',
-                        imageFit: 'contain',
-                        src: record.whoAmI.preview?.small,
-                        label: record.whoAmI.label ?? record.whoAmI.id
-                    }
-                }
-            }) satisfies IKitOption
-    );
-
     const _handleExplorerRef = (ref: IExplorerRef) => {
         if (_shouldUpdateExplorerActions(ref, explorerActions)) {
             setExplorerActions({
@@ -133,19 +161,94 @@ export const useLinkRecordsInEdition = ({
         }
     };
 
-    const _getExplorerItemActions = (): Array<'edit' | 'remove'> => {
-        if (isReadOnly) {
-            return [];
+    const _openLinkSelect = () => {
+        setIsExplorerAddButtonClicked(true);
+    };
+
+    const {saveValues} = useSaveValueBatchMutation();
+
+    const _onBlurLinkSelect: ComponentProps<typeof LinkSelect>['onBlur'] = async (itemsToLink, itemsToDelete) => {
+        // If there is no value to link or to remove, return early
+        if (itemsToLink.size === 0 && itemsToDelete.size === 0) {
+            setIsExplorerAddButtonClicked(false);
+            return;
         }
 
-        if (
-            (!attribute.multiple_values && attribute.required) ||
-            (attribute.multiple_values && backendValues.length === 1 && attribute.required)
-        ) {
-            return ['edit'];
+        // Convert itemsToLink Set to Array once to avoid repeated conversions
+        const itemsToLinkArray = Array.from(itemsToLink);
+
+        // Find values to remove and prepare payload for backend
+        const valuesToRemove = backendValues.filter(bv => itemsToDelete.has(bv.linkValue.id));
+        const idValuesToRemove = valuesToRemove.map(bv => bv.id_value);
+
+        // Prepare batch operation payload
+        const values = [
+            // Items to link (create new links)
+            ...itemsToLinkArray.map(item => ({
+                attribute: attribute.id,
+                idValue: null,
+                value: item
+            })),
+            // Items to delete (remove existing links)
+            ...idValuesToRemove.map(item => ({
+                attribute: attribute.id,
+                idValue: item,
+                value: null
+            }))
+        ];
+
+        // Send the values to the backend
+        const res = await saveValues({id: recordId, library: {id: libraryId}}, values, undefined, true);
+
+        const resValues = res.values as ValueDetailsLinkValueFragment[];
+
+        // Update linked IDs: add new links and remove deleted ones
+        const updatedLinkedIds = linkedIds.filter(id => !itemsToDelete.has(id)).concat(itemsToLinkArray);
+        setLinkIds(updatedLinkedIds);
+
+        // Extract newly added values from response
+        const newlyAddedValues = resValues.filter(v =>
+            itemsToLink.has(v.linkValue!.id)
+        ) as unknown as RecordFormElementsValueLinkValue[];
+
+        // Update backend values: remove deleted ones and add new ones
+        setBackendValues([...backendValues.filter(bv => !itemsToDelete.has(bv.linkValue.id)), ...newlyAddedValues]);
+
+        // Hide linkSelect
+        setIsExplorerAddButtonClicked(false);
+    };
+
+    // After 500 ms, debounce the search records that match the text typed in the search bar
+    const _onLinkSelectSearch: ComponentProps<typeof LinkSelect>['onSearch'] = async text => {
+        await libraryRefetch({
+            filters: [
+                {
+                    condition: RecordFilterCondition.CONTAINS,
+                    field: 'label',
+                    value: text
+                }
+            ]
+        });
+    };
+
+    const _onCreateLinkSelect: ComponentProps<typeof LinkSelect>['onClickCreateButton'] = async () => {
+        setIsExplorerAddButtonClicked(false);
+        explorerActions?.createAction?.callback();
+    };
+
+    const _onDeselect: ComponentProps<typeof LinkSelect>['onParentDeselect'] = linkId => {
+        const item = backendValues.find(bv => bv.linkValue.id === linkId);
+
+        if (!item) {
+            return null;
         }
 
-        return ['edit', 'remove'];
+        return {
+            id_value: item.id_value,
+            libraryId,
+            attribute,
+            recordId
+        };
     };
 
     return {
@@ -163,14 +266,7 @@ export const useLinkRecordsInEdition = ({
             isHookUsed &&
             recordId &&
             (tagDisplayMode ? (
-                <LinkSelect
-                    tagDisplay={true}
-                    options={selectOptions}
-                    defaultValues={selectOptions.map(({value}) => value)}
-                    onUpdateSelection={() => null}
-                    onCreate={() => null}
-                    onAdvanceSearch={() => null}
-                ></LinkSelect>
+                <LinkSelect tagDisplay options={selectOptions} defaultValues={linkedIds} />
             ) : (
                 <>
                     <ExplorerWrapper>
@@ -205,36 +301,27 @@ export const useLinkRecordsInEdition = ({
                                 !attribute.multiple_values ||
                                 (attribute.required && attribute.multiple_values && backendValues.length === 1)
                             }
-                            defaultActionsForItem={_getExplorerItemActions()}
+                            defaultActionsForItem={[]}
                             hidePrimaryActions
                             hideTableHeader
                             iconsOnlyItemActions
                         />
                     </ExplorerWrapper>
-                    <LinkActionsButtons
-                        createButtonProps={{
-                            icon: explorerActions?.createAction?.icon,
-                            label: explorerActions?.createAction?.label,
-                            callback: explorerActions?.createAction?.callback,
-                            disabled: isReadOnly || explorerActions?.createAction?.disabled
-                        }}
-                        linkButtonProps={{
-                            icon: <FaList />,
-                            label: explorerActions?.linkAction?.label,
-                            callback: explorerActions?.linkAction?.callback,
-                            disabled: isReadOnly || (attribute.multiple_values && explorerActions?.linkAction?.disabled)
-                        }}
-                        hasNoValue={hasNoValue}
-                    />
-                    {/* KEEP for dev in progress
-                     <LinkSelect
-                        tagDisplay={false}
-                        options={selectOptions}
-                        defaultValues={selectOptions.map(({value}) => value)}
-                        onUpdateSelection={() => null}
-                        onCreate={() => null}
-                        onAdvanceSearch={() => null}
-                    ></LinkSelect> */}
+
+                    <KitButton onClick={_openLinkSelect} icon={<FontAwesomeIcon icon={faPlus} />}>
+                        {t('global.add')}
+                    </KitButton>
+                    {isExplorerAddButtonClicked && (
+                        <LinkSelect
+                            tagDisplay={false}
+                            options={selectOptions}
+                            defaultValues={linkedIds}
+                            onClickCreateButton={_onCreateLinkSelect}
+                            onBlur={_onBlurLinkSelect}
+                            onParentDeselect={_onDeselect}
+                            onSearch={_onLinkSelectSearch}
+                        />
+                    )}
                 </>
             ))
     };
