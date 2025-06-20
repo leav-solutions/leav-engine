@@ -71,10 +71,10 @@ function LinkSelect({
 
     useEffect(() => {
         // Call API search when debounced search value changes
-        (async () => {
-            await onSearch(debouncedSearch);
-            setIsLoading(false);
-        })();
+        onSearch(debouncedSearch)
+            .then(() => {
+                setIsLoading(false);
+            });
     }, [debouncedSearch]);
 
     useEffect(() => {
