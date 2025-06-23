@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faMagnifyingGlass, faPlus} from '@fortawesome/free-solid-svg-icons';
 import {KitButton, KitDivider, KitLoader, KitSelect, KitSpace} from 'aristid-ds';
 import styled from 'styled-components';
-import {ComponentProps, useEffect, useState} from 'react';
+import {ComponentProps, useEffect, useRef, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useDebouncedValue} from '_ui/hooks/useDebouncedValue';
 import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
@@ -54,8 +54,8 @@ function LinkSelect({
 }: ILinkSelectProps): JSX.Element {
     const {t} = useSharedTranslation();
 
-    const [itemsToLink, setItemToLink] = useState(new Set<string>());
-    const [itemsToDelete, setItemToDelete] = useState(new Set<string>());
+    const itemsToLink = useRef(new Set<string>());
+    const itemsToDelete = useRef(new Set<string>());
 
     const [isOpen, setIsOpen] = useState(false);
     const [currentSearch, setCurrentSearch] = useState('');
@@ -101,24 +101,24 @@ function LinkSelect({
     };
 
     const _onBlur: ComponentProps<typeof KitSelect>['onBlur'] = () => {
-        onBlur?.(itemsToLink, itemsToDelete);
+        onBlur?.(itemsToLink.current, itemsToDelete.current);
         setIsOpen(false);
     };
 
     const _onSelect: ComponentProps<typeof KitSelect>['onSelect'] = (itemId: string) => {
         // remove itemToDelete if exists
-        itemsToDelete.delete(itemId);
-        itemsToLink.add(itemId);
+        itemsToDelete.current.delete(itemId);
+        itemsToLink.current.add(itemId);
     };
 
     const _onDeselect: ComponentProps<typeof KitSelect>['onDeselect'] = (itemId: any) => {
-        if (itemsToLink.has(itemId)) {
+        if (itemsToLink.current.has(itemId)) {
             // Remove item to link if exists
-            itemsToLink.delete(itemId);
+            itemsToLink.current.delete(itemId);
             return;
         }
 
-        itemsToDelete.add(itemId);
+        itemsToDelete.current.add(itemId);
     };
 
     const dropdownButtons: ComponentProps<typeof KitSelect>['dropdownRender'] = menu => (

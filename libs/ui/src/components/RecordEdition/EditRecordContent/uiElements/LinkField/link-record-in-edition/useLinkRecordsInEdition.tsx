@@ -216,7 +216,7 @@ export const useLinkRecordsInEdition = ({
         setIsExplorerAddButtonClicked(false);
     };
 
-    // After 500 ms, debounce the search records that match the text typed in the search bar
+    // search records that match the text typed in the search bar
     const _onLinkSelectSearch: ComponentProps<typeof LinkSelect>['onSearch'] = async text => {
         await libraryRefetch({
             filters: [
