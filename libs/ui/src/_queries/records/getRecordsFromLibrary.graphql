@@ -1,0 +1,12 @@
+query getRecordsFromLibrary(
+    $libraryId: ID!,
+    $pagination: RecordsPagination,
+    $filters: [RecordFilterInput],
+) {
+    records(library: $libraryId, filters: $filters, pagination: $pagination) {
+        totalCount
+        list {
+            ...RecordIdentity
+        }
+    }
+}
