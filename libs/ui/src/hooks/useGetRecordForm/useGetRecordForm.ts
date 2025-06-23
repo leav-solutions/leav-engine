@@ -103,7 +103,8 @@ const useGetRecordForm = ({
               }))
         : null;
 
-    const {loading, error, refetch} = useRecordFormWithoutValuesQuery({
+    const {loading, error, refetch} = useRecordFormQuery({
+        // const {loading, error, refetch} = useRecordFormWithoutValuesQuery({
         fetchPolicy: 'no-cache',
         notifyOnNetworkStatusChange: true,
         variables: {
@@ -114,6 +115,19 @@ const useGetRecordForm = ({
         },
         onCompleted: data => {
             console.log('data', data, data.recordForm.elements);
+
+            const recordFormFormatted: IRecordForm = {
+                ...data.recordForm,
+                elements: data.recordForm.elements.map(
+                    (element): RecordFormElement => ({
+                        ...element,
+                        values: []
+                    })
+                )
+            };
+
+            setRecordForm(recordFormFormatted);
+
             // Transform result to format values version to a more convenient object
             // const recordFormFormatted: IRecordForm = {
             //     ...data.recordForm
@@ -135,8 +149,6 @@ const useGetRecordForm = ({
             //     })
             // )
             // };
-
-            setRecordForm(data);
         }
     });
 

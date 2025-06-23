@@ -101,8 +101,8 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         refetch: refetchComputeFields
     } = useGetRecordValuesQuery(
         library,
-        recordForm
-            ? recordForm.elements?.filter(element => element.attribute?.compute).map(element => element.attribute.id)
+        recordForm && recordForm.elements
+            ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
             : [],
         [record?.id],
         true
