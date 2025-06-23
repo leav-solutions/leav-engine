@@ -105,6 +105,14 @@ export const useLinkRecordsInEdition = ({
 
     useEffect(() => {
         setLinkIds(backendValues.map(bv => bv.linkValue.id));
+
+        if (isHookUsed && activeAttribute?.attribute.id === attribute.id) {
+            // Update active value used in the sidebar when backendValues change
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                values: backendValues
+            });
+        }
     }, [backendValues]);
 
     // Update options for LinkSelect when libraryItems update
@@ -140,16 +148,6 @@ export const useLinkRecordsInEdition = ({
             ]);
         }
     }, []);
-
-    useEffect(() => {
-        if (isHookUsed && activeAttribute?.attribute.id === attribute.id) {
-            // Update active value used in the sidebar when backendValues change
-            dispatch({
-                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                values: backendValues
-            });
-        }
-    }, [backendValues]);
 
     const _handleExplorerRef = (ref: IExplorerRef) => {
         if (_shouldUpdateExplorerActions(ref, explorerActions)) {
