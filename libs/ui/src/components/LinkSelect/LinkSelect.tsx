@@ -169,7 +169,7 @@ function LinkSelect({
             defaultValue={defaultValues}
             options={options}
             optionFilterProp="label"
-            filterOption={(input, option) => option?.rawLabel?.toLowerCase().includes(input?.toLowerCase())}
+            filterOption={false}
             showSearch
             onChange={_handleChange}
             onSearch={_handleSearch}

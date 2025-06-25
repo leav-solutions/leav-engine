@@ -222,7 +222,7 @@ export const useLinkRecordsInEdition = ({
             filters: [
                 {
                     condition: RecordFilterCondition.CONTAINS,
-                    field: 'label',
+                    field: `${attribute.linked_library.id}_label`,
                     value: text
                 }
             ]
