@@ -11,9 +11,11 @@ import {DeleteMultipleValuesFunc} from '../../../_types';
 import {
     JoinLibraryContextFragment,
     RecordFilterCondition,
+    RecordFilterInput,
     RecordFilterOperator,
     RecordFormAttributeLinkAttributeFragment,
     useGetLibraryByIdQuery,
+    useGetLinkAttributeValueQuery,
     useGetRecordsFromLibraryQuery,
     ValueDetailsLinkValueFragment
 } from '_ui/_gqlTypes';
@@ -114,15 +116,49 @@ export const useLinkRecordsInEdition = ({
         }
     }, [libraryLinked]);
 
+    // 1. For each record in backendValues, get the value of mantatory attribute
+
+    const filteredJoinRecords: RecordFilterInput[] = backendValues.reduce(
+        (acc: RecordFilterInput[], value: RecordFormElementsValueLinkValue, index: number) => {
+            // Add OR operator between filters (except before the first filter)
+            if (index > 0) {
+                acc.push({operator: RecordFilterOperator.OR});
+            }
+            acc.push({
+                condition: RecordFilterCondition.EQUAL,
+                field: 'id',
+                value: value.linkValue.id
+            });
+
+            return acc;
+        },
+        []
+    );
+
+    const {data: joinLinkValue, refetch: refetchGetLinkAttributeValueQuery} = useGetLinkAttributeValueQuery({
+        fetchPolicy: 'network-only',
+        variables: {
+            joinLibraryId: attribute.linked_library.id,
+            filters: filteredJoinRecords,
+            linkAttributeId: joinLibraryContext?.mandatoryAttribute
+        }
+    });
+
     // Function to refetch data with current parameters
     const getRecordsRefetch = (customVariables = {}) =>
         getRecordsFromLibrary({
-            libraryId: attribute.linked_library.id,
+            libraryId: joinLibraryContext?.linkedLibrary ?? attribute.linked_library.id,
             pagination: {limit: 10, offset: 0},
             ...customVariables
         });
 
     useEffect(() => {
+        //how to bind JOIN library selected items ?
+
+        if (joinLibraryContext) {
+            // setLinkIds(joinLinkValue.records)
+        }
+
         setLinkIds(backendValues.map(bv => bv.linkValue.id));
 
         if (isHookUsed && activeAttribute?.attribute.id === attribute.id) {
@@ -132,7 +168,7 @@ export const useLinkRecordsInEdition = ({
                 values: backendValues
             });
         }
-    }, [backendValues]);
+    }, [backendValues, joinLinkValue]);
 
     // Update options for LinkSelect when libraryItems update
     useEffect(() => {
@@ -155,6 +191,10 @@ export const useLinkRecordsInEdition = ({
             );
         }
     }, [libraryItems]);
+
+    useEffect(() => {
+        console.log('joinLinkValue :>> ', joinLinkValue);
+    }, [joinLinkValue]);
 
     useEffect(() => {
         if (isHookUsed && backendValues.length === 0 && attribute.required) {
@@ -180,6 +220,11 @@ export const useLinkRecordsInEdition = ({
 
     const _openLinkSelect = () => {
         setIsExplorerAddButtonClicked(true);
+        refetchGetLinkAttributeValueQuery({
+            joinLibraryId: attribute.linked_library.id,
+            filters: filteredJoinRecords,
+            linkAttributeId: joinLibraryContext?.mandatoryAttribute
+        });
     };
 
     const {saveValues} = useSaveValueBatchMutation();

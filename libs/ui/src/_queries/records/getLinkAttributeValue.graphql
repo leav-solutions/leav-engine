@@ -1,0 +1,22 @@
+fragment LinkPropertyPayload on GenericValue {
+    ... on LinkValue {
+        payload {
+            ...RecordIdentity
+        }
+    }
+}
+
+query getLinkAttributeValue(
+    $joinLibraryId: ID!,
+    $filters: [RecordFilterInput],
+    $linkAttributeId: ID!,
+) {
+  records(library: $joinLibraryId, filters: $filters) {
+    list {
+      id
+      property(attribute: $linkAttributeId) {
+        ...LinkPropertyPayload
+      }
+    }
+  }
+}

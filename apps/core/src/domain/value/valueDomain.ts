@@ -352,7 +352,83 @@ const valueDomain = function ({
         return v;
     }
 
+    const _createJoinRecord = async (
+        attributeProps: IAttribute,
+        value: IValue,
+        ctx: IQueryInfos
+    ): Promise<string | void> => {
+        if (attributeProps.linked_library) {
+            const joinLibId = attributeProps.linked_library; // structure_item
+            const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
+
+            if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
+                const joinAttributeProps = await attributeDomain.getAttributeProperties({
+                    id: joinLibProps.mandatoryAttribute,
+                    ctx
+                });
+                if (
+                    joinAttributeProps.type === AttributeTypes.SIMPLE_LINK ||
+                    (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)
+                ) {
+                    // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
+                    const {record: joinRecord, valuesErrors} = await createRecordHelper({
+                        library: joinLibId,
+                        ctx
+                    });
+
+                    logger.debug(`Created join record: ${JSON.stringify(joinRecord, null, 2)}`);
+                    await saveValue({
+                        library: joinLibId,
+                        recordId: joinRecord.id,
+                        attribute: joinLibProps.mandatoryAttribute,
+                        value: {
+                            payload: value.payload // simple link from join record to "thematic"
+                        },
+                        ctx
+                    });
+
+                    return joinRecord.id;
+                }
+            }
+        }
+    };
+
+    const _deleteJoinRecord = async (
+        attributeProps: IAttribute,
+        deletedValues: IValue[],
+        ctx: IQueryInfos
+    ): Promise<void> => {
+        if (attributeProps.linked_library) {
+            const joinLibId = attributeProps.linked_library; // structure_item
+            const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
+
+            if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
+                const joinAttributeProps = await attributeDomain.getAttributeProperties({
+                    id: joinLibProps.mandatoryAttribute,
+                    ctx
+                });
+                if (
+                    joinAttributeProps.type === AttributeTypes.SIMPLE_LINK ||
+                    (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)
+                ) {
+                    // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
+
+                    await Promise.all(
+                        deletedValues.map(async deletedValue => {
+                            // should we unlink record attributes, or done in deleteRecordHelper ?
+
+                            const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
+                            logger.debug(`Deleted join record: ${JSON.stringify(deleteJoinRecord, null, 2)}`);
+                        })
+                    );
+                }
+            }
+        }
+    };
+
     const _executeDeleteValue = async ({library, recordId, attribute, value, ctx}: IDeleteValueParams) => {
+        console.log('deleteValue :>> ', JSON.stringify({library, recordId, attribute, value}, null, 2));
+
         // Check permission
         const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
             action: RecordPermissionsActions.EDIT_RECORD,
@@ -474,6 +550,8 @@ const valueDomain = function ({
                 return deletedValue;
             })
         );
+
+        _deleteJoinRecord(attributeProps, deletedValues, ctx);
 
         return deletedValues;
     };
@@ -603,6 +681,116 @@ const valueDomain = function ({
         return processedValues;
     };
 
+    const saveValue = async ({library, recordId, attribute, value, ctx}): Promise<IValue[]> => {
+        console.log('saveValue :>> ', JSON.stringify({library, recordId, attribute, value}, null, 2));
+        await validate.validateLibrary(library, ctx);
+        const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
+        await validate.validateLibraryAttribute(library, attribute, ctx);
+        const record = await validate.validateRecord(library, recordId, ctx);
+
+        const joinRecordId = await _createJoinRecord(attributeProps, value, ctx);
+        value.payload = joinRecordId ?? value.payload;
+
+        const valueChecksParams = {
+            attributeProps,
+            library,
+            recordId,
+            value,
+            keepEmpty: false,
+            infos: ctx
+        };
+
+        if (attributeProps.readonly) {
+            throw new ValidationError<IValue>({
+                attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
+            });
+        }
+
+        // Check permissions
+        const {
+            canSave,
+            reason: forbiddenSaveReason,
+            fields
+        } = await canSaveRecordValue({
+            ...valueChecksParams,
+            ctx,
+            deps: {
+                recordPermissionDomain,
+                recordAttributePermissionDomain,
+                config
+            }
+        });
+
+        if (!canSave) {
+            if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
+                throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
+            }
+
+            throw new PermissionError(
+                forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions,
+                fields
+            );
+        }
+
+        // Validate value
+        const validationErrors = await validateValue({
+            ...valueChecksParams,
+            attributeProps,
+            deps: {
+                attributeDomain,
+                recordRepo,
+                valueRepo,
+                treeRepo
+            },
+            ctx
+        });
+
+        if (Object.keys(validationErrors).length) {
+            throw new ValidationError<IValue>(validationErrors);
+        }
+
+        // Prepare value
+        const valuesToSave = await prepareValue({
+            ...valueChecksParams,
+            deps: {
+                actionsListDomain,
+                attributeDomain,
+                utils
+            },
+            ctx
+        });
+
+        const {allSavedValues, areValuesIdentical} = await valuesToSave.reduce(
+            async (promiseAcc, valueToSave) => {
+                const acc = await promiseAcc;
+                const {values: savedValues, areValuesIdentical: identicalValues} = await _executeSaveValue(
+                    library,
+                    record,
+                    attributeProps,
+                    valueToSave,
+                    ctx
+                );
+
+                if (!identicalValues) {
+                    acc.areValuesIdentical = false;
+                }
+
+                acc.allSavedValues.push(...savedValues);
+                return acc;
+            },
+            Promise.resolve({allSavedValues: [], areValuesIdentical: true})
+        );
+
+        if (!areValuesIdentical) {
+            await updateRecordLastModif(library, recordId, ctx);
+            allSavedValues.forEach(async savedValue => {
+                sendRecordUpdateEvent(record, [{attribute, value: savedValue}], ctx);
+            });
+        }
+
+        return allSavedValues;
+    };
+
     return {
         async getValues({library, recordId, attribute, options, ctx}): Promise<IValue[]> {
             await validate.validateLibrary(library, ctx);
@@ -690,113 +878,7 @@ const valueDomain = function ({
 
             return actionsListRes;
         },
-        async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue[]> {
-
-            console.log('saveValue :>> ', JSON.stringify({library, recordId, attribute, value}, null, 2));
-            await validate.validateLibrary(library, ctx);
-            const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
-            await validate.validateLibraryAttribute(library, attribute, ctx);
-            const record = await validate.validateRecord(library, recordId, ctx);
-
-            const valueChecksParams = {
-                attributeProps,
-                library,
-                recordId,
-                value,
-                keepEmpty: false,
-                infos: ctx
-            };
-
-            if (attributeProps.readonly) {
-                throw new ValidationError<IValue>({
-                    attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
-                });
-            }
-
-            // Check permissions
-            const {
-                canSave,
-                reason: forbiddenSaveReason,
-                fields
-            } = await canSaveRecordValue({
-                ...valueChecksParams,
-                ctx,
-                deps: {
-                    recordPermissionDomain,
-                    recordAttributePermissionDomain,
-                    config
-                }
-            });
-
-            if (!canSave) {
-                if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
-                    throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
-                }
-
-                throw new PermissionError(
-                    forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions,
-                    fields
-                );
-            }
-
-            // Validate value
-            const validationErrors = await validateValue({
-                ...valueChecksParams,
-                attributeProps,
-                deps: {
-                    attributeDomain,
-                    recordRepo,
-                    valueRepo,
-                    treeRepo
-                },
-                ctx
-            });
-
-            if (Object.keys(validationErrors).length) {
-                throw new ValidationError<IValue>(validationErrors);
-            }
-
-            // Prepare value
-            const valuesToSave = await prepareValue({
-                ...valueChecksParams,
-                deps: {
-                    actionsListDomain,
-                    attributeDomain,
-                    utils
-                },
-                ctx
-            });
-
-            const {allSavedValues, areValuesIdentical} = await valuesToSave.reduce(
-                async (promiseAcc, valueToSave) => {
-                    const acc = await promiseAcc;
-                    const {values: savedValues, areValuesIdentical: identicalValues} = await _executeSaveValue(
-                        library,
-                        record,
-                        attributeProps,
-                        valueToSave,
-                        ctx
-                    );
-
-                    if (!identicalValues) {
-                        acc.areValuesIdentical = false;
-                    }
-
-                    acc.allSavedValues.push(...savedValues);
-                    return acc;
-                },
-                Promise.resolve({allSavedValues: [], areValuesIdentical: true})
-            );
-
-            if (!areValuesIdentical) {
-                await updateRecordLastModif(library, recordId, ctx);
-                allSavedValues.forEach(async savedValue => {
-                    sendRecordUpdateEvent(record, [{attribute, value: savedValue}], ctx);
-                });
-            }
-
-            return allSavedValues;
-        },
+        saveValue,
         async saveValueBatch({
             library,
             recordId,
@@ -820,7 +902,6 @@ const valueDomain = function ({
                         const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
 
                         if (value.payload === null && !keepEmpty) {
-
                             const deletedValues = await _executeDeleteValue({
                                 library,
                                 value,
@@ -831,56 +912,12 @@ const valueDomain = function ({
 
                             prevRes.values.push(...deletedValues);
 
-                            // TODO move in _executeDeleteValue ?
-                            if (attributeProps.linked_library) {
-                                const joinLibId = attributeProps.linked_library; // structure_item
-                                const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
-
-                                if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
-                                    const joinAttributeProps = await attributeDomain.getAttributeProperties({id: joinLibProps.mandatoryAttribute, ctx});
-                                    if (joinAttributeProps.type === AttributeTypes.SIMPLE_LINK || (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)) { // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
-
-                                        await Promise.all(deletedValues.map(async deletedValue => {
-                                            // should we unlink record attributes, or done in deleteRecordHelper ?
-
-                                            const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
-                                            logger.debug(`Deleted join record: ${JSON.stringify(deleteJoinRecord, null, 2)}`);
-                                        }));
-                                    }
-                                }
-                            }
-
                             return prevRes;
                         }
 
-                        // TODO move in _executeSaveValue ?
-                        if (attributeProps.linked_library) {
-                            const joinLibId = attributeProps.linked_library; // structure_item
-                            const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
+                        const linkedRecord = await _createJoinRecord(attributeProps, value, ctx);
+                        value.payload = linkedRecord ?? value.payload;
 
-                            if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
-                                const joinAttributeProps = await attributeDomain.getAttributeProperties({id: joinLibProps.mandatoryAttribute, ctx});
-                                if (joinAttributeProps.type === AttributeTypes.SIMPLE_LINK || (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)) { // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
-                                    const {record: joinRecord, valuesErrors} = await createRecordHelper({
-                                        library: joinLibId,
-                                        ctx
-                                    });
-
-                                    logger.debug(`Created join record: ${JSON.stringify(joinRecord, null, 2)}`);
-                                    await this.saveValue({
-                                        library: joinLibId,
-                                        recordId: joinRecord.id,
-                                        attribute: joinLibProps.mandatoryAttribute,
-                                        value: {
-                                            payload: value.payload // simple link from join record to "thematic"
-                                        },
-                                        ctx
-                                    });
-
-                                    value.payload = joinRecord.id;
-                                }
-                            }
-                        }
                         const valueChecksParams = {
                             attributeProps,
                             library,
