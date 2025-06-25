@@ -30,7 +30,7 @@ import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 import LinkSelect from '_ui/components/LinkSelect';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
-import {FullTextAttribute} from '_ui/types';
+import {FullTextAttribute, IFilter, IQueryFilter} from '_ui/types';
 
 interface ILinkRecordsInCreationProps {
     libraryId: string;
@@ -234,21 +234,24 @@ export const useLinkRecordsInEdition = ({
 
     // search records that match the text typed in the search bar
     const _onLinkSelectSearch: ComponentProps<typeof LinkSelect>['onSearch'] = async text => {
-        const filters = fullTextSearchAttributes.reduce((acc: any[], attr: FullTextAttribute, index: number) => {
-            // Add OR operator between filters (except before the first filter)
-            if (index > 0) {
-                acc.push({operator: RecordFilterOperator.OR});
-            }
+        const filters = fullTextSearchAttributes.reduce(
+            (acc: IQueryFilter[], attr: FullTextAttribute, index: number) => {
+                // Add OR operator between filters (except before the first filter)
+                if (index > 0) {
+                    acc.push({operator: RecordFilterOperator.OR});
+                }
 
-            // Add the filter condition
-            acc.push({
-                condition: RecordFilterCondition.CONTAINS,
-                field: attr.id,
-                value: text
-            });
+                // Add the filter condition
+                acc.push({
+                    condition: RecordFilterCondition.CONTAINS,
+                    field: attr.id,
+                    value: text
+                });
 
-            return acc;
-        }, []);
+                return acc;
+            },
+            []
+        );
 
         await getRecordsRefetch({
             filters
