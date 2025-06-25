@@ -7,11 +7,12 @@ import {ComponentProps, Dispatch, SetStateAction, useEffect, useState} from 'rea
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ExplorerWrapper} from '../shared/ExplorerWrapper';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
-import {DeleteMultipleValuesFunc, ISubmitMultipleResult} from '../../../_types';
+import {DeleteMultipleValuesFunc} from '../../../_types';
 import {
     RecordFilterCondition,
+    RecordFilterOperator,
     RecordFormAttributeLinkAttributeFragment,
-    useGetRecordsFromLibraryLazyQuery,
+    useGetLibraryByIdQuery,
     useGetRecordsFromLibraryQuery,
     ValueDetailsLinkValueFragment
 } from '_ui/_gqlTypes';
@@ -29,6 +30,7 @@ import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 import LinkSelect from '_ui/components/LinkSelect';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
+import {FullTextAttribute} from '_ui/types';
 
 interface ILinkRecordsInCreationProps {
     libraryId: string;
@@ -72,6 +74,7 @@ export const useLinkRecordsInEdition = ({
 
     const [isExplorerAddButtonClicked, setIsExplorerAddButtonClicked] = useState(false);
     const [explorerActions, setExplorerActions] = useState<IExplorerRef | null>(null);
+    const [fullTextSearchAttributes, setFullTextSearchAttributes] = useState<FullTextAttribute[]>([]);
     const [linkedIds, setLinkIds] = useState<string[]>([]);
     const [selectOptions, setSelectOptions] = useState<IKitOption[]>([]);
 
@@ -95,8 +98,21 @@ export const useLinkRecordsInEdition = ({
         fetchPolicy: 'network-only'
     });
 
+    // Function to get the library configuration
+    const {data: libraryLinked} = useGetLibraryByIdQuery({
+        variables: {
+            id: attribute.linked_library.id
+        }
+    });
+
+    useEffect(() => {
+        if (libraryLinked) {
+            setFullTextSearchAttributes(libraryLinked.libraries.list[0].fullTextAttributes);
+        }
+    }, [libraryLinked]);
+
     // Function to refetch data with current parameters
-    const libraryRefetch = (customVariables = {}) =>
+    const getRecordsRefetch = (customVariables = {}) =>
         getRecordsFromLibrary({
             libraryId: attribute.linked_library.id,
             pagination: {limit: 10, offset: 0},
@@ -218,14 +234,24 @@ export const useLinkRecordsInEdition = ({
 
     // search records that match the text typed in the search bar
     const _onLinkSelectSearch: ComponentProps<typeof LinkSelect>['onSearch'] = async text => {
-        await libraryRefetch({
-            filters: [
-                {
-                    condition: RecordFilterCondition.CONTAINS,
-                    field: `${attribute.linked_library.id}_label`,
-                    value: text
-                }
-            ]
+        const filters = fullTextSearchAttributes.reduce((acc: any[], attr: FullTextAttribute, index: number) => {
+            // Add OR operator between filters (except before the first filter)
+            if (index > 0) {
+                acc.push({operator: RecordFilterOperator.OR});
+            }
+
+            // Add the filter condition
+            acc.push({
+                condition: RecordFilterCondition.CONTAINS,
+                field: attr.id,
+                value: text
+            });
+
+            return acc;
+        }, []);
+
+        await getRecordsRefetch({
+            filters
         });
     };
 
@@ -306,9 +332,7 @@ export const useLinkRecordsInEdition = ({
                         />
                     </ExplorerWrapper>
 
-                    <KitButton onClick={_openLinkSelect} icon={<FontAwesomeIcon icon={faPlus} />}>
-                        {t('global.add')}
-                    </KitButton>
+                    <KitButton onClick={_openLinkSelect} icon={<FontAwesomeIcon icon={faPlus} />}></KitButton>
                     {isExplorerAddButtonClicked && (
                         <LinkSelect
                             tagDisplay={false}

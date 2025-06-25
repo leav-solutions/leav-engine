@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {SystemTranslation} from './scalars';
-import {IParentAttributeData, ITreeData} from './search';
+import {IAttribute, IParentAttributeData, ITreeData} from './search';
 
 export interface ISelectedAttribute {
     id: string;
@@ -24,3 +24,5 @@ export interface IEmbeddedFields {
     label: SystemTranslation;
     embedded_fields: IEmbeddedFields[];
 }
+
+export type FullTextAttribute = Pick<IAttribute, 'id' | 'label'>;
