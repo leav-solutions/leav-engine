@@ -29,6 +29,7 @@ export interface IRecordForm {
 
 export enum FormElementTypes {
     field = 'field',
+    tabs = 'tabs',
     layout = 'layout'
 }
 

@@ -275,7 +275,7 @@ export default function ({
                         },
                         async recordForm(
                             _,
-                            {recordId, libraryId, formId, version}: IGetRecordFormArgs,
+                            {recordId, libraryId, formId, elementIds, version}: IGetRecordFormArgs,
                             ctx: IQueryInfos
                         ): Promise<IRecordForm> {
                             const formattedVersion = convertVersionFromGqlFormat(version);
@@ -284,6 +284,7 @@ export default function ({
                                 recordId,
                                 libraryId,
                                 formId,
+                                elementIds,
                                 version: formattedVersion,
                                 ctx
                             });

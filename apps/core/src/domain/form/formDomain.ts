@@ -57,6 +57,7 @@ export interface IFormDomain {
         recordId: string;
         libraryId: string;
         formId: string;
+        elementIds?: string[];
         version?: IValueVersion;
         ctx: IQueryInfos;
     }): Promise<IRecordForm>;
@@ -197,7 +198,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
 
             return formRepo.getForms({params: initializedParams, ctx});
         },
-        async getRecordForm({recordId, libraryId, formId, version, ctx}): Promise<IRecordForm> {
+        async getRecordForm({recordId, libraryId, formId, elementIds, version, ctx}): Promise<IRecordForm> {
             let formProps: IForm;
             try {
                 formProps = await this.getFormProperties({library: libraryId, id: formId, ctx});
@@ -229,6 +230,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                         let elementError: string;
                         try {
                             isElementVisible =
+                                elementIds?.includes(depElement.id) ||
                                 depElement.uiElementType === FormElementTypes.layout ||
                                 !depElement.settings?.attribute ||
                                 (await _canAccessAttribute(depElement.settings.attribute, libraryId, recordId, ctx));

@@ -103,8 +103,7 @@ const useGetRecordForm = ({
               }))
         : null;
 
-    const {loading, error, refetch} = useRecordFormQuery({
-        // const {loading, error, refetch} = useRecordFormWithoutValuesQuery({
+    const {loading, error, refetch} = useRecordFormWithoutValuesQuery({
         fetchPolicy: 'no-cache',
         notifyOnNetworkStatusChange: true,
         variables: {
@@ -114,7 +113,7 @@ const useGetRecordForm = ({
             version: requestVersion
         },
         onCompleted: data => {
-            console.log('data', data, data.recordForm.elements);
+            // console.log('data', data, data.recordForm.elements);
 
             const recordFormFormatted: IRecordForm = {
                 ...data.recordForm,

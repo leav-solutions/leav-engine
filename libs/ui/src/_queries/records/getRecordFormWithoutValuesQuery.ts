@@ -2,18 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
-import {valueDetailsFragment} from '../values/valueDetailsFragment';
-import {recordFormAttributeFragment} from './recordFormAttributeFragment';
 
 export const getRecordFormWithoutValuesQuery = gql`
-    ${recordFormAttributeFragment}
-
     fragment RecordFormElementWithoutValues on FormElementWithValues {
         id
         containerId
         uiElementType
         type
-        valueError
         attribute {
             ...RecordFormAttribute
         }
