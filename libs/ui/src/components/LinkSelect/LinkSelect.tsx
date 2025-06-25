@@ -80,10 +80,7 @@ function LinkSelect({
         if (debouncedSearch === '') {
             setEmptyResults(false);
         } else {
-            const optionsFiltered = options.filter(option =>
-                option.label?.toLowerCase().includes(debouncedSearch.toLowerCase())
-            );
-            setEmptyResults(optionsFiltered.length === 0);
+            setEmptyResults(options.length === 0);
         }
     }, [options, debouncedSearch]);
 
@@ -169,7 +166,7 @@ function LinkSelect({
             defaultValue={defaultValues}
             options={options}
             optionFilterProp="label"
-            filterOption={(input, option) => option?.rawLabel?.toLowerCase().includes(input?.toLowerCase())}
+            filterOption={false}
             showSearch
             onChange={_handleChange}
             onSearch={_handleSearch}

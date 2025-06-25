@@ -69,10 +69,7 @@ describe('LinkSelect', () => {
     it('should call onCreate with current search string', async () => {
         const handleCreate = jest.fn();
 
-        const options = [
-            {value: 'foo', label: 'Foo'},
-            {value: 'bar', label: 'Bar'}
-        ];
+        const options = [];
 
         render(
             <LinkSelect
