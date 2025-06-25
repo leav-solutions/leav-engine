@@ -9,9 +9,15 @@ import {ExplorerWrapper} from '../shared/ExplorerWrapper';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {DeleteMultipleValuesFunc} from '../../../_types';
 import {
+    RecordFilterCondition,
+    RecordFilterOperator,
     RecordFormAttributeLinkAttributeFragment,
+    useGetLibraryByIdQuery,
+    useGetRecordsFromLibraryQuery,
+    ValueDetailsLinkValueFragment
 } from '_ui/_gqlTypes';
 
+import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {AntForm, KitButton} from 'aristid-ds';
 import {
@@ -22,8 +28,6 @@ import {
 import {useLinkRecords} from './useLinkRecords';
 import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 import LinkSelect from '_ui/components/LinkSelect';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {FullTextAttribute} from '_ui/types';
@@ -70,9 +74,9 @@ export const useLinkRecordsInEdition = ({
 
     const [isExplorerAddButtonClicked, setIsExplorerAddButtonClicked] = useState(false);
     const [explorerActions, setExplorerActions] = useState<IExplorerRef | null>(null);
+    const [fullTextSearchAttributes, setFullTextSearchAttributes] = useState<FullTextAttribute[]>([]);
     const [linkedIds, setLinkIds] = useState<string[]>([]);
     const [selectOptions, setSelectOptions] = useState<IKitOption[]>([]);
-    const [fullTextSearchAttributes, setFullTextSearchAttributes] = useState<FullTextAttribute[]>([]);
 
     const {
         handleDeleteAllValues,
@@ -108,7 +112,7 @@ export const useLinkRecordsInEdition = ({
     }, [libraryLinked]);
 
     // Function to refetch data with current parameters
-    const libraryRefetch = (customVariables = {}) =>
+    const getRecordsRefetch = (customVariables = {}) =>
         getRecordsFromLibrary({
             libraryId: attribute.linked_library.id,
             pagination: {limit: 10, offset: 0},
@@ -250,6 +254,7 @@ export const useLinkRecordsInEdition = ({
             filters
         });
     };
+
     const _onCreateLinkSelect: ComponentProps<typeof LinkSelect>['onClickCreateButton'] = async () => {
         setIsExplorerAddButtonClicked(false);
         explorerActions?.createAction?.callback();

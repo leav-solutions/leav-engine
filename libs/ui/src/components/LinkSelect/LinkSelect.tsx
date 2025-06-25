@@ -80,26 +80,6 @@ function LinkSelect({
         if (debouncedSearch === '') {
             setEmptyResults(false);
         } else {
-            const optionsFiltered = options.filter(option =>
-                option.label?.toLowerCase().includes(debouncedSearch.toLowerCase())
-            );
-            setEmptyResults(optionsFiltered.length === 0);
-        }
-    }, [options, debouncedSearch]);
-
-    const _handleChange: ComponentProps<typeof KitSelect>['onChange'] = (selection: string[]) => {
-        onUpdateSelection?.(selection);
-    useEffect(() => {
-        // Call API search when debounced search value changes
-        onSearch?.(debouncedSearch).then(() => {
-            setIsLoading(false);
-        });
-    }, [debouncedSearch]);
-
-    useEffect(() => {
-        if (debouncedSearch === '') {
-            setEmptyResults(false);
-        } else {
             setEmptyResults(options.length === 0);
         }
     }, [options, debouncedSearch]);
