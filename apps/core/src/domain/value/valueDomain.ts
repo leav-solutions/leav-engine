@@ -35,7 +35,6 @@ import prepareValue from './helpers/prepareValue';
 import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
 import {IDeleteValueParams, IRunActionListParams} from './_types';
-import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {DeleteRecordHelper} from 'domain/record/helpers/deleteRecord';
 import {CreateRecordHelper} from 'domain/record/helpers/createRecord';
 import {IfLibraryJoinLinkAttribute} from '../attribute/helpers/ifLibraryJoinLinkAttribute';
@@ -142,7 +141,6 @@ export interface IValueDomainDeps {
     'core.domain.permission.record': IRecordPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.helpers.validate': IValidateHelper;
-    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.helpers.updateRecordLastModif': UpdateRecordLastModifFunc;
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
@@ -167,7 +165,6 @@ const valueDomain = function ({
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.eventsManager': eventsManager,
     'core.domain.helpers.validate': validate,
-    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif,
     'core.domain.tree.helpers.elementAncestors': elementAncestors,
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
