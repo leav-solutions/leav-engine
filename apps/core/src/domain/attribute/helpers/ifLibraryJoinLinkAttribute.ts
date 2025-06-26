@@ -14,7 +14,7 @@ export type IfLibraryJoinLinkAttribute = <R = unknown>(
     ctx: IQueryInfos
 ) => Promise<R | void>;
 
-interface IDeps {
+export interface IIfLibraryJoinLinkDeps {
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.attribute': IAttributeDomain;
 }
@@ -22,14 +22,18 @@ interface IDeps {
 export default function ({
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.attribute': attributeDomain
-}: IDeps): IfLibraryJoinLinkAttribute {
-
+}: IIfLibraryJoinLinkDeps): IfLibraryJoinLinkAttribute {
     return async <R>(
         attributeProps: IAttribute,
         callback: IfLibraryJoinLinkAttributeCallback<R>,
         ctx: IQueryInfos
     ): Promise<R | void> => {
-        if (attributeProps.linked_library) {
+        if (
+            [AttributeTypes.ADVANCED_LINK, AttributeTypes.SIMPLE_LINK, AttributeTypes.TREE].includes(
+                attributeProps.type
+            ) &&
+            attributeProps.linked_library
+        ) {
             const joinLibId = attributeProps.linked_library; // e.g. structure_item
             const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
 
@@ -41,7 +45,7 @@ export default function ({
                 if (
                     joinAttributeProps.type === AttributeTypes.SIMPLE_LINK ||
                     (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)
-                    // And may be handle joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
+                    // And maybe handle joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
                 ) {
                     return callback(joinLibId, joinAttributeProps);
                 }
