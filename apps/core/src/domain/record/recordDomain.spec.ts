@@ -139,7 +139,7 @@ describe('RecordDomain', () => {
     });
 
     describe('createRecord', () => {
-        test.only('Should create a new record', async function () {
+        test('Should create a new record', async function () {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -177,7 +177,6 @@ describe('RecordDomain', () => {
             });
 
             const createdRecord = await recDomain.createRecord({library: 'test', ctx});
-            console.log('createdRecord :>> ', JSON.stringify(createdRecord, null, 2));
 
             expect(recRepo.createRecord.mock.calls.length).toBe(1);
             expect(typeof recRepo.createRecord.mock.calls[0][0]).toBe('object');

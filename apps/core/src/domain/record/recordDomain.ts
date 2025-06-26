@@ -963,12 +963,12 @@ export default function ({
                         attribute: e.attribute,
                         message: e.message,
                         input: e.input
-                    }))
+                    })) || null
                 };
             }
             return {
                 record,
-                valuesErrors: []
+                valuesErrors: null
             };
 
         },
