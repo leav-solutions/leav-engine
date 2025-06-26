@@ -34,6 +34,7 @@ import {IValidateHelper} from '../helpers/validate';
 import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import valueDomain, {IValueDomainDeps} from './valueDomain';
+import {ifJoinRecordValue} from './helpers';
 
 const depsBase: ToAny<IValueDomainDeps> = {
     config: {},
@@ -53,7 +54,8 @@ const depsBase: ToAny<IValueDomainDeps> = {
     'core.infra.value': jest.fn(),
     'core.utils': jest.fn(),
     'core.utils.logger': jest.fn(),
-    'core.domain.tree': jest.fn()
+    'core.domain.tree': jest.fn(),
+    'core.domain.value.helpers.ifJoinRecordValue': jest.fn()
 };
 
 describe('ValueDomain', () => {

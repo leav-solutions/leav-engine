@@ -955,7 +955,6 @@ const valueDomain = function ({
 
                         prevRes.values.push(...saveResult);
                     } catch (e) {
-                        console.error('Error while saving value', e);
                         if (
                             !e.type ||
                             (e.type !== ErrorTypes.VALIDATION_ERROR && e.type !== ErrorTypes.PERMISSION_ERROR)
