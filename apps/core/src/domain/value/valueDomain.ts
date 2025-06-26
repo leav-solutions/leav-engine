@@ -14,7 +14,6 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
-import moment from 'moment';
 import * as Config from '_types/config';
 import {IRecord} from '_types/record';
 import PermissionError from '../../errors/PermissionError';
@@ -36,13 +35,10 @@ import prepareValue from './helpers/prepareValue';
 import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
 import {IDeleteValueParams, IRunActionListParams} from './_types';
-import libraryDomain, {ILibraryDomain} from 'domain/library/libraryDomain';
-import {ILibrary, LibraryBehavior} from '../../_types/library';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {DeleteRecordHelper} from 'domain/record/helpers/deleteRecord';
 import {CreateRecordHelper} from 'domain/record/helpers/createRecord';
+import {IfJoinRecordValue} from './helpers/ifJoinRecordValue';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -142,8 +138,6 @@ export interface IValueDomainDeps {
     config: Config.IConfig;
     'core.domain.actionsList': IActionsListDomain;
     'core.domain.attribute': IAttributeDomain;
-    // 'core.domain.library': ILibraryDomain;
-    // 'core.domain.record': IRecordDomain;
     'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
@@ -155,6 +149,7 @@ export interface IValueDomainDeps {
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.domain.record.helpers.createRecord': CreateRecordHelper;
     'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
+    'core.domain.value.helpers.ifJoinRecordValue': IfJoinRecordValue;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.infra.record': IRecordRepo;
     'core.infra.tree': ITreeRepo;
@@ -168,8 +163,6 @@ const valueDomain = function ({
     config,
     'core.domain.actionsList': actionsListDomain,
     'core.domain.attribute': attributeDomain,
-    // 'core.domain.library': libraryDomain,
-    // 'core.domain.record': recordDomain, // not possible, cycling deps
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.eventsManager': eventsManager,
@@ -181,6 +174,7 @@ const valueDomain = function ({
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.domain.record.helpers.createRecord': createRecordHelper,
     'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
+    'core.domain.value.helpers.ifJoinRecordValue': ifJoinRecordValue,
     'core.domain.versionProfile': versionProfileDomain,
     'core.infra.record': recordRepo,
     'core.infra.tree': treeRepo,
@@ -356,78 +350,42 @@ const valueDomain = function ({
         attributeProps: IAttribute,
         value: IValue,
         ctx: IQueryInfos
-    ): Promise<string | void> => {
-        if (attributeProps.linked_library) {
-            const joinLibId = attributeProps.linked_library; // structure_item
-            const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
+    ): Promise<string | void> => ifJoinRecordValue(attributeProps, async (joinLibId: string, joinAttributeProps: IAttribute) => {
+            const {record: joinRecord} = await createRecordHelper({
+                library: joinLibId,
+                ctx
+            });
 
-            if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
-                const joinAttributeProps = await attributeDomain.getAttributeProperties({
-                    id: joinLibProps.mandatoryAttribute,
-                    ctx
-                });
-                if (
-                    joinAttributeProps.type === AttributeTypes.SIMPLE_LINK ||
-                    (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)
-                ) {
-                    // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
-                    const {record: joinRecord, valuesErrors} = await createRecordHelper({
-                        library: joinLibId,
-                        ctx
-                    });
+            logger.debug(`Created join record: ${JSON.stringify(joinRecord, null, 2)}`);
+            await saveValue({
+                library: joinLibId,
+                recordId: joinRecord.id,
+                attribute: joinAttributeProps.id,
+                value: {
+                    payload: value.payload // simple link from join record to "thematic"
+                },
+                ctx
+            });
 
-                    logger.debug(`Created join record: ${JSON.stringify(joinRecord, null, 2)}`);
-                    await saveValue({
-                        library: joinLibId,
-                        recordId: joinRecord.id,
-                        attribute: joinLibProps.mandatoryAttribute,
-                        value: {
-                            payload: value.payload // simple link from join record to "thematic"
-                        },
-                        ctx
-                    });
-
-                    return joinRecord.id;
-                }
-            }
-        }
-    };
+            return joinRecord.id;
+        }, ctx);
 
     const _deleteJoinRecord = async (
         attributeProps: IAttribute,
         deletedValues: IValue[],
         ctx: IQueryInfos
-    ): Promise<void> => {
-        if (attributeProps.linked_library) {
-            const joinLibId = attributeProps.linked_library; // structure_item
-            const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
+    ): Promise<void> => ifJoinRecordValue(attributeProps, async (joinLibId: string) => {
+            await Promise.all(
+                deletedValues.map(async deletedValue => {
+                    // should we unlink record attributes, or done in deleteRecordHelper ?
 
-            if (joinLibProps.behavior === LibraryBehavior.JOIN && joinLibProps.mandatoryAttribute) {
-                const joinAttributeProps = await attributeDomain.getAttributeProperties({
-                    id: joinLibProps.mandatoryAttribute,
-                    ctx
-                });
-                if (
-                    joinAttributeProps.type === AttributeTypes.SIMPLE_LINK ||
-                    (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)
-                ) {
-                    // TODO  || joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
-
-                    await Promise.all(
-                        deletedValues.map(async deletedValue => {
-                            // should we unlink record attributes, or done in deleteRecordHelper ?
-
-                            const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
-                            logger.debug(`Deleted join record: ${JSON.stringify(deleteJoinRecord, null, 2)}`);
-                        })
-                    );
-                }
-            }
-        }
-    };
+                    const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
+                    logger.debug(`Deleted join record: ${JSON.stringify(deleteJoinRecord, null, 2)}`);
+                })
+            );
+        }, ctx);
 
     const _executeDeleteValue = async ({library, recordId, attribute, value, ctx}: IDeleteValueParams) => {
-        console.log('deleteValue :>> ', JSON.stringify({library, recordId, attribute, value}, null, 2));
 
         // Check permission
         const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
@@ -682,7 +640,6 @@ const valueDomain = function ({
     };
 
     const saveValue = async ({library, recordId, attribute, value, ctx}): Promise<IValue[]> => {
-        console.log('saveValue :>> ', JSON.stringify({library, recordId, attribute, value}, null, 2));
         await validate.validateLibrary(library, ctx);
         const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
         await validate.validateLibraryAttribute(library, attribute, ctx);
