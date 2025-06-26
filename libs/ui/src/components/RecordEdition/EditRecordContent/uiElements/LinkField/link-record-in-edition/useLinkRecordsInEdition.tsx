@@ -82,6 +82,10 @@ export const useLinkRecordsInEdition = ({
     const [fullTextSearchAttributes, setFullTextSearchAttributes] = useState<FullTextAttribute[]>([]);
     const [linkedIds, setLinkIds] = useState<string[]>([]);
     const [selectOptions, setSelectOptions] = useState<IKitOption[]>([]);
+    /**
+     * keys is joined record id (ei. thematic), values is join record Id (eu. structure item)
+     */
+    const [joinedRecordIdsMap, setJoinedRecordIdsMap] = useState<Record<string, string> | null>(null);
 
     const {
         handleDeleteAllValues,
@@ -100,7 +104,11 @@ export const useLinkRecordsInEdition = ({
     // Network-only is useful to avoid caching, we have a side effect otherwise
     // When the record is created, if we call getRecordsFromLibrary(), the previous records are returned
     const {data: libraryItems, refetch: getRecordsFromLibrary} = useGetRecordsFromLibraryQuery({
-        fetchPolicy: 'network-only'
+        fetchPolicy: 'network-only',
+        variables: {
+            libraryId: joinLibraryContext?.linkedLibrary ?? attribute.linked_library.id,
+            pagination: {limit: 10, offset: 0}
+        }
     });
 
     // Function to get the library configuration
@@ -135,14 +143,34 @@ export const useLinkRecordsInEdition = ({
         []
     );
 
-    const {data: joinLinkValue, refetch: refetchGetLinkAttributeValueQuery} = useGetLinkAttributeValueQuery({
-        fetchPolicy: 'network-only',
+    // TODO do not execute this query when backendValues/filteredJoinRecords is empty
+    const {data: joinLinkValue} = useGetLinkAttributeValueQuery({
+        fetchPolicy: 'no-cache',
         variables: {
             joinLibraryId: attribute.linked_library.id,
             filters: filteredJoinRecords,
             linkAttributeId: joinLibraryContext?.mandatoryAttribute
         }
     });
+
+    useEffect(() => {
+        if (joinLinkValue) {
+            console.log('joinLinkValue :>> ', joinLinkValue);
+            // const linkIds = joinLinkValue?.records?.list.map(record => record.property[0]?.payload?.id) || [];
+            const _joinedRecordIdsMap = joinLinkValue?.records?.list.reduce((acc, record) => {
+                const joinedRecordId = record.property[0]?.payload?.id;
+                if (joinedRecordId) {
+                    acc[joinedRecordId] = record.id;
+                }
+                return acc;
+            }, {} as Record<string, string>);
+            const linkIds = Object.keys(_joinedRecordIdsMap);
+            console.log('joinedMap :>> ', _joinedRecordIdsMap);
+            console.log('linkIds :>> ', linkIds);
+            setJoinedRecordIdsMap(_joinedRecordIdsMap);
+            setLinkIds(linkIds);
+        }
+    }, [joinLinkValue]);
 
     // Function to refetch data with current parameters
     const getRecordsRefetch = (customVariables = {}) =>
@@ -155,11 +183,10 @@ export const useLinkRecordsInEdition = ({
     useEffect(() => {
         //how to bind JOIN library selected items ?
 
-        if (joinLibraryContext) {
-            // setLinkIds(joinLinkValue.records)
+        // will be set by specific useEffect on joinLinkValue after useGetLinkAttributeValueQuery
+        if (!joinLibraryContext) {
+            setLinkIds(backendValues.map(bv => bv.linkValue.id));
         }
-
-        setLinkIds(backendValues.map(bv => bv.linkValue.id));
 
         if (isHookUsed && activeAttribute?.attribute.id === attribute.id) {
             // Update active value used in the sidebar when backendValues change
@@ -168,7 +195,7 @@ export const useLinkRecordsInEdition = ({
                 values: backendValues
             });
         }
-    }, [backendValues, joinLinkValue]);
+    }, [backendValues, joinLibraryContext]);
 
     // Update options for LinkSelect when libraryItems update
     useEffect(() => {
@@ -191,10 +218,6 @@ export const useLinkRecordsInEdition = ({
             );
         }
     }, [libraryItems]);
-
-    useEffect(() => {
-        console.log('joinLinkValue :>> ', joinLinkValue);
-    }, [joinLinkValue]);
 
     useEffect(() => {
         if (isHookUsed && backendValues.length === 0 && attribute.required) {
@@ -220,16 +243,23 @@ export const useLinkRecordsInEdition = ({
 
     const _openLinkSelect = () => {
         setIsExplorerAddButtonClicked(true);
-        refetchGetLinkAttributeValueQuery({
-            joinLibraryId: attribute.linked_library.id,
-            filters: filteredJoinRecords,
-            linkAttributeId: joinLibraryContext?.mandatoryAttribute
-        });
     };
 
     const {saveValues} = useSaveValueBatchMutation();
 
     const _onBlurLinkSelect: ComponentProps<typeof LinkSelect>['onBlur'] = async (itemsToLink, itemsToDelete) => {
+        console.log('_onBlurLinkSelect itemsToLink :>> ', itemsToLink);
+        console.log('_onBlurLinkSelect itemsToDelete :>> ', itemsToDelete);
+        console.log('_onBlurLinkSelect joinedRecordIdsMap :>> ', joinedRecordIdsMap);
+
+        const backendIdToDelete = joinedRecordIdsMap
+            ? new Set(itemsToDelete.values().map(itemToDelete => joinedRecordIdsMap[itemToDelete]))
+            : itemsToDelete;
+        console.log('_onBlurLinkSelect backendIdToDelete :>> ', backendIdToDelete);
+        // if joinLibraryContext
+        // remap itemToLink and itemsToDelete to backendValues (structure items)
+        // console.log('_onBlurLinkSelect backendValues :>> ', backendValues);
+
         // If there is no value to link or to remove, return early
         if (itemsToLink.size === 0 && itemsToDelete.size === 0) {
             setIsExplorerAddButtonClicked(false);
@@ -240,7 +270,7 @@ export const useLinkRecordsInEdition = ({
         const itemsToLinkArray = Array.from(itemsToLink);
 
         // Find values to remove and prepare payload for backend
-        const valuesToRemove = backendValues.filter(bv => itemsToDelete.has(bv.linkValue.id));
+        const valuesToRemove = backendValues.filter(bv => backendIdToDelete.has(bv.linkValue.id));
         const idValuesToRemove = valuesToRemove.map(bv => bv.id_value);
 
         // Prepare batch operation payload
@@ -266,6 +296,7 @@ export const useLinkRecordsInEdition = ({
 
         // Update linked IDs: add new links and remove deleted ones
         const updatedLinkedIds = linkedIds.filter(id => !itemsToDelete.has(id)).concat(itemsToLinkArray);
+        console.log('updatedLinkedIds :>> ', updatedLinkedIds);
         setLinkIds(updatedLinkedIds);
 
         // Extract newly added values from response
@@ -274,7 +305,7 @@ export const useLinkRecordsInEdition = ({
         ) as unknown as RecordFormElementsValueLinkValue[];
 
         // Update backend values: remove deleted ones and add new ones
-        setBackendValues([...backendValues.filter(bv => !itemsToDelete.has(bv.linkValue.id)), ...newlyAddedValues]);
+        setBackendValues([...backendValues.filter(bv => !backendIdToDelete.has(bv.linkValue.id)), ...newlyAddedValues]);
 
         // Hide linkSelect
         setIsExplorerAddButtonClicked(false);
@@ -312,6 +343,7 @@ export const useLinkRecordsInEdition = ({
     };
 
     const _onDeselect: ComponentProps<typeof LinkSelect>['onParentDeselect'] = linkId => {
+        console.log('_onDeselect linkId :>> ', linkId);
         const item = backendValues.find(bv => bv.linkValue.id === linkId);
 
         if (!item) {
@@ -325,6 +357,9 @@ export const useLinkRecordsInEdition = ({
             recordId
         };
     };
+
+    // console.log('selectOptions :>> ', selectOptions);
+    // console.log('linkedIds :>> ', linkedIds);
 
     return {
         UnlinkAllRecordsInEdition: isHookUsed &&
