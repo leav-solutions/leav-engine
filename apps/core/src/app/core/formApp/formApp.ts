@@ -21,6 +21,7 @@ import {
     IGetRecordFormArgs,
     ISaveFormArgs
 } from './_types';
+import {IfJoinRecordValue} from 'domain/value/helpers/ifJoinRecordValue';
 
 export interface ICoreFormApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -31,6 +32,7 @@ interface IDeps {
     'core.domain.form': IFormDomain;
     'core.domain.library': ILibraryDomain;
     'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
+    'core.domain.value.helpers.ifJoinRecordValue': IfJoinRecordValue;
     'core.utils': IUtils;
 }
 
@@ -39,6 +41,7 @@ export default function ({
     'core.domain.form': formDomain,
     'core.domain.library': libraryDomain,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
+    'core.domain.value.helpers.ifJoinRecordValue': ifJoinRecordValue,
     'core.utils': utils
 }: IDeps) {
     /** Functions to convert form from GraphQL format to IForm*/
@@ -101,37 +104,19 @@ export default function ({
             formElement: IFormElement,
             _,
             ctx: IQueryInfos
-        ): Promise<IFormElementJoinLibraryContext> | null => {
+        ): Promise<IFormElementJoinLibraryContext | void> => {
             const attributeId = formElement?.settings?.attribute;
 
             if (!attributeId) {
-                return null;
+                return;
             }
 
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
-            if (attrProps.linked_library) {
-                const libProps = await libraryDomain.getLibraryProperties(attrProps.linked_library, ctx);
-                if (libProps.behavior === LibraryBehavior.JOIN && libProps.mandatoryAttribute) {
-                    const mandatoryAttributeProps = await attributeDomain?.getAttributeProperties({
-                        id: libProps.mandatoryAttribute,
-                        ctx
-                    });
-                    if (
-                        (mandatoryAttributeProps.linked_library &&
-                            mandatoryAttributeProps.type === AttributeTypes.SIMPLE_LINK) ||
-                        (mandatoryAttributeProps.type === AttributeTypes.TREE &&
-                            !mandatoryAttributeProps.multiple_values)
-                    ) {
-                        return {
-                            multipleValues: attrProps.multiple_values,
-                            linkedLibrary: mandatoryAttributeProps.linked_library,
-                            mandatoryAttribute: mandatoryAttributeProps.id
-                        };
-                    }
-                }
-            }
-
-            return null;
+            return ifJoinRecordValue(attrProps, async (joinLibId: string, joinAttributeProps: IAttribute) => ({
+                multipleValues: attrProps.multiple_values,
+                linkedLibrary: joinAttributeProps.linked_library,
+                mandatoryAttribute: joinAttributeProps.id
+            }), ctx);
         }
     };
 

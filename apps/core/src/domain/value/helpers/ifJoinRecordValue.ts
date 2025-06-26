@@ -12,7 +12,7 @@ export type IfJoinRecordValue = <R = unknown>(
     attributeProps: IAttribute,
     callback: IfJoinRecordValueCallback<R>,
     ctx: IQueryInfos
-) => Promise<R>;
+) => Promise<R | void>;
 
 interface IDeps {
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
@@ -28,7 +28,7 @@ export default function ({
         attributeProps: IAttribute,
         callback: IfJoinRecordValueCallback<R>,
         ctx: IQueryInfos
-    ): Promise<R> => {
+    ): Promise<R | void> => {
         if (attributeProps.linked_library) {
             const joinLibId = attributeProps.linked_library; // e.g. structure_item
             const joinLibProps = await getCoreEntityById<ILibrary>('library', joinLibId, ctx);
