@@ -16,7 +16,6 @@ import {
     RecordFormAttributeLinkAttributeFragment,
     useGetLibraryByIdQuery,
     useGetLinkAttributeValueLazyQuery,
-    useGetLinkAttributeValueQuery,
     useGetRecordsFromLibraryQuery,
     ValueDetailsLinkValueFragment
 } from '_ui/_gqlTypes';
@@ -84,7 +83,8 @@ export const useLinkRecordsInEdition = ({
     const [linkedIds, setLinkIds] = useState<string[]>([]);
     const [selectOptions, setSelectOptions] = useState<IKitOption[]>([]);
     /**
-     * keys is joined record id (ei. thematic), values is join record Id (eu. structure item)
+     * Keys is joined record id (e.g. thematic), values is join record Id (e.g. structure_item)
+     * Necessary to get the id_value of the link when we want to delete a value
      */
     const [joinedRecordIdsMap, setJoinedRecordIdsMap] = useState<Record<string, string> | null>(null);
 
@@ -125,24 +125,14 @@ export const useLinkRecordsInEdition = ({
         }
     }, [libraryLinked]);
 
-    // 1. For each record in backendValues, get the value of mantatory attribute
-
-    // console.log('before useGetLinkAttributeValueQuery 2 :>> ', backendValues.length);
-    // TODO do not execute this query when backendValues/filteredJoinRecords is empty
+    // For each record in backendValues, get the id of the record linked by the mandatory attribute
+    // Will create a map of joined record ids to their corresponding link ids in joinedRecordIdsMap
     const [getLinkAttributeValue, {data: joinLinkValue}] = useGetLinkAttributeValueLazyQuery({
-        fetchPolicy: 'no-cache',
-        // variables: {
-        //     joinLibraryId: attribute.linked_library.id,
-        //     filters: filteredJoinRecords,
-        //     linkAttributeId: joinLibraryContext?.mandatoryAttribute
-        // }
+        fetchPolicy: 'no-cache'
     });
 
     useEffect(() => {
-        console.log('joinLinkValue :>> ', joinLinkValue);
         if (joinLinkValue) {
-            console.log('joinLinkValue :>> ', joinLinkValue);
-            // const linkIds = joinLinkValue?.records?.list.map(record => record.property[0]?.payload?.id) || [];
             const _joinedRecordIdsMap = joinLinkValue?.records?.list.reduce((acc, record) => {
                 const joinedRecordId = record.property[0]?.payload?.id;
                 if (joinedRecordId) {
@@ -151,8 +141,6 @@ export const useLinkRecordsInEdition = ({
                 return acc;
             }, {} as Record<string, string>);
             const linkIds = Object.keys(_joinedRecordIdsMap);
-            console.log('joinedMap :>> ', _joinedRecordIdsMap);
-            console.log('linkIds :>> ', linkIds);
             setJoinedRecordIdsMap(_joinedRecordIdsMap);
             setLinkIds(linkIds);
         }
@@ -167,9 +155,6 @@ export const useLinkRecordsInEdition = ({
         });
 
     useEffect(() => {
-        console.log('before useGetLinkAttributeValueQuery in useEffect :>> ', backendValues.length);
-        //how to bind JOIN library selected items ?
-
         // will be set by specific useEffect on joinLinkValue after useGetLinkAttributeValueQuery
         if (backendValues.length) {
             if (joinLibraryContext) {
@@ -264,17 +249,15 @@ export const useLinkRecordsInEdition = ({
     const {saveValues} = useSaveValueBatchMutation();
 
     const _onBlurLinkSelect: ComponentProps<typeof LinkSelect>['onBlur'] = async (itemsToLink, itemsToDelete) => {
-        console.log('_onBlurLinkSelect itemsToLink :>> ', itemsToLink);
-        console.log('_onBlurLinkSelect itemsToDelete :>> ', itemsToDelete);
-        console.log('_onBlurLinkSelect joinedRecordIdsMap :>> ', joinedRecordIdsMap);
-
+        // In case of joinLibraryContext,
+        // itemsToLink and itemsToDelete are a Set of joined record ids (e.g. thematic ids instead structure_item ids)
+        // - for insertion, backend can receive joined record ids, it is ok
+        // - but for deletion, we need the id of linked record (e.g. structure_item id), to be able to get the id_value of that link
+        // (e.g. between campaign and structure_item), so we use a map of joined record ids to their corresponding link ids
+        // (e.g. switch from thematic id to structure_item id)
         const backendIdToDelete = joinedRecordIdsMap
             ? new Set(itemsToDelete.values().map(itemToDelete => joinedRecordIdsMap[itemToDelete]))
             : itemsToDelete;
-        // console.log('_onBlurLinkSelect backendIdToDelete :>> ', backendIdToDelete);
-        // if joinLibraryContext
-        // remap itemToLink and itemsToDelete to backendValues (structure items)
-        // console.log('_onBlurLinkSelect backendValues :>> ', backendValues);
 
         // If there is no value to link or to remove, return early
         if (itemsToLink.size === 0 && itemsToDelete.size === 0) {
@@ -309,17 +292,17 @@ export const useLinkRecordsInEdition = ({
         const res = await saveValues({id: recordId, library: {id: libraryId}}, values, undefined, true);
 
         const resValues = res.values as ValueDetailsLinkValueFragment[];
-        console.log('resValues :>> ', resValues);
 
         // Update linked IDs: add new links and remove deleted ones
+        // Maybe not necessary because setBackendValues will trigger an effect to re set linkedIds !
         const updatedLinkedIds = linkedIds.filter(id => !itemsToDelete.has(id)).concat(itemsToLinkArray);
-        console.log('updatedLinkedIds :>> ', updatedLinkedIds);
         setLinkIds(updatedLinkedIds);
 
         // Extract newly added values from response, filter because saveValues return delete values in resValues !
         const newlyAddedValues = resValues.filter(v =>
-            // in case of joinLibraryContext, we know mapping between linkIds and backendValue ids.
-            // Is is why we can not do a positive filter based on itemsToLink because we do not have this mapping
+            // We do not do a positive filter based on itemsToLink because in case of joinLibraryContext,
+            // we do not have the mapping between linkIds and backendValue ids.
+            // However in we know the mapping between linkIds and backendValue ids for itemsToDelete, so we do a negative filter here
             !backendIdToDelete.has(v.linkValue.id)
         ) as unknown as RecordFormElementsValueLinkValue[];
 
@@ -362,7 +345,6 @@ export const useLinkRecordsInEdition = ({
     };
 
     const _onDeselect: ComponentProps<typeof LinkSelect>['onParentDeselect'] = linkId => {
-        // console.log('_onDeselect linkId :>> ', linkId);
         const item = backendValues.find(bv => bv.linkValue.id === linkId);
 
         if (!item) {
@@ -376,9 +358,6 @@ export const useLinkRecordsInEdition = ({
             recordId
         };
     };
-
-    // console.log('selectOptions :>> ', selectOptions);
-    // console.log('linkedIds :>> ', linkedIds);
 
     return {
         UnlinkAllRecordsInEdition: isHookUsed &&
