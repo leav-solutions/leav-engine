@@ -38,7 +38,7 @@ import {IDeleteValueParams, IRunActionListParams} from './_types';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {DeleteRecordHelper} from 'domain/record/helpers/deleteRecord';
 import {CreateRecordHelper} from 'domain/record/helpers/createRecord';
-import {IfJoinRecordValue} from './helpers/ifJoinRecordValue';
+import {IfLibraryJoinLinkAttribute} from '../attribute/helpers/ifLibraryJoinLinkAttribute';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -149,7 +149,7 @@ export interface IValueDomainDeps {
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.domain.record.helpers.createRecord': CreateRecordHelper;
     'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
-    'core.domain.value.helpers.ifJoinRecordValue': IfJoinRecordValue;
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': IfLibraryJoinLinkAttribute;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.infra.record': IRecordRepo;
     'core.infra.tree': ITreeRepo;
@@ -174,7 +174,7 @@ const valueDomain = function ({
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.domain.record.helpers.createRecord': createRecordHelper,
     'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
-    'core.domain.value.helpers.ifJoinRecordValue': ifJoinRecordValue,
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
     'core.domain.versionProfile': versionProfileDomain,
     'core.infra.record': recordRepo,
     'core.infra.tree': treeRepo,
@@ -350,7 +350,7 @@ const valueDomain = function ({
         attributeProps: IAttribute,
         value: IValue,
         ctx: IQueryInfos
-    ): Promise<string | void> => ifJoinRecordValue(attributeProps, async (joinLibId: string, joinAttributeProps: IAttribute) => {
+    ): Promise<string | void> => ifLibraryJoinLinkAttribute(attributeProps, async (joinLibId: string, joinAttributeProps: IAttribute) => {
             const {record: joinRecord} = await createRecordHelper({
                 library: joinLibId,
                 ctx
@@ -374,7 +374,7 @@ const valueDomain = function ({
         attributeProps: IAttribute,
         deletedValues: IValue[],
         ctx: IQueryInfos
-    ): Promise<void> => ifJoinRecordValue(attributeProps, async (joinLibId: string) => {
+    ): Promise<void> => ifLibraryJoinLinkAttribute(attributeProps, async (joinLibId: string) => {
             await Promise.all(
                 deletedValues.map(async deletedValue => {
                     // should we unlink record attributes, or done in deleteRecordHelper ?

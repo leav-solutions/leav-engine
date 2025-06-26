@@ -21,7 +21,7 @@ import {
     IGetRecordFormArgs,
     ISaveFormArgs
 } from './_types';
-import {IfJoinRecordValue} from 'domain/value/helpers/ifJoinRecordValue';
+import {IfLibraryJoinLinkAttribute} from 'domain/attribute/helpers/ifLibraryJoinLinkAttribute';
 
 export interface ICoreFormApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -32,7 +32,7 @@ interface IDeps {
     'core.domain.form': IFormDomain;
     'core.domain.library': ILibraryDomain;
     'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
-    'core.domain.value.helpers.ifJoinRecordValue': IfJoinRecordValue;
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': IfLibraryJoinLinkAttribute;
     'core.utils': IUtils;
 }
 
@@ -41,7 +41,7 @@ export default function ({
     'core.domain.form': formDomain,
     'core.domain.library': libraryDomain,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
-    'core.domain.value.helpers.ifJoinRecordValue': ifJoinRecordValue,
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
     'core.utils': utils
 }: IDeps) {
     /** Functions to convert form from GraphQL format to IForm*/
@@ -112,7 +112,7 @@ export default function ({
             }
 
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
-            return ifJoinRecordValue(attrProps, async (joinLibId: string, joinAttributeProps: IAttribute) => ({
+            return ifLibraryJoinLinkAttribute(attrProps, async (joinLibId: string, joinAttributeProps: IAttribute) => ({
                 multipleValues: attrProps.multiple_values,
                 linkedLibrary: joinAttributeProps.linked_library,
                 mandatoryAttribute: joinAttributeProps.id

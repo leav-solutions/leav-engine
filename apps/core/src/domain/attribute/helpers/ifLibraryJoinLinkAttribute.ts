@@ -7,10 +7,10 @@ import {IQueryInfos} from '../../../_types/queryInfos';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 
-export type IfJoinRecordValueCallback<R> = (joinLibId: string, joinAttributeProps: IAttribute) => Promise<R>;
-export type IfJoinRecordValue = <R = unknown>(
+export type IfLibraryJoinLinkAttributeCallback<R> = (joinLibId: string, joinAttributeProps: IAttribute) => Promise<R>;
+export type IfLibraryJoinLinkAttribute = <R = unknown>(
     attributeProps: IAttribute,
-    callback: IfJoinRecordValueCallback<R>,
+    callback: IfLibraryJoinLinkAttributeCallback<R>,
     ctx: IQueryInfos
 ) => Promise<R | void>;
 
@@ -22,11 +22,11 @@ interface IDeps {
 export default function ({
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.attribute': attributeDomain
-}: IDeps): IfJoinRecordValue {
+}: IDeps): IfLibraryJoinLinkAttribute {
 
     return async <R>(
         attributeProps: IAttribute,
-        callback: IfJoinRecordValueCallback<R>,
+        callback: IfLibraryJoinLinkAttributeCallback<R>,
         ctx: IQueryInfos
     ): Promise<R | void> => {
         if (attributeProps.linked_library) {
