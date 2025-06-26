@@ -256,7 +256,7 @@ export const useLinkRecordsInEdition = ({
         // (e.g. between campaign and structure_item), so we use a map of joined record ids to their corresponding link ids
         // (e.g. switch from thematic id to structure_item id)
         const backendIdToDelete = joinedRecordIdsMap
-            ? new Set(itemsToDelete.values().map(itemToDelete => joinedRecordIdsMap[itemToDelete]))
+            ? new Set([...itemsToDelete.values()].map(itemToDelete => joinedRecordIdsMap[itemToDelete]))
             : itemsToDelete;
 
         // If there is no value to link or to remove, return early
