@@ -143,17 +143,19 @@ export const useLinkRecordsInEdition = ({
         []
     );
 
+    // console.log('before useGetLinkAttributeValueQuery 2 :>> ', backendValues.length);
     // TODO do not execute this query when backendValues/filteredJoinRecords is empty
-    const {data: joinLinkValue} = useGetLinkAttributeValueQuery({
+    const {data: joinLinkValue} = filteredJoinRecords.length && useGetLinkAttributeValueQuery({
         fetchPolicy: 'no-cache',
         variables: {
             joinLibraryId: attribute.linked_library.id,
             filters: filteredJoinRecords,
             linkAttributeId: joinLibraryContext?.mandatoryAttribute
         }
-    });
+    }) || {data: undefined};
 
     useEffect(() => {
+        console.log('joinLinkValue :>> ', joinLinkValue);
         if (joinLinkValue) {
             console.log('joinLinkValue :>> ', joinLinkValue);
             // const linkIds = joinLinkValue?.records?.list.map(record => record.property[0]?.payload?.id) || [];
@@ -181,6 +183,7 @@ export const useLinkRecordsInEdition = ({
         });
 
     useEffect(() => {
+        console.log('before useGetLinkAttributeValueQuery in useEffect :>> ', backendValues.length);
         //how to bind JOIN library selected items ?
 
         // will be set by specific useEffect on joinLinkValue after useGetLinkAttributeValueQuery
@@ -255,7 +258,7 @@ export const useLinkRecordsInEdition = ({
         const backendIdToDelete = joinedRecordIdsMap
             ? new Set(itemsToDelete.values().map(itemToDelete => joinedRecordIdsMap[itemToDelete]))
             : itemsToDelete;
-        console.log('_onBlurLinkSelect backendIdToDelete :>> ', backendIdToDelete);
+        // console.log('_onBlurLinkSelect backendIdToDelete :>> ', backendIdToDelete);
         // if joinLibraryContext
         // remap itemToLink and itemsToDelete to backendValues (structure items)
         // console.log('_onBlurLinkSelect backendValues :>> ', backendValues);
@@ -293,15 +296,18 @@ export const useLinkRecordsInEdition = ({
         const res = await saveValues({id: recordId, library: {id: libraryId}}, values, undefined, true);
 
         const resValues = res.values as ValueDetailsLinkValueFragment[];
+        console.log('resValues :>> ', resValues);
 
         // Update linked IDs: add new links and remove deleted ones
         const updatedLinkedIds = linkedIds.filter(id => !itemsToDelete.has(id)).concat(itemsToLinkArray);
         console.log('updatedLinkedIds :>> ', updatedLinkedIds);
         setLinkIds(updatedLinkedIds);
 
-        // Extract newly added values from response
+        // Extract newly added values from response, filter because saveValues return delete values in resValues !
         const newlyAddedValues = resValues.filter(v =>
-            itemsToLink.has(v.linkValue!.id)
+            // in case of joinLibraryContext, we know mapping between linkIds and backendValue ids.
+            // Is is why we can not do a positive filter based on itemsToLink because we do not have this mapping
+            !backendIdToDelete.has(v.linkValue.id)
         ) as unknown as RecordFormElementsValueLinkValue[];
 
         // Update backend values: remove deleted ones and add new ones
@@ -343,7 +349,7 @@ export const useLinkRecordsInEdition = ({
     };
 
     const _onDeselect: ComponentProps<typeof LinkSelect>['onParentDeselect'] = linkId => {
-        console.log('_onDeselect linkId :>> ', linkId);
+        // console.log('_onDeselect linkId :>> ', linkId);
         const item = backendValues.find(bv => bv.linkValue.id === linkId);
 
         if (!item) {
