@@ -15,6 +15,7 @@ import {
     RecordFilterOperator,
     RecordFormAttributeLinkAttributeFragment,
     useGetLibraryByIdQuery,
+    useGetLinkAttributeValueLazyQuery,
     useGetLinkAttributeValueQuery,
     useGetRecordsFromLibraryQuery,
     ValueDetailsLinkValueFragment
@@ -126,33 +127,16 @@ export const useLinkRecordsInEdition = ({
 
     // 1. For each record in backendValues, get the value of mantatory attribute
 
-    const filteredJoinRecords: RecordFilterInput[] = backendValues.reduce(
-        (acc: RecordFilterInput[], value: RecordFormElementsValueLinkValue, index: number) => {
-            // Add OR operator between filters (except before the first filter)
-            if (index > 0) {
-                acc.push({operator: RecordFilterOperator.OR});
-            }
-            acc.push({
-                condition: RecordFilterCondition.EQUAL,
-                field: 'id',
-                value: value.linkValue.id
-            });
-
-            return acc;
-        },
-        []
-    );
-
     // console.log('before useGetLinkAttributeValueQuery 2 :>> ', backendValues.length);
     // TODO do not execute this query when backendValues/filteredJoinRecords is empty
-    const {data: joinLinkValue} = filteredJoinRecords.length && useGetLinkAttributeValueQuery({
+    const [getLinkAttributeValue, {data: joinLinkValue}] = useGetLinkAttributeValueLazyQuery({
         fetchPolicy: 'no-cache',
-        variables: {
-            joinLibraryId: attribute.linked_library.id,
-            filters: filteredJoinRecords,
-            linkAttributeId: joinLibraryContext?.mandatoryAttribute
-        }
-    }) || {data: undefined};
+        // variables: {
+        //     joinLibraryId: attribute.linked_library.id,
+        //     filters: filteredJoinRecords,
+        //     linkAttributeId: joinLibraryContext?.mandatoryAttribute
+        // }
+    });
 
     useEffect(() => {
         console.log('joinLinkValue :>> ', joinLinkValue);
@@ -187,8 +171,37 @@ export const useLinkRecordsInEdition = ({
         //how to bind JOIN library selected items ?
 
         // will be set by specific useEffect on joinLinkValue after useGetLinkAttributeValueQuery
-        if (!joinLibraryContext) {
-            setLinkIds(backendValues.map(bv => bv.linkValue.id));
+        if (backendValues.length) {
+            if (joinLibraryContext) {
+                const filteredJoinRecords: RecordFilterInput[] = backendValues.reduce(
+                    (acc: RecordFilterInput[], value: RecordFormElementsValueLinkValue, index: number) => {
+                        // Add OR operator between filters (except before the first filter)
+                        if (index > 0) {
+                            acc.push({operator: RecordFilterOperator.OR});
+                        }
+                        acc.push({
+                            condition: RecordFilterCondition.EQUAL,
+                            field: 'id',
+                            value: value.linkValue.id
+                        });
+
+                        return acc;
+                    },
+                    []
+                );
+                // if backendValues/filteredJoinRecords then that returns all values in library !
+                getLinkAttributeValue({
+                    variables: {
+                        joinLibraryId: attribute.linked_library.id,
+                        filters: filteredJoinRecords,
+                        linkAttributeId: joinLibraryContext?.mandatoryAttribute
+                    }
+                });
+            } else {
+                setLinkIds(backendValues.map(bv => bv.linkValue.id));
+            }
+        } else {
+            setLinkIds([]);
         }
 
         if (isHookUsed && activeAttribute?.attribute.id === attribute.id) {
