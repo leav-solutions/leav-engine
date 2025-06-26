@@ -5,7 +5,7 @@ import {renderHook} from '@testing-library/react';
 import {useExplorerProps} from '../useExplorerProps';
 import {ComponentProps} from 'react';
 import {Explorer} from '_ui/components';
-import {LibraryExplorerProps} from 'modules/ApplicationRouting/types';
+import {LibraryExplorerProps} from '_ui/hooks/useIFrameMessenger/types';
 
 type ExplorerProps = ComponentProps<typeof Explorer>;
 

@@ -3,7 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {renderHook} from '_ui/_tests/testUtils';
 import {useApplicationMatching} from '../useApplicationMatching';
-import {IWorkspace, Panel} from '../types';
+import {IWorkspace} from '../types';
+import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 describe('useApplicationMatching', () => {
     it('should return empty on panelId not found', async () => {

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Explorer} from '_ui/components';
+import {LibraryExplorerProps} from '_ui/hooks/useIFrameMessenger/types';
 import {ComponentProps} from 'react';
-import {LibraryExplorerProps} from '../types';
 
 const isBoolean = (val: unknown) => 'boolean' === typeof val;
 
