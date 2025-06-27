@@ -343,7 +343,7 @@ const valueDomain = function ({
         return v;
     }
 
-    const _createJoinRecord = async (
+    const _maybeCreateJoinRecord = async (
         attributeProps: IAttribute,
         value: IValue,
         ctx: IQueryInfos
@@ -367,7 +367,7 @@ const valueDomain = function ({
             return joinRecord.id;
         }, ctx);
 
-    const _deleteJoinRecord = async (
+    const _maybeDeleteJoinRecord = async (
         attributeProps: IAttribute,
         deletedValues: IValue[],
         ctx: IQueryInfos
@@ -506,7 +506,7 @@ const valueDomain = function ({
             })
         );
 
-        _deleteJoinRecord(attributeProps, deletedValues, ctx);
+        await _maybeDeleteJoinRecord(attributeProps, deletedValues, ctx);
 
         return deletedValues;
     };
@@ -642,9 +642,6 @@ const valueDomain = function ({
         await validate.validateLibraryAttribute(library, attribute, ctx);
         const record = await validate.validateRecord(library, recordId, ctx);
 
-        const joinRecordId = await _createJoinRecord(attributeProps, value, ctx);
-        value.payload = joinRecordId ?? value.payload;
-
         const valueChecksParams = {
             attributeProps,
             library,
@@ -685,6 +682,9 @@ const valueDomain = function ({
                 fields
             );
         }
+
+        // not sure of that place, may be better after prepareValue ?
+        value.payload = (await _maybeCreateJoinRecord(attributeProps, value, ctx)) || value.payload;
 
         // Validate value
         const validationErrors = await validateValue({
@@ -869,9 +869,6 @@ const valueDomain = function ({
                             return prevRes;
                         }
 
-                        const linkedRecord = await _createJoinRecord(attributeProps, value, ctx);
-                        value.payload = linkedRecord ?? value.payload;
-
                         const valueChecksParams = {
                             attributeProps,
                             library,
@@ -904,6 +901,9 @@ const valueDomain = function ({
                                 );
                             }
                         }
+
+                        // not sure of that place, may be better after prepareValue ?
+                        value.payload = (await _maybeCreateJoinRecord(attributeProps, value, ctx)) || value.payload;
 
                         // Validate value
                         const validationErrors = await validateValue({
