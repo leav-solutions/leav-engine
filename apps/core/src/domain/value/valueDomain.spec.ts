@@ -55,7 +55,6 @@ const depsBase: ToAny<IValueDomainDeps> = {
     'core.utils.logger': jest.fn(),
     'core.domain.tree': jest.fn(),
     'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': jest.fn(),
-    'core.domain.helpers.getCoreEntityById': jest.fn(),
     'core.domain.record.helpers.createRecord': jest.fn(),
     'core.domain.record.helpers.deleteRecord': jest.fn()
 };
