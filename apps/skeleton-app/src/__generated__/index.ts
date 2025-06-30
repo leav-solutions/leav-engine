@@ -235,6 +235,7 @@ export type Attribute = {
   label?: Maybe<Scalars['SystemTranslation']>;
   libraries?: Maybe<Array<Library>>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
+  multi_link_display_option?: Maybe<MultiLinkDisplayOption>;
   multiple_values: Scalars['Boolean'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;
@@ -285,6 +286,7 @@ export type AttributeInput = {
   linked_library?: InputMaybe<Scalars['String']>;
   linked_tree?: InputMaybe<Scalars['String']>;
   metadata_fields?: InputMaybe<Array<Scalars['String']>>;
+  multi_link_display_option?: InputMaybe<MultiLinkDisplayOption>;
   multiple_values?: InputMaybe<Scalars['Boolean']>;
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
   readonly?: InputMaybe<Scalars['Boolean']>;
@@ -690,6 +692,7 @@ export type LinkAttribute = Attribute & {
   libraries?: Maybe<Array<Library>>;
   linked_library?: Maybe<Library>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
+  multi_link_display_option?: Maybe<MultiLinkDisplayOption>;
   multiple_values: Scalars['Boolean'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;
@@ -849,7 +852,14 @@ export type LogTopicRecordFilterInput = {
   libraryId?: InputMaybe<Scalars['String']>;
 };
 
+export enum MultiLinkDisplayOption {
+  avatar = 'avatar',
+  badge_qty = 'badge_qty',
+  tag = 'tag'
+}
+
 export type Mutation = {
+  activateRecords: Array<Record>;
   cancelTask: Scalars['Boolean'];
   createDirectory: Record;
   createRecord: CreateRecordResult;
@@ -889,6 +899,13 @@ export type Mutation = {
   treeMoveElement: TreeNode;
   updateView: View;
   upload: Array<UploadData>;
+};
+
+
+export type MutationActivateRecordsArgs = {
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  libraryId: Scalars['String'];
+  recordsIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 
@@ -1488,8 +1505,13 @@ export type QueryViewsArgs = {
 };
 
 export type Record = {
+  active: Scalars['Boolean'];
+  created_at: Scalars['Int'];
+  created_by: Record;
   id: Scalars['ID'];
   library: Library;
+  modified_at: Scalars['Int'];
+  modified_by: Record;
   permissions: RecordPermissions;
   properties: Array<RecordProperty>;
   property: Array<GenericValue>;
@@ -1724,6 +1746,7 @@ export type StandardAttribute = Attribute & {
   label?: Maybe<Scalars['SystemTranslation']>;
   libraries?: Maybe<Array<Library>>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
+  multi_link_display_option?: Maybe<MultiLinkDisplayOption>;
   multiple_values: Scalars['Boolean'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;
@@ -1899,6 +1922,7 @@ export type TreeAttribute = Attribute & {
   libraries?: Maybe<Array<Library>>;
   linked_tree?: Maybe<Tree>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
+  multi_link_display_option?: Maybe<MultiLinkDisplayOption>;
   multiple_values: Scalars['Boolean'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;
@@ -2333,10 +2357,12 @@ export type SaveValueBatchResult = {
   values?: Maybe<Array<GenericValue>>;
 };
 
-export type GetApplicationPermissionAndNameQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetApplicationInstanceDataByEndpointQueryVariables = Exact<{
+  endpoint: Scalars['String'];
+}>;
 
 
-export type GetApplicationPermissionAndNameQuery = { applications?: { list: Array<{ id: string, label: any, permissions: { access_application: boolean } }> } | null };
+export type GetApplicationInstanceDataByEndpointQuery = { applications?: { list: Array<{ id: string, label: any, settings?: any | null, permissions: { access_application: boolean } }> } | null };
 
 export type GetLanguagesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2348,11 +2374,6 @@ export type GetUserIdentityQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUserIdentityQuery = { me?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } | null };
 
-export type GetApplicationSkeletonSettingsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetApplicationSkeletonSettingsQuery = { applications?: { list: Array<{ settings?: any | null }> } | null };
-
 export type GetRecordIdCardQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
   libraryId: Scalars['ID'];
@@ -2362,51 +2383,53 @@ export type GetRecordIdCardQueryVariables = Exact<{
 export type GetRecordIdCardQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, color?: string | null, label?: string | null, subLabel?: string | null, preview?: any | null } }> } };
 
 
-export const GetApplicationPermissionAndNameDocument = gql`
-    query getApplicationPermissionAndName {
-  applications(filters: {id: "skeleton-app"}) {
+export const GetApplicationInstanceDataByEndpointDocument = gql`
+    query GetApplicationInstanceDataByEndpoint($endpoint: String!) {
+  applications(filters: {endpoint: $endpoint}) {
     list {
       id
       label
       permissions {
         access_application
       }
+      settings
     }
   }
 }
     `;
 
 /**
- * __useGetApplicationPermissionAndNameQuery__
+ * __useGetApplicationInstanceDataByEndpointQuery__
  *
- * To run a query within a React component, call `useGetApplicationPermissionAndNameQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetApplicationPermissionAndNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetApplicationInstanceDataByEndpointQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApplicationInstanceDataByEndpointQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetApplicationPermissionAndNameQuery({
+ * const { data, loading, error } = useGetApplicationInstanceDataByEndpointQuery({
  *   variables: {
+ *      endpoint: // value for 'endpoint'
  *   },
  * });
  */
-export function useGetApplicationPermissionAndNameQuery(baseOptions?: Apollo.QueryHookOptions<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>) {
+export function useGetApplicationInstanceDataByEndpointQuery(baseOptions: Apollo.QueryHookOptions<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>(GetApplicationPermissionAndNameDocument, options);
+        return Apollo.useQuery<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>(GetApplicationInstanceDataByEndpointDocument, options);
       }
-export function useGetApplicationPermissionAndNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>) {
+export function useGetApplicationInstanceDataByEndpointLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>(GetApplicationPermissionAndNameDocument, options);
+          return Apollo.useLazyQuery<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>(GetApplicationInstanceDataByEndpointDocument, options);
         }
-export function useGetApplicationPermissionAndNameSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>) {
+export function useGetApplicationInstanceDataByEndpointSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>(GetApplicationPermissionAndNameDocument, options);
+          return Apollo.useSuspenseQuery<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>(GetApplicationInstanceDataByEndpointDocument, options);
         }
-export type GetApplicationPermissionAndNameQueryHookResult = ReturnType<typeof useGetApplicationPermissionAndNameQuery>;
-export type GetApplicationPermissionAndNameLazyQueryHookResult = ReturnType<typeof useGetApplicationPermissionAndNameLazyQuery>;
-export type GetApplicationPermissionAndNameSuspenseQueryHookResult = ReturnType<typeof useGetApplicationPermissionAndNameSuspenseQuery>;
-export type GetApplicationPermissionAndNameQueryResult = Apollo.QueryResult<GetApplicationPermissionAndNameQuery, GetApplicationPermissionAndNameQueryVariables>;
+export type GetApplicationInstanceDataByEndpointQueryHookResult = ReturnType<typeof useGetApplicationInstanceDataByEndpointQuery>;
+export type GetApplicationInstanceDataByEndpointLazyQueryHookResult = ReturnType<typeof useGetApplicationInstanceDataByEndpointLazyQuery>;
+export type GetApplicationInstanceDataByEndpointSuspenseQueryHookResult = ReturnType<typeof useGetApplicationInstanceDataByEndpointSuspenseQuery>;
+export type GetApplicationInstanceDataByEndpointQueryResult = Apollo.QueryResult<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>;
 export const GetLanguagesDocument = gql`
     query getLanguages {
   langs
@@ -2490,47 +2513,6 @@ export type GetUserIdentityQueryHookResult = ReturnType<typeof useGetUserIdentit
 export type GetUserIdentityLazyQueryHookResult = ReturnType<typeof useGetUserIdentityLazyQuery>;
 export type GetUserIdentitySuspenseQueryHookResult = ReturnType<typeof useGetUserIdentitySuspenseQuery>;
 export type GetUserIdentityQueryResult = Apollo.QueryResult<GetUserIdentityQuery, GetUserIdentityQueryVariables>;
-export const GetApplicationSkeletonSettingsDocument = gql`
-    query GetApplicationSkeletonSettings {
-  applications(filters: {id: "skeleton-app"}) {
-    list {
-      settings
-    }
-  }
-}
-    `;
-
-/**
- * __useGetApplicationSkeletonSettingsQuery__
- *
- * To run a query within a React component, call `useGetApplicationSkeletonSettingsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetApplicationSkeletonSettingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetApplicationSkeletonSettingsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetApplicationSkeletonSettingsQuery(baseOptions?: Apollo.QueryHookOptions<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>(GetApplicationSkeletonSettingsDocument, options);
-      }
-export function useGetApplicationSkeletonSettingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>(GetApplicationSkeletonSettingsDocument, options);
-        }
-export function useGetApplicationSkeletonSettingsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>(GetApplicationSkeletonSettingsDocument, options);
-        }
-export type GetApplicationSkeletonSettingsQueryHookResult = ReturnType<typeof useGetApplicationSkeletonSettingsQuery>;
-export type GetApplicationSkeletonSettingsLazyQueryHookResult = ReturnType<typeof useGetApplicationSkeletonSettingsLazyQuery>;
-export type GetApplicationSkeletonSettingsSuspenseQueryHookResult = ReturnType<typeof useGetApplicationSkeletonSettingsSuspenseQuery>;
-export type GetApplicationSkeletonSettingsQueryResult = Apollo.QueryResult<GetApplicationSkeletonSettingsQuery, GetApplicationSkeletonSettingsQueryVariables>;
 export const GetRecordIdCardDocument = gql`
     query GetRecordIdCard($id: String, $libraryId: ID!) {
   records(

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getAllPanels, addChildPanelToApplication} from '../utils';
-import {IApplication, IWorkspace} from '../types';
+import {Application, Workspace} from '../types';
 import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 const userEditionPanel: Panel = {
@@ -53,7 +53,7 @@ const explorerPanel: Panel = {
     }
 };
 
-const homeWorkspace: IWorkspace = {
+const homeWorkspace: Workspace = {
     entrypoint: {
         libraryId: 'map',
         type: 'library'
@@ -66,7 +66,7 @@ const homeWorkspace: IWorkspace = {
     panels: [explorerPanel]
 };
 
-const baseApplication: IApplication = {
+const baseApplication: Application = {
     workspaces: [homeWorkspace]
 };
 
@@ -108,7 +108,7 @@ describe('utils', () => {
                 name: {fr: 'tru'},
                 children: []
             };
-            const appWithChildrenPanel: IApplication = {
+            const appWithChildrenPanel: Application = {
                 workspaces: [
                     {
                         id: 'workspace1',

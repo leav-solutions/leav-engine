@@ -1,7 +1,0 @@
-query GetApplicationSkeletonSettings {
-    applications(filters: {id: "skeleton-app"}) {
-        list {
-            settings
-        }
-    }
-}

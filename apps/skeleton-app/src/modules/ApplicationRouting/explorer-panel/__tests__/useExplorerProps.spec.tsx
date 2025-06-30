@@ -3,11 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {renderHook} from '@testing-library/react';
 import {useExplorerProps} from '../useExplorerProps';
-import {ComponentProps} from 'react';
-import {Explorer} from '_ui/components';
-import {LibraryExplorerProps} from '_ui/hooks/useIFrameMessenger/types';
-
-type ExplorerProps = ComponentProps<typeof Explorer>;
+import {type LibraryExplorerProps} from '../../types';
 
 describe('useExplorerProps', () => {
     describe('with defined values', () => {

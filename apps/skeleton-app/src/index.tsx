@@ -3,11 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
 import {createRoot} from 'react-dom/client';
-import {InitTranslation} from './config/translation/InitTranslation';
-import {InitTheme} from './config/theme/InitTheme';
 import {InitNetwork} from './config/network/InitNetwork';
-import {GuardApplicationAccess} from './config/authentification/GuardApplicationAccess';
+import {InitTranslation} from './config/translation/InitTranslation';
 import {InitUser} from './config/user/InitUser';
+import {InitTheme} from './config/theme/InitTheme';
+import {InitApplicationSettingProvider} from './config/application-instance/application-settings/ApplicationSettingsContext';
+import {InitDocumentTitle} from './config/application-instance/document-title/InitDocumentTitle';
+import {GuardAccess} from './config/application-instance/guard-access/GuardAccess';
 import {InitRouting} from './config/router/InitRouting';
 import {InitLayout} from './modules/layout/InitLayout';
 import {InitApplicationRouter} from './modules/ApplicationRouting/InitApplicationRouter';
@@ -17,13 +19,17 @@ export const Index: FunctionComponent = () => (
         <InitTranslation>
             <InitUser>
                 <InitTheme>
-                    <GuardApplicationAccess>
-                        <InitRouting>
-                            <InitLayout>
-                                <InitApplicationRouter />
-                            </InitLayout>
-                        </InitRouting>
-                    </GuardApplicationAccess>
+                    <InitApplicationSettingProvider>
+                        <InitDocumentTitle>
+                            <GuardAccess>
+                                <InitRouting>
+                                    <InitLayout>
+                                        <InitApplicationRouter />
+                                    </InitLayout>
+                                </InitRouting>
+                            </GuardAccess>
+                        </InitDocumentTitle>
+                    </InitApplicationSettingProvider>
                 </InitTheme>
             </InitUser>
         </InitTranslation>

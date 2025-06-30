@@ -5,14 +5,14 @@ import {KitSideMenu} from 'aristid-ds';
 import {useMemo, type FunctionComponent, ComponentProps, useContext} from 'react';
 import {useNavigate, generatePath, useParams, Outlet} from 'react-router-dom';
 import {localizedTranslation} from '@leav/utils';
-import {LangContext} from '_ui/contexts';
-import {IApplication} from '../types';
+import {LangContext} from '@leav/ui';
+import {Application} from '../types';
 import {routes} from '../routes';
 import {useApplicationMatching} from '../useApplicationMatching';
 import {useWorkspacesNavigationMenu} from './useWorkspacesNavigationMenu';
 
 interface IWorkspacesNavigationMenuProps {
-    application: IApplication;
+    application: Application;
 }
 
 export const WorkspacesNavigationMenu: FunctionComponent<IWorkspacesNavigationMenuProps> = ({application}) => {

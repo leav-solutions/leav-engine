@@ -1,11 +1,12 @@
-query getApplicationPermissionAndName {
-    applications(filters: {id: "skeleton-app"}) {
+query GetApplicationInstanceDataByEndpoint($endpoint: String!) {
+    applications(filters: {endpoint: $endpoint}) {
         list {
             id
             label
             permissions {
                 access_application
             }
+            settings
         }
     }
 }
