@@ -4,17 +4,15 @@
 import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
 import {generatePath, Navigate, useLocation, useOutletContext} from 'react-router-dom';
 import {EditRecordPage} from '@leav/ui';
-import type {IApplicationMatchingContext} from './types';
+import type {AddPanel, IApplicationMatchingContext} from './types';
 import {recordSearchParamsName, routes} from './routes';
 import {SIDEBAR_CONTENT_ID} from '../../constants';
 import {PanelCustom} from './PanelCustom';
-
 import {PanelLibraryExplorer} from './PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './PanelAttributeExplorer';
-import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 interface IPanelContentProps {
-    addPanel: (panel: Panel, workspaceId: string, panelId: string) => void;
+    addPanel: AddPanel;
 }
 
 export const PanelContent: FunctionComponent<IPanelContentProps> = ({addPanel}) => {

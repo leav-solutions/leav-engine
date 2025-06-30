@@ -35,3 +35,5 @@ export interface IApplicationMatchingContext {
 export type Nullable<T> = {
     [P in keyof T]: T[P] | null;
 };
+
+export type AddPanel = (panel: Panel, destination: {workspaceId: string; panelId: string}) => void;

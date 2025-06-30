@@ -1,121 +1,113 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getAllPanels, updateApplication} from '../utils';
-import {IApplication} from '../types';
+import {getAllPanels, addChildPanelToApplication} from '../utils';
+import {IApplication, IWorkspace} from '../types';
 import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
-const mockPanel: Panel = {id: 'newPanelId', name: {fr: 'New Panel'}, children: []};
+const userEditionPanel: Panel = {
+    id: 'edition',
+    name: {
+        en: 'Users edition',
+        fr: 'Edition des utilisateurs'
+    },
+    content: {
+        formId: 'user_edition',
+        type: 'editionForm'
+    }
+};
+
+const userManagementPanel: Panel = {
+    id: 'display',
+    name: {
+        en: 'User management',
+        fr: 'Gestion des utilisateurs'
+    },
+    content: {
+        iframeSource: 'http://core.leav.localhost/app/users',
+        type: 'custom'
+    }
+};
+
+const unreachablePanel: Panel = {
+    id: 'unreachable panel',
+    name: {fr: 'panel non atteignable'},
+    children: [userEditionPanel, userManagementPanel]
+};
+
+const explorerPanel: Panel = {
+    id: 'parent_panel',
+    name: {
+        en: 'user management',
+        fr: 'Gestion des utilisateurs'
+    },
+    content: {
+        actions: [
+            {
+                what: unreachablePanel,
+                where: 'fullpage'
+            }
+        ],
+        libraryId: '<props>',
+        type: 'explorer'
+    }
+};
+
+const homeWorkspace: IWorkspace = {
+    entrypoint: {
+        libraryId: 'map',
+        type: 'library'
+    },
+    id: 'home',
+    title: {
+        en: 'home',
+        fr: 'home'
+    },
+    panels: [explorerPanel]
+};
 
 const baseApplication: IApplication = {
-    workspaces: [
-        {
-            entrypoint: {
-                libraryId: 'map',
-                type: 'library'
-            },
-            id: 'home',
-            panels: [
-                {
-                    content: {
-                        actions: [
-                            {
-                                what: {
-                                    children: [
-                                        {
-                                            content: {
-                                                iframeSource: 'http://core.leav.localhost/app/planning',
-                                                type: 'custom'
-                                            },
-                                            id: 'planning',
-                                            name: {
-                                                en: 'Planning Management',
-                                                fr: 'Planning'
-                                            }
-                                        },
-                                        {
-                                            content: {
-                                                formId: 'edition',
-                                                type: 'editionForm'
-                                            },
-                                            id: 'edition',
-                                            name: {
-                                                en: 'MAP edition',
-                                                fr: 'Informations du PAC'
-                                            }
-                                        },
-                                        {
-                                            content: {
-                                                actions: [],
-                                                attributeSource: 'map_campaigns_list',
-                                                type: 'explorer'
-                                            },
-                                            id: 'campaigns',
-                                            name: {
-                                                en: 'Campaigns',
-                                                fr: 'Campagnes'
-                                            }
-                                        },
-                                        {
-                                            content: {
-                                                iframeSource:
-                                                    'https://xstream-integration.aristid.com/app/cadrage/objectifs-des-campagnes',
-                                                type: 'custom'
-                                            },
-                                            id: 'campaignsGoals',
-                                            name: {
-                                                en: 'Goals per Campaigns',
-                                                fr: 'Objectifs par campagne'
-                                            }
-                                        }
-                                    ],
-                                    name: {fr: 'truc'},
-                                    id: 'unreachable PAC'
-                                },
-                                where: 'fullpage'
-                            }
-                        ],
-                        libraryId: '<props>',
-                        type: 'explorer'
-                    },
-                    id: 'PACs',
-                    name: {
-                        en: 'MAPs Management',
-                        fr: 'Gestion des PACs'
-                    }
-                }
-            ],
-            title: {
-                en: 'Roadmap',
-                fr: 'Roadmap'
-            }
-        }
-    ]
+    workspaces: [homeWorkspace]
 };
 
 describe('utils', () => {
-    describe('updateApplication', () => {
-        it('should update the panel with child if workspace and panel are valid and panel has no children', () => {
-            const result = updateApplication(baseApplication, mockPanel, 'home', 'campaignsGoals');
+    describe('addChildPanelToApplication', () => {
+        const mockPanel: Panel = {id: 'newPanelId', name: {fr: 'New Panel'}, children: []};
 
-            //@ts-expect-error
-            const updatedPanel = result.workspaces[0].panels[0].content.actions[0].what.children[3];
-            expect(updatedPanel.child).toEqual(mockPanel);
+        it('should update the panel with child if workspace and panel are valid and panel has no children', () => {
+            const result: any = addChildPanelToApplication(mockPanel, baseApplication, {
+                workspaceId: 'home',
+                panelId: 'display'
+            });
+
+            const updatedPanel = result.workspaces[0].panels[0].content.actions[0].what.children[1];
+            expect(updatedPanel.content.child).toEqual(mockPanel);
         });
 
         it('should return original application if workspace is not found', () => {
-            const result = updateApplication(baseApplication, mockPanel, 'nonexistentWorkspace', 'panel1');
+            const result = addChildPanelToApplication(mockPanel, baseApplication, {
+                workspaceId: 'nonexistentWorkspace',
+                panelId: 'panel1'
+            });
 
             expect(result).toEqual(baseApplication);
         });
 
         it('should return original application if panel is not found in workspace', () => {
-            const result = updateApplication(baseApplication, mockPanel, 'workspace1', 'nonexistentPanel');
+            const result = addChildPanelToApplication(mockPanel, baseApplication, {
+                workspaceId: 'workspace1',
+                panelId: 'nonexistentPanel'
+            });
 
             expect(result).toEqual(baseApplication);
         });
 
-        it('should return original application if panel has children property', () => {
+        it('should return original application if panel has an empty children property', () => {
+            const originalPanel: Panel = {
+                id: 'panel1',
+                name: {fr: 'tru'},
+                children: []
+            };
             const appWithChildrenPanel: IApplication = {
                 workspaces: [
                     {
@@ -125,131 +117,29 @@ describe('utils', () => {
                             type: 'entity',
                             libraryId: ''
                         },
-                        panels: [
-                            {
-                                id: 'panel1',
-                                name: {fr: 'tru'},
-                                children: []
-                            }
-                        ]
+                        panels: [originalPanel]
                     }
                 ]
             };
 
-            const result = updateApplication(appWithChildrenPanel, mockPanel, 'workspace1', 'panel1');
+            const result: any = addChildPanelToApplication(mockPanel, appWithChildrenPanel, {
+                workspaceId: 'workspace1',
+                panelId: 'panel1'
+            });
 
-            const updatedPanel = result.workspaces[0].panels[0] as any;
-            expect(updatedPanel.child).toBeUndefined();
+            const updatedPanel = result.workspaces[0].panels[0];
+            expect(updatedPanel).toEqual(originalPanel);
             expect(result).toEqual(appWithChildrenPanel);
         });
     });
 
     describe('getAllPanels', () => {
-        it('should return all panels as a flat array', () => {
+        it('should return all panels as a flat ', () => {
             expect(getAllPanels(baseApplication.workspaces[0])).toEqual([
-                {
-                    content: {iframeSource: 'http://core.leav.localhost/app/planning', type: 'custom'},
-                    id: 'planning',
-                    name: {en: 'Planning Management', fr: 'Planning'}
-                },
-                {
-                    content: {formId: 'edition', type: 'editionForm'},
-                    id: 'edition',
-                    name: {en: 'MAP edition', fr: 'Informations du PAC'}
-                },
-                {
-                    content: {actions: [], attributeSource: 'map_campaigns_list', type: 'explorer'},
-                    id: 'campaigns',
-                    name: {en: 'Campaigns', fr: 'Campagnes'}
-                },
-                {
-                    content: {
-                        iframeSource: 'https://xstream-integration.aristid.com/app/cadrage/objectifs-des-campagnes',
-                        type: 'custom'
-                    },
-                    id: 'campaignsGoals',
-                    name: {en: 'Goals per Campaigns', fr: 'Objectifs par campagne'}
-                },
-                {
-                    children: [
-                        {
-                            content: {iframeSource: 'http://core.leav.localhost/app/planning', type: 'custom'},
-                            id: 'planning',
-                            name: {en: 'Planning Management', fr: 'Planning'}
-                        },
-                        {
-                            content: {formId: 'edition', type: 'editionForm'},
-                            id: 'edition',
-                            name: {en: 'MAP edition', fr: 'Informations du PAC'}
-                        },
-                        {
-                            content: {actions: [], attributeSource: 'map_campaigns_list', type: 'explorer'},
-                            id: 'campaigns',
-                            name: {en: 'Campaigns', fr: 'Campagnes'}
-                        },
-                        {
-                            content: {
-                                iframeSource:
-                                    'https://xstream-integration.aristid.com/app/cadrage/objectifs-des-campagnes',
-                                type: 'custom'
-                            },
-                            id: 'campaignsGoals',
-                            name: {en: 'Goals per Campaigns', fr: 'Objectifs par campagne'}
-                        }
-                    ],
-                    id: 'unreachable PAC',
-                    name: {fr: 'truc'}
-                },
-                {
-                    content: {
-                        actions: [
-                            {
-                                what: {
-                                    children: [
-                                        {
-                                            content: {
-                                                iframeSource: 'http://core.leav.localhost/app/planning',
-                                                type: 'custom'
-                                            },
-                                            id: 'planning',
-                                            name: {en: 'Planning Management', fr: 'Planning'}
-                                        },
-                                        {
-                                            content: {formId: 'edition', type: 'editionForm'},
-                                            id: 'edition',
-                                            name: {en: 'MAP edition', fr: 'Informations du PAC'}
-                                        },
-                                        {
-                                            content: {
-                                                actions: [],
-                                                attributeSource: 'map_campaigns_list',
-                                                type: 'explorer'
-                                            },
-                                            id: 'campaigns',
-                                            name: {en: 'Campaigns', fr: 'Campagnes'}
-                                        },
-                                        {
-                                            content: {
-                                                iframeSource:
-                                                    'https://xstream-integration.aristid.com/app/cadrage/objectifs-des-campagnes',
-                                                type: 'custom'
-                                            },
-                                            id: 'campaignsGoals',
-                                            name: {en: 'Goals per Campaigns', fr: 'Objectifs par campagne'}
-                                        }
-                                    ],
-                                    id: 'unreachable PAC',
-                                    name: {fr: 'truc'}
-                                },
-                                where: 'fullpage'
-                            }
-                        ],
-                        libraryId: '<props>',
-                        type: 'explorer'
-                    },
-                    id: 'PACs',
-                    name: {en: 'MAPs Management', fr: 'Gestion des PACs'}
-                }
+                userEditionPanel,
+                userManagementPanel,
+                unreachablePanel,
+                explorerPanel
             ]);
         });
     });

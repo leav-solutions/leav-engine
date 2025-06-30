@@ -10,17 +10,17 @@ import {useOpenAlert} from './custom-panel-message-handlers/useOpenAlert';
 import {useOpenConfirmModal} from './custom-panel-message-handlers/useOpenConfirmModal';
 import {useSidePanelForm} from './custom-panel-message-handlers/useSidePanelForm';
 import {useModalForm} from './custom-panel-message-handlers/useModalForm';
-import {Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {AddPanel} from './types';
 
 interface IPanelCustomProps {
     source: string;
     searchQuery: string;
     title: string;
-    addPanel: (panel: Panel, workspaceId: string, panelId: string) => void;
+    addPanel: AddPanel;
 }
 
 export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, searchQuery, title, addPanel}) => {
-    const {navigateToPanel} = useNavigateToPanel({addPanel});
+    const {navigateToPanel} = useNavigateToPanel(addPanel);
     const {openNotification} = useOpenNotification();
     const {openAlert} = useOpenAlert();
     const {openConfirmModal} = useOpenConfirmModal();

@@ -28,11 +28,7 @@ describe('useNavigateToPanel', () => {
     it('should provide a method to navigate to a panel', async () => {
         const {
             result: {current}
-        } = renderHook(() =>
-            useNavigateToPanel({
-                addPanel: jest.fn()
-            })
-        );
+        } = renderHook(() => useNavigateToPanel(jest.fn()));
 
         current.navigateToPanel({panelId: 'panelIdTest'});
 
@@ -44,20 +40,19 @@ describe('useNavigateToPanel', () => {
 
         const {
             result: {current}
-        } = renderHook(() =>
-            useNavigateToPanel({
-                addPanel: addPanelMock
-            })
-        );
+        } = renderHook(() => useNavigateToPanel(addPanelMock));
 
         const panelData = {
             panelId: 'panelIdTest',
-            panel: {id: 'newPanel', name: 'Test Panel', children: []}
+            panel: {id: 'panelIdTest', name: 'Test Panel', children: []}
         };
 
         current.navigateToPanel(panelData);
 
-        expect(addPanelMock).toHaveBeenCalledWith(panelData.panel, 'workspaceId', 'currentPanelId');
+        expect(addPanelMock).toHaveBeenCalledWith(panelData.panel, {
+            workspaceId: 'workspaceId',
+            panelId: 'currentPanelId'
+        });
         expect(navigateMock).toHaveBeenCalledWith('/panelIdTest');
     });
 });

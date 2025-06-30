@@ -11,7 +11,7 @@ type ExplorerProps = ComponentProps<typeof Explorer>;
 
 describe('useExplorerProps', () => {
     describe('with defined values', () => {
-        it('shoud return correct props when all values are defined with true boolean', () => {
+        it('should return correct props when all values are defined with true boolean', () => {
             const explorerProps: LibraryExplorerProps = {
                 showSearch: true,
                 defaultPrimaryActions: ['create'],

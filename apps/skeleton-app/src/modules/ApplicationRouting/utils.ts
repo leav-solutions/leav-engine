@@ -9,8 +9,8 @@ export const getAllPanels = (workspace: IWorkspace): Panel[] => {
         if ('children' in panel) {
             return panel.children.flatMap(getPanelsIntoPanel).concat(panel);
         }
-        if ('child' in panel) {
-            return getPanelsIntoPanel(panel.child).concat(panel);
+        if ('child' in panel.content) {
+            return getPanelsIntoPanel(panel.content.child).concat(panel);
         }
         if (panel.content.type === 'explorer') {
             return panel.content.actions
@@ -26,17 +26,17 @@ export const getAllPanels = (workspace: IWorkspace): Panel[] => {
 
 /**
  * This function search through an array of panels to find a specific panel given its id
- * It is reccursive because a panel can be composed of others panels etc...
+ * It is recursive because a panel can be composed of others panels etc...
  */
-const findPanelInPanels = (panels: Panel[], panelId: string): Panel | undefined => {
+const findPanelById = (panels: Panel[], panelId: string): Panel | undefined => {
     for (const panel of panels) {
         let found: Panel;
         if (panel.id === panelId) {
             found = panel;
         } else if ('children' in panel) {
-            found = findPanelInPanels(panel.children, panelId);
-        } else if ('actions' in panel.content) {
-            found = findPanelInPanels(
+            found = findPanelById(panel.children, panelId);
+        } else if (panel.content.type === 'explorer') {
+            found = findPanelById(
                 panel.content.actions.map(p => p.what),
                 panelId
             );
@@ -47,26 +47,31 @@ const findPanelInPanels = (panels: Panel[], panelId: string): Panel | undefined 
     }
 };
 
-export const updateApplication = (
-    prevApplication: IApplication,
+export const addChildPanelToApplication = (
     panel: Panel,
-    workspaceId: string,
-    panelId: string
+    prevApplication: IApplication,
+    destination: {workspaceId: string; panelId: string}
 ): IApplication => {
+    /**
+     * Cannot use destructuring due to a deep object.
+     * Cannot change the initial object due to `useState` reactivity (got this error https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_define_property_object_not_extensible).
+     */
     const newApplication = JSON.parse(JSON.stringify(prevApplication)) as IApplication;
-    const workspace = newApplication.workspaces.find(w => w.id === workspaceId);
+    const workspace = newApplication.workspaces.find(({id}) => id === destination.workspaceId);
     if (!workspace) {
         return prevApplication;
     }
 
-    const currentPanel = findPanelInPanels(workspace.panels, panelId);
+    const currentPanel = findPanelById(workspace.panels, destination.panelId);
     if (!currentPanel || !('content' in currentPanel)) {
         return prevApplication;
     }
 
-    if (currentPanel && !('children' in currentPanel)) {
-        currentPanel.child = panel;
+    if (currentPanel.content.type !== 'custom') {
+        return prevApplication;
     }
+
+    currentPanel.content.child = panel;
 
     return newApplication;
 };

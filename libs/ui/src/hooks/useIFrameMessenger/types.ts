@@ -70,12 +70,17 @@ export type RegisterMessage = IMessageBase & {
     id: string;
 };
 
+type PanelId = string;
+
+interface INestedPanel {
+    panelId: PanelId;
+    panel: Panel;
+}
+
 export type NavigateToPanelMessage = IMessageBase & {
     type: 'navigate-to-panel';
-    data: {panelId: string} | {panel: Panel; panelId: PanelId};
+    data: {panelId: PanelId} | INestedPanel;
 };
-
-type PanelId = string;
 
 export interface ICommonExplorerProps {
     showSearch?: boolean;
@@ -123,6 +128,7 @@ export type Panel = {
               | {
                     type: 'custom';
                     iframeSource: string;
+                    child?: Panel;
                 }
               | {
                     type: 'editionForm';
@@ -132,7 +138,6 @@ export type Panel = {
                     type: 'creationForm';
                     formId: string;
                 };
-          child?: Panel;
       }
     | {
           children: Panel[];
