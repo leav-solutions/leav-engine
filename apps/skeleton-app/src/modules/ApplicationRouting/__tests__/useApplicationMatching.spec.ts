@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {renderHook} from '_ui/_tests/testUtils';
 import {useApplicationMatching} from '../useApplicationMatching';
-import {IWorkspace} from '../types';
+import {Workspace} from '../types';
 import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 describe('useApplicationMatching', () => {
@@ -32,7 +32,7 @@ describe('useApplicationMatching', () => {
                 actions: []
             }
         };
-        const usersWorkspace: IWorkspace = {
+        const usersWorkspace: Workspace = {
             id: 'home',
             title: {
                 en: 'Home',
@@ -89,7 +89,7 @@ describe('useApplicationMatching', () => {
                 }
             ]
         };
-        const usersWorkspace: IWorkspace = {
+        const usersWorkspace: Workspace = {
             id: 'home',
             title: {
                 en: 'Home',

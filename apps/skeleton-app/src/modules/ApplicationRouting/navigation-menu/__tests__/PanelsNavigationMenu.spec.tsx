@@ -4,7 +4,7 @@
 import {render, screen} from '_ui/_tests/testUtils';
 import {PanelsNavigationMenu} from '../PanelsNavigationMenu';
 import * as ReactRouter from 'react-router-dom';
-import {IWorkspace} from '../../types';
+import {Workspace} from '../../types';
 import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 jest.mock('react-router-dom', () => ({
@@ -28,7 +28,7 @@ describe('PanelsNavigationMenu component', () => {
                 panels: [],
                 id: 'w1',
                 title: {}
-            } satisfies IWorkspace,
+            } satisfies Workspace,
             currentParentTuple: [
                 {
                     id: 'p1',

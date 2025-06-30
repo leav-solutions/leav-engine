@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
-import {Explorer} from '_ui/components';
+import {Explorer} from '@leav/ui';
 import {explorerContainer} from './PanelContent.module.css';
+import {ItemActions, LibraryExplorerProps} from './types';
 import {useExplorerProps} from './explorer-panel/useExplorerProps';
 import {useItemActions} from './explorer-panel/useItemActions';
-import {ItemActions, LibraryExplorerProps} from '_ui/hooks/useIFrameMessenger/types';
 
 interface IPanelLibraryExplorerProps {
     libraryId: string;

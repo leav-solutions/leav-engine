@@ -9494,6 +9494,7 @@ __metadata:
     typescript: "npm:5.5.3"
     uuid: "npm:9.0.1"
     xlsx: "npm:0.18.5"
+    zod: "npm:3.25.67"
   peerDependencies:
     "@ant-design/icons": ">=5.2"
     "@apollo/client": ">=3.8.1"
@@ -32919,6 +32920,7 @@ __metadata:
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:0.4.9"
     vite-plugin-svgr: "npm:2.4.0"
+    zod: "npm:3.25.67"
   languageName: unknown
   linkType: soft
 
@@ -36599,6 +36601,13 @@ __metadata:
   version: 3.22.4
   resolution: "zod@npm:3.22.4"
   checksum: 73622ca36a916f785cf528fe612a884b3e0f183dbe6b33365a7d0fc92abdbedf7804c5e2bd8df0a278e1472106d46674281397a3dd800fa9031dc3429758c6ac
+  languageName: node
+  linkType: hard
+
+"zod@npm:3.25.67":
+  version: 3.25.67
+  resolution: "zod@npm:3.25.67"
+  checksum: 0e35432dcca7f053e63f5dd491a87c78abe0d981817547252c3b6d05f0f58788695d1a69724759c6501dff3fd62929be24c9f314a3625179bee889150f7a61fa
   languageName: node
   linkType: hard
 

@@ -4,13 +4,13 @@
 import {useMemo} from 'react';
 import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 import {getAllPanels} from './utils';
-import {IApplicationMatchingContext, IWorkspace} from './types';
+import {IApplicationMatchingContext, Workspace} from './types';
 
-export const useApplicationMatching = (workspaces: IWorkspace[], panelId: string): IApplicationMatchingContext =>
+export const useApplicationMatching = (workspaces: Workspace[], panelId: string): IApplicationMatchingContext =>
     useMemo(() => {
-        const _tuplesPanelByWorkspace: Array<[Panel, IWorkspace]> = workspaces
-            .map<[Panel[], IWorkspace]>(workspace => [getAllPanels(workspace), workspace])
-            .flatMap(([panels, workspace]) => panels.map<[Panel, IWorkspace]>(panel => [panel, workspace]));
+        const _tuplesPanelByWorkspace: Array<[Panel, Workspace]> = workspaces
+            .map<[Panel[], Workspace]>(workspace => [getAllPanels(workspace), workspace])
+            .flatMap(([panels, workspace]) => panels.map<[Panel, Workspace]>(panel => [panel, workspace]));
 
         const _currentParentTuple = _tuplesPanelByWorkspace.find(([panel]) =>
             'children' in panel ? panel.children.find(({id}) => id === panelId) : false

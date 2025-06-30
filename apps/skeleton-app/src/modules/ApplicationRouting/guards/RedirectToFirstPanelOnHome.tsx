@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
 import {generatePath, Navigate, useLocation} from 'react-router-dom';
-import {IApplication} from '../types';
+import {Application} from '../types';
 import {routes} from '../routes';
 
-export const RedirectToFirstPanelOnHome: FunctionComponent<{application: IApplication}> = ({application}) => {
+export const RedirectToFirstPanelOnHome: FunctionComponent<{application: Application}> = ({application}) => {
     const {search} = useLocation();
 
     return (

@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {WorkspacesNavigationMenu} from '../WorkspacesNavigationMenu';
-import {IApplication} from '../../types';
+import {Application} from '../../types';
 
 describe('WorkspacesNavigationMenu component', () => {
     it('should render correctly all workspaces', () => {
-        const application: IApplication = {
+        const application: Application = {
             workspaces: [
                 {
                     id: '1',

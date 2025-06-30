@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {RedirectToFirstPanelOnInvalidPanel} from '../RedirectToFirstPanelOnInvalidPanel';
-import {IApplication} from '../../types';
+import {Application} from '../../types';
 import * as ReactRouter from 'react-router-dom';
 import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
@@ -23,7 +23,7 @@ describe('RedirectToFirstPanelOnUnknownOne', () => {
 
     spyUseLocation.mockReturnValue({search: '?query=test'} as any);
 
-    const application: IApplication = {
+    const application: Application = {
         workspaces: [
             {
                 id: '1',

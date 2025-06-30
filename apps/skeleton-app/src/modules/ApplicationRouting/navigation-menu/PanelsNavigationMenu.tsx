@@ -5,7 +5,7 @@ import {type ComponentProps, FunctionComponent, useContext} from 'react';
 import {generatePath, Outlet, useLocation, useNavigate, useOutletContext} from 'react-router-dom';
 import {KitTabs} from 'aristid-ds';
 import {localizedTranslation} from '@leav/utils';
-import {LangContext} from '_ui/contexts';
+import {LangContext} from '@leav/ui';
 import type {IApplicationMatchingContext} from '../types';
 import {recordSearchParamsName, routes} from '../routes';
 import {SidePanelContent} from '../../layout/SidePanelContent';
