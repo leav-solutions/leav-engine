@@ -5,10 +5,10 @@ import {FunctionComponent} from 'react';
 import {Explorer} from '_ui/components';
 import {explorerContainer} from './PanelContent.module.css';
 import {useExplorerProps} from './explorer-panel/useExplorerProps';
-import {ItemActions, LibraryExplorerProps} from './types';
 import {useItemActions} from './explorer-panel/useItemActions';
 import {recordSearchParamsName} from './routes';
 import {useLocation} from 'react-router-dom';
+import {ItemActions, LibraryExplorerProps} from '_ui/hooks/useIFrameMessenger/types';
 
 interface IPanelExplorerProps {
     libraryId: string;

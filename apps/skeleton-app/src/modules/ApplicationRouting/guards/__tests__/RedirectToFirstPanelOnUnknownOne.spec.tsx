@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {RedirectToFirstPanelOnInvalidPanel} from '../RedirectToFirstPanelOnInvalidPanel';
-import {IApplication, Panel} from '../../types';
+import {IApplication} from '../../types';
 import * as ReactRouter from 'react-router-dom';
+import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),

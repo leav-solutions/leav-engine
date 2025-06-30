@@ -2,18 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
-import {generatePath, Navigate, useLocation, useNavigate, useOutletContext} from 'react-router-dom';
-import {EditRecordPage, Explorer} from '@leav/ui';
-import type {IApplicationMatchingContext} from './types';
+import {generatePath, Navigate, useLocation, useOutletContext} from 'react-router-dom';
+import {EditRecordPage} from '@leav/ui';
+import type {AddPanel, IApplicationMatchingContext} from './types';
 import {recordSearchParamsName, routes} from './routes';
 import {SIDEBAR_CONTENT_ID} from '../../constants';
 import {PanelCustom} from './PanelCustom';
-
-import {explorerContainer} from './PanelContent.module.css';
 import {PanelLibraryExplorer} from './PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './PanelAttributeExplorer';
 
-export const PanelContent: FunctionComponent = () => {
+interface IPanelContentProps {
+    addPanel: AddPanel;
+}
+
+export const PanelContent: FunctionComponent<IPanelContentProps> = ({addPanel}) => {
     const {search} = useLocation();
     const searchParams = new URLSearchParams(search);
     const {currentPanel, currentWorkspace} =
@@ -60,7 +62,12 @@ export const PanelContent: FunctionComponent = () => {
         }
         if (currentPanel.content.type === 'custom') {
             return (
-                <PanelCustom source={currentPanel.content.iframeSource} searchQuery={search} title={currentPanel.id} />
+                <PanelCustom
+                    source={currentPanel.content.iframeSource}
+                    searchQuery={search}
+                    title={currentPanel.id}
+                    addPanel={addPanel}
+                />
             );
         }
         if (currentPanel.content.type === 'explorer') {

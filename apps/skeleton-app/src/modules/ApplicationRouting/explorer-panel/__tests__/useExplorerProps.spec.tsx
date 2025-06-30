@@ -5,13 +5,13 @@ import {renderHook} from '@testing-library/react';
 import {useExplorerProps} from '../useExplorerProps';
 import {ComponentProps} from 'react';
 import {Explorer} from '_ui/components';
-import {LibraryExplorerProps} from 'modules/ApplicationRouting/types';
+import {LibraryExplorerProps} from '_ui/hooks/useIFrameMessenger/types';
 
 type ExplorerProps = ComponentProps<typeof Explorer>;
 
 describe('useExplorerProps', () => {
     describe('with defined values', () => {
-        it('shoud return correct props when all values are defined with true boolean', () => {
+        it('should return correct props when all values are defined with true boolean', () => {
             const explorerProps: LibraryExplorerProps = {
                 showSearch: true,
                 defaultPrimaryActions: ['create'],

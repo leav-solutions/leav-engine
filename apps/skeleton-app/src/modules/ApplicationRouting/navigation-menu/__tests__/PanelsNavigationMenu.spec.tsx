@@ -4,7 +4,8 @@
 import {render, screen} from '_ui/_tests/testUtils';
 import {PanelsNavigationMenu} from '../PanelsNavigationMenu';
 import * as ReactRouter from 'react-router-dom';
-import {IWorkspace, Panel} from '../../types';
+import {IWorkspace} from '../../types';
+import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
