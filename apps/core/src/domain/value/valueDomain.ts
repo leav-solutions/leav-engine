@@ -574,6 +574,11 @@ const valueDomain = function ({
                 },
                 ctx
             );
+
+            if (valueBefore) {
+                // a new join record was create in saveBalue/saveValueBatch, need to remove older if any
+                await _maybeDeleteJoinRecord(attribute, [valueBefore], ctx);
+            }
         }
 
         return {values: processedValues, areValuesIdentical};
