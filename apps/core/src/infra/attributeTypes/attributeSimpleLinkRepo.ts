@@ -79,8 +79,11 @@ export default function ({
         },
         async deleteValue(args): Promise<ILinkValue> {
             const deletedValue = await attributeSimpleRepo.deleteValue(args);
-
-            return _buildLinkValue(deletedValue, args.attribute);
+            // args.value is a ILinkValue !
+            return _buildLinkValue({
+                ...deletedValue,
+                payload: args.value.payload?.id ?? null // deletedValue returns null payload !
+            }, args.attribute);
         },
         // To get values from advanced reverse link attribute into simple link.
         async getReverseValues({advancedLinkAttr, value, forceGetAllValues = false, ctx}): Promise<ILinkValue[]> {
