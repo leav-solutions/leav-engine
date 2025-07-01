@@ -9,6 +9,13 @@ export const getRecordFormQuery = gql`
     ${valueDetailsFragment}
     ${recordFormAttributeFragment}
 
+    fragment JoinLibraryContext on FormElementJoinLibraryContext {
+        multipleValues
+        mandatoryAttribute {
+            ...RecordFormAttribute
+        }
+    }
+
     fragment RecordFormElement on FormElementWithValues {
         id
         containerId
@@ -24,6 +31,9 @@ export const getRecordFormQuery = gql`
         settings {
             key
             value
+        }
+        joinLibraryContext {
+            ...JoinLibraryContext
         }
     }
 

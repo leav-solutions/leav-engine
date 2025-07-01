@@ -6,10 +6,10 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IFormDomain} from 'domain/form/formDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
-import {IAttribute} from '_types/attribute';
-import {IForm, IFormDependentElements, IFormElement, IRecordForm} from '_types/forms';
+import {AttributeTypes, IAttribute} from '../../../_types/attribute';
+import {IForm, IFormDependentElements, IFormElement, IFormElementJoinLibraryContext, IRecordForm} from '_types/forms';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {ILibrary} from '_types/library';
+import {ILibrary, LibraryBehavior} from '../../../_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {
@@ -21,6 +21,7 @@ import {
     IGetRecordFormArgs,
     ISaveFormArgs
 } from './_types';
+import {IfLibraryJoinLinkAttribute} from 'domain/attribute/helpers/ifLibraryJoinLinkAttribute';
 
 export interface ICoreFormApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -31,6 +32,7 @@ interface IDeps {
     'core.domain.form': IFormDomain;
     'core.domain.library': ILibraryDomain;
     'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': IfLibraryJoinLinkAttribute;
     'core.utils': IUtils;
 }
 
@@ -39,6 +41,7 @@ export default function ({
     'core.domain.form': formDomain,
     'core.domain.library': libraryDomain,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
     'core.utils': utils
 }: IDeps) {
     /** Functions to convert form from GraphQL format to IForm*/
@@ -96,7 +99,28 @@ export default function ({
                     key: settingsKey,
                     value: settingsValue
                 };
-            })
+            }),
+        joinLibraryContext: async (
+            formElement: IFormElement,
+            _,
+            ctx: IQueryInfos
+        ): Promise<IFormElementJoinLibraryContext | void> => {
+            const attributeId = formElement?.settings?.attribute;
+
+            if (!attributeId) {
+                return;
+            }
+
+            const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
+            return ifLibraryJoinLinkAttribute(
+                attrProps,
+                async (joinLibId: string, joinAttributeProps: IAttribute) => ({
+                    multipleValues: attrProps.multiple_values,
+                    mandatoryAttribute: joinAttributeProps
+                }),
+                ctx
+            );
+        }
     };
 
     return {
@@ -173,6 +197,13 @@ export default function ({
                         value: Any!
                     }
 
+                    type FormElementJoinLibraryContext {
+                        "Mandatory attribute of the join library, can be simple or advanced mono link, or mono tree"
+                        mandatoryAttribute: Attribute!,
+                        "Is the link to join library a multiple values link ?"
+                        multipleValues: Boolean!
+                    }
+
                     input FormElementSettingsInput {
                         key: String!,
                         value: Any!
@@ -186,6 +217,8 @@ export default function ({
                         type: FormElementTypes!,
                         attribute: Attribute,
                         settings: [FormElementSettings!]!
+                        "In case the form element is a join library link"
+                        joinLibraryContext: FormElementJoinLibraryContext
                     }
 
                     type FormElementWithValues {
@@ -196,6 +229,8 @@ export default function ({
                         type: FormElementTypes!,
                         attribute: Attribute,
                         settings: [FormElementSettings!]!
+                        "In case the form element is a join library link"
+                        joinLibraryContext: FormElementJoinLibraryContext
                         values: [GenericValue!]
                         valueError: String
                     }
