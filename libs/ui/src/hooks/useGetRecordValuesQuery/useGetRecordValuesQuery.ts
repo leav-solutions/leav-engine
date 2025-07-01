@@ -11,7 +11,7 @@ import {
     GetRecordColumnsValuesRecord,
     IGetRecordColumnsValues,
     IGetRecordColumnsValuesVariables
-} from '_ui/_queries/records/getRecordColumnsValues';
+} from '../../_queries/records/getRecordColumnsValues';
 
 export interface IColumnsValuesByRecord {
     [recordId: string]: GetRecordColumnsValuesRecord;

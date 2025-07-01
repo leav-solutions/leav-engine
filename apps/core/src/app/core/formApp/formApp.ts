@@ -7,13 +7,12 @@ import {IFormDomain} from 'domain/form/formDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
-import {IForm, IFormDependentElements, IFormElement, IFormElementWithValues, IRecordForm} from '_types/forms';
+import {IForm, IFormDependentElements, IFormElement, IRecordForm} from '_types/forms';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {ILibrary} from '_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {
-    GetElementsArgs,
     IDeleteFormArgs,
     IFormDependentElementsForGraphQL,
     IFormElementForGraphQL,
