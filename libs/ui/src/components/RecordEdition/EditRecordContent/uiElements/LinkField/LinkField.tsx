@@ -95,7 +95,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
     const fieldErrors = form.getFieldError(attribute.id);
 
     const columnsToDisplay = settings.columns?.map(({id}) => id);
-    const isReadOnly = attribute.readonly || readonly;
+    const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
     const isFieldInError = fieldErrors.length > 0;
 
     useEffect(() => {
@@ -159,6 +159,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
             <AntForm.Item name={attribute.id} noStyle>
                 <KitInputWrapperStyled
                     id={LINK_FIELD_ID_PREFIX + attribute.id}
+                    data-testid="link-field"
                     label={label}
                     required={attribute.required}
                     bordered
