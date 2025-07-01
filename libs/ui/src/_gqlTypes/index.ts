@@ -1262,7 +1262,6 @@ export type RecordFormQueryVariables = Exact<{
   formId: Scalars['String'];
   recordId?: InputMaybe<Scalars['String']>;
   version?: InputMaybe<Array<ValueVersionInput> | ValueVersionInput>;
-  elementIds?: InputMaybe<Array<InputMaybe<Scalars['ID']>> | InputMaybe<Scalars['ID']>>;
 }>;
 
 
@@ -3485,13 +3484,12 @@ export type GetFileDataQueryHookResult = ReturnType<typeof useGetFileDataQuery>;
 export type GetFileDataLazyQueryHookResult = ReturnType<typeof useGetFileDataLazyQuery>;
 export type GetFileDataQueryResult = Apollo.QueryResult<GetFileDataQuery, GetFileDataQueryVariables>;
 export const RecordFormDocument = gql`
-    query RECORD_FORM($libraryId: String!, $formId: String!, $recordId: String, $version: [ValueVersionInput!], $elementIds: [ID]) {
+    query RECORD_FORM($libraryId: String!, $formId: String!, $recordId: String, $version: [ValueVersionInput!]) {
   recordForm(
     recordId: $recordId
     libraryId: $libraryId
     formId: $formId
     version: $version
-    elementIds: $elementIds
   ) {
     id
     recordId
@@ -3528,7 +3526,6 @@ export const RecordFormDocument = gql`
  *      formId: // value for 'formId'
  *      recordId: // value for 'recordId'
  *      version: // value for 'version'
- *      elementIds: // value for 'elementIds'
  *   },
  * });
  */
