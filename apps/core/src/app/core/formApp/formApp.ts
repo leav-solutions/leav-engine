@@ -7,12 +7,13 @@ import {IFormDomain} from 'domain/form/formDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
-import {IForm, IFormDependentElements, IFormElement, IRecordForm} from '_types/forms';
+import {IForm, IFormDependentElements, IFormElement, IFormElementWithValues, IRecordForm} from '_types/forms';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {ILibrary} from '_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {
+    GetElementsArgs,
     IDeleteFormArgs,
     IFormDependentElementsForGraphQL,
     IFormElementForGraphQL,
@@ -187,6 +188,10 @@ export default function ({
                         attribute: Attribute,
                         settings: [FormElementSettings!]!
                     }
+                    
+                    type ValueWithOnlyPayload {
+                        payload: Any
+                    }
 
                     type FormElementWithValues {
                         id: ID!,
@@ -196,7 +201,7 @@ export default function ({
                         type: FormElementTypes!,
                         attribute: Attribute,
                         settings: [FormElementSettings!]!
-                        values: [GenericValue!]
+                        values: [ValueWithOnlyPayload!]
                         valueError: String
                     }
 
@@ -247,7 +252,13 @@ export default function ({
                             libraryId: String!,
                             formId: String!,
                             version: [ValueVersionInput!],
+                            elementIds: [ID]
                         ): RecordForm
+
+                        # Returns form elements by their IDs
+                        getElements(
+                            elementIds: [ID!]!
+                        ): [FormElementWithValues!]!
                     }
 
                     extend type Mutation {
@@ -286,6 +297,16 @@ export default function ({
                                 formId,
                                 elementIds,
                                 version: formattedVersion,
+                                ctx
+                            });
+                        },
+                        async getElements(
+                            _,
+                            {elementIds}: GetElementsArgs,
+                            ctx: IQueryInfos
+                        ): Promise<IFormElementWithValues[]> {
+                            return formDomain.getElements({
+                                elementIds,
                                 ctx
                             });
                         }

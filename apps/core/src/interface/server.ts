@@ -32,14 +32,10 @@ import ValidationError from '../errors/ValidationError';
 import type {ValidateRequestTokenFunc} from '../app/helpers/validateRequestToken';
 import {HandleGraphqlErrorFunc} from './helpers/handleGraphqlError';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
-import {IRecordDomain} from '../domain/record/recordDomain';
-import moment from 'moment/moment';
-import {IValueDomain} from '../domain/value/valueDomain';
 
 export interface IServer {
     init(): Promise<void>;
     initConsumers(): Promise<void>;
-    addCampaignOnStartup(): any;
 }
 
 interface IDeps {
@@ -54,8 +50,6 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
     'core.depsManager'?: AwilixContainer;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.value'?: IValueDomain;
 }
 
 export default function ({
@@ -69,9 +63,7 @@ export default function ({
     'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null,
-    'core.depsManager': depsManager = null,
-    'core.domain.record': recordDomain,
-    'core.domain.value': valueDomain
+    'core.depsManager': depsManager = null
 }: IDeps = {}): IServer {
     const _checkAuth = async (req, res, next) => {
         try {
@@ -359,41 +351,6 @@ export default function ({
         },
         async initConsumers() {
             await coreApp.initPubSubEventsConsumer();
-        },
-        async addCampaignOnStartup() {
-            try {
-                // Check if we already have a campaign with this label to avoid duplicates
-                const campaignLabel = 'Demo Campaign';
-
-                // PAC ID to attach the campaign to
-                const pacId = '5006773';
-
-                const campaignCreated = await recordDomain.createRecord({
-                    library: 'campaigns',
-                    values: [
-                        {
-                            attribute: 'campaigns_label',
-                            payload: campaignLabel
-                        }
-                    ],
-                    ctx: {userId: '2'}
-                });
-
-                // Link the campaign to the pac
-                const link = await valueDomain.saveValue({
-                    library: 'pac',
-                    recordId: pacId,
-                    attribute: 'pac_campaigns',
-                    value: {
-                        payload: campaignCreated.record.id
-                    },
-                    ctx: {userId: '2'}
-                });
-
-                console.log('Campaign created', campaignCreated, link);
-            } catch (error) {
-                console.error('Error creating campaign:', error);
-            }
         }
     };
 }

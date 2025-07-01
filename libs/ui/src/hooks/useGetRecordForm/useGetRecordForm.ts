@@ -10,12 +10,11 @@ import {
     RecordFormQuery,
     RecordFormQueryResult,
     useRecordFormQuery,
-    useRecordFormWithoutValuesQuery,
     ValueDetailsLinkValueFragment,
     ValueDetailsTreeValueFragment,
     ValueDetailsValueFragment
 } from '_ui/_gqlTypes';
-import {getRecordFormWithoutValuesQuery} from '_ui/_queries/records/getRecordFormWithoutValuesQuery';
+import {arrayValueVersionToObject} from '_ui/_utils';
 
 export type RecordFormElementsValueStandardValue = Override<
     ValueDetailsValueFragment,
@@ -92,7 +91,7 @@ const useGetRecordForm = ({
     formId: string;
     version: IValueVersion;
 }): IUseGetRecordFormHook => {
-    const [recordForm, setRecordForm] = React.useState<any>(null);
+    const [recordForm, setRecordForm] = React.useState<IRecordForm>(null);
 
     const requestVersion = version
         ? objectToNameValueArray(version)
@@ -103,7 +102,7 @@ const useGetRecordForm = ({
               }))
         : null;
 
-    const {loading, error, refetch} = useRecordFormWithoutValuesQuery({
+    const {loading, error, refetch} = useRecordFormQuery({
         fetchPolicy: 'no-cache',
         notifyOnNetworkStatusChange: true,
         variables: {
@@ -113,41 +112,28 @@ const useGetRecordForm = ({
             version: requestVersion
         },
         onCompleted: data => {
-            // console.log('data', data, data.recordForm.elements);
-
+            // Transform result to format values version to a more convenient object
             const recordFormFormatted: IRecordForm = {
                 ...data.recordForm,
                 elements: data.recordForm.elements.map(
                     (element): RecordFormElement => ({
                         ...element,
-                        values: []
+                        values: (element?.values ?? []).map(value => ({
+                            ...value,
+                            version: arrayValueVersionToObject(value.version ?? []),
+                            metadata: (value.metadata ?? []).map(metadata => ({
+                                ...metadata,
+                                value: {
+                                    ...metadata.value,
+                                    version: arrayValueVersionToObject(metadata.value?.version ?? [])
+                                }
+                            }))
+                        }))
                     })
                 )
             };
 
             setRecordForm(recordFormFormatted);
-
-            // Transform result to format values version to a more convenient object
-            // const recordFormFormatted: IRecordForm = {
-            //     ...data.recordForm
-            // elements: data.recordForm.elements
-            // elements: data.recordForm.elements.map(
-            //     (element): RecordFormElement => ({
-            //         ...element,
-            //         values: (element?.values ?? []).map(value => ({
-            //             ...value,
-            //             version: arrayValueVersionToObject(value.version ?? []),
-            //             metadata: (value.metadata ?? []).map(metadata => ({
-            //                 ...metadata,
-            //                 value: {
-            //                     ...metadata.value,
-            //                     version: arrayValueVersionToObject(metadata.value?.version ?? [])
-            //                 }
-            //             }))
-            //         }))
-            //     })
-            // )
-            // };
         }
     });
 

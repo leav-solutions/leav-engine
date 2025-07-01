@@ -16,7 +16,7 @@ export const getRecordFormQuery = gql`
         type
         valueError
         values {
-            ...ValueDetails
+            payload
         }
         attribute {
             ...RecordFormAttribute

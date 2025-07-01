@@ -16,7 +16,7 @@ export const extractFormElements = (
     computedValues: GetRecordColumnsValuesRecord,
     computeErrors: QueryResult['error']
 ): IFormElementsByContainer =>
-    form.elements?.reduce((allElements, element) => {
+    form.elements.reduce((allElements, element) => {
         if (typeof allElements[element.containerId] === 'undefined') {
             allElements[element.containerId] = [];
         }

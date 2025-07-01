@@ -101,7 +101,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         refetch: refetchComputeFields
     } = useGetRecordValuesQuery(
         library,
-        recordForm && recordForm.elements
+        recordForm
             ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
             : [],
         [record?.id],
@@ -175,7 +175,6 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const recordComputedValues = computeFieldsData && record ? computeFieldsData[record.id] : null;
     const elementsByContainer = extractFormElements(recordForm, recordComputedValues, computeFieldsError);
 
-    console.log('computeFieldsData', computeFieldsData);
     return (
         <WrappedForm
             id={formElementId ?? EDIT_OR_CREATE_RECORD_FORM_ID}

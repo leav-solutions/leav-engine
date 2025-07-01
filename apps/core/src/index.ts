@@ -84,13 +84,8 @@ import {initOIDCClient} from './infra/oidc';
         switch (conf.coreMode) {
             case CoreMode.SERVER:
                 await initPlugins(conf.pluginsPath, pluginsContainer);
-                // Add a campaign on startup
                 await server.init();
                 await server.initConsumers();
-                // for (let i = 0; i < 1500; i++) {
-                //     await server.addCampaignOnStartup();
-                // }
-                // setTimeout(() => server.addCampaignOnStartup(), 5000);
                 break;
             case CoreMode.MIGRATE:
                 // Run db migrations
