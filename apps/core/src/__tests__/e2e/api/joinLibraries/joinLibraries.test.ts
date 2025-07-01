@@ -14,6 +14,9 @@ describe('JoinLibraries', () => {
     const attrStructureItemThematic = 'attribute_structure_items_thematic'; // simple link
     const attrCampaignStructureItems = 'attribute_campaign_structure_items'; // advanced link multi
     const formCampaign = 'form_campaigns';
+    let thematic1: string;
+    let thematic2: string;
+    let thematic3: string;
 
     beforeAll(async () => {
         await makeGraphQlCall(`mutation {
@@ -29,7 +32,6 @@ describe('JoinLibraries', () => {
             ) { id }
         }`);
 
-        // make libraries
         await makeGraphQlCall(`mutation {
             saveLibrary(library: {
                 id: "${libThematic}", 
@@ -50,12 +52,24 @@ describe('JoinLibraries', () => {
                 mandatoryAttribute: "${attrStructureItemThematic}"
             }) { id }
         }`);
+
+        thematic1 = await gqlCreateRecord(libThematic);
+        thematic2 = await gqlCreateRecord(libThematic);
+        thematic3 = await gqlCreateRecord(libThematic);
+    });
+
+    afterAll(async () => {
+        await makeGraphQlCall(`mutation {
+            d1: deleteRecord(library: "${libThematic}", id: "${thematic1}") { id }
+            d2: deleteRecord(library: "${libThematic}", id: "${thematic2}") { id }
+            d3: deleteRecord(library: "${libThematic}", id: "${thematic3}") { id }
+            d20: deleteLibrary(id: "${libStructureItem}") { id }
+            d21: deleteLibrary(id: "${libThematic}") { id }
+            d30: deleteAttribute(id: "${attrStructureItemThematic}") { id }
+        }`);
     });
 
     describe('Campaign with advanced link structure_items', () => {
-        let thematic1: string;
-        let thematic2: string;
-        let thematic3: string;
         let campaign: string;
 
         beforeAll(async () => {
@@ -84,19 +98,13 @@ describe('JoinLibraries', () => {
                 }) { id }
             }`);
 
-            thematic1 = await gqlCreateRecord(libThematic);
-            thematic2 = await gqlCreateRecord(libThematic);
-            thematic3 = await gqlCreateRecord(libThematic);
         });
 
         afterAll(async () => {
             await makeGraphQlCall(`mutation {
-                d1: deleteRecord(library: "${libThematic}", id: "${thematic1}") { id }
-                d2: deleteRecord(library: "${libThematic}", id: "${thematic2}") { id }
-                d3: deleteRecord(library: "${libThematic}", id: "${thematic3}") { id }
                 d10: deleteForm(library: "${libCampaign}", id: "${formCampaign}") { id }
-                d20: deleteAttribute(id: "${attrCampaignStructureItems}") { id }
-                d30: deleteLibrary(id: "${libCampaign}") { id }
+                d20: deleteLibrary(id: "${libCampaign}") { id }
+                d30: deleteAttribute(id: "${attrCampaignStructureItems}") { id }
             }`);
         });
 
@@ -348,8 +356,6 @@ describe('JoinLibraries', () => {
     });
 
     describe('Campaign with simple link structure_items', () => {
-        let thematic1: string;
-        let thematic2: string;
         let campaign: string;
 
         beforeAll(async () => {
@@ -376,15 +382,10 @@ describe('JoinLibraries', () => {
                     ]
                 }) { id }
             }`);
-
-            thematic1 = await gqlCreateRecord(libThematic);
-            thematic2 = await gqlCreateRecord(libThematic);
         });
 
         afterAll(async () => {
             await makeGraphQlCall(`mutation {
-                d1: deleteRecord(library: "${libThematic}", id: "${thematic1}") { id }
-                d2: deleteRecord(library: "${libThematic}", id: "${thematic2}") { id }
                 d10: deleteForm(library: "${libCampaign}", id: "${formCampaign}") { id }
                 d20: deleteAttribute(id: "${attrCampaignStructureItems}") { id }
                 d30: deleteLibrary(id: "${libCampaign}") { id }
@@ -670,7 +671,6 @@ describe('JoinLibraries', () => {
         });
     });
 
-
     async function getStructureItemsRecords(structureItemId: string) {
         const res = await makeGraphQlCall(`query {
             records(
@@ -731,7 +731,6 @@ describe('JoinLibraries', () => {
 
         return res.data.data.records.list;
     }
-
 
     async function createCampaignFormWithStructureItem(elementId: string) {
         const res = await makeGraphQlCall(`mutation {
