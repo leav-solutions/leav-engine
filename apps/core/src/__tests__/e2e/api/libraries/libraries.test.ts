@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {makeGraphQlCall} from '../e2eUtils';
+import {LibraryBehavior} from '../../../../_types/library';
 
 describe('Libraries', () => {
     test('Get libraries list', async () => {
@@ -21,11 +22,13 @@ describe('Libraries', () => {
                     permissions {
                         access_library
                     }
+                    behavior
                 }
             }`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.saveLibrary.id).toBe('libraries_test');
+        expect(res.data.data.saveLibrary.behavior).toBe(LibraryBehavior.STANDARD);
         expect(res.data.data.saveLibrary.attributes.length).toBeGreaterThanOrEqual(1);
         expect(res.data.data.saveLibrary.attributes[0].type).toBeDefined();
         expect(res.data.data.saveLibrary.fullTextAttributes.length).toBe(0);
@@ -37,12 +40,37 @@ describe('Libraries', () => {
 
         expect(libsRes.status).toBe(200);
         expect(libsRes.data.data.libraries.list.filter(lib => lib.id === 'libraries_test').length).toBe(1);
-        expect(libsRes.data.data.libraries.list[0].permissions.access_library).toBeDefined();
+        expect(
+            libsRes.data.data.libraries.list.find(lib => lib.id === 'libraries_test').permissions.access_library
+        ).toBeDefined();
+    });
+
+    test('Create join library', async () => {
+        const res = await makeGraphQlCall(`mutation {
+                saveLibrary(library: {id: "libraries_join_test", label: {en: "Join lib"}, behavior: ${LibraryBehavior.JOIN}}) {
+                    id
+                    attributes {id type}
+                    fullTextAttributes { id }
+                    permissions {
+                        access_library
+                    }
+                    behavior
+                }
+            }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.data.saveLibrary.id).toBe('libraries_join_test');
+        expect(res.data.data.saveLibrary.behavior).toBe(LibraryBehavior.JOIN);
+        expect(res.data.data.saveLibrary.attributes.length).toBeGreaterThanOrEqual(1);
+        expect(res.data.data.saveLibrary.attributes[0].type).toBeDefined();
+        expect(res.data.data.saveLibrary.fullTextAttributes.length).toBe(0);
+        expect(res.data.data.saveLibrary.permissions.access_library).toBeDefined();
+        expect(res.data.errors).toBeUndefined();
     });
 
     test('Create files library', async () => {
         const res = await makeGraphQlCall(`mutation {
-                saveLibrary(library: {id: "libraries_files_test", label: {en: "Test lib"}, behavior: files}) {
+                saveLibrary(library: {id: "libraries_files_test", label: {en: "Test lib"}, behavior: ${LibraryBehavior.FILES}}) {
                     id
                     attributes {
                         id
@@ -51,12 +79,14 @@ describe('Libraries', () => {
                         label
                         system
                     }
+                    behavior
                 }
             }`);
 
         expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveLibrary.id).toBe('libraries_files_test');
+        expect(res.data.data.saveLibrary.behavior).toBe(LibraryBehavior.FILES);
         expect(res.data.data.saveLibrary.previewsSettings).toHaveLength(1);
         expect(res.data.data.saveLibrary.previewsSettings[0].system).toBe(true);
         expect(
