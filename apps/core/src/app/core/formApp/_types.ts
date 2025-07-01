@@ -20,7 +20,6 @@ export interface IGetRecordFormArgs {
     recordId: string;
     libraryId: string;
     formId: string;
-    elementIds?: string[];
     version?: Array<{treeId: string; treeNodeId: string}>;
 }
 

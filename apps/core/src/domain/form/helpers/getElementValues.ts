@@ -13,7 +13,6 @@ export const getElementValues = async (params: {
     element: IFormElement;
     recordId: string;
     libraryId: string;
-    elementIds?: string[];
     version?: IValueVersion;
     deps: {'core.domain.record'?: IRecordDomain; 'core.utils'?: IUtils; 'core.utils.logger'?: winston.Winston};
     ctx: IQueryInfos;

@@ -251,14 +251,8 @@ export default function ({
                             recordId: String,
                             libraryId: String!,
                             formId: String!,
-                            version: [ValueVersionInput!],
-                            elementIds: [ID]
+                            version: [ValueVersionInput!]
                         ): RecordForm
-
-                        # Returns form elements by their IDs
-                        getElements(
-                            elementIds: [ID!]!
-                        ): [FormElementWithValues!]!
                     }
 
                     extend type Mutation {
@@ -286,7 +280,7 @@ export default function ({
                         },
                         async recordForm(
                             _,
-                            {recordId, libraryId, formId, elementIds, version}: IGetRecordFormArgs,
+                            {recordId, libraryId, formId, version}: IGetRecordFormArgs,
                             ctx: IQueryInfos
                         ): Promise<IRecordForm> {
                             const formattedVersion = convertVersionFromGqlFormat(version);
@@ -295,18 +289,7 @@ export default function ({
                                 recordId,
                                 libraryId,
                                 formId,
-                                elementIds,
                                 version: formattedVersion,
-                                ctx
-                            });
-                        },
-                        async getElements(
-                            _,
-                            {elementIds}: GetElementsArgs,
-                            ctx: IQueryInfos
-                        ): Promise<IFormElementWithValues[]> {
-                            return formDomain.getElements({
-                                elementIds,
                                 ctx
                             });
                         }
