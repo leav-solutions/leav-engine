@@ -13,11 +13,7 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IRecord} from '../../../_types/record';
 
-export type DeleteRecordHelper = (
-    library: string,
-    id: string,
-    ctx: IQueryInfos
-) => Promise<IRecord>;
+export type DeleteRecordHelper = (library: string, id: string, ctx: IQueryInfos) => Promise<IRecord>;
 
 interface IDeps {
     'core.domain.helpers.validate': IValidateHelper;
@@ -36,7 +32,6 @@ export default function ({
     'core.infra.tree': treeRepo,
     'core.infra.value': valueRepo
 }: IDeps): DeleteRecordHelper {
-
     return async (library, id, ctx) => {
         await validateHelper.validateLibrary(library, ctx);
 
@@ -53,7 +48,7 @@ export default function ({
             throw new PermissionError(RecordPermissionsActions.DELETE_RECORD);
         }
 
-        // simple link attribute value are directly in record data in db, so will be deleted with record
+        // simple link attribute value are directly in record data in db, so will be deleted with record itself
 
         // Delete linked values (advanced, advanced link and tree)
         await valueRepo.deleteAllValuesByRecord({libraryId: library, recordId: id, ctx});

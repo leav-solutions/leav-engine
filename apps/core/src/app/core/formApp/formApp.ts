@@ -112,11 +112,15 @@ export default function ({
             }
 
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
-            return ifLibraryJoinLinkAttribute(attrProps, async (joinLibId: string, joinAttributeProps: IAttribute) => ({
-                multipleValues: attrProps.multiple_values,
-                linkedLibrary: joinAttributeProps.linked_library,
-                mandatoryAttribute: joinAttributeProps.id
-            }), ctx);
+            return ifLibraryJoinLinkAttribute(
+                attrProps,
+                async (joinLibId: string, joinAttributeProps: IAttribute) => ({
+                    multipleValues: attrProps.multiple_values,
+                    linkedLibrary: joinAttributeProps.linked_library,
+                    mandatoryAttribute: joinAttributeProps.id
+                }),
+                ctx
+            );
         }
     };
 
@@ -195,9 +199,12 @@ export default function ({
                     }
 
                     type FormElementJoinLibraryContext {
-                        multipleValues: Boolean
+                        "Library ID targeted by the mandatory attribute of the join library"
                         linkedLibrary: ID,
+                        "Mandatory attribute ID of the join library, can be simple or advanced mono link"
                         mandatoryAttribute: ID,
+                        "Is the link to join library a multiple values link ?"
+                        multipleValues: Boolean
                     }
 
                     input FormElementSettingsInput {
@@ -213,6 +220,7 @@ export default function ({
                         type: FormElementTypes!,
                         attribute: Attribute,
                         settings: [FormElementSettings!]!
+                        "In case the form element is a join library link"
                         joinLibraryContext: FormElementJoinLibraryContext
                     }
 
@@ -224,6 +232,7 @@ export default function ({
                         type: FormElementTypes!,
                         attribute: Attribute,
                         settings: [FormElementSettings!]!
+                        "In case the form element is a join library link"
                         joinLibraryContext: FormElementJoinLibraryContext
                         values: [GenericValue!]
                         valueError: String

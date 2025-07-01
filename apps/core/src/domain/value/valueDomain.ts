@@ -347,43 +347,52 @@ const valueDomain = function ({
         attributeProps: IAttribute,
         value: IValue,
         ctx: IQueryInfos
-    ): Promise<string | void> => ifLibraryJoinLinkAttribute(attributeProps, async (joinLibId: string, joinAttributeProps: IAttribute) => {
-            const {record: joinRecord} = await createRecordHelper({
-                library: joinLibId,
-                ctx
-            });
+    ): Promise<string | void> =>
+        ifLibraryJoinLinkAttribute(
+            attributeProps,
+            async (joinLibId: string, joinAttributeProps: IAttribute) => {
+                const {record: joinRecord} = await createRecordHelper({
+                    library: joinLibId,
+                    ctx
+                });
 
-            logger.debug(`Created join record: ${JSON.stringify(joinRecord, null, 2)}`);
-            await saveValue({
-                library: joinLibId,
-                recordId: joinRecord.id,
-                attribute: joinAttributeProps.id,
-                value: {
-                    payload: value.payload // simple link from join record to "thematic"
-                },
-                ctx
-            });
+                logger.debug(`Created join record: ${JSON.stringify(joinRecord, null, 2)}`);
+                await saveValue({
+                    library: joinLibId,
+                    recordId: joinRecord.id,
+                    attribute: joinAttributeProps.id,
+                    value: {
+                        payload: value.payload // simple link from join record to "thematic"
+                    },
+                    ctx
+                });
 
-            return joinRecord.id;
-        }, ctx);
+                return joinRecord.id;
+            },
+            ctx
+        );
 
     const _maybeDeleteJoinRecord = async (
         attributeProps: IAttribute,
         deletedValues: IValue[],
         ctx: IQueryInfos
-    ): Promise<void> => ifLibraryJoinLinkAttribute(attributeProps, async (joinLibId: string) => {
-            await Promise.all(
-                deletedValues.map(async deletedValue => {
-                    // should we unlink record attributes, or done in deleteRecordHelper ?
+    ): Promise<void> =>
+        ifLibraryJoinLinkAttribute(
+            attributeProps,
+            async (joinLibId: string) => {
+                await Promise.all(
+                    deletedValues.map(async deletedValue => {
+                        // should we unlink record attributes, or done in deleteRecordHelper ?
 
-                    const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
-                    logger.debug(`Deleted join record: ${JSON.stringify(deleteJoinRecord, null, 2)}`);
-                })
-            );
-        }, ctx);
+                        const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
+                        logger.debug(`Deleted join record: ${JSON.stringify(deleteJoinRecord, null, 2)}`);
+                    })
+                );
+            },
+            ctx
+        );
 
     const _executeDeleteValue = async ({library, recordId, attribute, value, ctx}: IDeleteValueParams) => {
-
         // Check permission
         const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
             action: RecordPermissionsActions.EDIT_RECORD,
@@ -858,8 +867,6 @@ const valueDomain = function ({
                 async (promPrevRes: Promise<ISaveBatchValueResult>, value: IValue): Promise<ISaveBatchValueResult> => {
                     const prevRes = await promPrevRes;
                     try {
-                        const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
-
                         if (value.payload === null && !keepEmpty) {
                             const deletedValues = await _executeDeleteValue({
                                 library,
@@ -873,6 +880,8 @@ const valueDomain = function ({
 
                             return prevRes;
                         }
+
+                        const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
 
                         const valueChecksParams = {
                             attributeProps,
