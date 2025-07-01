@@ -210,7 +210,7 @@ describe('ifLibraryJoinLinkAttribute', () => {
         expect(callback).toHaveBeenCalledWith(joinLibraryId, joinAttributeProps);
     });
 
-    it('[+] should call callback if linked library has mandatory attribut tree mono valuated', async () => {
+    it('[-] should not call callback if linked library has mandatory attribut tree mono valuated', async () => {
         const joinLibraryId = 'structure_item_categories';
         const joinAttributeProps: IAttribute = {
             type: AttributeTypes.TREE,
@@ -232,8 +232,8 @@ describe('ifLibraryJoinLinkAttribute', () => {
                 callback,
                 ctx
             )
-        ).resolves.toEqual({some: 'values'});
-        expect(callback).toHaveBeenCalledTimes(1);
-        expect(callback).toHaveBeenCalledWith(joinLibraryId, joinAttributeProps);
+        ).resolves.not.toEqual({some: 'values'});
+        expect(callback).not.toHaveBeenCalledTimes(1);
+        expect(callback).not.toHaveBeenCalledWith(joinLibraryId, joinAttributeProps);
     });
 });
