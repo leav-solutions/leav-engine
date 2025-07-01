@@ -94,7 +94,9 @@ describe('AttributeSimpleLinkRepo', () => {
     describe('deleteValue', () => {
         test('Should delete a value', async () => {
             const deletedValueData = {
-                payload: '123456'
+                payload: {
+                    id: '123456'
+                }
             };
 
             const attrSimpleRepo = {
@@ -111,7 +113,9 @@ describe('AttributeSimpleLinkRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    payload: 123456
+                    payload: {
+                        id: '123456'
+                    }
                 },
                 ctx
             });
@@ -122,7 +126,9 @@ describe('AttributeSimpleLinkRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    payload: 123456
+                    payload: {
+                        id: '123456'
+                    }
                 },
                 ctx
             });
