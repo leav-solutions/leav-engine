@@ -35,6 +35,9 @@ import prepareValue from './helpers/prepareValue';
 import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
 import {IDeleteValueParams, IRunActionListParams} from './_types';
+import {DeleteRecordHelper} from 'domain/record/helpers/deleteRecord';
+import {CreateRecordHelper} from 'domain/record/helpers/createRecord';
+import {IfLibraryJoinLinkAttribute} from '../attribute/helpers/ifLibraryJoinLinkAttribute';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -142,6 +145,9 @@ export interface IValueDomainDeps {
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
+    'core.domain.record.helpers.createRecord': CreateRecordHelper;
+    'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': IfLibraryJoinLinkAttribute;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.infra.record': IRecordRepo;
     'core.infra.tree': ITreeRepo;
@@ -163,6 +169,9 @@ const valueDomain = function ({
     'core.domain.tree.helpers.elementAncestors': elementAncestors,
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
+    'core.domain.record.helpers.createRecord': createRecordHelper,
+    'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
     'core.domain.versionProfile': versionProfileDomain,
     'core.infra.record': recordRepo,
     'core.infra.tree': treeRepo,
@@ -334,6 +343,55 @@ const valueDomain = function ({
         return v;
     }
 
+    const _maybeCreateJoinRecord = async (
+        attributeProps: IAttribute,
+        value: IValue,
+        ctx: IQueryInfos
+    ): Promise<string | void> =>
+        ifLibraryJoinLinkAttribute(
+            attributeProps,
+            async (joinLibId: string, joinAttributeProps: IAttribute) => {
+                const {record: joinRecord} = await createRecordHelper({
+                    library: joinLibId,
+                    ctx
+                });
+
+                logger.debug(`Created join record: ${JSON.stringify(joinRecord, null, 2)}`);
+                await saveValue({
+                    library: joinLibId,
+                    recordId: joinRecord.id,
+                    attribute: joinAttributeProps.id,
+                    value: {
+                        payload: value.payload // simple link from join record to "thematic"
+                    },
+                    ctx
+                });
+
+                return joinRecord.id;
+            },
+            ctx
+        );
+
+    const _maybeDeleteJoinRecord = async (
+        attributeProps: IAttribute,
+        deletedValues: IValue[],
+        ctx: IQueryInfos
+    ): Promise<void> =>
+        ifLibraryJoinLinkAttribute(
+            attributeProps,
+            async (joinLibId: string) => {
+                await Promise.all(
+                    deletedValues.map(async deletedValue => {
+                        // should we unlink record attributes, or done in deleteRecordHelper ?
+
+                        const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
+                        logger.debug(`Deleted join record: ${JSON.stringify(deleteJoinRecord, null, 2)}`);
+                    })
+                );
+            },
+            ctx
+        );
+
     const _executeDeleteValue = async ({library, recordId, attribute, value, ctx}: IDeleteValueParams) => {
         // Check permission
         const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
@@ -457,6 +515,8 @@ const valueDomain = function ({
             })
         );
 
+        await _maybeDeleteJoinRecord(attributeProps, deletedValues, ctx);
+
         return deletedValues;
     };
 
@@ -523,6 +583,11 @@ const valueDomain = function ({
                 },
                 ctx
             );
+
+            if (valueBefore) {
+                // a new join record was create in saveBalue/saveValueBatch, need to remove older if any
+                await _maybeDeleteJoinRecord(attribute, [valueBefore], ctx);
+            }
         }
 
         return {values: processedValues, areValuesIdentical};
@@ -639,6 +704,9 @@ const valueDomain = function ({
                 fields
             );
         }
+
+        // not sure of that place, may be better after prepareValue ?
+        value.payload = (await _maybeCreateJoinRecord(attributeProps, value, ctx)) || value.payload;
 
         // Validate value
         const validationErrors = await validateValue({
@@ -855,6 +923,9 @@ const valueDomain = function ({
                                 );
                             }
                         }
+
+                        // not sure of that place, may be better after prepareValue ?
+                        value.payload = (await _maybeCreateJoinRecord(attributeProps, value, ctx)) || value.payload;
 
                         // Validate value
                         const validationErrors = await validateValue({
