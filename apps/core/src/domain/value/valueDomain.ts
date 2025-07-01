@@ -585,6 +585,120 @@ const valueDomain = function ({
         return processedValues;
     };
 
+    // Extracted to allow within this closure. Would have been better if we could use _executeSaveValue directly.
+    // May be future refactoring to move common code from saveValue, saveValueBatch and recordDomain.createRecord into helper module
+    const saveValue: IValueDomain['saveValue'] = async ({
+        library,
+        recordId,
+        attribute,
+        value,
+        ctx
+    }): Promise<IValue[]> => {
+        await validate.validateLibrary(library, ctx);
+        const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
+        await validate.validateLibraryAttribute(library, attribute, ctx);
+        const record = await validate.validateRecord(library, recordId, ctx);
+
+        const valueChecksParams = {
+            attributeProps,
+            library,
+            recordId,
+            value,
+            keepEmpty: false,
+            infos: ctx
+        };
+
+        if (attributeProps.readonly) {
+            throw new ValidationError<IValue>({
+                attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
+            });
+        }
+
+        // Check permissions
+        const {
+            canSave,
+            reason: forbiddenSaveReason,
+            fields
+        } = await canSaveRecordValue({
+            ...valueChecksParams,
+            ctx,
+            deps: {
+                recordPermissionDomain,
+                recordAttributePermissionDomain,
+                config
+            }
+        });
+
+        if (!canSave) {
+            if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
+                throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
+            }
+
+            throw new PermissionError(
+                forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions,
+                fields
+            );
+        }
+
+        // Validate value
+        const validationErrors = await validateValue({
+            ...valueChecksParams,
+            attributeProps,
+            deps: {
+                attributeDomain,
+                recordRepo,
+                valueRepo,
+                treeRepo
+            },
+            ctx
+        });
+
+        if (Object.keys(validationErrors).length) {
+            throw new ValidationError<IValue>(validationErrors);
+        }
+
+        // Prepare value
+        const valuesToSave = await prepareValue({
+            ...valueChecksParams,
+            deps: {
+                actionsListDomain,
+                attributeDomain,
+                utils
+            },
+            ctx
+        });
+
+        const {allSavedValues, areValuesIdentical} = await valuesToSave.reduce(
+            async (promiseAcc, valueToSave) => {
+                const acc = await promiseAcc;
+                const {values: savedValues, areValuesIdentical: identicalValues} = await _executeSaveValue(
+                    library,
+                    record,
+                    attributeProps,
+                    valueToSave,
+                    ctx
+                );
+
+                if (!identicalValues) {
+                    acc.areValuesIdentical = false;
+                }
+
+                acc.allSavedValues.push(...savedValues);
+                return acc;
+            },
+            Promise.resolve({allSavedValues: [], areValuesIdentical: true})
+        );
+
+        if (!areValuesIdentical) {
+            await updateRecordLastModif(library, recordId, ctx);
+            allSavedValues.forEach(async savedValue => {
+                sendRecordUpdateEvent(record, [{attribute, value: savedValue}], ctx);
+            });
+        }
+
+        return allSavedValues;
+    };
+
     return {
         async getValues({library, recordId, attribute, options, ctx}): Promise<IValue[]> {
             await validate.validateLibrary(library, ctx);
@@ -672,111 +786,7 @@ const valueDomain = function ({
 
             return actionsListRes;
         },
-        async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue[]> {
-            await validate.validateLibrary(library, ctx);
-            const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
-            await validate.validateLibraryAttribute(library, attribute, ctx);
-            const record = await validate.validateRecord(library, recordId, ctx);
-
-            const valueChecksParams = {
-                attributeProps,
-                library,
-                recordId,
-                value,
-                keepEmpty: false,
-                infos: ctx
-            };
-
-            if (attributeProps.readonly) {
-                throw new ValidationError<IValue>({
-                    attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
-                });
-            }
-
-            // Check permissions
-            const {
-                canSave,
-                reason: forbiddenSaveReason,
-                fields
-            } = await canSaveRecordValue({
-                ...valueChecksParams,
-                ctx,
-                deps: {
-                    recordPermissionDomain,
-                    recordAttributePermissionDomain,
-                    config
-                }
-            });
-
-            if (!canSave) {
-                if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
-                    throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
-                }
-
-                throw new PermissionError(
-                    forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions,
-                    fields
-                );
-            }
-
-            // Validate value
-            const validationErrors = await validateValue({
-                ...valueChecksParams,
-                attributeProps,
-                deps: {
-                    attributeDomain,
-                    recordRepo,
-                    valueRepo,
-                    treeRepo
-                },
-                ctx
-            });
-
-            if (Object.keys(validationErrors).length) {
-                throw new ValidationError<IValue>(validationErrors);
-            }
-
-            // Prepare value
-            const valuesToSave = await prepareValue({
-                ...valueChecksParams,
-                deps: {
-                    actionsListDomain,
-                    attributeDomain,
-                    utils
-                },
-                ctx
-            });
-
-            const {allSavedValues, areValuesIdentical} = await valuesToSave.reduce(
-                async (promiseAcc, valueToSave) => {
-                    const acc = await promiseAcc;
-                    const {values: savedValues, areValuesIdentical: identicalValues} = await _executeSaveValue(
-                        library,
-                        record,
-                        attributeProps,
-                        valueToSave,
-                        ctx
-                    );
-
-                    if (!identicalValues) {
-                        acc.areValuesIdentical = false;
-                    }
-
-                    acc.allSavedValues.push(...savedValues);
-                    return acc;
-                },
-                Promise.resolve({allSavedValues: [], areValuesIdentical: true})
-            );
-
-            if (!areValuesIdentical) {
-                await updateRecordLastModif(library, recordId, ctx);
-                allSavedValues.forEach(async savedValue => {
-                    sendRecordUpdateEvent(record, [{attribute, value: savedValue}], ctx);
-                });
-            }
-
-            return allSavedValues;
-        },
+        saveValue,
         async saveValueBatch({
             library,
             recordId,
