@@ -7,7 +7,7 @@ import {ComponentProps, Dispatch, SetStateAction, useEffect, useState} from 'rea
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ExplorerWrapper} from '../shared/ExplorerWrapper';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
-import {APICallStatus, DeleteMultipleValuesFunc, ISubmitMultipleResult, ISubmittedValueLink} from '../../../_types';
+import {DeleteMultipleValuesFunc} from '../../../_types';
 import {
     RecordFilterCondition,
     RecordFilterOperator,
@@ -30,7 +30,7 @@ import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 import LinkSelect from '_ui/components/LinkSelect';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
-import {FullTextAttribute, IFilter, IQueryFilter} from '_ui/types';
+import {FullTextAttribute, IQueryFilter} from '_ui/types';
 
 interface ILinkRecordsInCreationProps {
     libraryId: string;
