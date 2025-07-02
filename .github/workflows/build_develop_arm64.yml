@@ -1,5 +1,9 @@
 name: Build develop ARM64
 
+# Why use develop-arm64 tag ?
+# Because we are not building true multi arch images, we use a distinct tag for arm64 architecture
+# to avoid override amd64 images.
+
 on:
     workflow_dispatch:
 
@@ -38,7 +42,7 @@ jobs:
                     labels:
                         LEAV Engine
                         Core
-                    tags: "leavengine/core:develop"
+                    tags: "leavengine/core:develop-arm64"
 
     # Build preview-generator and deploy it to Docker Hub
     preview-generator:
@@ -72,7 +76,7 @@ jobs:
                     labels:
                         LEAV Engine
                         Preview Generator
-                    tags: "leavengine/preview-generator:develop"
+                    tags: "leavengine/preview-generator:develop-arm64"
 
     # Build automate-scan and deploy it to Docker Hub
     automate-scan:
@@ -106,7 +110,7 @@ jobs:
                     labels:
                         LEAV Engine
                         Automate Scan
-                    tags: "leavengine/automate-scan:develop"
+                    tags: "leavengine/automate-scan:develop-arm64"
 
     # Build sync-scan and deploy it to Docker Hub
     sync-scan:
@@ -140,7 +144,7 @@ jobs:
                     labels:
                         LEAV Engine
                         Sync scan
-                    tags: "leavengine/sync-scan:develop"
+                    tags: "leavengine/sync-scan:develop-arm64"
 
     # Build logs-collector and deploy it to Docker Hub
     logs-collector:
@@ -174,4 +178,4 @@ jobs:
                     labels:
                         LEAV Engine
                         Logs Collector
-                    tags: "leavengine/logs-collector:develop"
+                    tags: "leavengine/logs-collector:develop-arm64"

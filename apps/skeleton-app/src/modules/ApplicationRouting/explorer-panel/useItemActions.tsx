@@ -7,7 +7,7 @@ import {useNavigate, generatePath} from 'react-router-dom';
 import {recordSearchParamsName, routes} from '../routes';
 import {FaPlus} from 'react-icons/fa';
 import {useTranslation} from 'react-i18next';
-import {ItemActions} from '../types';
+import {ItemActions} from '_ui/hooks/useIFrameMessenger/types';
 
 export const useItemActions = ({actions}: {actions: ItemActions}) => {
     const {t} = useTranslation();
