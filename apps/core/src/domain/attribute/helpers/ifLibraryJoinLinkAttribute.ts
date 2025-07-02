@@ -44,9 +44,8 @@ export default function ({
             ctx
         });
         if (
-            joinAttributeProps.type === AttributeTypes.SIMPLE_LINK
-            // Theoretically can be type tree, but ther is a UX issue to discuss about TreeField vs LinkField display
-            // (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)
+            joinAttributeProps.type === AttributeTypes.SIMPLE_LINK ||
+            (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)
             // And maybe handle joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
         ) {
             return callback(joinLibId, joinAttributeProps);
