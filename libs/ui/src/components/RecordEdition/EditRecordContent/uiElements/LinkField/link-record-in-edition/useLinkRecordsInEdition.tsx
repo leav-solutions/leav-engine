@@ -7,7 +7,7 @@ import {ComponentProps, Dispatch, SetStateAction, useEffect, useState} from 'rea
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ExplorerWrapper} from '../shared/ExplorerWrapper';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
-import {DeleteMultipleValuesFunc} from '../../../_types';
+import {APICallStatus, DeleteMultipleValuesFunc, ISubmitMultipleResult, ISubmittedValueLink} from '../../../_types';
 import {
     RecordFilterCondition,
     RecordFilterOperator,
@@ -90,6 +90,10 @@ export const useLinkRecordsInEdition = ({
         setBackendValues,
         onDeleteMultipleValues
     });
+
+    useEffect(() => {
+        console.log('linkedIds updated', linkedIds);
+    }, [linkedIds]);
 
     // Query to get all records from the linked library
     // Network-only is useful to avoid caching, we have a side effect otherwise
@@ -278,6 +282,30 @@ export const useLinkRecordsInEdition = ({
         };
     };
 
+    const _getExplorerItemActions = (): Array<'edit' | 'remove'> => {
+        if (isReadOnly) {
+            return [];
+        }
+    };
+
+    const handleExplorerReplaceLink = (replaceValuesResult: ISubmitMultipleResult) => {
+        // Update linkedIds when a link is replaced
+        if (replaceValuesResult.status === APICallStatus.SUCCESS) {
+            const replaceLinkValues = replaceValuesResult.values as unknown as RecordFormElementsValueLinkValue[];
+            const oldLinkId = replaceLinkValues[0]?.id_value;
+            const oldLinkIndex = linkedIds.findIndex(id => {
+                const bv = backendValues.find(value => value.linkValue.id === id);
+                return bv && bv.id_value === oldLinkId;
+            });
+
+            if (oldLinkIndex !== -1 && replaceLinkValues[0]?.linkValue?.id) {
+                const newLinkedIds = [...linkedIds];
+                newLinkedIds[oldLinkIndex] = replaceLinkValues[0].linkValue.id;
+                setLinkIds(newLinkedIds);
+            }
+        }
+    };
+
     return {
         UnlinkAllRecordsInEdition: isHookUsed &&
             backendValues.length > 1 &&
@@ -310,7 +338,8 @@ export const useLinkRecordsInEdition = ({
                             }}
                             defaultCallbacks={{
                                 item: {
-                                    remove: handleExplorerRemoveValue
+                                    remove: handleExplorerRemoveValue,
+                                    replaceLink: handleExplorerReplaceLink
                                 },
                                 mass: {
                                     deactivate: handleExplorerMassDeactivateValues
@@ -328,7 +357,7 @@ export const useLinkRecordsInEdition = ({
                                 !attribute.multiple_values ||
                                 (attribute.required && attribute.multiple_values && backendValues.length === 1)
                             }
-                            defaultActionsForItem={[]}
+                            defaultActionsForItem={_getExplorerItemActions()}
                             hidePrimaryActions
                             hideTableHeader
                             iconsOnlyItemActions
