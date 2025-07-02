@@ -4,18 +4,22 @@
 import {FunctionComponent} from 'react';
 import {useRoutes} from 'react-router-dom';
 import {Loading} from '@leav/ui';
-import {useGetApplicationSkeletonSettingsQuery} from '../../__generated__';
 import {routes} from './routes';
+import {AddPanel} from './types';
+import {addChildPanelToApplication} from './utils';
 import {PanelContent} from './PanelContent';
 import {RedirectToFirstPanelOnHome} from './guards/RedirectToFirstPanelOnHome';
 import {PanelsNavigationMenu} from './navigation-menu/PanelsNavigationMenu';
 import {WorkspacesNavigationMenu} from './navigation-menu/WorkspacesNavigationMenu';
 import {RedirectToFirstPanelOnInvalidPanel} from './guards/RedirectToFirstPanelOnInvalidPanel';
+import {useLocalCopyForApplicationSettings} from './useLocalCopyForApplicationSettings';
 
 export const InitApplicationRouter: FunctionComponent = () => {
-    const {data} = useGetApplicationSkeletonSettingsQuery();
+    const [application, setApplication] = useLocalCopyForApplicationSettings();
 
-    const application = data?.applications?.list[0].settings ?? null;
+    const addPanel: AddPanel = (panel, destination) => {
+        setApplication(prevApplication => addChildPanelToApplication(panel, prevApplication, destination));
+    };
 
     return useRoutes(
         application === null
@@ -34,7 +38,7 @@ export const InitApplicationRouter: FunctionComponent = () => {
                               children: [
                                   {
                                       path: routes.panel,
-                                      element: <PanelContent />
+                                      element: <PanelContent addPanel={addPanel} />
                                   }
                               ]
                           },

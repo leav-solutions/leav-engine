@@ -91,10 +91,6 @@ export const useLinkRecordsInEdition = ({
         onDeleteMultipleValues
     });
 
-    useEffect(() => {
-        console.log('linkedIds updated', linkedIds);
-    }, [linkedIds]);
-
     // Query to get all records from the linked library
     // Network-only is useful to avoid caching, we have a side effect otherwise
     // When the record is created, if we call getRecordsFromLibrary(), the previous records are returned

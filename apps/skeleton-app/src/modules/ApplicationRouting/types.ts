@@ -2,75 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {Explorer} from '_ui/components/Explorer/Explorer';
-import {ComponentProps} from 'react';
+import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
 
-type PanelId = string;
 type WorkspaceId = string;
 type Language = string;
-
-export interface ICommonExplorerProps {
-    showSearch?: boolean;
-    defaultActionsForItem?: ComponentProps<typeof Explorer>['defaultActionsForItem'];
-    defaultPrimaryActions?: ComponentProps<typeof Explorer>['defaultPrimaryActions'];
-    defaultMassActions?: ComponentProps<typeof Explorer>['defaultMassActions'];
-    showFiltersAndSorts?: boolean;
-    freezeView?: boolean;
-    showAttributeLabels?: boolean;
-    creationFormId?: string;
-    editionFormId?: string;
-}
-
-export type LinkExplorerProps = ICommonExplorerProps;
-
-export type LibraryExplorerProps = {
-    noPagination?: true;
-} & ICommonExplorerProps;
-
-export type ItemActions = Array<{
-    what: Panel; // | WorkspaceId
-    where: 'popup' | 'slider' | 'fullpage';
-}>;
-
-export type Panel = {
-    // panel details
-    id: PanelId;
-    name: Record<Language, string>;
-} & (
-    | {
-          content:
-              | {
-                    type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
-                    // TODO: later add behavior on click on explorer item
-                    attributeSource: string;
-                    explorerProps?: LinkExplorerProps;
-                    viewId?: string | null;
-                    actions: ItemActions;
-                }
-              | {
-                    type: 'explorer'; // TODO: you can split types into link-explorer and library-explorer
-                    libraryId: '<props>' | string;
-                    explorerProps?: LibraryExplorerProps;
-                    viewId?: string | null;
-                    actions: ItemActions;
-                }
-              | {
-                    type: 'custom';
-                    iframeSource: string;
-                }
-              | {
-                    type: 'editionForm';
-                    formId: string;
-                }
-              | {
-                    type: 'creationForm';
-                    formId: string;
-                };
-      }
-    | {
-          children: Panel[];
-      }
-);
 
 export interface IWorkspace {
     id: WorkspaceId;
@@ -100,3 +35,5 @@ export interface IApplicationMatchingContext {
 export type Nullable<T> = {
     [P in keyof T]: T[P] | null;
 };
+
+export type AddPanel = (panel: Panel, destination: {workspaceId: string; panelId: string}) => void;
