@@ -278,28 +278,11 @@ export const useLinkRecordsInEdition = ({
         };
     };
 
-    const _getExplorerItemActions = (): Array<'edit' | 'remove'> => {
+    const _getExplorerItemActions = (): Array<'remove' | 'edit'> => {
         if (isReadOnly) {
             return [];
         }
-    };
-
-    const handleExplorerReplaceLink = (replaceValuesResult: ISubmitMultipleResult) => {
-        // Update linkedIds when a link is replaced
-        if (replaceValuesResult.status === APICallStatus.SUCCESS) {
-            const replaceLinkValues = replaceValuesResult.values as unknown as RecordFormElementsValueLinkValue[];
-            const oldLinkId = replaceLinkValues[0]?.id_value;
-            const oldLinkIndex = linkedIds.findIndex(id => {
-                const bv = backendValues.find(value => value.linkValue.id === id);
-                return bv && bv.id_value === oldLinkId;
-            });
-
-            if (oldLinkIndex !== -1 && replaceLinkValues[0]?.linkValue?.id) {
-                const newLinkedIds = [...linkedIds];
-                newLinkedIds[oldLinkIndex] = replaceLinkValues[0].linkValue.id;
-                setLinkIds(newLinkedIds);
-            }
-        }
+        return ['remove', 'edit'];
     };
 
     return {
@@ -334,8 +317,7 @@ export const useLinkRecordsInEdition = ({
                             }}
                             defaultCallbacks={{
                                 item: {
-                                    remove: handleExplorerRemoveValue,
-                                    replaceLink: handleExplorerReplaceLink
+                                    remove: handleExplorerRemoveValue
                                 },
                                 mass: {
                                     deactivate: handleExplorerMassDeactivateValues
