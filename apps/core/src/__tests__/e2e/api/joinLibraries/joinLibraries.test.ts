@@ -351,6 +351,45 @@ describe('JoinLibraries', () => {
                 );
             });
         });
+
+        describe('Existing structure item', () => {
+            let structureItem: string;
+
+            beforeAll(async () => {
+                structureItem = await gqlCreateRecord(libStructureItem);
+            });
+
+            it('saveValue campaign_structure_items with existing structure item should still be possible', async () => {
+                const res = await makeGraphQlCall(`mutation {
+                    saveValue(
+                        library: "${libCampaign}",
+                        recordId: "${campaign}",
+                        attribute: "${attrCampaignStructureItems}",
+                        value: {
+                            payload: "${structureItem}"
+                        }
+                    ) {
+                        id_value
+                        ... on LinkValue {
+                            payload {
+                                id
+                            }
+                        }
+                    }
+                }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+                expect(res.data.data.saveValue[0].id_value).toBeTruthy();
+                expect(res.data.data.saveValue[0].payload.id).toBe(structureItem);
+            });
+
+            afterAll(async () => {
+                await makeGraphQlCall(`mutation {
+                    deleteRecord(library: "${libStructureItem}", id: "${structureItem}") { id }
+                }`);
+            });
+        });
     });
 
     describe('Campaign with simple link structure_items', () => {
