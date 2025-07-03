@@ -53,6 +53,8 @@ export const useSidePanelForm = () => {
                           closable
                           size="m"
                           onClose={() => closeSidePanelForm(editRecordPageInSidePanelProps.onClose)}
+                          closeOnEsc
+                          closeOnOutsideClick
                       >
                           <div style={{height: '100%'}}>
                               <EditRecordPage
