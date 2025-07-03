@@ -30,7 +30,7 @@ import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 import LinkSelect from '_ui/components/LinkSelect';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
-import {FullTextAttribute, IFilter, IQueryFilter} from '_ui/types';
+import {FullTextAttribute, IQueryFilter} from '_ui/types';
 
 interface ILinkRecordsInCreationProps {
     libraryId: string;
@@ -133,6 +133,7 @@ export const useLinkRecordsInEdition = ({
 
     // Update options for LinkSelect when libraryItems update
     useEffect(() => {
+        console.log('libraryItems', libraryItems);
         if (libraryItems?.records?.list) {
             setSelectOptions(
                 libraryItems.records.list.map<IKitOption>(record => ({
@@ -181,7 +182,12 @@ export const useLinkRecordsInEdition = ({
 
     const {saveValues} = useSaveValueBatchMutation();
 
-    const _onBlurLinkSelect: ComponentProps<typeof LinkSelect>['onBlur'] = async (itemsToLink, itemsToDelete) => {
+    const _onItemsToUpdate: ComponentProps<typeof LinkSelect>['onItemsToUpdate'] = async (
+        itemsToLink: Set<string>,
+        itemsToDelete: Set<string>
+    ) => {
+        console.log('_onItemsToUpdate', itemsToLink, itemsToDelete);
+
         // If there is no value to link or to remove, return early
         if (itemsToLink.size === 0 && itemsToDelete.size === 0) {
             setIsExplorerAddButtonClicked(false);
@@ -191,9 +197,11 @@ export const useLinkRecordsInEdition = ({
         // Convert itemsToLink Set to Array once to avoid repeated conversions
         const itemsToLinkArray = Array.from(itemsToLink);
 
+        console.log('itemsToLink1', itemsToLink);
         // Find values to remove and prepare payload for backend
         const valuesToRemove = backendValues.filter(bv => itemsToDelete.has(bv.linkValue.id));
         const idValuesToRemove = valuesToRemove.map(bv => bv.id_value);
+        console.log('itemsToLink2', itemsToLink);
 
         // Prepare batch operation payload
         const values = [
@@ -210,26 +218,32 @@ export const useLinkRecordsInEdition = ({
                 value: null
             }))
         ];
+        console.log('itemsToLink3', itemsToLink);
 
         // Send the values to the backend
+        console.log('values', values, attribute, itemsToLink);
         const res = await saveValues({id: recordId, library: {id: libraryId}}, values, undefined, true);
 
         const resValues = res.values as ValueDetailsLinkValueFragment[];
-
-        // Update linked IDs: add new links and remove deleted ones
-        const updatedLinkedIds = linkedIds.filter(id => !itemsToDelete.has(id)).concat(itemsToLinkArray);
-        setLinkIds(updatedLinkedIds);
-
+        console.log('resValues', resValues, itemsToLink);
         // Extract newly added values from response
         const newlyAddedValues = resValues.filter(v =>
             itemsToLink.has(v.linkValue!.id)
         ) as unknown as RecordFormElementsValueLinkValue[];
 
         // Update backend values: remove deleted ones and add new ones
-        setBackendValues([...backendValues.filter(bv => !itemsToDelete.has(bv.linkValue.id)), ...newlyAddedValues]);
+        if (attribute.multiple_values) {
+            setBackendValues([...backendValues.filter(bv => !itemsToDelete.has(bv.linkValue.id)), ...newlyAddedValues]);
+        } else {
+            console.log('adddddddd', backendValues, newlyAddedValues, itemsToLink, itemsToLinkArray);
 
-        // Hide linkSelect
-        setIsExplorerAddButtonClicked(false);
+            setBackendValues([...newlyAddedValues]);
+        }
+
+        // Hide linkSelect only if attribute.multivalue = false
+        if (!attribute.multiple_values) {
+            setIsExplorerAddButtonClicked(false);
+        }
     };
 
     // search records that match the text typed in the search bar
@@ -253,9 +267,14 @@ export const useLinkRecordsInEdition = ({
             []
         );
 
+        console.log('_onLinkSelectSearch');
         await getRecordsRefetch({
             filters
         });
+    };
+
+    const _closeLinkSelect: ComponentProps<typeof LinkSelect>['onClose'] = () => {
+        setIsExplorerAddButtonClicked(false);
     };
 
     const _onCreateLinkSelect: ComponentProps<typeof LinkSelect>['onClickCreateButton'] = async () => {
@@ -293,7 +312,19 @@ export const useLinkRecordsInEdition = ({
             isHookUsed &&
             recordId &&
             (tagDisplayMode ? (
-                <LinkSelect tagDisplay options={selectOptions} defaultValues={linkedIds} />
+                <LinkSelect
+                    tagDisplay
+                    options={selectOptions}
+                    linkedIds={linkedIds}
+                    onClickCreateButton={_onCreateLinkSelect}
+                    // onBlur={setIsExplorerAddButtonClicked(false)}
+                    onItemsToUpdate={_onItemsToUpdate}
+                    onClose={_closeLinkSelect}
+                    onParentDeselect={_onDeselect}
+                    onSearch={_onLinkSelectSearch}
+                    canSelectMultipleValues={attribute.multiple_values}
+                    valueListConf={attribute.linkValuesList}
+                />
             ) : (
                 <>
                     <ExplorerWrapper>
@@ -328,7 +359,7 @@ export const useLinkRecordsInEdition = ({
                                 !attribute.multiple_values ||
                                 (attribute.required && attribute.multiple_values && backendValues.length === 1)
                             }
-                            defaultActionsForItem={[]}
+                            defaultActionsForItem={['remove']}
                             hidePrimaryActions
                             hideTableHeader
                             iconsOnlyItemActions
@@ -340,11 +371,14 @@ export const useLinkRecordsInEdition = ({
                         <LinkSelect
                             tagDisplay={false}
                             options={selectOptions}
-                            defaultValues={linkedIds}
+                            linkedIds={linkedIds}
+                            onClose={_closeLinkSelect}
                             onClickCreateButton={_onCreateLinkSelect}
-                            onBlur={_onBlurLinkSelect}
+                            onItemsToUpdate={_onItemsToUpdate}
                             onParentDeselect={_onDeselect}
                             onSearch={_onLinkSelectSearch}
+                            canSelectMultipleValues={attribute.multiple_values}
+                            valueListConf={attribute.linkValuesList}
                         />
                     )}
                 </>
