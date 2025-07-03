@@ -149,7 +149,7 @@ function InfosForm({
         format: yup.string().nullable(),
         multiple_values: yup.boolean(),
         unique: yup.boolean().nullable(),
-        character_limit: yup.number(),
+        character_limit: yup.number().nullable(),
         versions_conf: yup
             .object()
             .shape({
