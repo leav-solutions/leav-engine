@@ -34,7 +34,8 @@ describe('useDisplayTreeNode', () => {
             useDisplayTreeNode({
                 attribute: mockFormAttribute,
                 backendValues: [],
-                removeTreeNode: mockRemoveTreeNode
+                removeTreeNode: mockRemoveTreeNode,
+                isReadOnly: false
             })
         );
 
@@ -50,7 +51,8 @@ describe('useDisplayTreeNode', () => {
             useDisplayTreeNode({
                 attribute: mockFormAttribute,
                 backendValues: mockBackendValues,
-                removeTreeNode: mockRemoveTreeNode
+                removeTreeNode: mockRemoveTreeNode,
+                isReadOnly: false
             })
         );
 
