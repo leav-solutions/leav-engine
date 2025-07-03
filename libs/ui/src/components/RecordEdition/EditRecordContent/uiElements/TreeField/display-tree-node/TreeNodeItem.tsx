@@ -45,14 +45,16 @@ interface IUseTreeNodeItemProps {
     ancestors?: RecordFormElementsValueTreeValue['treeValue']['ancestors'];
     canDelete?: boolean;
     onClickToDelete?: (node: RecordFormElementsValueTreeValue) => void;
+    isReadOnly?: boolean;
 }
 
-const TreeNodeItem = ({color, label, ancestors, canDelete, onClickToDelete}: IUseTreeNodeItemProps) => {
+const TreeNodeItem = ({color, label, ancestors, canDelete, onClickToDelete, isReadOnly}: IUseTreeNodeItemProps) => {
     const {t} = useSharedTranslation();
 
     return (
         <KitItemListStyled
             tabIndex={NOT_FOCUSABLE} // We don't want ItemList to be focusable
+            disabled={isReadOnly}
             idCardSubstitute={
                 <KitSpace direction="horizontal">
                     <KitAvatar color={color} label={label} shape="square" />

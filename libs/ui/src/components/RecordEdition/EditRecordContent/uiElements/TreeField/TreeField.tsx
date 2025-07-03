@@ -112,7 +112,8 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
     const {TreeNodeList} = useDisplayTreeNode({
         attribute,
         backendValues,
-        removeTreeNode
+        removeTreeNode,
+        isReadOnly
     });
 
     return (
@@ -138,6 +139,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
                 >
                     {TreeNodeList}
                     <KitFieldFooterButton
+                        disabled={isReadOnly}
                         icon={<FaList />}
                         onClick={openModal}
                         size="m"
