@@ -20,7 +20,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
-import {Errors, ErrorTypes} from '../../_types/errors';
+import {ErrorFieldDetail, Errors, ErrorTypes} from '../../_types/errors';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IFindValueTree, IStandardValue, IValue, IValuesOptions} from '../../_types/value';
@@ -344,33 +344,42 @@ const valueDomain = function ({
     }
 
     const _maybeCreateJoinRecord = async (
+        validationErrors: ErrorFieldDetail<IValue>,
         attributeProps: IAttribute,
         value: IValue,
         ctx: IQueryInfos
-    ): Promise<string | void> =>
-        ifLibraryJoinLinkAttribute(
-            attributeProps,
-            async (joinLibId: string, joinAttributeProps: IAttribute) => {
-                const {record: joinRecord} = await createRecordHelper({
-                    library: joinLibId,
-                    ctx
-                });
+    ): Promise<string | void> => {
+        const errorType: Errors = validationErrors[attributeProps.id]?.msg;
+        if (errorType === Errors.UNKNOWN_LINKED_RECORD || errorType === Errors.ELEMENT_NOT_IN_TREE) {
+            return ifLibraryJoinLinkAttribute(
+                attributeProps,
+                async (joinLibId: string, joinAttributeProps: IAttribute) => {
+                    const {record: joinRecord} = await createRecordHelper({
+                        library: joinLibId,
+                        ctx
+                    });
 
-                logger.debug(`Created join record: ${JSON.stringify(joinRecord, null, 2)}`);
-                await saveValue({
-                    library: joinLibId,
-                    recordId: joinRecord.id,
-                    attribute: joinAttributeProps.id,
-                    value: {
-                        payload: value.payload // simple link from join record to "thematic"
-                    },
-                    ctx
-                });
+                    logger.debug(
+                        `Created join record ${joinRecord.id} on library ${joinLibId} for attribute ${attributeProps.id}`
+                    );
+                    await saveValue({
+                        library: joinLibId,
+                        recordId: joinRecord.id,
+                        attribute: joinAttributeProps.id,
+                        value: {
+                            // simple link from join record to "thematic"
+                            // or tree link from join record to "category" node
+                            payload: value.payload
+                        },
+                        ctx
+                    });
 
-                return joinRecord.id;
-            },
-            ctx
-        );
+                    return joinRecord.id;
+                },
+                ctx
+            );
+        }
+    };
 
     const _maybeDeleteJoinRecord = async (
         attributeProps: IAttribute,
@@ -385,7 +394,9 @@ const valueDomain = function ({
                         // should we unlink record attributes, or done in deleteRecordHelper ?
 
                         const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
-                        logger.debug(`Deleted join record: ${JSON.stringify(deleteJoinRecord, null, 2)}`);
+                        logger.debug(
+                            `Deleted join record ${deleteJoinRecord.id} on library ${joinLibId} for attribute ${attributeProps.id}`
+                        );
                     })
                 );
             },
@@ -705,9 +716,6 @@ const valueDomain = function ({
             );
         }
 
-        // not sure of that place, may be better after prepareValue ?
-        value.payload = (await _maybeCreateJoinRecord(attributeProps, value, ctx)) || value.payload;
-
         // Validate value
         const validationErrors = await validateValue({
             ...valueChecksParams,
@@ -722,7 +730,13 @@ const valueDomain = function ({
         });
 
         if (Object.keys(validationErrors).length) {
-            throw new ValidationError<IValue>(validationErrors);
+            // If we cannot find linked record or tree element, try to create join record if attribute is a link to join behavior library
+            const joinRecordPayload = await _maybeCreateJoinRecord(validationErrors, attributeProps, value, ctx);
+            if (joinRecordPayload) {
+                value.payload = joinRecordPayload;
+            } else {
+                throw new ValidationError<IValue>(validationErrors);
+            }
         }
 
         // Prepare value
@@ -924,9 +938,6 @@ const valueDomain = function ({
                             }
                         }
 
-                        // not sure of that place, may be better after prepareValue ?
-                        value.payload = (await _maybeCreateJoinRecord(attributeProps, value, ctx)) || value.payload;
-
                         // Validate value
                         const validationErrors = await validateValue({
                             ...{...valueChecksParams, attributeProps},
@@ -940,7 +951,18 @@ const valueDomain = function ({
                         });
 
                         if (Object.keys(validationErrors).length) {
-                            throw new ValidationError<IValue>(validationErrors);
+                            // If we cannot find linked record or tree element, try to create join record if attribute is a link to join behavior library
+                            const joinRecordPayload = await _maybeCreateJoinRecord(
+                                validationErrors,
+                                attributeProps,
+                                value,
+                                ctx
+                            );
+                            if (joinRecordPayload) {
+                                value.payload = joinRecordPayload;
+                            } else {
+                                throw new ValidationError<IValue>(validationErrors);
+                            }
                         }
 
                         // Prepare value
