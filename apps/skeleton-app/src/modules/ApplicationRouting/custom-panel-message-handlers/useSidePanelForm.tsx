@@ -1,12 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, useState} from 'react';
+import {ComponentProps, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {KitSidePanel} from 'aristid-ds';
 import {SIDE_PANEL_CONTENT_ID} from '../../../constants';
 import {EditRecordPage} from '@leav/ui';
 import {IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 
 const closedSidePanel = {key: 'closed'} as const;
 
@@ -19,10 +20,17 @@ type EditRecordPageInSidePanelProps =
 export const useSidePanelForm = () => {
     const [editRecordPageInSidePanelProps, setEditRecordPageInSidePanelProps] =
         useState<EditRecordPageInSidePanelProps>(closedSidePanel);
+    const refPanel = useRef<KitSidePanelRef | null>(null);
+
+    useEffect(() => {
+        if (refPanel.current && editRecordPageInSidePanelProps.key !== closedSidePanel.key) {
+            refPanel.current.open();
+        }
+    }, [editRecordPageInSidePanelProps]);
 
     const closeSidePanelForm = (onClose?: () => void) => {
         onClose?.();
-        setEditRecordPageInSidePanelProps(closedSidePanel);
+        refPanel.current?.close();
     };
 
     const openSidePanelForm: IUseIFrameMessengerOptions['handlers']['onSidePanelForm'] = data => {
@@ -48,7 +56,7 @@ export const useSidePanelForm = () => {
                 ? null
                 : createPortal(
                       <KitSidePanel
-                          initialOpen
+                          ref={refPanel}
                           floating
                           closable
                           size="m"

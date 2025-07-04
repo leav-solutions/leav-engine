@@ -79,6 +79,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({addPanel}) 
                             viewId={currentPanel.content.viewId}
                             explorerProps={currentPanel.content.explorerProps}
                             actions={currentPanel.content.actions}
+                            addPanel={addPanel}
                         />
                     );
                 }
@@ -88,6 +89,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({addPanel}) 
                         viewId={currentPanel.content.viewId}
                         explorerProps={currentPanel.content.explorerProps}
                         actions={currentPanel.content.actions}
+                        addPanel={addPanel}
                     />
                 );
             }
@@ -98,6 +100,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({addPanel}) 
                     viewId={currentPanel.content.viewId}
                     explorerProps={currentPanel.content.explorerProps}
                     actions={currentPanel.content.actions}
+                    addPanel={addPanel}
                 />
             );
         }

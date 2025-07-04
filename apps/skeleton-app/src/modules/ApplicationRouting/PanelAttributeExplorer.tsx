@@ -9,6 +9,14 @@ import {useExplorerProps} from './explorer-panel/useExplorerProps';
 import {useItemActions} from './explorer-panel/useItemActions';
 import {recordSearchParamsName} from './routes';
 import {ItemActions, LibraryExplorerProps} from './types';
+import {useLocation} from 'react-router-dom';
+import {usePopupPanelForm} from './explorer-panel/popup-panel/usePopupPanelForm';
+import {usePopupPanelExplorer} from './explorer-panel/popup-panel/usePopupPanelExplorer';
+import {usePopupPanelCustom} from './explorer-panel/popup-panel/usePopupPanelCustom';
+import {useSliderPanelExplorer} from './explorer-panel/slider-panel/useSliderPanelExplorer';
+import {useSliderPanelCustom} from './explorer-panel/slider-panel/useSliderPanelCustom';
+import {useSliderPanelForm} from './explorer-panel/slider-panel/useSliderPanelForm';
+import {AddPanel} from './types';
 
 interface IPanelExplorerProps {
     libraryId: string;
@@ -16,6 +24,8 @@ interface IPanelExplorerProps {
     viewId: string | null;
     explorerProps: LibraryExplorerProps;
     actions: ItemActions;
+    addPanel: AddPanel;
+    recordId?: string;
 }
 
 export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
@@ -23,12 +33,31 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
     attributeSource,
     viewId,
     explorerProps,
-    actions
+    actions,
+    addPanel,
+    recordId
 }) => {
     const {search} = useLocation();
     const searchParams = new URLSearchParams(search);
     const {commonExplorerProps} = useExplorerProps({explorerProps});
-    const {itemActions} = useItemActions({actions});
+
+    const {openPopupPanelForm, PopupPanelForm} = usePopupPanelForm();
+    const {openPopupPanelExplorer, PopupPanelExplorer} = usePopupPanelExplorer();
+    const {openPopupPanelCustom, PopupPanelCustom} = usePopupPanelCustom();
+    const {openSliderPanelForm, SliderPanelForm} = useSliderPanelForm();
+    const {openSliderPanelExplorer, SliderPanelExplorer} = useSliderPanelExplorer();
+    const {openSliderPanelCustom, SliderPanelCustom} = useSliderPanelCustom();
+
+    const {itemActions} = useItemActions({
+        actions,
+        addPanel,
+        openPopupPanelForm,
+        openPopupPanelExplorer,
+        openPopupPanelCustom,
+        openSliderPanelForm,
+        openSliderPanelExplorer,
+        openSliderPanelCustom
+    });
 
     return (
         <div className={explorerContainer}>
@@ -37,7 +66,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                     type: 'link',
                     linkAttributeId: attributeSource,
                     parentLibraryId: libraryId,
-                    parentRecordId: searchParams.get(recordSearchParamsName)
+                    parentRecordId: recordId ?? searchParams.get(recordSearchParamsName)
                 }}
                 defaultViewSettings={{
                     viewId
@@ -45,6 +74,12 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                 itemActions={itemActions}
                 {...commonExplorerProps}
             />
+            {PopupPanelForm}
+            {PopupPanelExplorer}
+            {PopupPanelCustom}
+            {SliderPanelForm}
+            {SliderPanelExplorer}
+            {SliderPanelCustom}
         </div>
     );
 };
