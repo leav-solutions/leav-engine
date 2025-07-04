@@ -2,14 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes, simpleStringHash} from '@leav/utils';
-import {FunctionComponent, useEffect, useMemo} from 'react';
+import {FunctionComponent, useEffect, useMemo, useState} from 'react';
 import {ErrorDisplay} from '_ui/components';
 import useGetRecordForm from '_ui/hooks/useGetRecordForm';
 import {useGetRecordUpdatesSubscription} from '_ui/hooks/useGetRecordUpdatesSubscription';
 import useRecordsConsultationHistory from '_ui/hooks/useRecordsConsultationHistory';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
-import {FormElementTypes, RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
+import {
+    FormElementTypes,
+    RecordFormAttributeStandardAttributeFragment,
+    useExplorerSelectionIdsLazyQuery,
+    useGetFormElementValuesLazyQuery
+} from '_ui/_gqlTypes';
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import extractFormElements from './helpers/extractFormElements';
@@ -61,6 +66,8 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
 
+    const [elementIdsVisible, setElementIdsVisible] = useState<string[]>([]);
+
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
 
     const {data: recordUpdateData} = useGetRecordUpdatesSubscription(
@@ -84,6 +91,56 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         formId: formIdToLoad,
         version: state.valuesVersion
     });
+
+    useEffect(() => {
+        if (recordForm) {
+            // Find element ids from record.elements that are in the first page of a tab or are not a tab
+
+            const containerToExclude = [];
+
+            recordForm.elements.forEach(el => {
+                if (el.uiElementType === 'tabs') {
+                    const tabSettings = el.settings.find(s => s.key === 'tabs');
+
+                    containerToExclude.push(...tabSettings.value.slice(1).map(e => e.id));
+                }
+            });
+
+            const elementIds = recordForm.elements
+                .filter(
+                    e =>
+                        // filters all elements where containers id contains /${e.id}
+                        !containerToExclude.some(c => e.containerId?.includes(c))
+                )
+                .map(e => e.id);
+
+            setElementIdsVisible(elementIds);
+        }
+    }, [recordForm]);
+
+    const [getFormElementValues] = useGetFormElementValuesLazyQuery({
+        fetchPolicy: 'no-cache'
+    });
+
+    useEffect(() => {
+        console.log('elementIdsVisible', elementIdsVisible);
+
+        (async () => {
+            if (elementIdsVisible.length) {
+                console.log('params', library, record?.id, formIdToLoad, elementIdsVisible);
+                const result = await getFormElementValues({
+                    variables: {
+                        libraryId: library,
+                        recordId: record?.id,
+                        formId: formIdToLoad,
+                        elementIds: elementIdsVisible
+                        // version: state.valuesVersion
+                    }
+                });
+                console.log('result', result);
+            }
+        })();
+    }, [elementIdsVisible]);
 
     useEffect(() => {
         if (!loading && recordForm) {
@@ -166,8 +223,6 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
         settings: {},
         attribute: null,
-        valueError: null,
-        values: null,
         uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
     };
 

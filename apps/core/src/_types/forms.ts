@@ -23,7 +23,7 @@ export interface IRecordForm {
     system: boolean;
     recordId: string;
     dependencyAttributes?: string[];
-    elements: IFormElementWithValues[];
+    elements: IFormElement[];
     sidePanel: IFormSidePanel;
 }
 

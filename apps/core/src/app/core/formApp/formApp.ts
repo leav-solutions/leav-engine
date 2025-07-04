@@ -17,6 +17,7 @@ import {
     IFormDependentElementsForGraphQL,
     IFormElementForGraphQL,
     IFormForGraphql,
+    IGetElementFormValuesArgs,
     IGetFormArgs,
     IGetRecordFormArgs,
     ISaveFormArgs
@@ -124,7 +125,7 @@ export default function ({
                         library: Library!,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        elements: [FormElementWithValues!]!,
+                        elements: [FormElement!]!,
                         dependencyAttributes: [Attribute!],
                         sidePanel: FormSidePanel,
                     }
@@ -187,10 +188,6 @@ export default function ({
                         attribute: Attribute,
                         settings: [FormElementSettings!]!
                     }
-                    
-                    type ValueWithOnlyPayload {
-                        payload: Any
-                    }
 
                     type FormElementWithValues {
                         id: ID!,
@@ -200,7 +197,7 @@ export default function ({
                         type: FormElementTypes!,
                         attribute: Attribute,
                         settings: [FormElementSettings!]!
-                        values: [ValueWithOnlyPayload!]
+                        values: [GenericValue!]
                         valueError: String
                     }
 
@@ -252,6 +249,14 @@ export default function ({
                             formId: String!,
                             version: [ValueVersionInput!]
                         ): RecordForm
+                        
+                        getFormElementValues(
+                            recordId: String,
+                            libraryId: String!,
+                            formId: String!,
+                            version: [ValueVersionInput!]
+                            elementIds: [ID!]
+                        ): [FormElementWithValues!]
                     }
 
                     extend type Mutation {
@@ -288,6 +293,22 @@ export default function ({
                                 recordId,
                                 libraryId,
                                 formId,
+                                version: formattedVersion,
+                                ctx
+                            });
+                        },
+                        async getFormElementValues(
+                            _,
+                            {recordId, libraryId, formId, version, elementIds}: IGetElementFormValuesArgs,
+                            ctx: IQueryInfos
+                        ): Promise<any> {
+                            const formattedVersion = convertVersionFromGqlFormat(version);
+
+                            return formDomain.getFormElementValues({
+                                recordId,
+                                libraryId,
+                                formId,
+                                elementIds,
                                 version: formattedVersion,
                                 ctx
                             });

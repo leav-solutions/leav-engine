@@ -9,15 +9,11 @@ export const getRecordFormQuery = gql`
     ${valueDetailsFragment}
     ${recordFormAttributeFragment}
 
-    fragment RecordFormElement on FormElementWithValues {
+    fragment RecordFormElement on FormElement {
         id
         containerId
         uiElementType
         type
-        valueError
-        values {
-            payload
-        }
         attribute {
             ...RecordFormAttribute
         }

@@ -1,0 +1,19 @@
+fragment FormElementWithValues on FormElementWithValues {
+    id
+    order
+    values {
+        id_value
+    }
+}
+
+query GET_FORM_ELEMENT_VALUES(
+    $recordId: String,
+    $libraryId: String!,
+    $formId: String!,
+    $version: [ValueVersionInput!],
+    $elementIds: [ID!]
+) {
+    getFormElementValues(recordId: $recordId, libraryId: $libraryId, formId: $formId, version: $version, elementIds: $elementIds) {
+        ...FormElementWithValues
+    }
+}

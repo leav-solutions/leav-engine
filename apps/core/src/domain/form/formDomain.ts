@@ -60,6 +60,14 @@ export interface IFormDomain {
         version?: IValueVersion;
         ctx: IQueryInfos;
     }): Promise<IRecordForm>;
+    getFormElementValues(params: {
+        recordId: string;
+        libraryId: string;
+        formId: string;
+        version?: IValueVersion;
+        ctx: IQueryInfos;
+        elementIds: string[];
+    }): Promise<any>;
     getFormProperties({library, id, ctx}: {library: string; id: string; ctx: IQueryInfos}): Promise<IForm>;
     saveForm({form, ctx}: {form: IForm; ctx: IQueryInfos}): Promise<IForm>;
     deleteForm({library, id, ctx}: {library: string; id: string; ctx: IQueryInfos}): Promise<IForm>;
@@ -184,6 +192,62 @@ export default function (deps: IFormDomainDeps): IFormDomain {
         };
     };
 
+    /**
+     * Recursively filters out all empty containers:
+     * if a container has children somewhere, keep it otherwise discard it.
+     * If a form has no visible field at all, nothing will be returned, including all other layout elements
+     */
+    const _filterEmptyContainers = (
+        elements: IFormElementWithValuesAndChildren[]
+    ): {children: IFormElementWithValues[]; hasFields: boolean} => {
+        let elementsToKeep: IFormElementWithValuesAndChildren[] = [];
+        let hasFields = false; // Used to inform caller about presence of a field
+
+        // All elements here are brother in the form.
+        // We check if each element is a field or a field somewhere in its descendants
+        for (const elem of elements) {
+            let _childrenToKeep = [];
+
+            // We have children, let's check descendants.
+            if (
+                elem.uiElementType === FormUIElementTypes.FIELDS_CONTAINER ||
+                elem.uiElementType === FormUIElementTypes.TAB_FIELDS_CONTAINER ||
+                elem.uiElementType === FormUIElementTypes.TABS
+            ) {
+                const {hasFields: childHasFields, children} = _filterEmptyContainers(elem.children);
+                if (childHasFields) {
+                    if (elem.uiElementType === FormUIElementTypes.TABS) {
+                        // If element is a tab => update settings
+                        elem.settings.tabs = (elem.settings ?? {}).tabs.filter(tab =>
+                            children.some(c => c.id === `${elem.id}/${tab.id}`)
+                        );
+                    }
+
+                    // If element has children we must keep element itself and its children
+                    _childrenToKeep = [
+                        omit(elem, ['children']),
+                        ...children.filter(c => c.uiElementType !== FormUIElementTypes.TAB_FIELDS_CONTAINER)
+                    ];
+                }
+                hasFields = hasFields || childHasFields;
+            } else if (elem.uiElementType === FormUIElementTypes.FRAME) {
+                // we should keep a frame
+                hasFields = true;
+                _childrenToKeep = [omit(elem, ['children'])];
+            } else {
+                _childrenToKeep = [omit(elem, ['children'])];
+
+                if (elem.type === FormElementTypes.field) {
+                    hasFields = true;
+                }
+            }
+
+            elementsToKeep = [...elementsToKeep, ..._childrenToKeep];
+        }
+
+        return {children: elementsToKeep, hasFields};
+    };
+
     return {
         async getFormsByLib({library, params, ctx}): Promise<IList<IForm>> {
             const filters = {...params?.filters, library};
@@ -295,64 +359,110 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 }
             }
 
-            /**
-             * Recursively filters out all empty containers:
-             * if a container has children somewhere, keep it otherwise discard it.
-             * If a form has no visible field at all, nothing will be returned, including all other layout elements
-             */
-            const _filterEmptyContainers = (
-                elements: IFormElementWithValuesAndChildren[]
-            ): {children: IFormElementWithValues[]; hasFields: boolean} => {
-                let elementsToKeep: IFormElementWithValuesAndChildren[] = [];
-                let hasFields = false; // Used to inform caller about presence of a field
-
-                // All elements here are brother in the form.
-                // We check if each element is a field or a field somewhere in its descendants
-                for (const elem of elements) {
-                    let _childrenToKeep = [];
-
-                    // We have children, let's check descendants.
-                    if (
-                        elem.uiElementType === FormUIElementTypes.FIELDS_CONTAINER ||
-                        elem.uiElementType === FormUIElementTypes.TAB_FIELDS_CONTAINER ||
-                        elem.uiElementType === FormUIElementTypes.TABS
-                    ) {
-                        const {hasFields: childHasFields, children} = _filterEmptyContainers(elem.children);
-                        if (childHasFields) {
-                            if (elem.uiElementType === FormUIElementTypes.TABS) {
-                                // If element is a tab => update settings
-                                elem.settings.tabs = (elem.settings ?? {}).tabs.filter(tab =>
-                                    children.some(c => c.id === `${elem.id}/${tab.id}`)
-                                );
-                            }
-
-                            // If element has children we must keep element itself and its children
-                            _childrenToKeep = [
-                                omit(elem, ['children']),
-                                ...children.filter(c => c.uiElementType !== FormUIElementTypes.TAB_FIELDS_CONTAINER)
-                            ];
-                        }
-                        hasFields = hasFields || childHasFields;
-                    } else if (elem.uiElementType === FormUIElementTypes.FRAME) {
-                        // we should keep a frame
-                        hasFields = true;
-                        _childrenToKeep = [omit(elem, ['children'])];
-                    } else {
-                        _childrenToKeep = [omit(elem, ['children'])];
-
-                        if (elem.type === FormElementTypes.field) {
-                            hasFields = true;
-                        }
-                    }
-
-                    elementsToKeep = [...elementsToKeep, ..._childrenToKeep];
-                }
-
-                return {children: elementsToKeep, hasFields};
-            };
-
             const formElements = _filterEmptyContainers(elementsTree).children;
 
+            return {
+                id: formId,
+                recordId,
+                system: formProps.system,
+                library: libraryId,
+                dependencyAttributes: formProps.dependencyAttributes,
+                elements: formElements,
+                sidePanel: formProps.sidePanel
+            };
+        },
+        async getFormElementValues({recordId, libraryId, formId, version, ctx, elementIds}) {
+            let formProps: IForm;
+            try {
+                formProps = await this.getFormProperties({library: libraryId, id: formId, ctx});
+            } catch (error) {
+                if (error instanceof ValidationError) {
+                    if (error.fields.id === Errors.UNKNOWN_FORM) {
+                        formProps = await _getMissingFormDefaultProps({library: libraryId, id: formId, ctx});
+                    }
+                } else {
+                    throw error;
+                }
+            }
+
+            const flatElementsList: IFormElementWithValuesAndChildren[] = [];
+            const allElems = [];
+
+            // Retrieve all relevant attributes in a hash map. It will be used later on to filter out empty containers
+            for await (const elementsWithDeps of formProps.elements) {
+                // Check if elements must be included based on dependencies
+                if (!(await mustIncludeElement(elementsWithDeps, recordId, libraryId, deps, ctx))) {
+                    break;
+                }
+
+                // Retrieve all visible form elements (based on permissions), with their values
+                for (const depElement of elementsWithDeps.elements) {
+                    let isElementVisible: boolean;
+                    let elementError: string;
+                    try {
+                        isElementVisible =
+                            depElement.uiElementType === FormElementTypes.layout ||
+                            !depElement.settings?.attribute ||
+                            (await _canAccessAttribute(depElement.settings.attribute, libraryId, recordId, ctx));
+                    } catch (error) {
+                        // If something went wrong, we assume the element is not visible
+                        isElementVisible = false;
+                        logger.error(error);
+                        logger.error('Form element was ', depElement);
+                    }
+                    if (isElementVisible) {
+                        const {error: valueError, values} = await getElementValues({
+                            element: depElement,
+                            recordId,
+                            libraryId,
+                            version,
+                            deps,
+                            ctx
+                        });
+
+                        const depElementWithValues: IFormElementWithValuesAndChildren = {
+                            ...depElement,
+                            values,
+                            valueError: elementError || valueError,
+                            children: []
+                        };
+
+                        // Add elements to the flat list as well, as we'll to run through all elements easily
+                        // to filters out empty containers
+                        flatElementsList.push(depElementWithValues);
+                        allElems[depElement.id] = depElementWithValues;
+
+                        // Tabs are not real container, it's only in element's settings.
+                        // We need to add it to hash map to be able to clear out empty tabs
+                        if (depElement.uiElementType === FormUIElementTypes.TABS && depElement.settings.tabs) {
+                            for (const [i, tab] of depElement.settings.tabs.entries()) {
+                                const tabContainer = {
+                                    id: `${depElement.id}/${tab.id}`,
+                                    type: FormElementTypes.layout,
+                                    uiElementType: FormUIElementTypes.TAB_FIELDS_CONTAINER,
+                                    children: [],
+                                    values: null,
+                                    order: i,
+                                    containerId: depElement.id
+                                };
+                                flatElementsList.push(tabContainer);
+                                allElems[tabContainer.id] = tabContainer;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Convert hash map to tree structure in order to filter out empty containers
+            const elementsTree = [];
+            for (const element of flatElementsList) {
+                if (element.containerId !== FORM_ROOT_CONTAINER_ID) {
+                    allElems[element.containerId]?.children.push(allElems[element.id]);
+                } else {
+                    elementsTree.push(allElems[element.id]);
+                }
+            }
+            const formElements = _filterEmptyContainers(elementsTree).children;
             return {
                 id: formId,
                 recordId,
