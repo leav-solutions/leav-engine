@@ -1,0 +1,23 @@
+query getLinkOrTreeAttributeValue(
+    $joinLibraryId: ID!,
+    $filters: [RecordFilterInput],
+    $linkOrTreeAttributeId: ID!,
+) {
+  records(library: $joinLibraryId, filters: $filters) {
+    list {
+      id
+      property(attribute: $linkOrTreeAttributeId) {
+        ... on LinkValue {
+          payload {
+            id
+          }
+        }
+        ... on TreeValue {
+          payload {
+            id
+          }
+        }
+      }
+    }
+  }
+}

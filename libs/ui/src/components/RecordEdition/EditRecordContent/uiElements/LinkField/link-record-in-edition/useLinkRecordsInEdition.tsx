@@ -9,13 +9,14 @@ import {ExplorerWrapper} from '../shared/ExplorerWrapper';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {DeleteMultipleValuesFunc} from '../../../_types';
 import {
+    AttributeType,
     JoinLibraryContextFragment,
     RecordFilterCondition,
     RecordFilterInput,
     RecordFilterOperator,
     RecordFormAttributeLinkAttributeFragment,
     useGetLibraryByIdQuery,
-    useGetLinkAttributeValueLazyQuery,
+    useGetLinkOrTreeAttributeValueLazyQuery,
     useGetRecordsFromLibraryQuery,
     ValueDetailsLinkValueFragment
 } from '_ui/_gqlTypes';
@@ -34,6 +35,8 @@ import LinkSelect from '_ui/components/LinkSelect';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {FullTextAttribute, IFilter, IQueryFilter} from '_ui/types';
+import {SelectTreeNodeModal} from '../../TreeField/manage-tree-node-selection/SelectTreeNodeModal';
+import _ from 'lodash';
 
 interface ILinkRecordsInCreationProps {
     libraryId: string;
@@ -133,13 +136,13 @@ export const useLinkRecordsInEdition = ({
 
     // For each record in backendValues, get the id of the record linked by the mandatory attribute
     // Will create a map of joined record ids to their corresponding link ids in joinedRecordIdsMap
-    const [getLinkAttributeValue, {data: joinLinkValue}] = useGetLinkAttributeValueLazyQuery({
+    const [getLinkOrTreeAttributeValue, {data: joinLinkOrTreeValue}] = useGetLinkOrTreeAttributeValueLazyQuery({
         fetchPolicy: 'no-cache'
     });
 
     useEffect(() => {
-        if (joinLinkValue) {
-            const _joinedRecordIdsMap = joinLinkValue?.records?.list.reduce(
+        if (joinLinkOrTreeValue) {
+            const _joinedRecordIdsMap = joinLinkOrTreeValue?.records?.list.reduce(
                 (acc, record) => {
                     const joinedRecordId = record.property[0]?.payload?.id;
                     if (joinedRecordId) {
@@ -153,7 +156,7 @@ export const useLinkRecordsInEdition = ({
             setJoinedRecordIdsMap(_joinedRecordIdsMap);
             setLinkIds(linkIds);
         }
-    }, [joinLinkValue]);
+    }, [joinLinkOrTreeValue]);
 
     // Function to refetch data with current parameters
     const getRecordsRefetch = (customVariables = {}) =>
@@ -164,9 +167,9 @@ export const useLinkRecordsInEdition = ({
         });
 
     useEffect(() => {
-        // will be set by specific useEffect on joinLinkValue after useGetLinkAttributeValueQuery
+        // will be set by specific useEffect on joinLinkOrTreeValue after getLinkOrTreeAttributeValueOfRecord
         if (backendValues.length) {
-            if (joinLibraryContext) {
+            if (joinLibraryContext?.mandatoryAttribute?.id) {
                 const filteredJoinRecords: RecordFilterInput[] = backendValues.reduce(
                     (acc: RecordFilterInput[], value: RecordFormElementsValueLinkValue, index: number) => {
                         // Add OR operator between filters (except before the first filter)
@@ -183,11 +186,11 @@ export const useLinkRecordsInEdition = ({
                     },
                     []
                 );
-                getLinkAttributeValue({
+                getLinkOrTreeAttributeValue({
                     variables: {
                         joinLibraryId: attribute.linked_library.id,
                         filters: filteredJoinRecords,
-                        linkAttributeId: joinLibraryContext?.mandatoryAttribute.id
+                        linkOrTreeAttributeId: joinLibraryContext.mandatoryAttribute.id
                     }
                 });
             } else {
@@ -256,7 +259,8 @@ export const useLinkRecordsInEdition = ({
 
     const {saveValues} = useSaveValueBatchMutation();
 
-    const _onBlurLinkSelect: ComponentProps<typeof LinkSelect>['onBlur'] = async (itemsToLink, itemsToDelete) => {
+    // eventually change Set to Array can simplify a bit that method !
+    const _onSelectionDone = async (itemsToLink: Set<string>, itemsToDelete: Set<string>) => {
         // In case of joinLibraryContext,
         // itemsToLink and itemsToDelete are a Set of joined record ids (e.g. thematic ids instead structure_item ids)
         // - for insertion, backend can receive joined record ids, it is ok
@@ -320,6 +324,28 @@ export const useLinkRecordsInEdition = ({
 
         // Hide linkSelect
         setIsExplorerAddButtonClicked(false);
+    };
+
+    const _onBlurLinkSelect: ComponentProps<typeof LinkSelect>['onBlur'] = async (itemsToLink, itemsToDelete) => {
+        _onSelectionDone(itemsToLink, itemsToDelete);
+    };
+
+    const _onSelectTreeNodeConfirm: ComponentProps<typeof SelectTreeNodeModal>['onConfirm'] = async selectedNodes => {
+        // Convert selectedNodes to a Set of ids
+        const itemsToLink = new Set(
+            _.difference(
+                selectedNodes.map(node => node.id),
+                linkedIds
+            )
+        );
+        const itemsToDelete = new Set(
+            _.difference(
+                linkedIds,
+                selectedNodes.map(node => node.id)
+            )
+        );
+
+        _onSelectionDone(itemsToLink, itemsToDelete);
     };
 
     // search records that match the text typed in the search bar
@@ -432,15 +458,39 @@ export const useLinkRecordsInEdition = ({
                         icon={<FontAwesomeIcon icon={faPlus} />}
                     ></KitButton>
                     {isExplorerAddButtonClicked && (
-                        <LinkSelect
-                            tagDisplay={false}
-                            options={selectOptions}
-                            defaultValues={linkedIds}
-                            onClickCreateButton={_onCreateLinkSelect}
-                            onBlur={_onBlurLinkSelect}
-                            onParentDeselect={_onDeselect}
-                            onSearch={_onLinkSelectSearch}
-                        />
+                        <>
+                            {joinLibraryContext?.mandatoryAttribute.type !== AttributeType.tree && (
+                                <LinkSelect
+                                    tagDisplay={false}
+                                    options={selectOptions}
+                                    defaultValues={linkedIds}
+                                    onClickCreateButton={_onCreateLinkSelect}
+                                    onBlur={_onBlurLinkSelect}
+                                    onParentDeselect={_onDeselect}
+                                    onSearch={_onLinkSelectSearch}
+                                />
+                            )}
+                            {joinLibraryContext?.mandatoryAttribute.type === AttributeType.tree && (
+                                <SelectTreeNodeModal
+                                    title="title"
+                                    open={true}
+                                    attribute={{
+                                        ...joinLibraryContext.mandatoryAttribute,
+                                        multiple_values: attribute.multiple_values
+                                    }}
+                                    backendValues={linkedIds.map(linkId => ({
+                                        treeValue: {
+                                            id: linkId
+                                        }
+                                    }))}
+                                    allowInitialNodeDeselection
+                                    onClose={() => {
+                                        setIsExplorerAddButtonClicked(false);
+                                    }}
+                                    onConfirm={_onSelectTreeNodeConfirm}
+                                />
+                            )}
+                        </>
                     )}
                 </>
             ))
