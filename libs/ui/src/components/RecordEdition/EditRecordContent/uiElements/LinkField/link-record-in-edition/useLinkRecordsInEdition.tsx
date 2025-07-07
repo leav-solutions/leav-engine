@@ -16,7 +16,7 @@ import {
     RecordFilterOperator,
     RecordFormAttributeLinkAttributeFragment,
     useGetLibraryByIdQuery,
-    useGetLinkOrTreeAttributeValueLazyQuery,
+    useGetJoinLibraryMandatoryAttributeValuesLazyQuery,
     useGetRecordsFromLibraryQuery,
     ValueDetailsLinkValueFragment
 } from '_ui/_gqlTypes';
@@ -136,13 +136,14 @@ export const useLinkRecordsInEdition = ({
 
     // For each record in backendValues, get the id of the record linked by the mandatory attribute
     // Will create a map of joined record ids to their corresponding link ids in joinedRecordIdsMap
-    const [getLinkOrTreeAttributeValue, {data: joinLinkOrTreeValue}] = useGetLinkOrTreeAttributeValueLazyQuery({
-        fetchPolicy: 'no-cache'
-    });
+    const [getJoinLibraryMandatoryAttributeValues, {data: mandatoryAttributeValues}] =
+        useGetJoinLibraryMandatoryAttributeValuesLazyQuery({
+            fetchPolicy: 'no-cache'
+        });
 
     useEffect(() => {
-        if (joinLinkOrTreeValue) {
-            const _joinedRecordIdsMap = joinLinkOrTreeValue?.records?.list.reduce(
+        if (mandatoryAttributeValues) {
+            const _joinedRecordIdsMap = mandatoryAttributeValues?.records?.list.reduce(
                 (acc, record) => {
                     const joinedRecordId = record.property[0]?.payload?.id;
                     if (joinedRecordId) {
@@ -156,7 +157,7 @@ export const useLinkRecordsInEdition = ({
             setJoinedRecordIdsMap(_joinedRecordIdsMap);
             setLinkIds(linkIds);
         }
-    }, [joinLinkOrTreeValue]);
+    }, [mandatoryAttributeValues]);
 
     // Function to refetch data with current parameters
     const getRecordsRefetch = (customVariables = {}) =>
@@ -186,11 +187,11 @@ export const useLinkRecordsInEdition = ({
                     },
                     []
                 );
-                getLinkOrTreeAttributeValue({
+                getJoinLibraryMandatoryAttributeValues({
                     variables: {
                         joinLibraryId: attribute.linked_library.id,
                         filters: filteredJoinRecords,
-                        linkOrTreeAttributeId: joinLibraryContext.mandatoryAttribute.id
+                        mandatoryAttributeId: joinLibraryContext.mandatoryAttribute.id
                     }
                 });
             } else {

@@ -1,12 +1,12 @@
-query getLinkOrTreeAttributeValue(
+query getJoinLibraryMandatoryAttributeValues(
     $joinLibraryId: ID!,
     $filters: [RecordFilterInput],
-    $linkOrTreeAttributeId: ID!,
+    $mandatoryAttributeId: ID!,
 ) {
   records(library: $joinLibraryId, filters: $filters) {
     list {
       id
-      property(attribute: $linkOrTreeAttributeId) {
+      property(attribute: $mandatoryAttributeId) {
         ... on LinkValue {
           payload {
             id
