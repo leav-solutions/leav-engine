@@ -57,10 +57,11 @@ import {IRecordAttributePermissionDomain} from '../permission/recordAttributePer
 import validateValue from '../value/helpers/validateValue';
 import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 import getAccessPermissionFilters from './helpers/getAccessPermissionFilters';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
+import {IPermissionRepo, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
 import {DeleteRecordHelper} from './helpers/deleteRecord';
 import {CreateRecordHelper} from './helpers/createRecord';
+import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -209,6 +210,7 @@ export interface IRecordDomainDeps {
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.infra.library': ILibraryRepo;
     'core.infra.tree': ITreeRepo;
+    'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.infra.value': IValueRepo;
     'core.infra.form': IFormRepo;
     'core.infra.permission': IPermissionRepo;
@@ -235,6 +237,7 @@ export default function ({
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.infra.library': libraryRepo,
     'core.infra.tree': treeRepo,
+    'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
     'core.infra.value': valueRepo,
     'core.infra.form': formRepo,
     'core.infra.permission': permissionRepo,
@@ -1140,8 +1143,19 @@ export default function ({
                 );
             }
 
+            const groupsWithAncestorsId = [];
+            for (const groupId of ctx.groupsId) {
+                const ancestors = await elementAncestorsHelper.getCachedElementAncestors({
+                    treeId: USERS_GROUP_TREE_NAME,
+                    nodeId: groupId,
+                    ctx
+                });
+                const ancestorsId = ancestors.map(a => a.id).reverse(); // reverse to have list from leaf to root
+                groupsWithAncestorsId.push(...ancestorsId);
+            }
+
             const accessPermissionFilters = await getAccessPermissionFilters(
-                ctx.groupsId,
+                groupsWithAncestorsId,
                 library,
                 {
                     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
