@@ -121,6 +121,7 @@ export default function ({
                 await _sendOrder(config.tasksManager.routingKeys.execOrders, taskToExecute, ctx);
             }
         }, config.tasksManager.checkingInterval);
+
     const _executeTask = async (task: ITask, ctx: IQueryInfos): Promise<ITask> => {
         await _attachWorker(task.id, process.pid, workerCtx);
         await _updateTask(
@@ -299,7 +300,7 @@ export default function ({
     };
 
     const _detachWorker = async (taskId: string, ctx: IQueryInfos): Promise<void> => {
-        await _updateTask(taskId, {}, ctx);
+        await _updateTask(taskId, {workerId: null}, ctx);
     };
 
     const _getTasks = async ({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>> => {
