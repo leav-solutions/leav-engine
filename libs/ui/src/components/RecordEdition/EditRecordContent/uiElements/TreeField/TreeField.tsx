@@ -65,7 +65,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
     const form = AntForm.useFormInstance();
     const fieldErrors = form.getFieldError(attribute.id);
 
-    const isReadOnly = attribute.readonly || readonly;
+    const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
     const isFieldInError = fieldErrors.length > 0;
 
     useEffect(() => {
@@ -112,7 +112,8 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
     const {TreeNodeList} = useDisplayTreeNode({
         attribute,
         backendValues,
-        removeTreeNode
+        removeTreeNode,
+        isReadOnly
     });
 
     return (
@@ -120,6 +121,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
             <AntForm.Item name={attribute.id} noStyle>
                 <KitInputWrapper
                     id={TREE_FIELD_ID_PREFIX + attribute.id}
+                    data-testid="tree-field"
                     label={label}
                     required={attribute.required}
                     bordered
@@ -137,6 +139,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
                 >
                     {TreeNodeList}
                     <KitFieldFooterButton
+                        disabled={isReadOnly}
                         icon={<FaList />}
                         onClick={openModal}
                         size="m"
