@@ -181,6 +181,32 @@ describe('StandardField', () => {
             expect(textInput).toHaveValue(newFormatedValue);
         });
 
+        describe('permissions', () => {
+            test('Should be disabled if edit permission is false', async () => {
+                render(
+                    <AntForm>
+                        <StandardField
+                            element={{
+                                ...mockFormElementInput,
+                                attribute: {
+                                    ...mockFormElementInput.attribute,
+                                    permissions: {
+                                        ...mockFormElementInput.attribute.permissions,
+                                        edit_value: false
+                                    }
+                                }
+                            }}
+                            {...baseProps}
+                        />
+                    </AntForm>
+                );
+
+                const textInput = screen.getByRole('textbox');
+
+                expect(textInput).toBeDisabled();
+            });
+        });
+
         describe('Character limit', () => {
             test('Should limit the number of characters', async () => {
                 render(

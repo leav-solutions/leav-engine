@@ -20,6 +20,7 @@ import {MockedLangContextProvider} from '_ui/testing';
 import {initialState} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import * as _ from 'lodash';
 
 const mockInitialState = {...initialState};
 const mockedUseFormInstance = AntForm.useFormInstance as jest.MockedFunction<typeof AntForm.useFormInstance>;
@@ -143,6 +144,22 @@ describe('TreeField', () => {
         expect(screen.getByTestId('select-tree-node-modal')).toBeInTheDocument();
         expect(screen.getByTestId('remove-all-tree-nodes')).toBeInTheDocument();
         expect(screen.getByText('Select Tree Node')).toBeInTheDocument();
+    });
+
+    it('should be disabled if edit permission is false', () => {
+        const props = _.cloneDeep(treeFieldDefaultProps);
+        props.element.attribute.permissions.edit_value = false;
+
+        render(
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...props} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
+        );
+
+        const textInput = screen.getByTestId('tree-field');
+        expect(textInput).toHaveClass('disabled');
     });
 
     it('should call useManageTreeNodeSelection with default props', () => {

@@ -335,7 +335,11 @@ export const useLinkRecordsInEdition = ({
                         />
                     </ExplorerWrapper>
 
-                    <KitButton onClick={_openLinkSelect} icon={<FontAwesomeIcon icon={faPlus} />}></KitButton>
+                    <KitButton
+                        disabled={isReadOnly}
+                        onClick={_openLinkSelect}
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                    ></KitButton>
                     {isExplorerAddButtonClicked && (
                         <LinkSelect
                             tagDisplay={false}

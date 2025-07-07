@@ -21,6 +21,7 @@ import {initialState} from '_ui/components/RecordEdition/editRecordReducer/editR
 import {AttributeType, RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
 import {IPendingValues} from '../../_types';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import * as _ from 'lodash';
 
 const mockInitialState = {...initialState};
 const mockedUseFormInstance = AntForm.useFormInstance as jest.MockedFunction<typeof AntForm.useFormInstance>;
@@ -133,6 +134,26 @@ describe('LinkField', () => {
             UnlinkAllRecordsInEdition: <div data-testid="unlink-edition">Unlink all records in Edition</div>,
             LinkRecordsInEditionExplorer: <div data-testid="link-edition">Unlink records in Creation with Explorer</div>
         } as any);
+    });
+
+    describe('permissions', () => {
+        it('should be disabled if edit permission is false', () => {
+            const props = _.cloneDeep(linkFieldDefaultProps);
+            props.element.attribute.permissions.edit_value = false;
+
+            render(
+                <KitApp>
+                    <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                        <MockedLangContextProvider>
+                            <LinkField {...props} formIdToLoad="creation" readonly={false} />
+                        </MockedLangContextProvider>
+                    </RecordEditionContext.Provider>
+                </KitApp>
+            );
+
+            const textInput = screen.getByTestId('link-field');
+            expect(textInput).toHaveClass('disabled');
+        });
     });
 
     describe('with formIdToLoad equal to creation', () => {
