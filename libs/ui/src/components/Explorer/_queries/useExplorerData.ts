@@ -73,7 +73,7 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
           )
         : {};
 
-    const records = data.records.list[0].property
+    const records = data.records.list.length && data.records.list[0].property
         .map((linkValue: LinkPropertyLinkValueFragment, index: number) => {
             if (!linkValue.payload) {
                 return null;
@@ -101,7 +101,7 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
                 id_value: linkValue.id_value ?? undefined
             };
         })
-        .filter(Boolean);
+        .filter(Boolean) || [];
 
     return {
         totalCount: records.length,
