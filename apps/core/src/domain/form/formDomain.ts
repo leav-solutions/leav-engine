@@ -441,7 +441,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                                     type: FormElementTypes.layout,
                                     uiElementType: FormUIElementTypes.TAB_FIELDS_CONTAINER,
                                     children: [],
-                                    values: null,
+                                    values,
                                     order: i,
                                     containerId: depElement.id
                                 };
@@ -454,24 +454,16 @@ export default function (deps: IFormDomainDeps): IFormDomain {
             }
 
             // Convert hash map to tree structure in order to filter out empty containers
-            const elementsTree = [];
-            for (const element of flatElementsList) {
-                if (element.containerId !== FORM_ROOT_CONTAINER_ID) {
-                    allElems[element.containerId]?.children.push(allElems[element.id]);
-                } else {
-                    elementsTree.push(allElems[element.id]);
-                }
-            }
-            const formElements = _filterEmptyContainers(elementsTree).children;
-            return {
-                id: formId,
-                recordId,
-                system: formProps.system,
-                library: libraryId,
-                dependencyAttributes: formProps.dependencyAttributes,
-                elements: formElements,
-                sidePanel: formProps.sidePanel
-            };
+            // const elementsTree = [];
+            // for (const element of flatElementsList) {
+            //     if (element.containerId !== FORM_ROOT_CONTAINER_ID) {
+            //         allElems[element.containerId]?.children.push(allElems[element.id]);
+            //     } else {
+            //         elementsTree.push(allElems[element.id]);
+            //     }
+            // }
+            // return _filterEmptyContainers(elementsTree).children;
+            return flatElementsList;
         },
         async getFormProperties({library, id, ctx}): Promise<IForm> {
             const filters = {id, library};
