@@ -72,7 +72,8 @@ export async function loadConfig<T extends {} = {}>(dirPath: string, env: string
     const merged = _mergeDeep(
         await _getConfigByEnv(dirPath, 'default'),
         await _getConfigByEnv(dirPath, env),
-        await _getConfigByEnv(dirPath, 'local'),
+        // skip local config when running e2e tests !
+        env === 'test' ? {} : await _getConfigByEnv(dirPath, 'local'),
         {
             env
         }

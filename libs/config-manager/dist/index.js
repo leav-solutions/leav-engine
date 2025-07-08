@@ -23,8 +23,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loadConfig = void 0;
-// Copyright LEAV Solutions 2017
+exports.loadConfig = loadConfig;
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const fs = __importStar(require("fs"));
@@ -39,14 +39,12 @@ const path = __importStar(require("path"));
 const _getConfigByEnv = async function (dirPath, env) {
     const envFile = path.join(dirPath, `${env}.js`);
     if (env && (await fs.existsSync(envFile))) {
-        const envConf = await Promise.resolve().then(() => __importStar(require(envFile)));
+        const envConf = await Promise.resolve(`${envFile}`).then(s => __importStar(require(s)));
         return envConf.default;
     }
     return {};
 };
-const _isObject = (item) => {
-    return item && typeof item === 'object' && !Array.isArray(item);
-};
+const _isObject = (item) => item && typeof item === 'object' && !Array.isArray(item);
 /**
  * Deep merge two objects.
  *
@@ -83,10 +81,11 @@ const _mergeDeep = function (target, ...sources) {
  * @return {Promise} Full config
  */
 async function loadConfig(dirPath, env) {
-    const merged = _mergeDeep(await _getConfigByEnv(dirPath, 'default'), await _getConfigByEnv(dirPath, env), await _getConfigByEnv(dirPath, 'local'), {
+    const merged = _mergeDeep(await _getConfigByEnv(dirPath, 'default'), await _getConfigByEnv(dirPath, env), 
+    // skip local config when running e2e tests !
+    env === 'test' ? {} : await _getConfigByEnv(dirPath, 'local'), {
         env
     });
     return merged;
 }
-exports.loadConfig = loadConfig;
 //# sourceMappingURL=index.js.map
