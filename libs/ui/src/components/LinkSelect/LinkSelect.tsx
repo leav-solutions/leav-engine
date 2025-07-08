@@ -99,7 +99,6 @@ function LinkSelect({
     }, [options, debouncedSearch]);
 
     useEffect(() => {
-        console.log('linkedIds', linkedIds);
         setDefaultValues(linkedIds);
     }, [linkedIds]);
 
@@ -113,7 +112,6 @@ function LinkSelect({
     };
 
     const _onBlur: ComponentProps<typeof KitSelect>['onBlur'] = async () => {
-        console.log('on blur');
         await onItemsToUpdate?.(itemsToLink.current, itemsToDelete.current);
         itemsToLink.current.clear();
         itemsToDelete.current.clear();
@@ -122,8 +120,6 @@ function LinkSelect({
     };
 
     const _onSelect: ComponentProps<typeof KitSelect>['onSelect'] = async (itemId: string) => {
-        console.log('_onSelect', tagDisplay, canSelectMultipleValues);
-
         // Add item to defaultValues
         setDefaultValues(prev => [...prev, itemId]);
 
@@ -140,8 +136,6 @@ function LinkSelect({
     };
 
     const _onDeselect: ComponentProps<typeof KitSelect>['onDeselect'] = async (itemId: any) => {
-        console.log('_onDeselect', tagDisplay, canSelectMultipleValues);
-
         // Always remove item from defaultValues
         setDefaultValues(prev => prev.filter(v => v !== itemId));
 
@@ -171,7 +165,6 @@ function LinkSelect({
     };
 
     const _onClear: ComponentProps<typeof KitSelect>['onClear'] = async () => {
-        console.log('on clear');
         itemsToLink.current.clear();
         defaultValues.map(v => itemsToDelete.current.add(v));
         await onItemsToUpdate(itemsToLink.current, itemsToDelete.current);

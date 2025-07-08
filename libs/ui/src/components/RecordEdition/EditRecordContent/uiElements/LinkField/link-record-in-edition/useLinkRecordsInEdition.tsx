@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Explorer} from '_ui/components/Explorer';
-import {IExplorerRef} from '_ui/components/Explorer/Explorer';
+import {IExplorerProps, IExplorerRef} from '_ui/components/Explorer/Explorer';
 import {ComponentProps, Dispatch, SetStateAction, useEffect, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ExplorerWrapper} from '../shared/ExplorerWrapper';
@@ -133,7 +133,6 @@ export const useLinkRecordsInEdition = ({
 
     // Update options for LinkSelect when libraryItems update
     useEffect(() => {
-        console.log('libraryItems', libraryItems);
         if (libraryItems?.records?.list) {
             setSelectOptions(
                 libraryItems.records.list.map<IKitOption>(record => ({
@@ -186,8 +185,6 @@ export const useLinkRecordsInEdition = ({
         itemsToLink: Set<string>,
         itemsToDelete: Set<string>
     ) => {
-        console.log('_onItemsToUpdate', itemsToLink, itemsToDelete);
-
         // If there is no value to link or to remove, return early
         if (itemsToLink.size === 0 && itemsToDelete.size === 0) {
             setIsExplorerAddButtonClicked(false);
@@ -197,11 +194,9 @@ export const useLinkRecordsInEdition = ({
         // Convert itemsToLink Set to Array once to avoid repeated conversions
         const itemsToLinkArray = Array.from(itemsToLink);
 
-        console.log('itemsToLink1', itemsToLink);
         // Find values to remove and prepare payload for backend
         const valuesToRemove = backendValues.filter(bv => itemsToDelete.has(bv.linkValue.id));
         const idValuesToRemove = valuesToRemove.map(bv => bv.id_value);
-        console.log('itemsToLink2', itemsToLink);
 
         // Prepare batch operation payload
         const values = [
@@ -218,14 +213,11 @@ export const useLinkRecordsInEdition = ({
                 value: null
             }))
         ];
-        console.log('itemsToLink3', itemsToLink);
 
         // Send the values to the backend
-        console.log('values', values, attribute, itemsToLink);
         const res = await saveValues({id: recordId, library: {id: libraryId}}, values, undefined, true);
 
         const resValues = res.values as ValueDetailsLinkValueFragment[];
-        console.log('resValues', resValues, itemsToLink);
         // Extract newly added values from response
         const newlyAddedValues = resValues.filter(v =>
             itemsToLink.has(v.linkValue!.id)
@@ -235,8 +227,6 @@ export const useLinkRecordsInEdition = ({
         if (attribute.multiple_values) {
             setBackendValues([...backendValues.filter(bv => !itemsToDelete.has(bv.linkValue.id)), ...newlyAddedValues]);
         } else {
-            console.log('adddddddd', backendValues, newlyAddedValues, itemsToLink, itemsToLinkArray);
-
             setBackendValues([...newlyAddedValues]);
         }
 
@@ -267,7 +257,6 @@ export const useLinkRecordsInEdition = ({
             []
         );
 
-        console.log('_onLinkSelectSearch');
         await getRecordsRefetch({
             filters
         });
@@ -295,6 +284,13 @@ export const useLinkRecordsInEdition = ({
             attribute,
             recordId
         };
+    };
+
+    const _getExplorerItemActions = (): IExplorerProps['defaultActionsForItem'] => {
+        if (isReadOnly) {
+            return [];
+        }
+        return ['remove', 'edit'];
     };
 
     return {
@@ -359,7 +355,7 @@ export const useLinkRecordsInEdition = ({
                                 !attribute.multiple_values ||
                                 (attribute.required && attribute.multiple_values && backendValues.length === 1)
                             }
-                            defaultActionsForItem={['remove']}
+                            defaultActionsForItem={_getExplorerItemActions()}
                             hidePrimaryActions
                             hideTableHeader
                             iconsOnlyItemActions
