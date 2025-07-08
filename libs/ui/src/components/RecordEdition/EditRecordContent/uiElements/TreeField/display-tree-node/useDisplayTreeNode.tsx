@@ -10,14 +10,21 @@ interface IUseDisplayTreeNodeProps {
     attribute: RecordFormAttributeTreeAttributeFragment;
     backendValues: RecordFormElementsValueTreeValue[];
     removeTreeNode: (nodeValue: RecordFormElementsValueTreeValue) => void;
+    isReadOnly: boolean;
 }
 
-export const useDisplayTreeNode = ({attribute, backendValues, removeTreeNode}: IUseDisplayTreeNodeProps) => ({
+export const useDisplayTreeNode = ({
+    attribute,
+    backendValues,
+    removeTreeNode,
+    isReadOnly
+}: IUseDisplayTreeNodeProps) => ({
     TreeNodeList: (
         <TreeFieldWrapper>
             {backendValues.map((value, index) => (
                 <TreeNodeItem
                     key={index}
+                    isReadOnly={isReadOnly}
                     color={value.treeValue.record.whoAmI.color}
                     label={value.treeValue.record.whoAmI.label}
                     ancestors={value.treeValue.ancestors}

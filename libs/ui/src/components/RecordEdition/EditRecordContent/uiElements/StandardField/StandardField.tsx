@@ -313,8 +313,7 @@ const StandardField: FunctionComponent<
     const canDeleteAllValues = hasValue && backendValues.length > 1 && !attribute.required;
 
     const label = localizedTranslation(element.settings.label, lang);
-
-    const isReadOnly = attribute.readonly || readonly;
+    const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
 
     return (
         <Wrapper $metadataEdit={metadataEdit}>
