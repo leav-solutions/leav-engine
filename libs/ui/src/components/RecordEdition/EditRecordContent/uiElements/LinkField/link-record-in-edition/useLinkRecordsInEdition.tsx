@@ -275,6 +275,13 @@ export const useLinkRecordsInEdition = ({
         };
     };
 
+    const _getExplorerItemActions = (): IExplorerProps['defaultActionsForItem'] => {
+        if (isReadOnly) {
+            return [];
+        }
+        return ['remove', 'edit'];
+    };
+
     return {
         UnlinkAllRecordsInEdition: isHookUsed &&
             backendValues.length > 1 &&
@@ -325,7 +332,7 @@ export const useLinkRecordsInEdition = ({
                                 !attribute.multiple_values ||
                                 (attribute.required && attribute.multiple_values && backendValues.length === 1)
                             }
-                            defaultActionsForItem={[]}
+                            defaultActionsForItem={_getExplorerItemActions()}
                             hidePrimaryActions
                             hideTableHeader
                             iconsOnlyItemActions
