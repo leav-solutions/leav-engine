@@ -107,7 +107,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         : [];
 
     const libTreeAttributesOptions = initialValues.attributes
-        ? library.attributes
+        ? initialValues.attributes
               .filter(a => a.type === AttributeType.tree)
               .map(a => ({
                   key: a.id,
