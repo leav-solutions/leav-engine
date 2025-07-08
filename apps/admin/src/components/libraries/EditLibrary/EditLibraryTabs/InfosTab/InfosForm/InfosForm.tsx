@@ -106,7 +106,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
           }))
         : [];
 
-    const libTreeAttributesOptions = library?.attributes
+    const libTreeAttributesOptions = initialValues.attributes
         ? library.attributes
               .filter(a => a.type === AttributeType.tree)
               .map(a => ({
@@ -115,7 +115,9 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                   text: localizedLabel(a.label, lang) || a.id
               }))
         : [];
+
     libAttributesOptions.unshift({key: '', value: '', text: ''});
+    libTreeAttributesOptions.unshift({key: '', value: '', text: ''});
 
     const _handleSubmit = values => {
         onSubmit(values);
