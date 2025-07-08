@@ -11,17 +11,27 @@ import {useDebouncedValue} from '_ui/hooks/useDebouncedValue';
 import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 import {FaChevronDown} from 'react-icons/fa';
 
+interface IValuesListConf {
+    enable: boolean;
+    values?: object[];
+    allowFreeEntry?: boolean;
+    allowListUpdate?: boolean;
+}
+
 interface ILinkSelectProps {
     tagDisplay: boolean;
     options: IKitOption[];
-    defaultValues: string[];
+    linkedIds: string[];
     hideAdvancedSearch?: boolean;
     onUpdateSelection?: (value: string[]) => void;
     onClickCreateButton?: (value: string) => void;
-    onBlur?: (itemsToLink: Set<string>, itemsToDelete: Set<string>) => void;
+    onItemsToUpdate?: (itemsToLink: Set<string>, itemsToDelete: Set<string>) => void;
     onParentDeselect?: (itemId: string) => any;
     onAdvanceSearch?: () => void;
     onSearch?: (searchValue: string) => Promise<void>;
+    onClose?: () => void;
+    canSelectMultipleValues: boolean;
+    valueListConf: IValuesListConf;
 }
 
 const StyledDivider = styled(KitDivider)`
@@ -44,18 +54,22 @@ const StyledKitSelect = styled(KitSelect)`
 function LinkSelect({
     tagDisplay,
     options,
-    defaultValues,
+    linkedIds,
     hideAdvancedSearch = false,
-    onUpdateSelection,
     onClickCreateButton,
-    onBlur,
+    onItemsToUpdate,
     onAdvanceSearch,
-    onSearch
+    onSearch,
+    onClose,
+    canSelectMultipleValues,
+    valueListConf
 }: ILinkSelectProps): JSX.Element {
     const {t} = useSharedTranslation();
 
     const itemsToLink = useRef(new Set<string>());
     const itemsToDelete = useRef(new Set<string>());
+
+    const [defaultValues, setDefaultValues] = useState([]);
 
     const [isOpen, setIsOpen] = useState(false);
     const [currentSearch, setCurrentSearch] = useState('');
@@ -84,9 +98,9 @@ function LinkSelect({
         }
     }, [options, debouncedSearch]);
 
-    const _handleChange: ComponentProps<typeof KitSelect>['onChange'] = (selection: string[]) => {
-        onUpdateSelection?.(selection);
-    };
+    useEffect(() => {
+        setDefaultValues(linkedIds);
+    }, [linkedIds]);
 
     const _handleSearch: ComponentProps<typeof KitSelect>['onSearch'] = (value: string) => {
         setIsLoading(true);
@@ -97,25 +111,63 @@ function LinkSelect({
         onClickCreateButton?.(debouncedSearch);
     };
 
-    const _onBlur: ComponentProps<typeof KitSelect>['onBlur'] = () => {
-        onBlur?.(itemsToLink.current, itemsToDelete.current);
+    const _onBlur: ComponentProps<typeof KitSelect>['onBlur'] = async () => {
+        await onItemsToUpdate?.(itemsToLink.current, itemsToDelete.current);
+        itemsToLink.current.clear();
+        itemsToDelete.current.clear();
         setIsOpen(false);
+        onClose();
     };
 
-    const _onSelect: ComponentProps<typeof KitSelect>['onSelect'] = (itemId: string) => {
-        // remove itemToDelete if exists
-        itemsToDelete.current.delete(itemId);
+    const _onSelect: ComponentProps<typeof KitSelect>['onSelect'] = async (itemId: string) => {
+        // Add item to defaultValues
+        setDefaultValues(prev => [...prev, itemId]);
+
         itemsToLink.current.add(itemId);
+        itemsToDelete.current.delete(itemId);
+
+        if (!canSelectMultipleValues) {
+            setDefaultValues([itemId]);
+            setIsOpen(false);
+            await onItemsToUpdate(itemsToLink.current, itemsToDelete.current);
+            itemsToLink.current.clear();
+            itemsToDelete.current.clear();
+        }
     };
 
-    const _onDeselect: ComponentProps<typeof KitSelect>['onDeselect'] = (itemId: any) => {
-        if (itemsToLink.current.has(itemId)) {
-            // Remove item to link if exists
-            itemsToLink.current.delete(itemId);
-            return;
-        }
+    const _onDeselect: ComponentProps<typeof KitSelect>['onDeselect'] = async (itemId: any) => {
+        // Always remove item from defaultValues
+        setDefaultValues(prev => prev.filter(v => v !== itemId));
 
+        // Always remove from itemsToLink if it exists there
+        itemsToLink.current.delete(itemId);
+
+        // Always add to itemsToDelete
         itemsToDelete.current.add(itemId);
+
+        // For single selection or tag display with single selection, update immediately
+        if (!canSelectMultipleValues) {
+            if (tagDisplay) {
+                setIsOpen(false);
+            }
+
+            await onItemsToUpdate(itemsToLink.current, itemsToDelete.current);
+            itemsToLink.current.clear();
+            itemsToDelete.current.clear();
+        } else {
+            if (tagDisplay) {
+                // For tags we can deselect with tags, we need to send the udpate before the onBlur
+                await onItemsToUpdate(itemsToLink.current, itemsToDelete.current);
+                itemsToLink.current.clear();
+                itemsToDelete.current.clear();
+            }
+        }
+    };
+
+    const _onClear: ComponentProps<typeof KitSelect>['onClear'] = async () => {
+        itemsToLink.current.clear();
+        defaultValues.map(v => itemsToDelete.current.add(v));
+        await onItemsToUpdate(itemsToLink.current, itemsToDelete.current);
     };
 
     const dropdownButtons: ComponentProps<typeof KitSelect>['dropdownRender'] = menu => (
@@ -140,7 +192,7 @@ function LinkSelect({
                                         {`${t('record_edition.new_record')} "${debouncedSearch}"`}
                                     </KitButton>
                                 )}
-                                {!hideAdvancedSearch && (
+                                {!hideAdvancedSearch && !valueListConf?.enable && (
                                     <KitButton
                                         type="tertiary"
                                         icon={<FontAwesomeIcon icon={faMagnifyingGlass} />}
@@ -159,21 +211,21 @@ function LinkSelect({
 
     return (
         <StyledKitSelect
-            className={tagDisplay ? undefined : 'select-without-tags'}
             placeholder={t('record_edition.select')}
-            mode="multiple"
+            mode={canSelectMultipleValues ? 'multiple' : undefined}
             open={isOpen}
             defaultValue={defaultValues}
+            value={defaultValues}
             options={options}
             optionFilterProp="label"
             filterOption={false}
             showSearch
-            onChange={_handleChange}
             onSearch={_handleSearch}
             onBlur={_onBlur}
             onFocus={() => setIsOpen(true)}
             onDeselect={_onDeselect}
             onSelect={_onSelect}
+            onClear={_onClear}
             dropdownRender={dropdownButtons}
             autoFocus={!tagDisplay}
             allowClear={tagDisplay}

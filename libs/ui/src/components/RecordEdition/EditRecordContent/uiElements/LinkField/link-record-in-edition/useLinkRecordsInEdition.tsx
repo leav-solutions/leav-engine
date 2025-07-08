@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Explorer} from '_ui/components/Explorer';
-import {IExplorerRef} from '_ui/components/Explorer/Explorer';
+import {IExplorerProps, IExplorerRef} from '_ui/components/Explorer/Explorer';
 import {ComponentProps, Dispatch, SetStateAction, useEffect, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ExplorerWrapper} from '../shared/ExplorerWrapper';
@@ -30,7 +30,7 @@ import {IKitOption} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 import LinkSelect from '_ui/components/LinkSelect';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
-import {FullTextAttribute, IFilter, IQueryFilter} from '_ui/types';
+import {FullTextAttribute, IQueryFilter} from '_ui/types';
 
 interface ILinkRecordsInCreationProps {
     libraryId: string;
@@ -181,7 +181,10 @@ export const useLinkRecordsInEdition = ({
 
     const {saveValues} = useSaveValueBatchMutation();
 
-    const _onBlurLinkSelect: ComponentProps<typeof LinkSelect>['onBlur'] = async (itemsToLink, itemsToDelete) => {
+    const _onItemsToUpdate: ComponentProps<typeof LinkSelect>['onItemsToUpdate'] = async (
+        itemsToLink: Set<string>,
+        itemsToDelete: Set<string>
+    ) => {
         // If there is no value to link or to remove, return early
         if (itemsToLink.size === 0 && itemsToDelete.size === 0) {
             setIsExplorerAddButtonClicked(false);
@@ -215,21 +218,22 @@ export const useLinkRecordsInEdition = ({
         const res = await saveValues({id: recordId, library: {id: libraryId}}, values, undefined, true);
 
         const resValues = res.values as ValueDetailsLinkValueFragment[];
-
-        // Update linked IDs: add new links and remove deleted ones
-        const updatedLinkedIds = linkedIds.filter(id => !itemsToDelete.has(id)).concat(itemsToLinkArray);
-        setLinkIds(updatedLinkedIds);
-
         // Extract newly added values from response
         const newlyAddedValues = resValues.filter(v =>
             itemsToLink.has(v.linkValue!.id)
         ) as unknown as RecordFormElementsValueLinkValue[];
 
         // Update backend values: remove deleted ones and add new ones
-        setBackendValues([...backendValues.filter(bv => !itemsToDelete.has(bv.linkValue.id)), ...newlyAddedValues]);
+        if (attribute.multiple_values) {
+            setBackendValues([...backendValues.filter(bv => !itemsToDelete.has(bv.linkValue.id)), ...newlyAddedValues]);
+        } else {
+            setBackendValues([...newlyAddedValues]);
+        }
 
-        // Hide linkSelect
-        setIsExplorerAddButtonClicked(false);
+        // Hide linkSelect only if attribute.multivalue = false
+        if (!attribute.multiple_values) {
+            setIsExplorerAddButtonClicked(false);
+        }
     };
 
     // search records that match the text typed in the search bar
@@ -258,6 +262,10 @@ export const useLinkRecordsInEdition = ({
         });
     };
 
+    const _closeLinkSelect: ComponentProps<typeof LinkSelect>['onClose'] = () => {
+        setIsExplorerAddButtonClicked(false);
+    };
+
     const _onCreateLinkSelect: ComponentProps<typeof LinkSelect>['onClickCreateButton'] = async () => {
         setIsExplorerAddButtonClicked(false);
         explorerActions?.createAction?.callback();
@@ -278,6 +286,13 @@ export const useLinkRecordsInEdition = ({
         };
     };
 
+    const _getExplorerItemActions = (): IExplorerProps['defaultActionsForItem'] => {
+        if (isReadOnly) {
+            return [];
+        }
+        return ['remove', 'edit'];
+    };
+
     return {
         UnlinkAllRecordsInEdition: isHookUsed &&
             backendValues.length > 1 &&
@@ -293,7 +308,19 @@ export const useLinkRecordsInEdition = ({
             isHookUsed &&
             recordId &&
             (tagDisplayMode ? (
-                <LinkSelect tagDisplay options={selectOptions} defaultValues={linkedIds} />
+                <LinkSelect
+                    tagDisplay
+                    options={selectOptions}
+                    linkedIds={linkedIds}
+                    onClickCreateButton={_onCreateLinkSelect}
+                    // onBlur={setIsExplorerAddButtonClicked(false)}
+                    onItemsToUpdate={_onItemsToUpdate}
+                    onClose={_closeLinkSelect}
+                    onParentDeselect={_onDeselect}
+                    onSearch={_onLinkSelectSearch}
+                    canSelectMultipleValues={attribute.multiple_values}
+                    valueListConf={attribute.linkValuesList}
+                />
             ) : (
                 <>
                     <ExplorerWrapper>
@@ -328,7 +355,7 @@ export const useLinkRecordsInEdition = ({
                                 !attribute.multiple_values ||
                                 (attribute.required && attribute.multiple_values && backendValues.length === 1)
                             }
-                            defaultActionsForItem={[]}
+                            defaultActionsForItem={_getExplorerItemActions()}
                             hidePrimaryActions
                             hideTableHeader
                             iconsOnlyItemActions
@@ -344,11 +371,14 @@ export const useLinkRecordsInEdition = ({
                         <LinkSelect
                             tagDisplay={false}
                             options={selectOptions}
-                            defaultValues={linkedIds}
+                            linkedIds={linkedIds}
+                            onClose={_closeLinkSelect}
                             onClickCreateButton={_onCreateLinkSelect}
-                            onBlur={_onBlurLinkSelect}
+                            onItemsToUpdate={_onItemsToUpdate}
                             onParentDeselect={_onDeselect}
                             onSearch={_onLinkSelectSearch}
+                            canSelectMultipleValues={attribute.multiple_values}
+                            valueListConf={attribute.linkValuesList}
                         />
                     )}
                 </>
