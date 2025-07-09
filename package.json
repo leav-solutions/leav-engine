@@ -45,6 +45,7 @@
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-jsdoc": "39.2.1",
     "eslint-plugin-jsx-a11y": "6.5.1",
+    "eslint-plugin-no-only-tests": "3.3.0",
     "eslint-plugin-react-hooks": "4.4.0",
     "eslint-plugin-react-refresh": "0.4.3",
     "husky": "6.0.0",
