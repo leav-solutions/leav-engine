@@ -11,7 +11,7 @@ import {themeVars} from '_ui/antdTheme';
 import DateBetweenFilter from '_ui/components/LibraryItemsList/FiltersPanel/Filter/FilterInput/DateBetweenFilter';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
-import {SelectTreeNodeModal} from '_ui/components/SelectTreeNodeModal';
+import {SelectTreeNodeModalOld} from '_ui/components/SelectTreeNodeModalOld';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
@@ -459,7 +459,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     return (
         <>
             {showSelectTreeNodeModal && (
-                <SelectTreeNodeModal
+                <SelectTreeNodeModalOld
                     selectedNodeKey={(filter.value.value as string) || (filter as IFilterTree).tree.id}
                     treeId={(filter as IFilterTree).tree.id}
                     onSubmit={node => updateFilterValue(_getValueFromNode(node))}
