@@ -10,3 +10,4 @@ export {EditRecordPage} from './EditRecordPage';
 export {default as EditRecordSidebar} from './EditRecordSidebar';
 export {default as useExecuteSaveValueBatchMutation} from './EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 export {default as useCreateRecordMutation} from './EditRecordContent/hooks/useCreateRecordMutation';
+export {SelectTreeNodeModal} from './EditRecordContent/uiElements/TreeField/manage-tree-node-selection/SelectTreeNodeModal';

@@ -16,7 +16,7 @@ interface ISelectTreeNodeModalProps {
     canSelectRoot?: boolean;
 }
 
-export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> = ({
+export const SelectTreeNodeModalOld: FunctionComponent<ISelectTreeNodeModalProps> = ({
     treeId,
     selectedNodeKey,
     onSubmit,

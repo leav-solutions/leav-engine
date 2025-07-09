@@ -3,20 +3,20 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {render, screen} from '../../_tests/testUtils';
-import {SelectTreeNodeModal} from './SelectTreeNodeModal';
+import {SelectTreeNodeModalOld} from './SelectTreeNodeModalOld';
 import ReactModal from 'react-modal';
 
 jest.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNode: () => <div>SelectTreeNode</div>
 }));
 
-describe('SelectTreeNodeModal', () => {
+describe('SelectTreeNodeModalOld', () => {
     test('Should modal with SelectTreeNode inside', async () => {
         const onSubmit = jest.fn();
 
         ReactModal.setAppElement(document.createElement('div'));
 
-        render(<SelectTreeNodeModal treeId="treeId" isVisible onSubmit={onSubmit} onClose={jest.fn()} />);
+        render(<SelectTreeNodeModalOld treeId="treeId" isVisible onSubmit={onSubmit} onClose={jest.fn()} />);
 
         expect(screen.getByText('SelectTreeNode')).toBeVisible();
 

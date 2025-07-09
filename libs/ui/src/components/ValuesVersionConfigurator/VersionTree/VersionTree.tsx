@@ -14,7 +14,7 @@ import {themeVars} from '../../../antdTheme';
 import useLang from '../../../hooks/useLang';
 import {ITreeNode} from '../../../types/trees';
 import {GetVersionableAttributesByLibraryQuery} from '../../../_gqlTypes';
-import {SelectTreeNodeModal} from '../../SelectTreeNodeModal';
+import {SelectTreeNodeModalOld} from '../../SelectTreeNodeModalOld';
 
 const Wrapper = styled.div`
     background: ${themeVars.lightBg};
@@ -110,7 +110,7 @@ function VersionTree({tree, selectedNode, readOnly, onNodeChange}: IVersionTreeP
                 </SelectedNodeTitle>
             </Wrapper>
             {isTreeNodeSelectorOpen && (
-                <SelectTreeNodeModal
+                <SelectTreeNodeModalOld
                     treeId={tree.id}
                     onClose={_handleCloseTreeSelector}
                     isVisible={isTreeNodeSelectorOpen}
