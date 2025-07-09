@@ -40,11 +40,6 @@ export default function ({
             }, [])[0];
     }
 
-    const _buildLinkValue = (savedValue: IStandardValue, attribute: IAttribute): ILinkValue => ({
-        ...savedValue,
-        payload: savedValue.payload !== null ? {id: savedValue.payload, library: attribute.linked_library} : null
-    });
-
     const _saveValue: IAttributeTypeRepo['createValue'] = async ({library, recordId, attribute, value, ctx}) => {
         const collec = dbService.db.collection(library);
 
@@ -79,8 +74,11 @@ export default function ({
         },
         async deleteValue(args): Promise<ILinkValue> {
             const deletedValue = await attributeSimpleRepo.deleteValue(args);
-
-            return _buildLinkValue(deletedValue, args.attribute);
+            return {
+                ...deletedValue,
+                // deletedValue returns null payload, so override it here !
+                payload: {id: args.value.payload?.id, library: args.attribute.linked_library}
+            };
         },
         // To get values from advanced reverse link attribute into simple link.
         async getReverseValues({advancedLinkAttr, value, forceGetAllValues = false, ctx}): Promise<ILinkValue[]> {

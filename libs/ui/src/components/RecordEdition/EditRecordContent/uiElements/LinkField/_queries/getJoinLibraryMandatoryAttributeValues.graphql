@@ -1,0 +1,23 @@
+query getJoinLibraryMandatoryAttributeValues(
+    $joinLibraryId: ID!,
+    $filters: [RecordFilterInput],
+    $mandatoryAttributeId: ID!,
+) {
+  records(library: $joinLibraryId, filters: $filters) {
+    list {
+      id
+      property(attribute: $mandatoryAttributeId) {
+        ... on LinkValue {
+          payload {
+            id
+          }
+        }
+        ... on TreeValue {
+          payload {
+            id
+          }
+        }
+      }
+    }
+  }
+}

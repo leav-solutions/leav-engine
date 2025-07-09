@@ -20,7 +20,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
-import {Errors, ErrorTypes} from '../../_types/errors';
+import {ErrorFieldDetail, Errors, ErrorTypes} from '../../_types/errors';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IFindValueTree, IStandardValue, IValue, IValuesOptions} from '../../_types/value';
@@ -35,6 +35,9 @@ import prepareValue from './helpers/prepareValue';
 import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
 import {IDeleteValueParams, IRunActionListParams} from './_types';
+import {DeleteRecordHelper} from 'domain/record/helpers/deleteRecord';
+import {CreateRecordHelper} from 'domain/record/helpers/createRecord';
+import {IfLibraryJoinLinkAttribute} from '../attribute/helpers/ifLibraryJoinLinkAttribute';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -142,6 +145,9 @@ export interface IValueDomainDeps {
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
+    'core.domain.record.helpers.createRecord': CreateRecordHelper;
+    'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': IfLibraryJoinLinkAttribute;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.infra.record': IRecordRepo;
     'core.infra.tree': ITreeRepo;
@@ -163,6 +169,9 @@ const valueDomain = function ({
     'core.domain.tree.helpers.elementAncestors': elementAncestors,
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
+    'core.domain.record.helpers.createRecord': createRecordHelper,
+    'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
+    'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
     'core.domain.versionProfile': versionProfileDomain,
     'core.infra.record': recordRepo,
     'core.infra.tree': treeRepo,
@@ -334,6 +343,64 @@ const valueDomain = function ({
         return v;
     }
 
+    const _maybeCreateJoinRecord = async (
+        validationErrors: ErrorFieldDetail<IValue>,
+        attributeProps: IAttribute,
+        value: IValue,
+        ctx: IQueryInfos
+    ): Promise<string | void> => {
+        const errorType: Errors = validationErrors[attributeProps.id]?.msg;
+        if (errorType === Errors.UNKNOWN_LINKED_RECORD || errorType === Errors.ELEMENT_NOT_IN_TREE) {
+            return ifLibraryJoinLinkAttribute(
+                attributeProps,
+                async (joinLibId: string, joinAttributeProps: IAttribute) => {
+                    const {record: joinRecord} = await createRecordHelper({
+                        library: joinLibId,
+                        ctx
+                    });
+
+                    logger.debug(
+                        `Created join record ${joinRecord.id} on library ${joinLibId} for attribute ${attributeProps.id}`
+                    );
+                    await saveValue({
+                        library: joinLibId,
+                        recordId: joinRecord.id,
+                        attribute: joinAttributeProps.id,
+                        value: {
+                            // simple link from join record to "thematic"
+                            // or tree link from join record to "category" node
+                            payload: value.payload
+                        },
+                        ctx
+                    });
+
+                    return joinRecord.id;
+                },
+                ctx
+            );
+        }
+    };
+
+    const _maybeDeleteJoinRecord = async (
+        attributeProps: IAttribute,
+        deletedValues: IValue[],
+        ctx: IQueryInfos
+    ): Promise<void> =>
+        ifLibraryJoinLinkAttribute(
+            attributeProps,
+            async (joinLibId: string) => {
+                await Promise.all(
+                    deletedValues.map(async deletedValue => {
+                        const deleteJoinRecord = await deleteRecordHelper(joinLibId, deletedValue.payload.id, ctx);
+                        logger.debug(
+                            `Deleted join record ${deleteJoinRecord.id} on library ${joinLibId} for attribute ${attributeProps.id}`
+                        );
+                    })
+                );
+            },
+            ctx
+        );
+
     const _executeDeleteValue = async ({library, recordId, attribute, value, ctx}: IDeleteValueParams) => {
         // Check permission
         const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
@@ -457,6 +524,8 @@ const valueDomain = function ({
             })
         );
 
+        await _maybeDeleteJoinRecord(attributeProps, deletedValues, ctx);
+
         return deletedValues;
     };
 
@@ -523,6 +592,11 @@ const valueDomain = function ({
                 },
                 ctx
             );
+
+            if (valueBefore) {
+                // a new join record was create in saveBalue/saveValueBatch, need to remove older if any
+                await _maybeDeleteJoinRecord(attribute, [valueBefore], ctx);
+            }
         }
 
         return {values: processedValues, areValuesIdentical};
@@ -583,6 +657,126 @@ const valueDomain = function ({
         );
 
         return processedValues;
+    };
+
+    // Extracted to allow within this closure. Would have been better if we could use _executeSaveValue directly.
+    // May be future refactoring to move common code from saveValue, saveValueBatch and recordDomain.createRecord into helper module
+    const saveValue: IValueDomain['saveValue'] = async ({
+        library,
+        recordId,
+        attribute,
+        value,
+        ctx
+    }): Promise<IValue[]> => {
+        await validate.validateLibrary(library, ctx);
+        const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
+        await validate.validateLibraryAttribute(library, attribute, ctx);
+        const record = await validate.validateRecord(library, recordId, ctx);
+
+        const valueChecksParams = {
+            attributeProps,
+            library,
+            recordId,
+            value,
+            keepEmpty: false,
+            infos: ctx
+        };
+
+        if (attributeProps.readonly) {
+            throw new ValidationError<IValue>({
+                attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
+            });
+        }
+
+        // Check permissions
+        const {
+            canSave,
+            reason: forbiddenSaveReason,
+            fields
+        } = await canSaveRecordValue({
+            ...valueChecksParams,
+            ctx,
+            deps: {
+                recordPermissionDomain,
+                recordAttributePermissionDomain,
+                config
+            }
+        });
+
+        if (!canSave) {
+            if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
+                throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
+            }
+
+            throw new PermissionError(
+                forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions,
+                fields
+            );
+        }
+
+        // Validate value
+        const validationErrors = await validateValue({
+            ...valueChecksParams,
+            attributeProps,
+            deps: {
+                attributeDomain,
+                recordRepo,
+                valueRepo,
+                treeRepo
+            },
+            ctx
+        });
+
+        if (Object.keys(validationErrors).length) {
+            // If we cannot find linked record or tree element, try to create join record if attribute is a link to join behavior library
+            const joinRecordPayload = await _maybeCreateJoinRecord(validationErrors, attributeProps, value, ctx);
+            if (joinRecordPayload) {
+                value.payload = joinRecordPayload;
+            } else {
+                throw new ValidationError<IValue>(validationErrors);
+            }
+        }
+
+        // Prepare value
+        const valuesToSave = await prepareValue({
+            ...valueChecksParams,
+            deps: {
+                actionsListDomain,
+                attributeDomain,
+                utils
+            },
+            ctx
+        });
+
+        const {allSavedValues, areValuesIdentical} = await valuesToSave.reduce(
+            async (promiseAcc, valueToSave) => {
+                const acc = await promiseAcc;
+                const {values: savedValues, areValuesIdentical: identicalValues} = await _executeSaveValue(
+                    library,
+                    record,
+                    attributeProps,
+                    valueToSave,
+                    ctx
+                );
+
+                if (!identicalValues) {
+                    acc.areValuesIdentical = false;
+                }
+
+                acc.allSavedValues.push(...savedValues);
+                return acc;
+            },
+            Promise.resolve({allSavedValues: [], areValuesIdentical: true})
+        );
+
+        if (!areValuesIdentical) {
+            await updateRecordLastModif(library, recordId, ctx);
+            allSavedValues.forEach(async savedValue => {
+                sendRecordUpdateEvent(record, [{attribute, value: savedValue}], ctx);
+            });
+        }
+
+        return allSavedValues;
     };
 
     return {
@@ -672,111 +866,7 @@ const valueDomain = function ({
 
             return actionsListRes;
         },
-        async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue[]> {
-            await validate.validateLibrary(library, ctx);
-            const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
-            await validate.validateLibraryAttribute(library, attribute, ctx);
-            const record = await validate.validateRecord(library, recordId, ctx);
-
-            const valueChecksParams = {
-                attributeProps,
-                library,
-                recordId,
-                value,
-                keepEmpty: false,
-                infos: ctx
-            };
-
-            if (attributeProps.readonly) {
-                throw new ValidationError<IValue>({
-                    attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
-                });
-            }
-
-            // Check permissions
-            const {
-                canSave,
-                reason: forbiddenSaveReason,
-                fields
-            } = await canSaveRecordValue({
-                ...valueChecksParams,
-                ctx,
-                deps: {
-                    recordPermissionDomain,
-                    recordAttributePermissionDomain,
-                    config
-                }
-            });
-
-            if (!canSave) {
-                if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
-                    throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
-                }
-
-                throw new PermissionError(
-                    forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions,
-                    fields
-                );
-            }
-
-            // Validate value
-            const validationErrors = await validateValue({
-                ...valueChecksParams,
-                attributeProps,
-                deps: {
-                    attributeDomain,
-                    recordRepo,
-                    valueRepo,
-                    treeRepo
-                },
-                ctx
-            });
-
-            if (Object.keys(validationErrors).length) {
-                throw new ValidationError<IValue>(validationErrors);
-            }
-
-            // Prepare value
-            const valuesToSave = await prepareValue({
-                ...valueChecksParams,
-                deps: {
-                    actionsListDomain,
-                    attributeDomain,
-                    utils
-                },
-                ctx
-            });
-
-            const {allSavedValues, areValuesIdentical} = await valuesToSave.reduce(
-                async (promiseAcc, valueToSave) => {
-                    const acc = await promiseAcc;
-                    const {values: savedValues, areValuesIdentical: identicalValues} = await _executeSaveValue(
-                        library,
-                        record,
-                        attributeProps,
-                        valueToSave,
-                        ctx
-                    );
-
-                    if (!identicalValues) {
-                        acc.areValuesIdentical = false;
-                    }
-
-                    acc.allSavedValues.push(...savedValues);
-                    return acc;
-                },
-                Promise.resolve({allSavedValues: [], areValuesIdentical: true})
-            );
-
-            if (!areValuesIdentical) {
-                await updateRecordLastModif(library, recordId, ctx);
-                allSavedValues.forEach(async savedValue => {
-                    sendRecordUpdateEvent(record, [{attribute, value: savedValue}], ctx);
-                });
-            }
-
-            return allSavedValues;
-        },
+        saveValue,
         async saveValueBatch({
             library,
             recordId,
@@ -859,7 +949,18 @@ const valueDomain = function ({
                         });
 
                         if (Object.keys(validationErrors).length) {
-                            throw new ValidationError<IValue>(validationErrors);
+                            // If we cannot find linked record or tree element, try to create join record if attribute is a link to join behavior library
+                            const joinRecordPayload = await _maybeCreateJoinRecord(
+                                validationErrors,
+                                attributeProps,
+                                value,
+                                ctx
+                            );
+                            if (joinRecordPayload) {
+                                value.payload = joinRecordPayload;
+                            } else {
+                                throw new ValidationError<IValue>(validationErrors);
+                            }
                         }
 
                         // Prepare value

@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IPreviewScalar} from '@leav/utils'
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
@@ -387,7 +390,6 @@ export enum LogAction {
   PERMISSION_SAVE = 'PERMISSION_SAVE',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
-  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -921,8 +923,6 @@ export type AttributesByLibAttributeFragment = AttributesByLibAttributeLinkAttri
 
 export type AttributesByLibLinkAttributeFragment = { linked_library?: { id: string } | null };
 
-export type FormElementWithValuesFragment = { id: string, order: number, values?: Array<{ id_value?: string | null }> | null };
-
 export type LibraryLightFragment = { id: string, label?: any | null, icon?: { id: string, whoAmI: { id: string, preview?: IPreviewScalar | null, library: { id: string } } } | null };
 
 export type LibraryDetailsFragment = { id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null };
@@ -937,7 +937,17 @@ export type LibraryLinkAttributeDetailsFragment = { linked_library?: { id: strin
 
 export type LibraryPreviewsSettingsFragment = { label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } };
 
-export type RecordFormElementFragment = { id: string, containerId: string, uiElementType: string, type: FormElementTypes, attribute?: { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_library?: { id: string, label?: any | null, behavior: LibraryBehavior, permissions?: { create_record: boolean } | null } | null, linkValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { character_limit?: number | null, id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null } | null, treeValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | null, settings: Array<{ key: string, value: any }> };
+export type RecordFormElementFragment = { id: string, containerId: string, uiElementType: string, type: FormElementTypes, valueError?: string | null, values?: Array<{ id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, linkValue?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null } | { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, treeValue?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null } | { payload?: any | null, raw_payload?: any | null, value?: any | null, raw_value?: any | null, id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null }> | null, attribute?: { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_library?: { id: string, label?: any | null, behavior: LibraryBehavior, permissions?: { create_record: boolean } | null } | null, linkValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { character_limit?: number | null, id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null } | null, treeValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | null, settings: Array<{ key: string, value: any }>, joinLibraryContext?: { mandatoryAttribute: { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_library?: { id: string, label?: any | null, behavior: LibraryBehavior, permissions?: { create_record: boolean } | null } | null, linkValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { character_limit?: number | null, id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null } | null, treeValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } } | null };
+
+export type ValueDetailsLinkValueFragment = { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, linkValue?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null };
+
+export type ValueDetailsTreeValueFragment = { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, treeValue?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null };
+
+export type ValueDetailsValueFragment = { payload?: any | null, raw_payload?: any | null, value?: any | null, raw_value?: any | null, id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null };
+
+export type ValueDetailsFragment = ValueDetailsLinkValueFragment | ValueDetailsTreeValueFragment | ValueDetailsValueFragment;
+
+export type ValuesVersionDetailsFragment = { treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null };
 
 export type RecordFormAttributeLinkAttributeFragment = { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_library?: { id: string, label?: any | null, behavior: LibraryBehavior, permissions?: { create_record: boolean } | null } | null, linkValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null };
 
@@ -953,15 +963,7 @@ export type StandardValuesListFragmentStandardStringValuesListConfFragment = { e
 
 export type StandardValuesListFragmentFragment = StandardValuesListFragmentStandardDateRangeValuesListConfFragment | StandardValuesListFragmentStandardStringValuesListConfFragment;
 
-export type ValueDetailsLinkValueFragment = { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, linkValue?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null };
-
-export type ValueDetailsTreeValueFragment = { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, treeValue?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null };
-
-export type ValueDetailsValueFragment = { payload?: any | null, raw_payload?: any | null, value?: any | null, raw_value?: any | null, id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null };
-
-export type ValueDetailsFragment = ValueDetailsLinkValueFragment | ValueDetailsTreeValueFragment | ValueDetailsValueFragment;
-
-export type ValuesVersionDetailsFragment = { treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null };
+export type JoinLibraryContextFragment = { mandatoryAttribute: { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_library?: { id: string, label?: any | null, behavior: LibraryBehavior, permissions?: { create_record: boolean } | null } | null, linkValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { character_limit?: number | null, id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null } | null, treeValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } };
 
 export type TreeDetailsFragment = { id: string, label?: any | null, behavior: TreeBehavior, system: boolean, libraries: Array<{ library: { id: string, label?: any | null }, settings: { allowMultiplePositions: boolean, allowedAtRoot: boolean, allowedChildren: Array<string> } }> };
 
@@ -1150,17 +1152,6 @@ export type UploadMutationVariables = Exact<{
 
 export type UploadMutation = { upload: Array<{ uid: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> };
 
-export type GetFormElementValuesQueryVariables = Exact<{
-  recordId?: InputMaybe<Scalars['String']>;
-  libraryId: Scalars['String'];
-  formId: Scalars['String'];
-  version?: InputMaybe<Array<ValueVersionInput> | ValueVersionInput>;
-  elementIds?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
-}>;
-
-
-export type GetFormElementValuesQuery = { getFormElementValues?: Array<{ id: string, order: number, values?: Array<{ id_value?: string | null }> | null }> | null };
-
 export type ImportExcelMutationVariables = Exact<{
   file: Scalars['Upload'];
   sheets?: InputMaybe<Array<InputMaybe<SheetInput>> | InputMaybe<SheetInput>>;
@@ -1279,7 +1270,7 @@ export type RecordFormQueryVariables = Exact<{
 }>;
 
 
-export type RecordFormQuery = { recordForm?: { id: string, recordId?: string | null, library: { id: string }, dependencyAttributes?: Array<{ id: string }> | null, elements: Array<{ id: string, containerId: string, uiElementType: string, type: FormElementTypes, attribute?: { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_library?: { id: string, label?: any | null, behavior: LibraryBehavior, permissions?: { create_record: boolean } | null } | null, linkValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { character_limit?: number | null, id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null } | null, treeValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | null, settings: Array<{ key: string, value: any }> }>, sidePanel?: { enable: boolean, isOpenByDefault?: boolean | null } | null } | null };
+export type RecordFormQuery = { recordForm?: { id: string, recordId?: string | null, library: { id: string }, dependencyAttributes?: Array<{ id: string }> | null, elements: Array<{ id: string, containerId: string, uiElementType: string, type: FormElementTypes, valueError?: string | null, values?: Array<{ id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, linkValue?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null } | { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, treeValue?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null } | { payload?: any | null, raw_payload?: any | null, value?: any | null, raw_value?: any | null, id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null }> | null, attribute?: { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_library?: { id: string, label?: any | null, behavior: LibraryBehavior, permissions?: { create_record: boolean } | null } | null, linkValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { character_limit?: number | null, id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null } | null, treeValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | null, settings: Array<{ key: string, value: any }>, joinLibraryContext?: { mandatoryAttribute: { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_library?: { id: string, label?: any | null, behavior: LibraryBehavior, permissions?: { create_record: boolean } | null } | null, linkValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { character_limit?: number | null, id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } | { id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, multiple_values: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null } | null, treeValuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<{ id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean }, versions_conf?: { versionable: boolean, profile?: { id: string, trees: Array<{ id: string, label?: any | null }> } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, description?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean }, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null } | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, metadata_fields?: Array<{ id: string }> | null }> | null } } | null }>, sidePanel?: { enable: boolean, isOpenByDefault?: boolean | null } | null } | null };
 
 export type RecordUpdateSubscriptionVariables = Exact<{
   filters?: InputMaybe<RecordUpdateFilterInput>;
@@ -1514,6 +1505,15 @@ export type UpdateViewMutationVariables = Exact<{
 
 export type UpdateViewMutation = { updateView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
 
+export type GetJoinLibraryMandatoryAttributeValuesQueryVariables = Exact<{
+  joinLibraryId: Scalars['ID'];
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+  mandatoryAttributeId: Scalars['ID'];
+}>;
+
+
+export type GetJoinLibraryMandatoryAttributeValuesQuery = { records: { list: Array<{ id: string, property: Array<{ payload?: { id: string } | null }> }> } };
+
 export type TreeDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID'];
 }>;
@@ -1646,15 +1646,6 @@ export const AttributesByLibAttributeFragmentDoc = gql`
   }
 }
     ${AttributesByLibLinkAttributeFragmentDoc}`;
-export const FormElementWithValuesFragmentDoc = gql`
-    fragment FormElementWithValues on FormElementWithValues {
-  id
-  order
-  values {
-    id_value
-  }
-}
-    `;
 export const LibraryLightFragmentDoc = gql`
     fragment LibraryLight on Library {
   id
@@ -1755,6 +1746,92 @@ export const LibraryDetailsFragmentDoc = gql`
     ${LibraryAttributesFragmentDoc}
 ${RecordIdentityFragmentDoc}
 ${LibraryPreviewsSettingsFragmentDoc}`;
+export const ValuesVersionDetailsFragmentDoc = gql`
+    fragment ValuesVersionDetails on ValueVersion {
+  treeId
+  treeNode {
+    id
+    record {
+      id
+      whoAmI {
+        id
+        label
+        library {
+          id
+        }
+      }
+    }
+  }
+}
+    `;
+export const ValueDetailsFragmentDoc = gql`
+    fragment ValueDetails on GenericValue {
+  id_value
+  isInherited
+  isCalculated
+  modified_at
+  modified_by {
+    ...RecordIdentity
+  }
+  created_at
+  created_by {
+    ...RecordIdentity
+  }
+  version {
+    ...ValuesVersionDetails
+  }
+  attribute {
+    id
+    format
+    type
+    system
+  }
+  metadata {
+    name
+    value {
+      id_value
+      modified_at
+      modified_by {
+        ...RecordIdentity
+      }
+      created_at
+      created_by {
+        ...RecordIdentity
+      }
+      version {
+        ...ValuesVersionDetails
+      }
+      payload
+      raw_payload
+    }
+  }
+  ... on Value {
+    payload
+    raw_payload
+    value
+    raw_value
+  }
+  ... on LinkValue {
+    linkValue: payload {
+      ...RecordIdentity
+    }
+  }
+  ... on TreeValue {
+    treeValue: payload {
+      id
+      record {
+        ...RecordIdentity
+      }
+      ancestors {
+        record {
+          ...RecordIdentity
+        }
+      }
+    }
+  }
+}
+    ${RecordIdentityFragmentDoc}
+${ValuesVersionDetailsFragmentDoc}`;
 export const StandardValuesListFragmentFragmentDoc = gql`
     fragment StandardValuesListFragment on StandardValuesListConf {
   ... on StandardStringValuesListConf {
@@ -1869,12 +1946,23 @@ export const RecordFormAttributeFragmentDoc = gql`
 }
     ${StandardValuesListFragmentFragmentDoc}
 ${RecordIdentityFragmentDoc}`;
+export const JoinLibraryContextFragmentDoc = gql`
+    fragment JoinLibraryContext on FormElementJoinLibraryContext {
+  mandatoryAttribute {
+    ...RecordFormAttribute
+  }
+}
+    ${RecordFormAttributeFragmentDoc}`;
 export const RecordFormElementFragmentDoc = gql`
-    fragment RecordFormElement on FormElement {
+    fragment RecordFormElement on FormElementWithValues {
   id
   containerId
   uiElementType
   type
+  valueError
+  values {
+    ...ValueDetails
+  }
   attribute {
     ...RecordFormAttribute
   }
@@ -1882,8 +1970,13 @@ export const RecordFormElementFragmentDoc = gql`
     key
     value
   }
+  joinLibraryContext {
+    ...JoinLibraryContext
+  }
 }
-    ${RecordFormAttributeFragmentDoc}`;
+    ${ValueDetailsFragmentDoc}
+${RecordFormAttributeFragmentDoc}
+${JoinLibraryContextFragmentDoc}`;
 export const TreeLightFragmentDoc = gql`
     fragment TreeLight on Tree {
   id
@@ -1940,92 +2033,6 @@ export const TreeNodeChildFragmentDoc = gql`
   }
 }
     ${RecordIdentityFragmentDoc}`;
-export const ValuesVersionDetailsFragmentDoc = gql`
-    fragment ValuesVersionDetails on ValueVersion {
-  treeId
-  treeNode {
-    id
-    record {
-      id
-      whoAmI {
-        id
-        label
-        library {
-          id
-        }
-      }
-    }
-  }
-}
-    `;
-export const ValueDetailsFragmentDoc = gql`
-    fragment ValueDetails on GenericValue {
-  id_value
-  isInherited
-  isCalculated
-  modified_at
-  modified_by {
-    ...RecordIdentity
-  }
-  created_at
-  created_by {
-    ...RecordIdentity
-  }
-  version {
-    ...ValuesVersionDetails
-  }
-  attribute {
-    id
-    format
-    type
-    system
-  }
-  metadata {
-    name
-    value {
-      id_value
-      modified_at
-      modified_by {
-        ...RecordIdentity
-      }
-      created_at
-      created_by {
-        ...RecordIdentity
-      }
-      version {
-        ...ValuesVersionDetails
-      }
-      payload
-      raw_payload
-    }
-  }
-  ... on Value {
-    payload
-    raw_payload
-    value
-    raw_value
-  }
-  ... on LinkValue {
-    linkValue: payload {
-      ...RecordIdentity
-    }
-  }
-  ... on TreeValue {
-    treeValue: payload {
-      id
-      record {
-        ...RecordIdentity
-      }
-      ancestors {
-        record {
-          ...RecordIdentity
-        }
-      }
-    }
-  }
-}
-    ${RecordIdentityFragmentDoc}
-${ValuesVersionDetailsFragmentDoc}`;
 export const ViewDetailsFilterFragmentDoc = gql`
     fragment ViewDetailsFilter on RecordFilter {
   field
@@ -2925,51 +2932,6 @@ export function useUploadMutation(baseOptions?: Apollo.MutationHookOptions<Uploa
 export type UploadMutationHookResult = ReturnType<typeof useUploadMutation>;
 export type UploadMutationResult = Apollo.MutationResult<UploadMutation>;
 export type UploadMutationOptions = Apollo.BaseMutationOptions<UploadMutation, UploadMutationVariables>;
-export const GetFormElementValuesDocument = gql`
-    query GET_FORM_ELEMENT_VALUES($recordId: String, $libraryId: String!, $formId: String!, $version: [ValueVersionInput!], $elementIds: [ID!]) {
-  getFormElementValues(
-    recordId: $recordId
-    libraryId: $libraryId
-    formId: $formId
-    version: $version
-    elementIds: $elementIds
-  ) {
-    ...FormElementWithValues
-  }
-}
-    ${FormElementWithValuesFragmentDoc}`;
-
-/**
- * __useGetFormElementValuesQuery__
- *
- * To run a query within a React component, call `useGetFormElementValuesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetFormElementValuesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetFormElementValuesQuery({
- *   variables: {
- *      recordId: // value for 'recordId'
- *      libraryId: // value for 'libraryId'
- *      formId: // value for 'formId'
- *      version: // value for 'version'
- *      elementIds: // value for 'elementIds'
- *   },
- * });
- */
-export function useGetFormElementValuesQuery(baseOptions: Apollo.QueryHookOptions<GetFormElementValuesQuery, GetFormElementValuesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetFormElementValuesQuery, GetFormElementValuesQueryVariables>(GetFormElementValuesDocument, options);
-      }
-export function useGetFormElementValuesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFormElementValuesQuery, GetFormElementValuesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetFormElementValuesQuery, GetFormElementValuesQueryVariables>(GetFormElementValuesDocument, options);
-        }
-export type GetFormElementValuesQueryHookResult = ReturnType<typeof useGetFormElementValuesQuery>;
-export type GetFormElementValuesLazyQueryHookResult = ReturnType<typeof useGetFormElementValuesLazyQuery>;
-export type GetFormElementValuesQueryResult = Apollo.QueryResult<GetFormElementValuesQuery, GetFormElementValuesQueryVariables>;
 export const ImportExcelDocument = gql`
     mutation IMPORT_EXCEL($file: Upload!, $sheets: [SheetInput], $startAt: Int) {
   importExcel(file: $file, sheets: $sheets, startAt: $startAt)
@@ -4807,6 +4769,57 @@ export function useUpdateViewMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateViewMutationHookResult = ReturnType<typeof useUpdateViewMutation>;
 export type UpdateViewMutationResult = Apollo.MutationResult<UpdateViewMutation>;
 export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMutation, UpdateViewMutationVariables>;
+export const GetJoinLibraryMandatoryAttributeValuesDocument = gql`
+    query getJoinLibraryMandatoryAttributeValues($joinLibraryId: ID!, $filters: [RecordFilterInput], $mandatoryAttributeId: ID!) {
+  records(library: $joinLibraryId, filters: $filters) {
+    list {
+      id
+      property(attribute: $mandatoryAttributeId) {
+        ... on LinkValue {
+          payload {
+            id
+          }
+        }
+        ... on TreeValue {
+          payload {
+            id
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetJoinLibraryMandatoryAttributeValuesQuery__
+ *
+ * To run a query within a React component, call `useGetJoinLibraryMandatoryAttributeValuesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetJoinLibraryMandatoryAttributeValuesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetJoinLibraryMandatoryAttributeValuesQuery({
+ *   variables: {
+ *      joinLibraryId: // value for 'joinLibraryId'
+ *      filters: // value for 'filters'
+ *      mandatoryAttributeId: // value for 'mandatoryAttributeId'
+ *   },
+ * });
+ */
+export function useGetJoinLibraryMandatoryAttributeValuesQuery(baseOptions: Apollo.QueryHookOptions<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>(GetJoinLibraryMandatoryAttributeValuesDocument, options);
+      }
+export function useGetJoinLibraryMandatoryAttributeValuesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>(GetJoinLibraryMandatoryAttributeValuesDocument, options);
+        }
+export type GetJoinLibraryMandatoryAttributeValuesQueryHookResult = ReturnType<typeof useGetJoinLibraryMandatoryAttributeValuesQuery>;
+export type GetJoinLibraryMandatoryAttributeValuesLazyQueryHookResult = ReturnType<typeof useGetJoinLibraryMandatoryAttributeValuesLazyQuery>;
+export type GetJoinLibraryMandatoryAttributeValuesQueryResult = Apollo.QueryResult<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>;
 export const TreeDataQueryDocument = gql`
     query TreeDataQuery($treeId: ID!) {
   trees(filters: {id: [$treeId]}) {

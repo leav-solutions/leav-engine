@@ -3,3 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import TreeField from './TreeField';
 export default TreeField;
+
+// Export SelectTreeNodeModal for cadrage, but rename if to avoid conflict with libs/ui/src/components/SelectTreeNodeModal
+export {SelectTreeNodeModal as SelectTreeNodeModalNext} from './manage-tree-node-selection/SelectTreeNodeModal';

@@ -9,6 +9,7 @@ import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ITreeNodeWithRecord} from '_ui/types';
 import {KitButton, KitModal} from 'aristid-ds';
+import _ from 'lodash';
 import {FunctionComponent, useState} from 'react';
 import {FaCheck} from 'react-icons/fa';
 
@@ -16,11 +17,36 @@ const SELECT_TREE_NODE_MODAL_HEIGHT = '563px';
 
 const SELECT_TREE_NODE_MODAL_WIDTH = '656px';
 
+type SelectTreeNodeModalBackendValue =
+    | RecordFormElementsValueTreeValue
+    | {
+          treeValue: {
+              id: string;
+          };
+      };
+
+type SelectTreeNodeModalAttribute =
+    | RecordFormAttributeTreeAttributeFragment
+    | {
+          multiple_values: boolean;
+          linked_tree: {
+              id: string;
+          };
+      };
+
 interface ISelectTreeNodeModalProps {
     title: string;
     open: boolean;
-    attribute: RecordFormAttributeTreeAttributeFragment;
-    backendValues: RecordFormElementsValueTreeValue[];
+    attribute: SelectTreeNodeModalAttribute;
+    backendValues: SelectTreeNodeModalBackendValue[];
+    /**
+     * If tree, initial node (backendValues) will be unselectable
+     * By default, they are not
+     *
+     * Would be much better to invert this property to disallowInitialNodeDeselection for instance
+     * But need to review upper usage
+     */
+    allowInitialNodeDeselection?: boolean;
     onConfirm: (selectedNodes: ITreeNodeWithRecord[]) => void;
     onClose: () => void;
     className?: string;
@@ -31,6 +57,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     open,
     attribute,
     backendValues,
+    allowInitialNodeDeselection = false,
     onConfirm,
     onClose,
     className
@@ -38,8 +65,13 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     const {t} = useSharedTranslation();
 
     const [selectedNodes, setSelectedNode] = useState<ITreeNodeWithRecord[]>([]);
+    // Use intermediate state to store backend node ids for initial props inject,
+    // reset after first _handleOnSelect/_handleOnCheck to avoid adding backend values to selected nodes again and again
+    // Another solution would be to inject backendValues with compatible ITreeNodeWithRecord type to set selectedNodes initial state
+    const [tmpBackendNodeIds, setTmpBackendNodeIds] = useState<string[] | undefined>(backendValues.map(value => value.treeValue.id));
 
     const _handleOnSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
+        setTmpBackendNodeIds(undefined);
         if (!attribute.multiple_values) {
             setSelectedNode(selected ? [node] : []);
             return;
@@ -53,6 +85,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     };
 
     const _handleOnCheck = (selection: ITreeNodeWithRecord[]) => {
+        setTmpBackendNodeIds(undefined);
         setSelectedNode(selection.map(node => node).filter(node => !node?.disabled));
     };
 
@@ -89,11 +122,8 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
         >
             <SelectTreeNode
                 treeId={attribute.linked_tree.id}
-                selectedNodes={[
-                    ...backendValues.map(value => value.treeValue.id),
-                    ...selectedNodes.map(node => node.id)
-                ]}
-                disabledNodes={backendValues.map(value => value.treeValue.id)}
+                selectedNodes={tmpBackendNodeIds || selectedNodes.map(node => node.id)}
+                disabledNodes={!allowInitialNodeDeselection && backendValues.map(value => value.treeValue.id) || []}
                 onSelect={_handleOnSelect}
                 onCheck={_handleOnCheck}
                 checkable={attribute.multiple_values}

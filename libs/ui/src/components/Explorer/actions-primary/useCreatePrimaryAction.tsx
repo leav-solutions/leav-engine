@@ -8,7 +8,12 @@ import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {LibraryBehavior, useExplorerLibraryDetailsQuery, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
+import {
+    JoinLibraryContextFragment,
+    LibraryBehavior,
+    useExplorerLibraryDetailsQuery,
+    useExplorerLinkAttributeQuery
+} from '_ui/_gqlTypes';
 import {FeatureHook, Entrypoint, IEntrypointLink, IPrimaryAction} from '../_types';
 import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
 
@@ -34,6 +39,7 @@ export const useCreatePrimaryAction = ({
     canCreateAndLinkValue,
     onCreate,
     formId,
+    joinLibraryContext,
     refetch
 }: FeatureHook<{
     libraryId: string;
@@ -47,6 +53,7 @@ export const useCreatePrimaryAction = ({
         recordIdCreated: string;
         saveValuesResultOnLink?: ISubmitMultipleResult;
     }) => void;
+    joinLibraryContext?: JoinLibraryContextFragment;
     formId?: string;
     refetch: () => void;
 }>) => {
@@ -60,7 +67,7 @@ export const useCreatePrimaryAction = ({
     useExplorerLinkAttributeQuery({
         skip: entrypoint.type !== 'link',
         variables: {
-            id: (entrypoint as IEntrypointLink).linkAttributeId
+            id: joinLibraryContext?.mandatoryAttribute.id || (entrypoint as IEntrypointLink).linkAttributeId
         },
         onCompleted: data => {
             const attributeData = data?.attributes?.list?.[0];
@@ -71,7 +78,16 @@ export const useCreatePrimaryAction = ({
         }
     });
 
-    const {data, loading, error} = useExplorerLibraryDetailsQuery({variables: {libraryId}, skip: !isEnabled});
+    const _getLibraryId = () =>
+        (joinLibraryContext?.mandatoryAttribute &&
+            'linked_library' in joinLibraryContext.mandatoryAttribute &&
+            joinLibraryContext.mandatoryAttribute.linked_library?.id) ||
+        libraryId;
+
+    const {data, loading, error} = useExplorerLibraryDetailsQuery({
+        variables: {libraryId: _getLibraryId()},
+        skip: !isEnabled
+    });
 
     if (error || loading) {
         return {createPrimaryAction: null, createModal: null};
@@ -105,7 +121,7 @@ export const useCreatePrimaryAction = ({
         case LibraryBehavior.files:
             _createModal = (
                 <UploadFiles
-                    libraryId={libraryId}
+                    libraryId={_getLibraryId()}
                     multiple
                     onClose={() => setIsModalCreationVisible(false)}
                     onCompleted={() => {
@@ -119,7 +135,7 @@ export const useCreatePrimaryAction = ({
         case LibraryBehavior.directories:
             _createModal = (
                 <CreateDirectory
-                    libraryId={libraryId}
+                    libraryId={_getLibraryId()}
                     onClose={() => setIsModalCreationVisible(false)}
                     onCompleted={() => {
                         refetch();
@@ -136,7 +152,7 @@ export const useCreatePrimaryAction = ({
                     className={CREATE_RECORD_MODAL_CLASSNAME}
                     open
                     record={null}
-                    library={libraryId}
+                    library={_getLibraryId()}
                     creationFormId={formId}
                     onClose={() => {
                         setIsModalCreationVisible(false);
