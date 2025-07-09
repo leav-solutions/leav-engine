@@ -5,7 +5,7 @@ import {Channel, Connection, Options} from 'amqplib';
 import * as amqp from 'amqplib/callback_api';
 import * as Crypto from 'crypto';
 import * as fs from 'fs';
-import {getConfig} from '../';
+import {getConfig} from '../config';
 import {createClient} from '../redis/redis';
 import {start} from '../watch/watch';
 

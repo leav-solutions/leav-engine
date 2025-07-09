@@ -6,7 +6,7 @@ import * as chokidar from 'chokidar';
 import {createHash} from 'crypto';
 import {createReadStream, Stats} from 'fs';
 import {join} from 'path';
-import {getConfig} from '../';
+import {getConfig} from '../config';
 import {getInode, setData} from '../redis/redis';
 import {IAmqpParams, IParams, IParamsExtends, IWatcherParams} from '../types';
 import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
