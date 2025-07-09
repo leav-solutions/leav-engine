@@ -75,6 +75,7 @@ const depsBase: ToAny<IRecordDomainDeps> = {
     'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
     'core.infra.library': jest.fn(),
     'core.infra.tree': jest.fn(),
+    'core.domain.tree.helpers.elementAncestors': jest.fn(),
     'core.infra.value': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     'core.infra.cache.cacheService': jest.fn(),
