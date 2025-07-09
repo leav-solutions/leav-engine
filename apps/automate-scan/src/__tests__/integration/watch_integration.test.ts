@@ -5,12 +5,13 @@ import {Channel} from 'amqplib';
 import * as amqp from 'amqplib/callback_api';
 import * as fs from 'fs';
 import {startWatch} from '../../setupWatcher/setupWatcher';
-import {getConfig} from '../../';
+import {getConfig} from '../../config';
+import path from 'path';
 
 describe('integration test automate-scan', () => {
     console.info = jest.fn();
 
-    test('create a file and check if event send to rabbitmq', async done => {
+    test('create a file and check if event send to rabbitmq', async () => {
         expect.assertions(2);
 
         const config = await getConfig();
@@ -29,21 +30,23 @@ describe('integration test automate-scan', () => {
             await fs.promises.writeFile(pathTmpFile, Math.random().toString());
         });
 
-        await initRabbitMQ(async (channel: Channel, msg: string) => {
-            watcher.close();
-            // Get the message consume
+        await new Promise<void>((resolve, reject) => {
+            initRabbitMQ(async (channel: Channel, msg: string) => {
+                watcher.close();
+                // Get the message consume
 
-            // Delete the file create for the test
-            await fs.promises.unlink(pathTmpFile);
+                // Delete the file create for the test
+                await fs.promises.unlink(pathTmpFile);
 
-            // Test if the message is correct
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('CREATE'));
+                // Test if the message is correct
+                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('CREATE'));
 
-            done();
+                resolve();
+            }).catch(reject);
         });
     });
 
-    test('update a file and check if event send to rabbitmq', async done => {
+    test('update a file and check if event send to rabbitmq', async () => {
         expect.assertions(2);
 
         const config = await getConfig();
@@ -63,17 +66,19 @@ describe('integration test automate-scan', () => {
             await fs.promises.writeFile(pathTmpFile, Math.random().toString());
         });
 
-        await initRabbitMQ(async (channel: Channel, msg: string) => {
-            watcher.close();
+        await new Promise<void>((resolve, reject) => {
+            initRabbitMQ(async (channel: Channel, msg: string) => {
+                watcher.close();
 
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('UPDATE'));
-            await fs.promises.unlink(pathTmpFile);
+                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('UPDATE'));
+                await fs.promises.unlink(pathTmpFile);
 
-            done();
+                resolve();
+            }).catch(reject);
         });
     });
 
-    test('delete a file and check if event send to rabbitmq', async done => {
+    test('delete a file and check if event send to rabbitmq', async () => {
         const config = await getConfig();
 
         // set max timeout in jest test
@@ -93,16 +98,18 @@ describe('integration test automate-scan', () => {
             }
         });
 
-        await initRabbitMQ((channel: Channel, msg: string) => {
-            watcher.close();
+        await new Promise<void>((resolve, reject) => {
+            initRabbitMQ(async (channel: Channel, msg: string) => {
+                watcher.close();
 
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('REMOVE'));
+                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('REMOVE'));
 
-            done();
+                resolve();
+            }).catch(reject);
         });
     });
 
-    test('rename a file and check if event send to rabbitmq', async done => {
+    test('rename a file and check if event send to rabbitmq', async () => {
         expect.assertions(2);
 
         const config = await getConfig();
@@ -126,17 +133,19 @@ describe('integration test automate-scan', () => {
             }
         });
 
-        await initRabbitMQ(async (channel: Channel, msg: string) => {
-            watcher.close();
+        await new Promise<void>((resolve, reject) => {
+            initRabbitMQ(async (channel: Channel, msg: string) => {
+                watcher.close();
 
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
-            await fs.promises.unlink(newPathTmpFile);
+                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
+                await fs.promises.unlink(newPathTmpFile);
 
-            done();
+                resolve();
+            }).catch(reject);
         });
     });
 
-    test('move a file and check if event send to rabbitmq', async done => {
+    test('move a file and check if event send to rabbitmq', async () => {
         expect.assertions(2);
 
         const config = await getConfig();
@@ -149,6 +158,9 @@ describe('integration test automate-scan', () => {
         const newPathTmpFile = config.rootPath + '/1/' + fileName;
 
         await fs.promises.writeFile(pathTmpFile, Math.random().toString());
+        if (!fs.existsSync(path.dirname(newPathTmpFile))) {
+            await fs.promises.mkdir(path.dirname(newPathTmpFile));
+        }
 
         const watcher = await startWatch();
         // Need the watcher to work
@@ -161,17 +173,19 @@ describe('integration test automate-scan', () => {
             }
         });
 
-        await initRabbitMQ(async (channel: Channel, msg: string) => {
-            watcher.close();
+        await new Promise<void>((resolve, reject) => {
+            initRabbitMQ(async (channel: Channel, msg: string) => {
+                watcher.close();
 
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
-            await fs.promises.unlink(newPathTmpFile);
+                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
+                await fs.promises.unlink(newPathTmpFile);
 
-            done();
+                resolve();
+            }).catch(reject);
         });
     });
 
-    test('move and rename a file and check if event send to rabbitmq', async done => {
+    test('move and rename a file and check if event send to rabbitmq', async () => {
         expect.assertions(2);
 
         const config = await getConfig();
@@ -182,6 +196,9 @@ describe('integration test automate-scan', () => {
         const newPathTmpFile = config.rootPath + '/1/file2_' + Math.random().toString();
 
         await fs.promises.writeFile(pathTmpFile, Math.random().toString());
+        if (!fs.existsSync(path.dirname(newPathTmpFile))) {
+            await fs.promises.mkdir(path.dirname(newPathTmpFile));
+        }
 
         const watcher = await startWatch();
         // Need the watcher to work
@@ -194,14 +211,16 @@ describe('integration test automate-scan', () => {
             }
         });
 
-        await initRabbitMQ(async (channel: Channel, msg: string) => {
-            watcher.close();
+        await new Promise<void>((resolve, reject) => {
+            initRabbitMQ(async (channel: Channel, msg: string) => {
+                watcher.close();
 
-            expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
+                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
 
-            await fs.promises.unlink(newPathTmpFile);
+                await fs.promises.unlink(newPathTmpFile);
 
-            done();
+                resolve();
+            }).catch(reject);
         });
     });
 });
