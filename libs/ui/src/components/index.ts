@@ -20,6 +20,7 @@ export * from './Explorer';
 export * from './ExportModal';
 export * from './FieldsGroup';
 export * from './FloatingMenu';
+export * from './CloseOnBlur';
 export * from './ImageLoading';
 export * from './ImageMissing';
 export * from './ImportModal';
