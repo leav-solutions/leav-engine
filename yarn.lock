@@ -19127,6 +19127,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-no-only-tests@npm:3.3.0":
+  version: 3.3.0
+  resolution: "eslint-plugin-no-only-tests@npm:3.3.0"
+  checksum: 1b3a88e392113240758405966047ef40dd742fbd828f3c8d02a207125edaa5303ef9a0319a778551bd88789110423221fff4e9db02896c20836389b13c27b32e
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-react-hooks@npm:4.4.0, eslint-plugin-react-hooks@npm:^4.3.0":
   version: 4.4.0
   resolution: "eslint-plugin-react-hooks@npm:4.4.0"
@@ -25342,6 +25349,7 @@ __metadata:
     eslint-plugin-import: "npm:2.26.0"
     eslint-plugin-jsdoc: "npm:39.2.1"
     eslint-plugin-jsx-a11y: "npm:6.5.1"
+    eslint-plugin-no-only-tests: "npm:3.3.0"
     eslint-plugin-react-hooks: "npm:4.4.0"
     eslint-plugin-react-refresh: "npm:0.4.3"
     husky: "npm:6.0.0"

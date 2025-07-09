@@ -5,7 +5,7 @@ module.exports = {
     ignorePatterns: ['**/_gqlTypes/*.ts', '**/dist/*', '**/plugins/*', '**/__generated__/**'],
     parser: '@typescript-eslint/parser',
     parserOptions: {tsconfigRootDir: __dirname},
-    plugins: ['@typescript-eslint', 'react-refresh'],
+    plugins: ['@typescript-eslint', 'react-refresh', 'no-only-tests'],
     settings: {react: {version: 'latest'}},
     extends: ['plugin:@aristid/recommended'],
     rules: {
@@ -133,5 +133,13 @@ module.exports = {
         'object-curly-spacing': ['error', 'never'],
         'func-call-spacing': ['error', 'never'],
         'react-refresh/only-export-components': 'warn'
-    }
+    },
+    overrides: [
+        {
+            files: ['**/*.test.ts', '**/*.spec.ts', '**/*.test.tsx', '**/*.spec.tsx'],
+            rules: {
+                'no-only-tests/no-only-tests': 'error'
+            }
+        }
+    ]
 };
