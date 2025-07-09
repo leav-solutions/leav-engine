@@ -29,7 +29,7 @@ export interface IGetAccessPermissionsValue {
 }
 
 export type IGetAccessPermissions = (
-    groupsIds: string[],
+    groupsIds: string[][],
     library: string,
     deps: IAccessPermissionFilterDeps,
     ctx: IQueryInfos
@@ -70,48 +70,66 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (groupsIds, lib
     };
     const _getNodesIdByPermission = async (treeId: string): Promise<any> => {
         const treeContent = await treeRepo.getTreeContent({treeId, ctx});
-        const permissions = await permissionRepo.getAllPermissionsForTree({
-            type: PermissionTypes.RECORD,
-            applyTo: library,
-            actionKey: RecordPermissionsActions.ACCESS_RECORD,
-            treeId,
-            groupsIds,
-            ctx
-        });
 
-        // for each treeTarget we list all saved permission (null, true, false)
-        const permissionsByTreeTarget = permissions.reduce((acc, p) => {
-            acc[`nodeId:${p.permissionTreeTarget.nodeId}`] = acc[`nodeId:${p.permissionTreeTarget.nodeId}`] ?? [];
+        const result = {
+            true: [],
+            false: []
+        };
+        for (const groupWithAncestor of groupsIds) {
+            // we calc permissions group by group.
+            // groupWithAncestor contains [definedGroupId, parentId, grandParentId, ...]
+            const permissions = await permissionRepo.getAllPermissionsForTree({
+                type: PermissionTypes.RECORD,
+                applyTo: library,
+                actionKey: RecordPermissionsActions.ACCESS_RECORD,
+                treeId,
+                groupsIds: groupWithAncestor,
+                ctx
+            });
 
-            acc[`nodeId:${p.permissionTreeTarget.nodeId}`].push(p.actions[`${RecordPermissionsActions.ACCESS_RECORD}`]);
-            return acc;
-        }, {});
+            // for each treeTarget we list all saved permission (null, true, false)
+            const permissionsByTreeTarget = permissions.reduce((acc, p) => {
+                acc[`nodeId:${p.permissionTreeTarget.nodeId}`] = acc[`nodeId:${p.permissionTreeTarget.nodeId}`] ?? [];
 
-        for (const key in permissionsByTreeTarget) {
-            if (Object.hasOwn(permissionsByTreeTarget, key)) {
-                // if at least one of groups has explicit true, we set true
-                permissionsByTreeTarget[key] = permissionsByTreeTarget[key].reduce((acc, p) => {
-                    if (p === null) {
-                        return acc;
-                    }
-                    if (p === true) {
-                        return true;
-                    }
-                    //p is false
-                    if (acc === true) {
-                        return true;
-                    }
-                    return false; // false case, override acc if acc is null
-                }, null);
+                acc[`nodeId:${p.permissionTreeTarget.nodeId}`].push(
+                    p.actions[`${RecordPermissionsActions.ACCESS_RECORD}`]
+                );
+                return acc;
+            }, {});
+
+            for (const key in permissionsByTreeTarget) {
+                if (Object.hasOwn(permissionsByTreeTarget, key)) {
+                    // if at least one of groups has explicit true, we set true
+                    permissionsByTreeTarget[key] = permissionsByTreeTarget[key].reduce((acc, p) => {
+                        if (p === null) {
+                            return acc;
+                        }
+                        if (p === true) {
+                            return true;
+                        }
+                        //p is false
+                        if (acc === true) {
+                            return true;
+                        }
+                        return false; // false case, override acc if acc is null
+                    }, null);
+                }
             }
-        }
 
-        // null is used for "all elements" of the tree (root node)
-        const rootPermission = permissionsByTreeTarget['nodeId:null'] ?? defaultPermHelper.getDefaultPermission();
-        const computedPermissionTree = _computePermissionTree(treeContent, rootPermission, permissionsByTreeTarget);
-        const nodesIdsByPermission = _getNodesIdsByPermissionFromTree(computedPermissionTree);
-        nodesIdsByPermission[rootPermission].push('null'); // add the null permission info for records not linked to the tree
-        return nodesIdsByPermission;
+            // null is used for "all elements" of the tree (root node)
+            const rootPermission = permissionsByTreeTarget['nodeId:null'] ?? defaultPermHelper.getDefaultPermission();
+            const computedPermissionTree = _computePermissionTree(treeContent, rootPermission, permissionsByTreeTarget);
+            const nodesIdsByPermission = _getNodesIdsByPermissionFromTree(computedPermissionTree);
+            nodesIdsByPermission[rootPermission].push('null'); // add the null permission info for records not linked to the tree
+
+            result.true = [...result.true, ...nodesIdsByPermission.true];
+            result.false = [...result.false, ...nodesIdsByPermission.false];
+        }
+        //deduplicate each list
+        result.true = [...new Set([...result.true])];
+        result.false = [...new Set([...result.false])];
+
+        return result;
     };
     const libProps: ILibrary = await getCoreEntityById('library', library, ctx);
     const treeAttributes = libProps?.permissions_conf?.permissionTreeAttributes || [];

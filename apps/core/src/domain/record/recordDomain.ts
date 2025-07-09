@@ -1145,6 +1145,7 @@ export default function ({
 
             const groupsWithAncestorsId = [];
             const groupsId = ctx?.groupsId || [];
+
             for (const groupId of groupsId) {
                 const ancestors = await elementAncestorsHelper.getCachedElementAncestors({
                     treeId: USERS_GROUP_TREE_NAME,
@@ -1152,7 +1153,7 @@ export default function ({
                     ctx
                 });
                 const ancestorsId = ancestors.map(a => a.id).reverse(); // reverse to have list from leaf to root
-                groupsWithAncestorsId.push(...ancestorsId);
+                groupsWithAncestorsId.push(ancestorsId);
             }
 
             const accessPermissionFilters = await getAccessPermissionFilters(
