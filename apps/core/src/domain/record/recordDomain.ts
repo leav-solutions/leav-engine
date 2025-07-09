@@ -1143,9 +1143,9 @@ export default function ({
                 );
             }
 
-            const groupsWithAncestorsId = [];
             const groupsId = ctx?.groupsId || [];
 
+            const groupsWithAncestorsId = [];
             for (const groupId of groupsId) {
                 const ancestors = await elementAncestorsHelper.getCachedElementAncestors({
                     treeId: USERS_GROUP_TREE_NAME,
