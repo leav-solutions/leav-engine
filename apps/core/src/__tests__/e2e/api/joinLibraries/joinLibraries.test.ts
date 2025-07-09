@@ -127,12 +127,12 @@ describe('JoinLibraries', () => {
                 expect(res.data.data.saveForm.library.id).toBe(libCampaign);
                 expect(res.data.data.saveForm.elements[0].elements).toHaveLength(2);
 
-            const joinLibraryElement = res.data.data.saveForm.elements[0].elements.find(e => e.id === elementId);
-            expect(joinLibraryElement).toBeDefined();
-            expect(joinLibraryElement.attribute.id).toBe(attrCampaignStructureItems);
-            expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.linked_library.id).toBe(libThematic);
-            expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.id).toBe(attrStructureItemThematic);
-        });
+                const joinLibraryElement = res.data.data.saveForm.elements[0].elements.find(e => e.id === elementId);
+                expect(joinLibraryElement).toBeDefined();
+                expect(joinLibraryElement.attribute.id).toBe(attrCampaignStructureItems);
+                expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.linked_library.id).toBe(libThematic);
+                expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.id).toBe(attrStructureItemThematic);
+            });
 
             it('saveValue campaign_structure_items with thematic should create join structure_item records bound to that thematic', async () => {
                 const res = await makeGraphQlCall(`mutation {
@@ -452,12 +452,12 @@ describe('JoinLibraries', () => {
                 expect(res.data.data.saveForm.library.id).toBe(libCampaign);
                 expect(res.data.data.saveForm.elements[0].elements).toHaveLength(2);
 
-            const joinLibraryElement = res.data.data.saveForm.elements[0].elements.find(e => e.id === elementId);
-            expect(joinLibraryElement).toBeDefined();
-            expect(joinLibraryElement.attribute.id).toBe(attrCampaignStructureItems);
-            expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.linked_library.id).toBe(libThematic);
-            expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.id).toBe(attrStructureItemThematic);
-        });
+                const joinLibraryElement = res.data.data.saveForm.elements[0].elements.find(e => e.id === elementId);
+                expect(joinLibraryElement).toBeDefined();
+                expect(joinLibraryElement.attribute.id).toBe(attrCampaignStructureItems);
+                expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.linked_library.id).toBe(libThematic);
+                expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.id).toBe(attrStructureItemThematic);
+            });
 
             it('saveValue campaign_structure_items with thematic should create join structure_item records bound to that thematic', async () => {
                 const res = await makeGraphQlCall(`mutation {
@@ -780,69 +780,68 @@ describe('JoinLibraries', () => {
             return res.data.data.records.list;
         }
 
-    async function createCampaignFormWithStructureItem(elementId: string) {
-        const res = await makeGraphQlCall(`mutation {
-            saveForm(
-                form: {
-                    id: "${formCampaign}"
-                    library: "${libCampaign}"
-                    label: { en: "Formulaire édition" }
-                    elements: [
-                        {
-                            elements: [
-                                {
-                                    id: "some_container"
-                                    containerId: "${FORM_ROOT_CONTAINER_ID}"
-                                    order: 0
-                                    type: layout
-                                    uiElementType: "fields_container"
-                                    settings: []
-                                },
-                                {
-                                    id: "${elementId}"
-                                    containerId: "some_container"
-                                    order: 0
-                                    uiElementType: "input"
-                                    type: field
-                                    settings: [
-                                        {
-                                            key: "attribute"
-                                            value: "${attrCampaignStructureItems}"
-                                        }
-                                    ]
-                                },
-                            ]
-                        }
-                    ]
-                }
-            ) {
-                id
-                label
-                library {
+        async function createCampaignFormWithStructureItem(elementId: string) {
+            const res = await makeGraphQlCall(`mutation {
+                saveForm(
+                    form: {
+                        id: "${formCampaign}"
+                        library: "${libCampaign}"
+                        label: { en: "Formulaire édition" }
+                        elements: [
+                            {
+                                elements: [
+                                    {
+                                        id: "some_container"
+                                        containerId: "${FORM_ROOT_CONTAINER_ID}"
+                                        order: 0
+                                        type: layout
+                                        uiElementType: "fields_container"
+                                        settings: []
+                                    },
+                                    {
+                                        id: "${elementId}"
+                                        containerId: "some_container"
+                                        order: 0
+                                        uiElementType: "input"
+                                        type: field
+                                        settings: [
+                                            {
+                                                key: "attribute"
+                                                value: "${attrCampaignStructureItems}"
+                                            }
+                                        ]
+                                    },
+                                ]
+                            }
+                        ]
+                    }
+                ) {
                     id
-                }
-                elements {
-                    elements {
+                    label
+                    library {
                         id
-                        joinLibraryContext { 
-                            multipleValues
-                            mandatoryAttribute {
-                                id
-                                ... on LinkAttribute {
-                                    linked_library {
-                                        id
+                    }
+                    elements {
+                        elements {
+                            id
+                            joinLibraryContext { 
+                                mandatoryAttribute {
+                                    id
+                                    ... on LinkAttribute {
+                                        linked_library {
+                                            id
+                                        }
                                     }
                                 }
                             }
-                        }
-                        attribute {
-                            id
-                            type
+                            attribute {
+                                id
+                                type
+                            }
                         }
                     }
                 }
-            }
-        }`);
+            }`);
 
             expect(res.status).toBe(200);
             expect(res.data.errors).toBeUndefined();
@@ -991,8 +990,7 @@ describe('JoinLibraries', () => {
                 }`);
             });
 
-            it('should NOT add joinLibraryContext in structure_item form categories item element because frontend not compatible', async () => {
-                // Disable because there an UX issue to discuss about TreeField vs LinkField display
+            it('should add joinLibraryContext in structure_item form categories item element', async () => {
                 const elementId = '123456';
 
                 const res = await createStructureItemFormWithStructureItemCategories(elementId);
@@ -1003,7 +1001,10 @@ describe('JoinLibraries', () => {
                 const joinLibraryElement = res.data.data.saveForm.elements[0].elements.find(e => e.id === elementId);
                 expect(joinLibraryElement).toBeDefined();
                 expect(joinLibraryElement.attribute.id).toBe(attrStructureItemCategories);
-                expect(joinLibraryElement.joinLibraryContext).toBeNull();
+                expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.linked_tree.id).toBe(treeCategories);
+                expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.id).toBe(
+                    attrStructureItemCategoriesCategory
+                );
             });
 
             it('saveValue structure_items_categories with category should create join structure_item_categories record bound to that category', async () => {
@@ -1130,7 +1131,7 @@ describe('JoinLibraries', () => {
                     structureItemCategory = await gqlCreateRecord(libStructureItemCategories);
                 });
 
-                it.only('saveValue campaign_structure_items with existing structure item should still be possible', async () => {
+                it('saveValue campaign_structure_items with existing structure item should still be possible', async () => {
                     const res = await makeGraphQlCall(`mutation {
                         saveValue(
                             library: "${libStructureItem}",
@@ -1272,9 +1273,14 @@ describe('JoinLibraries', () => {
                         elements {
                             id
                             joinLibraryContext { 
-                                multipleValues
-                                linkedLibrary
-                                mandatoryAttribute
+                                mandatoryAttribute {
+                                    id
+                                    ... on TreeAttribute {
+                                        linked_tree {
+                                            id
+                                        }
+                                    }
+                                }
                             }
                             attribute {
                                 id

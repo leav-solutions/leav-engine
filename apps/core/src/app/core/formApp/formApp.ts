@@ -198,9 +198,7 @@ export default function ({
 
                     type FormElementJoinLibraryContext {
                         "Mandatory attribute of the join library, can be simple or advanced mono link, or mono tree"
-                        mandatoryAttribute: Attribute!,
-                        "Is the link to join library a multiple values link ?"
-                        multipleValues: Boolean!
+                        mandatoryAttribute: Attribute!
                     }
 
                     input FormElementSettingsInput {
