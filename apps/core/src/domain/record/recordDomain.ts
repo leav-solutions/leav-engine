@@ -1010,7 +1010,7 @@ export default function ({
             return deleteRecordHelper(library, id, ctx);
         },
         async find({params, ctx}) {
-            const {library, sort, pagination, withCount, retrieveInactive = false} = params;
+            const {library, sort, pagination, withCount, retrieveInactive = false, ignorePermissions = false} = params;
             const {filters = [] as IRecordFilterLight[], fulltextSearch} = params;
             const fullFilters: IRecordFilterOption[] = [];
             let fullSort: IRecordSort[] = [];
@@ -1144,29 +1144,32 @@ export default function ({
             }
 
             const groupsId = ctx?.groupsId || [];
+            let accessPermissionFilters = [];
 
-            const groupsWithAncestorsId = [];
-            for (const groupId of groupsId) {
-                const ancestors = await elementAncestorsHelper.getCachedElementAncestors({
-                    treeId: USERS_GROUP_TREE_NAME,
-                    nodeId: groupId,
+            if (!ignorePermissions) {
+                const groupsWithAncestorsId = [];
+                for (const groupId of groupsId) {
+                    const ancestors = await elementAncestorsHelper.getCachedElementAncestors({
+                        treeId: USERS_GROUP_TREE_NAME,
+                        nodeId: groupId,
+                        ctx
+                    });
+                    const ancestorsId = ancestors.map(a => a.id).reverse(); // reverse to have list from leaf to root
+                    groupsWithAncestorsId.push(ancestorsId);
+                }
+
+                accessPermissionFilters = await getAccessPermissionFilters(
+                    groupsWithAncestorsId,
+                    library,
+                    {
+                        'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+                        'core.infra.tree': treeRepo,
+                        'core.infra.permission': permissionRepo,
+                        'core.domain.permission.helpers.defaultPermission': defaultPermHelper
+                    },
                     ctx
-                });
-                const ancestorsId = ancestors.map(a => a.id).reverse(); // reverse to have list from leaf to root
-                groupsWithAncestorsId.push(ancestorsId);
+                );
             }
-
-            const accessPermissionFilters = await getAccessPermissionFilters(
-                groupsWithAncestorsId,
-                library,
-                {
-                    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
-                    'core.infra.tree': treeRepo,
-                    'core.infra.permission': permissionRepo,
-                    'core.domain.permission.helpers.defaultPermission': defaultPermHelper
-                },
-                ctx
-            );
 
             return recordRepo.find({
                 libraryId: library,
