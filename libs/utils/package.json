@@ -8,7 +8,7 @@
   "main": "dist/esm/index",
   "scripts": {
     "prepublishOnly": "npm run build",
-    "build": "tsc --project tsconfig.esm.json & tsc --project tsconfig.json",
+    "build": "tsc --project tsconfig.esm.json && tsc --project tsconfig.json",
     "tscheck": "tsc --noEmit -p .",
     "tscheck:watch": "tsc -w --noEmit -p .",
     "test": "jest -c jest-config.json",
