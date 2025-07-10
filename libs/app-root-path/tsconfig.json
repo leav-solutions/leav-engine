@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "composite": true
+    "composite": true,
+    "noImplicitReturns": true
   },
   "include": ["./src"],
   "exclude": ["**/*.spec.ts"]
