@@ -5,7 +5,7 @@ import {aql} from 'arangojs';
 import {IDbService} from 'infra/db/dbService';
 import {IAttribute} from '_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
-import {IValue, IValuesOptions} from '_types/value';
+import {ISaveValue, IValue, IValuesOptions} from '_types/value';
 import {IAttributeTypesRepo, IAttributeWithRevLink} from '../attributeTypes/attributeTypesRepo';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -23,7 +23,7 @@ export interface IValueRepo {
         library: string;
         recordId: string;
         attribute: IAttributeWithRevLink;
-        value: IValue;
+        value: ISaveValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
 
@@ -40,7 +40,7 @@ export interface IValueRepo {
         library: string;
         recordId: string;
         attribute: IAttributeWithRevLink;
-        value: IValue;
+        value: ISaveValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
 
@@ -136,15 +136,33 @@ export default function ({
     return {
         createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.createValue({library, recordId, attribute, value, ctx});
+            return typeRepo.createValue({
+                library,
+                recordId,
+                attribute,
+                value,
+                ctx
+            });
         },
         updateValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.updateValue({library, recordId, attribute, value, ctx});
+            return typeRepo.updateValue({
+                library,
+                recordId,
+                attribute,
+                value,
+                ctx
+            });
         },
         deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.deleteValue({library, recordId, attribute, value, ctx});
+            return typeRepo.deleteValue({
+                library,
+                recordId,
+                attribute,
+                value,
+                ctx
+            });
         },
         isValueUsed({library, excludedRecordId, attribute, value, ctx}): Promise<boolean> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);

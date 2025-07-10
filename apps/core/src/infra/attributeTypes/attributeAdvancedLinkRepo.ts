@@ -12,16 +12,19 @@ import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
+import {IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
 
 interface ISavedValueResult {
     edge: IValueEdge;
     linkedRecord: IRecord;
 }
 
+export type IAttributeAdvancedLinkRepo = IAttributeTypeRepo<AttributeTypes.ADVANCED_LINK>;
+
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
-    'core.infra.attributeTypes.attributeSimpleLink'?: IAttributeTypeRepo;
+    'core.infra.attributeTypes.attributeSimpleLink'?: IAttributeSimpleLinkRepo;
     'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
     'core.utils'?: IUtils;
@@ -34,7 +37,7 @@ export default function ({
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.filterTypes': filterTypes = null,
     'core.utils': utils = null
-}: IDeps = {}): IAttributeTypeRepo {
+}: IDeps = {}): IAttributeAdvancedLinkRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return aql`${
             attributes
@@ -68,12 +71,19 @@ export default function ({
 
     return {
         async createValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
+            if (typeof value.payload !== 'string') {
+                throw new Error('Advanced link attribute value must be a string representing the linked record ID.');
+            }
             // If reverse_link is a simple link we call attributeSimpleLinkRepo instead.
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
                 await attributeSimpleLinkRepo.createValue({
                     library: attribute.linked_library,
                     recordId: value.payload,
-                    attribute: {...(attribute.reverse_link as IAttribute), reverse_link: undefined},
+                    attribute: {
+                        ...(attribute.reverse_link as IAttribute),
+                        reverse_link: undefined,
+                        type: AttributeTypes.SIMPLE_LINK
+                    },
                     value: {payload: recordId},
                     ctx
                 });
@@ -134,12 +144,19 @@ export default function ({
             );
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
+            if (typeof value.payload !== 'string') {
+                throw new Error('Advanced link attribute value must be a string representing the linked record ID.');
+            }
             // If reverse_link is a simple link we call attributeSimpleLinkRepo instead.
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
                 return attributeSimpleLinkRepo.updateValue({
                     library: attribute.linked_library,
-                    recordId: value.payload.id,
-                    attribute: {...(attribute.reverse_link as IAttribute), reverse_link: undefined},
+                    recordId: value.payload,
+                    attribute: {
+                        ...(attribute.reverse_link as IAttribute),
+                        reverse_link: undefined,
+                        type: AttributeTypes.SIMPLE_LINK
+                    },
                     value: {payload: recordId},
                     ctx
                 });
@@ -196,7 +213,11 @@ export default function ({
                 return attributeSimpleLinkRepo.deleteValue({
                     library: attribute.linked_library,
                     recordId: value.payload.id,
-                    attribute: {...(attribute.reverse_link as IAttribute), reverse_link: undefined},
+                    attribute: {
+                        ...(attribute.reverse_link as IAttribute),
+                        reverse_link: undefined,
+                        type: AttributeTypes.SIMPLE_LINK
+                    },
                     value: {payload: null},
                     ctx
                 });

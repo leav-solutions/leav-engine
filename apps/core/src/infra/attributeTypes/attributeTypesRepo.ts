@@ -5,15 +5,35 @@ import {AqlLiteral, AqlQuery, GeneratedAqlQuery} from 'arangojs/aql';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AttributeCondition, IRecordFilterOption} from '../../_types/record';
-import {IValue, IValuesOptions} from '../../_types/value';
+import {ISaveValueByAttributeType, IValueByAttributeType, IValuesOptions} from '../../_types/value';
+import {IAttributeSimpleRepo} from './attributeSimpleRepo';
+import {IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
+import {IAttributeAdvancedRepo} from './attributeAdvancedRepo';
+import {IAttributeAdvancedLinkRepo} from './attributeAdvancedLinkRepo';
+import {IAttributeTreeRepo} from './attributeTreeRepo';
 
 // To avoid some cyclic dependencies issues, we have to pass repo along attribute props
-export interface IAttributeWithRepo extends IAttributeWithRevLink {
+export type IAttributeWithRepo = IAttributeWithRevLink & {
     _repo: IAttributeTypeRepo;
-}
+};
+
+type IAttributeRepoByType<AttributeType extends AttributeTypes | unknown> =
+    AttributeType extends AttributeTypes.SIMPLE
+        ? IAttributeSimpleRepo
+        : AttributeType extends AttributeTypes.SIMPLE_LINK
+          ? IAttributeSimpleLinkRepo
+          : AttributeType extends AttributeTypes.ADVANCED
+            ? IAttributeAdvancedRepo
+            : AttributeType extends AttributeTypes.ADVANCED_LINK
+              ? IAttributeAdvancedLinkRepo
+              : AttributeType extends AttributeTypes.TREE
+                ? IAttributeTreeRepo
+                : IAttributeTypeRepo;
 
 export interface IAttributeTypesRepo {
-    getTypeRepo?(attribute: IAttribute): IAttributeTypeRepo;
+    getTypeRepo<AttributeType extends AttributeTypes | unknown>(
+        attribute: IAttribute
+    ): IAttributeRepoByType<AttributeType>;
 }
 
 export interface IAttributeWithRevLink extends IAttribute {
@@ -30,7 +50,10 @@ export type GetConditionPartFunc = (valueIdentifier: string | AqlLiteral) => Gen
 /**
  * Define interface used for all attribute type specific files
  */
-export interface IAttributeTypeRepo {
+export interface IAttributeTypeRepo<
+    AttributeType extends AttributeTypes = AttributeTypes,
+    Value = IValueByAttributeType[AttributeType]
+> {
     createValue({
         library,
         recordId,
@@ -41,9 +64,9 @@ export interface IAttributeTypeRepo {
         library: string;
         recordId: string;
         attribute: IAttributeWithRevLink;
-        value: IValue;
+        value: ISaveValueByAttributeType[AttributeType];
         ctx: IQueryInfos;
-    }): Promise<IValue>;
+    }): Promise<Value>;
 
     /**
      * Update an existing value. Field "id" is expected on the value
@@ -58,9 +81,9 @@ export interface IAttributeTypeRepo {
         library: string;
         recordId: string;
         attribute: IAttributeWithRevLink;
-        value: IValue;
+        value: ISaveValueByAttributeType[AttributeType];
         ctx: IQueryInfos;
-    }): Promise<IValue>;
+    }): Promise<Value>;
 
     /**
      * Delete an existing value. Field "id" is expected on the value
@@ -75,9 +98,9 @@ export interface IAttributeTypeRepo {
         library: string;
         recordId: string;
         attribute: IAttributeWithRevLink;
-        value: IValue;
+        value: Value;
         ctx: IQueryInfos;
-    }): Promise<IValue>;
+    }): Promise<Value>;
 
     /**
      * Check if a value is unique
@@ -92,7 +115,7 @@ export interface IAttributeTypeRepo {
         library: string;
         excludedRecordId?: string;
         attribute: IAttribute;
-        value: IValue;
+        value: Value;
         ctx: IQueryInfos;
     }): Promise<boolean>;
 
@@ -115,7 +138,7 @@ export interface IAttributeTypeRepo {
         forceGetAllValues?: boolean;
         options?: IValuesOptions;
         ctx: IQueryInfos;
-    }): Promise<IValue[]>;
+    }): Promise<Value[]>;
 
     /**
      * Get all reverse values for given attribute / value
@@ -130,7 +153,7 @@ export interface IAttributeTypeRepo {
         value: string;
         forceGetAllValues: boolean;
         ctx: IQueryInfos;
-    }): Promise<IValue[]>;
+    }): Promise<Value[]>;
 
     /**
      * Return a specific value based on its ID. Field "id" is expect on the value
@@ -149,7 +172,7 @@ export interface IAttributeTypeRepo {
         attribute: IAttribute;
         valueId: string;
         ctx: IQueryInfos;
-    }): Promise<IValue>;
+    }): Promise<Value>;
 
     /**
      * Return AQL query part to retrieve value for this attribute.
@@ -186,11 +209,11 @@ export const isValuesCountCondition = (condition: AttributeCondition): boolean =
     ].includes(condition as AttributeCondition);
 
 interface IDeps {
-    'core.infra.attributeTypes.attributeSimple'?: IAttributeTypeRepo;
-    'core.infra.attributeTypes.attributeSimpleLink'?: IAttributeTypeRepo;
-    'core.infra.attributeTypes.attributeAdvanced'?: IAttributeTypeRepo;
-    'core.infra.attributeTypes.attributeAdvancedLink'?: IAttributeTypeRepo;
-    'core.infra.attributeTypes.attributeTree'?: IAttributeTypeRepo;
+    'core.infra.attributeTypes.attributeSimple'?: IAttributeSimpleRepo;
+    'core.infra.attributeTypes.attributeSimpleLink'?: IAttributeSimpleLinkRepo;
+    'core.infra.attributeTypes.attributeAdvanced'?: IAttributeAdvancedRepo;
+    'core.infra.attributeTypes.attributeAdvancedLink'?: IAttributeAdvancedLinkRepo;
+    'core.infra.attributeTypes.attributeTree'?: IAttributeTreeRepo;
 }
 
 export default function ({
@@ -201,7 +224,9 @@ export default function ({
     'core.infra.attributeTypes.attributeTree': attributeTreeRepo = null
 }: IDeps = {}): IAttributeTypesRepo {
     return {
-        getTypeRepo(attribute) {
+        getTypeRepo<AttributeType extends AttributeTypes | unknown>(
+            attribute: IAttribute
+        ): IAttributeRepoByType<AttributeType> {
             let attrTypeRepo: IAttributeTypeRepo;
             switch (attribute.type) {
                 case AttributeTypes.SIMPLE:
@@ -221,7 +246,7 @@ export default function ({
                     break;
             }
 
-            return attrTypeRepo;
+            return attrTypeRepo as IAttributeRepoByType<AttributeType>;
         }
     };
 }

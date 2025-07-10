@@ -8,9 +8,10 @@ import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import attributeSimpleRepo from './attributeSimpleRepo';
+import {IAttributeWithRevLink} from './attributeTypesRepo';
 
 describe('AttributeSimpleRepo', () => {
-    const mockAttribute = {
+    const mockAttribute: IAttributeWithRevLink = {
         id: 'test_attr',
         type: AttributeTypes.SIMPLE
     };

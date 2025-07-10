@@ -18,7 +18,7 @@ import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IListWithCursor} from '_types/list';
 import {IPreview} from '_types/preview';
-import {IStandardValue, ITreeValue, IValue, IValuesOptions} from '_types/value';
+import {ISaveValue, IStandardValue, ITreeValue, IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
@@ -116,7 +116,7 @@ const allowedTypeOperator = {
 export interface IRecordDomain {
     createRecord(params: {
         library: string;
-        values?: IValue[];
+        values?: ISaveValue[];
         verifyRequiredAttributes?: boolean;
         ctx: IQueryInfos;
     }): Promise<ICreateRecordResult>;
@@ -805,7 +805,7 @@ export default function ({
             const {record, valuesErrors} = await createRecordHelper({
                 library,
                 preCreateCallback: async () => {
-                    const valuesByAttribute = (values ??= []).reduce<Record<string, IValue[]>>((acc, value) => {
+                    const valuesByAttribute = (values ??= []).reduce<Record<string, ISaveValue[]>>((acc, value) => {
                         if (!acc[value.attribute]) {
                             acc[value.attribute] = [];
                         }

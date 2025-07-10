@@ -41,7 +41,7 @@ import {IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, IRecordFilterLight, Operator} from '../../_types/record';
 import {ITaskFuncParams, TaskCallbackType, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {ITreeElement} from '../../_types/tree';
-import {IValue} from '../../_types/value';
+import {ISaveValue, IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import {IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
 
@@ -228,7 +228,7 @@ export default function ({
             library,
             recordId,
             attribute: attribute.id,
-            value: {payload: value.payload, id_value: valueId, metadata: value.metadata, version},
+            value: {payload: value.payload as string, id_value: valueId, metadata: value.metadata, version},
             ctx
         });
     };

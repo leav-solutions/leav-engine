@@ -13,10 +13,12 @@ import {AttributeCondition} from '../../_types/record';
 import {mockAttrSimpleLink} from '../../__tests__/mocks/attribute';
 import {mockRecord} from '../../__tests__/mocks/record';
 import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
-import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
+import {IAttributeSimpleRepo} from './attributeSimpleRepo';
+import {ISaveLinkValue} from '_types/value';
 
 describe('AttributeSimpleLinkRepo', () => {
-    const mockAttribute = {
+    const mockAttribute: IAttributeWithRevLink = {
         id: 'test_simple_link_attr',
         type: AttributeTypes.SIMPLE_LINK,
         linked_library: 'test_linked_lib'
@@ -49,7 +51,7 @@ describe('AttributeSimpleLinkRepo', () => {
                 cleanup: jest.fn().mockReturnValue(mockRecord)
             };
 
-            const updatedValueData = {
+            const updatedValueData: ISaveLinkValue = {
                 payload: '123456'
             };
 
@@ -60,7 +62,7 @@ describe('AttributeSimpleLinkRepo', () => {
             };
 
             const attrRepo = attributeSimpleLinkRepo({
-                'core.infra.attributeTypes.attributeSimple': attrSimpleRepo as IAttributeTypeRepo,
+                'core.infra.attributeTypes.attributeSimple': attrSimpleRepo as IAttributeSimpleRepo,
                 'core.infra.db.dbService': mockDbServ as IDbService,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -70,7 +72,7 @@ describe('AttributeSimpleLinkRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    payload: 123456
+                    payload: '123456'
                 },
                 ctx
             });
@@ -105,7 +107,7 @@ describe('AttributeSimpleLinkRepo', () => {
             };
 
             const attrRepo = attributeSimpleLinkRepo({
-                'core.infra.attributeTypes.attributeSimple': attrSimpleRepo as IAttributeTypeRepo
+                'core.infra.attributeTypes.attributeSimple': attrSimpleRepo as IAttributeSimpleRepo
             });
 
             const deletedVal = await attrRepo.deleteValue({
@@ -124,7 +126,10 @@ describe('AttributeSimpleLinkRepo', () => {
             expect(attrSimpleRepo.deleteValue).toBeCalledWith({
                 library: 'test_lib',
                 recordId: '12345',
-                attribute: mockAttribute,
+                attribute: {
+                    ...mockAttribute,
+                    type: AttributeTypes.SIMPLE
+                },
                 value: {
                     payload: {
                         id: '123456'
