@@ -5,20 +5,24 @@ import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {IDbDocument} from 'infra/db/_types';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IRecord} from '_types/record';
-import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {ILinkValue, IStandardValue} from '../../_types/value';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {ILinkValue, ISaveValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
+import {type IQueryInfos} from '_types/queryInfos';
+import {IAttributeSimpleRepo} from './attributeSimpleRepo';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
-    'core.infra.attributeTypes.attributeSimple'?: IAttributeTypeRepo;
+    'core.infra.attributeTypes.attributeSimple'?: IAttributeSimpleRepo;
     'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
+
+export type IAttributeSimpleLinkRepo = IAttributeTypeRepo<AttributeTypes.SIMPLE_LINK>;
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
@@ -26,7 +30,7 @@ export default function ({
     'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.filterTypes': filterTypesHelper = null
-}: IDeps = {}): IAttributeTypeRepo {
+}: IDeps = {}): IAttributeSimpleLinkRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return attributes
             .map(a => a.id)
@@ -40,7 +44,10 @@ export default function ({
             }, [])[0];
     }
 
-    const _saveValue: IAttributeTypeRepo['createValue'] = async ({library, recordId, attribute, value, ctx}) => {
+    const _saveValue: IAttributeSimpleLinkRepo['createValue'] = async ({library, recordId, attribute, value, ctx}) => {
+        if (typeof value.payload !== 'string') {
+            throw new Error('Simple link attribute value must be a string representing the linked record ID.');
+        }
         const collec = dbService.db.collection(library);
 
         const res = await dbService.execute<Array<{doc: IDbDocument; linkedRecord: IRecord}>>({
@@ -73,7 +80,13 @@ export default function ({
             return _saveValue(args);
         },
         async deleteValue(args): Promise<ILinkValue> {
-            const deletedValue = await attributeSimpleRepo.deleteValue(args);
+            const deletedValue = await attributeSimpleRepo.deleteValue({
+                ...args,
+                attribute: {
+                    ...args.attribute,
+                    type: AttributeTypes.SIMPLE
+                }
+            });
             return {
                 ...deletedValue,
                 // deletedValue returns null payload, so override it here !

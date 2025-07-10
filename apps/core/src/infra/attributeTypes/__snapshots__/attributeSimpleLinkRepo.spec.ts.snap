@@ -12,12 +12,12 @@ exports[`AttributeSimpleLinkRepo createValue Should create a simple link value 2
 {
   "@value4": "test_lib",
   "value0": "test_linked_lib",
-  "value1": 123456,
+  "value1": "123456",
   "value2": {
     "_key": "12345",
   },
   "value3": {
-    "test_simple_link_attr": 123456,
+    "test_simple_link_attr": "123456",
   },
 }
 `;

@@ -6,6 +6,7 @@ import {IDbEdge} from 'infra/db/_types';
 import {IRecord} from './record';
 import {ITreeNode, TreePaths} from './tree';
 import {EMPTY_VALUE} from 'infra/value/valueRepo';
+import {AttributeTypes} from './attribute';
 
 export type IValueFromGql = Override<
     Omit<IValue, 'version'>,
@@ -44,8 +45,11 @@ export interface IValueMetadata {
 
 export type EmptyValue = typeof EMPTY_VALUE;
 
-export interface IGenericValue {
-    id_value?: string;
+interface ICommonGenericSaveValue {
+    /**
+     * The id of the edge for advanced, advanced link or tree values
+     */
+    id_value?: string | null;
     attribute?: string;
     created_at?: number;
     modified_at?: number;
@@ -53,25 +57,70 @@ export interface IGenericValue {
     modified_by?: string;
     version?: IValueVersion;
     metadata?: IValueMetadata;
+}
+
+export interface IGenericValue extends ICommonGenericSaveValue {
     isInherited?: boolean;
     isCalculated?: boolean;
 }
 
 export interface IStandardValue extends IGenericValue {
+    /**
+     * Computed value after get actions on attribute are done
+     * TODO remove that any when possible
+     * TODO remove optional when possible
+     */
     payload?: any | EmptyValue;
-    raw_payload?: any | EmptyValue;
+    /**
+     * Raw value from the database, before any computation
+     * TODO, remove that any when possible
+     */
+    raw_payload?: any;
 }
 
 export interface ILinkValue extends IGenericValue {
+    /**
+     * Linked record
+     * TODO remove optional when possible
+     */
     payload?: IRecord;
 }
 
 export interface ITreeValue extends IGenericValue {
+    /**
+     * Linked tree node
+     * TODO remove optional when possible
+     */
     payload?: ITreeNode;
     treeId: string;
 }
 
 export type IValue = IStandardValue | ILinkValue | ITreeValue;
+
+type IGenericSaveValue = ICommonGenericSaveValue;
+
+export interface ISaveStandardValue extends IGenericSaveValue {
+    /**
+     * Any base type value to save
+     */
+    payload: number | string | boolean | EmptyValue | null;
+}
+
+export interface ISaveLinkValue extends IGenericSaveValue {
+    /**
+     * Record id to link
+     */
+    payload: string | null;
+}
+
+export interface ISaveTreeValue extends IGenericSaveValue {
+    /**
+     * Tree node id to link
+     */
+    payload: string | null;
+}
+
+export type ISaveValue = ISaveStandardValue | ISaveLinkValue | ISaveTreeValue;
 
 export interface IDateRangeValue<T = string | number> {
     from: T;
@@ -99,4 +148,20 @@ export interface IValueEdge extends IDbEdge {
     created_by: string;
     version?: IDbValueVersion;
     metadata?: IValueMetadata;
+}
+
+export interface IValueByAttributeType {
+    [AttributeTypes.SIMPLE]: IStandardValue;
+    [AttributeTypes.SIMPLE_LINK]: ILinkValue;
+    [AttributeTypes.ADVANCED]: IStandardValue;
+    [AttributeTypes.ADVANCED_LINK]: ILinkValue;
+    [AttributeTypes.TREE]: ITreeValue;
+}
+
+export interface ISaveValueByAttributeType {
+    [AttributeTypes.SIMPLE]: ISaveStandardValue;
+    [AttributeTypes.SIMPLE_LINK]: ISaveLinkValue;
+    [AttributeTypes.ADVANCED]: ISaveStandardValue;
+    [AttributeTypes.ADVANCED_LINK]: ISaveLinkValue;
+    [AttributeTypes.TREE]: ISaveTreeValue;
 }

@@ -13,24 +13,25 @@ import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import attributeAdvancedLinkRepo from './attributeAdvancedLinkRepo';
-import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
+import {IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
 
 describe('AttributeAdvancedLinkRepo', () => {
-    const mockAttribute = {
+    const mockAttribute: IAttributeWithRevLink = {
         id: 'test_adv_link_attr',
         type: AttributeTypes.ADVANCED_LINK,
         linked_library: 'test_linked_lib',
         multiple_values: true
     };
 
-    const mockReverseAdvAttribute = {
+    const mockReverseAdvAttribute: IAttributeWithRevLink = {
         id: 'test',
         type: AttributeTypes.ADVANCED_LINK,
         linked_library: 'test_lib',
         multiple_values: true
     };
 
-    const mockReverseSimpAttribute = {
+    const mockReverseSimpAttribute: IAttributeWithRevLink = {
         id: 'test',
         type: AttributeTypes.SIMPLE_LINK
     };
@@ -91,7 +92,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    payload: 987654,
+                    payload: '987654',
                     modified_at: 400999999,
                     created_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
@@ -150,7 +151,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 recordId: '12345',
                 attribute: {...mockAttribute, reverse_link: mockReverseAdvAttribute},
                 value: {
-                    payload: 987654,
+                    payload: '987654',
                     modified_at: 400999999,
                     created_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
@@ -171,7 +172,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const attrRepo = attributeAdvancedLinkRepo({
-                'core.infra.attributeTypes.attributeSimpleLink': attrSimpleLinkRepo as IAttributeTypeRepo
+                'core.infra.attributeTypes.attributeSimpleLink': attrSimpleLinkRepo as IAttributeSimpleLinkRepo
             });
 
             await attrRepo.createValue({
@@ -214,7 +215,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 attribute: mockAttribute,
                 value: {
                     id_value: '987654',
-                    payload: 987654,
+                    payload: '987654',
                     modified_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
                     version: {my_tree: '1'}
@@ -260,7 +261,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 attribute: {...mockAttribute, reverse_link: mockReverseAdvAttribute},
                 value: {
                     id_value: '987654',
-                    payload: 987654,
+                    payload: '987654',
                     modified_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
                     version: {my_tree: '1'}
@@ -280,7 +281,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const attrRepo = attributeAdvancedLinkRepo({
-                'core.infra.attributeTypes.attributeSimpleLink': attrSimpleLinkRepo as IAttributeTypeRepo
+                'core.infra.attributeTypes.attributeSimpleLink': attrSimpleLinkRepo as IAttributeSimpleLinkRepo
             });
 
             await attrRepo.updateValue({
@@ -288,7 +289,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 recordId: '12345',
                 attribute: {...mockAttribute, reverse_link: mockReverseSimpAttribute},
                 value: {
-                    payload: {id: '1'}
+                    payload: '1'
                 },
                 ctx
             });
@@ -331,7 +332,9 @@ describe('AttributeAdvancedLinkRepo', () => {
                 attribute: mockAttribute,
                 value: {
                     id_value: '445566',
-                    payload: 987654,
+                    payload: {
+                        id: '987654'
+                    },
                     modified_at: 400999999,
                     created_at: 400999999
                 },
@@ -359,7 +362,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const attrRepo = attributeAdvancedLinkRepo({
-                'core.infra.attributeTypes.attributeSimpleLink': attrSimpleLinkRepo as IAttributeTypeRepo,
+                'core.infra.attributeTypes.attributeSimpleLink': attrSimpleLinkRepo as IAttributeSimpleLinkRepo,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -676,7 +679,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const attrRepo = attributeAdvancedLinkRepo({
-                'core.infra.attributeTypes.attributeSimpleLink': attrSimpleLinkRepo as IAttributeTypeRepo
+                'core.infra.attributeTypes.attributeSimpleLink': attrSimpleLinkRepo as IAttributeSimpleLinkRepo
             });
 
             await attrRepo.getValues({

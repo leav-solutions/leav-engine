@@ -11,7 +11,7 @@ import {IValueRepo} from 'infra/value/valueRepo';
 import moment from 'moment';
 import {IQueryInfos} from '_types/queryInfos';
 import {IAttribute} from '../../../_types/attribute';
-import {IValue, IValueVersion} from '../../../_types/value';
+import {ISaveValue, IValue, IValueVersion} from '../../../_types/value';
 import doesValueExist from './doesValueExist';
 
 interface ISaveOneValueDeps {
@@ -65,7 +65,7 @@ export default async (
     library: string,
     recordId: string,
     attribute: IAttribute,
-    value: IValue,
+    value: ISaveValue,
     deps: ISaveOneValueDeps,
     ctx: IQueryInfos
 ): Promise<IValue> => {

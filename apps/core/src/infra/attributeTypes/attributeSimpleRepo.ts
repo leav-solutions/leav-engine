@@ -4,12 +4,12 @@
 import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IQueryInfos} from '_types/queryInfos';
-import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {IStandardValue, IValue} from '../../_types/value';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {ISaveStandardValue, IStandardValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
 interface IDeps {
@@ -18,18 +18,20 @@ interface IDeps {
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
+export type IAttributeSimpleRepo = IAttributeTypeRepo<AttributeTypes.SIMPLE>;
+
 export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.filterTypes': filterTypesHelper = null
-}: IDeps = {}): IAttributeTypeRepo {
+}: IDeps = {}): IAttributeSimpleRepo {
     async function _saveValue(
         library: string,
         recordId: string,
         attribute: IAttribute,
-        value: IValue,
+        value: ISaveStandardValue,
         ctx: IQueryInfos
-    ): Promise<IValue> {
+    ): Promise<IStandardValue> {
         const collec = dbService.db.collection(library);
         const res = await dbService.execute({
             query: aql`

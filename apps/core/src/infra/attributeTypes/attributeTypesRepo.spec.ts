@@ -2,6 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../_types/attribute';
+import {IAttributeAdvancedLinkRepo} from './attributeAdvancedLinkRepo';
+import {IAttributeAdvancedRepo} from './attributeAdvancedRepo';
+import {IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
+import {IAttributeSimpleRepo} from './attributeSimpleRepo';
+import {IAttributeTreeRepo} from './attributeTreeRepo';
 import attributeTypesRepo, {IAttributeTypeRepo} from './attributeTypesRepo';
 
 describe('AttributeTypesRepo', () => {
@@ -21,11 +26,11 @@ describe('AttributeTypesRepo', () => {
             const mockAttrTreeRepo = {...mockAttrTypeRepo};
 
             const attrRepo = attributeTypesRepo({
-                'core.infra.attributeTypes.attributeSimple': mockAttrSimpleRepo as IAttributeTypeRepo,
-                'core.infra.attributeTypes.attributeSimpleLink': mockAttrSimpleLinkRepo as IAttributeTypeRepo,
-                'core.infra.attributeTypes.attributeAdvanced': mockAttrAdvRepo as IAttributeTypeRepo,
-                'core.infra.attributeTypes.attributeAdvancedLink': mockAttrAdvLinkRepo as IAttributeTypeRepo,
-                'core.infra.attributeTypes.attributeTree': mockAttrTreeRepo as IAttributeTypeRepo
+                'core.infra.attributeTypes.attributeSimple': mockAttrSimpleRepo as IAttributeSimpleRepo,
+                'core.infra.attributeTypes.attributeSimpleLink': mockAttrSimpleLinkRepo as IAttributeSimpleLinkRepo,
+                'core.infra.attributeTypes.attributeAdvanced': mockAttrAdvRepo as IAttributeAdvancedRepo,
+                'core.infra.attributeTypes.attributeAdvancedLink': mockAttrAdvLinkRepo as IAttributeAdvancedLinkRepo,
+                'core.infra.attributeTypes.attributeTree': mockAttrTreeRepo as IAttributeTreeRepo
             });
 
             expect(attrRepo.getTypeRepo({...mockAttribute, type: AttributeTypes.SIMPLE})).toBe(mockAttrSimpleRepo);
