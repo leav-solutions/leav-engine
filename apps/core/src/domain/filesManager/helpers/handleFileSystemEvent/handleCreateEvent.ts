@@ -23,7 +23,7 @@ export const handleCreateEvent = async (
     resources: IHandleFileSystemEventResources,
     deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
-) => {
+): Promise<void> => {
     const pathAfter = scanMsg.pathAfter ?? '';
     const {filePath, fileName} = getInputData(pathAfter);
 
