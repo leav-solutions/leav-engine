@@ -274,7 +274,7 @@ const _createHashFromFile = async (filePath: string): Promise<string> => {
     try {
         const hash = createHash('md5');
 
-        return new Promise((resolve, reject) =>
+        return await new Promise((resolve, reject) =>
             createReadStream(filePath)
                 .on('error', err => {
                     reject(err);
