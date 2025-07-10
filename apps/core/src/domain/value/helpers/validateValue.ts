@@ -147,7 +147,7 @@ const _validateVersion = async (
     return badElements;
 };
 
-const _validateMetadata = (attribute: IAttribute, value: ISaveValue): ErrorFieldDetail<ISaveValue> => {
+const _validateMetadata = (attribute: IAttribute, value: ISaveValue): ErrorFieldDetail<ISaveValue | void> => {
     const errors: ErrorFieldDetail<ISaveValue> = {};
     if (!value.metadata) {
         return;

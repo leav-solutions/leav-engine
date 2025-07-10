@@ -165,7 +165,7 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
                 // later on. It doesn't contains useful information anyway, so throw it away.
                 delete e.response;
 
-                utils.rethrow(e);
+                return utils.rethrow(e);
             }
         },
         async createCollection(name: string, type: CollectionType): Promise<void> {

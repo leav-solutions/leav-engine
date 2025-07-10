@@ -60,7 +60,7 @@ export default function ({
                 // Put together a schema
                 return makeExecutableSchema(appSchema);
             } catch (e) {
-                utils.rethrow(e, 'Error generating schema:');
+                return utils.rethrow(e, 'Error generating schema:');
             }
         },
         getQueryFields(info: GraphQLResolveInfo): IQueryField[] {

@@ -11,7 +11,7 @@ export const handleRemoveEvent = async (
     {library}: IHandleFileSystemEventResources,
     deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
-) => {
+): Promise<boolean> => {
     const {filePath, fileName} = getInputData(scanMsg.pathBefore);
     const {userId} = deps.config.filesManager;
 

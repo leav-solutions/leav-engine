@@ -84,7 +84,7 @@ export default function ({
         clearDatabase: boolean,
         ctx: IQueryInfos,
         forceNoTask?: boolean
-    ): Promise<string> => {
+    ): Promise<string | undefined> => {
         if (clearDatabase) {
             await dbUtils.clearDatabase();
         }
@@ -189,7 +189,7 @@ export default function ({
                             _,
                             {file, clear = false}: IImportConfigParams,
                             ctx: IQueryInfos
-                        ): Promise<string> {
+                        ): Promise<string | undefined> {
                             const fileData: FileUpload = await file;
                             const allowedExtensions = ['json'];
 

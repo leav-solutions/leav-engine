@@ -85,9 +85,9 @@ export default function ({
         await pubsub.publish(pubSubEvent.payload.triggerName, publishedPayload);
     };
 
-    const _send = (routingKey: string, payload: any, ctx: IQueryInfos) => {
-        try {
-            return amqpService.publish(
+    const _send = (routingKey: string, payload: any, ctx: IQueryInfos): Promise<boolean> =>
+        amqpService
+            .publish(
                 config.amqp.exchange,
                 routingKey,
                 JSON.stringify({
@@ -99,11 +99,11 @@ export default function ({
                     trigger: ctx.trigger,
                     payload
                 })
-            );
-        } catch (e) {
-            console.error('Error while sending event to rabbitMQ', e);
-        }
-    };
+            )
+            .catch(e => {
+                console.error('Error while sending event to rabbitMQ', e);
+                return false;
+            });
 
     return {
         async initPubSubEventsConsumer() {
