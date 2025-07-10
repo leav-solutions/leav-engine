@@ -15,7 +15,6 @@ export const useNavigateToPanel = (addPanel: AddPanel) => {
             addPanel(data.panel, {workspaceId: currentWorkspace.id, panelId: currentPanel.id});
         }
 
-        //TODO: Gérer le where ici aussi ?
         return navigate(generatePath(routes.panel, {panelId: data.panelId}));
     };
 

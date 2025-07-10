@@ -203,7 +203,5 @@ export const useItemActions = ({
         }
     }));
 
-    // console.log('itemActions', actions, itemActions);
-
     return {itemActions};
 };
