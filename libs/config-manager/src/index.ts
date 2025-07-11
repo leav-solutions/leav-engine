@@ -69,10 +69,12 @@ const _mergeDeep = function (target: IKeyValue<any>, ...sources: Array<IKeyValue
  * @return {Promise} Full config
  */
 export async function loadConfig<T extends {} = {}>(dirPath: string, env: string): Promise<T> {
+    const ignoreLocal = process.env.CONFIG_IGNORE_LOCAL === 'true' || process.env.CONFIG_IGNORE_LOCAL === '1';
+
     const merged = _mergeDeep(
         await _getConfigByEnv(dirPath, 'default'),
         await _getConfigByEnv(dirPath, env),
-        await _getConfigByEnv(dirPath, 'local'),
+        ignoreLocal ? {} : await _getConfigByEnv(dirPath, 'local'),
         {
             env
         }
