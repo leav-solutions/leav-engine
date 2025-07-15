@@ -13,6 +13,7 @@ import {RedirectToFirstPanelOnInvalidPanel} from './guards/RedirectToFirstPanelO
 import {PanelsNavigationMenu} from './navigation-menu/PanelsNavigationMenu';
 import {WorkspacesNavigationMenu} from './navigation-menu/WorkspacesNavigationMenu';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/ApplicationSettingsContext';
+import {FullPagePanel} from './panel/FullPagePanel';
 
 export const InitApplicationRouter: FunctionComponent = () => {
     const [application, setApplication] = useApplicationSettingsContext();
@@ -37,7 +38,25 @@ export const InitApplicationRouter: FunctionComponent = () => {
                               children: [
                                   {
                                       path: routes.panel,
-                                      element: <PanelContent addPanel={addPanel} />
+                                      element: <FullPagePanel addPanel={addPanel} />
+                                      //   children: [
+                                      //       {
+                                      //           path: routes.popupPanel,
+                                      //           element: (
+                                      //               <PopupPanel>
+                                      //                   <PanelContent addPanel={addPanel} />
+                                      //               </PopupPanel>
+                                      //           )
+                                      //       },
+                                      //       {
+                                      //           path: routes.sliderPanel,
+                                      //           element: (
+                                      //               <SliderPanel>
+                                      //                   <PanelContent addPanel={addPanel} />
+                                      //               </SliderPanel>
+                                      //           )
+                                      //       }
+                                      //   ]
                                   }
                               ]
                           },

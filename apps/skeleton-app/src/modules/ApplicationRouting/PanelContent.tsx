@@ -10,16 +10,18 @@ import {SIDEBAR_CONTENT_ID} from '../../constants';
 import {PanelCustom} from './PanelCustom';
 import {PanelLibraryExplorer} from './PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './PanelAttributeExplorer';
+import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 interface IPanelContentProps {
+    panel: Panel;
     addPanel: AddPanel;
+    recordId?: string;
+    searchQuery?: string;
 }
 
-export const PanelContent: FunctionComponent<IPanelContentProps> = ({addPanel}) => {
-    const {search} = useLocation();
-    const searchParams = new URLSearchParams(search);
-    const {currentPanel, currentWorkspace} =
-        useOutletContext<Omit<IApplicationMatchingContext, 'currentParentTuple'>>();
+export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, addPanel, recordId, searchQuery}) => {
+    // const {search} = useLocation(); //TODO: A voir si on garde ici ou pas
+    const {currentWorkspace} = useOutletContext<Omit<IApplicationMatchingContext, 'currentParentTuple'>>();
 
     const [sidebarContainer, setSidebarContainer] = useState<HTMLElement>();
     useEffect(() => {
@@ -28,6 +30,9 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({addPanel}) 
             setSidebarContainer(element);
         }
     }, []);
+
+    //TODO: Just for now, to match old naming
+    const currentPanel = panel;
 
     if ('content' in currentPanel) {
         const commonFormProps: Partial<ComponentProps<typeof EditRecordPage>> = {
@@ -50,7 +55,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({addPanel}) 
                 <EditRecordPage
                     {...commonFormProps}
                     record={{
-                        id: searchParams.get(recordSearchParamsName),
+                        id: recordId,
                         library: {
                             id: currentWorkspace.entrypoint.libraryId
                         }
@@ -64,7 +69,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({addPanel}) 
             return (
                 <PanelCustom
                     source={currentPanel.content.iframeSource}
-                    searchQuery={search}
+                    searchQuery={searchQuery}
                     title={currentPanel.id}
                     addPanel={addPanel}
                 />
@@ -105,7 +110,10 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({addPanel}) 
 
     if ('children' in currentPanel) {
         return (
-            <Navigate to={generatePath(routes.panel, {panelId: currentPanel.children.at(0)?.id}) + search} replace />
+            <Navigate
+                to={generatePath(routes.panel, {panelId: currentPanel.children.at(0)?.id}) + searchQuery}
+                replace
+            />
         );
     }
 
