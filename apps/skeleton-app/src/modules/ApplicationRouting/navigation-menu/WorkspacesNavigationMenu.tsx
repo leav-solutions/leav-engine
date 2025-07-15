@@ -16,10 +16,10 @@ interface IWorkspacesNavigationMenuProps {
 }
 
 export const WorkspacesNavigationMenu: FunctionComponent<IWorkspacesNavigationMenuProps> = ({application}) => {
-    const {panelId} = useParams();
+    const {panelId, popupPanelId} = useParams();
     const {isMenuOpen, handleToggleMenu} = useWorkspacesNavigationMenu();
 
-    const applicationMatching = useApplicationMatching(application.workspaces, panelId);
+    const applicationMatching = useApplicationMatching(application.workspaces, panelId, popupPanelId);
     const navigate = useNavigate();
     const {lang} = useContext(LangContext);
 

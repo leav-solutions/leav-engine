@@ -2,28 +2,27 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
-import {generatePath, Navigate, useLocation, useOutletContext} from 'react-router-dom';
+import {generatePath, Navigate, useLocation} from 'react-router-dom';
 import {EditRecordPage} from '@leav/ui';
-import type {AddPanel, IApplicationMatchingContext} from './types';
+import type {AddPanel, Workspace} from './types';
 import {recordSearchParamsName, routes} from './routes';
 import {SIDEBAR_CONTENT_ID} from '../../constants';
 import {PanelCustom} from './PanelCustom';
 import {PanelLibraryExplorer} from './PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './PanelAttributeExplorer';
-import {findPanelById} from './utils';
+import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 interface IPanelContentProps {
-    panelId: string;
+    panel: Panel;
+    workspace: Workspace;
     addPanel: AddPanel;
-    recordId?: string;
-    searchQuery?: string;
 }
 
-export const PanelContent: FunctionComponent<IPanelContentProps> = ({panelId, addPanel, recordId, searchQuery}) => {
-    // const {search} = useLocation(); //TODO: A voir si on garde ici ou pas
-    const {currentWorkspace} = useOutletContext<Omit<IApplicationMatchingContext, 'currentParentTuple'>>();
-
+export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, workspace, addPanel}) => {
+    const {search} = useLocation();
+    const searchParams = new URLSearchParams(search);
     const [sidebarContainer, setSidebarContainer] = useState<HTMLElement>();
+
     useEffect(() => {
         const element = document.getElementById(SIDEBAR_CONTENT_ID);
         if (element) {
@@ -31,90 +30,82 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panelId, ad
         }
     }, []);
 
-    //TODO: Just for now, to match old naming
-    const currentPanel = findPanelById(currentWorkspace.panels, panelId);
-
-    if ('content' in currentPanel) {
+    if ('content' in panel) {
         const commonFormProps: Partial<ComponentProps<typeof EditRecordPage>> = {
             showRefreshButton: false,
             showHeader: false,
             sidebarContainer
         };
-        if (currentPanel.content.type === 'creationForm') {
+        if (panel.content.type === 'creationForm') {
             return (
                 <EditRecordPage
                     {...commonFormProps}
                     record={null}
-                    creationFormId={currentPanel.content.formId}
-                    library={currentWorkspace.entrypoint.libraryId}
+                    creationFormId={panel.content.formId}
+                    library={workspace.entrypoint.libraryId}
                 />
             );
         }
-        if (currentPanel.content.type === 'editionForm') {
+        if (panel.content.type === 'editionForm') {
             return (
                 <EditRecordPage
                     {...commonFormProps}
                     record={{
-                        id: recordId,
+                        id: searchParams.get(recordSearchParamsName),
                         library: {
-                            id: currentWorkspace.entrypoint.libraryId
+                            id: workspace.entrypoint.libraryId
                         }
                     }}
-                    editionFormId={currentPanel.content.formId}
-                    library={currentWorkspace.entrypoint.libraryId}
+                    editionFormId={panel.content.formId}
+                    library={workspace.entrypoint.libraryId}
                 />
             );
         }
-        if (currentPanel.content.type === 'custom') {
+        if (panel.content.type === 'custom') {
             return (
                 <PanelCustom
-                    source={currentPanel.content.iframeSource}
-                    searchQuery={searchQuery}
-                    title={currentPanel.id}
+                    source={panel.content.iframeSource}
+                    searchQuery={search}
+                    title={panel.id}
                     addPanel={addPanel}
                 />
             );
         }
-        if (currentPanel.content.type === 'explorer') {
-            if ('libraryId' in currentPanel.content) {
-                if (currentPanel.content.libraryId === '<props>') {
+        if (panel.content.type === 'explorer') {
+            if ('libraryId' in panel.content) {
+                if (panel.content.libraryId === '<props>') {
                     return (
                         <PanelLibraryExplorer
-                            libraryId={currentWorkspace.entrypoint.libraryId}
-                            viewId={currentPanel.content.viewId}
-                            explorerProps={currentPanel.content.explorerProps}
-                            actions={currentPanel.content.actions}
+                            libraryId={workspace.entrypoint.libraryId}
+                            viewId={panel.content.viewId}
+                            explorerProps={panel.content.explorerProps}
+                            actions={panel.content.actions}
                         />
                     );
                 }
                 return (
                     <PanelLibraryExplorer
-                        libraryId={currentPanel.content.libraryId}
-                        viewId={currentPanel.content.viewId}
-                        explorerProps={currentPanel.content.explorerProps}
-                        actions={currentPanel.content.actions}
+                        libraryId={panel.content.libraryId}
+                        viewId={panel.content.viewId}
+                        explorerProps={panel.content.explorerProps}
+                        actions={panel.content.actions}
                     />
                 );
             }
             return (
                 <PanelAttributeExplorer
-                    libraryId={currentWorkspace.entrypoint.libraryId}
-                    attributeSource={currentPanel.content.attributeSource}
-                    viewId={currentPanel.content.viewId}
-                    explorerProps={currentPanel.content.explorerProps}
-                    actions={currentPanel.content.actions}
+                    libraryId={workspace.entrypoint.libraryId}
+                    attributeSource={panel.content.attributeSource}
+                    viewId={panel.content.viewId}
+                    explorerProps={panel.content.explorerProps}
+                    actions={panel.content.actions}
                 />
             );
         }
     }
 
-    if ('children' in currentPanel) {
-        return (
-            <Navigate
-                to={generatePath(routes.panel, {panelId: currentPanel.children.at(0)?.id}) + searchQuery}
-                replace
-            />
-        );
+    if ('children' in panel) {
+        return <Navigate to={generatePath(routes.panel, {panelId: panel.children.at(0)?.id}) + search} replace />;
     }
 
     return null; // TODO: this case should not happen

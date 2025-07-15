@@ -6,7 +6,11 @@ import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 import {getAllPanels} from './utils';
 import {IApplicationMatchingContext, Workspace} from './types';
 
-export const useApplicationMatching = (workspaces: Workspace[], panelId: string): IApplicationMatchingContext =>
+export const useApplicationMatching = (
+    workspaces: Workspace[],
+    panelId: string,
+    popupPanelId: string
+): IApplicationMatchingContext =>
     useMemo(() => {
         const _tuplesPanelByWorkspace: Array<[Panel, Workspace]> = workspaces
             .map<[Panel[], Workspace]>(workspace => [getAllPanels(workspace), workspace])
@@ -16,6 +20,8 @@ export const useApplicationMatching = (workspaces: Workspace[], panelId: string)
             'children' in panel ? panel.children.find(({id}) => id === panelId) : false
         );
 
+        const [_currentPopupPanel] = _tuplesPanelByWorkspace.find(([panel]) => panel.id === popupPanelId) ?? [null];
+
         const [_currentPanel, _currentWorkspace] = _tuplesPanelByWorkspace.find(([panel]) => panel.id === panelId) ?? [
             null,
             null
@@ -24,6 +30,7 @@ export const useApplicationMatching = (workspaces: Workspace[], panelId: string)
         return {
             currentParentTuple: _currentParentTuple ?? null,
             currentPanel: _currentPanel ?? null,
+            currentPopupPanel: _currentPopupPanel ?? null,
             currentWorkspace: _currentWorkspace ?? null
         };
-    }, [workspaces, panelId]);
+    }, [workspaces, panelId, popupPanelId]);

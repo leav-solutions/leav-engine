@@ -14,7 +14,8 @@ import {PanelIdCard} from '../PanelIdCard';
 import {content, headerContent, page, pageHeader} from './panelsNavigationMenu.module.css';
 
 export const PanelsNavigationMenu: FunctionComponent = () => {
-    const {currentPanel, currentWorkspace, currentParentTuple} = useOutletContext<IApplicationMatchingContext>();
+    const {currentPanel, currentPopupPanel, currentWorkspace, currentParentTuple} =
+        useOutletContext<IApplicationMatchingContext>();
     const {lang} = useContext(LangContext);
     const {search} = useLocation();
     const searchParams = new URLSearchParams(search);
@@ -51,7 +52,7 @@ export const PanelsNavigationMenu: FunctionComponent = () => {
             <div className={content}>
                 <Outlet
                     context={
-                        {currentPanel, currentWorkspace} satisfies Omit<
+                        {currentPanel, currentPopupPanel, currentWorkspace} satisfies Omit<
                             IApplicationMatchingContext,
                             'currentParentTuple'
                         >

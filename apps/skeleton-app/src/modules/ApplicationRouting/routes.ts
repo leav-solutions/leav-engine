@@ -5,6 +5,5 @@ export const recordSearchParamsName = 'recordId';
 
 export const routes = {
     panel: '/:panelId',
-    popupPanel: '/:panelId/popup/:popupPanelId',
-    sliderPanel: '/:panelId/slider/:sliderPanelId'
+    popupPanel: 'popup?/:popupPanelId'
 };

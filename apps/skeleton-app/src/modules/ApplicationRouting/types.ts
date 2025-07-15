@@ -17,6 +17,7 @@ export type Application = z.infer<typeof ApplicationSchema>;
 export interface IApplicationMatchingContext {
     currentWorkspace: Workspace;
     currentPanel: Panel;
+    currentPopupPanel: Panel;
     currentParentTuple: [Panel, Workspace] | null;
 }
 

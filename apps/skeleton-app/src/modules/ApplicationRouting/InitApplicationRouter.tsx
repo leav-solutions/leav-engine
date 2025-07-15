@@ -7,13 +7,13 @@ import {Loading} from '@leav/ui';
 import {routes} from './routes';
 import {AddPanel} from './types';
 import {addChildPanelToApplication} from './utils';
-import {PanelContent} from './PanelContent';
 import {RedirectToFirstPanelOnHome} from './guards/RedirectToFirstPanelOnHome';
 import {RedirectToFirstPanelOnInvalidPanel} from './guards/RedirectToFirstPanelOnInvalidPanel';
 import {PanelsNavigationMenu} from './navigation-menu/PanelsNavigationMenu';
 import {WorkspacesNavigationMenu} from './navigation-menu/WorkspacesNavigationMenu';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/ApplicationSettingsContext';
 import {FullPagePanel} from './panel/FullPagePanel';
+import {AddModalForPopupPanel} from './panel/AddModalForPopupPanel';
 import {PopupPanel} from './panel/PopupPanel';
 
 export const InitApplicationRouter: FunctionComponent = () => {
@@ -42,17 +42,18 @@ export const InitApplicationRouter: FunctionComponent = () => {
                                       element: <FullPagePanel addPanel={addPanel} />,
                                       children: [
                                           {
-                                              path: routes.popupPanel,
-                                              element: <PopupPanel addPanel={addPanel} />
+                                              element: (
+                                                  <AddModalForPopupPanel>
+                                                      <PanelsNavigationMenu />
+                                                  </AddModalForPopupPanel>
+                                              ),
+                                              children: [
+                                                  {
+                                                      path: routes.popupPanel,
+                                                      element: <PopupPanel addPanel={addPanel} />
+                                                  }
+                                              ]
                                           }
-                                          // {
-                                          //     path: routes.sliderPanel,
-                                          //     element: (
-                                          //         <SliderPanel>
-                                          //             <PanelContent addPanel={addPanel} />
-                                          //         </SliderPanel>
-                                          //     )
-                                          // }
                                       ]
                                   }
                               ]
