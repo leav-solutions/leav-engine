@@ -12,7 +12,7 @@ import {localizedTranslation} from '@leav/utils';
 export const useItemActions = ({actions}: {actions: ItemActions}) => {
     const {lang} = useLang();
     const navigate = useNavigate();
-    const params = useParams();
+    const {panelId} = useParams();
 
     const itemActions: ComponentProps<typeof Explorer>['itemActions'] = actions.map(action => ({
         icon: <FaPlus />,
@@ -21,23 +21,14 @@ export const useItemActions = ({actions}: {actions: ItemActions}) => {
             const query = new URLSearchParams({[recordSearchParamsName]: item.itemId});
 
             //TODO: Ajouter la query uniquement si nécessaire ?
-            if (action.where === 'popup') {
-                return navigate(
-                    generatePath(routes.popupPanel, {panelId: params.panelId, popupPanelId: action.what.id}) +
-                        '?' +
-                        query.toString()
-                );
-            }
+            const routeMap = {
+                popup: {route: routes.popupPanel, params: {panelId: panelId, popupPanelId: action.what.id}},
+                slider: {route: routes.sliderPanel, params: {panelId: panelId, sliderPanelId: action.what.id}},
+                fullpage: {route: routes.panel, params: {panelId: action.what.id}}
+            };
 
-            if (action.where === 'slider') {
-                return navigate(
-                    generatePath(routes.sliderPanel, {panelId: params.panelId, sliderPanelId: action.what.id}) +
-                        '?' +
-                        query.toString()
-                );
-            }
-
-            return navigate(generatePath(routes.panel, {panelId: action.what.id}) + '?' + query.toString());
+            const {route, params} = routeMap[action.where] || routeMap.fullpage;
+            return navigate(generatePath(route, params) + '?' + query.toString());
         }
     }));
 

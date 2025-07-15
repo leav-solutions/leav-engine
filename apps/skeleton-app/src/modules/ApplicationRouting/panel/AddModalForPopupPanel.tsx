@@ -8,7 +8,7 @@ import {generatePath, Outlet, useNavigate, useOutletContext, useParams} from 're
 import {routes} from '../routes';
 
 export const AddModalForPopupPanel: FunctionComponent = () => {
-    const params = useParams();
+    const {panelId} = useParams();
     const navigate = useNavigate();
     const {currentPanel, currentPopupPanel, currentSliderPanel, currentWorkspace} =
         useOutletContext<Omit<IApplicationMatchingContext, 'currentParentTuple'>>();
@@ -20,7 +20,7 @@ export const AddModalForPopupPanel: FunctionComponent = () => {
             width="90vw"
             showCloseIcon
             close={() => {
-                navigate(generatePath(routes.panel, {panelId: params.panelId}));
+                navigate(generatePath(routes.panel, {panelId: panelId}));
             }}
         >
             <Outlet

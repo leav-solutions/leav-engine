@@ -13,7 +13,7 @@ export const AddSidePanelForSliderPanel: FunctionComponent = () => {
 
     const refPanel = useRef<KitSidePanelRef | null>(null);
     const navigate = useNavigate();
-    const params = useParams();
+    const {panelId} = useParams();
 
     const domElement = document.getElementById(SIDE_PANEL_CONTENT_ID);
     console.log('dom', domElement);
@@ -26,12 +26,11 @@ export const AddSidePanelForSliderPanel: FunctionComponent = () => {
     return domElement
         ? createPortal(
               <KitSidePanel
-                  initialOpen
                   ref={refPanel}
                   floating
                   closable
                   size="m"
-                  onClose={() => navigate(generatePath(routes.panel, {panelId: params.panelId}))}
+                  onClose={() => navigate(generatePath(routes.panel, {panelId: panelId}))}
                   closeOnEsc
                   closeOnOutsideClick
               >
