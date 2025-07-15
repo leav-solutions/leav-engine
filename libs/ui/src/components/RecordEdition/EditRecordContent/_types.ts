@@ -134,7 +134,7 @@ export type FormElement<SettingsType, RecordFormElements = RecordFormElementsVal
     {
         settings: SettingsType;
         uiElementType: FormUIElementTypes | FormFieldTypes;
-        // values: RecordFormElements[];
+        values: RecordFormElements[];
     }
 > & {
     uiElement: (

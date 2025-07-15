@@ -12,7 +12,7 @@ import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {
     FormElementTypes,
     RecordFormAttributeStandardAttributeFragment,
-    useGetFormElementValuesLazyQuery
+    useGetRecordFormElementsValuesLazyQuery
 } from '_ui/_gqlTypes';
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
@@ -119,7 +119,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
             recordForm.elements.forEach(el => {
                 if (el.uiElementType === 'tabs') {
-                    const tabSettings = el.settings.find(s => s.key === 'tabs');
+                    const tabSettings = el.settings?.find(s => s.key === 'tabs');
 
                     // Exclude all tab ids that are not equals to tabIdVisible variable
                     containerToExclude.push(...tabSettings.value.filter(e => e.id !== tabIdVisible).map(e => e.id));
@@ -143,12 +143,15 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         // When we load the record form, get tab id visible
         // get id of the first tab
         const firstTabId = recordForm?.elements
-            .find(e => e.uiElementType === 'tabs')
-            .settings.find(s => s.key === 'tabs')?.value[0]?.id;
-        setTabIdVisible(firstTabId);
+            ?.find(e => e.uiElementType === 'tabs')
+            ?.settings?.find(s => s.key === 'tabs')?.value[0]?.id;
+
+        if (firstTabId) {
+            setTabIdVisible(firstTabId);
+        }
     }, [recordForm]);
 
-    const [getFormElementValues] = useGetFormElementValuesLazyQuery({
+    const [getRecordFormElementsValues] = useGetRecordFormElementsValuesLazyQuery({
         fetchPolicy: 'no-cache'
     });
 
@@ -163,7 +166,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
             if (elementIdsToFetch.length) {
                 setElementsValuesFetched(elementsValuesFetched.concat(elementIdsToFetch));
 
-                const result = await getFormElementValues({
+                const result = await getRecordFormElementsValues({
                     variables: {
                         libraryId: library,
                         recordId: record?.id,
@@ -172,7 +175,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                         // version: state.valuesVersion
                     }
                 });
-                setElementsValues(result.data?.getFormElementValues);
+                setElementsValues(result.data?.getRecordFormElementsValues);
             }
         })();
     }, [elementIdsVisible]);
@@ -228,7 +231,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     // Create a refetch function for computed fields
     const refetchComputeFields = async (recordIds: string[]) => {
         if (elementIdsVisible.length && record) {
-            const result = await getFormElementValues({
+            const result = await getRecordFormElementsValues({
                 variables: {
                     libraryId: library,
                     recordId: record?.id,
@@ -236,7 +239,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                     elementIds: elementIdsVisible
                 }
             });
-            setElementsValues(result.data?.getFormElementValues);
+            setElementsValues(result.data?.getRecordFormElementsValues);
         }
     };
 
@@ -310,12 +313,9 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     // Used to get different event from children elements (e.g. listen onTabClick event from FormTab element)
     const onCustomEvent = (event: any): any => {
         // If a tab has been click
-        // Re-calculate visible element and fetch values
+        // Re-calculate visible elements and fetch values
         if (event.eventName === 'onTabClick') {
             const tabIdClicked = event.tabIdClicked;
-            const elementId = event.element.id;
-            const tabSettings = recordForm.elements.find(e => e.id === elementId)?.settings.find(s => s.key === 'tabs');
-
             setTabIdVisible(tabIdClicked);
         }
     };

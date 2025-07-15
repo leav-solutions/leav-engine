@@ -282,7 +282,7 @@ export default function ({
                             version: [ValueVersionInput!]
                         ): RecordForm
                         
-                        getFormElementValues(
+                        getRecordFormElementsValues(
                             recordId: String,
                             libraryId: String!,
                             formId: String!,
@@ -329,14 +329,14 @@ export default function ({
                                 ctx
                             });
                         },
-                        async getFormElementValues(
+                        async getRecordFormElementsValues(
                             _,
                             {recordId, libraryId, formId, version, elementIds}: IGetElementFormValuesArgs,
                             ctx: IQueryInfos
                         ): Promise<any> {
                             const formattedVersion = convertVersionFromGqlFormat(version);
 
-                            return formDomain.getFormElementValues({
+                            return formDomain.getRecordFormElementsValues({
                                 recordId,
                                 libraryId,
                                 formId,

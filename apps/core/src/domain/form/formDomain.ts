@@ -60,7 +60,7 @@ export interface IFormDomain {
         version?: IValueVersion;
         ctx: IQueryInfos;
     }): Promise<IRecordForm>;
-    getFormElementValues(params: {
+    getRecordFormElementsValues(params: {
         recordId: string;
         libraryId: string;
         formId: string;
@@ -371,7 +371,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 sidePanel: formProps.sidePanel
             };
         },
-        async getFormElementValues({recordId, libraryId, formId, version, ctx, elementIds}) {
+        async getRecordFormElementsValues({recordId, libraryId, formId, version, ctx, elementIds}) {
             let formProps: IForm;
             try {
                 formProps = await this.getFormProperties({library: libraryId, id: formId, ctx});

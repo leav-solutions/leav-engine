@@ -1,4 +1,4 @@
-fragment FormElementWithValues on FormElementWithValues {
+fragment RecordFormElementWithValues on FormElementWithValues {
     id
     containerId
     uiElementType
@@ -12,14 +12,14 @@ fragment FormElementWithValues on FormElementWithValues {
     }
 }
 
-query GET_FORM_ELEMENT_VALUES(
+query GET_RECORD_FORM_ELEMENTS_VALUES(
     $recordId: String,
     $libraryId: String!,
     $formId: String!,
     $version: [ValueVersionInput!],
     $elementIds: [ID!]
 ) {
-    getFormElementValues(recordId: $recordId, libraryId: $libraryId, formId: $formId, version: $version, elementIds: $elementIds) {
-        ...FormElementWithValues
+    getRecordFormElementsValues(recordId: $recordId, libraryId: $libraryId, formId: $formId, version: $version, elementIds: $elementIds) {
+        ...RecordFormElementWithValues
     }
 }
