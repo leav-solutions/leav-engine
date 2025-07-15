@@ -48,6 +48,7 @@ export type EmptyValue = typeof EMPTY_VALUE;
 interface ICommonGenericSaveValue {
     /**
      * The id of the edge for advanced, advanced link or tree values
+     * In case of advanced reverse link from simple link, this is the id of the linked record
      */
     id_value?: string | null;
     attribute?: string;
