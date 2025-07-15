@@ -15,8 +15,12 @@ function Container({
     pendingValues,
     onValueSubmit,
     onValueDelete,
+    onCustomEvent,
     onDeleteMultipleValues
-}: IFormElementProps<{}> & {antdForm?: FormInstance; computedValues: GetRecordColumnsValuesRecord}): JSX.Element {
+}: IFormElementProps<{}> & {
+    antdForm?: FormInstance;
+    computedValues: GetRecordColumnsValuesRecord;
+}): JSX.Element {
     const {elements: formElements} = useRecordEditionContext();
     const children = formElements[element.id] ?? [];
     const isAlone = children.length < 2;
@@ -36,6 +40,7 @@ function Container({
                                 formIdToLoad={formIdToLoad}
                                 onValueSubmit={onValueSubmit}
                                 onValueDelete={onValueDelete}
+                                onCustomEvent={onCustomEvent}
                                 onDeleteMultipleValues={onDeleteMultipleValues}
                             />
                         )}

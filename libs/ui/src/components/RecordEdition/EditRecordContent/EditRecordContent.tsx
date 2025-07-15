@@ -12,7 +12,6 @@ import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {
     FormElementTypes,
     RecordFormAttributeStandardAttributeFragment,
-    useExplorerSelectionIdsLazyQuery,
     useGetFormElementValuesLazyQuery
 } from '_ui/_gqlTypes';
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
@@ -24,7 +23,6 @@ import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, IPendingValues, 
 import {Form, FormInstance} from 'antd';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
-import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import EditRecordSkeleton from '../EditRecordSkeleton';
 import styled from 'styled-components';
 
@@ -67,6 +65,12 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const {state, dispatch} = useEditRecordReducer();
 
     const [elementIdsVisible, setElementIdsVisible] = useState<string[]>([]);
+    const [elementsValues, setElementsValues] = useState([]);
+    const [recordFormWithValues, setRecordFormWithValues] = useState(null);
+    // Keep tabId displayed in reference to re-calculate visible elementIds and get its values
+    const [tabIdVisible, setTabIdVisible] = useState(null);
+    // List of elements where values have been fetched
+    const [elementsValuesFetched, setElementsValuesFetched] = useState([]);
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
 
@@ -85,15 +89,30 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         }
     }, [recordUpdateData]);
 
-    const {loading, error, recordForm, refetch} = useGetRecordForm({
+    const {
+        loading,
+        error,
+        recordForm,
+        refetch: refetchGetRecordForm
+    } = useGetRecordForm({
         libraryId: library,
         recordId: record?.id,
         formId: formIdToLoad,
         version: state.valuesVersion
     });
 
+    // Triggered when a tab element is init or when a tab is switched
     useEffect(() => {
-        if (recordForm) {
+        // count the number of values in elements,
+        // if 0, we trigger the flow to fetch the values
+        const nbValues =
+            recordForm?.elements.reduce((acc, cur) => {
+                acc += cur.values.length;
+
+                return acc;
+            }, 0) || 0;
+
+        if (recordForm && !nbValues) {
             // Find element ids from record.elements that are in the first page of a tab or are not a tab
 
             const containerToExclude = [];
@@ -102,7 +121,8 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                 if (el.uiElementType === 'tabs') {
                     const tabSettings = el.settings.find(s => s.key === 'tabs');
 
-                    containerToExclude.push(...tabSettings.value.slice(1).map(e => e.id));
+                    // Exclude all tab ids that are not equals to tabIdVisible variable
+                    containerToExclude.push(...tabSettings.value.filter(e => e.id !== tabIdVisible).map(e => e.id));
                 }
             });
 
@@ -116,31 +136,84 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
             setElementIdsVisible(elementIds);
         }
+    }, [tabIdVisible]);
+
+    // Triggered when recordForm is init
+    useEffect(() => {
+        // When we load the record form, get tab id visible
+        // get id of the first tab
+        const firstTabId = recordForm?.elements
+            .find(e => e.uiElementType === 'tabs')
+            .settings.find(s => s.key === 'tabs')?.value[0]?.id;
+        setTabIdVisible(firstTabId);
     }, [recordForm]);
 
     const [getFormElementValues] = useGetFormElementValuesLazyQuery({
         fetchPolicy: 'no-cache'
     });
 
+    // Triggered when elementIdsVisible update
+    // Fetch all values from theses element ids
     useEffect(() => {
-        console.log('elementIdsVisible', elementIdsVisible);
-
         (async () => {
-            if (elementIdsVisible.length) {
-                console.log('params', library, record?.id, formIdToLoad, elementIdsVisible);
+            // List of elementIds that we don't have fetched their values yet
+            const elementIdsToFetch = elementIdsVisible.filter(e => !elementsValuesFetched.includes(e));
+
+            // load elementIdsVisible that have not been loaded yet
+            if (elementIdsToFetch.length) {
+                setElementsValuesFetched(elementsValuesFetched.concat(elementIdsToFetch));
+
                 const result = await getFormElementValues({
                     variables: {
                         libraryId: library,
                         recordId: record?.id,
                         formId: formIdToLoad,
-                        elementIds: elementIdsVisible
+                        elementIds: elementIdsToFetch
                         // version: state.valuesVersion
                     }
                 });
-                console.log('result', result);
+                setElementsValues(result.data?.getFormElementValues);
             }
         })();
     }, [elementIdsVisible]);
+
+    const [recordComputedValues, setRecordComputedValues] = useState(null);
+
+    useEffect(() => {
+        // remap elements values into recordForm
+        if (recordForm && elementsValues.length) {
+            // set values into form
+            setRecordFormWithValues({
+                ...recordForm,
+                elements: recordForm.elements.map(e => {
+                    const elementValue = elementsValues.find(v => v.id === e.id);
+                    if (elementValue) {
+                        return {
+                            ...e,
+                            attribute: elementValue.attribute,
+                            values: elementValue.values
+                        };
+                    } else {
+                        return e;
+                    }
+                })
+            });
+
+            // Transform elementsValues into the format expected by recordComputedValues
+            if (record) {
+                const computedValuesMap = {};
+                elementsValues.forEach(element => {
+                    if (element.attribute && element.values) {
+                        computedValuesMap[element.attribute.id] = element.values;
+                    }
+                });
+
+                setRecordComputedValues({
+                    [record.id]: computedValuesMap
+                });
+            }
+        }
+    }, [elementsValues, recordForm, record]);
 
     useEffect(() => {
         if (!loading && recordForm) {
@@ -152,25 +225,29 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         }
     }, [recordForm, loading]);
 
-    const {
-        data: computeFieldsData,
-        error: computeFieldsError,
-        refetch: refetchComputeFields
-    } = useGetRecordValuesQuery(
-        library,
-        recordForm
-            ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
-            : [],
-        [record?.id],
-        true
-    );
+    // Create a refetch function for computed fields
+    const refetchComputeFields = async (recordIds: string[]) => {
+        if (elementIdsVisible.length && record) {
+            const result = await getFormElementValues({
+                variables: {
+                    libraryId: library,
+                    recordId: record?.id,
+                    formId: formIdToLoad,
+                    elementIds: elementIdsVisible
+                }
+            });
+            setElementsValues(result.data?.getFormElementValues);
+        }
+    };
+
+    const computeFieldsError = null;
 
     // Generate a hash of recordForm to detect changes
     const recordFormHash = useMemo(() => simpleStringHash(JSON.stringify(recordForm)), [recordForm]);
 
     useEffect(() => {
         if (state.refreshRequested) {
-            refetch();
+            refetchGetRecordForm();
             dispatch({type: EditRecordReducerActionsTypes.REFRESH_DONE});
         }
     }, [state.refreshRequested]);
@@ -190,7 +267,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
     const _checkDependencyChange = (changedAttribute: string) => {
         // If a dependency attribute has changed, we need to refresh the form
-        if (recordForm.dependencyAttributes.map(depAttribute => depAttribute.id).includes(changedAttribute)) {
+        if (recordFormWithValues.dependencyAttributes.map(depAttribute => depAttribute.id).includes(changedAttribute)) {
             dispatch({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
         }
     };
@@ -226,9 +303,22 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
     };
 
-    const antdFormInitialValues = getAntdFormInitialValues(recordForm);
-    const recordComputedValues = computeFieldsData && record ? computeFieldsData[record.id] : null;
-    const elementsByContainer = extractFormElements(recordForm, recordComputedValues, computeFieldsError);
+    const antdFormInitialValues = getAntdFormInitialValues(recordFormWithValues || recordForm);
+    const computedValues = recordComputedValues && record ? recordComputedValues[record.id] : null;
+    const elementsByContainer = extractFormElements(recordForm, computedValues, computeFieldsError);
+
+    // Used to get different event from children elements (e.g. listen onTabClick event from FormTab element)
+    const onCustomEvent = (event: any): any => {
+        // If a tab has been click
+        // Re-calculate visible element and fetch values
+        if (event.eventName === 'onTabClick') {
+            const tabIdClicked = event.tabIdClicked;
+            const elementId = event.element.id;
+            const tabSettings = recordForm.elements.find(e => e.id === elementId)?.settings.find(s => s.key === 'tabs');
+
+            setTabIdVisible(tabIdClicked);
+        }
+    };
 
     return (
         <WrappedForm
@@ -254,12 +344,13 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                     antdForm={antdForm}
                     formIdToLoad={formIdToLoad}
                     element={rootElement}
-                    computedValues={recordComputedValues}
+                    computedValues={computedValues}
                     readonly={readonly}
                     pendingValues={pendingValues}
                     onValueSubmit={_handleValueSubmit}
                     onValueDelete={_handleValueDelete}
                     onDeleteMultipleValues={onDeleteMultipleValues}
+                    onCustomEvent={onCustomEvent}
                 />
             </RecordEditionContext.Provider>
         </WrappedForm>

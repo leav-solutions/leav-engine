@@ -1,8 +1,14 @@
 fragment FormElementWithValues on FormElementWithValues {
     id
-    order
+    containerId
+    uiElementType
+    attribute {
+        ...RecordFormAttribute
+    }
+    type
+    valueError
     values {
-        id_value
+        ...ValueDetails
     }
 }
 

@@ -396,7 +396,12 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 }
 
                 // Retrieve all visible form elements (based on permissions), with their values
-                for (const depElement of elementsWithDeps.elements) {
+                for (const depElement of elementsWithDeps.elements.filter(e => elementIds.includes(e.id))) {
+                    // skip element layout
+                    if (depElement.type === FormElementTypes.layout) {
+                        continue;
+                    }
+
                     let isElementVisible: boolean;
                     let elementError: string;
                     try {
