@@ -10,7 +10,8 @@
         "declaration": false,
         "sourceMap": false,
         "composite": false,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "noImplicitReturns": true
     },
     "references": [
         {

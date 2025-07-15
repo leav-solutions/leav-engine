@@ -60,7 +60,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
 
                 try {
                     await _init();
-                    await publish(exchange, routingKey, msg, priority);
+                    return await publish(exchange, routingKey, msg, priority);
                 } catch (err) {
                     throw new Error('2 tries reached. Stop sync.');
                 }

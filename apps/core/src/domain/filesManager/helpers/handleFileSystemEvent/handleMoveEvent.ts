@@ -17,7 +17,7 @@ export const handleMoveEvent = async (
     {library}: IHandleFileSystemEventResources,
     deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
-) => {
+): Promise<boolean | void> => {
     const {fileName: fileNameDest, filePath: filePathDest} = getInputData(scanMsg.pathAfter);
     const {fileName: fileNameOrigin, filePath: filePathOrigin} = getInputData(scanMsg.pathBefore);
 

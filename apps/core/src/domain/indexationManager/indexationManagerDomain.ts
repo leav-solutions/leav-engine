@@ -33,7 +33,7 @@ interface IIndexDatabaseParams {
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
-    indexDatabase(params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string>;
+    indexDatabase(params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<void>;
 }
 
 export interface IIndexationManagerDomainDeps {
@@ -406,12 +406,13 @@ export default function ({
         return newTaskId;
     }
 
-    const _indexDatabase = async (params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string> => {
+    const _indexDatabase = async (params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<void> => {
         const findRecordParams = [].concat(params.findRecordParams || []);
         const mustCreateTask = !params.forceNoTask && typeof task?.id === 'undefined';
 
         if (mustCreateTask) {
-            return _createIndexationTask(findRecordParams, params, task);
+            await _createIndexationTask(findRecordParams, params, task);
+            return;
         }
 
         const _updateLibraryIndexationStatus = async (inProgress: boolean) => {

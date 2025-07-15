@@ -78,7 +78,7 @@ interface IImportConfigParams {
 }
 
 export interface IImportDomain {
-    importConfig(params: IImportConfigParams, task?: ITaskFuncParams): Promise<string>;
+    importConfig(params: IImportConfigParams, task?: ITaskFuncParams): Promise<string | undefined>;
     importData(params: IImportDataParams, task?: ITaskFuncParams): Promise<string>;
     importExcel({filename, sheets, startAt}: IImportExcelParams, ctx: IQueryInfos): Promise<string>;
 }
@@ -665,7 +665,7 @@ export default function ({
     };
 
     return {
-        async importConfig(params: IImportConfigParams, task?: ITaskFuncParams): Promise<string> {
+        async importConfig(params: IImportConfigParams, task?: ITaskFuncParams): Promise<string | undefined> {
             const {filepath, ctx, forceNoTask} = params;
 
             if (!forceNoTask && typeof task?.id === 'undefined') {
@@ -791,6 +791,8 @@ export default function ({
             if (!forceNoTask) {
                 return task.id;
             }
+
+            return undefined;
         },
         async importData(params: IImportDataParams, task?: ITaskFuncParams): Promise<string> {
             const {filename, ctx, excelMapping} = params;
@@ -845,6 +847,7 @@ export default function ({
 
                     return translator.t('import.excel_pos', {lng: lang, sheet, line});
                 }
+                throw new Error('Missing excel mapping for element index');
             };
 
             try {

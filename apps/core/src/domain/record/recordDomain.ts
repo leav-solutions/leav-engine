@@ -933,10 +933,9 @@ export default function ({
                                 };
                             });
 
-                        if (errors.length > 0) {
-                            return errors;
-                        }
+                        return errors;
                     }
+                    return [];
                 },
                 ctx
             });

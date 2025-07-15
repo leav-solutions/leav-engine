@@ -198,6 +198,7 @@ describe('treeNodePermissionDomain', () => {
                         case 'parentCategory':
                             return Promise.resolve(false);
                     }
+                    return Promise.reject(new Error('Unknown mock call'));
                 })
             };
 

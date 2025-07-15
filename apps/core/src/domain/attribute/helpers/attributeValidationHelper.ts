@@ -158,9 +158,8 @@ const _validateMetadataFields = async (
                 vars: {attributes: invalidAttributes.join(', ')}
             };
         }
-
-        return metadataFieldsErrors;
     }
+    return metadataFieldsErrors;
 };
 
 /**

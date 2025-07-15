@@ -19,6 +19,7 @@ export default function ({config = null}: IDeps = {}) {
                     json: config.logs.useJsonFormat
                 });
             }
+            throw new Error(`Unknown transport type: ${transport}`);
         });
 
         logger.configure({

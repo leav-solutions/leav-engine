@@ -9,7 +9,7 @@ interface IDeps {
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
-export type GetSearchVariableName = (filter: IRecordFilterOption) => string;
+export type GetSearchVariableName = (filter: IRecordFilterOption) => string | undefined;
 
 export default function ({
     'core.infra.record.helpers.filterTypes': filterTypesHelper = null
@@ -26,5 +26,6 @@ export default function ({
 
             return `classified_${treeName}_${filter.value}`;
         }
+        return undefined;
     };
 }

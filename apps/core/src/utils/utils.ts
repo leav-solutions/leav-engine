@@ -208,6 +208,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
                 if (Array.isArray(oVal)) {
                     return oVal.concat(srcVal);
                 }
+                return undefined;
             };
 
             return mergeWith(object, sources, customizer);
