@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
-import {AddPanel, IApplicationMatchingContext} from '../types';
+import {AddPanel, ApplicationMatchingContextWithoutParentTuple} from '../types';
 import {PanelContent} from '../PanelContent';
 import {Outlet, useLocation, useOutletContext, useParams} from 'react-router-dom';
 
@@ -12,7 +12,7 @@ interface IFullPagePanelProps {
 
 export const FullPagePanel: FunctionComponent<IFullPagePanelProps> = ({addPanel}) => {
     const {currentPanel, currentPopupPanel, currentWorkspace} =
-        useOutletContext<Omit<IApplicationMatchingContext, 'currentParentTuple'>>();
+        useOutletContext<ApplicationMatchingContextWithoutParentTuple>();
 
     const {search} = useLocation();
     const params = useParams();

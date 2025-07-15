@@ -21,6 +21,8 @@ export interface IApplicationMatchingContext {
     currentParentTuple: [Panel, Workspace] | null;
 }
 
+export type ApplicationMatchingContextWithoutParentTuple = Omit<IApplicationMatchingContext, 'currentParentTuple'>;
+
 export type Nullable<T> = {
     [P in keyof T]: T[P] | null;
 };
