@@ -329,7 +329,7 @@ const valueDomain = function ({
                 ctx
             });
 
-            v = values.filter(val => val.payload.id === value.payload).pop();
+            v = values.filter(val => val.id_value === value.id_value).pop();
         } else if (!!value?.id_value) {
             v = await valueRepo.getValueById({
                 library,

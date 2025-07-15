@@ -1,8 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {AttributeCondition} from '../../../../_types/record';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {gqlAddElemToTree, gqlSaveAttribute, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {gqlAddElemToTree, gqlCreateRecord, gqlSaveAttribute, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {ILinkValue} from '_types/value';
 
 describe('Values', () => {
     const testLibName = 'values_library_test';
@@ -138,7 +140,8 @@ describe('Values', () => {
                         format: text,
                         linked_library: "${testLibName}",
                         label: {en: "Test attr advanced link"},
-                        reverse_link: "${attrAdvancedLinkName}"
+                        reverse_link: "${attrAdvancedLinkName}",
+                        multiple_values: true
                     }
                 ) { id }
             }`);
@@ -151,7 +154,8 @@ describe('Values', () => {
                         format: text,
                         linked_library: "${testLibName}",
                         label: {en: "Test attr advanced link"},
-                        reverse_link: "${attrSimpleLinkName}"
+                        reverse_link: "${attrSimpleLinkName}",
+                        multiple_values: true
                     }
                 ) { id }
             }`);
@@ -448,54 +452,6 @@ describe('Values', () => {
         expect(res.data.data.saveValue[0].payload.id).toBe(recordIdLinked);
     });
 
-    test('Save value advanced reverse link', async () => {
-        const res = await makeGraphQlCall(`mutation {
-                saveValue(
-                    library: "${testLibName}",
-                    recordId: "${recordId}",
-                    attribute: "${attrAdvancedReverseLinkName}",
-                    value: {payload: "${recordIdLinked}"}) {
-                        id_value
-
-                        ... on LinkValue {
-                            payload {
-                                id
-                            }
-                        }
-                    }
-              }`);
-
-        expect(res.status).toBe(200);
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue[0].id_value).toBeTruthy();
-        expect(res.data.data.saveValue[0].payload.id).toBe(recordIdLinked);
-    });
-
-    test('Save value advanced reverse link into simple link', async () => {
-        const res = await makeGraphQlCall(`mutation {
-                saveValue(
-                    library: "${testLibName}",
-                    recordId: "${recordId}",
-                    attribute: "${attrAdvancedReverseLinkToSimpleLinkName}",
-                    value: {payload: "${recordIdLinked}"}) {
-                        id_value
-
-                        ... on LinkValue {
-                            payload {
-                                id
-                            }
-                        }
-                    }
-              }`);
-
-        expect(res.status).toBe(200);
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue[0].id_value).toBeFalsy();
-        expect(res.data.data.saveValue[0].payload.id).toBe(recordIdLinked);
-    });
-
     test('Delete value advanced', async () => {
         const res = await makeGraphQlCall(`mutation {
                 deleteValue(
@@ -583,6 +539,430 @@ describe('Values', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValueBatch.values).toHaveLength(2);
         expect(res.data.data.saveValueBatch.values[1].id_value).toBeTruthy();
+    });
+
+    describe('Advanced reverse link from advanced link', () => {
+        let recordIdAdvancedLink: string;
+        let recordIdReverseLink: string;
+
+        beforeEach(async () => {
+            recordIdAdvancedLink = await gqlCreateRecord(testLibName);
+            recordIdReverseLink = await gqlCreateRecord(testLibName);
+        });
+
+        test('Save reverse value should create advanced link in linked record', async () => {
+            const res = await makeGraphQlCall(`mutation {
+                    saveValue(
+                        library: "${testLibName}",
+                        recordId: "${recordIdReverseLink}",
+                        attribute: "${attrAdvancedReverseLinkName}",
+                        value: {payload: "${recordIdAdvancedLink}"}) {
+                            id_value
+
+                            ... on LinkValue {
+                                payload {
+                                    id
+                                }
+                            }
+                        }
+                }`);
+
+            expect(res.status).toBe(200);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.saveValue[0].id_value).toBeTruthy();
+            expect(res.data.data.saveValue[0].payload.id).toBe(recordIdAdvancedLink);
+
+            const advLinkValue = await getAdvancedLinkFromRecord(recordIdAdvancedLink);
+            expect(advLinkValue[0].id_value).toBe(res.data.data.saveValue[0].id_value);
+            expect(advLinkValue[0].payload.id).toBe(recordIdReverseLink);
+        });
+
+        test('Save advanced value to linked record should add reverse link', async () => {
+            const res = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordIdAdvancedLink}",
+                    attribute: "${attrAdvancedLinkName}",
+                    value: {payload: "${recordIdReverseLink}"}) {
+                        id_value
+                        ... on LinkValue {
+                            payload {
+                                id
+                            }
+                        }
+                    }
+                }`);
+
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.saveValue[0].id_value).toBeTruthy();
+            expect(res.data.data.saveValue[0].payload.id).toBe(recordIdReverseLink);
+
+            const reverseLinkValues = await getReverseLinkFromRecord(recordIdReverseLink);
+            expect(reverseLinkValues[0].id_value).toBe(res.data.data.saveValue[0].id_value);
+            expect(reverseLinkValues[0].payload.id).toBe(recordIdAdvancedLink);
+        });
+
+        describe('Record have existing reverse link', () => {
+            let advancedReverseLinkValueId: string;
+            beforeEach(async () => {
+                const res = await makeGraphQlCall(`mutation {
+                    saveValueBatch(
+                        library: "${testLibName}",
+                        recordId: "${recordIdReverseLink}",
+                        values: [
+                            {
+                                attribute: "${attrAdvancedReverseLinkName}",
+                                id_value: null,
+                                value: "${recordIdAdvancedLink}"
+                            },
+                        ]
+                    ) {
+                        values {
+                            id_value
+
+                            ... on LinkValue {
+                                payload {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+                advancedReverseLinkValueId = res.data.data.saveValueBatch.values[0].id_value;
+            });
+
+            test('Save reverse value should add advanced link in linked record', async () => {
+                const recordIdAdvancedLinkBis = await gqlCreateRecord(testLibName);
+                const res = await makeGraphQlCall(`mutation {
+                    saveValue(
+                        library: "${testLibName}",
+                        recordId: "${recordIdReverseLink}",
+                        attribute: "${attrAdvancedReverseLinkName}",
+                        value: {payload: "${recordIdAdvancedLinkBis}"}) {
+                            id_value
+                            ... on LinkValue {
+                                payload {
+                                    id
+                                }
+                            }
+                        }
+                }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+                expect(res.data.data.saveValue[0].id_value).toBeTruthy();
+                expect(res.data.data.saveValue[0].payload.id).toBe(recordIdAdvancedLinkBis);
+
+                const advancedLinkValueBis = await getAdvancedLinkFromRecord(recordIdAdvancedLinkBis);
+                expect(advancedLinkValueBis[0].id_value).toBeTruthy();
+                expect(advancedLinkValueBis[0].payload.id).toBe(recordIdReverseLink);
+
+                const advancedLinkValue = await getAdvancedLinkFromRecord(recordIdAdvancedLink);
+                expect(advancedLinkValue[0].id_value).toBeTruthy();
+                expect(advancedLinkValue[0].payload.id).toBe(recordIdReverseLink);
+
+                const reverseLinkValues = await getReverseLinkFromRecord(recordIdReverseLink);
+                expect(reverseLinkValues).toHaveLength(2);
+                expect(reverseLinkValues.map(v => v.id_value)).toEqual(
+                    expect.arrayContaining([advancedLinkValue[0].id_value, advancedLinkValueBis[0].id_value])
+                );
+                expect(reverseLinkValues.map(v => v.payload.id)).toEqual(
+                    expect.arrayContaining([recordIdAdvancedLink, recordIdAdvancedLinkBis])
+                );
+            });
+
+            test('Delete value should remove advanced link from linked record', async () => {
+                const res = await makeGraphQlCall(`mutation {
+                    deleteValue(
+                        library: "${testLibName}",
+                        recordId: "${recordIdReverseLink}",
+                        attribute: "${attrAdvancedReverseLinkName}",
+                        value: {id_value: "${advancedReverseLinkValueId}"}) {
+                            id_value
+                            ... on LinkValue {
+                                payload {
+                                    id
+                                }
+                            }
+                        }
+                    }`);
+
+                expect(res.status).toBe(200);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.data.data.deleteValue[0].id_value).toBe(advancedReverseLinkValueId);
+                expect(res.data.data.deleteValue[0].payload.id).toBe(recordIdAdvancedLink);
+
+                expect(await getAdvancedLinkFromRecord(recordIdAdvancedLink)).toHaveLength(0);
+            });
+        });
+
+        async function getAdvancedLinkFromRecord(recId: string): Promise<ILinkValue[]> {
+            const resLinkedRecord = await makeGraphQlCall(`query {
+                    records(
+                        library: "${testLibName}",
+                        filters: [ { field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recId}" }]
+                    ) {
+                        list {
+                            property (attribute: "${attrAdvancedLinkName}") {
+                                id_value
+                                ... on LinkValue {
+                                    payload {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }`);
+
+            expect(resLinkedRecord.status).toBe(200);
+            expect(resLinkedRecord.data.errors).toBeUndefined();
+
+            return resLinkedRecord.data.data.records.list[0].property;
+        }
+
+        async function getReverseLinkFromRecord(recId: string): Promise<ILinkValue[]> {
+            const resRecord = await makeGraphQlCall(`query {
+                    records(
+                        library: "${testLibName}",
+                        filters: [ { field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recId}" }]
+                    ) {
+                        list {
+                            property (attribute: "${attrAdvancedReverseLinkName}") {
+                                id_value
+                                ... on LinkValue {
+                                    payload {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }`);
+
+            expect(resRecord.status).toBe(200);
+            expect(resRecord.data.errors).toBeUndefined();
+
+            return resRecord.data.data.records.list[0].property;
+        }
+    });
+
+    describe('Advanced reverse link from simple link', () => {
+        let recordIdSimpleLink: string;
+        let recordIdReverseLink: string;
+
+        beforeEach(async () => {
+            recordIdSimpleLink = await gqlCreateRecord(testLibName);
+            recordIdReverseLink = await gqlCreateRecord(testLibName);
+        });
+
+        test('Save reverse value should create simple link in linked record', async () => {
+            const res = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordIdReverseLink}",
+                    attribute: "${attrAdvancedReverseLinkToSimpleLinkName}",
+                    value: {payload: "${recordIdSimpleLink}"}) {
+                        id_value
+                        ... on LinkValue {
+                            payload {
+                                id
+                            }
+                        }
+                    }
+            }`);
+
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.saveValue[0].id_value).toBe(recordIdSimpleLink);
+            expect(res.data.data.saveValue[0].payload.id).toBe(recordIdSimpleLink);
+
+            const simpleLinkValue = await getSimpleLinkLinkedRecord(recordIdSimpleLink);
+            expect(simpleLinkValue.id_value).toBeFalsy(); // simple link
+            expect(simpleLinkValue.payload.id).toBe(recordIdReverseLink);
+        });
+
+        test('Save simple value to linked record should add reverse link', async () => {
+            const res = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordIdSimpleLink}",
+                    attribute: "${attrSimpleLinkName}",
+                    value: {payload: "${recordIdReverseLink}"}) {
+                        id_value
+                        ... on LinkValue {
+                            payload {
+                                id
+                            }
+                        }
+                    }
+                }`);
+
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.saveValue[0].id_value).toBeFalsy(); // simple link
+            expect(res.data.data.saveValue[0].payload.id).toBe(recordIdReverseLink);
+
+            const reverseLinkValues = await getReverseLinkFromRecord(recordIdReverseLink);
+            expect(reverseLinkValues[0].id_value).toBe(recordIdSimpleLink);
+            expect(reverseLinkValues[0].payload.id).toBe(recordIdSimpleLink);
+        });
+
+        describe('Record have existing reverse link', () => {
+            let advancedReverseSimpleLinkValueId: string;
+            beforeEach(async () => {
+                const res = await makeGraphQlCall(`mutation {
+                    saveValueBatch(
+                        library: "${testLibName}",
+                        recordId: "${recordIdReverseLink}",
+                        values: [
+                            {
+                                attribute: "${attrAdvancedReverseLinkToSimpleLinkName}",
+                                id_value: null,
+                                value: "${recordIdSimpleLink}"
+                            },
+                        ]
+                    ) {
+                        values {
+                            id_value
+
+                            ... on LinkValue {
+                                payload {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+                advancedReverseSimpleLinkValueId = res.data.data.saveValueBatch.values[0].id_value;
+                expect(advancedReverseSimpleLinkValueId).toBe(recordIdSimpleLink);
+            });
+
+            test('Save reverse value should add simple link in linked record', async () => {
+                const recordIdSimpleLinkBis = await gqlCreateRecord(testLibName);
+                const res = await makeGraphQlCall(`mutation {
+                    saveValue(
+                        library: "${testLibName}",
+                        recordId: "${recordIdReverseLink}",
+                        attribute: "${attrAdvancedReverseLinkToSimpleLinkName}",
+                        value: {payload: "${recordIdSimpleLinkBis}"}) {
+                            id_value
+                            ... on LinkValue {
+                                payload {
+                                    id
+                                }
+                            }
+                        }
+                }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+                expect(res.data.data.saveValue[0].id_value).toBe(recordIdSimpleLinkBis);
+                expect(res.data.data.saveValue[0].payload.id).toBe(recordIdSimpleLinkBis);
+
+                const simpleLinkValueBis = await getSimpleLinkLinkedRecord(recordIdSimpleLinkBis);
+                expect(simpleLinkValueBis.id_value).toBeFalsy(); // simple link
+                expect(simpleLinkValueBis.payload.id).toBe(recordIdReverseLink);
+
+                const simpleLinkValue = await getSimpleLinkLinkedRecord(recordIdSimpleLink);
+                expect(simpleLinkValue.id_value).toBeFalsy(); // simple link
+                expect(simpleLinkValue.payload.id).toBe(recordIdReverseLink);
+
+                const reverseLinkValues = await getReverseLinkFromRecord(recordIdReverseLink);
+                expect(reverseLinkValues).toHaveLength(2);
+                expect(reverseLinkValues.map(v => v.id_value)).toEqual(
+                    expect.arrayContaining([recordIdSimpleLink, recordIdSimpleLinkBis])
+                );
+                expect(reverseLinkValues.map(v => v.payload.id)).toEqual(
+                    expect.arrayContaining([recordIdSimpleLink, recordIdSimpleLinkBis])
+                );
+            });
+
+            test('Delete value should remove simple link from linked record', async () => {
+                const res = await makeGraphQlCall(`mutation {
+                    deleteValue(
+                        library: "${testLibName}",
+                        recordId: "${recordIdReverseLink}",
+                        attribute: "${attrAdvancedReverseLinkToSimpleLinkName}",
+                        value: {id_value: "${advancedReverseSimpleLinkValueId}"}) {
+                            id_value
+                            ... on LinkValue {
+                                payload {
+                                    id
+                                }
+                            }
+                        }
+                    }`);
+
+                expect(res.status).toBe(200);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.data.data.deleteValue[0].id_value).toBe(advancedReverseSimpleLinkValueId);
+                expect(res.data.data.deleteValue[0].payload.id).toBe(recordIdSimpleLink);
+
+                expect(await getSimpleLinkLinkedRecord(recordIdSimpleLink)).toBeUndefined();
+                expect(await getReverseLinkFromRecord(recordIdReverseLink)).toHaveLength(0);
+            });
+        });
+
+        async function getSimpleLinkLinkedRecord(recId: string): Promise<ILinkValue | undefined> {
+            const resLinkedRecord = await makeGraphQlCall(`query {
+                    records(
+                        library: "${testLibName}",
+                        filters: [ { field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recId}" }]
+                    ) {
+                        list {
+                            property (attribute: "${attrSimpleLinkName}") {
+                                id_value
+                                ... on LinkValue {
+                                    payload {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }`);
+
+            expect(resLinkedRecord.status).toBe(200);
+            expect(resLinkedRecord.data.errors).toBeUndefined();
+
+            return resLinkedRecord.data.data.records.list[0].property[0];
+        }
+
+        async function getReverseLinkFromRecord(recId: string): Promise<ILinkValue[]> {
+            const resRecord = await makeGraphQlCall(`query {
+                    records(
+                        library: "${testLibName}",
+                        filters: [ { field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recId}" }]
+                    ) {
+                        list {
+                            property (attribute: "${attrAdvancedReverseLinkToSimpleLinkName}") {
+                                id_value
+                                ... on LinkValue {
+                                    payload {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }`);
+
+            expect(resRecord.status).toBe(200);
+            expect(resRecord.data.errors).toBeUndefined();
+
+            return resRecord.data.data.records.list[0].property;
+        }
     });
 
     describe('Date range attribute', () => {

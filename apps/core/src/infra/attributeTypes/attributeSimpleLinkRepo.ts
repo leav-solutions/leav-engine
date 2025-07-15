@@ -112,7 +112,11 @@ export default function ({
             const query = join(queryParts);
             const res = await dbService.execute({query, ctx});
 
-            return res.map(r => ({id_value: null, payload: dbUtils.cleanup(r), created_by: null, modified_by: null}));
+            // id value of advanced revert link is the id of the record
+            return res.map(r => {
+                const record = dbUtils.cleanup<IRecord>(r);
+                return {id_value: record.id, payload: record, created_by: null, modified_by: null};
+            });
         },
         async getValues({library, recordId, attribute, ctx}): Promise<ILinkValue[]> {
             const libCollec = dbService.db.collection(library);

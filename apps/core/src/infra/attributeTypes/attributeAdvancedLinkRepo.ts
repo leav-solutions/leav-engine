@@ -69,6 +69,13 @@ export default function ({
         };
     };
 
+    const _buildSimpleLinkReverseValue = (linkedRecordId: string, linkedLibrary: string): ILinkValue => ({
+        id_value: linkedRecordId,
+        payload: {id: linkedRecordId, library: linkedLibrary},
+        created_by: null,
+        modified_by: null
+    });
+
     return {
         async createValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
             if (typeof value.payload !== 'string') {
@@ -87,13 +94,7 @@ export default function ({
                     value: {payload: recordId},
                     ctx
                 });
-
-                // To return the "from" value.
-                return {
-                    payload: {id: value.payload, library: attribute.linked_library},
-                    created_by: null,
-                    modified_by: null
-                };
+                return _buildSimpleLinkReverseValue(value.payload, attribute.linked_library);
             }
 
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
@@ -149,7 +150,7 @@ export default function ({
             }
             // If reverse_link is a simple link we call attributeSimpleLinkRepo instead.
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
-                return attributeSimpleLinkRepo.updateValue({
+                await attributeSimpleLinkRepo.updateValue({
                     library: attribute.linked_library,
                     recordId: value.payload,
                     attribute: {
@@ -160,6 +161,7 @@ export default function ({
                     value: {payload: recordId},
                     ctx
                 });
+                return _buildSimpleLinkReverseValue(value.payload, attribute.linked_library);
             }
 
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
@@ -210,7 +212,7 @@ export default function ({
         },
         async deleteValue({attribute, value, ctx}): Promise<ILinkValue> {
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
-                return attributeSimpleLinkRepo.deleteValue({
+                await attributeSimpleLinkRepo.deleteValue({
                     library: attribute.linked_library,
                     recordId: value.payload.id,
                     attribute: {
@@ -221,6 +223,7 @@ export default function ({
                     value: {payload: null},
                     ctx
                 });
+                return _buildSimpleLinkReverseValue(value.payload.id, attribute.linked_library);
             }
 
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
