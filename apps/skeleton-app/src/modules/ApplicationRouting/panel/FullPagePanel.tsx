@@ -4,7 +4,7 @@
 import {FunctionComponent} from 'react';
 import {AddPanel, ApplicationMatchingContextWithoutParentTuple} from '../types';
 import {PanelContent} from '../PanelContent';
-import {Outlet, useLocation, useOutletContext, useParams} from 'react-router-dom';
+import {Outlet, useOutletContext} from 'react-router-dom';
 
 interface IFullPagePanelProps {
     addPanel: AddPanel;
@@ -13,12 +13,6 @@ interface IFullPagePanelProps {
 export const FullPagePanel: FunctionComponent<IFullPagePanelProps> = ({addPanel}) => {
     const {currentPanel, currentPopupPanel, currentWorkspace} =
         useOutletContext<ApplicationMatchingContextWithoutParentTuple>();
-
-    const {search} = useLocation();
-    const params = useParams();
-    const searchParams = new URLSearchParams(search);
-
-    console.log('FullPagePanel', params);
 
     return (
         <>

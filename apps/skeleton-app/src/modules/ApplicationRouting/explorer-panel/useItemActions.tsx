@@ -20,13 +20,20 @@ export const useItemActions = ({actions}: {actions: ItemActions}) => {
         callback: item => {
             const query = new URLSearchParams({[recordSearchParamsName]: item.itemId});
 
+            //TODO: Ajouter la query uniquement si nécessaire ?
             if (action.where === 'popup') {
-                navigate(
+                return navigate(
                     generatePath(routes.popupPanel, {panelId: params.panelId, popupPanelId: action.what.id}) +
                         '?' +
                         query.toString()
                 );
             }
+
+            if (action.where === 'slider') {
+                return;
+            }
+
+            return navigate(generatePath(routes.panel, {panelId: action.what.id}) + '?' + query.toString());
         }
     }));
 
