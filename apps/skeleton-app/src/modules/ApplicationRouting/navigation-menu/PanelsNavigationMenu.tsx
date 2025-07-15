@@ -6,7 +6,7 @@ import {generatePath, Outlet, useLocation, useNavigate, useOutletContext} from '
 import {KitTabs} from 'aristid-ds';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
-import type {IApplicationMatchingContext} from '../types';
+import type {ApplicationMatchingContextWithoutParentTuple, IApplicationMatchingContext} from '../types';
 import {recordSearchParamsName, routes} from '../routes';
 import {SidePanelContent} from '../../layout/SidePanelContent';
 import {PanelIdCard} from '../PanelIdCard';
@@ -14,7 +14,7 @@ import {PanelIdCard} from '../PanelIdCard';
 import {content, headerContent, page, pageHeader} from './panelsNavigationMenu.module.css';
 
 export const PanelsNavigationMenu: FunctionComponent = () => {
-    const {currentPanel, currentPopupPanel, currentWorkspace, currentParentTuple} =
+    const {currentPanel, currentPopupPanel, currentSliderPanel, currentWorkspace, currentParentTuple} =
         useOutletContext<IApplicationMatchingContext>();
     const {lang} = useContext(LangContext);
     const {search} = useLocation();
@@ -52,10 +52,12 @@ export const PanelsNavigationMenu: FunctionComponent = () => {
             <div className={content}>
                 <Outlet
                     context={
-                        {currentPanel, currentPopupPanel, currentWorkspace} satisfies Omit<
-                            IApplicationMatchingContext,
-                            'currentParentTuple'
-                        >
+                        {
+                            currentPanel,
+                            currentPopupPanel,
+                            currentSliderPanel,
+                            currentWorkspace
+                        } satisfies ApplicationMatchingContextWithoutParentTuple
                     }
                 />
             </div>

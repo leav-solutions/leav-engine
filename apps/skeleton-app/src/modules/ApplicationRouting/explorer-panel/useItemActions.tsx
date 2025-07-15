@@ -30,7 +30,11 @@ export const useItemActions = ({actions}: {actions: ItemActions}) => {
             }
 
             if (action.where === 'slider') {
-                return;
+                return navigate(
+                    generatePath(routes.sliderPanel, {panelId: params.panelId, sliderPanelId: action.what.id}) +
+                        '?' +
+                        query.toString()
+                );
             }
 
             return navigate(generatePath(routes.panel, {panelId: action.what.id}) + '?' + query.toString());

@@ -15,6 +15,8 @@ import {useApplicationSettingsContext} from '../../config/application-instance/a
 import {FullPagePanel} from './panel/FullPagePanel';
 import {AddModalForPopupPanel} from './panel/AddModalForPopupPanel';
 import {PopupPanel} from './panel/PopupPanel';
+import {SliderPanel} from './panel/SliderPanel';
+import {AddSidePanelForSliderPanel} from './panel/AddSidePanelForSliderPanel';
 
 export const InitApplicationRouter: FunctionComponent = () => {
     const [application, setApplication] = useApplicationSettingsContext();
@@ -51,6 +53,19 @@ export const InitApplicationRouter: FunctionComponent = () => {
                                                   {
                                                       path: routes.popupPanel,
                                                       element: <PopupPanel addPanel={addPanel} />
+                                                  }
+                                              ]
+                                          },
+                                          {
+                                              element: (
+                                                  <AddSidePanelForSliderPanel>
+                                                      <PanelsNavigationMenu />
+                                                  </AddSidePanelForSliderPanel>
+                                              ),
+                                              children: [
+                                                  {
+                                                      path: routes.sliderPanel,
+                                                      element: <SliderPanel addPanel={addPanel} />
                                                   }
                                               ]
                                           }

@@ -18,6 +18,7 @@ export interface IApplicationMatchingContext {
     currentWorkspace: Workspace;
     currentPanel: Panel;
     currentPopupPanel: Panel;
+    currentSliderPanel: Panel;
     currentParentTuple: [Panel, Workspace] | null;
 }
 

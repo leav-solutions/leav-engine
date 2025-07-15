@@ -11,13 +11,13 @@ interface IFullPagePanelProps {
 }
 
 export const FullPagePanel: FunctionComponent<IFullPagePanelProps> = ({addPanel}) => {
-    const {currentPanel, currentPopupPanel, currentWorkspace} =
+    const {currentPanel, currentPopupPanel, currentSliderPanel, currentWorkspace} =
         useOutletContext<ApplicationMatchingContextWithoutParentTuple>();
 
     return (
         <>
             <PanelContent panel={currentPanel} workspace={currentWorkspace} addPanel={addPanel} />
-            <Outlet context={{currentPanel, currentPopupPanel, currentWorkspace}} />
+            <Outlet context={{currentPanel, currentPopupPanel, currentSliderPanel, currentWorkspace}} />
         </>
     );
 };

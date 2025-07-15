@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
-import {IApplicationMatchingContext} from '../types';
+import {ApplicationMatchingContextWithoutParentTuple, IApplicationMatchingContext} from '../types';
 import {KitModal} from 'aristid-ds';
 import {generatePath, Outlet, useNavigate, useOutletContext, useParams} from 'react-router-dom';
 import {routes} from '../routes';
@@ -10,7 +10,7 @@ import {routes} from '../routes';
 export const AddModalForPopupPanel: FunctionComponent = () => {
     const params = useParams();
     const navigate = useNavigate();
-    const {currentPanel, currentPopupPanel, currentWorkspace} =
+    const {currentPanel, currentPopupPanel, currentSliderPanel, currentWorkspace} =
         useOutletContext<Omit<IApplicationMatchingContext, 'currentParentTuple'>>();
 
     return (
@@ -25,10 +25,12 @@ export const AddModalForPopupPanel: FunctionComponent = () => {
         >
             <Outlet
                 context={
-                    {currentPanel, currentPopupPanel, currentWorkspace} satisfies Omit<
-                        IApplicationMatchingContext,
-                        'currentParentTuple'
-                    >
+                    {
+                        currentPanel,
+                        currentPopupPanel,
+                        currentSliderPanel,
+                        currentWorkspace
+                    } satisfies ApplicationMatchingContextWithoutParentTuple
                 }
             />
         </KitModal>
