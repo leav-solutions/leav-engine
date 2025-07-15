@@ -12,10 +12,11 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IFormRepo} from 'infra/form/formRepo';
 import {IUtils, ToAny} from 'utils/utils';
 import {Winston} from 'winston';
-import {IForm} from '_types/forms';
-import {IQueryInfos} from '_types/queryInfos';
+import {FormElementTypes, IForm} from '../../_types/forms';
+import {IQueryInfos} from '../../_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {Errors} from '../../_types/errors';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {formField, formLayoutElement, mockForm} from '../../__tests__/mocks/forms';
 import {mockLibrary} from '../../__tests__/mocks/library';
@@ -34,7 +35,9 @@ const depsBase: ToAny<IFormDomainDeps> = {
     'core.infra.form': jest.fn(),
     'core.utils': jest.fn(),
     'core.utils.logger': jest.fn(),
-    translator: {}
+    translator: {
+        t: jest.fn().mockReturnValue('Mocked translation')
+    }
 };
 
 describe('formDomain', () => {
@@ -52,7 +55,8 @@ describe('formDomain', () => {
     };
 
     const mockAttrDomain: Mockify<IAttributeDomain> = {
-        getAttributes: global.__mockPromise({list: [{...mockAttrSimple, id: 'test_attribute'}]})
+        getAttributes: global.__mockPromise({list: [{...mockAttrSimple, id: 'test_attribute'}]}),
+        getLibraryAttributes: global.__mockPromise([{...mockAttrSimple, id: 'test_attribute'}])
     };
 
     const mockLibraryPermDomain: Mockify<ILibraryPermissionDomain> = {
@@ -952,6 +956,188 @@ describe('formDomain', () => {
                     {...mockField2, valueError: null, values: [mockStandardValue]}
                 ]
             });
+        });
+    });
+
+    describe('getRecordFormElementsValues', () => {
+        const mockRecordAttributePermissionDomain: Mockify<IRecordAttributePermissionDomain> = {
+            getRecordAttributePermission: global.__mockPromise(true)
+        };
+
+        test('Return form elements with values for specific element IDs', async () => {
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
+            });
+
+            const field1 = {...formField, id: 'field1'};
+            const field2 = {...formField, id: 'field2'};
+            const field3 = {...formField, id: 'field3'};
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [field1, field2, field3]}]
+            });
+
+            const res = await domain.getRecordFormElementsValues({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                elementIds: ['field1', 'field3'],
+                ctx
+            });
+
+            expect(res).toHaveLength(2);
+            expect(res[0].id).toBe('field1');
+            expect(res[0].values).toEqual([mockStandardValue]);
+            expect(res[1].id).toBe('field3');
+            expect(res[1].values).toEqual([mockStandardValue]);
+        });
+
+        test('Skip layout elements', async () => {
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
+            });
+
+            const field1 = {...formField, id: 'field1'};
+            const layoutElement = {...formLayoutElement, id: 'layout1'};
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [field1, layoutElement]}]
+            });
+
+            const res = await domain.getRecordFormElementsValues({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                elementIds: ['field1', 'layout1'],
+                ctx
+            });
+
+            expect(res).toHaveLength(1);
+            expect(res[0].id).toBe('field1');
+        });
+
+        test('Handle tabs elements', async () => {
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
+            });
+
+            const tabsElement = {
+                ...formLayoutElement,
+                id: 'tabs1',
+                type: FormElementTypes.field, // Change from layout to field to avoid being filtered out
+                uiElementType: FormUIElementTypes.TABS,
+                settings: {
+                    tabs: [
+                        {
+                            label: {en: 'Tab 1'},
+                            id: 'tab1'
+                        },
+                        {
+                            label: {en: 'Tab 2'},
+                            id: 'tab2'
+                        }
+                    ]
+                }
+            };
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [tabsElement]}]
+            });
+
+            const res = await domain.getRecordFormElementsValues({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                elementIds: ['tabs1'],
+                ctx
+            });
+
+            expect(res).toHaveLength(3); // tabs element + 2 tab containers
+            expect(res[0].id).toBe('tabs1');
+            expect(res[1].id).toBe('tabs1/tab1');
+            expect(res[2].id).toBe('tabs1/tab2');
+        });
+
+        test('Return error encountered when fetching values', async () => {
+            const mockRecordDomainThrowing: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest.fn().mockRejectedValue(new Error('boom!'))
+            };
+
+            const mockLogger: Mockify<Winston> = {
+                error: jest.fn()
+            };
+
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomainThrowing as IRecordDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+                'core.utils.logger': mockLogger as Winston
+            });
+
+            const field1 = {...formField, id: 'field1'};
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [field1]}]
+            });
+
+            const res = await domain.getRecordFormElementsValues({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                elementIds: ['field1'],
+                ctx
+            });
+
+            expect(res).toHaveLength(1);
+            expect(res[0].id).toBe('field1');
+            expect(res[0].values).toBeNull();
+            expect(res[0].valueError).toBe('boom!');
+        });
+
+        test('Filter elements based on permissions', async () => {
+            const mockRecordAttributePermissionDomainFiltered: Mockify<IRecordAttributePermissionDomain> = {
+                getRecordAttributePermission: jest.fn().mockImplementation(async (action, userId, attributeId) => attributeId === 'allowed_attribute')
+            };
+
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomainFiltered as IRecordAttributePermissionDomain
+            });
+
+            const field1 = {...formField, id: 'field1', settings: {attribute: 'allowed_attribute'}};
+            const field2 = {...formField, id: 'field2', settings: {attribute: 'forbidden_attribute'}};
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [field1, field2]}]
+            });
+
+            const res = await domain.getRecordFormElementsValues({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                elementIds: ['field1', 'field2'],
+                ctx
+            });
+
+            expect(res).toHaveLength(1);
+            expect(res[0].id).toBe('field1');
         });
     });
 });
