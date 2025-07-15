@@ -10,16 +10,16 @@ import {SIDEBAR_CONTENT_ID} from '../../constants';
 import {PanelCustom} from './PanelCustom';
 import {PanelLibraryExplorer} from './PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './PanelAttributeExplorer';
-import {Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {findPanelById} from './utils';
 
 interface IPanelContentProps {
-    panel: Panel;
+    panelId: string;
     addPanel: AddPanel;
     recordId?: string;
     searchQuery?: string;
 }
 
-export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, addPanel, recordId, searchQuery}) => {
+export const PanelContent: FunctionComponent<IPanelContentProps> = ({panelId, addPanel, recordId, searchQuery}) => {
     // const {search} = useLocation(); //TODO: A voir si on garde ici ou pas
     const {currentWorkspace} = useOutletContext<Omit<IApplicationMatchingContext, 'currentParentTuple'>>();
 
@@ -32,7 +32,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, addP
     }, []);
 
     //TODO: Just for now, to match old naming
-    const currentPanel = panel;
+    const currentPanel = findPanelById(currentWorkspace.panels, panelId);
 
     if ('content' in currentPanel) {
         const commonFormProps: Partial<ComponentProps<typeof EditRecordPage>> = {
