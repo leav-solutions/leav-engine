@@ -401,6 +401,23 @@ const valueDomain = function ({
             ctx
         );
 
+    const _maybeDeactivateLinkedRecord = async (
+        attributeProps: IAttribute,
+        reverseLink: IAttribute | undefined,
+        deletedValues: IValue[],
+        ctx: IQueryInfos
+    ): Promise<void> => {
+        if (attributeProps.type === AttributeTypes.ADVANCED_LINK && reverseLink?.type === AttributeTypes.SIMPLE_LINK) {
+            await saveValue({
+                library: attributeProps.linked_library,
+                recordId: deletedValues[0].payload.id,
+                attribute: 'active',
+                value: {payload: false},
+                ctx
+            });
+        }
+    };
+
     const _executeDeleteValue = async ({library, recordId, attribute, value, ctx}: IDeleteValueParams) => {
         // Check permission
         const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
@@ -430,7 +447,7 @@ const valueDomain = function ({
 
         const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
-        let reverseLink: IAttribute;
+        let reverseLink: IAttribute | undefined;
         if (!!attributeProps.reverse_link) {
             reverseLink = await attributeDomain.getAttributeProperties({
                 id: attributeProps.reverse_link as string,
@@ -523,6 +540,8 @@ const valueDomain = function ({
                 return deletedValue;
             })
         );
+
+        await _maybeDeactivateLinkedRecord(attributeProps, reverseLink, deletedValues, ctx);
 
         await _maybeDeleteJoinRecord(attributeProps, deletedValues, ctx);
 
