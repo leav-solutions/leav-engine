@@ -887,7 +887,7 @@ describe('Values', () => {
                 );
             });
 
-            test('Delete value should remove simple link from linked record', async () => {
+            test('Delete value should remove simple link from linked record and deactivate linked record', async () => {
                 const res = await makeGraphQlCall(`mutation {
                     deleteValue(
                         library: "${testLibName}",
@@ -909,18 +909,23 @@ describe('Values', () => {
                 expect(res.data.data.deleteValue[0].id_value).toBe(advancedReverseSimpleLinkValueId);
                 expect(res.data.data.deleteValue[0].payload.id).toBe(recordIdSimpleLink);
 
-                expect(await getSimpleLinkLinkedRecord(recordIdSimpleLink)).toBeUndefined();
+                expect(await getSimpleLinkLinkedRecord(recordIdSimpleLink, true)).toBeUndefined();
                 expect(await getReverseLinkFromRecord(recordIdReverseLink)).toHaveLength(0);
             });
         });
 
-        async function getSimpleLinkLinkedRecord(recId: string): Promise<ILinkValue | undefined> {
+        async function getSimpleLinkLinkedRecord(
+            recId: string,
+            expectInactive = false
+        ): Promise<ILinkValue | undefined> {
             const resLinkedRecord = await makeGraphQlCall(`query {
                     records(
                         library: "${testLibName}",
-                        filters: [ { field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recId}" }]
+                        filters: [ { field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recId}" }],
+                        retrieveInactive: ${expectInactive}
                     ) {
                         list {
+                            active
                             property (attribute: "${attrSimpleLinkName}") {
                                 id_value
                                 ... on LinkValue {
@@ -935,6 +940,7 @@ describe('Values', () => {
 
             expect(resLinkedRecord.status).toBe(200);
             expect(resLinkedRecord.data.errors).toBeUndefined();
+            expect(resLinkedRecord.data.data.records.list[0].active).toBe(!expectInactive);
 
             return resLinkedRecord.data.data.records.list[0].property[0];
         }
