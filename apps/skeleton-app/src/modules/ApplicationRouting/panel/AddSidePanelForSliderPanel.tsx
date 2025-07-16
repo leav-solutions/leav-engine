@@ -13,7 +13,6 @@ export const AddSidePanelForSliderPanel: FunctionComponent = ({children}) => {
 
     const divToInsertSidePanel = document.getElementById(SIDE_PANEL_CONTENT_ID);
 
-    // TODO: Comment garder l'animation à la fermeture ? Déplacer le KitSidePanel à la place de la div side panel content ?
     useEffect(() => {
         refPanel.current?.open();
     }, []);
