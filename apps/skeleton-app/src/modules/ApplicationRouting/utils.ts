@@ -28,7 +28,7 @@ export const getAllPanels = (workspace: Workspace): Panel[] => {
  * This function search through an array of panels to find a specific panel given its id
  * It is recursive because a panel can be composed of others panels etc...
  */
-export const findPanelById = (panels: Panel[], panelId: string): Panel | undefined => {
+const findPanelById = (panels: Panel[], panelId: string): Panel | undefined => {
     for (const panel of panels) {
         let found: Panel;
         if (panel.id === panelId) {
