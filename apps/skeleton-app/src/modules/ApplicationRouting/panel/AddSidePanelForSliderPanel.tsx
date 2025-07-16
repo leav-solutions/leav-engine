@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createPortal} from 'react-dom';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {SIDE_PANEL_CONTENT_ID} from '../../../constants';
@@ -27,7 +30,7 @@ export const AddSidePanelForSliderPanel: FunctionComponent = ({children}) => {
                   onClose={() => {
                       //TODO: Remove this setTimeout by calling onCloseAfterAnimation when it's implemented in the design system
                       setTimeout(() => {
-                          navigate(generatePath(routes.panel, {panelId: panelId}));
+                          navigate(generatePath(routes.panel, {panelId}));
                       }, 300);
                   }}
                   closeOnEsc

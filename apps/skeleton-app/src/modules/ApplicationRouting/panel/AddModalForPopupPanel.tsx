@@ -17,7 +17,7 @@ export const AddModalForPopupPanel: FunctionComponent = ({children}) => {
             width="90vw"
             showCloseIcon
             close={() => {
-                navigate(generatePath(routes.panel, {panelId: panelId}));
+                navigate(generatePath(routes.panel, {panelId}));
             }}
         >
             {children}
