@@ -1,0 +1,671 @@
+default:
+  image: node:18-alpine3.18
+  interruptible: true
+
+.no_tag_rule: &no_tag_rule
+  if: $CI_COMMIT_TAG
+  when: never
+
+.mr_rule: &mr_rule
+  if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  when: on_success
+
+.no_duplicate_rule: &no_duplicate_rule
+  if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+  when: never
+
+.main_and_develop_branches_rule: &main_and_develop_branches_rule
+  if: $CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop")
+  when: on_success
+
+# To update, run the following command:
+# yarn workspaces list --json | jq 'select(.location | contains("test-apps") | not)' | jq -r '.name | "  - \"\(.)\""'
+# Hardcoded list because it is not possible to get the list of workspaces from yarn in the CI/CD pipeline
+# and use it for parallel job matrix
+.workspace_projects_name: &workspace_projects_name
+  - "leav-monorepo"
+  - "admin"
+  - "automate-scan"
+  - "core"
+  - "data-studio"
+  - "login"
+  - "logs-collector"
+  - "portal"
+  - "preview-generator"
+  - "skeleton-app"
+  - "sync-scan"
+  - "@leav/app-root-path"
+  - "@leav/config-manager"
+  - "@leav/message-broker"
+  - "@aristid/leav-types"
+  - "@leav/ui"
+  - "@leav/utils"
+
+variables:
+  GIT_DEPTH: 1 # clone only the last commit to speed up the pipeline
+  NODE_ENV: test
+  YARN_CACHE_FOLDER: .yarn_cache
+  # https://docs.gitlab.com/runner/configuration/feature-flags/
+  FF_USE_FASTZIP: "true"
+  FF_TIMESTAMPS: "true"
+  # https://docs.gitlab.com/ci/runners/configure_runners/#artifact-and-cache-settings
+  ARTIFACT_COMPRESSION_LEVEL: "default"
+  # bigger archive, but should not be a problem for local storage, or local s3 storage
+  CACHE_COMPRESSION_LEVEL: "fastest" 
+  # For ci development, could be removed once ci goes to production
+  DISABLE_CHECK_JOBS: "false"
+  DISABLE_TEST_JOBS: "false"
+  DISABLE_E2E_JOBS: "false"
+  DISABLE_BUILD_DOCKER_JOBS: "false"
+  DISABLE_PUBLISH_NPM_JOBS: "false"
+  # If use npmjs.org public registry
+  NPM_TOKEN: ""
+
+stages:
+  - install
+  - test
+  - build
+
+##########
+## Install
+## For merge requests and merge in develop/main branches
+.node_modules_cache: &node_modules_cache
+  key:
+    files:
+      - yarn.lock
+    prefix: $CI_RUNNER_EXECUTABLE_ARCH
+  paths:
+    - node_modules/
+    - apps/*/node_modules/
+    - libs/*/node_modules/
+    - test-apps/*/node_modules/
+    # Do no add .yarn_cache because node_modules should be enough
+  policy: pull
+
+# Necessary in case of cache not available (different runner, etc.)
+.yarn_install_if_not_exists: &yarn_install_if_not_exists
+  - |
+    echo "Check if node_modules exists and if it is up to date";
+    if [ -d node_modules ] && [ -f node_modules/.cache/last-successful-install ]; then
+      echo "node_modules already exists, skip yarn install";
+    else
+      yarn install --immutable &&
+      mkdir -p node_modules/.cache &&
+      touch node_modules/.cache/last-successful-install;
+    fi
+
+.install_ci_rules: &install_ci_rules
+  - *no_tag_rule
+  - *no_duplicate_rule
+  - *mr_rule
+  - *main_and_develop_branches_rule
+
+install:
+  stage: install
+  script:
+    - *yarn_install_if_not_exists
+  cache:
+    <<: *node_modules_cache
+    # pull if exists, push after that job,
+    # but is efficient only if other jobs run in same runner instance when cache is not share with s3
+    policy: pull-push
+  rules: *install_ci_rules
+
+## Install
+##########
+
+##########
+## Divers checks
+## For merge requests and merge in develop/main branches
+.check_ci_rules: &check_ci_rules
+  - if: $DISABLE_CHECK_JOBS == "true"
+    when: never
+  - *no_tag_rule
+  - *no_duplicate_rule
+  - *mr_rule
+  - *main_and_develop_branches_rule
+
+lint:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn lint
+  cache:
+    <<: *node_modules_cache
+  rules: *check_ci_rules
+
+license-check:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn license:check
+  cache:
+    <<: *node_modules_cache
+  rules: *check_ci_rules
+
+tscheck:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn tscheck
+  cache:
+    <<: *node_modules_cache
+  rules: *check_ci_rules
+
+translations-check:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn translations:check
+  cache:
+    <<: *node_modules_cache
+  rules: *check_ci_rules
+
+## Divers checks
+##########
+
+##########
+## Unit tests
+## For merge requests and merge in develop/main branches
+.test_ci_rules: &test_ci_rules
+  - if: $DISABLE_TEST_JOBS == "true"
+    when: never
+  - *no_tag_rule
+  - *no_duplicate_rule
+  - *mr_rule
+  - *main_and_develop_branches_rule
+
+check-workspaces-list:
+  stage: test
+  script:
+    # Prepare image ? maybe image with that tools already exists?
+    - apk add --no-cache yq jq
+    # Check if yarn workspaces list matches the .gitlab-ci.yml .workspace_projects_name
+    - |
+      echo "Check if .gitlab-ci.yml .workspace_projects_name matches yarn workspaces list output";
+      CI_WORKSPACES_NAME=$(cat .gitlab-ci.yml | yq -r '.[".workspace_projects_name"][]')
+      YARN_WORKSPACES_NAME=$(yarn workspaces list --json | jq 'select(.location | contains("test-apps") | not)' | jq -r '.name')
+      if [ "$CI_WORKSPACES_NAME" != "$YARN_WORKSPACES_NAME" ]; then
+        echo "Please update .gitlab-ci.yml .workspace_projects_name to match yarn workspaces list output.";
+        exit 1;
+      fi
+  rules: *test_ci_rules
+
+workspace-unit-tests:
+  stage: test
+  needs:
+    - job: check-workspaces-list
+  parallel:
+    matrix:
+      - WORKSPACE_NAME: *workspace_projects_name
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace $WORKSPACE_NAME run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules: *test_ci_rules
+
+## Unit tests
+##########
+
+##########
+## E2E tests
+## For merge requests and merge in develop/main branches
+.e2e_ci_rules: &e2e_ci_rules
+  - if: $DISABLE_E2E_JOBS == "true"
+    when: never
+  - *no_tag_rule
+  - *no_duplicate_rule
+  - *mr_rule
+  - *main_and_develop_branches_rule
+
+.e2e_service_arangodb: &e2e_service_arangodb
+  name: arangodb:3.12
+  alias: arangodb
+  variables:
+    ARANGO_NO_AUTH: "1"
+
+.e2e_service_rabbitmq: &e2e_service_rabbitmq
+  name: rabbitmq:3.13-management-alpine
+  alias: rabbitmq
+
+.e2e_service_redis: &e2e_service_redis
+  name: redis:latest
+  alias: redis
+
+# Proposed by copilote after many tries, may be not optimal but it is working
+.e2e_service_elasticsearch: &e2e_service_elasticsearch
+  name: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
+  alias: elasticsearch
+  entrypoint: [""]
+  command:
+    - bash
+    - -c
+    - |
+      su -s /bin/bash elasticsearch -c "/usr/local/bin/docker-entrypoint.sh eswrapper"
+  variables:
+    discovery.type: single-node
+    xpack.security.enabled: "false"
+    ES_JAVA_OPTS: -Xms256m -Xmx256m
+
+e2e-api:
+  stage: test
+  services:
+    - *e2e_service_arangodb
+    - *e2e_service_rabbitmq
+    - *e2e_service_redis
+    - *e2e_service_elasticsearch
+  variables:
+    ARANGO_URL: "http://root:@arangodb:8529"
+    AUTH_KEY: "123456789"
+    AMQP_HOST: "rabbitmq"
+    AMQP_PORT: "5672"
+    AMQP_USERNAME: "guest"
+    AMQP_PWD: "guest"
+    APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/core"
+    ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    IMPORT_DIR: "$CI_PROJECT_DIR/imports"
+    DISK_CACHE_DIRECTORY: "$CI_PROJECT_DIR/cache"
+    FILES_ROOT_PATHS: "files1:$CI_PROJECT_DIR/files"
+    REDIS_HOST: "redis"
+    REDIS_PORT: "6379"
+  script:
+    - *yarn_install_if_not_exists
+    - cd apps/core
+    - yarn run test:e2e:api
+  cache:
+    <<: *node_modules_cache
+  rules: *e2e_ci_rules
+
+e2e-indexation-manager:
+  stage: test
+  services:
+    - *e2e_service_arangodb
+    - *e2e_service_rabbitmq
+    - *e2e_service_redis
+    - *e2e_service_elasticsearch
+  variables:
+    ARANGO_URL: "http://root:@arangodb:8529"
+    AUTH_KEY: "123456789"
+    AMQP_HOST: "rabbitmq"
+    AMQP_PORT: "5672"
+    AMQP_USERNAME: "guest"
+    AMQP_PWD: "guest"
+    APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/core"
+    ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    REDIS_HOST: "redis"
+    REDIS_PORT: "6379"
+  script:
+    - *yarn_install_if_not_exists
+    - cd apps/core
+    - yarn run test:e2e:indexationManager
+  cache:
+    <<: *node_modules_cache
+  rules: *e2e_ci_rules
+
+e2e-sync-scan:
+  stage: test
+  services:
+    - *e2e_service_rabbitmq
+  variables:
+    AMQP_HOST: "rabbitmq"
+    AMQP_PORT: "5672"
+    AMQP_USERNAME: "guest"
+    AMQP_PWD: "guest"
+    APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/sync-scan"
+    ALLOW_FILES_LIST: ""
+    IGNORE_FILES_LIST: ""
+  script:
+    - *yarn_install_if_not_exists
+    - cd apps/sync-scan
+    - yarn run test:e2e
+  cache:
+    <<: *node_modules_cache
+  rules: *e2e_ci_rules
+
+## E2E tests
+##########
+
+##########
+## Build / push docker images
+## For develop branch and release/tags
+.docker_in_docker_image: &docker_in_docker_image docker:28.2.2-dind
+.docker_image: &docker_image docker:28.2.2-cli
+
+.docker_build_variables: &docker_build_variables
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_BUILDKIT: 1
+    
+.default_docker_build: &default_docker_build
+  image: *docker_image
+  services:
+    - *docker_in_docker_image
+  stage: build
+  rules:
+    - if: $DISABLE_BUILD_DOCKER_JOBS == "true"
+      when: never
+    - if: ($CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "develop") && $DOCKER_PLATFORM == "linux/arm64"
+      needs:
+        - job: build-docker-arm64
+      when: on_success
+    - if: ($CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "develop") && $DOCKER_PLATFORM == "linux/amd64"
+      when: on_success
+  variables:
+    <<: *docker_build_variables
+  parallel:
+    matrix:
+      - DOCKER_PLATFORM:
+        - linux/amd64
+        - linux/arm64
+  before_script:
+    - apk add --no-cache jq findutils
+    # Check if CI_REGISTRY_USER is set to skip docker login for gitlab-ci-local
+    - |
+      echo "Login to docker registry if CI_REGISTRY_USER is defined"
+      if [ -n "$CI_REGISTRY_USER" ]; then
+        echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+        export DOCKER_PUSH="--push"
+      else
+        echo "CI_REGISTRY_USER non défini, skip docker login"
+        export DOCKER_PUSH=""
+      fi
+    # Use different image tag for arm64 to avoid push conflict.
+    # By default, latest push would have override first push (amd64 generally)
+    # A solution would be to build image with single `docker buildx build` command and use --platform linux/amd64,linux/arm64 option,
+    # Another solution could be to use `docker buildx imagetools create` from two image tag/sha
+    # But because arm64 image are not allways built, this could result to a desynchronized code for same tag !
+    - |
+      echo "Defined docker image tag depending on CI_COMMIT_TAG and DOCKER_PLATFORM"
+      if [ "$DOCKER_PLATFORM" == "linux/arm64" ]; then
+        DOCKER_IMAGE_TAG_SUFFIX="-arm64"
+      else
+        DOCKER_IMAGE_TAG_SUFFIX=""
+      fi
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        export DOCKER_IMAGE_TAG="--tag $CI_REGISTRY_IMAGE/$DOCKER_IMAGE_APP:$CI_COMMIT_TAG$DOCKER_IMAGE_TAG_SUFFIX"
+        export DOCKER_IMAGE_LATEST="--tag $CI_REGISTRY_IMAGE/$DOCKER_IMAGE_APP:latest$DOCKER_IMAGE_TAG_SUFFIX"
+      else
+        export DOCKER_IMAGE_TAG="--tag $CI_REGISTRY_IMAGE/$DOCKER_IMAGE_APP:develop$DOCKER_IMAGE_TAG_SUFFIX"
+        export DOCKER_IMAGE_LATEST=""
+      fi
+    # Necessary to build linux/arm64 images on amd64 runners, use qemu !
+    # This will create application/vnd.oci.image.index.v1+json mediaType instead of application/vnd.docker.distribution.manifest.v2+json mediaType
+    # Not a problem, but gitlab registry will display a warning and wont be able to compute image size
+    - |
+      echo "Create docker buildx builder if DOCKER_PLATFORM is linux/arm64"
+      if [ "$DOCKER_PLATFORM" == "linux/arm64" ]; then
+        docker buildx create --use --driver docker-container --name builder
+      fi
+  after_script:
+    - |
+      echo "Remove docker buildx builder if DOCKER_PLATFORM is linux/arm64" 
+      if [ "$DOCKER_PLATFORM" == "linux/arm64" ]; then
+        docker buildx rm builder
+      fi
+
+# Write version to package.json and manifest.json
+.set_version: &set_version
+  - |
+    if [ -z "$CI_COMMIT_TAG" ]; then
+      echo "Setting version to develop ($CI_COMMIT_SHA)"
+      find \( -name "package.json" -o -name "manifest.json" \) \
+        -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f \
+        -exec sh -c 'jq ".version = \"develop ($CI_COMMIT_SHA)\"" {} > tmpfile && mv tmpfile {}' \;
+    fi
+
+# May be replace with a child pipeline for docker image build
+# Or use https://docs.docker.com/build/building/multi-platform/ if performance are good enough,
+# but probably not will we use qemu !
+build-docker-arm64:
+  stage: build
+  when: manual
+  allow_failure: true
+  script:
+    - echo "Build arm64 docker images on demand only"
+  rules:
+    - if: $DISABLE_BUILD_DOCKER_JOBS == "true"
+      when: never
+    - if: $CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "develop"
+      when: manual
+
+build-docker-core:
+  <<: *default_docker_build
+  variables:
+    <<: *docker_build_variables
+    DOCKER_IMAGE_APP: "core"
+  script:
+    - *set_version
+    - docker buildx build
+        --platform $DOCKER_PLATFORM
+        --file docker/DOCKERFILES/build/core.Dockerfile
+        --label "LEAV Engine"
+        --label "Core"
+        $DOCKER_IMAGE_TAG
+        $DOCKER_IMAGE_LATEST
+        $DOCKER_PUSH
+        .
+
+build-docker-preview-generator:
+  <<: *default_docker_build
+  variables:
+    <<: *docker_build_variables
+    DOCKER_IMAGE_APP: "preview-generator"
+  script:
+    - *set_version
+    - docker buildx build
+        --platform $DOCKER_PLATFORM
+        --file docker/DOCKERFILES/build/generic.Dockerfile
+        --build-arg APP=$DOCKER_IMAGE_APP
+        --target runner-preview-generator
+        --label "LEAV Engine"
+        --label "Preview Generator"
+        $DOCKER_IMAGE_TAG
+        $DOCKER_IMAGE_LATEST
+        $DOCKER_PUSH
+        . 
+
+build-docker-automate-scan:
+  <<: *default_docker_build
+  variables:
+    <<: *docker_build_variables
+    DOCKER_IMAGE_APP: "automate-scan"
+  script:
+    - *set_version
+    - docker buildx build
+        --platform $DOCKER_PLATFORM
+        --file docker/DOCKERFILES/build/generic.Dockerfile
+        --build-arg APP=$DOCKER_IMAGE_APP
+        --target runner
+        --label "LEAV Engine"
+        --label "Automate Scan"
+        $DOCKER_IMAGE_TAG
+        $DOCKER_IMAGE_LATEST
+        $DOCKER_PUSH
+        . 
+
+build-docker-sync-scan:
+  <<: *default_docker_build
+  variables:
+    <<: *docker_build_variables
+    DOCKER_IMAGE_APP: "sync-scan"
+  script:
+    - *set_version
+    - docker buildx build
+        --platform $DOCKER_PLATFORM
+        --file docker/DOCKERFILES/build/generic.Dockerfile
+        --build-arg APP=$DOCKER_IMAGE_APP
+        --target runner
+        --label "LEAV Engine"
+        --label "Sync scan"
+        $DOCKER_IMAGE_TAG
+        $DOCKER_IMAGE_LATEST
+        $DOCKER_PUSH
+        . 
+
+build-docker-logs-collector:
+  <<: *default_docker_build
+  variables:
+    <<: *docker_build_variables
+    DOCKER_IMAGE_APP: "logs-collector"
+  script:
+    - *set_version
+    - docker buildx build
+        --platform $DOCKER_PLATFORM
+        --file docker/DOCKERFILES/build/generic.Dockerfile
+        --build-arg APP=$DOCKER_IMAGE_APP
+        --target runner
+        --label "LEAV Engine"
+        --label "Logs Collector"
+        $DOCKER_IMAGE_TAG
+        $DOCKER_IMAGE_LATEST
+        $DOCKER_PUSH
+        . 
+
+## Build / push docker images
+##########
+
+##########
+## Publish npm packages
+
+.login_npm_registry_script: &login_npm_registry_script
+  - |
+    if [ -n "$NPM_TOKEN" ]; then
+      echo "Login to public npm registry with NPM_TOKEN"
+      echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+    elif [ -n "$CI_JOB_TOKEN" ]; then
+      echo "Login to private npm $CI_SERVER_HOST with CI_JOB_TOKEN"
+      echo "registry=https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/" > .npmrc
+      echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    else
+      echo "NPM_TOKEN or CI_JOB_TOKEN not defined, skip npm login"
+    fi
+
+publish-npm-leav-types-next:
+  stage: build
+  script:
+    - apk add --no-cache jq
+    - *login_npm_registry_script
+    - *yarn_install_if_not_exists
+    - VERSION=$(yarn workspace @aristid/leav-types get-version)-$CI_COMMIT_SHORT_SHA
+    - |
+      echo "Check if version @aristid/leav-types@$VERSION already exists on npm"
+      EXISTS=$(npm --silent view @aristid/leav-types@$VERSION version || echo "")
+      if [ -n "$EXISTS" ]; then
+        echo "Version @aristid/leav-types@$VERSION already exists on npm, skipping publish."
+      else
+        echo "Publishing @aristid/leav-types@$VERSION to npm"
+        echo yarn workspace @aristid/leav-types generate
+        yarn workspace @aristid/leav-types generate
+        # Do not use 'yarn workspace @aristid/leav-types version xxx' because it needs git !
+        echo yarn workspace @aristid/leav-types set-version -- $VERSION
+        yarn workspace @aristid/leav-types set-version -- $VERSION
+        echo yarn workspace @aristid/leav-types publish-types --tag next
+        yarn workspace @aristid/leav-types publish-types --tag next
+      fi
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - if: $DISABLE_PUBLISH_NPM_JOBS == "true"
+      when: never
+    - if: $CI_COMMIT_BRANCH == "develop"
+      changes:
+      # libs/types is a projection of apps/core
+      - apps/core/**/*
+      when: on_success
+
+publish-npm-leav-ui-next:
+  stage: build
+  script:
+    - apk add --no-cache jq
+    - *login_npm_registry_script
+    - *yarn_install_if_not_exists
+    - VERSION=$(yarn workspace @leav/ui get-version)-$CI_COMMIT_SHORT_SHA
+    - |
+      echo "Check if version @leav/ui@$VERSION already exists on npm"
+      EXISTS=$(npm --silent view @leav/ui@$VERSION version || echo "")
+      if [ -n "$EXISTS" ]; then
+        echo "Version @leav/ui@$VERSION already exists on npm, skipping publish."
+      else
+        echo "Publishing @leav/ui@$VERSION to npm"
+        echo yarn workspace @leav/ui build
+        yarn workspace @leav/ui build
+        # Do not use 'yarn workspace @leav/ui version xxx' because it needs git !
+        echo yarn workspace @leav/ui set-version -- $VERSION
+        yarn workspace @leav/ui set-version -- $VERSION
+        echo yarn workspace @leav/ui publish-ui --tag next
+        yarn workspace @leav/ui publish-ui --tag next
+      fi
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - if: $DISABLE_PUBLISH_NPM_JOBS == "true"
+      when: never
+    - if: $CI_COMMIT_BRANCH == "develop"
+      changes:
+      - libs/ui/**/*
+      when: on_success
+
+publish-npm-leav-ui-latest:
+  stage: build
+  when: manual
+  script:
+    - apk add --no-cache jq
+    - *login_npm_registry_script
+    - *yarn_install_if_not_exists
+    - VERSION=$(yarn workspace @leav/ui get-version)
+    - |
+      echo "Check if version @leav/ui@$VERSION already exists on npm"
+      EXISTS=$(npm --silent view @leav/ui@$VERSION version || echo "")
+      if [ -n "$EXISTS" ]; then
+        echo "Version @leav/ui@$VERSION already exists on npm, skipping publish."
+      else
+        echo "Publishing @leav/ui@$VERSION to npm"
+        echo yarn workspace @leav/ui build
+        yarn workspace @leav/ui build
+        echo yarn workspace @leav/ui publish-ui --tag latest
+        yarn workspace @leav/ui publish-ui --tag latest
+      fi
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - if: $DISABLE_PUBLISH_NPM_JOBS == "true"
+      when: never
+    - if: $CI_COMMIT_BRANCH == "develop"
+      changes:
+      - libs/ui/**/*
+      when: manual
+
+publish-npm-leav-utils-latest:
+  stage: build
+  when: manual
+  script:
+    - apk add --no-cache jq
+    - *login_npm_registry_script
+    - *yarn_install_if_not_exists
+    - VERSION=$(yarn workspace @leav/utils get-version)
+    - |
+      echo "Check if version @leav/utils@$VERSION already exists on npm"
+      EXISTS=$(npm --silent view @leav/utils@$VERSION version || echo "")
+      if [ -n "$EXISTS" ]; then
+        echo "Version @leav/utils@$VERSION already exists on npm, skipping publish."
+      else
+        echo "Publishing @leav/utils@$VERSION to npm"
+        echo yarn workspace @leav/utils build
+        yarn workspace @leav/utils build
+        echo yarn workspace @leav/utils publish-utils --tag latest
+        yarn workspace @leav/utils publish-utils --tag latest
+      fi
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - if: $DISABLE_PUBLISH_NPM_JOBS == "true"
+      when: never
+    - if: $CI_COMMIT_BRANCH == "develop"
+      changes:
+      - libs/utils/**/*
+      when: manual
+
+## Publish npm packages
+##########

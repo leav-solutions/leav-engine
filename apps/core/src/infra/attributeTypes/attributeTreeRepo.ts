@@ -8,9 +8,9 @@ import {IUtils} from 'utils/utils';
 import {getEdgesCollectionName, getFullNodeId} from '../../infra/tree/helpers/utils';
 import {NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from '../../infra/tree/_types';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
-import {AttributeFormats, IAttribute} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {IRecord} from '../../_types/record';
-import {ITreeValue, IValue, IValueEdge} from '../../_types/value';
+import {ITreeValue, IValueEdge} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
@@ -24,13 +24,15 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
+export type IAttributeTreeRepo = IAttributeTypeRepo<AttributeTypes.TREE>;
+
 export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.filterTypes': filterTypes = null,
     'core.utils': utils = null
-}: IDeps = {}): IAttributeTypeRepo {
+}: IDeps = {}): IAttributeTreeRepo {
     const _buildTreeValue = (
         treeId: string,
         nodeId: string,
@@ -72,6 +74,9 @@ export default function ({
 
     return {
         async createValue({library, recordId, attribute, value, ctx}): Promise<ITreeValue> {
+            if (typeof value.payload !== 'string') {
+                throw new Error('Tree attribute value must be a string representing the linked node ID.');
+            }
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it
@@ -113,6 +118,9 @@ export default function ({
             );
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ITreeValue> {
+            if (typeof value.payload !== 'string') {
+                throw new Error('Tree attribute value must be a string representing the linked node ID.');
+            }
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             // Update value's metadata on records link
@@ -236,7 +244,7 @@ export default function ({
                 return acc;
             }, []);
         },
-        async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
+        async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ITreeValue> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const query = aql`

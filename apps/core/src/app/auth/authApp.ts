@@ -140,7 +140,8 @@ export default function ({
         const users = await recordDomain.find({
             params: {
                 library: 'users',
-                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}]
+                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}],
+                ignorePermissions: true
             },
             ctx
         });
@@ -241,7 +242,8 @@ export default function ({
                         const userRecords = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}]
+                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}],
+                                ignorePermissions: true
                             },
                             ctx
                         });
@@ -303,7 +305,8 @@ export default function ({
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'login', condition: AttributeCondition.EQUAL, value: login}]
+                                filters: [{field: 'login', condition: AttributeCondition.EQUAL, value: login}],
+                                ignorePermissions: true
                             },
                             ctx
                         });
@@ -398,7 +401,8 @@ export default function ({
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}]
+                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}],
+                                ignorePermissions: true
                             },
                             ctx
                         });

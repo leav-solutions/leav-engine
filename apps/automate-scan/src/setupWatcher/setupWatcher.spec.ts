@@ -10,7 +10,7 @@ jest.mock('../watch/watch', () => ({
     start: jest.fn()
 }));
 
-jest.mock('../', () => ({
+jest.mock('../config', () => ({
     getConfig: global.__mockPromise({
         rootPath: '',
         redis: {

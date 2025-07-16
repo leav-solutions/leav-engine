@@ -23,7 +23,7 @@ import {AttributeFormats, AttributeTypes, IAttribute, ValueVersionMode} from '..
 import {ErrorFieldDetail, Errors, ErrorTypes} from '../../_types/errors';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {IFindValueTree, IStandardValue, IValue, IValuesOptions} from '../../_types/value';
+import {IFindValueTree, ISaveValue, IStandardValue, IValue, IValuesOptions} from '../../_types/value';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
@@ -91,7 +91,7 @@ export interface IValueDomain {
         library: string;
         recordId: string;
         attribute: string;
-        value: IValue;
+        value: ISaveValue;
         ctx: IQueryInfos;
     }): Promise<IValue[]>;
 
@@ -104,7 +104,7 @@ export interface IValueDomain {
     saveValueBatch(params: {
         library: string;
         recordId: string;
-        values: IValue[];
+        values: ISaveValue[];
         ctx: IQueryInfos;
         keepEmpty?: boolean;
         skipPermission?: boolean;
@@ -533,7 +533,7 @@ const valueDomain = function ({
         library: string,
         record: IRecord,
         attribute: IAttribute,
-        value: IValue,
+        value: ISaveValue,
         ctx: IQueryInfos
     ) => {
         const valueBefore = await _getExistingValue({
@@ -884,7 +884,10 @@ const valueDomain = function ({
             const record = await validate.validateRecord(library, recordId, ctx);
 
             const saveRes: ISaveBatchValueResult = await values.reduce(
-                async (promPrevRes: Promise<ISaveBatchValueResult>, value: IValue): Promise<ISaveBatchValueResult> => {
+                async (
+                    promPrevRes: Promise<ISaveBatchValueResult>,
+                    value: ISaveValue
+                ): Promise<ISaveBatchValueResult> => {
                     const prevRes = await promPrevRes;
                     try {
                         if (value.payload === null && !keepEmpty) {
@@ -1012,7 +1015,7 @@ const valueDomain = function ({
                                     ? utils.translateError(e.fields[value.attribute], ctx.lang)
                                     : e.fields[value.attribute]
                                 : e.message,
-                            input: value.payload,
+                            input: value.payload as string,
                             attribute: value.attribute
                         });
                     }

@@ -9,6 +9,7 @@ import {AttributeCondition} from '../../_types/record';
 import {mockAttrAdvVersionableSimple} from '../../__tests__/mocks/attribute';
 import attributeAdvancedRepo, {IAttributeAdvancedRepoDeps} from './attributeAdvancedRepo';
 import {ToAny} from 'utils/utils';
+import {IAttributeWithRevLink} from './attributeTypesRepo';
 
 const depsBase: ToAny<IAttributeAdvancedRepoDeps> = {
     'core.infra.db.dbService': jest.fn(),
@@ -18,7 +19,7 @@ const depsBase: ToAny<IAttributeAdvancedRepoDeps> = {
 };
 
 describe('AttributeStandardRepo', () => {
-    const mockAttribute = {
+    const mockAttribute: IAttributeWithRevLink = {
         id: 'test_attr',
         type: AttributeTypes.ADVANCED,
         multiple_values: true
@@ -606,7 +607,7 @@ describe('AttributeStandardRepo', () => {
             const values = await attrRepo.getValues({
                 library: 'test_lib',
                 recordId: '123456',
-                attribute: {...mockAttrAdvVersionableSimple, reverse_link: undefined},
+                attribute: {...mockAttrAdvVersionableSimple, reverse_link: undefined, type: AttributeTypes.ADVANCED},
                 forceGetAllValues: false,
                 options: {version: {my_tree: '1345'}},
                 ctx

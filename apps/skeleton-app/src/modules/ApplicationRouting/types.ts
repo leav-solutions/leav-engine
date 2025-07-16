@@ -1,35 +1,23 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import * as z from 'zod/v4';
+import {Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {ItemActionsSchema, LibraryExplorerPropsSchema} from '_ui/hooks/useIFrameMessenger/schema';
+import {ApplicationSchema, WorkspaceSchema} from './schema';
 
-import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
+export type LibraryExplorerProps = z.infer<typeof LibraryExplorerPropsSchema>;
 
-type WorkspaceId = string;
-type Language = string;
+export type ItemActions = z.infer<typeof ItemActionsSchema>;
 
-export interface IWorkspace {
-    id: WorkspaceId;
-    title: Record<Language, string>;
-    description?: string;
-    color?: string;
-    icon?: string;
-    panels: Panel[]; // display first
-    entrypoint: {
-        type: 'entity' | 'library' | 'entityValue';
-        //   |-> PAC 2025 |-> PACs |-> PAC2025.campaigns
-        libraryId: string;
-    };
-}
+export type Workspace = z.infer<typeof WorkspaceSchema>;
 
-export interface IApplication {
-    // some info
-    workspaces: IWorkspace[]; // display first
-}
+export type Application = z.infer<typeof ApplicationSchema>;
 
 export interface IApplicationMatchingContext {
-    currentWorkspace: IWorkspace;
+    currentWorkspace: Workspace;
     currentPanel: Panel;
-    currentParentTuple: [Panel, IWorkspace] | null;
+    currentParentTuple: [Panel, Workspace] | null;
 }
 
 export type Nullable<T> = {

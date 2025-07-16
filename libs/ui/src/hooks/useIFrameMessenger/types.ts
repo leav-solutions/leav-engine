@@ -1,11 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {type RefObject, type ComponentProps, type Key, type JSXElementConstructor} from 'react';
+import * as z from 'zod/v4';
 import {type KitNotification} from 'aristid-ds';
 import {type IKitConfirmDialog} from 'aristid-ds/dist/Kit/Feedback/Modal/types';
-import {type RefObject, type ComponentProps, type Key, type JSXElementConstructor} from 'react';
-import {EditRecordModal, Explorer} from '_ui/components';
-import {ToastedAlertProps} from 'aristid-ds/dist/Kit/Feedback/Alert/types';
+import {type ToastedAlertProps} from 'aristid-ds/dist/Kit/Feedback/Alert/types';
+import {type EditRecordModal} from '_ui/components';
+import {type PanelIdSchema, PanelSchema} from '_ui/hooks/useIFrameMessenger/schema';
 
 export const packetId = '__fromIframeMessenger';
 
@@ -70,7 +72,8 @@ export type RegisterMessage = IMessageBase & {
     id: string;
 };
 
-type PanelId = string;
+type PanelId = z.infer<typeof PanelIdSchema>;
+export type Panel = z.infer<typeof PanelSchema>;
 
 interface INestedPanel {
     panelId: PanelId;
@@ -81,68 +84,6 @@ export type NavigateToPanelMessage = IMessageBase & {
     type: 'navigate-to-panel';
     data: {panelId: PanelId} | INestedPanel;
 };
-
-export interface ICommonExplorerProps {
-    showSearch?: boolean;
-    defaultActionsForItem?: ComponentProps<typeof Explorer>['defaultActionsForItem'];
-    defaultPrimaryActions?: ComponentProps<typeof Explorer>['defaultPrimaryActions'];
-    defaultMassActions?: ComponentProps<typeof Explorer>['defaultMassActions'];
-    showFiltersAndSorts?: boolean;
-    freezeView?: boolean;
-    showAttributeLabels?: boolean;
-    creationFormId?: string;
-    editionFormId?: string;
-}
-
-export type LinkExplorerProps = ICommonExplorerProps;
-
-export type LibraryExplorerProps = {
-    noPagination?: true;
-} & ICommonExplorerProps;
-
-export type ItemActions = Array<{
-    what: Panel; // | WorkspaceId
-    where: 'popup' | 'slider' | 'fullpage';
-}>;
-
-export type Panel = {
-    id: PanelId;
-    name: Record<string, string>;
-} & (
-    | {
-          content:
-              | {
-                    type: 'explorer';
-                    attributeSource: string;
-                    explorerProps?: LinkExplorerProps;
-                    viewId?: string | null;
-                    actions: ItemActions;
-                }
-              | {
-                    type: 'explorer';
-                    libraryId: '<props>' | string;
-                    explorerProps?: LibraryExplorerProps;
-                    viewId?: string | null;
-                    actions: ItemActions;
-                }
-              | {
-                    type: 'custom';
-                    iframeSource: string;
-                    child?: Panel;
-                }
-              | {
-                    type: 'editionForm';
-                    formId: string;
-                }
-              | {
-                    type: 'creationForm';
-                    formId: string;
-                };
-      }
-    | {
-          children: Panel[];
-      }
-);
 
 export type MessageToParent =
     | SidePanelFormMessage

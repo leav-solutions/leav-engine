@@ -11,10 +11,10 @@ import {AttributeCondition} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import {mockAttrTreeVersionableSimple} from '../../__tests__/mocks/attribute';
 import attributeTreeRepo from './attributeTreeRepo';
-import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
 
 describe('AttributeTreeRepo', () => {
-    const mockAttribute = {
+    const mockAttribute: IAttributeWithRevLink = {
         id: 'test_tree_attr',
         type: AttributeTypes.TREE,
         linked_tree: 'test_tree',
@@ -232,9 +232,12 @@ describe('AttributeTreeRepo', () => {
                 attribute: mockAttribute,
                 value: {
                     id_value: '445566',
-                    payload: 'categories/123456',
+                    payload: {
+                        id: 'categories/123456'
+                    },
                     modified_at: 400999999,
-                    created_at: 400999999
+                    created_at: 400999999,
+                    treeId: 'categories'
                 },
                 ctx
             });
@@ -531,7 +534,7 @@ describe('AttributeTreeRepo', () => {
             const values = await attrRepo.getValues({
                 library: 'test_lib',
                 recordId: '123456',
-                attribute: {...mockAttrTreeVersionableSimple, reverse_link: undefined},
+                attribute: {...mockAttrTreeVersionableSimple, reverse_link: undefined, type: AttributeTypes.TREE},
                 forceGetAllValues: false,
                 options: {
                     version: {

@@ -18,7 +18,7 @@ import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IListWithCursor} from '_types/list';
 import {IPreview} from '_types/preview';
-import {IStandardValue, ITreeValue, IValue, IValuesOptions} from '_types/value';
+import {ISaveValue, IStandardValue, ITreeValue, IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
@@ -57,10 +57,11 @@ import {IRecordAttributePermissionDomain} from '../permission/recordAttributePer
 import validateValue from '../value/helpers/validateValue';
 import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 import getAccessPermissionFilters from './helpers/getAccessPermissionFilters';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
+import {IPermissionRepo, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
 import {DeleteRecordHelper} from './helpers/deleteRecord';
 import {CreateRecordHelper} from './helpers/createRecord';
+import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -115,7 +116,7 @@ const allowedTypeOperator = {
 export interface IRecordDomain {
     createRecord(params: {
         library: string;
-        values?: IValue[];
+        values?: ISaveValue[];
         verifyRequiredAttributes?: boolean;
         ctx: IQueryInfos;
     }): Promise<ICreateRecordResult>;
@@ -209,6 +210,7 @@ export interface IRecordDomainDeps {
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.infra.library': ILibraryRepo;
     'core.infra.tree': ITreeRepo;
+    'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.infra.value': IValueRepo;
     'core.infra.form': IFormRepo;
     'core.infra.permission': IPermissionRepo;
@@ -235,6 +237,7 @@ export default function ({
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.infra.library': libraryRepo,
     'core.infra.tree': treeRepo,
+    'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
     'core.infra.value': valueRepo,
     'core.infra.form': formRepo,
     'core.infra.permission': permissionRepo,
@@ -802,7 +805,7 @@ export default function ({
             const {record, valuesErrors} = await createRecordHelper({
                 library,
                 preCreateCallback: async () => {
-                    const valuesByAttribute = (values ??= []).reduce<Record<string, IValue[]>>((acc, value) => {
+                    const valuesByAttribute = (values ??= []).reduce<Record<string, ISaveValue[]>>((acc, value) => {
                         if (!acc[value.attribute]) {
                             acc[value.attribute] = [];
                         }
@@ -1007,7 +1010,7 @@ export default function ({
             return deleteRecordHelper(library, id, ctx);
         },
         async find({params, ctx}) {
-            const {library, sort, pagination, withCount, retrieveInactive = false} = params;
+            const {library, sort, pagination, withCount, retrieveInactive = false, ignorePermissions = false} = params;
             const {filters = [] as IRecordFilterLight[], fulltextSearch} = params;
             const fullFilters: IRecordFilterOption[] = [];
             let fullSort: IRecordSort[] = [];
@@ -1140,17 +1143,33 @@ export default function ({
                 );
             }
 
-            const accessPermissionFilters = await getAccessPermissionFilters(
-                ctx.groupsId,
-                library,
-                {
-                    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
-                    'core.infra.tree': treeRepo,
-                    'core.infra.permission': permissionRepo,
-                    'core.domain.permission.helpers.defaultPermission': defaultPermHelper
-                },
-                ctx
-            );
+            const groupsId = ctx?.groupsId || [];
+            let accessPermissionFilters = [];
+
+            if (!ignorePermissions) {
+                const groupsWithAncestorsId = [];
+                for (const groupId of groupsId) {
+                    const ancestors = await elementAncestorsHelper.getCachedElementAncestors({
+                        treeId: USERS_GROUP_TREE_NAME,
+                        nodeId: groupId,
+                        ctx
+                    });
+                    const ancestorsId = ancestors.map(a => a.id).reverse(); // reverse to have list from leaf to root
+                    groupsWithAncestorsId.push(ancestorsId);
+                }
+
+                accessPermissionFilters = await getAccessPermissionFilters(
+                    groupsWithAncestorsId,
+                    library,
+                    {
+                        'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+                        'core.infra.tree': treeRepo,
+                        'core.infra.permission': permissionRepo,
+                        'core.domain.permission.helpers.defaultPermission': defaultPermHelper
+                    },
+                    ctx
+                );
+            }
 
             return recordRepo.find({
                 libraryId: library,

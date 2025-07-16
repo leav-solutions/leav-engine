@@ -13,7 +13,9 @@
     "test:ci": "jest --maxWorkers=2",
     "test:commit": "jest --maxWorkers=50% --onlyChanged",
     "create_comp": "scripts/createComponent.js",
-    "publish-ui": "npm publish --access public"
+    "publish-ui": "npm publish --access public",
+    "get-version": "jq -r '.version' package.json",
+    "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"
   },
   "main": "dist/index",
   "files": [
@@ -80,6 +82,7 @@
     "react-table": "7.8.0",
     "react-table-sticky": "1.1.3",
     "uuid": "9.0.1",
-    "xlsx": "0.18.5"
+    "xlsx": "0.18.5",
+    "zod": "3.25.67"
   }
 }

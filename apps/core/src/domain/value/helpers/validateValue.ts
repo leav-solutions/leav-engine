@@ -10,7 +10,7 @@ import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attr
 import {ErrorFieldDetail, Errors, IExtendedErrorMsg} from '../../../_types/errors';
 import {IQueryInfos} from '../../../_types/queryInfos';
 import {AttributeCondition} from '../../../_types/record';
-import {IValue, IValueVersion} from '../../../_types/value';
+import {ISaveLinkValue, ISaveTreeValue, ISaveValue, IValueVersion} from '../../../_types/value';
 import doesValueExist from './doesValueExist';
 
 interface ILinkRecordValidationResult {
@@ -20,7 +20,7 @@ interface ILinkRecordValidationResult {
 
 interface IValidateValueParams {
     attributeProps: IAttribute;
-    value: IValue;
+    value: ISaveValue;
     library: string;
     recordId?: string;
     infos?: IQueryInfos;
@@ -35,11 +35,14 @@ interface IValidateValueParams {
 }
 
 const _validateLinkedRecord = async (
-    value: IValue,
+    value: ISaveLinkValue,
     attribute: IAttribute,
     deps: {attributeDomain: IAttributeDomain; recordRepo: IRecordRepo},
     ctx: IQueryInfos
 ): Promise<ILinkRecordValidationResult> => {
+    if (typeof value.payload !== 'string') {
+        throw new Error('Link attribute value must be a string representing the linked record ID.');
+    }
     const idAttrProps = await deps.attributeDomain.getAttributeProperties({id: 'id', ctx});
     let reverseLink: IAttribute;
     if (!!idAttrProps.reverse_link) {
@@ -73,11 +76,14 @@ const _validateLinkedRecord = async (
 };
 
 const _validateTreeLinkedRecord = async (
-    value: IValue,
+    value: ISaveTreeValue,
     attribute: IAttribute,
     deps: {attributeDomain: IAttributeDomain; recordRepo: IRecordRepo; treeRepo: ITreeRepo},
     ctx: IQueryInfos
 ): Promise<ILinkRecordValidationResult> => {
+    if (typeof value.payload !== 'string') {
+        throw new Error('Tree attribute value must be a string representing the linked node ID.');
+    }
     const nodeId = value.payload;
 
     const isElementInTree = await deps.treeRepo.isNodePresent({
@@ -103,7 +109,7 @@ const _mustCheckLinkedRecord = (attribute: IAttribute): boolean => {
 };
 
 const _validateVersion = async (
-    value: IValue,
+    value: ISaveValue,
     deps: {treeRepo: ITreeRepo},
     ctx: IQueryInfos
 ): Promise<ErrorFieldDetail<IValueVersion>> => {
@@ -141,8 +147,8 @@ const _validateVersion = async (
     return badElements;
 };
 
-const _validateMetadata = (attribute: IAttribute, value: IValue): ErrorFieldDetail<IValue> => {
-    const errors: ErrorFieldDetail<IValue> = {};
+const _validateMetadata = (attribute: IAttribute, value: ISaveValue): ErrorFieldDetail<ISaveValue> => {
+    const errors: ErrorFieldDetail<ISaveValue> = {};
     if (!value.metadata) {
         return;
     }
@@ -159,8 +165,8 @@ const _validateMetadata = (attribute: IAttribute, value: IValue): ErrorFieldDeta
 
 const DELETE_HTML_TAGS_REGEX = /<\/?[^<>]+>/g;
 
-export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IValue>> => {
-    let errors: ErrorFieldDetail<IValue> = {};
+export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<ISaveValue>> => {
+    let errors: ErrorFieldDetail<ISaveValue> = {};
     const {attributeProps, value, library, recordId, deps, ctx} = params;
     const valueExists = doesValueExist(value, attributeProps);
 
@@ -169,6 +175,9 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
         [AttributeFormats.TEXT, AttributeFormats.RICH_TEXT].includes(attributeProps.format) &&
         attributeProps.character_limit
     ) {
+        if (typeof value.payload !== 'string') {
+            throw new Error('Text attribute value must be a string.');
+        }
         const text =
             attributeProps.format === AttributeFormats.RICH_TEXT
                 ? value.payload.replace(DELETE_HTML_TAGS_REGEX, '')
@@ -224,7 +233,7 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
     if (_mustCheckLinkedRecord(attributeProps) && value.payload !== null) {
         const linkedRecordValidationHandler: {
             [type: string]: (
-                value: IValue,
+                value: ISaveLinkValue | ISaveTreeValue,
                 attribute: IAttribute,
                 deps: any,
                 ctx: IQueryInfos
@@ -235,7 +244,12 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
             [AttributeTypes.TREE]: _validateTreeLinkedRecord
         };
 
-        const isValidLink = await linkedRecordValidationHandler[attributeProps.type](value, attributeProps, deps, ctx);
+        const isValidLink = await linkedRecordValidationHandler[attributeProps.type](
+            value as ISaveLinkValue | ISaveTreeValue,
+            attributeProps,
+            deps,
+            ctx
+        );
 
         if (!isValidLink.isValid) {
             errors[attributeProps.id] = isValidLink.reason;

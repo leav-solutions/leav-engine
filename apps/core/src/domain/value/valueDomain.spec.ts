@@ -11,7 +11,7 @@ import {IValueRepo} from 'infra/value/valueRepo';
 import {IUtils, ToAny} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {IValue, IValueVersion} from '_types/value';
+import {ISaveValue, IValue, IValueVersion} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
@@ -1179,22 +1179,19 @@ describe('ValueDomain', () => {
                     throw e;
                 })
             };
-            const values: IValue[] = [
+            const values: ISaveValue[] = [
                 {
                     attribute: 'test_attr',
                     payload: 'test',
-                    raw_payload: 'test',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
-                    payload: 'test',
-                    raw_payload: 'test'
+                    payload: 'test'
                 },
                 {
                     attribute: 'test_attr3',
-                    payload: 'test',
-                    raw_payload: 'test'
+                    payload: 'test'
                 }
             ];
 
@@ -1292,22 +1289,19 @@ describe('ValueDomain', () => {
                     throw e;
                 })
             };
-            const values: IValue[] = [
+            const values: ISaveValue[] = [
                 {
                     attribute: 'test_attr',
                     payload: 'identical',
-                    raw_payload: 'identical',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
-                    payload: 'test',
-                    raw_payload: 'test'
+                    payload: 'test'
                 },
                 {
                     attribute: 'test_attr3',
-                    payload: 'test',
-                    raw_payload: 'test'
+                    payload: 'test'
                 }
             ];
 
@@ -1398,7 +1392,7 @@ describe('ValueDomain', () => {
         });
 
         test('Should return errors for invalid values', async () => {
-            const values: IValue[] = [
+            const values: ISaveValue[] = [
                 {
                     attribute: 'test_attr',
                     payload: 'test',
@@ -1468,7 +1462,7 @@ describe('ValueDomain', () => {
         });
 
         test('Should throw if a value is not editable', async () => {
-            const values: IValue[] = [
+            const values: ISaveValue[] = [
                 {
                     attribute: 'test_attr',
                     payload: 'test',
@@ -1538,7 +1532,7 @@ describe('ValueDomain', () => {
                 })
             };
 
-            const values: IValue[] = [
+            const values: ISaveValue[] = [
                 {
                     attribute: 'advanced_attribute',
                     payload: '',
@@ -1599,7 +1593,7 @@ describe('ValueDomain', () => {
                 })
             };
 
-            const values: IValue[] = [
+            const values: ISaveValue[] = [
                 {
                     attribute: 'advanced_attribute',
                     payload: '',
@@ -1653,7 +1647,7 @@ describe('ValueDomain', () => {
         });
 
         test('Should throw if unknown library', async function () {
-            const values: IValue[] = [
+            const values: ISaveValue[] = [
                 {
                     attribute: 'advanced_attribute',
                     payload: '',
@@ -1710,7 +1704,7 @@ describe('ValueDomain', () => {
         });
 
         test('Should throw if unknown record', async function () {
-            const values: IValue[] = [
+            const values: ISaveValue[] = [
                 {
                     attribute: 'advanced_attribute',
                     payload: '',

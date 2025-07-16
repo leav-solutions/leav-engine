@@ -19,6 +19,7 @@
         "public",
         "scripts",
         ".yarn",
+        ".yarn_cache",
         ".husky",
         "**/.eslintcache",
         "**/yarn.lock",

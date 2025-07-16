@@ -32,7 +32,7 @@ export * from './RecordEdition';
 export * from './RecordPreviewWithModal';
 export * from './SearchModal';
 export * from './SelectTreeNode';
-export * from './SelectTreeNodeModal';
+export * from './SelectTreeNodeModalOld';
 export * from './SimpleErrorBoundary';
 export * from './SubmitStateNotifier';
 export * from './TreePicker';

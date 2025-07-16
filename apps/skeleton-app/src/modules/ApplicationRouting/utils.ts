@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Panel} from '_ui/hooks/useIFrameMessenger/types';
-import type {IApplication, IWorkspace} from './types';
+import type {Application, Workspace} from './types';
 
-export const getAllPanels = (workspace: IWorkspace): Panel[] => {
+export const getAllPanels = (workspace: Workspace): Panel[] => {
     const getPanelsIntoPanel = (panel: Panel): Panel[] => {
         if ('children' in panel) {
             return panel.children.flatMap(getPanelsIntoPanel).concat(panel);
@@ -49,14 +49,14 @@ const findPanelById = (panels: Panel[], panelId: string): Panel | undefined => {
 
 export const addChildPanelToApplication = (
     panel: Panel,
-    prevApplication: IApplication,
+    prevApplication: Application,
     destination: {workspaceId: string; panelId: string}
-): IApplication => {
+): Application => {
     /**
      * Cannot use destructuring due to a deep object.
      * Cannot change the initial object due to `useState` reactivity (got this error https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_define_property_object_not_extensible).
      */
-    const newApplication = JSON.parse(JSON.stringify(prevApplication)) as IApplication;
+    const newApplication = JSON.parse(JSON.stringify(prevApplication)) as Application;
     const workspace = newApplication.workspaces.find(({id}) => id === destination.workspaceId);
     if (!workspace) {
         return prevApplication;

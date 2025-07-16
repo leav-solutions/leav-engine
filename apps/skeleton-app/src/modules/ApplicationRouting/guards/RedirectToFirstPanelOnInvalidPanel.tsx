@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
 import {generatePath, Navigate, useLocation, useOutletContext} from 'react-router-dom';
-import {IApplication, IApplicationMatchingContext, Nullable} from '../types';
+import {Application, IApplicationMatchingContext, Nullable} from '../types';
 import {routes} from '../routes';
 
-export const RedirectToFirstPanelOnInvalidPanel: FunctionComponent<{application: IApplication}> = ({
+export const RedirectToFirstPanelOnInvalidPanel: FunctionComponent<{application: Application}> = ({
     application,
     children
 }) => {

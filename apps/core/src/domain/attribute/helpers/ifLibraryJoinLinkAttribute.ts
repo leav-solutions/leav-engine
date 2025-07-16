@@ -45,8 +45,9 @@ export default function ({
         });
         if (
             joinAttributeProps.type === AttributeTypes.SIMPLE_LINK ||
+            (joinAttributeProps.type === AttributeTypes.ADVANCED_LINK &&
+                joinAttributeProps.multiple_values === false) ||
             (joinAttributeProps.type === AttributeTypes.TREE && joinAttributeProps.multiple_values === false)
-            // And maybe handle joinAttributeProps.type === AttributeTypes.ADVANCED_LINK without multiple_values
         ) {
             return callback(joinLibId, joinAttributeProps);
         }

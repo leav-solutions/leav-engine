@@ -28,6 +28,7 @@ dist-artifact-**.zip
 logs
 !test-apps/logs
 *.log
+/.gitlab-ci-local/
 
 ### MacOS ###
 *.DS_STORE

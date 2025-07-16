@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
 import {ApolloProvider} from '@apollo/client';
-import {useInitAuth} from '../authentification/useInitAuth';
+import {useInitAuth} from './useInitAuth';
 import {useInitApollo} from '../graphQL/useInitApollo';
 
 export const InitNetwork: FunctionComponent = ({children}) => {

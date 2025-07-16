@@ -179,7 +179,34 @@ describe('ifLibraryJoinLinkAttribute', () => {
         expect(callback).toHaveBeenCalledWith(joinLibraryId, joinAttributeProps);
     });
 
-    it('[+] should not call callback if linked library has mandatory attribut tree mono valuated', async () => {
+    it('[+] should call callback if linked library has mandatory attribut advanced link mono valuated', async () => {
+        const joinLibraryId = 'structure_items';
+        const joinAttributeProps: IAttribute = {
+            type: AttributeTypes.ADVANCED_LINK,
+            id: 'structure_item_thematic',
+            multiple_values: false
+        };
+        depsBase['core.domain.helpers.getCoreEntityById'].mockResolvedValue({
+            behavior: LibraryBehavior.JOIN,
+            mandatoryAttribute: joinAttributeProps.id
+        } as ILibrary);
+        depsBase['core.domain.attribute'].getAttributeProperties = jest.fn().mockResolvedValue(joinAttributeProps);
+        callback.mockResolvedValue({some: 'values'});
+        await expect(
+            _ifLibraryJoinLinkAttribute(
+                {
+                    type: AttributeTypes.ADVANCED_LINK,
+                    linked_library: joinLibraryId
+                },
+                callback,
+                ctx
+            )
+        ).resolves.toEqual({some: 'values'});
+        expect(callback).toHaveBeenCalledTimes(1);
+        expect(callback).toHaveBeenCalledWith(joinLibraryId, joinAttributeProps);
+    });
+
+    it('[+] should call callback if linked library has mandatory attribut tree mono valuated', async () => {
         const joinLibraryId = 'structure_item_categories';
         const joinAttributeProps: IAttribute = {
             type: AttributeTypes.TREE,

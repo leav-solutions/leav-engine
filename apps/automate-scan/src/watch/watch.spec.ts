@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getConfig} from '../';
+import {getConfig} from '../config';
 import {sendToRabbitMQ} from '../rabbitmq/rabbitmq';
 import {setData} from '../redis/redis';
 import {IParamsExtends} from './../types';
@@ -42,7 +42,7 @@ jest.mock('../rabbitmq/rabbitmq', () => ({
     sendToRabbitMQ: jest.fn()
 }));
 
-jest.mock('../', () => ({
+jest.mock('../config', () => ({
     getConfig: global.__mockPromise({
         allowFilesList: '',
         ignoreFilesList: '',

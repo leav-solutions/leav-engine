@@ -7,9 +7,9 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IDbDocument, IDbEdge} from 'infra/db/_types';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {VALUES_COLLECTION, VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
-import {AttributeFormats, IAttribute} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {IRecord} from '../../_types/record';
-import {IValue, IValueEdge} from '../../_types/value';
+import {IStandardValue, IValueEdge} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
@@ -21,12 +21,14 @@ export interface IAttributeAdvancedRepoDeps {
     'core.infra.record.helpers.filterTypes': IFilterTypesHelper;
 }
 
+export type IAttributeAdvancedRepo = IAttributeTypeRepo<AttributeTypes.ADVANCED>;
+
 export default function ({
     'core.infra.db.dbService': dbService,
     'core.infra.db.dbUtils': dbUtils,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart,
     'core.infra.record.helpers.filterTypes': filterTypesHelper
-}: IAttributeAdvancedRepoDeps): IAttributeTypeRepo {
+}: IAttributeAdvancedRepoDeps): IAttributeAdvancedRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], advancedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return aql`${
             attributes
@@ -43,7 +45,7 @@ export default function ({
     }
 
     return {
-        async createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async createValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
@@ -84,7 +86,7 @@ export default function ({
                 ctx
             });
             const savedEdge: Partial<IDbEdge> = resEdge.length ? resEdge[0] : {};
-            const res: IValue = {
+            const res: IStandardValue = {
                 id_value: savedVal._key,
                 payload: savedVal.value,
                 attribute: savedEdge.attribute,
@@ -98,7 +100,7 @@ export default function ({
 
             return res;
         },
-        async updateValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async updateValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
@@ -147,7 +149,7 @@ export default function ({
             });
             const savedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
 
-            const res: IValue = {
+            const res: IStandardValue = {
                 id_value: savedVal._key,
                 payload: savedVal.value,
                 attribute: savedEdge.attribute,
@@ -161,7 +163,7 @@ export default function ({
 
             return res;
         },
-        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION) as EdgeCollection<IDbEdge>;
 
@@ -184,7 +186,14 @@ export default function ({
                 created_by: deletedEdge.created_by
             };
         },
-        async getValues({library, recordId, attribute, forceGetAllValues = false, options, ctx}): Promise<IValue[]> {
+        async getValues({
+            library,
+            recordId,
+            attribute,
+            forceGetAllValues = false,
+            options,
+            ctx
+        }): Promise<IStandardValue[]> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const queryParts = [
@@ -220,7 +229,7 @@ export default function ({
                 version: r.edge.version ?? null
             }));
         },
-        async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
+        async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IStandardValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION) as EdgeCollection<IDbEdge>;
 

@@ -6,7 +6,10 @@
     "tscheck": "",
     "test:ci": "",
     "test:commit": "",
-    "publish-types": "npm publish --access public"
+    "publish-types": "npm publish --access public",
+    "generate": "yarn workspace core tsc --emitDeclarationOnly --declaration --outDir dist-types && mv ../../apps/core/dist-types/* . && rmdir ../../apps/core/dist-types",
+    "get-version": "jq -r '.version' package.json",
+    "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"
   },
   "license": "LGPL3",
   "repository": "https://github.com/leav-solutions/leav-engine",

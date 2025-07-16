@@ -4,8 +4,8 @@ module.exports = {
     env: {browser: true, node: true, es6: true},
     ignorePatterns: ['**/_gqlTypes/*.ts', '**/dist/*', '**/plugins/*', '**/__generated__/**'],
     parser: '@typescript-eslint/parser',
-    parserOptions: {tsconfigRootDir: __dirname},
-    plugins: ['@typescript-eslint', 'react-refresh'],
+    parserOptions: {tsconfigRootDir: __dirname, project: ['./tsconfig.json']},
+    plugins: ['@typescript-eslint', 'react-refresh', 'no-only-tests'],
     settings: {react: {version: 'latest'}},
     extends: ['plugin:@aristid/recommended'],
     rules: {
@@ -54,6 +54,7 @@ module.exports = {
         '@typescript-eslint/prefer-function-type': 'error',
         '@typescript-eslint/prefer-namespace-keyword': 'error',
         '@typescript-eslint/quotes': ['error', 'single', {avoidEscape: true}],
+        '@typescript-eslint/return-await': 'error',
         '@typescript-eslint/semi': ['error', 'always'],
         '@typescript-eslint/triple-slash-reference': 'error',
         'comma-dangle': 'error',
@@ -99,7 +100,6 @@ module.exports = {
         'no-new-wrappers': 'error',
         'no-redeclare': 'off',
         '@typescript-eslint/no-redeclare': ['error'],
-        'no-return-await': 'error',
         'no-sequences': 'error',
         'no-shadow': 'off',
         '@typescript-eslint/no-shadow': ['error'],
@@ -133,5 +133,13 @@ module.exports = {
         'object-curly-spacing': ['error', 'never'],
         'func-call-spacing': ['error', 'never'],
         'react-refresh/only-export-components': 'warn'
-    }
+    },
+    overrides: [
+        {
+            files: ['**/*.test.ts', '**/*.spec.ts', '**/*.test.tsx', '**/*.spec.tsx'],
+            rules: {
+                'no-only-tests/no-only-tests': 'error'
+            }
+        }
+    ]
 };

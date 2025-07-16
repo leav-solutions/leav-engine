@@ -7,8 +7,8 @@ import {getVersionableAttributesByLibraryQuery} from '../../_queries/attributes/
 import {act, render, screen, waitFor} from '../../_tests/testUtils';
 import ValuesVersionConfigurator from './ValuesVersionConfigurator';
 
-jest.mock('_ui/components/SelectTreeNodeModal', () => ({
-    SelectTreeNodeModal: () => <div>SelectTreeNodeModal</div>
+jest.mock('_ui/components/SelectTreeNodeModalOld', () => ({
+    SelectTreeNodeModalOld: () => <div>SelectTreeNodeModalOld</div>
 }));
 
 describe('VersionsPanel', () => {
@@ -54,7 +54,7 @@ describe('VersionsPanel', () => {
             userEvent.click(screen.getByText(/select_version/i));
         });
 
-        expect(await screen.findByText(/SelectTreeNodeModal/i)).toBeInTheDocument();
+        expect(await screen.findByText(/SelectTreeNodeModalOld/i)).toBeInTheDocument();
     });
 
     test('If readonly, do not open tree node selection', async () => {

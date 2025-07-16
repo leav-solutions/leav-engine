@@ -9,13 +9,13 @@ import {AddPanel} from './types';
 import {addChildPanelToApplication} from './utils';
 import {PanelContent} from './PanelContent';
 import {RedirectToFirstPanelOnHome} from './guards/RedirectToFirstPanelOnHome';
+import {RedirectToFirstPanelOnInvalidPanel} from './guards/RedirectToFirstPanelOnInvalidPanel';
 import {PanelsNavigationMenu} from './navigation-menu/PanelsNavigationMenu';
 import {WorkspacesNavigationMenu} from './navigation-menu/WorkspacesNavigationMenu';
-import {RedirectToFirstPanelOnInvalidPanel} from './guards/RedirectToFirstPanelOnInvalidPanel';
-import {useLocalCopyForApplicationSettings} from './useLocalCopyForApplicationSettings';
+import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/ApplicationSettingsContext';
 
 export const InitApplicationRouter: FunctionComponent = () => {
-    const [application, setApplication] = useLocalCopyForApplicationSettings();
+    const [application, setApplication] = useApplicationSettingsContext();
 
     const addPanel: AddPanel = (panel, destination) => {
         setApplication(prevApplication => addChildPanelToApplication(panel, prevApplication, destination));
@@ -25,7 +25,6 @@ export const InitApplicationRouter: FunctionComponent = () => {
         application === null
             ? [{element: <Loading />, path: '*'}]
             : [
-                  // TODO: add check each workspace has a panel at least
                   {
                       element: <WorkspacesNavigationMenu application={application} />,
                       children: [
