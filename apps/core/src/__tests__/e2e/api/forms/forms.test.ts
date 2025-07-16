@@ -2,7 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FORM_ROOT_CONTAINER_ID} from '@leav/utils';
-import {gqlCreateRecord, makeGraphQlCall} from '../e2eUtils';
+import {
+    gqlAddElemToTree,
+    gqlCreateRecord,
+    gqlSaveAttribute,
+    gqlSaveTree,
+    gqlSaveVersionProfile,
+    makeGraphQlCall
+} from '../e2eUtils';
+import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 
 describe('Forms', () => {
     const libraryId = 'forms_test_library';
@@ -325,14 +333,6 @@ describe('Forms', () => {
                     order
                     uiElementType
                     settings { key value }
-                    values {
-                        id_value
-
-                        ...on Value {
-                          payload
-                          raw_payload
-                        }
-                    }
                 }
             }
         }`);
@@ -341,5 +341,111 @@ describe('Forms', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.recordForm.id).toBe(`${formName}_for_record_form`);
         expect(res.data.data.recordForm.elements.length).toBe(2);
+    });
+    test('Get form element values by record', async () => {
+        // Create a form with elements
+        await makeGraphQlCall(`mutation {
+            saveForm(
+                form: {
+                    id: "${formName}_for_element_values"
+                    library: "${libraryId}"
+                    label: { en: "Form for element values" }
+                    elements: [
+                        {
+                            elements: [
+                                {
+                                    id: "some_container"
+                                    containerId: "${FORM_ROOT_CONTAINER_ID}"
+                                    order: 0
+                                    type: layout
+                                    uiElementType: "fields_container"
+                                    settings: []
+                                },
+                                {
+                                    id: "field_element_1"
+                                    containerId: "some_container"
+                                    order: 0
+                                    uiElementType: "input"
+                                    type: field
+                                    settings: [
+                                        {
+                                            key: "attribute"
+                                            value: "${fieldAttributeId}"
+                                        }
+                                    ]
+                                },
+                                {
+                                    id: "field_element_2"
+                                    containerId: "some_container"
+                                    order: 1
+                                    uiElementType: "input"
+                                    type: field
+                                    settings: [
+                                        {
+                                            key: "attribute"
+                                            value: "${fieldAttributeId}"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ) {
+                id
+                label
+                elements {
+                    elements {
+                        id
+                    }
+                }
+            }
+        }`);
+
+        // Save a value for the field attribute
+        await makeGraphQlCall(`mutation {
+            saveValue(
+                library: "${libraryId}", 
+                recordId: "${recordId}", 
+                attribute: "${fieldAttributeId}", 
+                value: { payload: "Test value" }
+            ) {
+                id_value
+            }
+        }`);
+
+        // Test getting values for specific elements
+        const res = await makeGraphQlCall(`{
+            getRecordFormElementsValues(
+                recordId: "${recordId}", 
+                libraryId: "${libraryId}", 
+                formId: "${formName}_for_element_values",
+                elementIds: ["field_element_1", "field_element_2"]
+            ) {
+                id
+                type
+                uiElementType
+                settings { key value }
+                values { payload }
+            }
+        }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.getRecordFormElementsValues).toHaveLength(2);
+
+        // Check that both elements have the same value
+        const elements = res.data.data.getRecordFormElementsValues;
+        expect(elements[0].id).toBe('field_element_1');
+        expect(elements[1].id).toBe('field_element_2');
+
+        // Both elements should have values
+        expect(elements[0].values).toBeDefined();
+        expect(elements[0].values).toHaveLength(1);
+        expect(elements[0].values[0].payload).toBe('Test value');
+
+        expect(elements[1].values).toBeDefined();
+        expect(elements[1].values).toHaveLength(1);
+        expect(elements[1].values[0].payload).toBe('Test value');
     });
 });

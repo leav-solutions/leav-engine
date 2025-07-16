@@ -58,7 +58,7 @@ export interface IFormDomain {
         version?: IValueVersion;
         ctx: IQueryInfos;
         elementIds: string[];
-    }): Promise<any>;
+    }): Promise<IFormElement[]>;
     getFormProperties({library, id, ctx}: {library: string; id: string; ctx: IQueryInfos}): Promise<IForm>;
     saveForm({form, ctx}: {form: IForm; ctx: IQueryInfos}): Promise<IForm>;
     deleteForm({library, id, ctx}: {library: string; id: string; ctx: IQueryInfos}): Promise<IForm>;
@@ -351,7 +351,14 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 sidePanel: formProps.sidePanel
             };
         },
-        async getRecordFormElementsValues({recordId, libraryId, formId, version, ctx, elementIds}) {
+        async getRecordFormElementsValues({
+            recordId,
+            libraryId,
+            formId,
+            version,
+            ctx,
+            elementIds
+        }): Promise<IFormElement[]> {
             let formProps: IForm;
             try {
                 formProps = await this.getFormProperties({library: libraryId, id: formId, ctx});

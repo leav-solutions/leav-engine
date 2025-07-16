@@ -119,17 +119,7 @@ const useGetRecordForm = ({
                 elements: data.recordForm.elements.map(
                     (element): RecordFormElement => ({
                         ...element,
-                        values: (element?.values ?? []).map(value => ({
-                            ...value,
-                            version: arrayValueVersionToObject(value.version ?? []),
-                            metadata: (value.metadata ?? []).map(metadata => ({
-                                ...metadata,
-                                value: {
-                                    ...metadata.value,
-                                    version: arrayValueVersionToObject(metadata.value?.version ?? [])
-                                }
-                            }))
-                        }))
+                        values: []
                     })
                 )
             };
