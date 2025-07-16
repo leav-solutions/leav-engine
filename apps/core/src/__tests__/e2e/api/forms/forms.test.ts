@@ -2,15 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FORM_ROOT_CONTAINER_ID} from '@leav/utils';
-import {
-    gqlAddElemToTree,
-    gqlCreateRecord,
-    gqlSaveAttribute,
-    gqlSaveTree,
-    gqlSaveVersionProfile,
-    makeGraphQlCall
-} from '../e2eUtils';
-import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
+import {gqlCreateRecord, makeGraphQlCall} from '../e2eUtils';
 
 describe('Forms', () => {
     const libraryId = 'forms_test_library';
@@ -18,7 +10,7 @@ describe('Forms', () => {
     const fieldAttributeId = 'forms_test_attribute';
     const formName = 'test_form';
     const formName2 = 'test_other_form';
-    let recordId;
+    let recordId: string;
 
     beforeAll(async () => {
         // Create libraries
