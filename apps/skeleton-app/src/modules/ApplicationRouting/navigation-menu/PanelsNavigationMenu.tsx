@@ -9,7 +9,7 @@ import {LangContext} from '@leav/ui';
 import type {ApplicationMatchingContextWithoutParentTuple, IApplicationMatchingContext} from '../types';
 import {recordSearchParamsName, routes} from '../routes';
 import {SidePanelContent} from '../../layout/SidePanelContent';
-import {PanelIdCard} from '../PanelIdCard';
+import {PanelIdCard} from './PanelIdCard';
 
 import {content, headerContent, page, pageHeader} from './panelsNavigationMenu.module.css';
 

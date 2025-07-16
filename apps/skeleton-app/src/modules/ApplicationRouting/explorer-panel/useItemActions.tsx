@@ -28,6 +28,10 @@ export const useItemActions = ({actions}: {actions: ItemActions}) => {
             };
 
             const {route, params} = routeMap[action.where] || routeMap.fullpage;
+
+            //TODO: Vérifier la modale -> modale et slider -> slider
+            console.log({route, params, path: generatePath(route, params) + '?' + query.toString()});
+
             return navigate(generatePath(route, params) + '?' + query.toString());
         }
     }));
