@@ -61,6 +61,7 @@ export type RecordFormElement = Override<
     RecordFormElementFragment,
     {
         values: RecordFormElementsValue[];
+        valueError?: string;
     }
 >;
 
@@ -111,7 +112,7 @@ const useGetRecordForm = ({
             formId,
             version: requestVersion
         },
-        onCompleted: data => {
+        onCompleted: (data: RecordFormQuery) => {
             // Transform result to format values version to a more convenient object
             const recordFormFormatted: IRecordForm = {
                 ...data.recordForm,

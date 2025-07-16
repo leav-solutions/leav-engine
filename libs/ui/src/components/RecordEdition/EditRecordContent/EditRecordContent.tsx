@@ -303,6 +303,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
         settings: {},
         attribute: null,
+        values: null,
         uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
     };
 

@@ -23,16 +23,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {
-    FormElementTypes,
-    IForm,
-    IFormElement,
-    IFormElementWithValues,
-    IFormElementWithValuesAndChildren,
-    IFormFilterOptions,
-    IFormStrict,
-    IRecordForm
-} from '../../_types/forms';
+import {FormElementTypes, IForm, IFormElement, IFormFilterOptions, IFormStrict, IRecordForm} from '../../_types/forms';
 import {IList, SortOrder} from '../../_types/list';
 import {
     AttributePermissionsActions,
@@ -124,6 +115,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 id: uniqueId(),
                 containerId: FORM_ROOT_CONTAINER_ID,
                 order: 0,
+                children: [],
                 uiElementType: 'text_block',
                 type: FormElementTypes.layout,
                 settings: {content: translator.t('forms.missing_form_warning', {idForm: id, lng: ctx.lang})}
@@ -132,6 +124,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 id: uniqueId(),
                 containerId: FORM_ROOT_CONTAINER_ID,
                 order: 1,
+                children: [],
                 uiElementType: 'divider',
                 type: FormElementTypes.layout,
                 settings: null
@@ -149,6 +142,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 order: index + 2,
                 uiElementType: 'input_field',
                 type: FormElementTypes.field,
+                children: [],
                 settings: {
                     label: att.label || att.id,
                     attribute: att.id
@@ -197,10 +191,8 @@ export default function (deps: IFormDomainDeps): IFormDomain {
      * if a container has children somewhere, keep it otherwise discard it.
      * If a form has no visible field at all, nothing will be returned, including all other layout elements
      */
-    const _filterEmptyContainers = (
-        elements: IFormElementWithValuesAndChildren[]
-    ): {children: IFormElementWithValues[]; hasFields: boolean} => {
-        let elementsToKeep: IFormElementWithValuesAndChildren[] = [];
+    const _filterEmptyContainers = (elements: IFormElement[]): {children: IFormElement[]; hasFields: boolean} => {
+        let elementsToKeep: IFormElement[] = [];
         let hasFields = false; // Used to inform caller about presence of a field
 
         // All elements here are brother in the form.
@@ -275,11 +267,11 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 }
             }
 
-            const flatElementsList: IFormElementWithValuesAndChildren[] = [];
+            const flatElementsList: IFormElement[] = [];
 
             // Retrieve all relevant attributes in a hash map. It will be used later on to filter out empty containers
-            const elementsHashMap: {[id: string]: IFormElementWithValuesAndChildren} = await formProps.elements.reduce(
-                async (allElemsProm: Promise<{[id: string]: IFormElementWithValuesAndChildren}>, elementsWithDeps) => {
+            const elementsHashMap: {[id: string]: IFormElement} = await formProps.elements.reduce(
+                async (allElemsProm: Promise<{[id: string]: IFormElement}>, elementsWithDeps) => {
                     const allElems = await allElemsProm;
 
                     // Check if elements must be included based on dependencies
@@ -290,7 +282,6 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                     // Retrieve all visible form elements (based on permissions), with their values
                     for (const depElement of elementsWithDeps.elements) {
                         let isElementVisible: boolean;
-                        let elementError: string;
                         try {
                             isElementVisible =
                                 depElement.uiElementType === FormElementTypes.layout ||
@@ -302,27 +293,17 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                             logger.error(error);
                             logger.error('Form element was ', depElement);
                         }
-                        if (isElementVisible) {
-                            const {error: valueError, values} = await getElementValues({
-                                element: depElement,
-                                recordId,
-                                libraryId,
-                                version,
-                                deps,
-                                ctx
-                            });
 
-                            const depElementWithValues: IFormElementWithValuesAndChildren = {
+                        if (isElementVisible) {
+                            const depElementWithChildren: IFormElement = {
                                 ...depElement,
-                                values,
-                                valueError: elementError || valueError,
                                 children: []
                             };
 
                             // Add elements to the flat list as well, as we'll to run through all elements easily
                             // to filters out empty containers
-                            flatElementsList.push(depElementWithValues);
-                            allElems[depElement.id] = depElementWithValues;
+                            flatElementsList.push(depElementWithChildren);
+                            allElems[depElement.id] = depElementWithChildren;
 
                             // Tabs are not real container, it's only in element's settings.
                             // We need to add it to hash map to be able to clear out empty tabs
@@ -333,7 +314,6 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                                         type: FormElementTypes.layout,
                                         uiElementType: FormUIElementTypes.TAB_FIELDS_CONTAINER,
                                         children: [],
-                                        values: null,
                                         order: i,
                                         containerId: depElement.id
                                     };
@@ -353,7 +333,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
             const elementsTree = [];
             for (const element of flatElementsList) {
                 if (element.containerId !== FORM_ROOT_CONTAINER_ID) {
-                    elementsHashMap[element.containerId]?.children.push(elementsHashMap[element.id]);
+                    elementsHashMap[element.containerId]?.children?.push(elementsHashMap[element.id]);
                 } else {
                     elementsTree.push(elementsHashMap[element.id]);
                 }
@@ -385,7 +365,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 }
             }
 
-            const flatElementsList: IFormElementWithValuesAndChildren[] = [];
+            const flatElementsList: IFormElement[] = [];
             const allElems = [];
 
             // Retrieve all relevant attributes in a hash map. It will be used later on to filter out empty containers
@@ -425,7 +405,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                             ctx
                         });
 
-                        const depElementWithValues: IFormElementWithValuesAndChildren = {
+                        const depElementWithValues: IFormElement = {
                             ...depElement,
                             values,
                             valueError: elementError || valueError,

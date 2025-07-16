@@ -53,19 +53,13 @@ export interface IFormElement {
     uiElementType: string;
     containerId: string;
     settings?: IKeyValue<any>;
-}
-
-export interface IFormElementWithValues extends IFormElement {
     values?: IValue[];
     valueError?: string;
+    children?: IFormElement[];
 }
 
-export type IFormElementWithValuesAndChildren = IFormElementWithValues & {
-    children: IFormElementWithValuesAndChildren[];
-};
-
 /**
- * Accepted fields to filter attributes list
+ * Accepted fields to filter an attribute list
  */
 export interface IFormFilterOptions extends ICoreEntityFilterOptions {
     library?: string;
