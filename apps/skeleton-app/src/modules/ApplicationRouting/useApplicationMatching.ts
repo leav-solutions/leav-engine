@@ -9,8 +9,8 @@ import {IApplicationMatchingContext, Workspace} from './types';
 export const useApplicationMatching = (
     workspaces: Workspace[],
     panelId: string,
-    popupPanelId: string,
-    sliderPanelId: string
+    popupPanelId?: string,
+    sliderPanelId?: string
 ): IApplicationMatchingContext =>
     useMemo(() => {
         const _tuplesPanelByWorkspace: Array<[Panel, Workspace]> = workspaces

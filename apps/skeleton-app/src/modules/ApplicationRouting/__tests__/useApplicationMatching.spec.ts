@@ -6,6 +6,31 @@ import {useApplicationMatching} from '../useApplicationMatching';
 import {Workspace} from '../types';
 import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
+const panelUsers: Panel = {
+    id: 'users',
+    name: {
+        en: 'Users',
+        fr: 'Utilisateurs'
+    },
+    content: {
+        type: 'explorer',
+        libraryId: '<props>',
+        actions: []
+    }
+};
+
+const usersWorkspaceWithoutPanels: Omit<Workspace, 'panels'> = {
+    id: 'home',
+    title: {
+        en: 'Home',
+        fr: 'Accueil'
+    },
+    entrypoint: {
+        type: 'library',
+        libraryId: 'users'
+    }
+};
+
 describe('useApplicationMatching', () => {
     it('should return empty on panelId not found', async () => {
         const {
@@ -14,34 +39,16 @@ describe('useApplicationMatching', () => {
 
         expect(current).toEqual({
             currentPanel: null,
+            currentPopupPanel: null,
+            currentSliderPanel: null,
             currentParentTuple: null,
             currentWorkspace: null
         });
     });
 
     it('should return panel infos on panelId found without parent', async () => {
-        const panelUsers: Panel = {
-            id: 'users',
-            name: {
-                en: 'Users',
-                fr: 'Utilisateurs'
-            },
-            content: {
-                type: 'explorer',
-                libraryId: '<props>',
-                actions: []
-            }
-        };
         const usersWorkspace: Workspace = {
-            id: 'home',
-            title: {
-                en: 'Home',
-                fr: 'Accueil'
-            },
-            entrypoint: {
-                type: 'library',
-                libraryId: 'users'
-            },
+            ...usersWorkspaceWithoutPanels,
             panels: [panelUsers]
         };
         const {
@@ -51,23 +58,13 @@ describe('useApplicationMatching', () => {
         expect(current).toEqual({
             currentWorkspace: usersWorkspace,
             currentPanel: panelUsers,
+            currentPopupPanel: null,
+            currentSliderPanel: null,
             currentParentTuple: null
         });
     });
 
     it('should return panel infos on panelId found with parent', async () => {
-        const panelUsers: Panel = {
-            id: 'users',
-            name: {
-                en: 'Users',
-                fr: 'Utilisateurs'
-            },
-            content: {
-                type: 'explorer',
-                libraryId: '<props>',
-                actions: []
-            }
-        };
         const unreachablePanel: Panel = {
             id: 'unreachablePanel',
             name: {
@@ -90,15 +87,7 @@ describe('useApplicationMatching', () => {
             ]
         };
         const usersWorkspace: Workspace = {
-            id: 'home',
-            title: {
-                en: 'Home',
-                fr: 'Accueil'
-            },
-            entrypoint: {
-                type: 'library',
-                libraryId: 'users'
-            },
+            ...usersWorkspaceWithoutPanels,
             panels: [unreachablePanel]
         };
         const {
@@ -108,6 +97,8 @@ describe('useApplicationMatching', () => {
         expect(current).toEqual({
             currentWorkspace: usersWorkspace,
             currentPanel: panelUsers,
+            currentPopupPanel: null,
+            currentSliderPanel: null,
             currentParentTuple: [unreachablePanel, usersWorkspace]
         });
     });
