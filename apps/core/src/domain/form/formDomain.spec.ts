@@ -11,8 +11,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IFormRepo} from 'infra/form/formRepo';
 import {IUtils, ToAny} from 'utils/utils';
-import {Winston} from 'winston';
-import {IForm} from '_types/forms';
+import {FormElementTypes, IForm} from '../../_types/forms';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -21,6 +20,7 @@ import {formField, formLayoutElement, mockForm} from '../../__tests__/mocks/form
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import formDomain, {IFormDomainDeps} from './formDomain';
+import {AttributeTypes} from '../../_types/attribute';
 
 const depsBase: ToAny<IFormDomainDeps> = {
     'core.domain.library': jest.fn(),
@@ -844,6 +844,300 @@ describe('formDomain', () => {
                     mockField2
                 ]
             });
+        });
+    });
+    describe('getRecordFormElementsValues', () => {
+        const mockRecordAttributePermissionDomain: Mockify<IRecordAttributePermissionDomain> = {
+            getRecordAttributePermission: global.__mockPromise(true)
+        };
+
+        test('Return values for specified form elements', async () => {
+            const mockRecordDomainWithValues: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest
+                    .fn()
+                    .mockImplementation(async ({attributeId}) => ({payload: `value-for-${attributeId}`}))
+            };
+
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomainWithValues as IRecordDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                'core.utils.logger': {error: jest.fn()} as any
+            });
+
+            const field1 = {
+                ...formField,
+                id: 'field1',
+                settings: {attribute: 'attr1'}
+            };
+            const field2 = {
+                ...formField,
+                id: 'field2',
+                settings: {attribute: 'attr2'}
+            };
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [field1, field2]}]
+            });
+
+            const res = await domain.getRecordFormElementsValues({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                ctx,
+                elementIds: ['field1', 'field2']
+            });
+
+            expect(res).toHaveLength(2);
+            expect(res[0].id).toBe('field1');
+            expect(res[0].values).toEqual([{payload: 'value-for-attr1'}]);
+            expect(res[1].id).toBe('field2');
+            expect(res[1].values).toEqual([{payload: 'value-for-attr2'}]);
+        });
+
+        test('Skip elements not in elementIds list', async () => {
+            const mockRecordDomainWithValues: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest
+                    .fn()
+                    .mockImplementation(async ({attributeId}) => ({payload: `value-for-${attributeId}`}))
+            };
+
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomainWithValues as IRecordDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                'core.utils.logger': {error: jest.fn()} as any
+            });
+
+            const field1 = {
+                ...formField,
+                id: 'field1',
+                settings: {attribute: 'attr1'}
+            };
+            const field2 = {
+                ...formField,
+                id: 'field2',
+                settings: {attribute: 'attr2'}
+            };
+            const field3 = {
+                ...formField,
+                id: 'field3',
+                settings: {attribute: 'attr3'}
+            };
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [field1, field2, field3]}]
+            });
+
+            const res = await domain.getRecordFormElementsValues({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                ctx,
+                elementIds: ['field1', 'field3']
+            });
+
+            expect(res).toHaveLength(2);
+            expect(res[0].id).toBe('field1');
+            expect(res[1].id).toBe('field3');
+            expect(mockRecordDomainWithValues.getRecordFieldValue).toHaveBeenCalledTimes(2);
+        });
+
+        test('Skip layout elements', async () => {
+            const mockRecordDomainWithValues: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest
+                    .fn()
+                    .mockImplementation(async ({attributeId}) => ({payload: `value-for-${attributeId}`}))
+            };
+
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomainWithValues as IRecordDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                'core.utils.logger': {error: jest.fn()} as any
+            });
+
+            const field1 = {
+                ...formField,
+                id: 'field1',
+                settings: {attribute: 'attr1'}
+            };
+            const layoutElement = {
+                ...formLayoutElement,
+                id: 'layout1',
+                type: FormElementTypes.layout
+            };
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [field1, layoutElement]}]
+            });
+
+            const res = await domain.getRecordFormElementsValues({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                ctx,
+                elementIds: ['field1', 'layout1']
+            });
+
+            expect(res).toHaveLength(1);
+            expect(res[0].id).toBe('field1');
+            expect(mockRecordDomainWithValues.getRecordFieldValue).toHaveBeenCalledTimes(1);
+        });
+
+        test('Handle permission denied for attributes', async () => {
+            const mockRecordDomainWithValues: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest
+                    .fn()
+                    .mockImplementation(async ({attributeId}) => ({payload: `value-for-${attributeId}`}))
+            };
+
+            const mockRecordAttributePermissionDomainFiltered: Mockify<IRecordAttributePermissionDomain> = {
+                getRecordAttributePermission: jest.fn(
+                    async (action, userId, attributeId) => attributeId === 'attr1' // Only allow attr1
+                )
+            };
+
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomainWithValues as IRecordDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomainFiltered as IRecordAttributePermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                'core.utils.logger': {error: jest.fn()} as any
+            });
+
+            const field1 = {
+                ...formField,
+                id: 'field1',
+                settings: {attribute: 'attr1'}
+            };
+            const field2 = {
+                ...formField,
+                id: 'field2',
+                settings: {attribute: 'attr2'}
+            };
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [field1, field2]}]
+            });
+
+            const res = await domain.getRecordFormElementsValues({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                ctx,
+                elementIds: ['field1', 'field2']
+            });
+
+            expect(res).toHaveLength(1);
+            expect(res[0].id).toBe('field1');
+            expect(mockRecordDomainWithValues.getRecordFieldValue).toHaveBeenCalledTimes(1);
+        });
+
+        test('Handle error when getting field value', async () => {
+            const mockRecordDomainWithError: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
+                    if (attributeId === 'attr1') {
+                        return {payload: 'value-for-attr1'};
+                    } else {
+                        throw new ValidationError({field: 'Error getting value'});
+                    }
+                })
+            };
+
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomainWithError as IRecordDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+                'core.utils': {
+                    ...mockUtils,
+                    translateError: jest.fn().mockReturnValue('Translated error')
+                } as IUtils,
+                'core.utils.logger': {error: jest.fn()} as any
+            });
+
+            const field1 = {
+                ...formField,
+                id: 'field1',
+                settings: {attribute: 'attr1'}
+            };
+            const field2 = {
+                ...formField,
+                id: 'field2',
+                settings: {attribute: 'attr2'}
+            };
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [field1, field2]}]
+            });
+
+            const res = await domain.getRecordFormElementsValues({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                ctx,
+                elementIds: ['field1', 'field2']
+            });
+
+            expect(res).toHaveLength(2);
+            expect(res[0].id).toBe('field1');
+            expect(res[0].values).toEqual([{payload: 'value-for-attr1'}]);
+            expect(res[1].id).toBe('field2');
+            expect(res[1].valueError).toBe('Translated error');
+        });
+
+        test('Handle missing form by creating default form', async () => {
+            const mockRecordDomainWithValues: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest
+                    .fn()
+                    .mockImplementation(async ({attributeId}) => ({payload: `value-for-${attributeId}`}))
+            };
+
+            const mockAttrDomainWithAttrs: Mockify<IAttributeDomain> = {
+                getLibraryAttributes: global.__mockPromise([
+                    {id: 'attr1', label: 'Attribute 1', type: AttributeTypes.SIMPLE}
+                ])
+            };
+
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomainWithValues as IRecordDomain,
+                'core.domain.attribute': mockAttrDomainWithAttrs as IAttributeDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+                'core.utils': mockUtils as IUtils,
+                'core.utils.logger': {error: jest.fn()} as any,
+                translator: {t: jest.fn().mockReturnValue('Missing form warning')} as any
+            });
+
+            // Make getFormProperties throw a ValidationError for unknown form
+            domain.getFormProperties = jest.fn().mockImplementation(() => {
+                throw new ValidationError({id: 'UNKNOWN_FORM'});
+            });
+
+            const res = await domain.getRecordFormElementsValues({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'unknown_form',
+                ctx,
+                elementIds: ['field1']
+            });
+
+            // Should return empty array since field1 doesn't exist in the default form
+            expect(res).toHaveLength(0);
         });
     });
 });
