@@ -20,7 +20,7 @@ export const useItemActions = ({actions}: {actions: ItemActions}) => {
         callback: item => {
             const query = new URLSearchParams({[recordSearchParamsName]: item.itemId});
 
-            //TODO: Ajouter la query uniquement si nécessaire ?
+            // TODO: When we will adress the feature to open a popup trough a popup panel, we might need to use routes.panel/routes.popupPanel instead of routes.popupPanel
             const routeMap = {
                 popup: {route: routes.popupPanel, params: {panelId: panelId, popupPanelId: action.what.id}},
                 slider: {route: routes.sliderPanel, params: {panelId: panelId, sliderPanelId: action.what.id}},
@@ -28,9 +28,6 @@ export const useItemActions = ({actions}: {actions: ItemActions}) => {
             };
 
             const {route, params} = routeMap[action.where] || routeMap.fullpage;
-
-            //TODO: Vérifier la modale -> modale et slider -> slider
-            console.log({route, params, path: generatePath(route, params) + '?' + query.toString()});
 
             return navigate(generatePath(route, params) + '?' + query.toString());
         }

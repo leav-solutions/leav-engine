@@ -13,6 +13,11 @@ import {PanelIdCard} from './PanelIdCard';
 
 import {content, headerContent, page, pageHeader} from './panelsNavigationMenu.module.css';
 
+// TODO: Later if we want a clean rendering for the modal and the slider, we would need to duplicate this component like this:
+// - PanelsNavigationMenuFullPage
+// - PanelsNavigationMenuPopup (+ merge AddSidePanelForPopupPanel)
+// - PanelsNavigationMenuSlider (+ merge AddSidePanelForSliderPanel)
+// Each component would manage the rendering correctly (example for the popup, we would display the idCard in the header of the KitModal)
 export const PanelsNavigationMenu: FunctionComponent = () => {
     const {currentPanel, currentPopupPanel, currentSliderPanel, currentWorkspace, currentParentTuple} =
         useOutletContext<IApplicationMatchingContext>();

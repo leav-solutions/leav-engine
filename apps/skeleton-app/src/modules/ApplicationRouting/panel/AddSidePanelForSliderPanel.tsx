@@ -25,6 +25,7 @@ export const AddSidePanelForSliderPanel: FunctionComponent = ({children}) => {
                   closable
                   size="m"
                   onClose={() => {
+                      //TODO: Remove this setTimeout by calling onCloseAfterAnimation when it's implemented in the design system
                       setTimeout(() => {
                           navigate(generatePath(routes.panel, {panelId: panelId}));
                       }, 300);

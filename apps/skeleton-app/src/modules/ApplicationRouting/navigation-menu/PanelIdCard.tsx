@@ -18,11 +18,6 @@ export const PanelIdCard: FunctionComponent<{currentRecordId?: string; libraryId
         skip: !currentRecordId || !libraryId
     });
 
-    console.log('PanelIdCard', {
-        title: data?.records?.list?.[0]?.whoAmI?.label,
-        description: data?.records?.list?.[0]?.whoAmI?.subLabel
-    });
-
     return loading ? (
         <PanelIdCardSkeleton />
     ) : (
