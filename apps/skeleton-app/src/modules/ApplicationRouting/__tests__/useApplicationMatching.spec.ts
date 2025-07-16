@@ -19,6 +19,30 @@ const panelUsers: Panel = {
     }
 };
 
+const popupEditUserPanel: Panel = {
+    id: 'popupEditUser',
+    name: {
+        en: 'Popup Panel',
+        fr: 'Panneau Popup'
+    },
+    content: {
+        formId: 'edition',
+        type: 'editionForm'
+    }
+};
+
+const sliderEditUserPanel: Panel = {
+    id: 'sliderEditUser',
+    name: {
+        en: 'Slider Panel',
+        fr: 'Panneau Slider'
+    },
+    content: {
+        formId: 'edition',
+        type: 'editionForm'
+    }
+};
+
 const usersWorkspaceWithoutPanels: Omit<Workspace, 'panels'> = {
     id: 'home',
     title: {
@@ -100,6 +124,70 @@ describe('useApplicationMatching', () => {
             currentPopupPanel: null,
             currentSliderPanel: null,
             currentParentTuple: [unreachablePanel, usersWorkspace]
+        });
+    });
+
+    it('should return popup panel infos on popupPanelId found', async () => {
+        const panelUsersWithPopupPanel: Panel = {
+            ...panelUsers,
+            content: {
+                ...panelUsers.content,
+                actions: [
+                    {
+                        what: popupEditUserPanel,
+                        where: 'popup'
+                    }
+                ]
+            }
+        };
+
+        const usersWorkspace: Workspace = {
+            ...usersWorkspaceWithoutPanels,
+            panels: [panelUsersWithPopupPanel]
+        };
+
+        const {
+            result: {current}
+        } = renderHook(() => useApplicationMatching([usersWorkspace], 'users', 'popupEditUser'));
+
+        expect(current).toEqual({
+            currentWorkspace: usersWorkspace,
+            currentPanel: panelUsersWithPopupPanel,
+            currentPopupPanel: popupEditUserPanel,
+            currentSliderPanel: null,
+            currentParentTuple: null
+        });
+    });
+
+    it('should return slider panel infos on sliderPanelId found', async () => {
+        const panelUsersWithSliderPanel: Panel = {
+            ...panelUsers,
+            content: {
+                ...panelUsers.content,
+                actions: [
+                    {
+                        what: sliderEditUserPanel,
+                        where: 'slider'
+                    }
+                ]
+            }
+        };
+
+        const usersWorkspace: Workspace = {
+            ...usersWorkspaceWithoutPanels,
+            panels: [panelUsersWithSliderPanel]
+        };
+
+        const {
+            result: {current}
+        } = renderHook(() => useApplicationMatching([usersWorkspace], 'users', undefined, 'sliderEditUser'));
+
+        expect(current).toEqual({
+            currentWorkspace: usersWorkspace,
+            currentPanel: panelUsersWithSliderPanel,
+            currentPopupPanel: null,
+            currentSliderPanel: sliderEditUserPanel,
+            currentParentTuple: null
         });
     });
 });
