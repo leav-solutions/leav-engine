@@ -4,9 +4,9 @@
 import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
 import {generatePath, Navigate, useLocation} from 'react-router-dom';
 import {EditRecordPage} from '@leav/ui';
-import type {AddPanel, Workspace} from './types';
-import {recordSearchParamsName, routes} from './routes';
-import {SIDEBAR_CONTENT_ID} from '../../constants';
+import type {AddPanel, Workspace} from '../../types';
+import {recordSearchParamsName, routes} from '../../routes';
+import {SIDEBAR_CONTENT_ID} from '../../../../constants';
 import {PanelCustom} from './PanelCustom';
 import {PanelLibraryExplorer} from './PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './PanelAttributeExplorer';

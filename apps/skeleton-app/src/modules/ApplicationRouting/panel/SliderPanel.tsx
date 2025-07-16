@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
-import {PanelContent} from '../PanelContent';
+import {PanelContent} from './content/PanelContent';
 import {AddPanel, ApplicationMatchingContextWithoutParentTuple} from '../types';
 import {useOutletContext} from 'react-router-dom';
 

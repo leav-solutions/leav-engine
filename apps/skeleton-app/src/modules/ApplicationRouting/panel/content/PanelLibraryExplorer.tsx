@@ -4,9 +4,9 @@
 import {FunctionComponent} from 'react';
 import {Explorer} from '@leav/ui';
 import {explorerContainer} from './PanelContent.module.css';
-import {ItemActions, LibraryExplorerProps} from './types';
-import {useExplorerProps} from './explorer-panel/useExplorerProps';
-import {useItemActions} from './explorer-panel/useItemActions';
+import {ItemActions, LibraryExplorerProps} from '../../types';
+import {useExplorerProps} from '../../explorer-panel/useExplorerProps';
+import {useItemActions} from '../../explorer-panel/useItemActions';
 
 interface IPanelLibraryExplorerProps {
     libraryId: string;

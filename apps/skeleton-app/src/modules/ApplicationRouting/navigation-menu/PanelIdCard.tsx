@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
-import {useGetRecordIdCardQuery} from '../../__generated__';
+import {useGetRecordIdCardQuery} from '../../../__generated__';
 import {KitIdCard} from 'aristid-ds';
 import {PanelIdCardSkeleton} from './PanelIdCardSkeleton';
 
@@ -16,6 +16,11 @@ export const PanelIdCard: FunctionComponent<{currentRecordId?: string; libraryId
             libraryId
         },
         skip: !currentRecordId || !libraryId
+    });
+
+    console.log('PanelIdCard', {
+        title: data?.records?.list?.[0]?.whoAmI?.label,
+        description: data?.records?.list?.[0]?.whoAmI?.subLabel
     });
 
     return loading ? (
