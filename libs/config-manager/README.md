@@ -26,7 +26,7 @@ Given the path and current env, the module will look for three files:
 
 - `default.js`: this file contains the exhaustivity of all possible settings with their default value. Default value might be a `process.env` value
 - `[env].js`: file containing **specific** values for this environment. It doesn't have to contain all possible values, only those who needs to be overriden.
-- `local.js`: file containing some values specific to where the program is being run. This file is not supposed to be versioned as it's really user specific. It can be useful for development but it's not meant to be used in production for sensitive settings like DB credentials. Use env variables instead.
+- `local.js`: file containing some values specific to where the program is being run. This file is not supposed to be versioned as it's really user specific. It can be useful for development but it's not meant to be used in production for sensitive settings like DB credentials. Use env variables instead. Skip when environment variable **CONFIG_IGNORE_LOCAL** is "true" or "1", useful in case of controlled env like e2e testing.
 
 None of these files are mandatory. If file is not present, the module will just ignore it silently.
 
