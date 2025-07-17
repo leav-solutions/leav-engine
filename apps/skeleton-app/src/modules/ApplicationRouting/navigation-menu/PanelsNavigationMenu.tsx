@@ -41,14 +41,21 @@ export const PanelsNavigationMenu: FunctionComponent = () => {
         }
     };
 
+    // TODO: When we will adress the issue where we can't display the library name in the id card, we should move this logic to a proper component (maybe inside <PanelIdCard />)
+    const tabLibraryId = currentParentTuple?.[0]?.libraryId;
+    const panelLibraryId =
+        currentPanel.content?.libraryId === '<props>'
+            ? currentWorkspace.entrypoint.libraryId
+            : currentPanel.content?.libraryId;
+    const workspaceLibraryId = currentWorkspace.entrypoint.libraryId;
+
+    const libraryId = tabLibraryId ?? panelLibraryId ?? workspaceLibraryId;
+
     return (
         <section className={page}>
             <div className={pageHeader}>
                 <div className={headerContent}>
-                    <PanelIdCard
-                        libraryId={currentWorkspace.entrypoint.libraryId}
-                        currentRecordId={searchParams.get(recordSearchParamsName)}
-                    />
+                    <PanelIdCard libraryId={libraryId} currentRecordId={searchParams.get(recordSearchParamsName)} />
                 </div>
                 {tabItems.length !== 0 && (
                     <KitTabs items={tabItems} onChange={onChangeTab} defaultKey={currentPanel.id} />

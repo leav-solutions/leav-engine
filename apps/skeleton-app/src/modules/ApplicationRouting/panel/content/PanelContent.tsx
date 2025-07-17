@@ -42,7 +42,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, work
                     {...commonFormProps}
                     record={null}
                     creationFormId={panel.content.formId}
-                    library={workspace.entrypoint.libraryId}
+                    library={panel.content.libraryId}
                 />
             );
         }
@@ -53,11 +53,11 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, work
                     record={{
                         id: searchParams.get(recordSearchParamsName),
                         library: {
-                            id: workspace.entrypoint.libraryId
+                            id: panel.content.libraryId
                         }
                     }}
                     editionFormId={panel.content.formId}
-                    library={workspace.entrypoint.libraryId}
+                    library={panel.content.libraryId}
                 />
             );
         }
@@ -94,7 +94,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, work
             }
             return (
                 <PanelAttributeExplorer
-                    libraryId={workspace.entrypoint.libraryId}
+                    libraryId={panel.content.libraryId}
                     attributeSource={panel.content.attributeSource}
                     viewId={panel.content.viewId}
                     explorerProps={panel.content.explorerProps}
