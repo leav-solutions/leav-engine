@@ -1093,7 +1093,7 @@ describe('formDomain', () => {
             expect(res[0].id).toBe('field1');
             expect(res[0].values).toEqual([{payload: 'value-for-attr1'}]);
             expect(res[1].id).toBe('field2');
-            expect(res[1].valueError).toBe('Translated error');
+            expect(res[1].valueError).toBe('boom!');
         });
 
         test('Handle missing form by creating default form', async () => {
