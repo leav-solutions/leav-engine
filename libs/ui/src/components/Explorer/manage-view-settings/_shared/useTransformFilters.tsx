@@ -132,6 +132,7 @@ export const useTransformFilters = () => {
                     const newFilter: IExplorerFilterThrough = {
                         field: filter.field,
                         value: filter.value ?? null,
+                        hidden: filter.hidden ?? false,
                         id: uuid(),
                         condition: filter.condition,
                         attribute: {
@@ -146,6 +147,7 @@ export const useTransformFilters = () => {
                     const newFilter: IExplorerFilterLink = {
                         field: filter.field,
                         value: filter.value ?? null,
+                        hidden: filter.hidden ?? false,
                         id: uuid(),
                         condition: filter.condition,
                         attribute: {
