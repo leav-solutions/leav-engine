@@ -78,6 +78,7 @@ export const useTransformFilters = () => {
                     field,
                     subField,
                     value: filter.value ?? null,
+                    hidden: filter.hidden ?? false,
                     condition: ThroughConditionFilter.THROUGH,
                     subCondition: filter.condition
                 };
@@ -112,6 +113,7 @@ export const useTransformFilters = () => {
                 const newFilter: IExplorerFilterStandard = {
                     field: filter.field,
                     value: filter.value ?? null,
+                    hidden: filter.hidden ?? false,
                     id: uuid(),
                     condition: (filter.condition as RecordFilterCondition) ?? null,
                     attribute: {

@@ -88,6 +88,7 @@ interface IExplorerBaseFilter {
     id: string;
     field: string;
     value: string | null;
+    hidden?: boolean;
 }
 
 export interface IExplorerFilterStandard extends IExplorerBaseFilter {
@@ -155,6 +156,7 @@ export type ValidFieldFilter = Override<
     {
         field: NonNullable<ViewDetailsFilterFragment['field']>;
         condition: NonNullable<ViewDetailsFilterFragment['condition']>;
+        hidden: boolean;
     }
 >;
 
@@ -162,6 +164,7 @@ export type ValidFieldFilterThrough = Override<
     ValidFieldFilter,
     {
         condition: ThroughConditionFilter.THROUGH;
+        hidden: boolean;
     }
 > & {
     subField: NonNullable<ViewDetailsFilterFragment['field']>;

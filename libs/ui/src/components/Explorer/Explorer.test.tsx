@@ -857,6 +857,46 @@ describe('Explorer', () => {
             expect(screen.queryByText(simpleMockAttribute.label.fr)).not.toBeInTheDocument();
         });
 
+        test('should not display hidden filters in the toolbar', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        showFiltersAndSorts
+                        defaultViewSettings={{
+                            filters: [
+                                {
+                                    id: '',
+                                    attribute: {
+                                        format: simpleMockAttribute.format,
+                                        label: simpleMockAttribute.label.fr,
+                                        type: simpleMockAttribute.type
+                                    },
+                                    hidden: true,
+                                    field: simpleMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                    value: 'Christmas'
+                                },
+                                {
+                                    id: '',
+                                    attribute: {
+                                        format: booleanMockAttribute.format,
+                                        label: booleanMockAttribute.label.fr,
+                                        type: booleanMockAttribute.type
+                                    },
+                                    field: booleanMockAttribute.id,
+                                    condition: gqlTypes.RecordFilterCondition.EQUAL,
+                                    value: 'true'
+                                }
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(screen.queryByText(simpleMockAttribute.label.fr)).not.toBeInTheDocument();
+            expect(screen.queryByText(booleanMockAttribute.label.fr)).toBeInTheDocument();
+        });
+
         test('should display filters in the toolbar', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>

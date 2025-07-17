@@ -52,8 +52,9 @@ export const ExplorerToolbar: FunctionComponent<{
     const {openSettingsPanel} = useOpenViewSettings({view, isEnabled: true});
 
     const {attributeDetailsById} = useAttributeDetailsData(view.libraryId);
+    const visibleFilters = filters.filter(filterItem => !filterItem.hidden);
 
-    if (((filters.length === 0 && sort.length === 0) || !showFiltersAndSort) && !children) {
+    if (((visibleFilters.length === 0 && sort.length === 0) || !showFiltersAndSort) && !children) {
         return null;
     }
 
@@ -75,15 +76,15 @@ export const ExplorerToolbar: FunctionComponent<{
             {!!children && (
                 <>
                     <li>{children}</li>
-                    {showFiltersAndSort && (filters.length !== 0 || sort.length > 0) && (
+                    {showFiltersAndSort && (visibleFilters.length !== 0 || sort.length > 0) && (
                         <DividerStyled type="vertical" />
                     )}
                 </>
             )}
             {showFiltersAndSort && (
                 <KitSpace size="s">
-                    {filters.length > 0 &&
-                        filters.map(filter => (
+                    {visibleFilters.length > 0 &&
+                        visibleFilters.map(filter => (
                             <li key={filter.id}>
                                 <CommonFilterItem key={filter.id} filter={filter} disabled={isMassSelectionAll} />
                             </li>
