@@ -1061,10 +1061,7 @@ describe('formDomain', () => {
                 'core.domain.record': mockRecordDomainWithError as IRecordDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
-                'core.utils': {
-                    ...mockUtils,
-                    translateError: jest.fn().mockReturnValue('Translated error')
-                } as IUtils,
+                'core.utils': mockUtils as IUtils,
                 'core.utils.logger': {error: jest.fn()} as any
             });
 
@@ -1123,7 +1120,7 @@ describe('formDomain', () => {
                 translator: {t: jest.fn().mockReturnValue('Missing form warning')} as any
             });
 
-            // Make getFormProperties throw a ValidationError for unknown form
+            // Make getFormProperties throw a ValidationError for an unknown form
             domain.getFormProperties = jest.fn().mockImplementation(() => {
                 throw new ValidationError({id: 'UNKNOWN_FORM'});
             });
@@ -1136,7 +1133,7 @@ describe('formDomain', () => {
                 elementIds: ['field1']
             });
 
-            // Should return empty array since field1 doesn't exist in the default form
+            // Should return an empty array since field1 doesn't exist in the default form
             expect(res).toHaveLength(0);
         });
     });

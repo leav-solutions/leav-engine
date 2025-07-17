@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useGetRecordFormElementsValuesLazyQuery} from '_ui/_gqlTypes';
 import {useEffect, useState} from 'react';
 import {IRecordForm, RecordFormElement} from '_ui/hooks/useGetRecordForm';
@@ -13,7 +16,7 @@ export const useGetVisibleValues = (formIdToLoad: string, recordForm: IRecordFor
         fetchPolicy: 'no-cache'
     });
 
-    const getElementIdsVisible = (recordForm: IRecordForm): string[] => {
+    const getElementIdsVisible = (): string[] => {
         // Find element ids from record.elements that are in the first page of a tab or are not a tab
         const containerToExclude = [];
 
@@ -38,9 +41,11 @@ export const useGetVisibleValues = (formIdToLoad: string, recordForm: IRecordFor
 
     useEffect(() => {
         (async () => {
-            if (!recordForm || !formIdToLoad || !tabIdVisible) return;
+            if (!recordForm || !formIdToLoad || !tabIdVisible) {
+                return;
+            }
 
-            const elementIds = getElementIdsVisible(recordForm);
+            const elementIds = getElementIdsVisible();
             setElementIdsVisible(elementIds);
 
             // List of elementIds that we don't have fetched their values yet

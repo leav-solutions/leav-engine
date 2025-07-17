@@ -354,7 +354,7 @@ describe('Forms', () => {
                                     settings: []
                                 },
                                 {
-                                    id: "field_element_1"
+                                    id: "element_id_1"
                                     containerId: "some_container"
                                     order: 0
                                     uiElementType: "input"
@@ -367,7 +367,7 @@ describe('Forms', () => {
                                     ]
                                 },
                                 {
-                                    id: "field_element_2"
+                                    id: "element_id_2"
                                     containerId: "some_container"
                                     order: 1
                                     uiElementType: "input"
@@ -412,7 +412,7 @@ describe('Forms', () => {
                 recordId: "${recordId}", 
                 libraryId: "${libraryId}", 
                 formId: "${formName}_for_element_values",
-                elementIds: ["field_element_1", "field_element_2"]
+                elementIds: ["element_id_1", "element_id_2"]
             ) {
                 id
                 type
@@ -428,8 +428,8 @@ describe('Forms', () => {
 
         // Check that both elements have the same value
         const elements = res.data.data.getRecordFormElementsValues;
-        expect(elements[0].id).toBe('field_element_1');
-        expect(elements[1].id).toBe('field_element_2');
+        expect(elements[0].id).toBe('element_id_1');
+        expect(elements[1].id).toBe('element_id_2');
 
         // Both elements should have values
         expect(elements[0].values).toBeDefined();
