@@ -333,7 +333,7 @@ export default function ({
                             _,
                             {recordId, libraryId, formId, version, elementIds}: IGetElementFormValuesArgs,
                             ctx: IQueryInfos
-                        ): Promise<any> {
+                        ): Promise<IFormElement[]> {
                             const formattedVersion = convertVersionFromGqlFormat(version);
 
                             return formDomain.getRecordFormElementsValues({

@@ -418,7 +418,12 @@ describe('Forms', () => {
                 type
                 uiElementType
                 settings { key value }
-                values { payload }
+                values { 
+                    id_value
+                    ... on Value {
+                        payload
+                    }
+                 }
             }
         }`);
 
