@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes, simpleStringHash} from '@leav/utils';
-import {FunctionComponent, useEffect, useMemo} from 'react';
+import {FunctionComponent, useEffect, useMemo, useState} from 'react';
 import {ErrorDisplay} from '_ui/components';
 import useGetRecordForm from '_ui/hooks/useGetRecordForm';
 import {useGetRecordUpdatesSubscription} from '_ui/hooks/useGetRecordUpdatesSubscription';
@@ -60,6 +60,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     }
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
+    const [avoidFormValidationOnLoad, setAvoidFormValidationOnLoad] = useState(formIdToLoad === 'creation');
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
 
@@ -180,11 +181,14 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
             id={formElementId ?? EDIT_OR_CREATE_RECORD_FORM_ID}
             form={antdForm}
             initialValues={antdFormInitialValues}
-            onFinish={() =>
+            onFinish={() => {
+                if (avoidFormValidationOnLoad) {
+                    setAvoidFormValidationOnLoad(false);
+                }
                 onRecordSubmit(
                     recordForm.elements.filter(element => element.attribute?.id).map(element => element.attribute)
-                )
-            }
+                );
+            }}
         >
             <RecordEditionContext.Provider
                 value={{
@@ -198,6 +202,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                     key={recordFormHash}
                     antdForm={antdForm}
                     formIdToLoad={formIdToLoad}
+                    avoidFormValidationOnLoad={avoidFormValidationOnLoad}
                     element={rootElement}
                     computedValues={recordComputedValues}
                     readonly={readonly}

@@ -71,7 +71,8 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
     onDeleteMultipleValues,
     onValueSubmit,
     onValueDelete,
-    metadataEdit = false
+    metadataEdit = false,
+    avoidFormValidationOnLoad = false
 }) => {
     const {state, dispatch} = useEditRecordReducer();
     const {lang} = useLang();
@@ -101,7 +102,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
 
     const columnsToDisplay = settings.columns?.map(({id}) => id);
     const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
-    const isFieldInError = fieldErrors.length > 0;
+    const isFieldInError = !avoidFormValidationOnLoad && fieldErrors.length > 0;
 
     useEffect(() => {
         setAttributePendingValues(
