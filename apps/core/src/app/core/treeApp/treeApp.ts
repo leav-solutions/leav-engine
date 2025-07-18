@@ -15,7 +15,12 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {ITreeDomain} from '../../../domain/tree/treeDomain';
 import {TriggerNames} from '../../../_types/eventsManager';
-import {PermissionTypes, TreeNodePermissionsActions, TreePermissionsActions} from '../../../_types/permissions';
+import {
+    PermissionTypes,
+    RecordPermissionsActions,
+    TreeNodePermissionsActions,
+    TreePermissionsActions
+} from '../../../_types/permissions';
 import {IQueryField, IRecord} from '../../../_types/record';
 import {
     ITree,
@@ -39,6 +44,7 @@ import {
     ITreePermissionsConfForGraphQL,
     ITreesQueryArgs
 } from './_types';
+import {IRecordPermissionDomain} from '../../../domain/permission/recordPermissionDomain';
 
 export interface ITreeAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -53,6 +59,7 @@ interface IDeps {
     'core.app.core': ICoreApp;
     'core.app.core.subscriptionsHelper': ICoreSubscriptionsHelpersApp;
     'core.domain.library': ILibraryDomain;
+    'core.domain.permission.record': IRecordPermissionDomain;
 }
 
 export default function ({
@@ -63,7 +70,8 @@ export default function ({
     'core.app.core': coreApp,
     'core.app.graphql': graphqlApp,
     'core.app.core.subscriptionsHelper': subscriptionsHelper,
-    'core.domain.library': libraryDomain
+    'core.domain.library': libraryDomain,
+    'core.domain.permission.record': recordPermissionDomain
 }: IDeps): ITreeAttributeApp {
     /**
      * Retrieve parent tree attribute by recursively getting up on GraphQL query path.
@@ -87,6 +95,7 @@ export default function ({
      *
      * @param parent
      * @param info
+     * @param ctx
      */
     const _extractTreeIdFromParent = async (parent, info, ctx): Promise<string> => {
         const attribute = parent.attribute ?? _findParentAttribute(info.path);
@@ -296,6 +305,12 @@ export default function ({
                         events: [TreeEventTypes!]
                     }
 
+                    input ChildrenAsRecordValuePermissionFilter {
+                        libraryId: ID!,
+                        attributeId: ID!,
+                        action: RecordPermissionsActions!
+                    }
+
                     extend type Query {
                         trees(
                             filters: TreesFiltersInput,
@@ -309,7 +324,8 @@ export default function ({
                         treeContent(treeId: ID!, startAt: ID): [TreeNode!]!
 
                         # Retrieve direct children of a node. If node is not specified, retrieves root children
-                        treeNodeChildren(treeId: ID!, node: ID, pagination: Pagination): TreeNodeLightList!
+                        # childrenAsRecordValuePermissionFilter is used to filter children by record permission if setted as value of a tree attribute
+                        treeNodeChildren(treeId: ID!, node: ID, pagination: Pagination, childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilter): TreeNodeLightList!
 
                         # Retrieve full tree content form tree root, as an object.
                         fullTreeContent(treeId: ID!): FullTreeContent
@@ -372,7 +388,7 @@ export default function ({
                             const hasChildrenCount = !!fields.find(f => f.name === 'childrenCount');
                             const depth = _getChildrenDepth(fields, 1);
 
-                            const treeContent = (
+                            return (
                                 await treeDomain.getTreeContent({
                                     treeId,
                                     startingNode: startAt,
@@ -384,11 +400,24 @@ export default function ({
                                 ...node,
                                 treeId
                             }));
-                            return treeContent;
                         },
                         async treeNodeChildren(
                             _,
-                            {treeId, node, pagination}: {treeId: string; node?: string; pagination?: IPaginationParams},
+                            {
+                                treeId,
+                                node,
+                                pagination,
+                                childrenAsRecordValuePermissionFilter
+                            }: {
+                                treeId: string;
+                                node?: string;
+                                pagination?: IPaginationParams;
+                                childrenAsRecordValuePermissionFilter?: {
+                                    libraryId: string;
+                                    attributeId: string;
+                                    action: RecordPermissionsActions;
+                                };
+                            },
                             ctx: IQueryInfos,
                             info: GraphQLResolveInfo
                         ): Promise<IList<ITreeNode>> {
@@ -408,6 +437,24 @@ export default function ({
                                 pagination,
                                 ctx
                             });
+
+                            if (childrenAsRecordValuePermissionFilter) {
+                                const permissionsFilter = await Promise.all(
+                                    children.list.map(treeNode =>
+                                        recordPermissionDomain.estimateTreeValueRecordPermission({
+                                            action: childrenAsRecordValuePermissionFilter.action,
+                                            userId: ctx.userId,
+                                            libraryId: childrenAsRecordValuePermissionFilter.libraryId,
+                                            attributeId: childrenAsRecordValuePermissionFilter.attributeId,
+                                            nodeId: treeNode.id,
+                                            ctx
+                                        })
+                                    )
+                                );
+
+                                // Apply permissions filter to children list
+                                children.list = children.list.filter((_treeNode, i) => permissionsFilter[i]);
+                            }
 
                             return {
                                 ...children,
@@ -603,7 +650,7 @@ export default function ({
                             const treeId =
                                 parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
 
-                            let children = [];
+                            let children: ITreeNode[];
                             if (typeof parent.children !== 'undefined') {
                                 children = parent.children;
                             } else {
@@ -617,18 +664,16 @@ export default function ({
                         linkedRecords: async (
                             parent: ITreeNode & {treeId?: string},
                             {attribute}: {attribute: string},
-                            ctx: IQueryInfos,
-                            info: GraphQLResolveInfo
+                            ctx: IQueryInfos
                         ): Promise<IRecord[]> => {
                             const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
-                            const records = await treeDomain.getLinkedRecords({
+
+                            return treeDomain.getLinkedRecords({
                                 treeId: attributeProps.linked_tree,
                                 attribute,
                                 nodeId: parent.id,
                                 ctx
                             });
-
-                            return records;
                         },
                         permissions: (
                             treeNode: ITreeNode & {treeId?: string},
@@ -691,9 +736,7 @@ export default function ({
                 }
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
-            return fullSchema;
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         }
     };
 }

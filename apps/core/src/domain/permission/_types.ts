@@ -16,7 +16,7 @@ import {
     TreePermissionsActions
 } from '_types/permissions';
 import {IQueryInfos} from '_types/queryInfos';
-import {ITreeNode, TreePaths} from '_types/tree';
+import {TreePaths} from '_types/tree';
 
 export const PERMISSIONS_CACHE_HEADER = 'permissions';
 export const PERMISSIONS_NULL_PLACEHOLDER = '__null__';
@@ -237,5 +237,14 @@ export interface IGetInheritedRecordPermissionParams {
     library: string;
     permTree: string;
     permTreeNode: string;
+    ctx: IQueryInfos;
+}
+
+export interface IEstimateTreeValueRecordPermissionParams {
+    action: RecordPermissionsActions;
+    userId: string;
+    libraryId: string;
+    attributeId: string;
+    nodeId: string;
     ctx: IQueryInfos;
 }
