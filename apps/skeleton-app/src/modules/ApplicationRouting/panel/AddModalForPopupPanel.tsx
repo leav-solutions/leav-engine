@@ -3,12 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
 import {KitModal} from 'aristid-ds';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {generatePath, useLocation, useNavigate, useParams} from 'react-router-dom';
 import {routes} from '../routes';
 
 export const AddModalForPopupPanel: FunctionComponent = ({children}) => {
     const {panelId} = useParams();
     const navigate = useNavigate();
+    const {search} = useLocation();
 
     return (
         <KitModal
@@ -17,7 +18,7 @@ export const AddModalForPopupPanel: FunctionComponent = ({children}) => {
             width="90vw"
             showCloseIcon
             close={() => {
-                navigate(generatePath(routes.panel, {panelId}));
+                navigate(generatePath(routes.panel, {panelId}) + search);
             }}
         >
             {children}
