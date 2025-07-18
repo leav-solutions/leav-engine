@@ -37,8 +37,7 @@ export const PanelSchema = z.lazy(() =>
     z
         .object({
             id: PanelIdSchema,
-            name: z.record(LanguageSchema, z.string()).optional(),
-            libraryId: z.string().optional() //TODO: This should be mandatory when using a Panel as a tab wrapper
+            name: z.record(LanguageSchema, z.string()).optional()
         })
         .and(
             z.union([
@@ -81,7 +80,8 @@ export const PanelSchema = z.lazy(() =>
                     ])
                 }),
                 z.object({
-                    children: z.array(z.lazy(() => PanelSchema))
+                    children: z.array(z.lazy(() => PanelSchema)),
+                    libraryId: z.string().optional()
                 })
             ])
         )

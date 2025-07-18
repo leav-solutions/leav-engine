@@ -21,13 +21,11 @@ export const useItemActions = ({actions}: {actions: ItemActions}) => {
             const query = new URLSearchParams({[recordSearchParamsName]: item.itemId});
 
             // TODO: When we will adress the feature to open a popup trough a popup panel, we might need to use routes.panel/routes.popupPanel instead of routes.popupPanel
-            const routeMap = {
-                popup: {route: routes.popupPanel, params: {panelId: panelId, popupPanelId: action.what.id}},
-                slider: {route: routes.sliderPanel, params: {panelId: panelId, sliderPanelId: action.what.id}},
+            const {route, params} = {
+                popup: {route: routes.popupPanel, params: {panelId, popupPanelId: action.what.id}},
+                slider: {route: routes.sliderPanel, params: {panelId, sliderPanelId: action.what.id}},
                 fullpage: {route: routes.panel, params: {panelId: action.what.id}}
-            };
-
-            const {route, params} = routeMap[action.where] || routeMap.fullpage;
+            }[action.where];
 
             return navigate(generatePath(route, params) + '?' + query.toString());
         }
