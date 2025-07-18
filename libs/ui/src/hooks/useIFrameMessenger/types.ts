@@ -7,7 +7,7 @@ import {type KitNotification} from 'aristid-ds';
 import {type IKitConfirmDialog} from 'aristid-ds/dist/Kit/Feedback/Modal/types';
 import {type ToastedAlertProps} from 'aristid-ds/dist/Kit/Feedback/Alert/types';
 import {type EditRecordModal} from '_ui/components';
-import {type PanelIdSchema, PanelSchema} from '_ui/hooks/useIFrameMessenger/schema';
+import {ItemActionsSchema, type PanelIdSchema, PanelSchema} from '_ui/hooks/useIFrameMessenger/schema';
 
 export const packetId = '__fromIframeMessenger';
 
@@ -72,12 +72,15 @@ export type RegisterMessage = IMessageBase & {
     id: string;
 };
 
-type PanelId = z.infer<typeof PanelIdSchema>;
 export type Panel = z.infer<typeof PanelSchema>;
 
+type PanelId = z.infer<typeof PanelIdSchema>;
+
+type ItemActions = z.infer<typeof ItemActionsSchema>;
+
 interface INestedPanel {
-    panelId: PanelId;
-    panel: Panel;
+    where: ItemActions['where'];
+    what: Panel & {recordId?: string};
 }
 
 export type NavigateToPanelMessage = IMessageBase & {
