@@ -25,7 +25,7 @@ export default () =>
                 targets
             }
         },
-        base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/skeleton-app',
+        base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/app-studio',
         build: {
             rollupOptions: {
                 onwarn(warning, warn) {

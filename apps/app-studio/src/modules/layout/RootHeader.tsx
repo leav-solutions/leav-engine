@@ -52,7 +52,7 @@ export const RootHeader: FunctionComponent = () => {
             className={header}
             logo={
                 <Link to="/" className={logo}>
-                    <img src="/global-icon/small" alt="logo-leavengine" title="skeleton-app" />
+                    <img src="/global-icon/small" alt="logo-leavengine" title="app-studio" />
                 </Link>
             }
             profile={<KitHeader.Profile menu={profileMenuContent} profileCardProps={{avatarProps, title: identity}} />}
