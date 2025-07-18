@@ -53,6 +53,7 @@ export const PanelSchema = z.lazy(() =>
                                 z.union([
                                     z.object({
                                         // TODO: later add behavior on click on explorer item
+                                        libraryId: z.string(),
                                         attributeSource: z.string(),
                                         explorerProps: LinkExplorerPropsSchema.optional()
                                     }),
@@ -68,16 +69,19 @@ export const PanelSchema = z.lazy(() =>
                         }),
                         z.object({
                             type: z.literal('editionForm'),
-                            formId: z.string()
+                            formId: z.string(),
+                            libraryId: z.string()
                         }),
                         z.object({
                             type: z.literal('creationForm'),
-                            formId: z.string()
+                            formId: z.string(),
+                            libraryId: z.string()
                         })
                     ])
                 }),
                 z.object({
-                    children: z.array(z.lazy(() => PanelSchema))
+                    children: z.array(z.lazy(() => PanelSchema)),
+                    libraryId: z.string().optional()
                 })
             ])
         )

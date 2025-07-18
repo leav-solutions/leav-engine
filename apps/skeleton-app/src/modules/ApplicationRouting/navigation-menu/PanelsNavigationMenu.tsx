@@ -6,15 +6,21 @@ import {generatePath, Outlet, useLocation, useNavigate, useOutletContext} from '
 import {KitTabs} from 'aristid-ds';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
-import type {IApplicationMatchingContext} from '../types';
+import type {ApplicationMatchingContextWithoutParentTuple, IApplicationMatchingContext} from '../types';
 import {recordSearchParamsName, routes} from '../routes';
 import {SidePanelContent} from '../../layout/SidePanelContent';
-import {PanelIdCard} from '../PanelIdCard';
+import {PanelIdCard} from './PanelIdCard';
 
 import {content, headerContent, page, pageHeader} from './panelsNavigationMenu.module.css';
 
+// TODO: Later if we want a clean rendering for the modal and the slider, we would need to duplicate this component like this:
+// - PanelsNavigationMenuFullPage
+// - PanelsNavigationMenuPopup (+ merge AddSidePanelForPopupPanel)
+// - PanelsNavigationMenuSlider (+ merge AddSidePanelForSliderPanel)
+// Each component would manage the rendering correctly (example for the popup, we would display the idCard in the header of the KitModal)
 export const PanelsNavigationMenu: FunctionComponent = () => {
-    const {currentPanel, currentWorkspace, currentParentTuple} = useOutletContext<IApplicationMatchingContext>();
+    const {currentPanel, currentPopupPanel, currentSliderPanel, currentWorkspace, currentParentTuple} =
+        useOutletContext<IApplicationMatchingContext>();
     const {lang} = useContext(LangContext);
     const {search} = useLocation();
     const searchParams = new URLSearchParams(search);
@@ -35,14 +41,21 @@ export const PanelsNavigationMenu: FunctionComponent = () => {
         }
     };
 
+    // TODO: When we will adress the issue where we can't display the library name in the id card, we should move this logic to a proper component (maybe inside <PanelIdCard />)
+    const tabLibraryId = currentParentTuple?.[0]?.libraryId;
+    const panelLibraryId =
+        currentPanel.content?.libraryId === '<props>'
+            ? currentWorkspace.entrypoint.libraryId
+            : currentPanel.content?.libraryId;
+    const workspaceLibraryId = currentWorkspace.entrypoint.libraryId;
+
+    const libraryId = tabLibraryId ?? panelLibraryId ?? workspaceLibraryId;
+
     return (
         <section className={page}>
             <div className={pageHeader}>
                 <div className={headerContent}>
-                    <PanelIdCard
-                        libraryId={currentWorkspace.entrypoint.libraryId}
-                        currentRecordId={searchParams.get(recordSearchParamsName)}
-                    />
+                    <PanelIdCard libraryId={libraryId} currentRecordId={searchParams.get(recordSearchParamsName)} />
                 </div>
                 {tabItems.length !== 0 && (
                     <KitTabs items={tabItems} onChange={onChangeTab} defaultKey={currentPanel.id} />
@@ -51,10 +64,12 @@ export const PanelsNavigationMenu: FunctionComponent = () => {
             <div className={content}>
                 <Outlet
                     context={
-                        {currentPanel, currentWorkspace} satisfies Omit<
-                            IApplicationMatchingContext,
-                            'currentParentTuple'
-                        >
+                        {
+                            currentPanel,
+                            currentPopupPanel,
+                            currentSliderPanel,
+                            currentWorkspace
+                        } satisfies ApplicationMatchingContextWithoutParentTuple
                     }
                 />
             </div>

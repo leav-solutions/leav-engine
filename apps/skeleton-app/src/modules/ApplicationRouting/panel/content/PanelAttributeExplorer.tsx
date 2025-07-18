@@ -5,10 +5,10 @@ import {type FunctionComponent} from 'react';
 import {useLocation} from 'react-router-dom';
 import {Explorer} from '@leav/ui';
 import {explorerContainer} from './PanelContent.module.css';
-import {useExplorerProps} from './explorer-panel/useExplorerProps';
-import {useItemActions} from './explorer-panel/useItemActions';
-import {recordSearchParamsName} from './routes';
-import {ItemActions, LibraryExplorerProps} from './types';
+import {useExplorerProps} from '../../explorer-panel/useExplorerProps';
+import {useItemActions} from '../../explorer-panel/useItemActions';
+import {recordSearchParamsName} from '../../routes';
+import {ItemActions, LibraryExplorerProps} from '../../types';
 
 interface IPanelExplorerProps {
     libraryId: string;

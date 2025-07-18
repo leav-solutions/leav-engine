@@ -4,13 +4,13 @@
 import {type FunctionComponent, useContext, useEffect} from 'react';
 import {iframe} from './PanelCustom.module.css';
 import {LangContext, useIFrameMessenger} from '@leav/ui';
-import {useNavigateToPanel} from './custom-panel-message-handlers/useNavigateToPanel';
-import {useOpenNotification} from './custom-panel-message-handlers/useOpenNotification';
-import {useOpenAlert} from './custom-panel-message-handlers/useOpenAlert';
-import {useOpenConfirmModal} from './custom-panel-message-handlers/useOpenConfirmModal';
-import {useSidePanelForm} from './custom-panel-message-handlers/useSidePanelForm';
-import {useModalForm} from './custom-panel-message-handlers/useModalForm';
-import {AddPanel} from './types';
+import {useNavigateToPanel} from '../../custom-panel-message-handlers/useNavigateToPanel';
+import {useOpenNotification} from '../../custom-panel-message-handlers/useOpenNotification';
+import {useOpenAlert} from '../../custom-panel-message-handlers/useOpenAlert';
+import {useOpenConfirmModal} from '../../custom-panel-message-handlers/useOpenConfirmModal';
+import {useSidePanelForm} from '../../custom-panel-message-handlers/useSidePanelForm';
+import {useModalForm} from '../../custom-panel-message-handlers/useModalForm';
+import {AddPanel} from '../../types';
 
 interface IPanelCustomProps {
     source: string;

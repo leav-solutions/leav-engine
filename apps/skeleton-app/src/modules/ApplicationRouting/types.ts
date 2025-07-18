@@ -17,8 +17,12 @@ export type Application = z.infer<typeof ApplicationSchema>;
 export interface IApplicationMatchingContext {
     currentWorkspace: Workspace;
     currentPanel: Panel;
+    currentPopupPanel: Panel;
+    currentSliderPanel: Panel;
     currentParentTuple: [Panel, Workspace] | null;
 }
+
+export type ApplicationMatchingContextWithoutParentTuple = Omit<IApplicationMatchingContext, 'currentParentTuple'>;
 
 export type Nullable<T> = {
     [P in keyof T]: T[P] | null;

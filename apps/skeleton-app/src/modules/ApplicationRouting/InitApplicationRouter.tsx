@@ -7,12 +7,16 @@ import {Loading} from '@leav/ui';
 import {routes} from './routes';
 import {AddPanel} from './types';
 import {addChildPanelToApplication} from './utils';
-import {PanelContent} from './PanelContent';
 import {RedirectToFirstPanelOnHome} from './guards/RedirectToFirstPanelOnHome';
 import {RedirectToFirstPanelOnInvalidPanel} from './guards/RedirectToFirstPanelOnInvalidPanel';
 import {PanelsNavigationMenu} from './navigation-menu/PanelsNavigationMenu';
 import {WorkspacesNavigationMenu} from './navigation-menu/WorkspacesNavigationMenu';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/ApplicationSettingsContext';
+import {FullPagePanel} from './panel/FullPagePanel';
+import {AddModalForPopupPanel} from './panel/AddModalForPopupPanel';
+import {PopupPanel} from './panel/PopupPanel';
+import {SliderPanel} from './panel/SliderPanel';
+import {AddSidePanelForSliderPanel} from './panel/AddSidePanelForSliderPanel';
 
 export const InitApplicationRouter: FunctionComponent = () => {
     const [application, setApplication] = useApplicationSettingsContext();
@@ -37,7 +41,35 @@ export const InitApplicationRouter: FunctionComponent = () => {
                               children: [
                                   {
                                       path: routes.panel,
-                                      element: <PanelContent addPanel={addPanel} />
+                                      element: <FullPagePanel addPanel={addPanel} />,
+                                      children: [
+                                          {
+                                              element: (
+                                                  <AddModalForPopupPanel>
+                                                      <PanelsNavigationMenu />
+                                                  </AddModalForPopupPanel>
+                                              ),
+                                              children: [
+                                                  {
+                                                      path: routes.popupPanel,
+                                                      element: <PopupPanel addPanel={addPanel} />
+                                                  }
+                                              ]
+                                          },
+                                          {
+                                              element: (
+                                                  <AddSidePanelForSliderPanel>
+                                                      <PanelsNavigationMenu />
+                                                  </AddSidePanelForSliderPanel>
+                                              ),
+                                              children: [
+                                                  {
+                                                      path: routes.sliderPanel,
+                                                      element: <SliderPanel addPanel={addPanel} />
+                                                  }
+                                              ]
+                                          }
+                                      ]
                                   }
                               ]
                           },
