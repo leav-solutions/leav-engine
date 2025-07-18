@@ -7,10 +7,10 @@ import {InitNetwork} from './config/network/InitNetwork';
 import {InitTranslation} from './config/translation/InitTranslation';
 import {InitUser} from './config/user/InitUser';
 import {InitTheme} from './config/theme/InitTheme';
+import {InitRouting} from './config/router/InitRouting';
 import {InitApplicationSettingProvider} from './config/application-instance/application-settings/ApplicationSettingsContext';
 import {InitDocumentTitle} from './config/application-instance/document-title/InitDocumentTitle';
 import {GuardAccess} from './config/application-instance/guard-access/GuardAccess';
-import {InitRouting} from './config/router/InitRouting';
 import {InitLayout} from './modules/layout/InitLayout';
 import {InitApplicationRouter} from './modules/ApplicationRouting/InitApplicationRouter';
 
@@ -19,17 +19,17 @@ export const Index: FunctionComponent = () => (
         <InitTranslation>
             <InitUser>
                 <InitTheme>
-                    <InitApplicationSettingProvider>
-                        <InitDocumentTitle>
-                            <GuardAccess>
-                                <InitRouting>
+                    <InitRouting>
+                        <InitApplicationSettingProvider>
+                            <InitDocumentTitle>
+                                <GuardAccess>
                                     <InitLayout>
                                         <InitApplicationRouter />
                                     </InitLayout>
-                                </InitRouting>
-                            </GuardAccess>
-                        </InitDocumentTitle>
-                    </InitApplicationSettingProvider>
+                                </GuardAccess>
+                            </InitDocumentTitle>
+                        </InitApplicationSettingProvider>
+                    </InitRouting>
                 </InitTheme>
             </InitUser>
         </InitTranslation>

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createContext, FunctionComponent, useContext, useEffect, useState} from 'react';
+import {$ZodIssue} from 'zod/v4/core';
 import {useTranslation} from 'react-i18next';
 import {APP_ENDPOINT, ErrorDisplay, Loading} from '@leav/ui';
 import {useGetApplicationInstanceDataByEndpointQuery} from '../../../__generated__';
@@ -23,25 +24,29 @@ export const InitApplicationSettingProvider: FunctionComponent = ({children}) =>
 
     const applicationState = useState<Application | null>(null);
     const [, setApplication] = applicationState;
-    const [hasErrorsOnParsing, setHasErrorsOnParsing] = useState(false);
+    const [errorsOnParsing, setErrorsOnParsing] = useState<$ZodIssue[] | null>(null);
     useEffect(() => {
         if (currentApp?.settings) {
             const result = ApplicationSchema.safeParse(currentApp.settings);
 
             if (result.success === false) {
-                setHasErrorsOnParsing(true);
+                setErrorsOnParsing(result.error.issues);
                 return;
             }
             setApplication(result.data);
         }
-    }, [currentApp?.settings, setApplication, setHasErrorsOnParsing]);
+    }, [currentApp?.settings, setApplication, setErrorsOnParsing]);
 
     if (loading) {
         return <Loading />;
     }
 
-    if (error || hasErrorsOnParsing) {
+    if (error) {
         return <ErrorDisplay message={error.message} />;
+    }
+
+    if (errorsOnParsing) {
+        return <ErrorDisplay message={JSON.stringify(errorsOnParsing)} />;
     }
 
     if (!currentApp) {
