@@ -1,6 +1,6 @@
 {
-    "name": "skeleton-app",
-    "description": "Generic application to manage your data",
+    "name": "app-studio",
+    "description": "Generic application to create a workflow from a configuration",
     "version": "1.0.0-beta18",
     "icons": [
       {

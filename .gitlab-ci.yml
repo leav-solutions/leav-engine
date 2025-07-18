@@ -25,6 +25,7 @@ default:
 .workspace_projects_name: &workspace_projects_name
   - "leav-monorepo"
   - "admin"
+  - "app-studio"
   - "automate-scan"
   - "core"
   - "data-studio"
@@ -32,7 +33,6 @@ default:
   - "logs-collector"
   - "portal"
   - "preview-generator"
-  - "skeleton-app"
   - "sync-scan"
   - "@leav/app-root-path"
   - "@leav/config-manager"
@@ -51,7 +51,7 @@ variables:
   # https://docs.gitlab.com/ci/runners/configure_runners/#artifact-and-cache-settings
   ARTIFACT_COMPRESSION_LEVEL: "default"
   # bigger archive, but should not be a problem for local storage, or local s3 storage
-  CACHE_COMPRESSION_LEVEL: "fastest" 
+  CACHE_COMPRESSION_LEVEL: "fastest"
   # For ci development, could be removed once ci goes to production
   DISABLE_CHECK_JOBS: "false"
   DISABLE_TEST_JOBS: "false"
@@ -337,7 +337,7 @@ e2e-sync-scan:
   DOCKER_TLS_CERTDIR: ""
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_BUILDKIT: 1
-    
+
 .default_docker_build: &default_docker_build
   image: *docker_image
   services:
@@ -464,7 +464,7 @@ build-docker-preview-generator:
         $DOCKER_IMAGE_TAG
         $DOCKER_IMAGE_LATEST
         $DOCKER_PUSH
-        . 
+        .
 
 build-docker-automate-scan:
   <<: *default_docker_build
@@ -483,7 +483,7 @@ build-docker-automate-scan:
         $DOCKER_IMAGE_TAG
         $DOCKER_IMAGE_LATEST
         $DOCKER_PUSH
-        . 
+        .
 
 build-docker-sync-scan:
   <<: *default_docker_build
@@ -502,7 +502,7 @@ build-docker-sync-scan:
         $DOCKER_IMAGE_TAG
         $DOCKER_IMAGE_LATEST
         $DOCKER_PUSH
-        . 
+        .
 
 build-docker-logs-collector:
   <<: *default_docker_build
@@ -521,7 +521,7 @@ build-docker-logs-collector:
         $DOCKER_IMAGE_TAG
         $DOCKER_IMAGE_LATEST
         $DOCKER_PUSH
-        . 
+        .
 
 ## Build / push docker images
 ##########
