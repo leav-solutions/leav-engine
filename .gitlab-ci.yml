@@ -25,6 +25,8 @@ workflow:
   if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop" || $CI_PIPELINE_SOURCE == "merge_request_event"
   when: on_success
 
+.new_lib_installed_changes: &new_lib_installed_changes yarn.lock
+
 variables:
   GIT_DEPTH: 1 # clone only the last commit to speed up the pipeline
   NODE_ENV: test
@@ -124,6 +126,7 @@ libs/app-root-path-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - libs/app-root-path/**/*
 
 libs/config-manager-unit-tests:
@@ -139,6 +142,7 @@ libs/config-manager-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - libs/config-manager/**/*
 
 libs/message-broker-unit-tests:
@@ -154,6 +158,7 @@ libs/message-broker-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - libs/message-broker/**/*
 
 libs/ui-unit-tests:
@@ -169,6 +174,7 @@ libs/ui-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - libs/ui/**/*
 
 libs/utils-unit-tests:
@@ -184,6 +190,7 @@ libs/utils-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - libs/utils/**/*
 
 apps/admin-unit-tests:
@@ -199,6 +206,7 @@ apps/admin-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/admin/**/*
 
 apps/app-studio-unit-tests:
@@ -214,6 +222,7 @@ apps/app-studio-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/app-studio/**/*
         - libs/ui/**/*
         - libs/utils/**/*
@@ -231,6 +240,7 @@ apps/automate-scan-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/automate-scan/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
@@ -249,6 +259,7 @@ apps/core-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/core/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
@@ -268,6 +279,7 @@ apps/data-studio-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/data-studio/**/*
         - libs/ui/**/*
         - libs/utils/**/*
@@ -285,6 +297,7 @@ apps/login-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/login/**/*
         - libs/ui/**/*
 
@@ -301,6 +314,7 @@ apps/logs-collector-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/logs-collector/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
@@ -320,6 +334,7 @@ apps/portal-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/portal/**/*
         - libs/ui/**/*
         - libs/utils/**/*
@@ -337,6 +352,7 @@ apps/preview-generator-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/preview-generator/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
@@ -355,6 +371,7 @@ apps/sync-scan-unit-tests:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/sync-scan/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
@@ -439,6 +456,7 @@ e2e-api:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/core/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
@@ -473,6 +491,7 @@ e2e-indexation-manager:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/core/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
@@ -502,6 +521,7 @@ e2e-sync-scan:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/sync-scan/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
@@ -730,7 +750,7 @@ build-docker-logs-collector:
       echo "NPM_TOKEN or CI_JOB_TOKEN not defined, skip npm login"
     fi
 
-# Ensure we can build package in MR
+# Ensure we can build a package in MR
 test-build-npm-leav-types:
   stage: test
   script:
@@ -744,6 +764,7 @@ test-build-npm-leav-types:
       changes:
         # libs/types is a projection of apps/core
         - apps/core/**/*
+        - *new_lib_installed_changes
       when: on_success
 
 test-build-npm-leav-ui:
@@ -758,6 +779,7 @@ test-build-npm-leav-ui:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
         - libs/ui/**/*
+        - *new_lib_installed_changes
       when: on_success
 
 test-build-npm-leav-utils:
@@ -772,6 +794,7 @@ test-build-npm-leav-utils:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
         - libs/utils/**/*
+        - *new_lib_installed_changes
       when: on_success
 
 publish-npm-leav-types-next:
