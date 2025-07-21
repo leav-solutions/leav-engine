@@ -14,7 +14,6 @@ import {
     ValueDetailsTreeValueFragment,
     ValueDetailsValueFragment
 } from '_ui/_gqlTypes';
-import {arrayValueVersionToObject} from '_ui/_utils';
 
 export type RecordFormElementsValueStandardValue = Override<
     ValueDetailsValueFragment,

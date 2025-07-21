@@ -127,6 +127,8 @@ export interface IFormElementProps<SettingsType, RecordFormElements = RecordForm
     onCustomEvent?: CustomEventFunc;
     onDeleteMultipleValues?: DeleteMultipleValuesFunc;
     metadataEdit?: boolean;
+    record: IRecordIdentityWhoAmI;
+    elementsByContainer: any;
 }
 
 export type FormElement<SettingsType, RecordFormElements = RecordFormElementsValue> = Override<
@@ -136,12 +138,13 @@ export type FormElement<SettingsType, RecordFormElements = RecordFormElementsVal
         uiElementType: FormUIElementTypes | FormFieldTypes;
         values: RecordFormElements[];
         valueError?: string;
+        record?: IRecordIdentityWhoAmI;
     }
 > & {
     uiElement: (
         props: IFormElementProps<unknown> & {
             antdForm?: FormInstance;
-            computedValues?: GetRecordColumnsValuesRecord;
+            valuesMappedByAttributeId?: GetRecordColumnsValuesRecord;
         }
     ) => JSX.Element;
 };

@@ -6,7 +6,6 @@ import {IFormFrameSettings} from '@leav/utils';
 import {useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {IFormElementProps} from '../../_types';
-import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 
 const Wrapper = styled.iframe`
     width: 100%;
@@ -15,8 +14,7 @@ const Wrapper = styled.iframe`
     border: none;
 `;
 
-function Frame({element, onValueSubmit}: IFormElementProps<IFormFrameSettings>): JSX.Element {
-    const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
+function Frame({element, onValueSubmit, record}: IFormElementProps<IFormFrameSettings>): JSX.Element {
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [iframeLoaded, setIframeLoaded] = useState(false);
     useEffect(() => {

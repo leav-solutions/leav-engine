@@ -2,13 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Col, FormInstance, Row} from 'antd';
-import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import {IFormElementProps} from '../../_types';
 import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
 
 function Container({
     element,
-    computedValues,
     antdForm,
     formIdToLoad,
     readonly,
@@ -16,13 +14,16 @@ function Container({
     onValueSubmit,
     onValueDelete,
     onCustomEvent,
-    onDeleteMultipleValues
+    onDeleteMultipleValues,
+    record,
+    valuesMappedByAttributeId,
+    elementsByContainer
 }: IFormElementProps<{}> & {
     antdForm?: FormInstance;
-    computedValues: GetRecordColumnsValuesRecord;
+    valuesMappedByAttributeId: GetRecordColumnsValuesRecord;
 }): JSX.Element {
-    const {elements: formElements} = useRecordEditionContext();
-    const children = formElements[element.id] ?? [];
+    const children = elementsByContainer?.[element.id] ?? [];
+
     const isAlone = children.length < 2;
 
     return (
@@ -33,7 +34,7 @@ function Container({
                         {el.uiElement && (
                             <el.uiElement
                                 element={el}
-                                computedValues={computedValues}
+                                valuesMappedByAttributeId={valuesMappedByAttributeId}
                                 readonly={readonly}
                                 antdForm={antdForm}
                                 pendingValues={pendingValues}
@@ -42,6 +43,8 @@ function Container({
                                 onValueDelete={onValueDelete}
                                 onCustomEvent={onCustomEvent}
                                 onDeleteMultipleValues={onDeleteMultipleValues}
+                                record={record}
+                                elementsByContainer={elementsByContainer}
                             />
                         )}
                     </Col>

@@ -1,11 +1,5 @@
 fragment RecordFormElementWithValues on FormElementWithValues {
     id
-    containerId
-    uiElementType
-    attribute {
-        ...RecordFormAttribute
-    }
-    type
     valueError
     values {
         ...ValueDetails

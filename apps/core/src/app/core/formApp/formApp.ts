@@ -221,14 +221,6 @@ export default function ({
 
                     type FormElementWithValues {
                         id: ID!,
-                        containerId: ID!,
-                        order: Int!,
-                        uiElementType: String!,
-                        type: FormElementTypes!,
-                        attribute: Attribute,
-                        settings: [FormElementSettings!]!
-                        "In case the form element is a join library link"
-                        joinLibraryContext: FormElementJoinLibraryContext
                         values: [GenericValue!]
                         valueError: String
                     }
@@ -336,7 +328,7 @@ export default function ({
                         ): Promise<IFormElement[]> {
                             const formattedVersion = convertVersionFromGqlFormat(version);
 
-                            return formDomain.getRecordFormElementsValues({
+                            const data = await formDomain.getRecordFormElementsValues({
                                 recordId,
                                 libraryId,
                                 formId,
@@ -344,6 +336,8 @@ export default function ({
                                 version: formattedVersion,
                                 ctx
                             });
+
+                            return data;
                         }
                     },
                     Mutation: {
@@ -376,8 +370,7 @@ export default function ({
                                 )
                             )
                     },
-                    FormElement: commonFormElementResolvers,
-                    FormElementWithValues: commonFormElementResolvers
+                    FormElement: commonFormElementResolvers
                 }
             };
         }

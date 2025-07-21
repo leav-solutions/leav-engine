@@ -264,7 +264,7 @@ To use it in a project, just add it with a `yarn add @leav/my_lib`.
 Then, in your code, you can import it and use it like a regular package:
 
 ```typescript
-import { mySuperFunc } from '@leav/my_lib'
+import {mySuperFunc} from '@leav/my_lib'
 
 mySuperFunc();
 ```
@@ -334,7 +334,7 @@ You'd better run it locally, on your machine with a standard `yarn run test`.
 End-to-end testing needs to be run inside the container as it starts a server, access to the DB, etc.
 This can be done by either:
 
-- Running a shell in the container and executing `yarn run test:e2e`
+- Running a shell in the container and executing `yarn run test:e2e` or `yarn run test:e2e:api`
 - Executing the command from your machine: `docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e`
 
 ---
