@@ -4,6 +4,7 @@
 import {renderHook} from '_ui/_tests/testUtils';
 import * as ReactRouter from 'react-router-dom';
 import {useNavigateToPanel} from '../useNavigateToPanel';
+import {INestedPanel} from '_ui/hooks/useIFrameMessenger/types';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -46,7 +47,7 @@ describe('useNavigateToPanel', () => {
                 result: {current}
             } = renderHook(() => useNavigateToPanel(addPanelMock));
 
-            const panelData = {
+            const panelData: INestedPanel = {
                 where: 'fullpage',
                 what: {id: 'panelIdTest', name: 'Test Panel', children: []}
             };
@@ -67,7 +68,7 @@ describe('useNavigateToPanel', () => {
                 result: {current}
             } = renderHook(() => useNavigateToPanel(addPanelMock));
 
-            const panelData = {
+            const panelData: INestedPanel = {
                 where: 'popup',
                 what: {id: 'popupPanelIdTest', name: 'Test Panel', children: []}
             };
@@ -89,7 +90,7 @@ describe('useNavigateToPanel', () => {
                 result: {current}
             } = renderHook(() => useNavigateToPanel(addPanelMock));
 
-            const panelData = {
+            const panelData: INestedPanel = {
                 where: 'slider',
                 what: {id: 'sliderPanelIdTest', name: 'Test Panel', children: []}
             };

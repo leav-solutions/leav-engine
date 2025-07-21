@@ -78,7 +78,7 @@ type PanelId = z.infer<typeof PanelIdSchema>;
 
 type ItemActions = z.infer<typeof ItemActionsSchema>;
 
-interface INestedPanel {
+export interface INestedPanel {
     where: ItemActions[number]['where'];
     what: Panel & {recordId?: string};
 }
