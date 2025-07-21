@@ -59,6 +59,12 @@ export interface IDeleteValueResult {
     error?: string;
 }
 
+export interface ICustomEventResult {
+    [key: string]: unknown;
+    eventName: string;
+    element: FormElement<unknown>;
+}
+
 export interface ICreateRecordResult {
     status: APICallStatus;
     record?: RecordIdentityFragment['whoAmI'];
@@ -91,6 +97,7 @@ export type SubmittedValue = ISubmittedValueStandard | ISubmittedValueLink | ISu
 
 export type SubmitValueFunc = (values: SubmittedValue[], version: IValueVersion) => Promise<ISubmitMultipleResult>;
 export type DeleteValueFunc = (value: ValueInput | null, attribute: string) => Promise<IDeleteValueResult>;
+export type CustomEventFunc = (details: object) => Promise<ICustomEventResult>;
 export type CreateRecordFunc = (library: string, values: ValueBatchInput[]) => Promise<ICreateRecordResult>;
 export type DeleteMultipleValuesFunc = (
     attribute: string,
@@ -117,8 +124,11 @@ export interface IFormElementProps<SettingsType, RecordFormElements = RecordForm
     readonly?: boolean;
     onValueSubmit?: SubmitValueFunc;
     onValueDelete?: DeleteValueFunc;
+    onCustomEvent?: CustomEventFunc;
     onDeleteMultipleValues?: DeleteMultipleValuesFunc;
     metadataEdit?: boolean;
+    record: IRecordIdentityWhoAmI;
+    elementsByContainer: any;
 }
 
 export type FormElement<SettingsType, RecordFormElements = RecordFormElementsValue> = Override<
@@ -127,12 +137,14 @@ export type FormElement<SettingsType, RecordFormElements = RecordFormElementsVal
         settings: SettingsType;
         uiElementType: FormUIElementTypes | FormFieldTypes;
         values: RecordFormElements[];
+        valueError?: string;
+        record?: IRecordIdentityWhoAmI;
     }
 > & {
     uiElement: (
         props: IFormElementProps<unknown> & {
             antdForm?: FormInstance;
-            computedValues?: GetRecordColumnsValuesRecord;
+            valuesMappedByAttributeId?: GetRecordColumnsValuesRecord;
         }
     ) => JSX.Element;
 };

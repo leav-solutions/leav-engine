@@ -91,7 +91,7 @@ export const getAntdDisplayedValue = (
 
 export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
     recordForm.elements.reduce<Store>((acc, {attribute, values}) => {
-        if (!attribute) {
+        if (!attribute || values === null) {
             return acc;
         }
 

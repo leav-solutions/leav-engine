@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes, simpleStringHash} from '@leav/utils';
-import {FunctionComponent, useEffect, useMemo} from 'react';
+import {FunctionComponent, useEffect, useMemo, useState} from 'react';
 import {ErrorDisplay} from '_ui/components';
 import useGetRecordForm from '_ui/hooks/useGetRecordForm';
 import {useGetRecordUpdatesSubscription} from '_ui/hooks/useGetRecordUpdatesSubscription';
@@ -12,16 +12,16 @@ import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {FormElementTypes, RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
-import extractFormElements from './helpers/extractFormElements';
-import {RecordEditionContext} from './hooks/useRecordEditionContext';
 import {formComponents} from './uiElements';
 import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, IPendingValues, SubmitValueFunc} from './_types';
 import {Form, FormInstance} from 'antd';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
-import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import EditRecordSkeleton from '../EditRecordSkeleton';
 import styled from 'styled-components';
+import {useFetchVisibleFormValue} from '_ui/components/RecordEdition/EditRecordContent/hooks/useFetchVisibleFormValue';
+import extractFormElements from '_ui/components/RecordEdition/EditRecordContent/helpers/extractFormElements';
+import useTabManagement from '_ui/components/RecordEdition/EditRecordContent/hooks/useTabManagement';
 
 interface IEditRecordContentProps {
     antdForm: FormInstance;
@@ -61,6 +61,9 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
 
+    // Reformat values with key as attribute id to facilitate the usage in form (attribute id as reference)
+    const [valuesMappedByAttributeId, setValuesMappedByAttributeId] = useState(null);
+
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
 
     const {data: recordUpdateData} = useGetRecordUpdatesSubscription(
@@ -78,12 +81,43 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         }
     }, [recordUpdateData]);
 
-    const {loading, error, recordForm, refetch} = useGetRecordForm({
+    // Get form without values
+    const {
+        loading,
+        error,
+        recordForm,
+        refetch: refetchGetRecordForm
+    } = useGetRecordForm({
         libraryId: library,
         recordId: record?.id,
         formId: formIdToLoad,
         version: state.valuesVersion
     });
+
+    // Keep tabId displayed in reference to re-calculate visible elementIds and get its values
+    const {tabIdVisible, handleTabClick} = useTabManagement(recordForm);
+
+    // Get values of formElements
+    const {
+        refetchRecordFormWithValues,
+        recordFormWithValues,
+        error: errorOnGetValues
+    } = useFetchVisibleFormValue(formIdToLoad, recordForm, tabIdVisible);
+
+    useEffect(() => {
+        if (!recordFormWithValues?.recordId || !recordFormWithValues?.elements?.length) {
+            return;
+        }
+        // Transform elementsValues into the format by attribute id
+        const valuesMappedByAttributeIdTmp = {};
+        recordFormWithValues.elements.forEach(element => {
+            if (element.attribute && element.values) {
+                valuesMappedByAttributeIdTmp[element.attribute.id] = element.values;
+            }
+        });
+
+        setValuesMappedByAttributeId(valuesMappedByAttributeIdTmp);
+    }, [recordFormWithValues]);
 
     useEffect(() => {
         if (!loading && recordForm) {
@@ -95,25 +129,14 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         }
     }, [recordForm, loading]);
 
-    const {
-        data: computeFieldsData,
-        error: computeFieldsError,
-        refetch: refetchComputeFields
-    } = useGetRecordValuesQuery(
-        library,
-        recordForm
-            ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
-            : [],
-        [record?.id],
-        true
-    );
+    const computeFieldsError = null;
 
     // Generate a hash of recordForm to detect changes
     const recordFormHash = useMemo(() => simpleStringHash(JSON.stringify(recordForm)), [recordForm]);
 
     useEffect(() => {
         if (state.refreshRequested) {
-            refetch();
+            refetchGetRecordForm();
             dispatch({type: EditRecordReducerActionsTypes.REFRESH_DONE});
         }
     }, [state.refreshRequested]);
@@ -122,13 +145,18 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         return <EditRecordSkeleton rows={5} />;
     }
 
-    if (error) {
+    const displayError = e => {
         const message =
-            Object.values((error.graphQLErrors[0]?.extensions?.exception as {fields: string})?.fields ?? {}).join(
-                '\n'
-            ) ?? error?.message;
+            Object.values((e.graphQLErrors[0]?.extensions?.exception as {fields: string})?.fields ?? {}).join('\n') ??
+            error?.message;
 
         return <ErrorDisplay message={message ?? t('record_edition.no_form_error')} />;
+    };
+
+    if (error) {
+        return displayError(error);
+    } else if (errorOnGetValues) {
+        return displayError(errorOnGetValues);
     }
 
     const _checkDependencyChange = (changedAttribute: string) => {
@@ -145,7 +173,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
         const isEditing = Boolean(record);
         if (isEditing) {
-            refetchComputeFields([record.id]);
+            refetchRecordFormWithValues();
         }
 
         return submitRes;
@@ -168,12 +196,21 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         attribute: null,
         valueError: null,
         values: null,
-        uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
+        uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER],
+        record
     };
 
-    const antdFormInitialValues = getAntdFormInitialValues(recordForm);
-    const recordComputedValues = computeFieldsData && record ? computeFieldsData[record.id] : null;
-    const elementsByContainer = extractFormElements(recordForm, recordComputedValues, computeFieldsError);
+    // Used to get different event from children elements (e.g., listen to onTabClick event from FormTab element)
+    const onCustomEvent = (event: any): any => {
+        // If a tab has been click
+        // Re-calculate visible elements and fetch values
+        if (event.eventName === 'onTabClick') {
+            handleTabClick(event.tabIdClicked);
+        }
+    };
+
+    const antdFormInitialValues = getAntdFormInitialValues(recordFormWithValues || recordForm);
+    const elementsByContainer = extractFormElements(recordFormWithValues || recordForm, computeFieldsError);
 
     return (
         <WrappedForm
@@ -186,27 +223,22 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                 )
             }
         >
-            <RecordEditionContext.Provider
-                value={{
-                    elements: elementsByContainer,
-                    readOnly: readonly,
-                    record
-                }}
-            >
-                <rootElement.uiElement
-                    // Use a hash of record form as a key to force a full re-render when the form changes
-                    key={recordFormHash}
-                    antdForm={antdForm}
-                    formIdToLoad={formIdToLoad}
-                    element={rootElement}
-                    computedValues={recordComputedValues}
-                    readonly={readonly}
-                    pendingValues={pendingValues}
-                    onValueSubmit={_handleValueSubmit}
-                    onValueDelete={_handleValueDelete}
-                    onDeleteMultipleValues={onDeleteMultipleValues}
-                />
-            </RecordEditionContext.Provider>
+            <rootElement.uiElement
+                // Use a hash of a record form as a key to force a full re-render when the form changes
+                key={recordFormHash}
+                antdForm={antdForm}
+                valuesMappedByAttributeId={valuesMappedByAttributeId}
+                formIdToLoad={formIdToLoad}
+                element={rootElement}
+                readonly={readonly}
+                pendingValues={pendingValues}
+                onValueSubmit={_handleValueSubmit}
+                onValueDelete={_handleValueDelete}
+                onDeleteMultipleValues={onDeleteMultipleValues}
+                onCustomEvent={onCustomEvent}
+                record={record}
+                elementsByContainer={elementsByContainer}
+            />
         </WrappedForm>
     );
 };

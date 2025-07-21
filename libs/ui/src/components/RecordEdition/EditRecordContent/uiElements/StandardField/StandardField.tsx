@@ -18,13 +18,13 @@ import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculate
 import {useGetPresentationValues} from './useGetPresentationValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {getAntdDisplayedValue, getEmptyInitialValue} from '../../antdUtils';
-import {GetRecordColumnsValuesRecord, IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {STANDARD_FIELD_ID_PREFIX} from '_ui/constants';
 import {ComputeIndicator} from '../shared/ComputeIndicator';
 import {useOutsideInteractionDetector} from '../shared/useOutsideInteractionDetector';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {INPUT_MAX_HEIGHT} from '../../formConstants';
+import {GetRecordColumnsValuesRecord, IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -71,11 +71,11 @@ const KitAddValueButton = styled(KitButton)`
 const StandardField: FunctionComponent<
     IFormElementProps<IRequiredFieldsSettings, RecordFormElementsValueStandardValue> & {
         antdForm?: FormInstance;
-        computedValues?: GetRecordColumnsValuesRecord<IRecordColumnValueStandard>;
+        valuesMappedByAttributeId?: GetRecordColumnsValuesRecord<IRecordColumnValueStandard>;
     }
 > = ({
     element,
-    computedValues,
+    valuesMappedByAttributeId,
     antdForm,
     readonly,
     formIdToLoad,
@@ -97,11 +97,17 @@ const StandardField: FunctionComponent<
     const {attribute} = element;
 
     useEffect(() => {
-        if (computedValues && computedValues[attribute.id]) {
-            setBackendValues(computedValues[attribute.id]);
-            antdForm.setFieldValue(attribute.id, getAntdDisplayedValue(computedValues[attribute.id], attribute));
+        if (element?.values?.length) {
+            if (attribute.multiple_values) {
+                // TODO: we cannot call getAntdDisplayedValue because we don't know how to handle inherited/calculated on multi values
+                const values = element.values.map(v => getAntdDisplayedValue([v], attribute));
+                setElementValues(element.values);
+                antdForm.setFieldValue(attribute.id, values);
+            } else {
+                antdForm.setFieldValue(attribute.id, getAntdDisplayedValue(element.values, attribute));
+            }
         }
-    }, [computedValues]);
+    }, [element.values]);
 
     if (!attribute) {
         return <ErrorDisplay message={t('record_edition.missing_attribute')} />;
@@ -109,10 +115,10 @@ const StandardField: FunctionComponent<
 
     const {state, dispatch} = useEditRecordReducer();
 
-    const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
+    const [elementValues, setElementValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
 
-    const calculatedFlags = computeCalculatedFlags(backendValues);
-    const inheritedFlags = computeInheritedFlags(backendValues);
+    const calculatedFlags = computeCalculatedFlags(elementValues);
+    const inheritedFlags = computeInheritedFlags(elementValues);
     const defaultValueToAddInAntdForm = getEmptyInitialValue(attribute);
 
     const [attributePendingValues, setAttributePendingValues] = useState<RecordFormElementsValueStandardValue[]>([]);
@@ -127,12 +133,13 @@ const StandardField: FunctionComponent<
 
     useEffect(() => {
         if (state.activeAttribute?.attribute.id === attribute.id) {
+            // debugger;
             dispatch({
                 type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                values: backendValues
+                values: elementValues
             });
         }
-    }, [backendValues]);
+    }, [elementValues]);
 
     useOutsideInteractionDetector({
         attribute,
@@ -140,13 +147,13 @@ const StandardField: FunctionComponent<
         attributePrefix: STANDARD_FIELD_ID_PREFIX,
         dispatch,
         formIdToLoad,
-        backendValues,
+        elementValues,
         pendingValues: attributePendingValues,
         allowedSelectors: ['.ant-popover.ant-color-picker', '.ant-picker-dropdown', '.kit-modal-wrapper.link-modal']
     });
 
-    const backendWithoutCalculatedOrInheritedValues = backendValues
-        .filter(backendValue => !backendValue.isCalculated && !backendValue.isInherited)
+    const backendWithoutCalculatedOrInheritedValues = elementValues
+        .filter(elementValue => !elementValue.isCalculated && !elementValue.isInherited)
         .sort((a, b) => Number(a.id_value) - Number(b.id_value));
 
     const {presentationValues} = useGetPresentationValues({
@@ -175,28 +182,27 @@ const StandardField: FunctionComponent<
             if (attribute.multiple_values) {
                 submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
                 if (submitRes.status === APICallStatus.SUCCESS) {
-                    setBackendValues(previousBackendValues => {
-                        const newBackendValues = [...previousBackendValues, ...submitRes.values].reduce(
-                            (acc, backendValue) => {
+                    setElementValues(previousValues => {
+                        const newElementValues = [...previousValues, ...submitRes.values].reduce(
+                            (acc, elementValue) => {
                                 const existingValue = acc.find(
                                     o =>
-                                        o.id_value === backendValue.id_value &&
-                                        o.isCalculated === backendValue.isCalculated &&
-                                        o.isInherited === backendValue.isInherited
+                                        o.id_value === elementValue.id_value &&
+                                        o.isCalculated === elementValue.isCalculated &&
+                                        o.isInherited === elementValue.isInherited
                                 );
 
                                 if (existingValue) {
-                                    Object.assign(existingValue, backendValue);
+                                    Object.assign(existingValue, elementValue);
                                 } else {
-                                    acc.push(backendValue);
+                                    acc.push(elementValue);
                                 }
-
                                 return acc;
                             },
                             []
                         );
 
-                        return newBackendValues;
+                        return newElementValues;
                     });
 
                     return submitRes;
@@ -205,7 +211,7 @@ const StandardField: FunctionComponent<
                 if (valueToSave) {
                     submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
                     if (submitRes.status === APICallStatus.SUCCESS) {
-                        setBackendValues((submitRes.values as unknown as RecordFormElementsValueStandardValue[]) ?? []);
+                        setElementValues((submitRes.values as unknown as RecordFormElementsValueStandardValue[]) ?? []);
 
                         return submitRes;
                     }
@@ -214,8 +220,8 @@ const StandardField: FunctionComponent<
                         submitRes = await onValueDelete({id_value: idValue, payload: null}, attribute.id);
 
                         if (submitRes.status === APICallStatus.SUCCESS) {
-                            setBackendValues(previousBackendValues =>
-                                previousBackendValues.filter(
+                            setElementValues(previousValues =>
+                                previousValues.filter(
                                     value =>
                                         (value.isCalculated !== null && value.isCalculated !== undefined) ||
                                         (value.isInherited !== null && value.isInherited !== undefined)
@@ -262,8 +268,15 @@ const StandardField: FunctionComponent<
         if (idValue) {
             await onValueDelete({id_value: idValue}, attribute.id);
 
-            setBackendValues(previousBackendValues =>
-                previousBackendValues.filter(backendValue => backendValue.id_value !== idValue)
+            setElementValues(previousValues =>
+                previousValues.filter(elementValue => elementValue.id_value !== idValue)
+            );
+        } else {
+            // For values without an ID (like our newly added empty values)
+            // We need to update elementValues to maintain consistency with the form
+            setElementValues(previousValues =>
+                // Create a new array without the value at the deleted index
+                previousValues.filter((_, index) => index !== deletedFieldIndex)
             );
         }
         antdRemove(deletedFieldIndex);
@@ -272,16 +285,14 @@ const StandardField: FunctionComponent<
     const _handleDeleteAllValues = async () => {
         const deleteRes = await onDeleteMultipleValues(
             attribute.id,
-            backendValues.filter(b => b.id_value),
+            elementValues.filter(b => b.id_value),
             null
         );
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
             antdListFieldsRef.current.remove(antdListFieldsRef.current.indexes);
             antdListFieldsRef.current.add(defaultValueToAddInAntdForm);
-            setBackendValues(previousBackendValues =>
-                previousBackendValues.filter(backendValue => !backendValue.id_value)
-            );
+            setElementValues(previousValues => previousValues.filter(elementValue => !elementValue.id_value));
 
             return;
         }
@@ -290,7 +301,7 @@ const StandardField: FunctionComponent<
     let isFieldInError = false;
 
     if (antdForm) {
-        const hasErrorsInFormList = backendValues.some((_, index) => {
+        const hasErrorsInFormList = elementValues.some((_, index) => {
             const errors = antdForm.getFieldError([attribute.id, index]);
             return errors.length > 0;
         });
@@ -303,14 +314,14 @@ const StandardField: FunctionComponent<
     }
 
     const isMultipleValues = element.attribute.multiple_values;
-    const hasValue = isMultipleValues && backendValues.length > 0;
+    const hasValue = isMultipleValues && elementValues.length > 0;
     const canAddAnotherValue =
         !readonly &&
         isMultipleValues &&
         !isFieldInError &&
         attribute.format !== AttributeFormat.boolean &&
         attribute.format !== AttributeFormat.encrypted;
-    const canDeleteAllValues = hasValue && backendValues.length > 1 && !attribute.required;
+    const canDeleteAllValues = hasValue && elementValues.length > 1 && !attribute.required;
 
     const label = localizedTranslation(element.settings.label, lang);
     const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;

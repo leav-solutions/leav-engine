@@ -17,6 +17,7 @@ import {
     IFormDependentElementsForGraphQL,
     IFormElementForGraphQL,
     IFormForGraphql,
+    IGetElementFormValuesArgs,
     IGetFormArgs,
     IGetRecordFormArgs,
     ISaveFormArgs
@@ -147,7 +148,7 @@ export default function ({
                         library: Library!,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        elements: [FormElementWithValues!]!,
+                        elements: [FormElement!]!,
                         dependencyAttributes: [Attribute!],
                         sidePanel: FormSidePanel,
                     }
@@ -220,14 +221,6 @@ export default function ({
 
                     type FormElementWithValues {
                         id: ID!,
-                        containerId: ID!,
-                        order: Int!,
-                        uiElementType: String!,
-                        type: FormElementTypes!,
-                        attribute: Attribute,
-                        settings: [FormElementSettings!]!
-                        "In case the form element is a join library link"
-                        joinLibraryContext: FormElementJoinLibraryContext
                         values: [GenericValue!]
                         valueError: String
                     }
@@ -278,8 +271,16 @@ export default function ({
                             recordId: String,
                             libraryId: String!,
                             formId: String!,
-                            version: [ValueVersionInput!],
+                            version: [ValueVersionInput!]
                         ): RecordForm
+                        
+                        getRecordFormElementsValues(
+                            recordId: String,
+                            libraryId: String!,
+                            formId: String!,
+                            version: [ValueVersionInput!]
+                            elementIds: [ID!]
+                        ): [FormElementWithValues!]
                     }
 
                     extend type Mutation {
@@ -319,6 +320,24 @@ export default function ({
                                 version: formattedVersion,
                                 ctx
                             });
+                        },
+                        async getRecordFormElementsValues(
+                            _,
+                            {recordId, libraryId, formId, version, elementIds}: IGetElementFormValuesArgs,
+                            ctx: IQueryInfos
+                        ): Promise<IFormElement[]> {
+                            const formattedVersion = convertVersionFromGqlFormat(version);
+
+                            const data = await formDomain.getRecordFormElementsValues({
+                                recordId,
+                                libraryId,
+                                formId,
+                                elementIds,
+                                version: formattedVersion,
+                                ctx
+                            });
+
+                            return data;
                         }
                     },
                     Mutation: {
@@ -351,8 +370,7 @@ export default function ({
                                 )
                             )
                     },
-                    FormElement: commonFormElementResolvers,
-                    FormElementWithValues: commonFormElementResolvers
+                    FormElement: commonFormElementResolvers
                 }
             };
         }

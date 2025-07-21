@@ -46,46 +46,7 @@ describe('useGetRecordForm', () => {
                                     },
                                     type: FormElementTypes.field,
                                     valueError: null,
-                                    values: [
-                                        {
-                                            __typename: 'Value',
-                                            id_value: '987654321',
-                                            created_at: 1234567890,
-                                            modified_at: 1234567890,
-                                            created_by: {
-                                                __typename: 'User',
-                                                id: '1',
-                                                whoAmI: mockRecord
-                                            },
-                                            modified_by: {
-                                                __typename: 'User',
-                                                id: '1',
-                                                whoAmI: mockRecord
-                                            },
-                                            metadata: null,
-                                            version: [
-                                                {
-                                                    __typename: 'ValueVersion',
-                                                    treeId: 'tree_1',
-                                                    treeNode: {
-                                                        id: '1337',
-                                                        record: {
-                                                            id: '1337',
-                                                            whoAmI: {
-                                                                id: '1337',
-                                                                label: 'Some tree element',
-                                                                library: {
-                                                                    id: 'test_lib'
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ],
-                                            value: 'some value',
-                                            raw_value: 'some value'
-                                        }
-                                    ],
+                                    values: [],
                                     settings: []
                                 }
                             ]
@@ -127,30 +88,7 @@ describe('useGetRecordForm', () => {
                     type: FormElementTypes.field,
                     valueError: null,
                     attribute: {...mockFormAttribute, values_list: null},
-                    values: [
-                        {
-                            id_value: '987654321',
-                            created_at: 1234567890,
-                            modified_at: 1234567890,
-                            created_by: {
-                                id: '1',
-                                whoAmI: mockRecord
-                            },
-                            modified_by: {
-                                id: '1',
-                                whoAmI: mockRecord
-                            },
-                            metadata: [],
-                            version: {
-                                tree_1: {
-                                    id: '1337',
-                                    label: 'Some tree element'
-                                }
-                            },
-                            value: 'some value',
-                            raw_value: 'some value'
-                        }
-                    ],
+                    values: [],
                     settings: []
                 }
             ]
@@ -194,46 +132,7 @@ describe('useGetRecordForm', () => {
                                     },
                                     type: FormElementTypes.field,
                                     valueError: null,
-                                    values: [
-                                        {
-                                            __typename: 'Value',
-                                            id_value: '987654321',
-                                            created_at: 1234567890,
-                                            modified_at: 1234567890,
-                                            created_by: {
-                                                __typename: 'User',
-                                                id: '1',
-                                                whoAmI: mockRecord
-                                            },
-                                            modified_by: {
-                                                __typename: 'User',
-                                                id: '1',
-                                                whoAmI: mockRecord
-                                            },
-                                            metadata: [{value: null}],
-                                            version: [
-                                                {
-                                                    __typename: 'ValueVersion',
-                                                    treeId: 'tree_1',
-                                                    treeNode: {
-                                                        id: '1337',
-                                                        record: {
-                                                            id: '1337',
-                                                            whoAmI: {
-                                                                id: '1337',
-                                                                label: 'Some tree element',
-                                                                library: {
-                                                                    id: 'test_lib'
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ],
-                                            value: 'some value',
-                                            raw_value: 'some value'
-                                        }
-                                    ],
+                                    values: [],
                                     settings: []
                                 }
                             ]
@@ -275,36 +174,7 @@ describe('useGetRecordForm', () => {
                     type: FormElementTypes.field,
                     valueError: null,
                     attribute: {...mockFormAttribute, values_list: null},
-                    values: [
-                        {
-                            id_value: '987654321',
-                            created_at: 1234567890,
-                            modified_at: 1234567890,
-                            created_by: {
-                                id: '1',
-                                whoAmI: mockRecord
-                            },
-                            modified_by: {
-                                id: '1',
-                                whoAmI: mockRecord
-                            },
-                            metadata: [
-                                {
-                                    value: {
-                                        version: {}
-                                    }
-                                }
-                            ],
-                            version: {
-                                tree_1: {
-                                    id: '1337',
-                                    label: 'Some tree element'
-                                }
-                            },
-                            value: 'some value',
-                            raw_value: 'some value'
-                        }
-                    ],
+                    values: [],
                     settings: []
                 }
             ]

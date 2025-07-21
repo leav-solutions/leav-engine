@@ -24,12 +24,13 @@ export interface IRecordForm {
     system: boolean;
     recordId: string;
     dependencyAttributes?: string[];
-    elements: IFormElementWithValues[];
+    elements: IFormElement[];
     sidePanel: IFormSidePanel;
 }
 
 export enum FormElementTypes {
     field = 'field',
+    tabs = 'tabs',
     layout = 'layout'
 }
 
@@ -52,19 +53,13 @@ export interface IFormElement {
     uiElementType: string;
     containerId: string;
     settings?: IKeyValue<any>;
-}
-
-export interface IFormElementWithValues extends IFormElement {
     values?: IValue[];
     valueError?: string;
+    children?: IFormElement[];
 }
 
-export type IFormElementWithValuesAndChildren = IFormElementWithValues & {
-    children: IFormElementWithValuesAndChildren[];
-};
-
 /**
- * Accepted fields to filter attributes list
+ * Accepted fields to filter an attribute list
  */
 export interface IFormFilterOptions extends ICoreEntityFilterOptions {
     library?: string;
