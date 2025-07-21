@@ -8,7 +8,7 @@ import {LangContext} from '@leav/ui';
 import {getLanguageRadical} from '../../config/translation/utils';
 import {i18n} from '../../config/translation/initI18n';
 
-import {select, flagIcon} from './LanguageSelector.module.css';
+import {select, flagIcon} from './languageSelector.module.css';
 
 const flagWidth = 20;
 
