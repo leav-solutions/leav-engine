@@ -79,7 +79,7 @@ type PanelId = z.infer<typeof PanelIdSchema>;
 type ItemActions = z.infer<typeof ItemActionsSchema>;
 
 interface INestedPanel {
-    where: ItemActions['where'];
+    where: ItemActions[number]['where'];
     what: Panel & {recordId?: string};
 }
 
