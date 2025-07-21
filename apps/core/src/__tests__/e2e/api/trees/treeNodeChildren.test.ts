@@ -1,12 +1,21 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {gqlAddElemToTree, gqlCreateRecord, gqlSaveLibrary, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {
+    gqlAddElemToTree,
+    gqlCreateRecord,
+    gqlSaveAttribute,
+    gqlSaveLibrary,
+    gqlSaveTree,
+    makeGraphQlCall
+} from '../e2eUtils';
+import {PermissionTypes, RecordPermissionsActions} from '../../../../_types/permissions';
+import {AttributeTypes} from '../../../../_types/attribute';
 
 describe('Trees', () => {
     const testTreeName = 'test_tree_node_children';
     const testLibName = 'trees_node_children_library_test';
-    const testLibTypeName = 'treesNodeChildrenLibraryTest';
+    const treeAttributeId = 'tree_attribute';
 
     let recordId1;
     let recordNode1;
@@ -18,7 +27,15 @@ describe('Trees', () => {
     let recordNode4;
 
     beforeAll(async () => {
-        await gqlSaveLibrary(testLibName, 'Test Lib');
+        await gqlSaveAttribute({
+            id: 'tree_attribute',
+            type: AttributeTypes.TREE,
+            multipleValues: false,
+            label: 'Tree attribute',
+            linkedTree: testTreeName
+        });
+
+        await gqlSaveLibrary(testLibName, 'Test Lib', [treeAttributeId]);
         await gqlSaveTree(testTreeName, 'Test tree', [testLibName]);
 
         recordId1 = await gqlCreateRecord(testLibName);
@@ -93,5 +110,58 @@ describe('Trees', () => {
         expect(res.data.data.rootChildrenPage2.totalCount).toBe(2);
         expect(res.data.data.rootChildrenPage2.list).toHaveLength(1);
         expect(res.data.data.rootChildrenPage2.list[0].id).toBe(recordNode2);
+    });
+
+    test('Get Trees node children with filters "childrenAsRecordValuePermissionFilter" filter', async () => {
+        await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: ${PermissionTypes.RECORD},
+                        applyTo: "${testLibName}",
+                        usersGroup: null,
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${recordNode1}"
+                        },
+                        actions: [
+                            {name: ${RecordPermissionsActions.CREATE_RECORD}, allowed: false}
+                        ]
+                    }
+                ) {
+                    type
+                    applyTo
+                    usersGroup
+                    permissionTreeTarget {
+                        tree
+                        nodeId
+                    }
+                    actions {
+                        allowed
+                        name
+                    }
+                }
+            }`);
+
+        const res = await makeGraphQlCall(`{
+            rootChildren: treeNodeChildren(
+                treeId: "${testTreeName}",
+                childrenAsRecordValuePermissionFilter: {
+                    action: ${RecordPermissionsActions.CREATE_RECORD},
+                    libraryId: "${testLibName}",
+                    attributeId: "${treeAttributeId}"
+                }
+            ) {
+                totalCount
+                list {
+                    id
+                }
+              }
+        }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
+
+        expect(res.data.data.rootChildren.totalCount).toBe(1);
+        expect(res.data.data.rootChildren.list).toHaveLength(1);
+        expect(res.data.data.rootChildren.list[0].id).toBe(recordNode2);
     });
 });

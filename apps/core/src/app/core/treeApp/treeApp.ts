@@ -454,6 +454,7 @@ export default function ({
 
                                 // Apply permissions filter to children list
                                 children.list = children.list.filter((_treeNode, i) => permissionsFilter[i]);
+                                children.totalCount = children.list.length;
                             }
 
                             return {
