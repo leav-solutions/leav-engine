@@ -42,7 +42,8 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
     onDeleteMultipleValues,
     onValueSubmit,
     onValueDelete,
-    metadataEdit = false
+    metadataEdit = false,
+    avoidFormValidationOnLoad = false
 }) => {
     const {state, dispatch} = useEditRecordReducer();
     const {lang} = useLang();
@@ -66,7 +67,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
     const fieldErrors = form.getFieldError(attribute.id);
 
     const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
-    const isFieldInError = fieldErrors.length > 0;
+    const isFieldInError = !avoidFormValidationOnLoad && fieldErrors.length > 0;
 
     useEffect(() => {
         setAttributePendingValues(

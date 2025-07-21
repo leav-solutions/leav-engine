@@ -13,6 +13,7 @@ function Container({
     formIdToLoad,
     readonly,
     pendingValues,
+    avoidFormValidationOnLoad,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues
@@ -37,6 +38,7 @@ function Container({
                                 onValueSubmit={onValueSubmit}
                                 onValueDelete={onValueDelete}
                                 onDeleteMultipleValues={onDeleteMultipleValues}
+                                avoidFormValidationOnLoad={avoidFormValidationOnLoad}
                             />
                         )}
                     </Col>

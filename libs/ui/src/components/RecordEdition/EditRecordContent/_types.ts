@@ -119,6 +119,7 @@ export interface IFormElementProps<SettingsType, RecordFormElements = RecordForm
     onValueDelete?: DeleteValueFunc;
     onDeleteMultipleValues?: DeleteMultipleValuesFunc;
     metadataEdit?: boolean;
+    avoidFormValidationOnLoad?: boolean;
 }
 
 export type FormElement<SettingsType, RecordFormElements = RecordFormElementsValue> = Override<
