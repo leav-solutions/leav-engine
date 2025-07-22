@@ -44,7 +44,7 @@ export const useManageTreeNodeSelection = ({
 
     useEffect(() => {
         // Set field in error when TreeField is displayed for the first time. Otherwise, errors will be handled by other functions in this file.
-        if (backendValues.length === 0 && attribute.required && formIdToLoad === 'edition') {
+        if (backendValues.length === 0 && attribute.required && formIdToLoad !== 'creation') {
             form.setFields([
                 {
                     name: attribute.id,

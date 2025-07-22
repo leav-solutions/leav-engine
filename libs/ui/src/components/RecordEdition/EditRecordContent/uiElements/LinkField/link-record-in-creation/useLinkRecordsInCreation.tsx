@@ -85,7 +85,7 @@ export const useLinkRecordsInCreation = ({
     });
 
     useEffect(() => {
-        if (isHookUsed && pendingValues.length === 0 && attribute.required && formIdToLoad === 'edition') {
+        if (isHookUsed && pendingValues.length === 0 && attribute.required && formIdToLoad !== 'creation') {
             // Set field in error when LinkField is displayed for the first time. Otherwise, errors will be handled by useLinkRecords
             form.setFields([
                 {
