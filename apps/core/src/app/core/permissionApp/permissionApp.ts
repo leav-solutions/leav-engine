@@ -46,10 +46,11 @@ export default function ({
     }
 
     /**
-     * Return all possibles permissions actions, deduplicated, including plugins actions
+     * Return possibles permissions actions, deduplicated, including plugins actions
      */
-    const _graphqlActionsList = (): string => {
-        const actions = Object.values(PermissionTypes).reduce(
+    const _graphqlPermissionsActionsList = (filterType?: PermissionTypes): string => {
+        const types = filterType ? [filterType] : Object.values(PermissionTypes);
+        const actions = types.reduce(
             (acc, type): string[] => [
                 ...acc,
                 ...permissionDomain.getActionsByType({type, skipApplyOn: true}).map(a => a.name)
@@ -72,10 +73,14 @@ export default function ({
                         ${Object.values(PermissionTypes).join(' ')}
                     }
 
-                    enum PermissionsActions{
-                        ${_graphqlActionsList()}
+                    enum PermissionsActions {
+                        ${_graphqlPermissionsActionsList()}
                     }
-
+    
+                    enum RecordPermissionsActions {
+                        ${_graphqlPermissionsActionsList(PermissionTypes.RECORD)}
+                    }
+    
                     type LabeledPermissionsActions {
                         name: PermissionsActions!,
                         label: SystemTranslation
@@ -269,7 +274,7 @@ export default function ({
                     PermissionsActions: {
                         __resolveType(obj: IPermission) {
                             const typesMapping = {
-                                [PermissionTypes.RECORD]: 'RecordPermisisons',
+                                [PermissionTypes.RECORD]: 'RecordPermissions',
                                 [PermissionTypes.RECORD_ATTRIBUTE]: 'AttributePermissions'
                             };
 
@@ -290,9 +295,7 @@ export default function ({
                 }
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
-            return fullSchema;
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         },
         extensionPoints: {
             registerPermissionActions(type: PermissionTypes, actions: string[], applyOn?: string[]) {
