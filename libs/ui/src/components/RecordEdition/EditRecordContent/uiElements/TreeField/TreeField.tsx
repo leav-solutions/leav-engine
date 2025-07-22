@@ -106,7 +106,8 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
             onValueDelete,
             onDeleteMultipleValues,
             isReadOnly,
-            isFieldInError
+            isFieldInError,
+            formIdToLoad
         });
 
     const {TreeNodeList} = useDisplayTreeNode({

@@ -36,6 +36,7 @@ interface IUseLinkRecordsInCreationProps {
     isFieldInError: boolean;
     onValueSubmit: SubmitValueFunc;
     onValueDelete: DeleteValueFunc;
+    formIdToLoad: string;
 }
 
 export const useLinkRecordsInCreation = ({
@@ -48,7 +49,8 @@ export const useLinkRecordsInCreation = ({
     isReadOnly,
     isFieldInError,
     onValueSubmit,
-    onValueDelete
+    onValueDelete,
+    formIdToLoad
 }: IUseLinkRecordsInCreationProps) => {
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
@@ -83,7 +85,7 @@ export const useLinkRecordsInCreation = ({
     });
 
     useEffect(() => {
-        if (isHookUsed && pendingValues.length === 0 && attribute.required) {
+        if (isHookUsed && pendingValues.length === 0 && attribute.required && formIdToLoad === 'edition') {
             // Set field in error when LinkField is displayed for the first time. Otherwise, errors will be handled by useLinkRecords
             form.setFields([
                 {

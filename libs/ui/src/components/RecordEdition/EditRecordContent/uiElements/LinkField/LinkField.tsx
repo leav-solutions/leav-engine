@@ -139,7 +139,8 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         isReadOnly,
         isFieldInError,
         onValueSubmit,
-        onValueDelete
+        onValueDelete,
+        formIdToLoad
     });
 
     const {UnlinkAllRecordsInEdition, LinkRecordsInEditionExplorer} = useLinkRecordsInEdition({
