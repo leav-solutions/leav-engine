@@ -39,13 +39,8 @@ import {
     MetadataSubmitValueFunc,
     SubmitValueFunc
 } from '../EditRecordContent/_types';
-import editRecordReducer, {
-    EditRecordReducerActionsTypes,
-    initialState,
-    EditRecordSidebarContentTypeMap
-} from '../editRecordReducer/editRecordReducer';
+import editRecordReducer, {EditRecordReducerActionsTypes, initialState} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
-import CreationErrorContext, {ICreationErrorByField} from './creationErrorContext';
 import {FormInstance} from 'antd/lib/form/Form';
 import {useRunActionsListAndFormatOnValue} from '../EditRecordContent/hooks/useRunActionsListAndFormatOnValue';
 import EditRecordSidebar from '../EditRecordSidebar';
@@ -127,8 +122,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     const {saveValues} = useSaveValueBatchMutation();
     const {deleteValue} = useExecuteDeleteValueMutation(record);
     const {createRecord} = useExecuteCreateRecordMutation();
-
-    const [creationErrors, setCreationErrors] = useState<ICreationErrorByField>({});
 
     const [pendingValues, setPendingValues] = useState<IPendingValues>({});
 
@@ -399,23 +392,10 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
 
         const creationResult = await createRecord(libraryId, valuesToSave);
         if (creationResult.status === APICallStatus.SUCCESS) {
-            if (onCreate) {
-                onCreate(creationResult.record);
-            }
+            onCreate?.(creationResult.record);
+
             return;
         }
-
-        // Extract errors by field
-        const errorsByField = creationResult.errors.reduce((errors, error) => {
-            if (!errors[error.attribute]) {
-                errors[error.attribute] = [];
-            }
-
-            errors[error.attribute].push(error);
-
-            return errors;
-        }, {});
-        setCreationErrors(errorsByField);
 
         antdForm.setFields(
             creationResult.errors.map(error => {
@@ -423,7 +403,9 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
 
                 const doesAttributeHaveMultipleFields =
                     attributeInError?.multiple_values &&
-                    ![AttributeType.simple_link, AttributeType.advanced_link].includes(attributeInError.type);
+                    ![AttributeType.simple_link, AttributeType.advanced_link, AttributeType.tree].includes(
+                        attributeInError.type
+                    );
 
                 return {
                     name:
@@ -493,36 +475,31 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     return (
         <ErrorBoundary>
             <EditRecordReducerContext.Provider value={{state, dispatch}}>
-                <CreationErrorContext.Provider value={creationErrors}>
-                    <Container $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar} style={containerStyle}>
-                        <EditRecordButtons />
-                        <Content $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar}>
-                            {permissionsLoading ? (
-                                <EditRecordSkeleton rows={5} />
-                            ) : canEdit ? (
-                                <EditRecordContent
-                                    antdForm={antdForm}
-                                    formId={formId}
-                                    formElementId={formElementId}
-                                    record={record}
-                                    library={libraryId}
-                                    pendingValues={pendingValues}
-                                    onRecordSubmit={_handleRecordSubmit}
-                                    onValueSubmit={_handleValueSubmit}
-                                    onValueDelete={_handleDeleteValue}
-                                    onDeleteMultipleValues={_handleDeleteAllValues}
-                                    readonly={isReadOnly}
-                                />
-                            ) : (
-                                <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} showActionButton={false} />
-                            )}
-                        </Content>
-                        <EditRecordSidebar
-                            onMetadataSubmit={_handleMetadataSubmit}
-                            sidebarContainer={sidebarContainer}
-                        />
-                    </Container>
-                </CreationErrorContext.Provider>
+                <Container $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar} style={containerStyle}>
+                    <EditRecordButtons />
+                    <Content $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar}>
+                        {permissionsLoading ? (
+                            <EditRecordSkeleton rows={5} />
+                        ) : canEdit ? (
+                            <EditRecordContent
+                                antdForm={antdForm}
+                                formId={formId}
+                                formElementId={formElementId}
+                                record={record}
+                                library={libraryId}
+                                pendingValues={pendingValues}
+                                onRecordSubmit={_handleRecordSubmit}
+                                onValueSubmit={_handleValueSubmit}
+                                onValueDelete={_handleDeleteValue}
+                                onDeleteMultipleValues={_handleDeleteAllValues}
+                                readonly={isReadOnly}
+                            />
+                        ) : (
+                            <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} showActionButton={false} />
+                        )}
+                    </Content>
+                    <EditRecordSidebar onMetadataSubmit={_handleMetadataSubmit} sidebarContainer={sidebarContainer} />
+                </Container>
             </EditRecordReducerContext.Provider>
         </ErrorBoundary>
     );

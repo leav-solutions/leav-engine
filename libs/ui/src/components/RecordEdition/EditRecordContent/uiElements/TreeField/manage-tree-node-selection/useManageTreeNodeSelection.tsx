@@ -22,6 +22,7 @@ interface IUseManageTreeNodeSelectionProps {
     onDeleteMultipleValues: DeleteMultipleValuesFunc;
     isReadOnly: boolean;
     isFieldInError: boolean;
+    formIdToLoad: string;
 }
 
 export const useManageTreeNodeSelection = ({
@@ -33,7 +34,8 @@ export const useManageTreeNodeSelection = ({
     onValueDelete,
     onDeleteMultipleValues,
     isReadOnly,
-    isFieldInError
+    isFieldInError,
+    formIdToLoad
 }: IUseManageTreeNodeSelectionProps) => {
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
@@ -41,8 +43,8 @@ export const useManageTreeNodeSelection = ({
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
-        if (backendValues.length === 0 && attribute.required) {
-            // Set field in error when TreeField is displayed for the first time. Otherwise, errors will be handled by other functions in this file.
+        // Set field in error when TreeField is displayed for the first time. Otherwise, errors will be handled by other functions in this file.
+        if (backendValues.length === 0 && attribute.required && formIdToLoad !== 'creation') {
             form.setFields([
                 {
                     name: attribute.id,
