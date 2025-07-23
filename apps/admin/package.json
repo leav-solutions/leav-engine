@@ -1,7 +1,7 @@
 {
     "name": "admin",
     "description": "Administration",
-    "version": "1.0.0-beta24",
+    "version": "1.0.0-beta25",
     "main": "src/index.tsx",
     "dependencies": {
         "@apollo/client": "3.8.1",
