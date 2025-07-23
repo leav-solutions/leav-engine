@@ -1,6 +1,8 @@
 default:
   image: node:18-alpine3.18
   interruptible: true
+  tags:
+    - docker-dev
 
 .no_tag_rule: &no_tag_rule
   if: $CI_COMMIT_TAG
@@ -115,7 +117,7 @@ install:
 ##########
 
 ##########
-## Divers checks
+## Other checks
 ## For merge requests and merge in develop/main branches
 .check_ci_rules: &check_ci_rules
   - if: $DISABLE_CHECK_JOBS == "true"
@@ -161,7 +163,7 @@ translations-check:
     <<: *node_modules_cache
   rules: *check_ci_rules
 
-## Divers checks
+## Other checks
 ##########
 
 ##########
