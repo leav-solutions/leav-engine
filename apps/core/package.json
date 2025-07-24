@@ -28,6 +28,7 @@
         "buildapps:dev": "ts-node src/ build-apps",
         "benchmark": "ts-node src/ benchmark",
         "build": "scripts/build.js",
+        "build-types": "tsc -b tsconfig.types.json",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p tsconfig.json"
     },

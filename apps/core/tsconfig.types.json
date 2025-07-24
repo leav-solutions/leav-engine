@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": "src",
+        "outDir": "dist-types",
+        "isolatedModules": false,
+        "emitDeclarationOnly": true,
+        "declaration": true,
+        "typeRoots": ["./src/_types", "./node_modules/@types"]
+    },
+    "exclude": [
+        "applications"
+    ]
+}

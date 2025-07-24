@@ -37,56 +37,16 @@ variables:
   NPM_TOKEN: ""
 
 stages:
-  - install
   - test
   - build
 
-##########
-## Install
-## For merge requests and merge in develop/main branches
-.node_modules_cache: &node_modules_cache
+.yarn_cache: &yarn_cache
   key:
     files:
       - yarn.lock
-    prefix: $CI_RUNNER_EXECUTABLE_ARCH
   paths:
-    - node_modules/
-    - apps/*/node_modules/
-    - libs/*/node_modules/
-    - test-apps/*/node_modules/
-    # Do no add .yarn_cache because node_modules should be enough
+    - .yarn_cache
   policy: pull
-
-# Necessary in case of cache not available (different runner, etc.)
-.yarn_install_if_not_exists: &yarn_install_if_not_exists
-  - |
-    echo "Check if node_modules exists and if it is up to date";
-    if [ -d node_modules ] && [ -f node_modules/.cache/last-successful-install ]; then
-      echo "node_modules already exists, skip yarn install";
-    else
-      yarn install --immutable &&
-      mkdir -p node_modules/.cache &&
-      touch node_modules/.cache/last-successful-install;
-    fi
-
-.install_ci_rules: &install_ci_rules
-  - *no_tag_rule
-  - *no_duplicate_rule
-  - *main_develop_or_mr_rule
-
-install:
-  stage: install
-  script:
-    - *yarn_install_if_not_exists
-  cache:
-    <<: *node_modules_cache
-    # pull if exists, push after that job,
-    # but is efficient only if other jobs run in same runner instance when cache is not share with s3
-    policy: pull-push
-  rules: *install_ci_rules
-
-## Install
-##########
 
 ##########
 ## Other checks
@@ -101,37 +61,35 @@ install:
 lint:
   stage: test
   script:
-    - *yarn_install_if_not_exists
-    - yarn lint
+    - yarn workspaces focus --all
+    - yarn run lint
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
+    policy: pull-push
   rules: *check_ci_rules
 
 license-check:
   stage: test
   script:
-    - *yarn_install_if_not_exists
-    - yarn license:check
+    - yarn workspaces focus leav-monorepo
+    - yarn run license:check
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules: *check_ci_rules
 
 tscheck:
   stage: test
   script:
-    - *yarn_install_if_not_exists
-    - yarn tscheck
+    - yarn workspaces focus --all
+    - yarn run tscheck
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules: *check_ci_rules
 
 translations-check:
   stage: test
   script:
-    - *yarn_install_if_not_exists
-    - yarn translations:check
-  cache:
-    <<: *node_modules_cache
+    - node ./scripts/compareTranslations.js
   rules: *check_ci_rules
 
 ## Other checks
@@ -147,10 +105,10 @@ translations-check:
 libs/app-root-path-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus @leav/app-root-path
     - yarn workspace @leav/app-root-path run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -162,10 +120,10 @@ libs/app-root-path-unit-tests:
 libs/config-manager-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus @leav/config-manager
     - yarn workspace @leav/config-manager run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -177,10 +135,10 @@ libs/config-manager-unit-tests:
 libs/message-broker-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus @leav/message-broker
     - yarn workspace @leav/message-broker run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -192,10 +150,10 @@ libs/message-broker-unit-tests:
 libs/ui-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus @leav/ui
     - yarn workspace @leav/ui run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -207,10 +165,10 @@ libs/ui-unit-tests:
 libs/utils-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus @leav/utils
     - yarn workspace @leav/utils run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -222,10 +180,10 @@ libs/utils-unit-tests:
 apps/admin-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus admin
     - yarn workspace admin run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -237,10 +195,10 @@ apps/admin-unit-tests:
 apps/app-studio-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus app-studio
     - yarn workspace app-studio run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -254,10 +212,10 @@ apps/app-studio-unit-tests:
 apps/automate-scan-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus automate-scan
     - yarn workspace automate-scan run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -272,10 +230,10 @@ apps/automate-scan-unit-tests:
 apps/core-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus core
     - yarn workspace core run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -291,10 +249,10 @@ apps/core-unit-tests:
 apps/data-studio-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus data-studio
     - yarn workspace data-studio run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -308,10 +266,10 @@ apps/data-studio-unit-tests:
 apps/login-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus login
     - yarn workspace login run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -324,10 +282,10 @@ apps/login-unit-tests:
 apps/logs-collector-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus logs-collector
     - yarn workspace logs-collector run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -343,10 +301,10 @@ apps/logs-collector-unit-tests:
 apps/portal-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus portal
     - yarn workspace portal run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -360,10 +318,10 @@ apps/portal-unit-tests:
 apps/preview-generator-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus preview-generator
     - yarn workspace preview-generator run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -378,10 +336,10 @@ apps/preview-generator-unit-tests:
 apps/sync-scan-unit-tests:
   stage: test
   script:
-    - *yarn_install_if_not_exists
+    - yarn workspaces focus sync-scan
     - yarn workspace sync-scan run test:ci
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_test_rule
     - *no_tag_rule
@@ -454,11 +412,10 @@ e2e-api:
     REDIS_HOST: "redis"
     REDIS_PORT: "6379"
   script:
-    - *yarn_install_if_not_exists
-    - cd apps/core
-    - yarn run test:e2e:api
+    - yarn workspaces focus core
+    - yarn workspace core run test:e2e:api
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_e2e_rule
     - *no_tag_rule
@@ -490,11 +447,10 @@ e2e-indexation-manager:
     REDIS_HOST: "redis"
     REDIS_PORT: "6379"
   script:
-    - *yarn_install_if_not_exists
-    - cd apps/core
-    - yarn run test:e2e:indexationManager
+    - yarn workspaces focus core
+    - yarn workspace core run test:e2e:indexationManager
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_e2e_rule
     - *no_tag_rule
@@ -520,11 +476,10 @@ e2e-sync-scan:
     ALLOW_FILES_LIST: ""
     IGNORE_FILES_LIST: ""
   script:
-    - *yarn_install_if_not_exists
-    - cd apps/sync-scan
-    - yarn run test:e2e
+    - yarn workspaces focus sync-scan
+    - yarn workspace sync-scan run test:e2e
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_e2e_rule
     - *no_tag_rule
@@ -764,8 +719,7 @@ publish-npm-leav-types-next:
   script:
     - apk add --no-cache jq
     - *login_npm_registry_script
-    - *yarn_install_if_not_exists
-    - VERSION=$(yarn workspace @aristid/leav-types get-version)-$CI_COMMIT_SHORT_SHA
+    - VERSION=$(npm --silent -workspace @aristid/leav-types run get-version)-$CI_COMMIT_SHORT_SHA
     - |
       echo "Check if version @aristid/leav-types@$VERSION already exists on npm"
       EXISTS=$(npm --silent view @aristid/leav-types@$VERSION version || echo "")
@@ -773,6 +727,8 @@ publish-npm-leav-types-next:
         echo "Version @aristid/leav-types@$VERSION already exists on npm, skipping publish."
       else
         echo "Publishing @aristid/leav-types@$VERSION to npm"
+        echo yarn workspaces focus core
+        yarn workspaces focus core
         echo yarn workspace @aristid/leav-types generate
         yarn workspace @aristid/leav-types generate
         # Do not use 'yarn workspace @aristid/leav-types version xxx' because it needs git !
@@ -782,7 +738,7 @@ publish-npm-leav-types-next:
         yarn workspace @aristid/leav-types publish-types --tag next
       fi
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
     - if: $CI_COMMIT_BRANCH == "develop"
@@ -796,8 +752,7 @@ publish-npm-leav-ui-next:
   script:
     - apk add --no-cache jq
     - *login_npm_registry_script
-    - *yarn_install_if_not_exists
-    - VERSION=$(yarn workspace @leav/ui get-version)-$CI_COMMIT_SHORT_SHA
+    - VERSION=$(npm --silent -workspace @leav/ui run get-version)-$CI_COMMIT_SHORT_SHA
     - |
       echo "Check if version @leav/ui@$VERSION already exists on npm"
       EXISTS=$(npm --silent view @leav/ui@$VERSION version || echo "")
@@ -805,6 +760,8 @@ publish-npm-leav-ui-next:
         echo "Version @leav/ui@$VERSION already exists on npm, skipping publish."
       else
         echo "Publishing @leav/ui@$VERSION to npm"
+        echo yarn workspaces focus @leav/ui
+        yarn workspaces focus @leav/ui
         echo yarn workspace @leav/ui build
         yarn workspace @leav/ui build
         # Do not use 'yarn workspace @leav/ui version xxx' because it needs git !
@@ -814,7 +771,7 @@ publish-npm-leav-ui-next:
         yarn workspace @leav/ui publish-ui --tag next
       fi
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
     - if: $CI_COMMIT_BRANCH == "develop"
@@ -828,8 +785,7 @@ publish-npm-leav-ui-latest:
   script:
     - apk add --no-cache jq
     - *login_npm_registry_script
-    - *yarn_install_if_not_exists
-    - VERSION=$(yarn workspace @leav/ui get-version)
+    - VERSION=$(npm --silent -workspace @leav/ui run get-version)
     - |
       echo "Check if version @leav/ui@$VERSION already exists on npm"
       EXISTS=$(npm --silent view @leav/ui@$VERSION version || echo "")
@@ -837,13 +793,15 @@ publish-npm-leav-ui-latest:
         echo "Version @leav/ui@$VERSION already exists on npm, skipping publish."
       else
         echo "Publishing @leav/ui@$VERSION to npm"
+        echo yarn workspaces focus @leav/ui
+        yarn workspaces focus @leav/ui
         echo yarn workspace @leav/ui build
         yarn workspace @leav/ui build
         echo yarn workspace @leav/ui publish-ui --tag latest
         yarn workspace @leav/ui publish-ui --tag latest
       fi
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
     - if: $CI_COMMIT_BRANCH == "develop"
@@ -857,8 +815,7 @@ publish-npm-leav-utils-latest:
   script:
     - apk add --no-cache jq
     - *login_npm_registry_script
-    - *yarn_install_if_not_exists
-    - VERSION=$(yarn workspace @leav/utils get-version)
+    - VERSION=$(npm --silent -workspace @leav/utils run get-version)
     - |
       echo "Check if version @leav/utils@$VERSION already exists on npm"
       EXISTS=$(npm --silent view @leav/utils@$VERSION version || echo "")
@@ -866,13 +823,15 @@ publish-npm-leav-utils-latest:
         echo "Version @leav/utils@$VERSION already exists on npm, skipping publish."
       else
         echo "Publishing @leav/utils@$VERSION to npm"
+        echo yarn workspaces focus @leav/utils
+        yarn workspaces focus @leav/utils
         echo yarn workspace @leav/utils build
         yarn workspace @leav/utils build
         echo yarn workspace @leav/utils publish-utils --tag latest
         yarn workspace @leav/utils publish-utils --tag latest
       fi
   cache:
-    <<: *node_modules_cache
+    <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
     - if: $CI_COMMIT_BRANCH == "develop"
