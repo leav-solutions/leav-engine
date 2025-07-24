@@ -8,40 +8,13 @@ default:
   if: $CI_COMMIT_TAG
   when: never
 
-.mr_rule: &mr_rule
-  if: $CI_PIPELINE_SOURCE == "merge_request_event"
-  when: on_success
-
 .no_duplicate_rule: &no_duplicate_rule
   if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
   when: never
 
-.main_and_develop_branches_rule: &main_and_develop_branches_rule
-  if: $CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop")
+.main_develop_or_mr_rule: &main_develop_or_mr_rule
+  if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop" || $CI_PIPELINE_SOURCE == "merge_request_event"
   when: on_success
-
-# To update, run the following command:
-# yarn workspaces list --json | jq 'select(.location | contains("test-apps") | not)' | jq -r '.name | "  - \"\(.)\""'
-# Hardcoded list because it is not possible to get the list of workspaces from yarn in the CI/CD pipeline
-# and use it for parallel job matrix
-.workspace_projects_name: &workspace_projects_name
-  - "leav-monorepo"
-  - "admin"
-  - "app-studio"
-  - "automate-scan"
-  - "core"
-  - "data-studio"
-  - "login"
-  - "logs-collector"
-  - "portal"
-  - "preview-generator"
-  - "sync-scan"
-  - "@leav/app-root-path"
-  - "@leav/config-manager"
-  - "@leav/message-broker"
-  - "@aristid/leav-types"
-  - "@leav/ui"
-  - "@leav/utils"
 
 variables:
   GIT_DEPTH: 1 # clone only the last commit to speed up the pipeline
@@ -99,8 +72,7 @@ stages:
 .install_ci_rules: &install_ci_rules
   - *no_tag_rule
   - *no_duplicate_rule
-  - *mr_rule
-  - *main_and_develop_branches_rule
+  - *main_develop_or_mr_rule
 
 install:
   stage: install
@@ -124,8 +96,7 @@ install:
     when: never
   - *no_tag_rule
   - *no_duplicate_rule
-  - *mr_rule
-  - *main_and_develop_branches_rule
+  - *main_develop_or_mr_rule
 
 lint:
   stage: test
@@ -169,57 +140,268 @@ translations-check:
 ##########
 ## Unit tests
 ## For merge requests and merge in develop/main branches
-.test_ci_rules: &test_ci_rules
-  - if: $DISABLE_TEST_JOBS == "true"
-    when: never
-  - *no_tag_rule
-  - *no_duplicate_rule
-  - *mr_rule
-  - *main_and_develop_branches_rule
+.disable_test_rule: &disable_test_rule
+  if: $DISABLE_TEST_JOBS == "true"
+  when: never
 
-check-workspaces-list:
+libs/app-root-path-unit-tests:
   stage: test
-  script:
-    # Prepare image ? maybe image with that tools already exists?
-    - apk add --no-cache yq jq
-    # Check if yarn workspaces list matches the .gitlab-ci.yml .workspace_projects_name
-    - |
-      echo "Check if .gitlab-ci.yml .workspace_projects_name matches yarn workspaces list output";
-      CI_WORKSPACES_NAME=$(cat .gitlab-ci.yml | yq -r '.[".workspace_projects_name"][]')
-      YARN_WORKSPACES_NAME=$(yarn workspaces list --json | jq 'select(.location | contains("test-apps") | not)' | jq -r '.name')
-      if [ "$CI_WORKSPACES_NAME" != "$YARN_WORKSPACES_NAME" ]; then
-        echo "Please update .gitlab-ci.yml .workspace_projects_name to match yarn workspaces list output.";
-        exit 1;
-      fi
-  rules: *test_ci_rules
-
-workspace-unit-tests:
-  stage: test
-  needs:
-    - job: check-workspaces-list
-  parallel:
-    matrix:
-      - WORKSPACE_NAME: *workspace_projects_name
   script:
     - *yarn_install_if_not_exists
-    - yarn workspace $WORKSPACE_NAME run test:ci
+    - yarn workspace @leav/app-root-path run test:ci
   cache:
     <<: *node_modules_cache
-  rules: *test_ci_rules
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - libs/app-root-path/**/*
 
+libs/config-manager-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace @leav/config-manager run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - libs/config-manager/**/*
+
+libs/message-broker-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace @leav/message-broker run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - libs/message-broker/**/*
+
+libs/ui-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace @leav/ui run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - libs/ui/**/*
+
+libs/utils-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace @leav/utils run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - libs/utils/**/*
+
+apps/admin-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace admin run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/admin/**/*
+
+apps/app-studio-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace app-studio run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/app-studio/**/*
+        - libs/ui/**/*
+        - libs/utils/**/*
+
+apps/automate-scan-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace automate-scan run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/automate-scan/**/*
+        - libs/app-root-path/**/*
+        - libs/config-manager/**/*
+        - libs/utils/**/*
+
+apps/core-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace core run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/core/**/*
+        - libs/app-root-path/**/*
+        - libs/config-manager/**/*
+        - libs/message-broker/**/*
+        - libs/utils/**/*
+
+apps/data-studio-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace data-studio run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/data-studio/**/*
+        - libs/ui/**/*
+        - libs/utils/**/*
+
+apps/login-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace login run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/login/**/*
+        - libs/ui/**/*
+
+apps/logs-collector-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace logs-collector run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/logs-collector/**/*
+        - libs/app-root-path/**/*
+        - libs/config-manager/**/*
+        - libs/message-broker/**/*
+        - libs/utils/**/*
+
+apps/portal-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace portal run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/portal/**/*
+        - libs/ui/**/*
+        - libs/utils/**/*
+
+apps/preview-generator-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace preview-generator run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/preview-generator/**/*
+        - libs/app-root-path/**/*
+        - libs/config-manager/**/*
+        - libs/utils/**/*
+
+apps/sync-scan-unit-tests:
+  stage: test
+  script:
+    - *yarn_install_if_not_exists
+    - yarn workspace sync-scan run test:ci
+  cache:
+    <<: *node_modules_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/sync-scan/**/*
+        - libs/app-root-path/**/*
+        - libs/config-manager/**/*
+        - libs/message-broker/**/*
+        - libs/utils/**/*
 ## Unit tests
 ##########
 
 ##########
 ## E2E tests
 ## For merge requests and merge in develop/main branches
-.e2e_ci_rules: &e2e_ci_rules
-  - if: $DISABLE_E2E_JOBS == "true"
-    when: never
-  - *no_tag_rule
-  - *no_duplicate_rule
-  - *mr_rule
-  - *main_and_develop_branches_rule
+.disable_e2e_rule: &disable_e2e_rule
+  if: $DISABLE_E2E_JOBS == "true"
+  when: never
 
 .e2e_service_arangodb: &e2e_service_arangodb
   name: arangodb:3.12
@@ -277,7 +459,17 @@ e2e-api:
     - yarn run test:e2e:api
   cache:
     <<: *node_modules_cache
-  rules: *e2e_ci_rules
+  rules:
+    - *disable_e2e_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/core/**/*
+        - libs/app-root-path/**/*
+        - libs/config-manager/**/*
+        - libs/message-broker/**/*
+        - libs/utils/**/*
 
 e2e-indexation-manager:
   stage: test
@@ -303,7 +495,17 @@ e2e-indexation-manager:
     - yarn run test:e2e:indexationManager
   cache:
     <<: *node_modules_cache
-  rules: *e2e_ci_rules
+  rules:
+    - *disable_e2e_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/core/**/*
+        - libs/app-root-path/**/*
+        - libs/config-manager/**/*
+        - libs/message-broker/**/*
+        - libs/utils/**/*
 
 e2e-sync-scan:
   stage: test
@@ -323,7 +525,17 @@ e2e-sync-scan:
     - yarn run test:e2e
   cache:
     <<: *node_modules_cache
-  rules: *e2e_ci_rules
+  rules:
+    - *disable_e2e_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/sync-scan/**/*
+        - libs/app-root-path/**/*
+        - libs/config-manager/**/*
+        - libs/message-broker/**/*
+        - libs/utils/**/*
 
 ## E2E tests
 ##########
@@ -359,8 +571,8 @@ e2e-sync-scan:
   parallel:
     matrix:
       - DOCKER_PLATFORM:
-        - linux/amd64
-        - linux/arm64
+          - linux/amd64
+          - linux/arm64
   before_script:
     - apk add --no-cache jq findutils
     # Check if CI_REGISTRY_USER is set to skip docker login for gitlab-ci-local
@@ -440,14 +652,14 @@ build-docker-core:
   script:
     - *set_version
     - docker buildx build
-        --platform $DOCKER_PLATFORM
-        --file docker/DOCKERFILES/build/core.Dockerfile
-        --label "LEAV Engine"
-        --label "Core"
-        $DOCKER_IMAGE_TAG
-        $DOCKER_IMAGE_LATEST
-        $DOCKER_PUSH
-        .
+      --platform $DOCKER_PLATFORM
+      --file docker/DOCKERFILES/build/core.Dockerfile
+      --label "LEAV Engine"
+      --label "Core"
+      $DOCKER_IMAGE_TAG
+      $DOCKER_IMAGE_LATEST
+      $DOCKER_PUSH
+      .
 
 build-docker-preview-generator:
   <<: *default_docker_build
@@ -457,16 +669,16 @@ build-docker-preview-generator:
   script:
     - *set_version
     - docker buildx build
-        --platform $DOCKER_PLATFORM
-        --file docker/DOCKERFILES/build/generic.Dockerfile
-        --build-arg APP=$DOCKER_IMAGE_APP
-        --target runner-preview-generator
-        --label "LEAV Engine"
-        --label "Preview Generator"
-        $DOCKER_IMAGE_TAG
-        $DOCKER_IMAGE_LATEST
-        $DOCKER_PUSH
-        .
+      --platform $DOCKER_PLATFORM
+      --file docker/DOCKERFILES/build/generic.Dockerfile
+      --build-arg APP=$DOCKER_IMAGE_APP
+      --target runner-preview-generator
+      --label "LEAV Engine"
+      --label "Preview Generator"
+      $DOCKER_IMAGE_TAG
+      $DOCKER_IMAGE_LATEST
+      $DOCKER_PUSH
+      .
 
 build-docker-automate-scan:
   <<: *default_docker_build
@@ -476,16 +688,16 @@ build-docker-automate-scan:
   script:
     - *set_version
     - docker buildx build
-        --platform $DOCKER_PLATFORM
-        --file docker/DOCKERFILES/build/generic.Dockerfile
-        --build-arg APP=$DOCKER_IMAGE_APP
-        --target runner
-        --label "LEAV Engine"
-        --label "Automate Scan"
-        $DOCKER_IMAGE_TAG
-        $DOCKER_IMAGE_LATEST
-        $DOCKER_PUSH
-        .
+      --platform $DOCKER_PLATFORM
+      --file docker/DOCKERFILES/build/generic.Dockerfile
+      --build-arg APP=$DOCKER_IMAGE_APP
+      --target runner
+      --label "LEAV Engine"
+      --label "Automate Scan"
+      $DOCKER_IMAGE_TAG
+      $DOCKER_IMAGE_LATEST
+      $DOCKER_PUSH
+      .
 
 build-docker-sync-scan:
   <<: *default_docker_build
@@ -495,16 +707,16 @@ build-docker-sync-scan:
   script:
     - *set_version
     - docker buildx build
-        --platform $DOCKER_PLATFORM
-        --file docker/DOCKERFILES/build/generic.Dockerfile
-        --build-arg APP=$DOCKER_IMAGE_APP
-        --target runner
-        --label "LEAV Engine"
-        --label "Sync scan"
-        $DOCKER_IMAGE_TAG
-        $DOCKER_IMAGE_LATEST
-        $DOCKER_PUSH
-        .
+      --platform $DOCKER_PLATFORM
+      --file docker/DOCKERFILES/build/generic.Dockerfile
+      --build-arg APP=$DOCKER_IMAGE_APP
+      --target runner
+      --label "LEAV Engine"
+      --label "Sync scan"
+      $DOCKER_IMAGE_TAG
+      $DOCKER_IMAGE_LATEST
+      $DOCKER_PUSH
+      .
 
 build-docker-logs-collector:
   <<: *default_docker_build
@@ -514,22 +726,25 @@ build-docker-logs-collector:
   script:
     - *set_version
     - docker buildx build
-        --platform $DOCKER_PLATFORM
-        --file docker/DOCKERFILES/build/generic.Dockerfile
-        --build-arg APP=$DOCKER_IMAGE_APP
-        --target runner
-        --label "LEAV Engine"
-        --label "Logs Collector"
-        $DOCKER_IMAGE_TAG
-        $DOCKER_IMAGE_LATEST
-        $DOCKER_PUSH
-        .
+      --platform $DOCKER_PLATFORM
+      --file docker/DOCKERFILES/build/generic.Dockerfile
+      --build-arg APP=$DOCKER_IMAGE_APP
+      --target runner
+      --label "LEAV Engine"
+      --label "Logs Collector"
+      $DOCKER_IMAGE_TAG
+      $DOCKER_IMAGE_LATEST
+      $DOCKER_PUSH
+      .
 
 ## Build / push docker images
 ##########
 
 ##########
 ## Publish npm packages
+.disable_publish_npm_rule: &disable_publish_npm_rule
+  if: $DISABLE_PUBLISH_NPM_JOBS == "true"
+  when: never
 
 .login_npm_registry_script: &login_npm_registry_script
   - |
@@ -569,12 +784,11 @@ publish-npm-leav-types-next:
   cache:
     <<: *node_modules_cache
   rules:
-    - if: $DISABLE_PUBLISH_NPM_JOBS == "true"
-      when: never
+    - *disable_publish_npm_rule
     - if: $CI_COMMIT_BRANCH == "develop"
       changes:
-      # libs/types is a projection of apps/core
-      - apps/core/**/*
+        # libs/types is a projection of apps/core
+        - apps/core/**/*
       when: on_success
 
 publish-npm-leav-ui-next:
@@ -602,11 +816,10 @@ publish-npm-leav-ui-next:
   cache:
     <<: *node_modules_cache
   rules:
-    - if: $DISABLE_PUBLISH_NPM_JOBS == "true"
-      when: never
+    - *disable_publish_npm_rule
     - if: $CI_COMMIT_BRANCH == "develop"
       changes:
-      - libs/ui/**/*
+        - libs/ui/**/*
       when: on_success
 
 publish-npm-leav-ui-latest:
@@ -632,11 +845,10 @@ publish-npm-leav-ui-latest:
   cache:
     <<: *node_modules_cache
   rules:
-    - if: $DISABLE_PUBLISH_NPM_JOBS == "true"
-      when: never
+    - *disable_publish_npm_rule
     - if: $CI_COMMIT_BRANCH == "develop"
       changes:
-      - libs/ui/**/*
+        - libs/ui/**/*
       when: manual
 
 publish-npm-leav-utils-latest:
@@ -662,12 +874,10 @@ publish-npm-leav-utils-latest:
   cache:
     <<: *node_modules_cache
   rules:
-    - if: $DISABLE_PUBLISH_NPM_JOBS == "true"
-      when: never
+    - *disable_publish_npm_rule
     - if: $CI_COMMIT_BRANCH == "develop"
       changes:
-      - libs/utils/**/*
+        - libs/utils/**/*
       when: manual
-
 ## Publish npm packages
 ##########
