@@ -44,7 +44,7 @@ export const useApplicationLibraries = (params: IUseApplicationLibrariesParams =
     const librariesCount = libraries.length;
 
     if (onlyAllowed) {
-        libraries = libraries.filter(lib => lib.permissions.access_library);
+        libraries = libraries.filter(lib => lib.permissions?.access_library);
     }
 
     // Order libraries according to librariesOrder settings. If a library doesn't appear on order, put it at the end
