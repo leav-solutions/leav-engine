@@ -30,13 +30,13 @@ import {IncomingHttpHeaders} from 'http';
 import {IRecordRepo} from '../../infra/record/recordRepo';
 import {AttributeTypes} from '../../_types/attribute';
 import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {IServerRouteAppModule} from 'interface/server';
 
-export interface IAuthApp extends IGraphqlAppModule {
+export interface IAuthApp extends IGraphqlAppModule, IServerRouteAppModule {
     validateRequestToken(
         params: {apiKey?: string; headers: IncomingHttpHeaders; cookies?: {}},
         res: Response<unknown>
     ): Promise<ITokenUserData>;
-    registerRoute(app: Express): void;
     authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): Promise<void | Response>;
 }
 

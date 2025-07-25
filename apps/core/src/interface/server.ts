@@ -12,7 +12,7 @@ import {AwilixContainer} from 'awilix';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, {NextFunction, Response} from 'express';
+import express, {NextFunction, Response, Express} from 'express';
 import fs from 'fs';
 import {GraphQLError} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
@@ -32,10 +32,22 @@ import ValidationError from '../errors/ValidationError';
 import type {ValidateRequestTokenFunc} from '../app/helpers/validateRequestToken';
 import {HandleGraphqlErrorFunc} from './helpers/handleGraphqlError';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
+import {IAppModule} from '_types/shared';
 
 export interface IServer {
     init(): Promise<void>;
     initConsumers(): Promise<void>;
+}
+
+export interface IServerRouteAppModule {
+    /**
+     * @param app Express instance, can be used to extend the app
+     */
+    registerRoute(app: Express): void;
+}
+
+function isServerRouteAppModule(app: IAppModule | IServerRouteAppModule): app is IServerRouteAppModule {
+    return typeof (app as IServerRouteAppModule).registerRoute === 'function';
 }
 
 interface IDeps {
@@ -122,7 +134,7 @@ export default function ({
                 for (const modName of modules) {
                     const appModule = depsManager.cradle[modName];
 
-                    if (typeof appModule.registerRoute === 'function') {
+                    if (isServerRouteAppModule(appModule)) {
                         await appModule.registerRoute(app);
                     }
                 }

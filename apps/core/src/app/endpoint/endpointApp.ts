@@ -12,14 +12,9 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {USERS_LIBRARY} from '../../_types/library';
 import {ITreeValue} from '_types/value';
 import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
+import {IServerRouteAppModule} from 'interface/server';
 
-interface IEndpointApp extends IAppModule {
-    /**
-     * Method call automatically by the LEAV Core: server.ts
-     * @param app Express instance, can be used to extend the app
-     */
-    registerRoute(app: Express): void;
-}
+type IEndpointApp = IAppModule & IServerRouteAppModule;
 
 export interface IPluginRoute {
     path: string;

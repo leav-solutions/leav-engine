@@ -39,10 +39,9 @@ import {AttributeCondition, IRecord} from '../../_types/record';
 import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 import {IAuthApp} from '../auth/authApp';
 import {IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
+import {IServerRouteAppModule} from 'interface/server';
 
-export interface IApplicationApp extends IGraphqlAppModule {
-    registerRoute(app: Express): void;
-}
+export type IApplicationApp = IGraphqlAppModule & IServerRouteAppModule;
 
 export interface IApplicationAppDeps {
     'core.app.graphql': IGraphqlApp;

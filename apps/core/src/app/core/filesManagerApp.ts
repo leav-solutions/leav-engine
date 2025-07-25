@@ -17,10 +17,10 @@ import {TriggerNames} from '../../_types/eventsManager';
 import AuthenticationError from '../../errors/AuthenticationError';
 import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {IServerRouteAppModule} from 'interface/server';
 
-export interface IFilesManagerApp extends IGraphqlAppModule {
+export interface IFilesManagerApp extends IGraphqlAppModule, IServerRouteAppModule {
     init(): Promise<void>;
-    registerRoute(app: Express): void;
 }
 
 interface IDeps {

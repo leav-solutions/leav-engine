@@ -18,10 +18,9 @@ import {IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsD
 import {APP_DEFAULT_NAME, DEFAULT_APPLICATION} from '../../_constants/globalSettings';
 import {AttributeCondition} from '../../_types/record';
 import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {IServerRouteAppModule} from 'interface/server';
 
-export interface ICoreApp extends IAppModule, IGraphqlAppModule {
-    registerRoute(app: Express): void;
-}
+export type ICoreApp = IAppModule & IGraphqlAppModule & IServerRouteAppModule;
 
 interface IDeps {
     'core.app.helpers.initQueryContext': InitQueryContextFunc;
