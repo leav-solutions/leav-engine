@@ -4,7 +4,7 @@
   "description": "Module to get app root path",
   "scripts": {
     "test": "jest -c jest-config.json",
-    "test:ci": "jest -c jest-config.json",
+    "test:ci": "jest -c jest-config.json --maxWorkers=2",
     "test:commit": "jest -c jest-config.json --maxWorkers=50% --onlyChanged ",
     "prepublishOnly": "npm run build",
     "build": "tsc --build",
