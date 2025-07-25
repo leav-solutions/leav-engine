@@ -4,10 +4,10 @@
 import {IPluginsDomain} from 'domain/plugins/pluginsDomain';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IPluginInfos} from '../../_types/plugin';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
-export interface ICorePluginsApp {
+export interface ICorePluginsApp extends IGraphqlAppModule {
     registerPlugin(path: string, plugin: IPluginInfos): void;
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
 interface IDeps {

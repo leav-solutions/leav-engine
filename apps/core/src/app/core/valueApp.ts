@@ -15,10 +15,9 @@ import {IStandardValue, ITreeValue, IValue, IValueFromGql, IValueVersion, IValue
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
-export interface ICoreValueApp {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-}
+export type ICoreValueApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.value': IValueDomain;

@@ -17,9 +17,9 @@ import {IAppModule} from '_types/shared';
 import {IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
 import {APP_DEFAULT_NAME, DEFAULT_APPLICATION} from '../../_constants/globalSettings';
 import {AttributeCondition} from '../../_types/record';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
-export interface ICoreApp extends IAppModule {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
+export interface ICoreApp extends IAppModule, IGraphqlAppModule {
     registerRoute(app: Express): void;
 }
 

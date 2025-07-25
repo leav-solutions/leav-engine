@@ -18,13 +18,11 @@ import {ITree} from '_types/tree';
 import {ILibrary, LibraryBehavior} from '../../../_types/library';
 import {LibraryPermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../../_types/record';
-import {IGraphqlApp} from '../../graphql/graphqlApp';
+import {IGraphqlAppModule, IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {IGetLibraryParams} from './_types';
 
-export interface ICoreLibraryApp {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-}
+export type ICoreLibraryApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.library'?: ILibraryDomain;

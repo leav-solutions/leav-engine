@@ -16,11 +16,11 @@ import {TriggerNames} from '../../_types/eventsManager';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition} from '../../_types/record';
 import {ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
-export interface ITasksManagerApp {
+export interface ITasksManagerApp extends IGraphqlAppModule {
     initMaster(): Promise<NodeJS.Timer>;
     initWorker(): Promise<void>;
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
 interface IDeps {

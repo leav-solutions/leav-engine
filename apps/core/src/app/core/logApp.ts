@@ -9,15 +9,14 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ILogDomain} from 'domain/log/logDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {IAppGraphQLSchema} from '_types/graphql';
 import {ILogFilters, ILogPagination, ILogSort} from '_types/log';
 import {IQueryInfos} from '_types/queryInfos';
 import {IAppModule} from '_types/shared';
 import {USERS_LIBRARY} from '../../_types/library';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {IAppGraphQLSchema} from '_types/graphql';
 
-export interface ICoreLogApp extends IAppModule {
-    getGraphQLSchema(): IAppGraphQLSchema;
-}
+export type ICoreLogApp = IAppModule & IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.log': ILogDomain;
@@ -39,7 +38,7 @@ export default function ({
     'core.domain.application': applicationDomain
 }: IDeps): ICoreLogApp {
     return {
-        getGraphQLSchema() {
+        async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
                     enum LogAction {

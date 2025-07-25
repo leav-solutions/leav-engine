@@ -3,10 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IExportDomain} from 'domain/export/exportDomain';
 import {IAppGraphQLSchema} from '_types/graphql';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
-export interface ICoreExportApp {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-}
+export type ICoreExportApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.export': IExportDomain;

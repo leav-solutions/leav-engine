@@ -5,10 +5,9 @@ import {UserCoreDataKeys, IUserDomain} from '../../domain/user/userDomain';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUserData} from '_types/userData';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
-export interface ICoreImportApp {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-}
+export type ICoreImportApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.user': IUserDomain;

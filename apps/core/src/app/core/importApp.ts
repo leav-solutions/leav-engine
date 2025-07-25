@@ -16,10 +16,9 @@ import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {ImportMode, ImportType} from '../../_types/import';
 import {TaskCallbackType} from '../../_types/tasksManager';
-import {IGraphqlApp} from '../graphql/graphqlApp';
+import {IGraphqlAppModule, IGraphqlApp} from '../graphql/graphqlApp';
 
-export interface ICoreImportApp {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
+export interface ICoreImportApp extends IGraphqlAppModule {
     importConfig(filepath: string, clear: boolean): Promise<void>;
     importData(filepath: string): Promise<void>;
 }

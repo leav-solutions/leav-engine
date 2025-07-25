@@ -18,6 +18,14 @@ export interface IGraphqlApp extends IAppModule {
     getQueryFields(info: GraphQLResolveInfo): IQueryField[];
 }
 
+export interface IGraphqlAppModule {
+    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
+}
+
+function isGraphqlAppModule(app: IAppModule | IGraphqlAppModule): app is IGraphqlAppModule {
+    return typeof (app as IGraphqlAppModule).getGraphQLSchema === 'function';
+}
+
 interface IDeps {
     'core.depsManager'?: AwilixContainer;
     'core.utils'?: IUtils;
@@ -37,7 +45,7 @@ export default function ({
                 for (const modName of modules) {
                     const appModule = depsManager.cradle[modName];
 
-                    if (typeof appModule.getGraphQLSchema === 'function') {
+                    if (isGraphqlAppModule(appModule)) {
                         const schemaToAdd = await appModule.getGraphQLSchema();
                         appSchema.typeDefs.push(schemaToAdd.typeDefs);
                         appSchema.resolvers = merge(appSchema.resolvers, schemaToAdd.resolvers);

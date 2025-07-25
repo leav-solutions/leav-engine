@@ -4,7 +4,7 @@
 import {appRootPath} from '@leav/app-root-path';
 import {Override, PublishedEvent} from '@leav/utils';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from 'app/core/helpers/subscriptions';
-import {IGraphqlApp} from 'app/graphql/graphqlApp';
+import {IGraphqlAppModule, IGraphqlApp} from 'app/graphql/graphqlApp';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
@@ -40,10 +40,8 @@ import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 import {IAuthApp} from '../auth/authApp';
 import {IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
 
-export interface IApplicationApp {
+export interface IApplicationApp extends IGraphqlAppModule {
     registerRoute(app: Express): void;
-
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
 export interface IApplicationAppDeps {

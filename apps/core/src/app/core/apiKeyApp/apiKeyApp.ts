@@ -9,10 +9,9 @@ import {IQueryInfos} from '_types/queryInfos';
 import {USERS_LIBRARY} from '../../../_types/library';
 import {AttributeCondition, IRecord} from '../../../_types/record';
 import {IApiKeysArgs, IDeleteApiKeyArgs, ISaveApiKeyArgs} from './_types';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
-export interface ICoreVersionProfileApp {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-}
+export type ICoreVersionProfileApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.apiKey': IApiKeyDomain;

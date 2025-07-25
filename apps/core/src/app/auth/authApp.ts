@@ -29,9 +29,9 @@ import {IConvertOIDCIdentifier} from '../helpers/convertOIDCIdentifier';
 import {IncomingHttpHeaders} from 'http';
 import {IRecordRepo} from '../../infra/record/recordRepo';
 import {AttributeTypes} from '../../_types/attribute';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
-export interface IAuthApp {
-    getGraphQLSchema(): IAppGraphQLSchema;
+export interface IAuthApp extends IGraphqlAppModule {
     validateRequestToken(
         params: {apiKey?: string; headers: IncomingHttpHeaders; cookies?: {}},
         res: Response<unknown>
@@ -180,7 +180,7 @@ export default function ({
     };
 
     return {
-        getGraphQLSchema: () => ({
+        getGraphQLSchema: async (): Promise<IAppGraphQLSchema> => ({
             typeDefs: `
                     extend type Query {
                         me: Record

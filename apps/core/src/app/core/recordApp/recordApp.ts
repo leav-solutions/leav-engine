@@ -28,16 +28,14 @@ import {
     IRecordUpdateEventFilters,
     TreeCondition
 } from '../../../_types/record';
-import {IGraphqlApp} from '../../graphql/graphqlApp';
+import {IGraphqlAppModule, IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
 import {IIndexationManagerApp} from '../indexationManagerApp';
 import {ICreateRecordParams, IRecordsQueryVariables} from './_types';
 import {IFindRecordParams} from 'domain/record/_types';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
-export interface ICoreRecordApp {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-}
+export type ICoreRecordApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.record': IRecordDomain;

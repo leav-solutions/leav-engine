@@ -22,10 +22,9 @@ import {
     ISaveFormArgs
 } from './_types';
 import {IfLibraryJoinLinkAttribute} from 'domain/attribute/helpers/ifLibraryJoinLinkAttribute';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
-export interface ICoreFormApp {
-    getGraphQLSchema(): IAppGraphQLSchema;
-}
+export type ICoreFormApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.attribute': IAttributeDomain;
@@ -123,7 +122,7 @@ export default function ({
     };
 
     return {
-        getGraphQLSchema(): IAppGraphQLSchema {
+        async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             return {
                 typeDefs: `
                     enum FormElementTypes {

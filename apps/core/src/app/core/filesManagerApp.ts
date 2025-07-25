@@ -16,10 +16,10 @@ import {IFilesManagerDomain} from '../../domain/filesManager/filesManagerDomain'
 import {TriggerNames} from '../../_types/eventsManager';
 import AuthenticationError from '../../errors/AuthenticationError';
 import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
-export interface IFilesManagerApp {
+export interface IFilesManagerApp extends IGraphqlAppModule {
     init(): Promise<void>;
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
     registerRoute(app: Express): void;
 }
 

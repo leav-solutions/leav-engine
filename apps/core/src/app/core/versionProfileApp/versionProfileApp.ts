@@ -7,10 +7,9 @@ import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IVersionProfile} from '_types/versionProfile';
 import {IDeleteVersionProfileArgs, ISaveVersionProfileArgs, IVersionProfilesArgs} from './_types';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
-export interface ICoreVersionProfileApp {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-}
+export type ICoreVersionProfileApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.versionProfile'?: IVersionProfileDomain;

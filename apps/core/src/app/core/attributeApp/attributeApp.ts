@@ -27,13 +27,11 @@ import {
 } from '../../../_types/attribute';
 import {AttributePermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../../_types/record';
-import {IGraphqlApp} from '../../graphql/graphqlApp';
+import {IGraphqlAppModule, IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {Override} from '@leav/utils';
 
-export interface ICoreAttributeApp {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-}
+export type ICoreAttributeApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.attribute': IAttributeDomain;

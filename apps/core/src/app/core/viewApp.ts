@@ -18,6 +18,7 @@ import {
     ViewTypes
 } from '../../_types/views';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
 interface IDeps {
     'core.domain.record': IRecordDomain;
@@ -26,9 +27,7 @@ interface IDeps {
     'core.utils': IUtils;
 }
 
-export interface IViewApp {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-}
+export type IViewApp = IGraphqlAppModule;
 
 export default function ({
     'core.domain.view': viewDomain,

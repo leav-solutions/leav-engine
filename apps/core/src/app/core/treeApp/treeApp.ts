@@ -26,7 +26,7 @@ import {
     TreeEventTypes,
     TreePaths
 } from '../../../_types/tree';
-import {IGraphqlApp} from '../../graphql/graphqlApp';
+import {IGraphqlAppModule, IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
 import {
@@ -40,9 +40,7 @@ import {
     ITreesQueryArgs
 } from './_types';
 
-export interface ITreeAttributeApp {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-}
+export type ITreeAttributeApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.tree': ITreeDomain;

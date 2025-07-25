@@ -13,6 +13,7 @@ import {
     PermissionTypes
 } from '../../../_types/permissions';
 import {IInheritedPermissionsQueryParams} from './_types';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
 export interface IPluginPermission {
     name: string;
@@ -20,9 +21,7 @@ export interface IPluginPermission {
     applyOn?: string[];
 }
 
-export interface ICorePermissionApp extends IAppModule {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-}
+export type ICorePermissionApp = IAppModule & IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.permission'?: IPermissionDomain;

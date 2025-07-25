@@ -13,10 +13,9 @@ import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IAppModule} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
-import {IGraphqlApp} from '../graphql/graphqlApp';
+import {IGraphqlAppModule, IGraphqlApp} from '../graphql/graphqlApp';
 
-export interface ICoreApp extends IAppModule {
-    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
+export interface ICoreApp extends IAppModule, IGraphqlAppModule {
     filterSysTranslationField(fieldData: ISystemTranslation, requestedLangs: string[]): ISystemTranslation | null;
     initPubSubEventsConsumer(): Promise<void>;
 }
