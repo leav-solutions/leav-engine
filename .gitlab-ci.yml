@@ -714,6 +714,50 @@ build-docker-logs-collector:
       echo "NPM_TOKEN or CI_JOB_TOKEN not defined, skip npm login"
     fi
 
+# Ensure we can build package in MR
+test-build-npm-leav-types:
+  stage: test
+  script:
+    - yarn workspaces focus core
+    - yarn workspace @aristid/leav-types generate
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_publish_npm_rule
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        # libs/types is a projection of apps/core
+        - apps/core/**/*
+      when: on_success
+
+test-build-npm-leav-ui:
+  stage: test
+  script:
+    - yarn workspaces focus @leav/ui
+    - yarn workspace @leav/ui build
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_publish_npm_rule
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - libs/ui/**/*
+      when: on_success
+
+test-build-npm-leav-utils:
+  stage: test
+  script:
+    - yarn workspaces focus @leav/utils
+    - yarn workspace @leav/utils build
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_publish_npm_rule
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - libs/utils/**/*
+      when: on_success
+
 publish-npm-leav-types-next:
   stage: build
   script:
