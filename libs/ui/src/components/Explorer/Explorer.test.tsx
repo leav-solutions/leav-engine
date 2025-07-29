@@ -1746,7 +1746,8 @@ describe('Explorer', () => {
             );
 
             const firstActionButton = screen.queryByRole('button', {name: 'explorer.create-one'});
-            const dropdownButton = firstActionButton?.nextElementSibling;
+            // TODO in DS : find a way to move dropdown hidden input somewhere else
+            const dropdownButton = firstActionButton?.nextElementSibling?.nextElementSibling;
             expect(screen.queryByText(customPrimaryAction1.label)).not.toBeInTheDocument();
             expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
 
@@ -1777,7 +1778,7 @@ describe('Explorer', () => {
             await user.click(firstActionButton);
             expect(customPrimaryActions[0].callback).toHaveBeenCalled();
 
-            const dropdownButton = firstActionButton?.nextElementSibling;
+            const dropdownButton = firstActionButton?.nextElementSibling?.nextElementSibling;
             expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
 
             await user.click(dropdownButton!);
