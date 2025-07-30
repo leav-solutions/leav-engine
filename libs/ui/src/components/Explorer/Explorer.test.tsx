@@ -862,7 +862,7 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         entrypoint={libraryEntrypoint}
-                        showFiltersAndSorts
+                        showFilters
                         defaultViewSettings={{
                             filters: [
                                 {
@@ -902,7 +902,7 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         entrypoint={libraryEntrypoint}
-                        showFiltersAndSorts
+                        showFilters
                         defaultViewSettings={{
                             filters: [
                                 {
@@ -1922,7 +1922,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         entrypoint={{type: 'library', libraryId: 'campaigns'}}
-                        showFiltersAndSorts
+                        showFilters
+                        showSorts
                         enableConfigureView
                         defaultViewSettings={{
                             filters: [
@@ -1983,7 +1984,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         entrypoint={{type: 'library', libraryId: 'campaigns'}}
-                        showFiltersAndSorts
+                        showFilters
+                        showSorts
                         enableConfigureView
                         defaultViewSettings={{
                             filtersOperator: 'OR',
@@ -2270,7 +2272,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         entrypoint={libraryEntrypoint}
-                        showFiltersAndSorts
+                        showFilters
+                        showSorts
                         enableConfigureView
                         defaultMassActions={[]}
                         massActions={[testMassAction]}
@@ -2388,7 +2391,8 @@ describe('Explorer', () => {
                     <Explorer
                         entrypoint={libraryEntrypoint}
                         enableConfigureView
-                        showFiltersAndSorts
+                        showFilters
+                        showSorts
                         defaultMassActions={[]}
                         massActions={[testMassAction]}
                         defaultViewSettings={{
@@ -2763,7 +2767,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         enableConfigureView
-                        showFiltersAndSorts
+                        showFilters
+                        showSorts
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
                     />
@@ -2810,7 +2815,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         enableConfigureView
-                        showFiltersAndSorts
+                        showFilters
+                        showSorts
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
                     />
@@ -2903,7 +2909,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         entrypoint={libraryEntrypoint}
-                        showFiltersAndSorts
+                        showFilters
+                        showSorts
                         defaultViewSettings={{
                             attributesIds: [
                                 simpleMockAttribute.id,
@@ -2962,6 +2969,53 @@ describe('Explorer', () => {
             );
         });
 
+        test('Should display sorts', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        showSorts
+                        defaultViewSettings={{
+                            sort: [
+                                {
+                                    field: simpleMockAttribute.id,
+                                    order: gqlTypes.SortOrder.asc
+                                }
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+
+            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
+        });
+
+        test('Should not display sorts', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={libraryEntrypoint}
+                        defaultViewSettings={{
+                            sort: [
+                                {
+                                    field: simpleColorMockAttribute.id,
+                                    order: gqlTypes.SortOrder.desc
+                                }
+                            ]
+                        }}
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+
+            expect(within(toolbar).queryByRole('button', {name: /sort-items/})).not.toBeInTheDocument();
+        });
+
         test('Should not display sorts for attributes the user does not have access to', async () => {
             jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
                 () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
@@ -2971,7 +3025,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         entrypoint={libraryEntrypoint}
-                        showFiltersAndSorts
+                        showFilters
+                        showSorts
                         defaultViewSettings={{
                             attributesIds: [
                                 simpleMockAttribute.id,
@@ -3100,7 +3155,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         enableConfigureView
-                        showFiltersAndSorts
+                        showFilters
+                        showSorts
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
                     />
@@ -3124,7 +3180,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         enableConfigureView
-                        showFiltersAndSorts
+                        showFilters
+                        showSorts
                         ignoreViewByDefault
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
@@ -3140,7 +3197,8 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         enableConfigureView
-                        showFiltersAndSorts
+                        showFilters
+                        showSorts
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
                         defaultViewSettings={{

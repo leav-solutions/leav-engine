@@ -41,9 +41,10 @@ const DividerStyled = styled(KitDivider)`
 
 export const ExplorerToolbar: FunctionComponent<{
     isMassSelectionAll: boolean;
-    showFiltersAndSort: boolean;
+    showFilters: boolean;
+    showSorts: boolean;
     headless: boolean;
-}> = ({isMassSelectionAll, showFiltersAndSort, headless, children}) => {
+}> = ({isMassSelectionAll, showFilters, showSorts, headless, children}) => {
     const {t} = useSharedTranslation();
 
     const {view} = useViewSettingsContext();
@@ -54,7 +55,7 @@ export const ExplorerToolbar: FunctionComponent<{
     const {attributeDetailsById} = useAttributeDetailsData(view.libraryId);
     const visibleFilters = filters.filter(filterItem => !filterItem.hidden);
 
-    if (((visibleFilters.length === 0 && sort.length === 0) || !showFiltersAndSort) && !children) {
+    if (((visibleFilters.length === 0 && sort.length === 0) || (!showFilters && !showSorts)) && !children) {
         return null;
     }
 
@@ -76,12 +77,12 @@ export const ExplorerToolbar: FunctionComponent<{
             {!!children && (
                 <>
                     <li>{children}</li>
-                    {showFiltersAndSort && (visibleFilters.length !== 0 || sort.length > 0) && (
+                    {((showFilters && visibleFilters.length !== 0) || (showSorts && sort.length > 0)) && (
                         <DividerStyled type="vertical" />
                     )}
                 </>
             )}
-            {showFiltersAndSort && (
+            {(showFilters || showSorts) && (
                 <KitSpace size="s">
                     {visibleFilters.length > 0 &&
                         visibleFilters.map(filter => (
@@ -89,7 +90,7 @@ export const ExplorerToolbar: FunctionComponent<{
                                 <CommonFilterItem key={filter.id} filter={filter} disabled={isMassSelectionAll} />
                             </li>
                         ))}
-                    {sort.length > 0 && (
+                    {showSorts && sort.length > 0 && (
                         <li>
                             <FilterStyled
                                 label={t('explorer.sort-items')}

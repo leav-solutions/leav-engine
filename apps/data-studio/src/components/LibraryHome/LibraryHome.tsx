@@ -151,7 +151,8 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 showTitle
                 showSearch
                 enableConfigureView
-                showFiltersAndSorts
+                showFilters
+                showSorts
                 defaultActionsForItem={['edit', 'remove', 'activate']}
                 defaultPrimaryActions={['create']}
                 defaultMassActions={['deactivate']}
@@ -193,7 +194,8 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 showTitle
                 showSearch
                 enableConfigureView
-                showFiltersAndSorts
+                showFilters
+                showSorts
                 entrypoint={{
                     type: 'link',
                     parentLibraryId: 'sebastien_s_librairy',

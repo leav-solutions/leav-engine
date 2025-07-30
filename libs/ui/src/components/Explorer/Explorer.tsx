@@ -101,7 +101,8 @@ export interface IExplorerProps {
             deactivate?: IMassActions['callback'];
         };
     };
-    showFiltersAndSorts?: boolean;
+    showFilters?: boolean;
+    showSorts?: boolean;
     enableConfigureView?: boolean;
     ignoreViewByDefault?: boolean;
     showTitle?: boolean;
@@ -134,7 +135,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             noPagination,
             creationFormId,
             editionFormId,
-            showFiltersAndSorts = false,
+            showFilters = false,
+            showSorts = false,
             enableConfigureView = false,
             disableSelection = false,
             hideSelectAllAction = false,
@@ -308,7 +310,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                     )}
                     {!viewSettingsLoading && (
                         <ExplorerToolbar
-                            showFiltersAndSort={showFiltersAndSorts}
+                            showFilters={showFilters}
+                            showSorts={showSorts}
                             isMassSelectionAll={isMassSelectionAll}
                             headless={hideTableHeader}
                         >
