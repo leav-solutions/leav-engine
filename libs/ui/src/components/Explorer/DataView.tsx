@@ -158,9 +158,9 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     size="m"
                                     disabled={resolveItemActionProp(item, disabled) as boolean}
                                 >
-                                    {!iconsOnlyItemActions && !iconOnly && typeof label === 'function'
-                                        ? label(item)
-                                        : label}
+                                    {!iconsOnlyItemActions &&
+                                        !iconOnly &&
+                                        (typeof label === 'function' ? label(item) : label)}
                                 </KitButton>
                             ))}
                         </>
