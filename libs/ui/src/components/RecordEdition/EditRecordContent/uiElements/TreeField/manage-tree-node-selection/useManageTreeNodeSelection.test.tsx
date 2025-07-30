@@ -221,7 +221,7 @@ describe('useManageTreeNodeSelection', () => {
         ]);
     });
 
-    it('should add a tree node and remove the previous one if not multiple values', async () => {
+    it('should replace a tree node if not multiple values', async () => {
         mockSelectedNodeOnConfirm = [mockSelectedNode1];
         mockOnValueSubmit.mockResolvedValue(addTreeNodeSingleSuccessResponse);
         mockOnValueDelete.mockResolvedValue(successResponse);
@@ -237,10 +237,10 @@ describe('useManageTreeNodeSelection', () => {
         await user.click(screen.getByTestId('open-modal'));
         await user.click(screen.getByTestId('confirm-selection'));
         expect(mockOnValueSubmit).toHaveBeenCalledWith(
-            [{attribute: mockFormAttribute, idValue: null, value: mockSelectedNode1}],
+            [{attribute: mockFormAttribute, idValue: 'value_1', value: mockSelectedNode1}],
             null
         );
-        expect(mockOnValueDelete).toHaveBeenCalledWith({id_value: mockBackendValue.id_value}, mockFormAttribute.id);
+        expect(mockOnValueDelete).toHaveBeenCalledTimes(0);
     });
 
     it('should handle error when adding tree nodes', async () => {

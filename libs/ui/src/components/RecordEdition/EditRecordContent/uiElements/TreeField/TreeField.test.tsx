@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import TreeField from './TreeField';
-import {useDisplayTreeNode} from './display-tree-node/useDisplayTreeNode';
+import {TreeNodeList} from './display-tree-node/TreeNodeList';
 import {useManageTreeNodeSelection} from './manage-tree-node-selection/useManageTreeNodeSelection';
 import {AntForm} from 'aristid-ds';
 import {
@@ -24,15 +24,15 @@ import * as _ from 'lodash';
 
 const mockInitialState = {...initialState};
 const mockedUseFormInstance = AntForm.useFormInstance as jest.MockedFunction<typeof AntForm.useFormInstance>;
-const mockedUseDisplayTreeNode = useDisplayTreeNode as jest.MockedFunction<typeof useDisplayTreeNode>;
+const mockedTreeNodeList = TreeNodeList as jest.MockedFunction<typeof TreeNodeList>;
 const mockedUseManageTreeNodeSelection = useManageTreeNodeSelection as jest.MockedFunction<
     typeof useManageTreeNodeSelection
 >;
 const mockedComputeCalculatedFlags = computeCalculatedFlags as jest.MockedFunction<typeof computeCalculatedFlags>;
 const mockedComputeInheritedFlags = computeInheritedFlags as jest.MockedFunction<typeof computeInheritedFlags>;
 
-jest.mock('./display-tree-node/useDisplayTreeNode', () => ({
-    useDisplayTreeNode: jest.fn()
+jest.mock('./display-tree-node/TreeNodeList', () => ({
+    TreeNodeList: jest.fn()
 }));
 
 jest.mock('./manage-tree-node-selection/useManageTreeNodeSelection', () => ({
@@ -118,9 +118,7 @@ describe('TreeField', () => {
         mockedComputeCalculatedFlags.mockReturnValue(calculatedFlagsWithoutCalculatedValue);
         mockedComputeInheritedFlags.mockReturnValue(inheritedFlagsWithoutInheritedValue);
 
-        mockedUseDisplayTreeNode.mockReturnValue({
-            TreeNodeList: <div data-testid="tree-node-list">Tree Node List</div>
-        } as any);
+        mockedTreeNodeList.mockReturnValue(<div data-testid="tree-node-list">Tree Node List</div>);
 
         mockedUseManageTreeNodeSelection.mockReturnValue({
             openModal: jest.fn(),
@@ -191,9 +189,9 @@ describe('TreeField', () => {
             </RecordEditionContext.Provider>
         );
 
-        expect(mockedUseDisplayTreeNode).toHaveBeenCalled();
+        expect(mockedTreeNodeList).toHaveBeenCalled();
 
-        const callArgs = mockedUseDisplayTreeNode.mock.calls[0][0];
+        const callArgs = mockedTreeNodeList.mock.calls[0][0];
 
         expect(callArgs.attribute).toBe(treeFieldDefaultProps.element.attribute);
         expect(callArgs.backendValues).toEqual(mockFormElementTree.values);

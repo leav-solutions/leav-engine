@@ -1,20 +1,18 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ComponentProps, FunctionComponent, useState} from 'react';
+import {FaCheck} from 'react-icons/fa';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {KitButton, KitModal} from 'aristid-ds';
 import {ChildrenAsRecordValuePermissionFilterInput, RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
 import {SelectTreeNode} from '_ui/components/SelectTreeNode';
 import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ITreeNodeWithRecord} from '_ui/types';
-import {KitButton, KitModal} from 'aristid-ds';
-import _ from 'lodash';
-import {FunctionComponent, useState} from 'react';
-import {FaCheck} from 'react-icons/fa';
 
 const SELECT_TREE_NODE_MODAL_HEIGHT = '563px';
-
 const SELECT_TREE_NODE_MODAL_WIDTH = '656px';
 
 type SelectTreeNodeModalBackendValue =
@@ -39,14 +37,6 @@ interface ISelectTreeNodeModalProps {
     open: boolean;
     attribute: SelectTreeNodeModalAttribute;
     backendValues: SelectTreeNodeModalBackendValue[];
-    /**
-     * If tree, initial node (backendValues) will be unselectable
-     * By default, they are not
-     *
-     * Would be much better to invert this property to disallowInitialNodeDeselection for instance
-     * But need to review upper usage
-     */
-    allowInitialNodeDeselection?: boolean;
     onConfirm: (selectedNodes: ITreeNodeWithRecord[]) => void;
     onClose: () => void;
     childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
@@ -58,7 +48,6 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     open,
     attribute,
     backendValues,
-    allowInitialNodeDeselection = false,
     onConfirm,
     onClose,
     childrenAsRecordValuePermissionFilter,
@@ -67,17 +56,12 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     const {t} = useSharedTranslation();
 
     const [selectedNodes, setSelectedNode] = useState<ITreeNodeWithRecord[]>([]);
-    // Use intermediate state to store backend node ids for initial props inject,
-    // reset after first _handleOnSelect/_handleOnCheck to avoid adding backend values to selected nodes again and again
-    // Another solution would be to inject backendValues with compatible ITreeNodeWithRecord type to set selectedNodes initial state
-    const [tmpBackendNodeIds, setTmpBackendNodeIds] = useState<string[] | undefined>(
-        backendValues.map(value => value.treeValue.id)
-    );
+    const [isMonoValueToReplace, setIsMonoValueToReplace] = useState(false);
 
-    const _handleOnSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
-        setTmpBackendNodeIds(undefined);
+    const _handleOnSelect: ComponentProps<typeof SelectTreeNode>['onSelect'] = (node, selected) => {
         if (!attribute.multiple_values) {
             setSelectedNode(selected ? [node] : []);
+            setIsMonoValueToReplace(true);
             return;
         }
 
@@ -88,12 +72,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
         }
     };
 
-    const _handleOnCheck = (selection: ITreeNodeWithRecord[]) => {
-        setTmpBackendNodeIds(undefined);
-        setSelectedNode(selection.map(node => node).filter(node => !node?.disabled));
-    };
-
-    const _handleOnConfirm = () => {
+    const _handleOnConfirm: ComponentProps<typeof KitButton>['onClick'] = () => {
         onConfirm(selectedNodes);
         onClose();
     };
@@ -101,6 +80,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     return (
         <KitModal
             className={className}
+            showCloseIcon
             width={SELECT_TREE_NODE_MODAL_WIDTH}
             height={SELECT_TREE_NODE_MODAL_HEIGHT}
             title={title}
@@ -122,18 +102,17 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
                     </KitButton>
                 </>
             }
-            showCloseIcon
         >
             <SelectTreeNode
                 treeId={attribute.linked_tree.id}
-                childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
-                selectedNodes={tmpBackendNodeIds || selectedNodes.map(node => node.id)}
-                disabledNodes={(!allowInitialNodeDeselection && backendValues.map(value => value.treeValue.id)) || []}
-                onSelect={_handleOnSelect}
-                onCheck={_handleOnCheck}
-                checkable={attribute.multiple_values}
                 multiple // We want to be able to set as selected in the tree components, the nodes that are already selected and the disabled nodes
-                canSelectRoot
+                selectedNodes={[
+                    ...selectedNodes.map(node => node.id),
+                    ...(isMonoValueToReplace ? [] : backendValues.map(value => value.treeValue.id))
+                ]}
+                childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
+                disabledNodes={backendValues.map(value => value.treeValue.id).concat(attribute.linked_tree.id)}
+                onSelect={_handleOnSelect}
             />
         </KitModal>
     );

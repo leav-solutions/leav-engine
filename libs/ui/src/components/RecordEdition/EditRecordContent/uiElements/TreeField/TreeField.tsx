@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useEffect, useState} from 'react';
-import {IFormElementProps} from '../../_types';
-import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import styled from 'styled-components';
+import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import {AntForm, KitButton, KitInputWrapper} from 'aristid-ds';
+import {FaList} from 'react-icons/fa';
+import {useLang} from '_ui/hooks';
+import {IFormElementProps} from '../../_types';
 import {
     ChildrenAsRecordValuePermissionFilterInput,
     RecordFormAttributeTreeAttributeFragment,
     RecordPermissionsActions
 } from '_ui/_gqlTypes';
 import {TREE_FIELD_ID_PREFIX} from '_ui/constants';
-import {useLang} from '_ui/hooks';
-import {FaList} from 'react-icons/fa';
 import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
-import {useDisplayTreeNode} from './display-tree-node/useDisplayTreeNode';
+import {TreeNodeList} from './display-tree-node/TreeNodeList';
 import {useManageTreeNodeSelection} from './manage-tree-node-selection/useManageTreeNodeSelection';
 import {useOutsideInteractionDetector} from '../shared/useOutsideInteractionDetector';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
@@ -23,16 +23,16 @@ import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRe
 import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
 import {ComputeIndicator} from '../shared/ComputeIndicator';
 
-const Wrapper = styled.div<{$metadataEdit: boolean}>`
+const StyledWrapperDiv = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
 `;
 
-const KitInputExtraAlignLeft = styled.div`
+const KitInputExtraAlignLeftDiv = styled.div`
     margin-right: auto;
     line-height: 12px;
 `;
 
-const KitFieldFooterButton = styled(KitButton)<{$hasNoValue: boolean}>`
+const StyledFieldFooterKitButton = styled(KitButton)<{$hasNoValue: boolean}>`
     margin-top: ${props => (props.$hasNoValue ? 0 : 'calc((var(--general-spacing-xs)) * 1px)')};
 `;
 
@@ -120,15 +120,8 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
             childrenAsRecordValuePermissionFilter
         });
 
-    const {TreeNodeList} = useDisplayTreeNode({
-        attribute,
-        backendValues,
-        removeTreeNode,
-        isReadOnly
-    });
-
     return (
-        <Wrapper $metadataEdit={metadataEdit}>
+        <StyledWrapperDiv $metadataEdit={metadataEdit}>
             <AntForm.Item name={attribute.id} noStyle>
                 <KitInputWrapper
                     id={TREE_FIELD_ID_PREFIX + attribute.id}
@@ -141,15 +134,20 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
                     helper={isFieldInError ? String(fieldErrors[0]) : undefined}
                     extra={
                         <>
-                            <KitInputExtraAlignLeft>
+                            <KitInputExtraAlignLeftDiv>
                                 <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
-                            </KitInputExtraAlignLeft>
+                            </KitInputExtraAlignLeftDiv>
                             {RemoveAllTreeNodes}
                         </>
                     }
                 >
-                    {TreeNodeList}
-                    <KitFieldFooterButton
+                    <TreeNodeList
+                        attribute={attribute}
+                        backendValues={backendValues}
+                        removeTreeNode={removeTreeNode}
+                        isReadOnly={isReadOnly}
+                    />
+                    <StyledFieldFooterKitButton
                         disabled={isReadOnly}
                         icon={<FaList />}
                         onClick={openModal}
@@ -157,11 +155,11 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
                         $hasNoValue={!backendValues?.length}
                     >
                         {actionButtonLabel}
-                    </KitFieldFooterButton>
+                    </StyledFieldFooterKitButton>
                     {SelectTreeNodeModal}
                 </KitInputWrapper>
             </AntForm.Item>
-        </Wrapper>
+        </StyledWrapperDiv>
     );
 };
 

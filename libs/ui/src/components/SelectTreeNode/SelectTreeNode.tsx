@@ -14,14 +14,14 @@ import {SelectTreeNodeContentSkeleton} from './SelectTreeNodeContentSkeleton';
 interface ISelectTreeNodeProps {
     treeId: string;
     childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
-    selectedNodes?: string[];
-    disabledNodes?: string[];
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
     onCheck?: (selection: ITreeNodeWithRecord[]) => void;
+    selectedNodes?: string[];
+    disabledNodes?: string[];
+    selectableLibraries?: string[]; // all by default
     multiple?: boolean;
     checkable?: boolean;
     canSelectRoot?: boolean;
-    selectableLibraries?: string[]; // all by default
 }
 
 export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
@@ -31,10 +31,10 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     onCheck,
     selectedNodes,
     disabledNodes,
+    selectableLibraries,
     multiple = false,
     checkable = false,
-    canSelectRoot = false,
-    selectableLibraries
+    canSelectRoot = false
 }) => {
     const {lang} = useLang();
     const {t} = useSharedTranslation();
@@ -54,11 +54,9 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
         return <ErrorDisplay message={t('error.unknown_tree', {treeId})} />;
     }
 
-    const label = localizedTranslation(data.trees.list[0].label, lang) || treeId;
-
     return (
         <SelectTreeNodeContent
-            treeData={{id: treeId, label}}
+            treeData={{id: treeId, label: localizedTranslation(data.trees.list[0].label, lang) || treeId}}
             childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
             onCheck={onCheck}
             onSelect={onSelect}

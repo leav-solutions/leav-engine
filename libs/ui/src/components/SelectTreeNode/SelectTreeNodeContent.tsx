@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
+import {KitTree} from 'aristid-ds';
 import {Spin} from 'antd';
 import {EventDataNode} from 'antd/lib/tree';
-import {ComponentProps, FunctionComponent, Key, useEffect, useState} from 'react';
+import {ITreeNodeWithRecord} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     ChildrenAsRecordValuePermissionFilterInput,
-    TreeNodeChildFragment,
     useTreeNodeChildrenLazyQuery
 } from '_ui/_gqlTypes';
 import {defaultPaginationPageSize, ErrorDisplay} from '../..';
-import {ITreeNodeWithRecord} from '../../types/trees';
-import {KitTree} from 'aristid-ds';
 import {TreeNodeTitle} from './TreeNodeTitle';
+import {_isObjectSelection, ITreeMap, ITreeMapElement} from './_types';
 
 interface ISelectTreeNodeContentProps {
     treeData: {id: string; label: string};
@@ -28,39 +28,12 @@ interface ISelectTreeNodeContentProps {
     selectableLibraries?: string[]; // all by default
 }
 
-type OnCheckFirstParam = Parameters<ComponentProps<typeof KitTree>['onCheck']>[0];
-const _isObjectSelection = (selection: OnCheckFirstParam): selection is Exclude<OnCheckFirstParam, Key[]> =>
-    'checked' in selection && 'halfChecked' in selection;
-
-const _constructTreeContent = (data: TreeNodeChildFragment[]): ITreeNodeWithRecord[] =>
-    data.map(e => ({
-        record: e.record,
-        title: e.record.whoAmI.label || e.record.whoAmI.id,
-        id: e.id,
-        key: e.id,
-        isLeaf: !e.childrenCount,
-        children: []
-    }));
-
-interface ITreeMapElement extends ITreeNodeWithRecord {
-    isLeaf?: boolean;
-    paginationOffset: number;
-    children: ITreeMapElement[];
-    isShowMore?: boolean;
-    selectable?: boolean;
-    disabled?: boolean;
-}
-
-interface ITreeMap {
-    [nodeId: string]: ITreeMapElement;
-}
-
 export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProps> = ({
     treeData: tree,
     childrenAsRecordValuePermissionFilter,
     onSelect,
     onCheck,
-    selectedNodes: initSelectedNodes,
+    selectedNodes,
     disabledNodes,
     multiple = false,
     checkable = false,
@@ -85,13 +58,14 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         [tree.id]: rootNode
     });
 
-    const [selectedNodes, setSelectedNodes] = useState<string[]>(initSelectedNodes);
-    const [fetchError, setFetchError] = useState<string>();
+    const [fetchError, setFetchError] = useState<string | undefined>();
     const [loadTreeContent, {error, called}] = useTreeNodeChildrenLazyQuery();
 
     const _fetchTreeContent = async (parentNodeKey?: string, offset = 0) => {
         try {
-            const data = await loadTreeContent({
+            const {
+                data: {treeNodeChildren}
+            } = await loadTreeContent({
                 variables: {
                     treeId: tree.id,
                     node: parentNodeKey && parentNodeKey !== tree.id ? parentNodeKey : null,
@@ -103,11 +77,18 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                 }
             });
 
-            const formattedNodes = _constructTreeContent(data.data.treeNodeChildren.list);
+            const formattedNodes = treeNodeChildren.list.map(e => ({
+                record: e.record,
+                title: e.record.whoAmI.label || e.record.whoAmI.id,
+                id: e.id,
+                key: e.id,
+                isLeaf: !e.childrenCount,
+                children: []
+            }));
             const parentMapKey = parentNodeKey ?? tree.id;
 
             const newTreeMap = {...treeMap};
-            const totalCount = data.data.treeNodeChildren.totalCount;
+            const totalCount = treeNodeChildren.totalCount;
             const parentElement = newTreeMap[parentMapKey];
             const showMoreKey = '__showMore' + parentMapKey + offset;
 
@@ -148,10 +129,6 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             setFetchError((err as Error).message);
         }
     };
-
-    useEffect(() => {
-        setSelectedNodes(initSelectedNodes);
-    }, [initSelectedNodes]);
 
     useEffect(() => {
         // Load root
@@ -205,12 +182,14 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         return <ErrorDisplay message={error?.message ?? fetchError} />;
     }
 
-    const treeData = [treeMap[rootNode.key]];
-
     return (
         <KitTree
-            defaultExpandedKeys={[tree.id]} // TODO: Should be selectedNode but more changes are needed
+            checkStrictly
+            treeData={[treeMap[rootNode.key]]}
+            loadData={_handleLoadData}
             multiple={multiple}
+            checkable={checkable}
+            defaultExpandedKeys={[tree.id]} // TODO: Should be selectedNode but more changes are needed
             selectedKeys={selectedNodes}
             checkedKeys={selectedNodes}
             titleRender={node => {
@@ -227,10 +206,6 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             }}
             onSelect={_handleSelect}
             onCheck={_handleCheck}
-            treeData={treeData}
-            loadData={_handleLoadData}
-            checkStrictly
-            checkable={checkable}
         />
     );
 };

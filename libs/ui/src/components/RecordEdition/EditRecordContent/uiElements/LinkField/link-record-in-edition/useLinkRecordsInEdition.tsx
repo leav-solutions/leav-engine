@@ -484,7 +484,6 @@ export const useLinkRecordsInEdition = ({
                                             id: linkId
                                         }
                                     }))}
-                                    allowInitialNodeDeselection
                                     onClose={() => {
                                         setIsExplorerAddButtonClicked(false);
                                     }}

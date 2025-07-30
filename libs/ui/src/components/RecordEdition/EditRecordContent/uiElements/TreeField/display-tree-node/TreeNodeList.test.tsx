@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useDisplayTreeNode} from './useDisplayTreeNode';
+import {TreeNodeList} from './TreeNodeList';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
-import {render, screen, renderHook} from '@testing-library/react';
+import {render, screen} from '@testing-library/react';
 import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 
 jest.mock('./TreeNodeItem', () => ({
@@ -28,18 +28,16 @@ const createMockBackendValues = (count: number) =>
             }
         })) as RecordFormElementsValueTreeValue[];
 
-describe('useDisplayTreeNode', () => {
+describe('TreeNodeList', () => {
     it('should render zero TreeNodeItem when backendValues is empty', () => {
-        const {result} = renderHook(() =>
-            useDisplayTreeNode({
-                attribute: mockFormAttribute,
-                backendValues: [],
-                removeTreeNode: mockRemoveTreeNode,
-                isReadOnly: false
-            })
+        render(
+            <TreeNodeList
+                attribute={mockFormAttribute}
+                backendValues={[]}
+                removeTreeNode={mockRemoveTreeNode}
+                isReadOnly={false}
+            />
         );
-
-        render(result.current.TreeNodeList);
 
         expect(screen.queryAllByTestId('tree-node-item')).toHaveLength(0);
     });
@@ -47,16 +45,14 @@ describe('useDisplayTreeNode', () => {
     it('should render five TreeNodeItems when backendValues has five items', () => {
         const mockBackendValues = createMockBackendValues(5);
 
-        const {result} = renderHook(() =>
-            useDisplayTreeNode({
-                attribute: mockFormAttribute,
-                backendValues: mockBackendValues,
-                removeTreeNode: mockRemoveTreeNode,
-                isReadOnly: false
-            })
+        render(
+            <TreeNodeList
+                attribute={mockFormAttribute}
+                backendValues={mockBackendValues}
+                removeTreeNode={mockRemoveTreeNode}
+                isReadOnly={false}
+            />
         );
-
-        render(result.current.TreeNodeList);
 
         expect(screen.queryAllByTestId('tree-node-item')).toHaveLength(5);
     });
