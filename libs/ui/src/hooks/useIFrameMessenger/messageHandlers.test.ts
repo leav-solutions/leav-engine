@@ -24,6 +24,7 @@ describe('MessageHandlers', () => {
                 showAlert: expect.any(Function),
                 showNotification: expect.any(Function),
                 messageToParent: expect.any(Function),
+                messageToPanel: expect.any(Function),
                 navigateToPanel: expect.any(Function)
             });
         });
@@ -136,6 +137,15 @@ describe('MessageHandlers', () => {
             messageToParent(data);
 
             expect(dispatchMock).toHaveBeenCalledWith({type: 'message', data, id: String(fakeTime)});
+        });
+
+        it('Should expose method messageToPanel which dispatch to other panels', async () => {
+            const data: any = {someField: 'someValue'};
+
+            const {messageToPanel} = getExposedMethods({current: null}, dispatchMock);
+            messageToPanel(data);
+
+            expect(dispatchMock).toHaveBeenCalledWith({type: 'message-to-panel', data});
         });
 
         it('should expose method navigateToPanel which dispatch to the parent', async () => {

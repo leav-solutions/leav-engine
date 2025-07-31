@@ -1,11 +1,25 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useCallback, useContext, useEffect, useRef} from 'react';
+import {useCallback, useContext, useEffect, useMemo, useRef} from 'react';
 import {v4 as uuid} from 'uuid';
 import {LangContext} from '_ui/contexts';
-import {type Callbacks, type CallCbFunction, type IUseIFrameMessengerOptions, type MessageDispatcher} from './types';
+import {
+    AddMessageToPanelMessageHandler,
+    MessageToPanelMessageHandler,
+    type Callbacks,
+    type CallCbFunction,
+    type IUseIFrameMessengerOptions,
+    type MessageDispatcher
+} from './types';
 import {encodeMessage, decodeMessage, getExposedMethods, initClientHandlers} from './messageHandlers';
+
+/**
+ * This is the core of useIFrameMessenger. should be used for top level apps, such as app-studio
+ * For client apps (apps that need to consume the messenger), please use the useIFrameMessengerClient
+ */
+
+export {IUseIFrameMessengerOptions};
 
 export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
     const registry = useRef<Record<string, Window>>({});
@@ -22,6 +36,14 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
         );
     };
 
+    const panelMessageHandlerRegistry = useRef<Record<string, MessageToPanelMessageHandler>>({});
+    const addPanelMessageHandler: AddMessageToPanelMessageHandler = (
+        type: string,
+        handler: MessageToPanelMessageHandler
+    ) => {
+        panelMessageHandlerRegistry.current[type] = handler;
+    };
+
     const dispatch = useCallback<MessageDispatcher>(
         (message, frameId) => {
             if (window !== window.top) {
@@ -32,8 +54,11 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
                     '*'
                 );
             } else if (frameId === 'all') {
-                Object.values(registry.current).forEach(frame => {
-                    frame.postMessage(encodeMessage({...message, __frameId: selfId.current}), '*');
+                Object.entries(registry.current).forEach(([id, frame]) => {
+                    if (id !== message.__frameId) {
+                        // DO not send message to sender
+                        frame.postMessage(encodeMessage({...message, __frameId: selfId.current}), '*');
+                    }
                 });
             }
         },
@@ -47,33 +72,57 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
         [dispatch]
     );
 
+    const unregister = () => {
+        if (window !== window.top) {
+            dispatch({type: 'unregister', id: selfId.current});
+        }
+    };
+
     const callbacksStore = useRef<Callbacks>({});
-    const methods = useRef(getExposedMethods(callbacksStore, dispatch));
+    const methods = useRef({
+        ...getExposedMethods(callbacksStore, dispatch),
+        unregister,
+        changeLangInAllFrames,
+        addPanelMessageHandler
+    });
 
     useEffect(() => {
         const clientHandlers = initClientHandlers(callCb, {...options, id: selfId.current}, callbacksStore);
         const onMessage = (event: MessageEvent) => {
             const message = decodeMessage(event.data);
-
             if (message === undefined) {
                 return;
             }
-
-            if (message.type === 'register') {
-                const frames = window.frames;
-                // Due to weak typing on Window, we cannot iterate directly on window.frames
-                // eslint-disable-next-line @typescript-eslint/prefer-for-of
-                for (let i = 0; i < frames.length; i++) {
-                    if (event.source === frames[i]) {
-                        registry.current[message.id] = frames[i];
+            switch (message.type) {
+                case 'register':
+                    const frames = window.frames;
+                    // Due to weak typing on Window, we cannot iterate directly on window.frames
+                    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+                    for (let i = 0; i < frames.length; i++) {
+                        if (event.source === frames[i]) {
+                            registry.current[message.id] = frames[i];
+                        }
                     }
-                }
-            } else {
-                if (message.type === 'change-language') {
-                    setLang(message.language);
-                } else {
-                    clientHandlers(message, dispatch);
-                }
+                    break;
+                case 'unregister':
+                    if (registry.current[message.id]) {
+                        delete registry.current[message.id];
+                    }
+                    break;
+                case 'message-to-panel':
+                    panelMessageHandlerRegistry.current[message.data.type]?.(message.data.payload);
+                    if (window === window.top) {
+                        const target = message.data.target ?? 'all';
+                        dispatch(message, target);
+                    }
+                    break;
+                default:
+                    if (message.type === 'change-language') {
+                        setLang(message.language);
+                    } else {
+                        clientHandlers(message, dispatch);
+                    }
+                    break;
             }
         };
 
@@ -89,5 +138,5 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
         };
     }, []);
 
-    return {...methods.current, changeLangInAllFrames};
+    return methods.current;
 };

@@ -72,6 +72,11 @@ export type RegisterMessage = IMessageBase & {
     id: string;
 };
 
+export type UnregisterMessage = IMessageBase & {
+    type: 'unregister';
+    id: string;
+};
+
 export type Panel = z.infer<typeof PanelSchema>;
 
 type PanelId = z.infer<typeof PanelIdSchema>;
@@ -88,6 +93,15 @@ export type NavigateToPanelMessage = IMessageBase & {
     data: {panelId: PanelId} | INestedPanel;
 };
 
+export type MessageToPanelMessage = IMessageBase & {
+    type: 'message-to-panel';
+    data: {
+        type: string;
+        target?: string;
+        payload: unknown;
+    };
+};
+
 export type MessageToParent =
     | SidePanelFormMessage
     | ModalConfirmMessage
@@ -96,7 +110,9 @@ export type MessageToParent =
     | NotificationMessage
     | SimpleMessage
     | RegisterMessage
-    | NavigateToPanelMessage;
+    | UnregisterMessage
+    | NavigateToPanelMessage
+    | MessageToPanelMessage;
 
 export type MessageFromParent =
     | (IMessageBase & {
@@ -115,6 +131,9 @@ export type CallCbFunction = (path: string, data: unknown, frameId: string) => v
 
 export type CallbackFunction = (...args: never[]) => void;
 export type Callbacks = Record<string, Record<string, CallbackFunction>>;
+
+export type MessageToPanelMessageHandler = (data: MessageToPanelMessage['data']['payload']) => void;
+export type AddMessageToPanelMessageHandler = (type: string, handler: MessageToPanelMessageHandler) => void;
 
 export interface IUseIFrameMessengerOptions {
     ref?: RefObject<HTMLIFrameElement>;

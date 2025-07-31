@@ -12,6 +12,7 @@ import {
     type Message,
     type MessageDispatcher,
     type MessageHandler,
+    type MessageToPanelMessage,
     type ModalConfirmMessage,
     type ModalFormMessage,
     type NavigateToPanelMessage,
@@ -211,5 +212,8 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
     },
     navigateToPanel: (data: NavigateToPanelMessage['data']) => {
         dispatch?.({type: 'navigate-to-panel', data});
+    },
+    messageToPanel: (data: MessageToPanelMessage['data']) => {
+        dispatch?.({type: 'message-to-panel', data});
     }
 });

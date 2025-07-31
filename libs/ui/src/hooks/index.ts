@@ -17,3 +17,5 @@ export {default as useRedirectToLogin} from './useRedirectToLogin';
 export {useUser} from './useUser';
 export {useValuesCacheUpdate} from './useValuesCacheUpdate';
 export {useIFrameMessenger} from './useIFrameMessenger/useIFrameMessenger';
+export {useIFrameMessengerClient} from './useIFrameMessengerClient/useIFrameMessengerClient';
+export {IFrameMessengerClient} from './useIFrameMessengerClient/IFrameMessengerClient';
