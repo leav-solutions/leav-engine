@@ -1,11 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import _ from 'lodash';
 import {getCallStack} from '@leav/utils';
 import {Database} from 'arangojs';
 import {Analyzer, CreateAnalyzerOptions} from 'arangojs/analyzer';
 import {isAqlQuery} from 'arangojs/aql';
 import {CollectionType} from 'arangojs/collection';
+import {CursorStats} from 'arangojs/cursor';
 import {CreateViewOptions, View} from 'arangojs/view';
 import {createHash} from 'crypto';
 import {IUtils} from 'utils/utils';
@@ -95,6 +97,7 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
             attempts = 0
         }: IExecute): Promise<T> {
             try {
+                let setQueryProfilerStats: ((cursorStats?: CursorStats) => void) | undefined;
                 if (config.dbProfiler.enable) {
                     const dbProfiler: IDbProfiler = ctx.dbProfiler ?? {
                         totalCount: 0,
@@ -120,10 +123,22 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
                         callersStack = new Set();
                     }
 
+                    const previousQueryProfile = dbProfiler.queries?.[queryKey];
                     dbProfiler.queries[queryKey] = {
-                        count: (dbProfiler.queries?.[queryKey]?.count ?? 0) + 1,
+                        count: (previousQueryProfile?.count ?? 0) + 1,
                         callers: callersStack.add(callStack),
-                        query
+                        query,
+                        stats: previousQueryProfile?.stats || []
+                    };
+
+                    const startDate = process.hrtime.bigint();
+                    setQueryProfilerStats = (cursorStats?: CursorStats): void => {
+                        dbProfiler.queries[queryKey].stats.push({
+                            executionTimeMs: cursorStats.executionTime
+                                ? _.round(cursorStats.executionTime * 1000, 3)
+                                : null,
+                            nodejsTimeMs: _.round(Number(process.hrtime.bigint() - startDate) / 1_000_000, 3)
+                        });
                     };
 
                     dbProfiler.uniqueQueriesCount = Object.keys(dbProfiler.queries).length;
@@ -144,6 +159,8 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
                 const cursor = await db.query(queryToRun, queryOptions);
 
                 const results = await cursor.all();
+
+                setQueryProfilerStats?.(cursor.extra.stats);
 
                 return (withTotalCount ? {totalCount: cursor.extra.stats.fullCount, results} : results) as T;
             } catch (e) {
