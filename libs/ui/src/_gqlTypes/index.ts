@@ -202,6 +202,12 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type ChildrenAsRecordValuePermissionFilterInput = {
+  action: RecordPermissionsActions;
+  attributeId: Scalars['ID'];
+  libraryId: Scalars['ID'];
+};
+
 export type CreateRecordDataInput = {
   values?: InputMaybe<Array<ValueBatchInput>>;
   version?: InputMaybe<Array<ValueVersionInput>>;
@@ -620,6 +626,13 @@ export type RecordInput = {
   id: Scalars['ID'];
   library: Scalars['String'];
 };
+
+export enum RecordPermissionsActions {
+  access_record = 'access_record',
+  create_record = 'create_record',
+  delete_record = 'delete_record',
+  edit_record = 'edit_record'
+}
 
 export type RecordSortInput = {
   field: Scalars['String'];
@@ -1348,6 +1361,7 @@ export type TreeNodeChildrenQueryVariables = Exact<{
   treeId: Scalars['ID'];
   node?: InputMaybe<Scalars['ID']>;
   pagination?: InputMaybe<Pagination>;
+  childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
 }>;
 
 
@@ -2250,8 +2264,13 @@ export function useCheckApplicationExistenceLazyQuery(baseOptions?: Apollo.LazyQ
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<CheckApplicationExistenceQuery, CheckApplicationExistenceQueryVariables>(CheckApplicationExistenceDocument, options);
         }
+export function useCheckApplicationExistenceSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<CheckApplicationExistenceQuery, CheckApplicationExistenceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CheckApplicationExistenceQuery, CheckApplicationExistenceQueryVariables>(CheckApplicationExistenceDocument, options);
+        }
 export type CheckApplicationExistenceQueryHookResult = ReturnType<typeof useCheckApplicationExistenceQuery>;
 export type CheckApplicationExistenceLazyQueryHookResult = ReturnType<typeof useCheckApplicationExistenceLazyQuery>;
+export type CheckApplicationExistenceSuspenseQueryHookResult = ReturnType<typeof useCheckApplicationExistenceSuspenseQuery>;
 export type CheckApplicationExistenceQueryResult = Apollo.QueryResult<CheckApplicationExistenceQuery, CheckApplicationExistenceQueryVariables>;
 export const GetApplicationByIdDocument = gql`
     query GET_APPLICATION_BY_ID($id: ID!) {
@@ -2287,8 +2306,13 @@ export function useGetApplicationByIdLazyQuery(baseOptions?: Apollo.LazyQueryHoo
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetApplicationByIdQuery, GetApplicationByIdQueryVariables>(GetApplicationByIdDocument, options);
         }
+export function useGetApplicationByIdSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationByIdQuery, GetApplicationByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetApplicationByIdQuery, GetApplicationByIdQueryVariables>(GetApplicationByIdDocument, options);
+        }
 export type GetApplicationByIdQueryHookResult = ReturnType<typeof useGetApplicationByIdQuery>;
 export type GetApplicationByIdLazyQueryHookResult = ReturnType<typeof useGetApplicationByIdLazyQuery>;
+export type GetApplicationByIdSuspenseQueryHookResult = ReturnType<typeof useGetApplicationByIdSuspenseQuery>;
 export type GetApplicationByIdQueryResult = Apollo.QueryResult<GetApplicationByIdQuery, GetApplicationByIdQueryVariables>;
 export const GetApplicationModulesDocument = gql`
     query GET_APPLICATION_MODULES {
@@ -2323,8 +2347,13 @@ export function useGetApplicationModulesLazyQuery(baseOptions?: Apollo.LazyQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetApplicationModulesQuery, GetApplicationModulesQueryVariables>(GetApplicationModulesDocument, options);
         }
+export function useGetApplicationModulesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationModulesQuery, GetApplicationModulesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetApplicationModulesQuery, GetApplicationModulesQueryVariables>(GetApplicationModulesDocument, options);
+        }
 export type GetApplicationModulesQueryHookResult = ReturnType<typeof useGetApplicationModulesQuery>;
 export type GetApplicationModulesLazyQueryHookResult = ReturnType<typeof useGetApplicationModulesLazyQuery>;
+export type GetApplicationModulesSuspenseQueryHookResult = ReturnType<typeof useGetApplicationModulesSuspenseQuery>;
 export type GetApplicationModulesQueryResult = Apollo.QueryResult<GetApplicationModulesQuery, GetApplicationModulesQueryVariables>;
 export const SaveApplicationDocument = gql`
     mutation SAVE_APPLICATION($application: ApplicationInput!) {
@@ -2391,8 +2420,13 @@ export function useCheckAttributeExistenceLazyQuery(baseOptions?: Apollo.LazyQue
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<CheckAttributeExistenceQuery, CheckAttributeExistenceQueryVariables>(CheckAttributeExistenceDocument, options);
         }
+export function useCheckAttributeExistenceSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<CheckAttributeExistenceQuery, CheckAttributeExistenceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CheckAttributeExistenceQuery, CheckAttributeExistenceQueryVariables>(CheckAttributeExistenceDocument, options);
+        }
 export type CheckAttributeExistenceQueryHookResult = ReturnType<typeof useCheckAttributeExistenceQuery>;
 export type CheckAttributeExistenceLazyQueryHookResult = ReturnType<typeof useCheckAttributeExistenceLazyQuery>;
+export type CheckAttributeExistenceSuspenseQueryHookResult = ReturnType<typeof useCheckAttributeExistenceSuspenseQuery>;
 export type CheckAttributeExistenceQueryResult = Apollo.QueryResult<CheckAttributeExistenceQuery, CheckAttributeExistenceQueryVariables>;
 export const DeleteAttributeDocument = gql`
     mutation DELETE_ATTRIBUTE($id: ID) {
@@ -2461,8 +2495,13 @@ export function useGetAttributeByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookO
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetAttributeByIdQuery, GetAttributeByIdQueryVariables>(GetAttributeByIdDocument, options);
         }
+export function useGetAttributeByIdSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAttributeByIdQuery, GetAttributeByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAttributeByIdQuery, GetAttributeByIdQueryVariables>(GetAttributeByIdDocument, options);
+        }
 export type GetAttributeByIdQueryHookResult = ReturnType<typeof useGetAttributeByIdQuery>;
 export type GetAttributeByIdLazyQueryHookResult = ReturnType<typeof useGetAttributeByIdLazyQuery>;
+export type GetAttributeByIdSuspenseQueryHookResult = ReturnType<typeof useGetAttributeByIdSuspenseQuery>;
 export type GetAttributeByIdQueryResult = Apollo.QueryResult<GetAttributeByIdQuery, GetAttributeByIdQueryVariables>;
 export const GetAttributesByLibDocument = gql`
     query GET_ATTRIBUTES_BY_LIB($library: String!) {
@@ -2498,8 +2537,13 @@ export function useGetAttributesByLibLazyQuery(baseOptions?: Apollo.LazyQueryHoo
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetAttributesByLibQuery, GetAttributesByLibQueryVariables>(GetAttributesByLibDocument, options);
         }
+export function useGetAttributesByLibSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAttributesByLibQuery, GetAttributesByLibQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAttributesByLibQuery, GetAttributesByLibQueryVariables>(GetAttributesByLibDocument, options);
+        }
 export type GetAttributesByLibQueryHookResult = ReturnType<typeof useGetAttributesByLibQuery>;
 export type GetAttributesByLibLazyQueryHookResult = ReturnType<typeof useGetAttributesByLibLazyQuery>;
+export type GetAttributesByLibSuspenseQueryHookResult = ReturnType<typeof useGetAttributesByLibSuspenseQuery>;
 export type GetAttributesByLibQueryResult = Apollo.QueryResult<GetAttributesByLibQuery, GetAttributesByLibQueryVariables>;
 export const GetAttributesDocument = gql`
     query GET_ATTRIBUTES($pagination: Pagination, $sort: SortAttributes, $filters: AttributesFiltersInput) {
@@ -2542,8 +2586,13 @@ export function useGetAttributesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetAttributesQuery, GetAttributesQueryVariables>(GetAttributesDocument, options);
         }
+export function useGetAttributesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAttributesQuery, GetAttributesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAttributesQuery, GetAttributesQueryVariables>(GetAttributesDocument, options);
+        }
 export type GetAttributesQueryHookResult = ReturnType<typeof useGetAttributesQuery>;
 export type GetAttributesLazyQueryHookResult = ReturnType<typeof useGetAttributesLazyQuery>;
+export type GetAttributesSuspenseQueryHookResult = ReturnType<typeof useGetAttributesSuspenseQuery>;
 export type GetAttributesQueryResult = Apollo.QueryResult<GetAttributesQuery, GetAttributesQueryVariables>;
 export const GetVersionProfilesDocument = gql`
     query GET_VERSION_PROFILES($filters: VersionProfilesFiltersInput, $sort: SortVersionProfilesInput) {
@@ -2581,8 +2630,13 @@ export function useGetVersionProfilesLazyQuery(baseOptions?: Apollo.LazyQueryHoo
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetVersionProfilesQuery, GetVersionProfilesQueryVariables>(GetVersionProfilesDocument, options);
         }
+export function useGetVersionProfilesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetVersionProfilesQuery, GetVersionProfilesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetVersionProfilesQuery, GetVersionProfilesQueryVariables>(GetVersionProfilesDocument, options);
+        }
 export type GetVersionProfilesQueryHookResult = ReturnType<typeof useGetVersionProfilesQuery>;
 export type GetVersionProfilesLazyQueryHookResult = ReturnType<typeof useGetVersionProfilesLazyQuery>;
+export type GetVersionProfilesSuspenseQueryHookResult = ReturnType<typeof useGetVersionProfilesSuspenseQuery>;
 export type GetVersionProfilesQueryResult = Apollo.QueryResult<GetVersionProfilesQuery, GetVersionProfilesQueryVariables>;
 export const GetVersionableAttributesByLibraryDocument = gql`
     query GET_VERSIONABLE_ATTRIBUTES_BY_LIBRARY($libraryId: String!) {
@@ -2628,8 +2682,13 @@ export function useGetVersionableAttributesByLibraryLazyQuery(baseOptions?: Apol
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetVersionableAttributesByLibraryQuery, GetVersionableAttributesByLibraryQueryVariables>(GetVersionableAttributesByLibraryDocument, options);
         }
+export function useGetVersionableAttributesByLibrarySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetVersionableAttributesByLibraryQuery, GetVersionableAttributesByLibraryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetVersionableAttributesByLibraryQuery, GetVersionableAttributesByLibraryQueryVariables>(GetVersionableAttributesByLibraryDocument, options);
+        }
 export type GetVersionableAttributesByLibraryQueryHookResult = ReturnType<typeof useGetVersionableAttributesByLibraryQuery>;
 export type GetVersionableAttributesByLibraryLazyQueryHookResult = ReturnType<typeof useGetVersionableAttributesByLibraryLazyQuery>;
+export type GetVersionableAttributesByLibrarySuspenseQueryHookResult = ReturnType<typeof useGetVersionableAttributesByLibrarySuspenseQuery>;
 export type GetVersionableAttributesByLibraryQueryResult = Apollo.QueryResult<GetVersionableAttributesByLibraryQuery, GetVersionableAttributesByLibraryQueryVariables>;
 export const SaveAttributeDocument = gql`
     mutation SAVE_ATTRIBUTE($attribute: AttributeInput!) {
@@ -2696,8 +2755,13 @@ export function useExportLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Exp
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ExportQuery, ExportQueryVariables>(ExportDocument, options);
         }
+export function useExportSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExportQuery, ExportQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExportQuery, ExportQueryVariables>(ExportDocument, options);
+        }
 export type ExportQueryHookResult = ReturnType<typeof useExportQuery>;
 export type ExportLazyQueryHookResult = ReturnType<typeof useExportLazyQuery>;
+export type ExportSuspenseQueryHookResult = ReturnType<typeof useExportSuspenseQuery>;
 export type ExportQueryResult = Apollo.QueryResult<ExportQuery, ExportQueryVariables>;
 export const CreateDirectoryDocument = gql`
     mutation CREATE_DIRECTORY($library: String!, $nodeId: String!, $name: String!) {
@@ -2850,8 +2914,13 @@ export function useGetDirectoryDataLazyQuery(baseOptions?: Apollo.LazyQueryHookO
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetDirectoryDataQuery, GetDirectoryDataQueryVariables>(GetDirectoryDataDocument, options);
         }
+export function useGetDirectoryDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetDirectoryDataQuery, GetDirectoryDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetDirectoryDataQuery, GetDirectoryDataQueryVariables>(GetDirectoryDataDocument, options);
+        }
 export type GetDirectoryDataQueryHookResult = ReturnType<typeof useGetDirectoryDataQuery>;
 export type GetDirectoryDataLazyQueryHookResult = ReturnType<typeof useGetDirectoryDataLazyQuery>;
+export type GetDirectoryDataSuspenseQueryHookResult = ReturnType<typeof useGetDirectoryDataSuspenseQuery>;
 export type GetDirectoryDataQueryResult = Apollo.QueryResult<GetDirectoryDataQuery, GetDirectoryDataQueryVariables>;
 export const UploadUpdateDocument = gql`
     subscription UPLOAD_UPDATE($filters: UploadFiltersInput) {
@@ -2997,8 +3066,13 @@ export function useCheckLibraryExistenceLazyQuery(baseOptions?: Apollo.LazyQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>(CheckLibraryExistenceDocument, options);
         }
+export function useCheckLibraryExistenceSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>(CheckLibraryExistenceDocument, options);
+        }
 export type CheckLibraryExistenceQueryHookResult = ReturnType<typeof useCheckLibraryExistenceQuery>;
 export type CheckLibraryExistenceLazyQueryHookResult = ReturnType<typeof useCheckLibraryExistenceLazyQuery>;
+export type CheckLibraryExistenceSuspenseQueryHookResult = ReturnType<typeof useCheckLibraryExistenceSuspenseQuery>;
 export type CheckLibraryExistenceQueryResult = Apollo.QueryResult<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>;
 export const DeleteLibraryDocument = gql`
     mutation DELETE_LIBRARY($id: ID) {
@@ -3066,8 +3140,13 @@ export function useGetLibrariesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetLibrariesQuery, GetLibrariesQueryVariables>(GetLibrariesDocument, options);
         }
+export function useGetLibrariesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLibrariesQuery, GetLibrariesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLibrariesQuery, GetLibrariesQueryVariables>(GetLibrariesDocument, options);
+        }
 export type GetLibrariesQueryHookResult = ReturnType<typeof useGetLibrariesQuery>;
 export type GetLibrariesLazyQueryHookResult = ReturnType<typeof useGetLibrariesLazyQuery>;
+export type GetLibrariesSuspenseQueryHookResult = ReturnType<typeof useGetLibrariesSuspenseQuery>;
 export type GetLibrariesQueryResult = Apollo.QueryResult<GetLibrariesQuery, GetLibrariesQueryVariables>;
 export const GetLibraryByIdDocument = gql`
     query GET_LIBRARY_BY_ID($id: [ID!]) {
@@ -3103,8 +3182,13 @@ export function useGetLibraryByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>(GetLibraryByIdDocument, options);
         }
+export function useGetLibraryByIdSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>(GetLibraryByIdDocument, options);
+        }
 export type GetLibraryByIdQueryHookResult = ReturnType<typeof useGetLibraryByIdQuery>;
 export type GetLibraryByIdLazyQueryHookResult = ReturnType<typeof useGetLibraryByIdLazyQuery>;
+export type GetLibraryByIdSuspenseQueryHookResult = ReturnType<typeof useGetLibraryByIdSuspenseQuery>;
 export type GetLibraryByIdQueryResult = Apollo.QueryResult<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>;
 export const GetLibraryPermissionsDocument = gql`
     query GET_LIBRARY_PERMISSIONS($libraryId: [ID!]) {
@@ -3146,8 +3230,13 @@ export function useGetLibraryPermissionsLazyQuery(baseOptions?: Apollo.LazyQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetLibraryPermissionsQuery, GetLibraryPermissionsQueryVariables>(GetLibraryPermissionsDocument, options);
         }
+export function useGetLibraryPermissionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLibraryPermissionsQuery, GetLibraryPermissionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLibraryPermissionsQuery, GetLibraryPermissionsQueryVariables>(GetLibraryPermissionsDocument, options);
+        }
 export type GetLibraryPermissionsQueryHookResult = ReturnType<typeof useGetLibraryPermissionsQuery>;
 export type GetLibraryPermissionsLazyQueryHookResult = ReturnType<typeof useGetLibraryPermissionsLazyQuery>;
+export type GetLibraryPermissionsSuspenseQueryHookResult = ReturnType<typeof useGetLibraryPermissionsSuspenseQuery>;
 export type GetLibraryPermissionsQueryResult = Apollo.QueryResult<GetLibraryPermissionsQuery, GetLibraryPermissionsQueryVariables>;
 export const GetLibraryPreviewsSettingsDocument = gql`
     query GET_LIBRARY_PREVIEWS_SETTINGS($id: ID!) {
@@ -3198,8 +3287,13 @@ export function useGetLibraryPreviewsSettingsLazyQuery(baseOptions?: Apollo.Lazy
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetLibraryPreviewsSettingsQuery, GetLibraryPreviewsSettingsQueryVariables>(GetLibraryPreviewsSettingsDocument, options);
         }
+export function useGetLibraryPreviewsSettingsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLibraryPreviewsSettingsQuery, GetLibraryPreviewsSettingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLibraryPreviewsSettingsQuery, GetLibraryPreviewsSettingsQueryVariables>(GetLibraryPreviewsSettingsDocument, options);
+        }
 export type GetLibraryPreviewsSettingsQueryHookResult = ReturnType<typeof useGetLibraryPreviewsSettingsQuery>;
 export type GetLibraryPreviewsSettingsLazyQueryHookResult = ReturnType<typeof useGetLibraryPreviewsSettingsLazyQuery>;
+export type GetLibraryPreviewsSettingsSuspenseQueryHookResult = ReturnType<typeof useGetLibraryPreviewsSettingsSuspenseQuery>;
 export type GetLibraryPreviewsSettingsQueryResult = Apollo.QueryResult<GetLibraryPreviewsSettingsQuery, GetLibraryPreviewsSettingsQueryVariables>;
 export const SaveLibraryDocument = gql`
     mutation saveLibrary($library: LibraryInput!) {
@@ -3270,8 +3364,13 @@ export function useIsAllowedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<IsAllowedQuery, IsAllowedQueryVariables>(IsAllowedDocument, options);
         }
+export function useIsAllowedSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<IsAllowedQuery, IsAllowedQueryVariables>(IsAllowedDocument, options);
+        }
 export type IsAllowedQueryHookResult = ReturnType<typeof useIsAllowedQuery>;
 export type IsAllowedLazyQueryHookResult = ReturnType<typeof useIsAllowedLazyQuery>;
+export type IsAllowedSuspenseQueryHookResult = ReturnType<typeof useIsAllowedSuspenseQuery>;
 export type IsAllowedQueryResult = Apollo.QueryResult<IsAllowedQuery, IsAllowedQueryVariables>;
 export const ActivateRecordsDocument = gql`
     mutation ACTIVATE_RECORDS($libraryId: String!, $recordsIds: [String!], $filters: [RecordFilterInput!]) {
@@ -3431,8 +3530,13 @@ export function useDoesFileExistAsChildLazyQuery(baseOptions?: Apollo.LazyQueryH
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<DoesFileExistAsChildQuery, DoesFileExistAsChildQueryVariables>(DoesFileExistAsChildDocument, options);
         }
+export function useDoesFileExistAsChildSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<DoesFileExistAsChildQuery, DoesFileExistAsChildQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<DoesFileExistAsChildQuery, DoesFileExistAsChildQueryVariables>(DoesFileExistAsChildDocument, options);
+        }
 export type DoesFileExistAsChildQueryHookResult = ReturnType<typeof useDoesFileExistAsChildQuery>;
 export type DoesFileExistAsChildLazyQueryHookResult = ReturnType<typeof useDoesFileExistAsChildLazyQuery>;
+export type DoesFileExistAsChildSuspenseQueryHookResult = ReturnType<typeof useDoesFileExistAsChildSuspenseQuery>;
 export type DoesFileExistAsChildQueryResult = Apollo.QueryResult<DoesFileExistAsChildQuery, DoesFileExistAsChildQueryVariables>;
 export const GetFileDataDocument = gql`
     query GET_FILE_DATA($library: ID!, $fileId: String!, $previewsStatusAttribute: ID!) {
@@ -3515,8 +3619,13 @@ export function useGetFileDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetFileDataQuery, GetFileDataQueryVariables>(GetFileDataDocument, options);
         }
+export function useGetFileDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetFileDataQuery, GetFileDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetFileDataQuery, GetFileDataQueryVariables>(GetFileDataDocument, options);
+        }
 export type GetFileDataQueryHookResult = ReturnType<typeof useGetFileDataQuery>;
 export type GetFileDataLazyQueryHookResult = ReturnType<typeof useGetFileDataLazyQuery>;
+export type GetFileDataSuspenseQueryHookResult = ReturnType<typeof useGetFileDataSuspenseQuery>;
 export type GetFileDataQueryResult = Apollo.QueryResult<GetFileDataQuery, GetFileDataQueryVariables>;
 export const RecordFormDocument = gql`
     query RECORD_FORM($libraryId: String!, $formId: String!, $recordId: String, $version: [ValueVersionInput!]) {
@@ -3572,8 +3681,13 @@ export function useRecordFormLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<RecordFormQuery, RecordFormQueryVariables>(RecordFormDocument, options);
         }
+export function useRecordFormSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<RecordFormQuery, RecordFormQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<RecordFormQuery, RecordFormQueryVariables>(RecordFormDocument, options);
+        }
 export type RecordFormQueryHookResult = ReturnType<typeof useRecordFormQuery>;
 export type RecordFormLazyQueryHookResult = ReturnType<typeof useRecordFormLazyQuery>;
+export type RecordFormSuspenseQueryHookResult = ReturnType<typeof useRecordFormSuspenseQuery>;
 export type RecordFormQueryResult = Apollo.QueryResult<RecordFormQuery, RecordFormQueryVariables>;
 export const RecordUpdateDocument = gql`
     subscription RECORD_UPDATE($filters: RecordUpdateFilterInput) {
@@ -3658,8 +3772,13 @@ export function useGetRecordsFromLibraryLazyQuery(baseOptions?: Apollo.LazyQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetRecordsFromLibraryQuery, GetRecordsFromLibraryQueryVariables>(GetRecordsFromLibraryDocument, options);
         }
+export function useGetRecordsFromLibrarySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetRecordsFromLibraryQuery, GetRecordsFromLibraryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetRecordsFromLibraryQuery, GetRecordsFromLibraryQueryVariables>(GetRecordsFromLibraryDocument, options);
+        }
 export type GetRecordsFromLibraryQueryHookResult = ReturnType<typeof useGetRecordsFromLibraryQuery>;
 export type GetRecordsFromLibraryLazyQueryHookResult = ReturnType<typeof useGetRecordsFromLibraryLazyQuery>;
+export type GetRecordsFromLibrarySuspenseQueryHookResult = ReturnType<typeof useGetRecordsFromLibrarySuspenseQuery>;
 export type GetRecordsFromLibraryQueryResult = Apollo.QueryResult<GetRecordsFromLibraryQuery, GetRecordsFromLibraryQueryVariables>;
 export const IndexRecordsDocument = gql`
     mutation INDEX_RECORDS($libraryId: String!, $records: [String!]) {
@@ -3756,8 +3875,13 @@ export function useCheckTreeExistenceLazyQuery(baseOptions?: Apollo.LazyQueryHoo
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>(CheckTreeExistenceDocument, options);
         }
+export function useCheckTreeExistenceSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>(CheckTreeExistenceDocument, options);
+        }
 export type CheckTreeExistenceQueryHookResult = ReturnType<typeof useCheckTreeExistenceQuery>;
 export type CheckTreeExistenceLazyQueryHookResult = ReturnType<typeof useCheckTreeExistenceLazyQuery>;
+export type CheckTreeExistenceSuspenseQueryHookResult = ReturnType<typeof useCheckTreeExistenceSuspenseQuery>;
 export type CheckTreeExistenceQueryResult = Apollo.QueryResult<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>;
 export const DeleteTreeDocument = gql`
     mutation DELETE_TREE($id: ID!) {
@@ -3826,8 +3950,13 @@ export function useGetTreeByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetTreeByIdQuery, GetTreeByIdQueryVariables>(GetTreeByIdDocument, options);
         }
+export function useGetTreeByIdSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTreeByIdQuery, GetTreeByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTreeByIdQuery, GetTreeByIdQueryVariables>(GetTreeByIdDocument, options);
+        }
 export type GetTreeByIdQueryHookResult = ReturnType<typeof useGetTreeByIdQuery>;
 export type GetTreeByIdLazyQueryHookResult = ReturnType<typeof useGetTreeByIdLazyQuery>;
+export type GetTreeByIdSuspenseQueryHookResult = ReturnType<typeof useGetTreeByIdSuspenseQuery>;
 export type GetTreeByIdQueryResult = Apollo.QueryResult<GetTreeByIdQuery, GetTreeByIdQueryVariables>;
 export const GetTreeLibrariesDocument = gql`
     query GET_TREE_LIBRARIES($treeId: [ID!], $library: String) {
@@ -3880,8 +4009,13 @@ export function useGetTreeLibrariesLazyQuery(baseOptions?: Apollo.LazyQueryHookO
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetTreeLibrariesQuery, GetTreeLibrariesQueryVariables>(GetTreeLibrariesDocument, options);
         }
+export function useGetTreeLibrariesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTreeLibrariesQuery, GetTreeLibrariesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTreeLibrariesQuery, GetTreeLibrariesQueryVariables>(GetTreeLibrariesDocument, options);
+        }
 export type GetTreeLibrariesQueryHookResult = ReturnType<typeof useGetTreeLibrariesQuery>;
 export type GetTreeLibrariesLazyQueryHookResult = ReturnType<typeof useGetTreeLibrariesLazyQuery>;
+export type GetTreeLibrariesSuspenseQueryHookResult = ReturnType<typeof useGetTreeLibrariesSuspenseQuery>;
 export type GetTreeLibrariesQueryResult = Apollo.QueryResult<GetTreeLibrariesQuery, GetTreeLibrariesQueryVariables>;
 export const GetTreesDocument = gql`
     query GET_TREES {
@@ -3916,8 +4050,13 @@ export function useGetTreesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetTreesQuery, GetTreesQueryVariables>(GetTreesDocument, options);
         }
+export function useGetTreesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTreesQuery, GetTreesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTreesQuery, GetTreesQueryVariables>(GetTreesDocument, options);
+        }
 export type GetTreesQueryHookResult = ReturnType<typeof useGetTreesQuery>;
 export type GetTreesLazyQueryHookResult = ReturnType<typeof useGetTreesLazyQuery>;
+export type GetTreesSuspenseQueryHookResult = ReturnType<typeof useGetTreesSuspenseQuery>;
 export type GetTreesQueryResult = Apollo.QueryResult<GetTreesQuery, GetTreesQueryVariables>;
 export const SaveTreeDocument = gql`
     mutation SAVE_TREE($tree: TreeInput!) {
@@ -3953,8 +4092,13 @@ export type SaveTreeMutationHookResult = ReturnType<typeof useSaveTreeMutation>;
 export type SaveTreeMutationResult = Apollo.MutationResult<SaveTreeMutation>;
 export type SaveTreeMutationOptions = Apollo.BaseMutationOptions<SaveTreeMutation, SaveTreeMutationVariables>;
 export const TreeNodeChildrenDocument = gql`
-    query TREE_NODE_CHILDREN($treeId: ID!, $node: ID, $pagination: Pagination) {
-  treeNodeChildren(treeId: $treeId, node: $node, pagination: $pagination) {
+    query TREE_NODE_CHILDREN($treeId: ID!, $node: ID, $pagination: Pagination, $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput) {
+  treeNodeChildren(
+    treeId: $treeId
+    node: $node
+    pagination: $pagination
+    childrenAsRecordValuePermissionFilter: $childrenAsRecordValuePermissionFilter
+  ) {
     totalCount
     list {
       ...TreeNodeChild
@@ -3978,6 +4122,7 @@ export const TreeNodeChildrenDocument = gql`
  *      treeId: // value for 'treeId'
  *      node: // value for 'node'
  *      pagination: // value for 'pagination'
+ *      childrenAsRecordValuePermissionFilter: // value for 'childrenAsRecordValuePermissionFilter'
  *   },
  * });
  */
@@ -3989,8 +4134,13 @@ export function useTreeNodeChildrenLazyQuery(baseOptions?: Apollo.LazyQueryHookO
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>(TreeNodeChildrenDocument, options);
         }
+export function useTreeNodeChildrenSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>(TreeNodeChildrenDocument, options);
+        }
 export type TreeNodeChildrenQueryHookResult = ReturnType<typeof useTreeNodeChildrenQuery>;
 export type TreeNodeChildrenLazyQueryHookResult = ReturnType<typeof useTreeNodeChildrenLazyQuery>;
+export type TreeNodeChildrenSuspenseQueryHookResult = ReturnType<typeof useTreeNodeChildrenSuspenseQuery>;
 export type TreeNodeChildrenQueryResult = Apollo.QueryResult<TreeNodeChildrenQuery, TreeNodeChildrenQueryVariables>;
 export const GetUserDataDocument = gql`
     query GET_USER_DATA($keys: [String!]!, $global: Boolean) {
@@ -4026,8 +4176,13 @@ export function useGetUserDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetUserDataQuery, GetUserDataQueryVariables>(GetUserDataDocument, options);
         }
+export function useGetUserDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserDataQuery, GetUserDataQueryVariables>(GetUserDataDocument, options);
+        }
 export type GetUserDataQueryHookResult = ReturnType<typeof useGetUserDataQuery>;
 export type GetUserDataLazyQueryHookResult = ReturnType<typeof useGetUserDataLazyQuery>;
+export type GetUserDataSuspenseQueryHookResult = ReturnType<typeof useGetUserDataSuspenseQuery>;
 export type GetUserDataQueryResult = Apollo.QueryResult<GetUserDataQuery, GetUserDataQueryVariables>;
 export const SaveUserDataDocument = gql`
     mutation SAVE_USER_DATA($key: String!, $value: Any, $global: Boolean!) {
@@ -4144,8 +4299,13 @@ export function useRunActionsListAndFormatOnValueLazyQuery(baseOptions?: Apollo.
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<RunActionsListAndFormatOnValueQuery, RunActionsListAndFormatOnValueQueryVariables>(RunActionsListAndFormatOnValueDocument, options);
         }
+export function useRunActionsListAndFormatOnValueSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<RunActionsListAndFormatOnValueQuery, RunActionsListAndFormatOnValueQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<RunActionsListAndFormatOnValueQuery, RunActionsListAndFormatOnValueQueryVariables>(RunActionsListAndFormatOnValueDocument, options);
+        }
 export type RunActionsListAndFormatOnValueQueryHookResult = ReturnType<typeof useRunActionsListAndFormatOnValueQuery>;
 export type RunActionsListAndFormatOnValueLazyQueryHookResult = ReturnType<typeof useRunActionsListAndFormatOnValueLazyQuery>;
+export type RunActionsListAndFormatOnValueSuspenseQueryHookResult = ReturnType<typeof useRunActionsListAndFormatOnValueSuspenseQuery>;
 export type RunActionsListAndFormatOnValueQueryResult = Apollo.QueryResult<RunActionsListAndFormatOnValueQuery, RunActionsListAndFormatOnValueQueryVariables>;
 export const SaveValueBatchDocument = gql`
     mutation SAVE_VALUE_BATCH($library: ID!, $recordId: ID!, $version: [ValueVersionInput!], $values: [ValueBatchInput!]!, $deleteEmpty: Boolean) {
@@ -4264,8 +4424,13 @@ export function useGetViewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetViewQuery, GetViewQueryVariables>(GetViewDocument, options);
         }
+export function useGetViewSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetViewQuery, GetViewQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetViewQuery, GetViewQueryVariables>(GetViewDocument, options);
+        }
 export type GetViewQueryHookResult = ReturnType<typeof useGetViewQuery>;
 export type GetViewLazyQueryHookResult = ReturnType<typeof useGetViewLazyQuery>;
+export type GetViewSuspenseQueryHookResult = ReturnType<typeof useGetViewSuspenseQuery>;
 export type GetViewQueryResult = Apollo.QueryResult<GetViewQuery, GetViewQueryVariables>;
 export const GetViewsListDocument = gql`
     query GET_VIEWS_LIST($libraryId: String!) {
@@ -4302,8 +4467,13 @@ export function useGetViewsListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetViewsListQuery, GetViewsListQueryVariables>(GetViewsListDocument, options);
         }
+export function useGetViewsListSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetViewsListQuery, GetViewsListQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetViewsListQuery, GetViewsListQueryVariables>(GetViewsListDocument, options);
+        }
 export type GetViewsListQueryHookResult = ReturnType<typeof useGetViewsListQuery>;
 export type GetViewsListLazyQueryHookResult = ReturnType<typeof useGetViewsListLazyQuery>;
+export type GetViewsListSuspenseQueryHookResult = ReturnType<typeof useGetViewsListSuspenseQuery>;
 export type GetViewsListQueryResult = Apollo.QueryResult<GetViewsListQuery, GetViewsListQueryVariables>;
 export const SaveViewDocument = gql`
     mutation SAVE_VIEW($view: ViewInput!) {
@@ -4372,8 +4542,13 @@ export function useGetAttributesByLibWithPermissionsLazyQuery(baseOptions?: Apol
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetAttributesByLibWithPermissionsQuery, GetAttributesByLibWithPermissionsQueryVariables>(GetAttributesByLibWithPermissionsDocument, options);
         }
+export function useGetAttributesByLibWithPermissionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAttributesByLibWithPermissionsQuery, GetAttributesByLibWithPermissionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAttributesByLibWithPermissionsQuery, GetAttributesByLibWithPermissionsQueryVariables>(GetAttributesByLibWithPermissionsDocument, options);
+        }
 export type GetAttributesByLibWithPermissionsQueryHookResult = ReturnType<typeof useGetAttributesByLibWithPermissionsQuery>;
 export type GetAttributesByLibWithPermissionsLazyQueryHookResult = ReturnType<typeof useGetAttributesByLibWithPermissionsLazyQuery>;
+export type GetAttributesByLibWithPermissionsSuspenseQueryHookResult = ReturnType<typeof useGetAttributesByLibWithPermissionsSuspenseQuery>;
 export type GetAttributesByLibWithPermissionsQueryResult = Apollo.QueryResult<GetAttributesByLibWithPermissionsQuery, GetAttributesByLibWithPermissionsQueryVariables>;
 export const ExplorerAttributesDocument = gql`
     query ExplorerAttributes($ids: [ID!]) {
@@ -4416,8 +4591,13 @@ export function useExplorerAttributesLazyQuery(baseOptions?: Apollo.LazyQueryHoo
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ExplorerAttributesQuery, ExplorerAttributesQueryVariables>(ExplorerAttributesDocument, options);
         }
+export function useExplorerAttributesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExplorerAttributesQuery, ExplorerAttributesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExplorerAttributesQuery, ExplorerAttributesQueryVariables>(ExplorerAttributesDocument, options);
+        }
 export type ExplorerAttributesQueryHookResult = ReturnType<typeof useExplorerAttributesQuery>;
 export type ExplorerAttributesLazyQueryHookResult = ReturnType<typeof useExplorerAttributesLazyQuery>;
+export type ExplorerAttributesSuspenseQueryHookResult = ReturnType<typeof useExplorerAttributesSuspenseQuery>;
 export type ExplorerAttributesQueryResult = Apollo.QueryResult<ExplorerAttributesQuery, ExplorerAttributesQueryVariables>;
 export const ExplorerLinkAttributeDocument = gql`
     query ExplorerLinkAttribute($id: ID!) {
@@ -4459,8 +4639,13 @@ export function useExplorerLinkAttributeLazyQuery(baseOptions?: Apollo.LazyQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ExplorerLinkAttributeQuery, ExplorerLinkAttributeQueryVariables>(ExplorerLinkAttributeDocument, options);
         }
+export function useExplorerLinkAttributeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExplorerLinkAttributeQuery, ExplorerLinkAttributeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExplorerLinkAttributeQuery, ExplorerLinkAttributeQueryVariables>(ExplorerLinkAttributeDocument, options);
+        }
 export type ExplorerLinkAttributeQueryHookResult = ReturnType<typeof useExplorerLinkAttributeQuery>;
 export type ExplorerLinkAttributeLazyQueryHookResult = ReturnType<typeof useExplorerLinkAttributeLazyQuery>;
+export type ExplorerLinkAttributeSuspenseQueryHookResult = ReturnType<typeof useExplorerLinkAttributeSuspenseQuery>;
 export type ExplorerLinkAttributeQueryResult = Apollo.QueryResult<ExplorerLinkAttributeQuery, ExplorerLinkAttributeQueryVariables>;
 export const ExplorerLibraryDataDocument = gql`
     query ExplorerLibraryData($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
@@ -4524,8 +4709,13 @@ export function useExplorerLibraryDataLazyQuery(baseOptions?: Apollo.LazyQueryHo
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ExplorerLibraryDataQuery, ExplorerLibraryDataQueryVariables>(ExplorerLibraryDataDocument, options);
         }
+export function useExplorerLibraryDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExplorerLibraryDataQuery, ExplorerLibraryDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExplorerLibraryDataQuery, ExplorerLibraryDataQueryVariables>(ExplorerLibraryDataDocument, options);
+        }
 export type ExplorerLibraryDataQueryHookResult = ReturnType<typeof useExplorerLibraryDataQuery>;
 export type ExplorerLibraryDataLazyQueryHookResult = ReturnType<typeof useExplorerLibraryDataLazyQuery>;
+export type ExplorerLibraryDataSuspenseQueryHookResult = ReturnType<typeof useExplorerLibraryDataSuspenseQuery>;
 export type ExplorerLibraryDataQueryResult = Apollo.QueryResult<ExplorerLibraryDataQuery, ExplorerLibraryDataQueryVariables>;
 export const ExplorerLinkDataDocument = gql`
     query ExplorerLinkData($attributeIds: [ID!]!, $parentLibraryId: ID!, $parentRecordId: String, $linkAttributeId: ID!) {
@@ -4576,8 +4766,13 @@ export function useExplorerLinkDataLazyQuery(baseOptions?: Apollo.LazyQueryHookO
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ExplorerLinkDataQuery, ExplorerLinkDataQueryVariables>(ExplorerLinkDataDocument, options);
         }
+export function useExplorerLinkDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExplorerLinkDataQuery, ExplorerLinkDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExplorerLinkDataQuery, ExplorerLinkDataQueryVariables>(ExplorerLinkDataDocument, options);
+        }
 export type ExplorerLinkDataQueryHookResult = ReturnType<typeof useExplorerLinkDataQuery>;
 export type ExplorerLinkDataLazyQueryHookResult = ReturnType<typeof useExplorerLinkDataLazyQuery>;
+export type ExplorerLinkDataSuspenseQueryHookResult = ReturnType<typeof useExplorerLinkDataSuspenseQuery>;
 export type ExplorerLinkDataQueryResult = Apollo.QueryResult<ExplorerLinkDataQuery, ExplorerLinkDataQueryVariables>;
 export const GetLibraryAttributesDocument = gql`
     query GetLibraryAttributes($libraryId: ID!) {
@@ -4616,8 +4811,13 @@ export function useGetLibraryAttributesLazyQuery(baseOptions?: Apollo.LazyQueryH
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>(GetLibraryAttributesDocument, options);
         }
+export function useGetLibraryAttributesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>(GetLibraryAttributesDocument, options);
+        }
 export type GetLibraryAttributesQueryHookResult = ReturnType<typeof useGetLibraryAttributesQuery>;
 export type GetLibraryAttributesLazyQueryHookResult = ReturnType<typeof useGetLibraryAttributesLazyQuery>;
+export type GetLibraryAttributesSuspenseQueryHookResult = ReturnType<typeof useGetLibraryAttributesSuspenseQuery>;
 export type GetLibraryAttributesQueryResult = Apollo.QueryResult<GetLibraryAttributesQuery, GetLibraryAttributesQueryVariables>;
 export const ExplorerLibraryDetailsDocument = gql`
     query ExplorerLibraryDetails($libraryId: ID!) {
@@ -4655,8 +4855,13 @@ export function useExplorerLibraryDetailsLazyQuery(baseOptions?: Apollo.LazyQuer
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ExplorerLibraryDetailsQuery, ExplorerLibraryDetailsQueryVariables>(ExplorerLibraryDetailsDocument, options);
         }
+export function useExplorerLibraryDetailsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExplorerLibraryDetailsQuery, ExplorerLibraryDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExplorerLibraryDetailsQuery, ExplorerLibraryDetailsQueryVariables>(ExplorerLibraryDetailsDocument, options);
+        }
 export type ExplorerLibraryDetailsQueryHookResult = ReturnType<typeof useExplorerLibraryDetailsQuery>;
 export type ExplorerLibraryDetailsLazyQueryHookResult = ReturnType<typeof useExplorerLibraryDetailsLazyQuery>;
+export type ExplorerLibraryDetailsSuspenseQueryHookResult = ReturnType<typeof useExplorerLibraryDetailsSuspenseQuery>;
 export type ExplorerLibraryDetailsQueryResult = Apollo.QueryResult<ExplorerLibraryDetailsQuery, ExplorerLibraryDetailsQueryVariables>;
 export const ExplorerSelectionIdsDocument = gql`
     query ExplorerSelectionIds($libraryId: ID!, $filters: [RecordFilterInput]) {
@@ -4693,8 +4898,13 @@ export function useExplorerSelectionIdsLazyQuery(baseOptions?: Apollo.LazyQueryH
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ExplorerSelectionIdsQuery, ExplorerSelectionIdsQueryVariables>(ExplorerSelectionIdsDocument, options);
         }
+export function useExplorerSelectionIdsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExplorerSelectionIdsQuery, ExplorerSelectionIdsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExplorerSelectionIdsQuery, ExplorerSelectionIdsQueryVariables>(ExplorerSelectionIdsDocument, options);
+        }
 export type ExplorerSelectionIdsQueryHookResult = ReturnType<typeof useExplorerSelectionIdsQuery>;
 export type ExplorerSelectionIdsLazyQueryHookResult = ReturnType<typeof useExplorerSelectionIdsLazyQuery>;
+export type ExplorerSelectionIdsSuspenseQueryHookResult = ReturnType<typeof useExplorerSelectionIdsSuspenseQuery>;
 export type ExplorerSelectionIdsQueryResult = Apollo.QueryResult<ExplorerSelectionIdsQuery, ExplorerSelectionIdsQueryVariables>;
 export const MeDocument = gql`
     query Me {
@@ -4733,8 +4943,13 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
         }
+export function useMeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<MeQuery, MeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+        }
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeSuspenseQueryHookResult = ReturnType<typeof useMeSuspenseQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const UpdateViewDocument = gql`
     mutation UpdateView($view: ViewInputPartial!) {
@@ -4817,8 +5032,13 @@ export function useGetJoinLibraryMandatoryAttributeValuesLazyQuery(baseOptions?:
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>(GetJoinLibraryMandatoryAttributeValuesDocument, options);
         }
+export function useGetJoinLibraryMandatoryAttributeValuesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>(GetJoinLibraryMandatoryAttributeValuesDocument, options);
+        }
 export type GetJoinLibraryMandatoryAttributeValuesQueryHookResult = ReturnType<typeof useGetJoinLibraryMandatoryAttributeValuesQuery>;
 export type GetJoinLibraryMandatoryAttributeValuesLazyQueryHookResult = ReturnType<typeof useGetJoinLibraryMandatoryAttributeValuesLazyQuery>;
+export type GetJoinLibraryMandatoryAttributeValuesSuspenseQueryHookResult = ReturnType<typeof useGetJoinLibraryMandatoryAttributeValuesSuspenseQuery>;
 export type GetJoinLibraryMandatoryAttributeValuesQueryResult = Apollo.QueryResult<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>;
 export const TreeDataQueryDocument = gql`
     query TreeDataQuery($treeId: ID!) {
@@ -4855,6 +5075,11 @@ export function useTreeDataQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<TreeDataQueryQuery, TreeDataQueryQueryVariables>(TreeDataQueryDocument, options);
         }
+export function useTreeDataQuerySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TreeDataQueryQuery, TreeDataQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TreeDataQueryQuery, TreeDataQueryQueryVariables>(TreeDataQueryDocument, options);
+        }
 export type TreeDataQueryQueryHookResult = ReturnType<typeof useTreeDataQueryQuery>;
 export type TreeDataQueryLazyQueryHookResult = ReturnType<typeof useTreeDataQueryLazyQuery>;
+export type TreeDataQuerySuspenseQueryHookResult = ReturnType<typeof useTreeDataQuerySuspenseQuery>;
 export type TreeDataQueryQueryResult = Apollo.QueryResult<TreeDataQueryQuery, TreeDataQueryQueryVariables>;

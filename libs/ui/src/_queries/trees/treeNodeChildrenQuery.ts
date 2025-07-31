@@ -37,8 +37,18 @@ export const getTreeNodeChildrenQuery = gql`
         }
     }
 
-    query TREE_NODE_CHILDREN($treeId: ID!, $node: ID, $pagination: Pagination) {
-        treeNodeChildren(treeId: $treeId, node: $node, pagination: $pagination) {
+    query TREE_NODE_CHILDREN(
+        $treeId: ID!
+        $node: ID
+        $pagination: Pagination
+        $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput
+    ) {
+        treeNodeChildren(
+            treeId: $treeId
+            node: $node
+            pagination: $pagination
+            childrenAsRecordValuePermissionFilter: $childrenAsRecordValuePermissionFilter
+        ) {
             totalCount
             list {
                 ...TreeNodeChild

@@ -18,7 +18,7 @@ import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IListWithCursor} from '_types/list';
 import {IPreview} from '_types/preview';
-import {ISaveValue, IStandardValue, ITreeValue, IValue, IValuesOptions} from '_types/value';
+import {ISaveTreeValue, ISaveValue, IStandardValue, ITreeValue, IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
@@ -855,6 +855,11 @@ export default function ({
                         // First, check if values are ok. If not, we won't create the record at all
                         const res = await Promise.allSettled(
                             Object.entries(valuesByAttribute).map(async ([attributeId, attributeValues]) => {
+                                const attributeProperties = await attributeDomain.getAttributeProperties({
+                                    id: attributeId,
+                                    ctx
+                                });
+
                                 const canEditAttr = await attrPermissionDomain.getAttributePermission({
                                     action: AttributePermissionsActions.EDIT_VALUE,
                                     attributeId,
@@ -868,13 +873,34 @@ export default function ({
                                     });
                                 }
 
-                                const attributeProps = await attributeDomain.getAttributeProperties({
-                                    id: attributeId,
-                                    ctx
-                                });
+                                if (utils.isTreeAttribute(attributeProperties)) {
+                                    await Promise.all(
+                                        (attributeValues as ISaveTreeValue[]).map(async treeValue => {
+                                            const treeValuePermission =
+                                                await recordPermissionDomain.evaluateTreeValueRecordPermission({
+                                                    action: RecordPermissionsActions.CREATE_RECORD,
+                                                    userId: ctx.userId,
+                                                    libraryId: library,
+                                                    attributeId,
+                                                    nodeId: treeValue.payload,
+                                                    ctx
+                                                });
+
+                                            if (!treeValuePermission) {
+                                                throw new PermissionError<ISaveTreeValue>(
+                                                    RecordPermissionsActions.CREATE_RECORD,
+                                                    {
+                                                        attribute: attributeId,
+                                                        [attributeId]: `Record creation permission denied with nodeId ${treeValue.payload}`
+                                                    }
+                                                );
+                                            }
+                                        })
+                                    );
+                                }
 
                                 const valueChecksParams = {
-                                    attributeProps,
+                                    attributeProps: attributeProperties,
                                     library,
                                     keepEmpty: false,
                                     infos: ctx
@@ -898,7 +924,7 @@ export default function ({
 
                                 if (Object.keys(validationErrors).length > 0) {
                                     throw new ValidationError<IValue>(validationErrors, 'Validation error', false, {
-                                        attribute: attributeProps.id,
+                                        attribute: attributeProperties.id,
                                         values: attributeValues
                                     });
                                 }
@@ -906,7 +932,7 @@ export default function ({
                                 return valueDomain.runActionsList({
                                     listName: ActionsListEvents.SAVE_VALUE,
                                     values: attributeValues,
-                                    attribute: attributeProps,
+                                    attribute: attributeProperties,
                                     library,
                                     ctx
                                 });

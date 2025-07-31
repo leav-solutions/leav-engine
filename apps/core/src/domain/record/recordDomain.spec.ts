@@ -231,7 +231,8 @@ describe('RecordDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                     'core.infra.record': recRepo as IRecordRepo
-                })
+                }),
+                'core.utils': mockUtils as IUtils
             });
 
             const createdRecord = await recDomain.createRecord({
@@ -492,13 +493,6 @@ describe('RecordDomain', () => {
 
             const recordPermDomain: Mockify<IRecordPermissionDomain> = {
                 getRecordPermission: global.__mockPromise(true)
-            };
-            const libRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 1})
-            };
-
-            const attrDomain: Mockify<IAttributeDomain> = {
-                getAttributes: global.__mockPromise({totalCount: 0, list: []})
             };
 
             const mockValueRepo: Mockify<IValueRepo> = {
@@ -1973,7 +1967,7 @@ describe('RecordDomain', () => {
         };
 
         const mockValueDomainFormatValue: Mockify<IValueDomain> = {
-            formatValue: jest.fn(({value, library}) => Promise.resolve(value)),
+            formatValue: jest.fn(({value}) => Promise.resolve(value)),
             runActionsList: jest.fn(() => Promise.resolve([{payload: 2119477320}]))
         };
 
@@ -2112,7 +2106,7 @@ describe('RecordDomain', () => {
             };
 
             const mockValueDomainFormatValueLink: Mockify<IValueDomain> = {
-                formatValue: jest.fn(({value, library}) =>
+                formatValue: jest.fn(() =>
                     Promise.resolve({payload: {...mockRecord, id: mockRecordWithValues.created_by, library: 'users'}})
                 ),
                 runActionsList: jest.fn((_, value) => Promise.resolve([value]))

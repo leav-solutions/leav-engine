@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
+import {ChildrenAsRecordValuePermissionFilterInput, RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
 import {SelectTreeNode} from '_ui/components/SelectTreeNode';
 import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -49,6 +49,7 @@ interface ISelectTreeNodeModalProps {
     allowInitialNodeDeselection?: boolean;
     onConfirm: (selectedNodes: ITreeNodeWithRecord[]) => void;
     onClose: () => void;
+    childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
     className?: string;
 }
 
@@ -60,6 +61,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     allowInitialNodeDeselection = false,
     onConfirm,
     onClose,
+    childrenAsRecordValuePermissionFilter,
     className
 }) => {
     const {t} = useSharedTranslation();
@@ -68,7 +70,9 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     // Use intermediate state to store backend node ids for initial props inject,
     // reset after first _handleOnSelect/_handleOnCheck to avoid adding backend values to selected nodes again and again
     // Another solution would be to inject backendValues with compatible ITreeNodeWithRecord type to set selectedNodes initial state
-    const [tmpBackendNodeIds, setTmpBackendNodeIds] = useState<string[] | undefined>(backendValues.map(value => value.treeValue.id));
+    const [tmpBackendNodeIds, setTmpBackendNodeIds] = useState<string[] | undefined>(
+        backendValues.map(value => value.treeValue.id)
+    );
 
     const _handleOnSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
         setTmpBackendNodeIds(undefined);
@@ -122,8 +126,9 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
         >
             <SelectTreeNode
                 treeId={attribute.linked_tree.id}
+                childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
                 selectedNodes={tmpBackendNodeIds || selectedNodes.map(node => node.id)}
-                disabledNodes={!allowInitialNodeDeselection && backendValues.map(value => value.treeValue.id) || []}
+                disabledNodes={(!allowInitialNodeDeselection && backendValues.map(value => value.treeValue.id)) || []}
                 onSelect={_handleOnSelect}
                 onCheck={_handleOnCheck}
                 checkable={attribute.multiple_values}

@@ -4,7 +4,7 @@
 import {localizedTranslation} from '@leav/utils';
 import {FunctionComponent} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useTreeDataQueryQuery} from '_ui/_gqlTypes';
+import {ChildrenAsRecordValuePermissionFilterInput, useTreeDataQueryQuery} from '_ui/_gqlTypes';
 import {ErrorDisplay} from '../..';
 import useLang from '../../hooks/useLang';
 import {ITreeNodeWithRecord} from '../../types/trees';
@@ -13,6 +13,7 @@ import {SelectTreeNodeContentSkeleton} from './SelectTreeNodeContentSkeleton';
 
 interface ISelectTreeNodeProps {
     treeId: string;
+    childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
     selectedNodes?: string[];
     disabledNodes?: string[];
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
@@ -25,6 +26,7 @@ interface ISelectTreeNodeProps {
 
 export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     treeId,
+    childrenAsRecordValuePermissionFilter,
     onSelect,
     onCheck,
     selectedNodes,
@@ -57,6 +59,7 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     return (
         <SelectTreeNodeContent
             treeData={{id: treeId, label}}
+            childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
             onCheck={onCheck}
             onSelect={onSelect}
             multiple={multiple}

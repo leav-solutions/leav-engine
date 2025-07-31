@@ -5,7 +5,11 @@ import {Spin} from 'antd';
 import {EventDataNode} from 'antd/lib/tree';
 import {ComponentProps, FunctionComponent, Key, useEffect, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {TreeNodeChildFragment, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
+import {
+    ChildrenAsRecordValuePermissionFilterInput,
+    TreeNodeChildFragment,
+    useTreeNodeChildrenLazyQuery
+} from '_ui/_gqlTypes';
 import {defaultPaginationPageSize, ErrorDisplay} from '../..';
 import {ITreeNodeWithRecord} from '../../types/trees';
 import {KitTree} from 'aristid-ds';
@@ -13,6 +17,7 @@ import {TreeNodeTitle} from './TreeNodeTitle';
 
 interface ISelectTreeNodeContentProps {
     treeData: {id: string; label: string};
+    childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
     selectedNodes?: string[];
     disabledNodes?: string[];
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
@@ -52,6 +57,7 @@ interface ITreeMap {
 
 export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProps> = ({
     treeData: tree,
+    childrenAsRecordValuePermissionFilter,
     onSelect,
     onCheck,
     selectedNodes: initSelectedNodes,
@@ -92,7 +98,8 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                     pagination: {
                         limit: defaultPaginationPageSize,
                         offset
-                    }
+                    },
+                    childrenAsRecordValuePermissionFilter
                 }
             });
 

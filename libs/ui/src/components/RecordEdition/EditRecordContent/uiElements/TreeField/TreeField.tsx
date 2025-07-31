@@ -6,7 +6,11 @@ import {IFormElementProps} from '../../_types';
 import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import styled from 'styled-components';
 import {AntForm, KitButton, KitInputWrapper} from 'aristid-ds';
-import {RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
+import {
+    ChildrenAsRecordValuePermissionFilterInput,
+    RecordFormAttributeTreeAttributeFragment,
+    RecordPermissionsActions
+} from '_ui/_gqlTypes';
 import {TREE_FIELD_ID_PREFIX} from '_ui/constants';
 import {useLang} from '_ui/hooks';
 import {FaList} from 'react-icons/fa';
@@ -96,6 +100,12 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         allowedSelectors: ['.kit-modal-wrapper']
     });
 
+    const childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput = {
+        libraryId: state.libraryId,
+        attributeId: state.activeAttribute?.attribute?.id,
+        action: RecordPermissionsActions.create_record
+    };
+
     const {openModal, removeTreeNode, actionButtonLabel, SelectTreeNodeModal, RemoveAllTreeNodes} =
         useManageTreeNodeSelection({
             modaleTitle: label,
@@ -106,7 +116,8 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
             onValueDelete,
             onDeleteMultipleValues,
             isReadOnly,
-            isFieldInError
+            isFieldInError,
+            childrenAsRecordValuePermissionFilter
         });
 
     const {TreeNodeList} = useDisplayTreeNode({

@@ -13,11 +13,17 @@ import {
 } from '../e2eUtils';
 import {adminUserId} from '../../../../_constants/users';
 import {usersLibraryId} from '../../../../_constants/libraries';
+import {PermissionTypes, RecordPermissionsActions} from '../../../../_types/permissions';
+import {ErrorTypes} from '../../../../_types/errors';
 
 describe('Records', () => {
     const testLibName = 'record_library_test';
+    const testTreeName = 'test_tree';
     const testAttributeId = 'create_record_test_attribute';
+    const testTreeAttributeId = 'create_record_test_tree_attribute';
+
     let recordId: string;
+    let recordNode: string;
 
     beforeAll(async () => {
         await gqlSaveAttribute({
@@ -27,13 +33,24 @@ describe('Records', () => {
             label: 'test'
         });
 
-        await gqlSaveLibrary(testLibName, 'Test', [testAttributeId]);
+        await gqlSaveAttribute({
+            id: testTreeAttributeId,
+            type: AttributeTypes.TREE,
+            multipleValues: false,
+            label: 'Test Tree attribute',
+            linkedTree: testTreeName
+        });
+
+        await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testTreeAttributeId]);
+        await gqlSaveTree(testTreeName, 'Test tree', [testLibName]);
 
         const resultCreation = await makeGraphQlCall(`mutation {
             c1: createRecord(library: "${testLibName}") { record {id} }
         }`);
 
         recordId = resultCreation.data.data.c1.record.id;
+
+        recordNode = await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId});
     });
 
     test('Create records', async () => {
@@ -57,6 +74,55 @@ describe('Records', () => {
         expect(res.data.data.c1.record.permissions.edit_record).toBeDefined();
     });
 
+    test('Should not create record if no allowed on tree attribute value', async () => {
+        await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: ${PermissionTypes.RECORD},
+                        applyTo: "${testLibName}",
+                        usersGroup: null,
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${recordNode}"
+                        },
+                        actions: [
+                            {name: ${RecordPermissionsActions.CREATE_RECORD}, allowed: false}
+                        ]
+                    }
+                ) { type }
+            }`);
+
+        const res = await makeGraphQlCall(`mutation {
+            c1: createRecord(library: "${testLibName}", data: {
+                version: null,
+                values: [
+                    {
+                        attribute: "${testTreeAttributeId}",
+                        payload: "${recordNode}"
+                    }
+                ]
+            }) {
+                    valuesErrors {
+                      attribute
+                      input
+                      message
+                      type
+                    }
+                    record {
+                      id
+                    }
+            },
+        }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.data.c1.valuesErrors).toMatchObject([
+            {
+                attribute: testTreeAttributeId,
+                type: ErrorTypes.PERMISSION_ERROR,
+                message: `Record creation permission denied with nodeId ${recordNode}`
+            }
+        ]);
+    });
+
     test('Create record with values', async () => {
         const res = await makeGraphQlCall(`mutation {
             c1: createRecord(library: "${testLibName}", data: {
@@ -77,7 +143,7 @@ describe('Records', () => {
                     }
                 }
             },
-        }`);
+}`);
 
         expect(res.status).toBe(200);
 

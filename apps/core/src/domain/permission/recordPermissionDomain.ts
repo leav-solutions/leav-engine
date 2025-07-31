@@ -7,7 +7,7 @@ import {IValueRepo} from 'infra/value/valueRepo';
 import {ILibrary} from '_types/library';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {LibraryPermissionsActions, PermissionTypes} from '../../_types/permissions';
+import {LibraryPermissionsActions, PermissionsRelations, PermissionTypes} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
@@ -17,12 +17,15 @@ import {
     IGetDefaultPermissionParams,
     IGetInheritedRecordPermissionParams,
     IGetRecordPermissionParams,
-    IGetTreeBasedPermissionParams
+    IGetTreeBasedPermissionParams,
+    IEstimateTreeValueRecordPermissionParams
 } from './_types';
+import {ITreeRepo} from '../../infra/tree/treeRepo';
 
 export interface IRecordPermissionDomain {
     getRecordPermission(params: IGetRecordPermissionParams): Promise<boolean>;
     getInheritedRecordPermission(params: IGetInheritedRecordPermissionParams): Promise<boolean>;
+    evaluateTreeValueRecordPermission(params: IEstimateTreeValueRecordPermissionParams): Promise<boolean>;
 }
 
 export interface IRecordPermissionDomainDeps {
@@ -33,6 +36,7 @@ export interface IRecordPermissionDomainDeps {
     'core.domain.attribute': IAttributeDomain;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.infra.value': IValueRepo;
+    'core.infra.tree': ITreeRepo;
 }
 
 export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDomain {
@@ -43,10 +47,60 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
         'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
         'core.domain.attribute': attributeDomain,
         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
-        'core.infra.value': valueRepo
+        'core.infra.value': valueRepo,
+        'core.infra.tree': treeRepo
     } = deps;
 
     return {
+        async evaluateTreeValueRecordPermission({
+            action,
+            userId,
+            libraryId,
+            attributeId,
+            nodeId,
+            ctx
+        }): Promise<boolean> {
+            const attribute = (await attributeDomain.getLibraryAttributes(libraryId, ctx)).find(
+                a => a.id === attributeId
+            );
+
+            if (!attribute) {
+                throw new ValidationError({
+                    [attributeId]: {
+                        msg: Errors.INVALID_ATTRIBUTE_FOR_LIBRARY,
+                        vars: {attribute: attributeId, library: libraryId}
+                    }
+                });
+            }
+
+            if (!(await treeRepo.isNodePresent({treeId: attribute.linked_tree, nodeId, ctx}))) {
+                throw new ValidationError({node: Errors.UNKNOWN_NODE});
+            }
+
+            return treeBasedPermissionsHelper.getTreeBasedPermission(
+                {
+                    type: PermissionTypes.RECORD,
+                    action,
+                    userId,
+                    applyTo: libraryId,
+                    treeValues: {
+                        [attributeId]: [nodeId]
+                    },
+                    permissions_conf: {
+                        permissionTreeAttributes: [attributeId],
+                        relation: PermissionsRelations.AND
+                    },
+                    getDefaultPermission: () =>
+                        libraryPermissionDomain.getLibraryPermission({
+                            action: action as unknown as LibraryPermissionsActions,
+                            libraryId,
+                            userId: ctx.userId,
+                            ctx
+                        })
+                },
+                ctx
+            );
+        },
         async getRecordPermission({action, userId, library, recordId, ctx}): Promise<boolean> {
             const libProps = await getCoreEntityById<ILibrary>('library', library, ctx);
 

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import {SelectTreeNodeModal} from './SelectTreeNodeModal';
-import {RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
+import {ChildrenAsRecordValuePermissionFilterInput, RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
 import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {ITreeNodeWithRecord} from '_ui/types';
 import {APICallStatus, DeleteMultipleValuesFunc, DeleteValueFunc, SubmitValueFunc} from '../../../_types';
@@ -22,6 +22,7 @@ interface IUseManageTreeNodeSelectionProps {
     onDeleteMultipleValues: DeleteMultipleValuesFunc;
     isReadOnly: boolean;
     isFieldInError: boolean;
+    childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
 }
 
 export const useManageTreeNodeSelection = ({
@@ -33,7 +34,8 @@ export const useManageTreeNodeSelection = ({
     onValueDelete,
     onDeleteMultipleValues,
     isReadOnly,
-    isFieldInError
+    isFieldInError,
+    childrenAsRecordValuePermissionFilter
 }: IUseManageTreeNodeSelectionProps) => {
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
@@ -205,6 +207,7 @@ export const useManageTreeNodeSelection = ({
                 backendValues={backendValues}
                 onConfirm={addTreeNodes}
                 onClose={closeModal}
+                childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
             />
         ) : null,
         RemoveAllTreeNodes:
