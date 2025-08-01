@@ -2,7 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+import DataLoader from 'dataloader';
 import {IQueryInfos} from '_types/queryInfos';
+import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
+import {nextTick} from 'process';
 
 export interface IMemoizeParams<T> {
     key: string;
@@ -40,10 +43,58 @@ export enum ECacheType {
     RAM = 'RAM'
 }
 
+type RamCacheDataLoader = DataLoader<string, unknown>;
+
 export default function ({
     'core.infra.cache.ramService': ramService,
     'core.infra.cache.diskService': diskService
 }: IDeps): ICachesService {
+    /**
+     * For the current request, keep in RAM the data loaded from redis.
+     * This is useful to avoid multiple redis calls for the same key.
+     * That happen often for getAttributeProperties for instance.
+     *
+     * Use dataloader instead on simple Map to synchronise async request for same key,
+     * and sometimes mutualize redis mget.
+     */
+    function getRamCacheDataLoader(ctx: IQueryInfos): RamCacheDataLoader {
+        return getOrCreateDataLoaderInCtx<RamCacheDataLoader>(
+            ctx,
+            'ramCache',
+            () =>
+                new DataLoader<string, unknown>(
+                    async (keys: readonly string[]) =>
+                        (await ramService.getData([...keys])).map((data: string | null) =>
+                            data !== null ? JSON.parse(data) : null
+                        ),
+                    {
+                        cache: true
+                    }
+                )
+        );
+    }
+
+    /**
+     * Ensure memoize compute function is not called multiple times concurrently for the same key.
+     */
+    const memoizePromiseMap = new Map<string, Promise<unknown>>();
+    async function memoizeWithLock<T>(key: string, saveFunc: () => Promise<T>): Promise<T> {
+        let savePromise = memoizePromiseMap.get(key);
+        if (!savePromise) {
+            // Start the computation and store the promise immediately to avoid race conditions
+            savePromise = saveFunc();
+            memoizePromiseMap.set(key, savePromise);
+            savePromise.finally(() => {
+                // Cleanup the promise from the map after it resolves
+                // Use nextTick to ensure this runs after the current event loop tick
+                nextTick(() => {
+                    memoizePromiseMap.delete(key);
+                });
+            });
+        }
+        return savePromise as Promise<T>;
+    }
+
     return {
         getCache(type: ECacheType): ICacheService {
             let cacheService: ICacheService;
@@ -59,21 +110,25 @@ export default function ({
 
             return cacheService;
         },
-        async memoize({key, func, storeNulls, ctx}) {
-            const cacheService = this.getCache(ECacheType.RAM);
-            const cacheValue = await cacheService.getData([key]);
-
-            if (cacheValue[0]) {
-                return JSON.parse(cacheValue[0]);
+        async memoize<T>({key, func, storeNulls, ctx}): Promise<T> {
+            const ramCacheDataLoader = getRamCacheDataLoader(ctx);
+            const cacheValueFrom = await ramCacheDataLoader.load(key);
+            if (cacheValueFrom != null) {
+                return cacheValueFrom as T;
             }
 
-            const result = await func();
+            return memoizeWithLock<T>(key, async () => {
+                const result = await func();
 
-            if (result !== null || storeNulls) {
-                cacheService.storeData({key, data: JSON.stringify(result)});
-            }
+                if (result !== null || storeNulls) {
+                    const ramCacheService = this.getCache(ECacheType.RAM);
+                    ramCacheDataLoader.prime(key, result);
+                    // Do not wait for the storeData to finish, we can continue processing
+                    ramCacheService.storeData({key, data: JSON.stringify(result)}).catch(() => undefined);
+                }
 
-            return result;
+                return result;
+            });
         }
     };
 }
