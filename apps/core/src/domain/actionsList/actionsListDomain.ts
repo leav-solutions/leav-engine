@@ -60,12 +60,23 @@ export interface IActionsListDomainDeps {
 
 export default function ({'core.depsManager': depsManager, translator}: IActionsListDomainDeps): IActionsListDomain {
     let _pluginActions: IActionsListFunction[] = [];
+    /**
+     * Loaded on first call to getAvailableActions()
+     * To avoid "heavy" sync operation with depsManager modules
+     * Each call was about 1.2ms, often called !
+     */
+    let _loadedActions: IActionsListFunction[] = null;
+
     return {
         getAvailableActions() {
-            const actions = Object.keys(depsManager.registrations)
-                .filter(modName => modName.match(/^core\.domain\.actions\./))
-                .map(modName => depsManager.cradle[modName]);
-            return [...actions, ..._pluginActions];
+            if (_loadedActions === null) {
+                const coreActions = Object.keys(depsManager.registrations)
+                    .filter(modName => modName.match(/^core\.domain\.actions\./))
+                    .map(modName => depsManager.cradle[modName]);
+                _loadedActions = [...coreActions, ..._pluginActions];
+            }
+
+            return _loadedActions;
         },
         handleJoiError(attribute, error) {
             return {
@@ -77,6 +88,9 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
         },
         registerActions(actions) {
             _pluginActions = [..._pluginActions, ...actions];
+            if (_loadedActions !== null) {
+                _loadedActions = [..._loadedActions, ...actions];
+            }
         },
         async runActionsList(actions, values, ctx) {
             const availActions: IActionsListFunction[] = this.getAvailableActions();
