@@ -1,0 +1,22 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import DataLoader from 'dataloader';
+import {IQueryInfos} from '_types/queryInfos';
+
+/**
+ * Get or create a DataLoader in the request context.
+ * Each usage (not each call) of this function should use a unique name to avoid conflicts among different DataLoaders.
+ * Name is used has key to store the DataLoader in ctx.dataLoaders.
+ */
+export function getOrCreateDataLoaderInCtx<DL extends DataLoader<unknown, unknown>>(
+    ctx: IQueryInfos,
+    name: string,
+    create: () => DL
+): DL {
+    ctx.dataLoaders = ctx.dataLoaders || {};
+    if (!ctx.dataLoaders[name]) {
+        ctx.dataLoaders[name] = create();
+    }
+    return ctx.dataLoaders[name] as DL;
+}
