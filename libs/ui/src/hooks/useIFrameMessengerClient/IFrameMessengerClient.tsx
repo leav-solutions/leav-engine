@@ -1,14 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect} from 'react';
+import {FunctionComponent, ReactNode, useEffect} from 'react';
 import {useIFrameMessenger} from '../useIFrameMessenger/useIFrameMessenger';
 import {IframeMessengerClientContext} from './iFrameMessengerClientContext';
 
-export const IFrameMessengerClient: FunctionComponent<{id?: string}> = ({children, id}) => {
-    const iFrameMessenger = useIFrameMessenger({
-        id
-    });
+interface IFrameMessengerClientProps {
+    children: ReactNode;
+    id?: string;
+}
+
+export const IFrameMessengerClient: FunctionComponent<IFrameMessengerClientProps> = ({children, id}) => {
+    const iFrameMessenger = useIFrameMessenger({id});
 
     useEffect(() => () => iFrameMessenger.unregister(), []);
 
