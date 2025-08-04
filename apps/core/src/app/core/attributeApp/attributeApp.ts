@@ -378,16 +378,10 @@ export default function (deps: IDeps): ICoreAttributeApp {
                     },
                     Mutation: {
                         async saveAttribute(parent, {attribute}, ctx): Promise<IAttribute> {
-                            const savedAttr = await attributeDomain.saveAttribute({attrData: attribute, ctx});
-                            graphqlApp.getSchema();
-
-                            return savedAttr;
+                            return attributeDomain.saveAttribute({attrData: attribute, ctx});
                         },
                         async deleteAttribute(parent, {id}, ctx): Promise<IAttribute> {
-                            const deletedAttr = await attributeDomain.deleteAttribute({id, ctx});
-                            graphqlApp.getSchema();
-
-                            return deletedAttr;
+                            return attributeDomain.deleteAttribute({id, ctx});
                         }
                     },
                     Attribute: {

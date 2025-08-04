@@ -14,6 +14,10 @@ import {IAppModule} from '_types/shared';
 import {IQueryField} from '../../_types/record';
 
 export interface IGraphqlApp extends IAppModule {
+    /**
+     * Parse all registered GraphQL schemas and return a single schema
+     * Very costly operation, should be called only once at application startup
+     */
     getSchema(): Promise<GraphQLSchema>;
     getQueryFields(info: GraphQLResolveInfo): IQueryField[];
 }

@@ -206,16 +206,10 @@ export default function ({
                                 }));
                             }
 
-                            const savedLib = await libraryDomain.saveLibrary(library, ctx);
-                            graphqlApp.getSchema();
-
-                            return savedLib;
+                            return libraryDomain.saveLibrary(library, ctx);
                         },
                         async deleteLibrary(parent, {id}, ctx): Promise<ILibrary> {
-                            const deletedLib = await libraryDomain.deleteLibrary(id, ctx);
-                            graphqlApp.getSchema();
-
-                            return deletedLib;
+                            return libraryDomain.deleteLibrary(id, ctx);
                         }
                     },
                     Library: {
