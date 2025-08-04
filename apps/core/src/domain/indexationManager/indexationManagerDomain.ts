@@ -156,7 +156,7 @@ export default function ({
 
                 return {
                     ...v,
-                    payload: recordIdentity.label || v.payload.id
+                    payload: (await recordIdentity.getLabel?.()) || v.payload.id
                 };
             });
 

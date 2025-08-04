@@ -16,6 +16,7 @@ import {IAppGraphQLSchema} from '_types/graphql';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
+import {IPreview} from '../../../_types/preview';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors, ErrorTypes} from '../../../_types/errors';
 import {TriggerNames} from '../../../_types/eventsManager';
@@ -24,6 +25,7 @@ import {
     AttributeCondition,
     IRecord,
     IRecordFilterLight,
+    IRecordIdentity,
     IRecordUpdateEvent,
     IRecordUpdateEventFilters,
     TreeCondition
@@ -452,6 +454,15 @@ export default function ({
 
                             return treeDomain.getTreeProperties(recordFilter.treeId, ctx);
                         }
+                    },
+                    RecordIdentity: {
+                        label: async (recordIdentity: IRecordIdentity): Promise<string> => recordIdentity.getLabel?.(),
+                        subLabel: async (recordIdentity: IRecordIdentity): Promise<string | null> =>
+                            recordIdentity.getSubLabel?.(),
+                        color: async (recordIdentity: IRecordIdentity): Promise<string | null> =>
+                            recordIdentity.getColor?.(),
+                        preview: async (recordIdentity: IRecordIdentity): Promise<IPreview | null> =>
+                            recordIdentity.getPreview?.()
                     },
                     Preview: new GraphQLScalarType({
                         name: 'Preview',

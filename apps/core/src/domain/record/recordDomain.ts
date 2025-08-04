@@ -47,6 +47,7 @@ import {
     Operator,
     TreeCondition
 } from '../../_types/record';
+import {TreePaths} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
@@ -723,78 +724,100 @@ export default function ({
             version: ctx.version ?? null
         };
 
-        let label: string | null = null;
-        if (conf.label) {
-            label = await _getLabel(record, [], ctx);
-        }
+        const getLabel = conf.label ? () => _getLabel(record, [], ctx) : null;
 
-        let subLabel: string | null = null;
-        if (conf.subLabel) {
-            subLabel = await _getSubLabel(record, [], ctx);
-        }
+        const getSubLabel = conf.subLabel ? () => _getSubLabel(record, [], ctx) : null;
 
-        let color: string | null = null;
-        if (conf.color) {
-            color = await _getColor(record, [], ctx);
-        }
-
-        let preview: IPreview = null;
-        if (conf.preview || lib.behavior === LibraryBehavior.FILES) {
-            preview = (await _getPreviews({conf, lib, record, ctx})) ?? null;
-        }
-
-        //look in tree if not defined on current record
-        if ((color === null || preview === null) && conf.treeColorPreview) {
-            const treeValues = await valueDomain.getValues({
-                library: lib.id,
-                recordId: record.id,
-                attribute: conf.treeColorPreview,
-                options: valuesOptions,
-                ctx
-            });
-
-            if (treeValues.length) {
-                // for now, we look through first element (discard others if linked to multiple leaves of tree)
-                const treeAttrProps = await attributeDomain.getAttributeProperties({id: conf.treeColorPreview, ctx});
-                const ancestors = await treeRepo.getElementAncestors({
-                    treeId: treeAttrProps.linked_tree,
-                    nodeId: treeValues[0].payload.id,
+        // look in tree if not defined on current record for color and preview
+        let _getAncestorsPromise: Promise<TreePaths | null> | null = null;
+        const _getAncestors = async (): Promise<TreePaths | null> => {
+            if (_getAncestorsPromise !== null) {
+                return _getAncestorsPromise;
+            }
+            _getAncestorsPromise = (async () => {
+                const treeValues = await valueDomain.getValues({
+                    library: lib.id,
+                    recordId: record.id,
+                    attribute: conf.treeColorPreview,
+                    options: valuesOptions,
                     ctx
                 });
 
-                const inheritedData = await ancestors.reduceRight(
-                    async (resProm: Promise<{color: string; preview: IPreview}>, ancestor) => {
+                if (treeValues.length) {
+                    // for now, we look through first element (discard others if linked to multiple leaves of tree)
+                    const treeAttrProps = await attributeDomain.getAttributeProperties({
+                        id: conf.treeColorPreview,
+                        ctx
+                    });
+                    return treeRepo.getElementAncestors({
+                        treeId: treeAttrProps.linked_tree,
+                        nodeId: treeValues[0].payload.id,
+                        ctx
+                    });
+                }
+                return null;
+            })().catch(() => null);
+            return _getAncestorsPromise;
+        };
+
+        const getColor = async () => {
+            const color = conf.color ? await _getColor(record, [], ctx) : null;
+            if (color === null && conf.treeColorPreview) {
+                const ancestors = await _getAncestors();
+
+                return ancestors.reduceRight(async (resProm: Promise<string | null>, ancestor) => {
+                    const res = await resProm; // cause async function so res is a promise
+                    if (res !== null) {
+                        // already found data, nothing to do
+                        return res;
+                    }
+                    const ancestorIdentity = await _getRecordIdentity(ancestor.record, ctx);
+
+                    return ancestorIdentity.getColor();
+                }, null);
+            }
+
+            return color;
+        };
+
+        const getPreview = async () => {
+            const preview =
+                conf.preview || lib.behavior === LibraryBehavior.FILES
+                    ? await _getPreviews({conf, lib, record, ctx})
+                    : null;
+            if (preview === null && conf.treeColorPreview) {
+                const ancestors = await _getAncestors();
+
+                const inheritedPreview = await ancestors.reduceRight(
+                    async (resProm: Promise<IPreview | null>, ancestor) => {
                         const res = await resProm; // cause async function so res is a promise
-                        if (res.color !== null && res.preview !== null) {
+                        if (res !== null) {
                             // already found data, nothing to do
                             return res;
                         }
                         const ancestorIdentity = await _getRecordIdentity(ancestor.record, ctx);
 
-                        return {
-                            color: res.color === null ? ancestorIdentity.color : res.color,
-                            preview: res.preview === null ? ancestorIdentity.preview : res.preview
-                        };
+                        return ancestorIdentity.getPreview();
                     },
-                    Promise.resolve({color, preview})
+                    null
                 );
-                color = color === null ? inheritedData.color : color;
-                preview = preview === null ? inheritedData.preview : preview;
-            }
-        }
 
-        // If no preview found, or preview is not available, use library icon if any
-        if (preview === null || !preview.file) {
-            preview = await _getLibraryIconPreview(lib, ctx);
-        }
+                // If no preview found, or preview is not available, use library icon if any
+                if (!inheritedPreview?.file) {
+                    return _getLibraryIconPreview(lib, ctx);
+                }
+                return inheritedPreview;
+            }
+            return preview;
+        };
 
         const identity = {
             id: record.id,
             library: lib,
-            label,
-            subLabel,
-            color,
-            preview
+            getLabel,
+            getSubLabel,
+            getColor,
+            getPreview
         };
 
         return identity;

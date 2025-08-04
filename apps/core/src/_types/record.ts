@@ -84,10 +84,10 @@ export interface IQueryField {
 export interface IRecordIdentity {
     id: string;
     library: ILibrary;
-    label?: string;
-    subLabel?: string;
-    color?: string;
-    preview?: IPreview;
+    getLabel?: () => Promise<string | null>;
+    getSubLabel?: () => Promise<string | null>;
+    getColor?: () => Promise<string | null>;
+    getPreview?: () => Promise<IPreview | null>;
 }
 
 export interface IRecordIdentityConf {

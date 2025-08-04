@@ -96,7 +96,7 @@ export default function ({
                     ctx
                 );
 
-                values[i].payload = recordIdentity.label || v.payload.id;
+                values[i].payload = (await recordIdentity.getLabel?.()) || v.payload.id;
             }
         }
 

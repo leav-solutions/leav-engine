@@ -1217,9 +1217,9 @@ describe('RecordDomain', () => {
 
             expect(res.id).toBe('222536283');
             expect(res.library).toMatchObject(libData);
-            expect(res.label).toBe('Label Value');
-            expect(res.color).toBe('#123456');
-            expect(res.preview).toEqual({
+            expect(await res.getLabel()).toBe('Label Value');
+            expect(await res.getColor()).toBe('#123456');
+            expect(await res.getPreview()).toEqual({
                 big: getPreviewUrl() + 'big_fake-image',
                 small: getPreviewUrl() + 'small_fake-image',
                 medium: getPreviewUrl() + 'medium_fake-image',
@@ -1324,7 +1324,7 @@ describe('RecordDomain', () => {
 
                 expect(res.id).toBe('222536283');
                 expect(res.library).toMatchObject(libData);
-                expect(res.label).toBe('Inherited Label Value');
+                expect(await res.getLabel()).toBe('Inherited Label Value');
             });
 
             test('Return record identity with override label', async () => {
@@ -1410,7 +1410,7 @@ describe('RecordDomain', () => {
 
                 expect(res.id).toBe('222536283');
                 expect(res.library).toMatchObject(libData);
-                expect(res.label).toBe('Override Label Value');
+                expect(await res.getLabel()).toBe('Override Label Value');
             });
         });
 
@@ -1497,7 +1497,7 @@ describe('RecordDomain', () => {
 
                 expect(res.id).toBe('222536283');
                 expect(res.library).toMatchObject(libData);
-                expect(res.subLabel).toBe('Inherited SubLabel Value');
+                expect(await res.getSubLabel()).toBe('Inherited SubLabel Value');
             });
 
             test('Return record identity with override sublabel', async () => {
@@ -1583,7 +1583,7 @@ describe('RecordDomain', () => {
 
                 expect(res.id).toBe('222536283');
                 expect(res.library).toMatchObject(libData);
-                expect(res.subLabel).toBe('Override SubLabel Value');
+                expect(await res.getSubLabel()).toBe('Override SubLabel Value');
             });
         });
 
@@ -1670,7 +1670,7 @@ describe('RecordDomain', () => {
 
                 expect(res.id).toBe('222536283');
                 expect(res.library).toMatchObject(libData);
-                expect(res.color).toBe('#ff0000');
+                expect(await res.getColor()).toBe('#ff0000');
             });
 
             test('Return record identity with override color', async () => {
@@ -1756,7 +1756,7 @@ describe('RecordDomain', () => {
 
                 expect(res.id).toBe('222536283');
                 expect(res.library).toMatchObject(libData);
-                expect(res.color).toBe('#ffff00');
+                expect(await res.getColor()).toBe('#ffff00');
             });
         });
 
@@ -1801,15 +1801,6 @@ describe('RecordDomain', () => {
                                 {
                                     payload: {from: '2024-02-16T10:59:52+00:00', to: '2024-02-18T10:59:52+00:00'}
                                 }
-                            ],
-                            [
-                                {
-                                    payload: {
-                                        small: 'small_fake-image',
-                                        medium: 'medium_fake-image',
-                                        big: 'big_fake-image'
-                                    }
-                                }
                             ]
                         ])
                     };
@@ -1830,26 +1821,21 @@ describe('RecordDomain', () => {
                     recDomain.getRecordFieldValue = global.__mockPromise([
                         {
                             ...mockStandardValue,
-                            payload: {
-                                ...mockRecord,
-                                previews: {
-                                    small: 'small_fake-image',
-                                    medium: 'medium_fake-image',
-                                    big: 'big_fake-image'
-                                }
-                            }
+                            payload: mockRecord
                         }
                     ]);
 
                     const res = await recDomain.getRecordIdentity(recordWithDateRange, ctx);
 
+                    expect(res).not.toBe(null);
+                    const labelOrSubLabel = conf === 'label' ? await res.getLabel() : await res.getSubLabel();
+                    expect(labelOrSubLabel).toBeDefined();
                     expect(mockTranslatorWithOptions.t).toBeCalledWith('labels.date_range', {
                         from: '2024-02-16T10:59:52+00:00',
                         to: '2024-02-18T10:59:52+00:00',
                         lng: 'fr',
                         interpolation: {escapeValue: false}
                     });
-                    expect(res).not.toBe(null);
                 });
 
                 it('should return null when date range attribute is present but null', async () => {
@@ -1859,15 +1845,6 @@ describe('RecordDomain', () => {
                                 {
                                     value: null
                                 }
-                            ],
-                            [
-                                {
-                                    value: {
-                                        small: 'small_fake-image',
-                                        medium: 'medium_fake-image',
-                                        big: 'big_fake-image'
-                                    }
-                                }
                             ]
                         ])
                     };
@@ -1888,21 +1865,16 @@ describe('RecordDomain', () => {
                     recDomain.getRecordFieldValue = global.__mockPromise([
                         {
                             ...mockStandardValue,
-                            value: {
-                                ...mockRecord,
-                                previews: {
-                                    small: 'small_fake-image',
-                                    medium: 'medium_fake-image',
-                                    big: 'big_fake-image'
-                                }
-                            }
+                            value: mockRecord
                         }
                     ]);
 
                     const res = await recDomain.getRecordIdentity(recordWithDateRange, ctx);
 
+                    const labelOrSubLabel = conf === 'label' ? await res.getLabel() : await res.getSubLabel();
+                    expect(labelOrSubLabel).toBeNull();
+
                     expect(mockTranslatorWithOptions.t).toBeCalledTimes(0);
-                    expect(res.subLabel).toBe(null);
                 });
             };
 
@@ -1951,9 +1923,9 @@ describe('RecordDomain', () => {
 
             expect(res.id).toBe('222536283');
             expect(res.library).toMatchObject(libData);
-            expect(res.label).toBe(null);
-            expect(res.color).toBe(null);
-            expect(res.preview).toBe(null);
+            expect(await res.getLabel?.()).toBeFalsy();
+            expect(await res.getColor?.()).toBeFalsy();
+            expect(await res.getPreview?.()).toBeFalsy();
         });
     });
 
