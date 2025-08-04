@@ -343,7 +343,7 @@ export default function ({
                         }
                     },
                     GenericValue: {
-                        __resolveType: async (fieldValue, _, ctx) => {
+                        __resolveType: async (fieldValue, ctx) => {
                             const attribute = Array.isArray(fieldValue)
                                 ? fieldValue[0].attribute
                                 : fieldValue.attribute;
