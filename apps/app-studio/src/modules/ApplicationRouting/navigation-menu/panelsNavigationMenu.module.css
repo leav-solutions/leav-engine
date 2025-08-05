@@ -1,6 +1,7 @@
 .page {
     position:relative;
     flex: 1;
+    height: 100%;
     flex-direction: column;
     gap: calc(var(--general-spacing-s) * 1px);
     padding: calc(var(--general-spacing-m) * 1px);
@@ -26,5 +27,3 @@
     box-shadow: var(--general-utilities-shadow-light);
     overflow: hidden;
 }
-
-
