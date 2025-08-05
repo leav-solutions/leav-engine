@@ -264,7 +264,13 @@ export default function ({
                                             ...contextValue.dbProfiler,
                                             // Transform queries hash map into an array, sort queries by count
                                             queries: Object.values(contextValue.dbProfiler.queries)
-                                                .map(q => ({...q, callers: [...q.callers]})) // Transform callers Set into Array
+                                                .map(q => ({
+                                                    ...q,
+                                                    // Transform callers hash map into an array, sort callers by count
+                                                    callers: Object.values(q.callers).sort(
+                                                        (a: any, b: any) => b.count - a.count
+                                                    )
+                                                }))
                                                 .sort((a: any, b: any) => b.count - a.count)
                                         }
                                     };

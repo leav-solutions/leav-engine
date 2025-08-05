@@ -111,29 +111,28 @@ export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDb
                     // to group identical queries (exact same query with exact same params)
                     const queryKey = createHash('md5').update(JSON.stringify(query)).digest('base64');
 
-                    if (!dbProfiler.queries) {
-                        dbProfiler.queries = {};
-                    }
-
                     const callStack = JSON.stringify(getCallStack(10));
-
-                    let callersStack = dbProfiler.queries?.[queryKey]?.callers ?? new Set();
-
-                    if (!callersStack.add) {
-                        callersStack = new Set();
-                    }
+                    const callStackIndexClean = callStack.replace(/@ \(index @ \d+\)/g, '@ (index @ x)');
+                    const callKey = createHash('md5').update(callStackIndexClean).digest('base64');
+                    const callers = dbProfiler.queries?.[queryKey]?.callers ?? {};
+                    const caller = callers[callKey] || {
+                        count: 0,
+                        stats: [],
+                        stack: callStackIndexClean
+                    };
+                    caller.count++;
+                    callers[callKey] = caller;
 
                     const previousQueryProfile = dbProfiler.queries?.[queryKey];
                     dbProfiler.queries[queryKey] = {
                         count: (previousQueryProfile?.count ?? 0) + 1,
-                        callers: callersStack.add(callStack),
                         query,
-                        stats: previousQueryProfile?.stats || []
+                        callers
                     };
 
                     const startDate = process.hrtime.bigint();
                     setQueryProfilerStats = (cursorStats?: CursorStats): void => {
-                        dbProfiler.queries[queryKey].stats.push({
+                        caller.stats.push({
                             executionTimeMs: cursorStats.executionTime
                                 ? _.round(cursorStats.executionTime * 1000, 3)
                                 : null,
