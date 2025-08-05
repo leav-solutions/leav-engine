@@ -85,7 +85,7 @@
         "behavior_standard": "Standard",
         "behavior_directories": "Dossiers",
         "behavior_join": "Jointure",
-        "mandatory_attribute": "Attribut obligatoire",
+        "mandatory_attribute": "Attribut de jointure",
         "default_view": "Vue par défaut",
         "fulltext_attributes": "Attributs de recherche fulltext",
         "index_fulltext_search": "Rafraichir index fulltext",

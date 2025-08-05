@@ -161,10 +161,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         errors: inputErrors,
         values,
         touched,
-        submitForm,
-        isValid,
-        isValidating,
-        isSubmitting
+        submitForm
     }: FormikProps<LibraryFormValues>) => {
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
@@ -269,7 +266,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                         options={behaviorOptions}
                     />
                 </FormFieldWrapper>
-                {isExistingLib && (
+                {isExistingLib && library.behavior === LibraryBehavior.join && (
                     <FormFieldWrapper error={_getErrorByField('libraries.mandatory_attribute')}>
                         <Form.Select
                             label={t('libraries.mandatory_attribute')}
