@@ -63,7 +63,7 @@ module.exports = {
         curly: 'error',
         'dot-notation': 'error',
         'eol-last': 'off',
-        eqeqeq: ['warn', 'always'],
+        eqeqeq: ['warn', 'always', {"null": "ignore"}],
         'guard-for-in': 'error',
         'id-match': 'error',
         'import/no-extraneous-dependencies': 'off',
