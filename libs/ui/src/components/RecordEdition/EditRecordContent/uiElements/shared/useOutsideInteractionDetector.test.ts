@@ -13,7 +13,7 @@ import {RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 describe('useOutsideInteractionDetector', () => {
-    const mockBackendValues: RecordFormElementsValue[] = [
+    const mockElementValues: RecordFormElementsValue[] = [
         {id_value: 'backend-value', linkValue: {id: 'test', whoAmI: {id: 'test', library: {id: 'linked_library'}}}}
     ];
     const mockPendingValues: RecordFormElementsValue[] = [
@@ -42,7 +42,7 @@ describe('useOutsideInteractionDetector', () => {
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
                 formIdToLoad: mockFormIdToLoad,
-                backendValues: mockBackendValues,
+                elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
@@ -71,7 +71,7 @@ describe('useOutsideInteractionDetector', () => {
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
                 formIdToLoad: mockFormIdToLoad,
-                backendValues: mockBackendValues,
+                elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
@@ -87,7 +87,7 @@ describe('useOutsideInteractionDetector', () => {
         expect(mockDispatch).toHaveBeenCalledWith({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             attribute: mockFormAttribute,
-            values: mockBackendValues
+            values: mockElementValues
         });
     });
 
@@ -98,7 +98,7 @@ describe('useOutsideInteractionDetector', () => {
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
                 formIdToLoad: mockFormIdToLoad,
-                backendValues: mockBackendValues,
+                elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
@@ -125,7 +125,7 @@ describe('useOutsideInteractionDetector', () => {
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
                 formIdToLoad: mockFormIdToLoad,
-                backendValues: mockBackendValues,
+                elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
@@ -155,7 +155,7 @@ describe('useOutsideInteractionDetector', () => {
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
                 formIdToLoad: mockFormIdToLoad,
-                backendValues: mockBackendValues,
+                elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
@@ -185,7 +185,7 @@ describe('useOutsideInteractionDetector', () => {
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
                 formIdToLoad: mockFormIdToLoad,
-                backendValues: mockBackendValues,
+                elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: ['#allowed-element'],
                 attributePrefix: 'standardfield-'
@@ -211,7 +211,7 @@ describe('useOutsideInteractionDetector', () => {
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
                 formIdToLoad: mockFormIdToLoad,
-                backendValues: mockBackendValues,
+                elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
@@ -238,7 +238,7 @@ describe('useOutsideInteractionDetector', () => {
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
                 formIdToLoad: mockFormIdToLoad,
-                backendValues: mockBackendValues,
+                elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
@@ -263,7 +263,7 @@ describe('useOutsideInteractionDetector', () => {
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
                 formIdToLoad: mockFormIdToLoad,
-                backendValues: mockBackendValues,
+                elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
@@ -283,7 +283,7 @@ describe('useOutsideInteractionDetector', () => {
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
                 formIdToLoad: mockFormIdToLoad,
-                backendValues: mockBackendValues,
+                elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'

@@ -89,9 +89,15 @@ export const getAntdDisplayedValue = (
         attribute
     );
 
+/**
+ * @deprecated This function will be removed after 2026-01-01.
+ * This fn is not used anymore, this hook is used useFetchVisibleFormValue, so we don't load default values
+ * Return formatted values for an antdForm
+ * @param recordForm
+ */
 export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
     recordForm.elements.reduce<Store>((acc, {attribute, values}) => {
-        if (!attribute) {
+        if (!attribute || values === null) {
             return acc;
         }
 

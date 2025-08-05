@@ -1112,7 +1112,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>
             );
 
-            expect(screen.getByText("Here's my explorer!")).toBeInTheDocument();
+            expect(screen.getByText('Here\'s my explorer!')).toBeInTheDocument();
         });
     });
 

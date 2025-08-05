@@ -14,7 +14,6 @@ import {
 } from '../shared/calculatedInheritedFlags';
 import {FormInstance} from 'antd';
 import {mockFormElementLink, mockLinkValue} from '_ui/__mocks__/common/form';
-import {RecordEditionContext} from '../../hooks/useRecordEditionContext';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {MockedLangContextProvider} from '_ui/testing';
 import {initialState} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
@@ -93,12 +92,6 @@ describe('LinkField', () => {
         metadataEdit: false
     };
 
-    const recordEditionContextDefaultProps = {
-        record: mockRecord,
-        readOnly: true,
-        elements: null
-    };
-
     const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
         isCalculatedValue: false,
         isCalculatedOverrideValue: false,
@@ -143,11 +136,9 @@ describe('LinkField', () => {
 
             render(
                 <KitApp>
-                    <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
-                        <MockedLangContextProvider>
-                            <LinkField {...props} formIdToLoad="creation" readonly={false} />
-                        </MockedLangContextProvider>
-                    </RecordEditionContext.Provider>
+                    <MockedLangContextProvider>
+                        <LinkField {...props} formIdToLoad="creation" readonly={false} />
+                    </MockedLangContextProvider>
                 </KitApp>
             );
 
@@ -160,11 +151,9 @@ describe('LinkField', () => {
         it('should call useLinkRecordsInCreation with default props', () => {
             render(
                 <KitApp>
-                    <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
-                        <MockedLangContextProvider>
-                            <LinkField {...linkFieldDefaultProps} formIdToLoad="creation" />
-                        </MockedLangContextProvider>
-                    </RecordEditionContext.Provider>
+                    <MockedLangContextProvider>
+                        <LinkField {...linkFieldDefaultProps} formIdToLoad="creation" />
+                    </MockedLangContextProvider>
                 </KitApp>
             );
 
@@ -190,11 +179,9 @@ describe('LinkField', () => {
         it('should call useLinkRecordsInCreation with isReadOnly to true', () => {
             render(
                 <KitApp>
-                    <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
-                        <MockedLangContextProvider>
-                            <LinkField {...linkFieldDefaultProps} formIdToLoad="creation" readonly={true} />
-                        </MockedLangContextProvider>
-                    </RecordEditionContext.Provider>
+                    <MockedLangContextProvider>
+                        <LinkField {...linkFieldDefaultProps} formIdToLoad="creation" readonly={true} />
+                    </MockedLangContextProvider>
                 </KitApp>
             );
 
@@ -209,11 +196,9 @@ describe('LinkField', () => {
 
             render(
                 <KitApp>
-                    <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
-                        <MockedLangContextProvider>
-                            <LinkField {...linkFieldDefaultProps} formIdToLoad="creation" />
-                        </MockedLangContextProvider>
-                    </RecordEditionContext.Provider>
+                    <MockedLangContextProvider>
+                        <LinkField {...linkFieldDefaultProps} formIdToLoad="creation" />
+                    </MockedLangContextProvider>
                 </KitApp>
             );
 
@@ -265,15 +250,9 @@ describe('LinkField', () => {
 
             render(
                 <KitApp>
-                    <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
-                        <MockedLangContextProvider>
-                            <LinkField
-                                {...linkFieldDefaultProps}
-                                formIdToLoad="creation"
-                                pendingValues={pendingValues}
-                            />
-                        </MockedLangContextProvider>
-                    </RecordEditionContext.Provider>
+                    <MockedLangContextProvider>
+                        <LinkField {...linkFieldDefaultProps} formIdToLoad="creation" pendingValues={pendingValues} />
+                    </MockedLangContextProvider>
                 </KitApp>
             );
 
@@ -289,11 +268,9 @@ describe('LinkField', () => {
 
             render(
                 <KitApp>
-                    <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
-                        <MockedLangContextProvider>
-                            <LinkField {...linkFieldDefaultProps} formIdToLoad="edition" />
-                        </MockedLangContextProvider>
-                    </RecordEditionContext.Provider>
+                    <MockedLangContextProvider>
+                        <LinkField {...linkFieldDefaultProps} formIdToLoad="edition" />
+                    </MockedLangContextProvider>
                 </KitApp>
             );
 
@@ -322,11 +299,9 @@ describe('LinkField', () => {
         it('should call useLinkRecordsInEdition with isReadOnly to true', () => {
             render(
                 <KitApp>
-                    <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
-                        <MockedLangContextProvider>
-                            <LinkField {...linkFieldDefaultProps} formIdToLoad="edition" readonly={true} />
-                        </MockedLangContextProvider>
-                    </RecordEditionContext.Provider>
+                    <MockedLangContextProvider>
+                        <LinkField {...linkFieldDefaultProps} formIdToLoad="edition" readonly={true} />
+                    </MockedLangContextProvider>
                 </KitApp>
             );
 
@@ -341,11 +316,9 @@ describe('LinkField', () => {
 
             render(
                 <KitApp>
-                    <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
-                        <MockedLangContextProvider>
-                            <LinkField {...linkFieldDefaultProps} formIdToLoad="edition" />
-                        </MockedLangContextProvider>
-                    </RecordEditionContext.Provider>
+                    <MockedLangContextProvider>
+                        <LinkField {...linkFieldDefaultProps} formIdToLoad="edition" />
+                    </MockedLangContextProvider>
                 </KitApp>
             );
 

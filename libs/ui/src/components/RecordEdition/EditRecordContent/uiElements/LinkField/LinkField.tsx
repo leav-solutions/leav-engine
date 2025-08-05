@@ -117,7 +117,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         attributePrefix: LINK_FIELD_ID_PREFIX,
         dispatch,
         formIdToLoad,
-        backendValues,
+        elementValues: backendValues,
         pendingValues: attributePendingValues,
         allowedSelectors: [
             'div[role="status"]:has(.kit-snackbar-message)',

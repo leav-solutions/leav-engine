@@ -9,7 +9,8 @@ export enum FormUIElementTypes {
     TAB_FIELDS_CONTAINER = 'tab_fields_container',
     TEXT_BLOCK = 'text_block',
     TABS = 'tabs',
-    FRAME = 'frame'
+    FRAME = 'frame',
+    LINK = 'link'
 }
 
 export enum FormFieldTypes {

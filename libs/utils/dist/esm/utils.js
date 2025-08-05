@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import camelCase from 'lodash/camelCase';
@@ -225,14 +225,14 @@ export const simpleStringHash = (str) => {
 };
 export const getFlagByLang = (lang) => {
     const flagsByLang = {
-        en: '🇬🇧',
-        es: '🇪🇸',
-        fr: '🇫🇷',
-        de: '🇩🇪',
-        zh: '🇨🇳',
-        ru: '🇷🇺',
-        pt: '🇵🇹',
-        ja: '🇯🇵',
+        en: '🇬🇧', // English
+        es: '🇪🇸', // Spanish
+        fr: '🇫🇷', // French
+        de: '🇩🇪', // German
+        zh: '🇨🇳', // Chinese
+        ru: '🇷🇺', // Russian
+        pt: '🇵🇹', // Portuguese
+        ja: '🇯🇵', // Japanese
         ko: '🇰🇷' // Korean
     };
     return flagsByLang[lang] ?? '';

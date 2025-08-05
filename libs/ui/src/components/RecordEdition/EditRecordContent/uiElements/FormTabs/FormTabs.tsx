@@ -19,10 +19,6 @@ const StyledTabs = styled(Tabs)`
         overflow: visible;
         height: 100%;
     }
-    .ant-tabs-content,
-    .ant-tabs-tabpane {
-        height: 100%;
-    }
 `;
 
 function FormTabs({element, ...elementProps}: IFormElementProps<IFormTabsSettings>): JSX.Element {
@@ -49,7 +45,16 @@ function FormTabs({element, ...elementProps}: IFormElementProps<IFormTabsSetting
         };
     });
 
-    return <StyledTabs tabPosition={tabPosition} data-testid="form-tabs" items={tabItems} />;
+    const onTabClick = (key: string) => {
+        // propagate the event onTabClick to parent
+        elementProps.onCustomEvent?.({
+            eventName: 'onTabClick',
+            tabIdClicked: key,
+            element
+        });
+    };
+
+    return <StyledTabs tabPosition={tabPosition} data-testid="form-tabs" items={tabItems} onTabClick={onTabClick} />;
 }
 
 export default FormTabs;

@@ -23,6 +23,14 @@ export interface IGetRecordFormArgs {
     version?: Array<{treeId: string; treeNodeId: string}>;
 }
 
+export interface IGetElementFormValuesArgs {
+    recordId: string;
+    libraryId: string;
+    formId: string;
+    version?: Array<{treeId: string; treeNodeId: string}>;
+    elementIds: string[];
+}
+
 export interface ISaveFormArgs {
     form: IFormForGraphql;
 }

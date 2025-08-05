@@ -32,11 +32,9 @@ describe('List', () => {
         expect(checkbox).toBeInTheDocument();
         expect(checkbox).not.toBeChecked();
 
-        userEvent.click(checkbox);
+        await userEvent.click(checkbox);
 
-        await waitFor(() => {
-            expect(onSelect).toBeCalledWith(['Item A']);
-        });
+        expect(onSelect).toBeCalledWith(['Item A']);
     });
 
     test('Automatically check selected elements', async () => {

@@ -26,6 +26,7 @@ interface IStandardFieldValueProps {
     calculatedFlags: CalculatedFlags;
     inheritedFlags: InheritedFlags;
     listField?: FormListFieldData;
+    onFocus?: () => void;
     removeLastValueOfMultivalues?: () => void;
     isLastValueOfMultivalues?: boolean;
 }
@@ -39,6 +40,7 @@ function StandardFieldValue({
     calculatedFlags,
     inheritedFlags,
     listField,
+    onFocus,
     removeLastValueOfMultivalues,
     isLastValueOfMultivalues = false
 }: IStandardFieldValueProps): JSX.Element {
@@ -62,6 +64,7 @@ function StandardFieldValue({
         isLastValueOfMultivalues,
         removeLastValueOfMultivalues,
         readonly,
+        onFocus,
         label,
         calculatedFlags,
         inheritedFlags

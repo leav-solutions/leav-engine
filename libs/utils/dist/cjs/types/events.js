@@ -33,5 +33,5 @@ var EventAction;
     EventAction["VALUE_SAVE"] = "VALUE_SAVE";
     EventAction["VERSION_PROFILE_DELETE"] = "VERSION_PROFILE_DELETE";
     EventAction["VERSION_PROFILE_SAVE"] = "VERSION_PROFILE_SAVE";
-})(EventAction = exports.EventAction || (exports.EventAction = {}));
+})(EventAction || (exports.EventAction = EventAction = {}));
 //# sourceMappingURL=events.js.map

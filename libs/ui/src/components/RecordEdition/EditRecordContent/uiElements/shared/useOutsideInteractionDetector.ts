@@ -21,7 +21,7 @@ interface IUseOutsideInteractionDetectorProps {
     activeAttribute: IRecordPropertyWithAttribute | null;
     dispatch: Dispatch<IEditRecordReducerActions>;
     formIdToLoad: string | 'edition' | 'creation';
-    backendValues: RecordFormElementsValue[];
+    elementValues: RecordFormElementsValue[];
     pendingValues: RecordFormElementsValue[];
     allowedSelectors?: string[];
     attributePrefix?: typeof LINK_FIELD_ID_PREFIX | typeof STANDARD_FIELD_ID_PREFIX | typeof TREE_FIELD_ID_PREFIX;
@@ -33,7 +33,7 @@ export const useOutsideInteractionDetector = ({
     attributePrefix,
     dispatch,
     formIdToLoad,
-    backendValues,
+    elementValues,
     pendingValues,
     allowedSelectors = []
 }: IUseOutsideInteractionDetectorProps) => {
@@ -45,7 +45,7 @@ export const useOutsideInteractionDetector = ({
         attributePrefix,
         allowedSelectors,
         formIdToLoad,
-        backendValues,
+        elementValues,
         pendingValues
     });
 
@@ -56,10 +56,10 @@ export const useOutsideInteractionDetector = ({
             attributePrefix,
             allowedSelectors,
             formIdToLoad,
-            backendValues,
+            elementValues,
             pendingValues
         };
-    }, [attribute, activeAttribute, attributePrefix, allowedSelectors, formIdToLoad, backendValues, pendingValues]);
+    }, [attribute, activeAttribute, attributePrefix, allowedSelectors, formIdToLoad, elementValues, pendingValues]);
 
     useEffect(() => {
         const handleClick = (event: MouseEvent) => {
@@ -73,7 +73,7 @@ export const useOutsideInteractionDetector = ({
                 dispatch({
                     type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
                     attribute: currentProps.attribute,
-                    values: formIdToLoad === 'creation' ? currentProps.pendingValues : currentProps.backendValues
+                    values: formIdToLoad === 'creation' ? currentProps.pendingValues : currentProps.elementValues
                 });
                 return;
             }
@@ -109,7 +109,7 @@ export const useOutsideInteractionDetector = ({
                 dispatch({
                     type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
                     attribute: currentProps.attribute,
-                    values: formIdToLoad === 'creation' ? currentProps.pendingValues : currentProps.backendValues
+                    values: formIdToLoad === 'creation' ? currentProps.pendingValues : currentProps.elementValues
                 });
             }
         };
