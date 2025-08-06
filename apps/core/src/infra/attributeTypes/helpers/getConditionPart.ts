@@ -29,25 +29,24 @@ export default function (): GetConditionPart {
                 const cond =
                     attribute.format === AttributeFormats.DATE && !isCountFilter
                         ? aql`DATE_COMPARE(${valueField} * 1000, ${Number(value) * 1000}, "years", "days") == true`
-                        : aql`${valueField} == ${value}`;
-
+                        : aql`LOWER(${valueField}) == LOWER(${`${value}`})`;
                 return cond;
             }
             case AttributeCondition.NOT_EQUAL:
                 return attribute.format === AttributeFormats.DATE && !isCountFilter
                     ? aql`DATE_COMPARE(${valueField} * 1000, ${Number(value) * 1000}, "years", "days") == false`
-                    : aql`${valueField} != ${value}`;
+                    : aql`LOWER(${valueField}) != LOWER(${`${value}`})`;
             case AttributeCondition.BEGIN_WITH:
-                return aql`${valueField} LIKE ${`${value}%`}`;
+                return aql`LOWER(${valueField}) LIKE LOWER(${`${value}%`})`;
             case AttributeCondition.END_WITH:
-                return aql`${valueField} LIKE ${`%${value}`}`;
+                return aql`LOWER(${valueField}) LIKE LOWER(${`%${value}`})`;
             case AttributeCondition.CONTAINS: {
                 return attribute.format === AttributeFormats.DATE_RANGE
                     ? aql`(${Number(value)} >= ${valueField}.from AND ${Number(value)} <= ${valueField}.to)`
-                    : aql`${valueField} LIKE ${`%${value}%`}`;
+                    : aql`LOWER(${valueField}) LIKE LOWER(${`%${value}%`})`;
             }
             case AttributeCondition.NOT_CONTAINS:
-                return aql`${valueField} NOT LIKE ${`%${value}%`}`;
+                return aql`LOWER(${valueField}) NOT LIKE ${`%${value}%`}`;
             case AttributeCondition.GREATER_THAN:
                 return aql`${valueField} > ${Number(value)}`;
             case AttributeCondition.LESS_THAN:
@@ -100,7 +99,7 @@ export default function (): GetConditionPart {
             case AttributeCondition.END_AFTER:
                 return aql`${valueField}.to > ${Number(value)}`;
             default:
-                return aql`${valueField} == ${value}`;
+                return aql`LOWER(${`${valueField}`}) == LOWER(${`${value}`})`;
         }
     };
 }
