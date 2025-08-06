@@ -765,7 +765,7 @@ export default function ({
             if (color === null && conf.treeColorPreview) {
                 const ancestors = await _getAncestors();
 
-                return ancestors.reduceRight(async (resProm: Promise<string | null>, ancestor) => {
+                return ancestors?.reduceRight(async (resProm: Promise<string | null>, ancestor) => {
                     const res = await resProm; // cause async function so res is a promise
                     if (res !== null) {
                         // already found data, nothing to do
@@ -773,7 +773,7 @@ export default function ({
                     }
                     const ancestorIdentity = await _getRecordIdentity(ancestor.record, ctx);
 
-                    return ancestorIdentity.getColor();
+                    return ancestorIdentity.getColor?.();
                 }, null);
             }
 
@@ -788,7 +788,7 @@ export default function ({
             if (preview === null && conf.treeColorPreview) {
                 const ancestors = await _getAncestors();
 
-                const inheritedPreview = await ancestors.reduceRight(
+                const inheritedPreview = await ancestors?.reduceRight(
                     async (resProm: Promise<IPreview | null>, ancestor) => {
                         const res = await resProm; // cause async function so res is a promise
                         if (res !== null) {
@@ -797,7 +797,7 @@ export default function ({
                         }
                         const ancestorIdentity = await _getRecordIdentity(ancestor.record, ctx);
 
-                        return ancestorIdentity.getPreview();
+                        return ancestorIdentity.getPreview?.();
                     },
                     null
                 );
