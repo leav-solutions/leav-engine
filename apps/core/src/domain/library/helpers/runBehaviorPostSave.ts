@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {i18n} from 'i18next';
-import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {IAttributeForRepo, IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
@@ -34,7 +34,7 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
     const attributesSettings = deps.utils.getPreviewAttributesSettings(library);
 
     // Previews attribute
-    const previewsAttributeData = {
+    const previewsAttributeData: IAttributeForRepo = {
         id: previewsAttributeId,
         label: deps.config.lang.available.reduce((labels, lang) => {
             labels[lang] = deps.translator.t('files.previews', {lng: lang});
@@ -43,6 +43,7 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
         }, {}),
         system: true,
         readonly: true,
+        required: false,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.EXTENDED,
         multiple_values: false,
@@ -58,7 +59,7 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
     });
 
     // Previews status attribute
-    const previewsStatusAttributeData = {
+    const previewsStatusAttributeData: IAttributeForRepo = {
         id: previewsStatusAttributeId,
         label: deps.config.lang.available.reduce((labels, lang) => {
             labels[lang] = deps.translator.t('files.previews_status', {lng: lang});
@@ -67,6 +68,7 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
         }, {}),
         system: true,
         readonly: true,
+        required: false,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.EXTENDED,
         multiple_values: false,

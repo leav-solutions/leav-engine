@@ -9,6 +9,8 @@ import {ISystemTranslation} from './systemTranslation';
 import {ITreeElement} from './tree';
 import {IDateRangeValue} from './value';
 
+// properties system, readonly, required should nor be optional, as for graphql type
+// but change this types as a lot of side effects for now
 export interface IAttribute extends ICoreEntity {
     system?: boolean;
     readonly?: boolean;
