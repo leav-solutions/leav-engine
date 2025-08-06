@@ -11,7 +11,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IFormRepo} from 'infra/form/formRepo';
 import {IUtils, ToAny} from 'utils/utils';
-import {FormElementTypes, IForm} from '../../_types/forms';
+import {FormElementTypes, IForm, IFormElement} from '../../_types/forms';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -461,6 +461,72 @@ describe('formDomain', () => {
                 dependencyAttributes: [],
                 sidePanel: mockForm.sidePanel,
                 elements: [mockContainer, field1, field2, mockDivider]
+            });
+        });
+
+        test('Return a generated record form when not defined should have reproductible element ids', async () => {
+            const mockAttrDomainWithAttrs: Mockify<IAttributeDomain> = {
+                getLibraryAttributes: global.__mockPromise([
+                    {id: 'attr1', label: 'Attribute 1', type: AttributeTypes.SIMPLE}
+                ])
+            };
+            const domain = formDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.attribute': mockAttrDomainWithAttrs as IAttributeDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+                translator: {t: jest.fn().mockReturnValue('Missing form warning')} as any
+            });
+
+            const mockFormWithMissingForm: IFormElement = {
+                id: 'generated-form-missing_form_warning',
+                containerId: FORM_ROOT_CONTAINER_ID,
+                order: 0,
+                uiElementType: 'text_block',
+                type: FormElementTypes.layout,
+                settings: {
+                    content: 'Missing form warning'
+                }
+            };
+            const mockFormWithMissingFormDivider: IFormElement = {
+                id: 'generated-form-missing_form_warning_divider',
+                containerId: FORM_ROOT_CONTAINER_ID,
+                order: 1,
+                uiElementType: 'divider',
+                type: FormElementTypes.layout,
+                settings: null
+            };
+            const mockFormAttr1: IFormElement = {
+                id: 'generated-form-attr1',
+                containerId: FORM_ROOT_CONTAINER_ID,
+                order: 2,
+                uiElementType: 'input_field',
+                type: FormElementTypes.field,
+                settings: {
+                    label: 'Attribute 1',
+                    attribute: 'attr1'
+                }
+            };
+
+            domain.getFormProperties = jest.fn().mockRejectedValue(new ValidationError({id: 'UNKNOWN_FORM'}));
+
+            const res = await domain.getRecordForm({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                ctx
+            });
+
+            expect(res).toEqual({
+                id: 'edition',
+                library: 'my_lib',
+                recordId: '123456',
+                sidePanel: {
+                    enable: true,
+                    isOpenByDefault: true
+                },
+                elements: [mockFormWithMissingForm, mockFormWithMissingFormDivider, mockFormAttr1]
             });
         });
 

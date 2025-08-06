@@ -12,7 +12,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {i18n} from 'i18next';
 import {IFormRepo} from 'infra/form/formRepo';
-import {difference, uniqueId} from 'lodash';
+import {difference} from 'lodash';
 import omit from 'lodash/omit';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
@@ -118,9 +118,11 @@ export default function (deps: IFormDomainDeps): IFormDomain {
               });
 
     const _getMissingFormDefaultProps = async ({library, id, ctx}): Promise<IForm> => {
+        const generateElementId = (_id: string) => `generated-form-${_id}`;
+
         const defaultElements: IFormElement[] = [
             {
-                id: uniqueId(),
+                id: generateElementId('missing_form_warning'),
                 containerId: FORM_ROOT_CONTAINER_ID,
                 order: 0,
                 children: [],
@@ -129,7 +131,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 settings: {content: translator.t('forms.missing_form_warning', {idForm: id, lng: ctx.lang})}
             },
             {
-                id: uniqueId(),
+                id: generateElementId('missing_form_warning_divider'),
                 containerId: FORM_ROOT_CONTAINER_ID,
                 order: 1,
                 children: [],
@@ -145,7 +147,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
 
         const attributesElements = attributes.map((att, index): IFormElement => {
             const data: IFormElement = {
-                id: uniqueId(),
+                id: generateElementId(att.id),
                 containerId: FORM_ROOT_CONTAINER_ID,
                 order: index + 2,
                 uiElementType: 'input_field',
