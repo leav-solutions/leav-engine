@@ -9,6 +9,9 @@ import {useLang} from '_ui/hooks';
 import {FormElementTypes} from '_ui/_gqlTypes';
 import {formComponents} from '..';
 import {FormElement, IFormElementProps} from '../../_types';
+import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+import {useEffect, useState} from 'react';
 
 const StyledTabs = styled(Tabs)`
     && {
@@ -24,6 +27,8 @@ const StyledTabs = styled(Tabs)`
 function FormTabs({element, ...elementProps}: IFormElementProps<IFormTabsSettings>): JSX.Element {
     const {lang} = useLang();
     const tabPosition = element.settings.direction === TabsDirection.VERTICAL ? 'left' : 'top';
+    const [tabIndex, setTabIndex] = useState(null);
+    const {state, dispatch} = useEditRecordReducer();
 
     const tabItems = element.settings.tabs.map(tab => {
         const tabContainer: FormElement<{}> = {
@@ -45,7 +50,20 @@ function FormTabs({element, ...elementProps}: IFormElementProps<IFormTabsSetting
         };
     });
 
+    useEffect(() => {
+        if (state.tabActiveIndex) {
+            setTabIndex(state.tabActiveIndex);
+        }
+    }, [state.tabActiveIndex]);
+
     const onTabClick = (key: string) => {
+        // update tabActiveIndex editRecordReducerContext
+        // used to put back automatically the current tab when loader display is done -> FormTabs is rerendered
+        dispatch({
+            type: EditRecordReducerActionsTypes.UPDATE_TAB_ACTIVE_INDEX,
+            tabActiveIndex: key
+        });
+
         // propagate the event onTabClick to parent
         elementProps.onCustomEvent?.({
             eventName: 'onTabClick',
@@ -54,7 +72,15 @@ function FormTabs({element, ...elementProps}: IFormElementProps<IFormTabsSetting
         });
     };
 
-    return <StyledTabs tabPosition={tabPosition} data-testid="form-tabs" items={tabItems} onTabClick={onTabClick} />;
+    return (
+        <StyledTabs
+            activeKey={tabIndex || (tabItems.length > 0 ? tabItems[0].key : undefined)}
+            tabPosition={tabPosition}
+            data-testid="form-tabs"
+            items={tabItems}
+            onTabClick={onTabClick}
+        />
+    );
 }
 
 export default FormTabs;

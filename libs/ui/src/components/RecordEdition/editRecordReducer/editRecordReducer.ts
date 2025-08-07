@@ -47,6 +47,7 @@ export interface IEditRecordReducerState {
         };
     };
     withInfoButton: boolean;
+    tabActiveIndex: string;
 }
 
 export enum EditRecordReducerActionsTypes {
@@ -62,7 +63,8 @@ export enum EditRecordReducerActionsTypes {
     REQUEST_REFRESH = 'REQUEST_REFRESH',
     REFRESH_DONE = 'REFRESH_DONE',
     ADD_EXTERNAL_UPDATE = 'ADD_EXTERNAL_UPDATE',
-    CLEAR_EXTERNAL_UPDATE = 'CLEAR_EXTERNAL_UPDATE'
+    CLEAR_EXTERNAL_UPDATE = 'CLEAR_EXTERNAL_UPDATE',
+    UPDATE_TAB_ACTIVE_INDEX = 'UPDATE_TAB_ACTIVE_INDEX'
 }
 
 export type IEditRecordReducerActions =
@@ -120,6 +122,10 @@ export type IEditRecordReducerActions =
       }
     | {
           type: EditRecordReducerActionsTypes.CLEAR_EXTERNAL_UPDATE;
+      }
+    | {
+          type: EditRecordReducerActionsTypes.UPDATE_TAB_ACTIVE_INDEX;
+          tabActiveIndex: IEditRecordReducerState['tabActiveIndex'];
       };
 
 export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void;
@@ -140,7 +146,8 @@ export const initialState: IEditRecordReducerState = {
         modifiers: [],
         updatedValues: {}
     },
-    withInfoButton: false
+    withInfoButton: false,
+    tabActiveIndex: null
 };
 
 const editRecordReducer = (
@@ -257,6 +264,8 @@ const editRecordReducer = (
             return newState;
         case EditRecordReducerActionsTypes.CLEAR_EXTERNAL_UPDATE:
             return {...state, externalUpdate: {...initialState.externalUpdate}};
+        case EditRecordReducerActionsTypes.UPDATE_TAB_ACTIVE_INDEX:
+            return {...state, tabActiveIndex: action.tabActiveIndex};
         default:
             console.warn('Unknown action type in editRecordReducer:', action);
             return state;

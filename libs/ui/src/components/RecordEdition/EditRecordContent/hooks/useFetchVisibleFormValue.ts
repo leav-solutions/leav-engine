@@ -18,7 +18,7 @@ export const useFetchVisibleFormValue = (formIdToLoad: string, recordForm: IReco
     const [elementIdsVisible, setElementIdsVisible] = useState<string[]>([]);
     const [elementsIdsFetched, setElementsIdsFetched] = useState<string[]>([]);
 
-    const [getRecordFormElementsValues] = useGetRecordFormElementsValuesLazyQuery({
+    const [getRecordFormElementsValues, {loading}] = useGetRecordFormElementsValuesLazyQuery({
         fetchPolicy: 'no-cache'
     });
 
@@ -50,7 +50,7 @@ export const useFetchVisibleFormValue = (formIdToLoad: string, recordForm: IReco
 
     useEffect(() => {
         (async () => {
-            if (!recordForm || !formIdToLoad || !tabIdVisible) {
+            if (!recordForm || !formIdToLoad || tabIdVisible === undefined) {
                 return;
             }
 
@@ -124,6 +124,7 @@ export const useFetchVisibleFormValue = (formIdToLoad: string, recordForm: IReco
     };
 
     return {
+        loading,
         error,
         refetchRecordFormWithValues,
         recordFormWithValues

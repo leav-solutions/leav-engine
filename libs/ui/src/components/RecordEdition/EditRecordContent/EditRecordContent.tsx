@@ -100,6 +100,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
     // Get values of formElements
     const {
+        loading: loadingValues,
         refetchRecordFormWithValues,
         recordFormWithValues,
         error: errorOnGetValues
@@ -140,7 +141,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         }
     }, [state.refreshRequested]);
 
-    if (loading && !recordForm) {
+    if ((loading && !recordForm) || loadingValues) {
         return <EditRecordSkeleton rows={5} />;
     }
 
