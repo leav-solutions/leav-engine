@@ -75,7 +75,7 @@ const StandardField: FunctionComponent<
     element,
     antdForm,
     readonly,
-    formIdToLoad,
+    isCreationForm,
     pendingValues,
     onValueSubmit,
     onValueDelete,
@@ -154,7 +154,7 @@ const StandardField: FunctionComponent<
         activeAttribute: state.activeAttribute,
         attributePrefix: STANDARD_FIELD_ID_PREFIX,
         dispatch,
-        formIdToLoad,
+        isCreationForm,
         elementValues: element.values ?? [],
         pendingValues: attributePendingValues,
         allowedSelectors: ['.ant-popover.ant-color-picker', '.ant-picker-dropdown', '.kit-modal-wrapper.link-modal']

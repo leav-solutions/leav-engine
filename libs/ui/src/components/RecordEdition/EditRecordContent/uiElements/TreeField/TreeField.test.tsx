@@ -77,7 +77,7 @@ describe('TreeField', () => {
             }
         },
         readonly: false,
-        formIdToLoad: 'creation',
+        isCreationForm: false,
         onValueSubmit: jest.fn(),
         onValueDelete: jest.fn(),
         onDeleteMultipleValues: jest.fn(),

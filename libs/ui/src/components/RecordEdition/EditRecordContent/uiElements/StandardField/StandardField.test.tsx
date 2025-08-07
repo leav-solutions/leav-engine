@@ -66,7 +66,7 @@ describe('StandardField', () => {
         .mockReturnValue({status: APICallStatus.SUCCESS});
 
     const baseProps = {
-        formIdToLoad: 'edition',
+        isCreationForm: false,
         readonly: false,
         onValueSubmit: mockHandleSubmit,
         onValueDelete: mockHandleDelete,

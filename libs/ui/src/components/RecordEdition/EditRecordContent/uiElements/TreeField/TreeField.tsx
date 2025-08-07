@@ -41,7 +41,7 @@ type TreeFieldProps = IFormElementProps<ICommonFieldsSettings>;
 const TreeField: FunctionComponent<TreeFieldProps> = ({
     element,
     readonly,
-    formIdToLoad,
+    isCreationForm,
     pendingValues,
     onDeleteMultipleValues,
     onValueSubmit,
@@ -98,7 +98,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         activeAttribute: state.activeAttribute,
         attributePrefix: TREE_FIELD_ID_PREFIX,
         dispatch,
-        formIdToLoad,
+        isCreationForm,
         elementValues: backendValues,
         pendingValues: attributePendingValues,
         allowedSelectors: ['.kit-modal-wrapper']

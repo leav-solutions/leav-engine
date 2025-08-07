@@ -113,7 +113,7 @@ export interface ISubmittedValueBase {
 
 export interface IFormElementProps<SettingsType, RecordFormElements = RecordFormElementsValue> {
     element: FormElement<SettingsType, RecordFormElements>;
-    formIdToLoad: string | 'edition' | 'creation';
+    isCreationForm: boolean;
     pendingValues?: IPendingValues;
     readonly?: boolean;
     onValueSubmit?: SubmitValueFunc;

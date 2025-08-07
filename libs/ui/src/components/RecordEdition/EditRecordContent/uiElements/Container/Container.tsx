@@ -8,7 +8,7 @@ import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumn
 function Container({
     element,
     antdForm,
-    formIdToLoad,
+    isCreationForm,
     readonly,
     pendingValues,
     onValueSubmit,
@@ -38,7 +38,7 @@ function Container({
                                 readonly={readonly}
                                 antdForm={antdForm}
                                 pendingValues={pendingValues}
-                                formIdToLoad={formIdToLoad}
+                                isCreationForm={isCreationForm}
                                 onValueSubmit={onValueSubmit}
                                 onValueDelete={onValueDelete}
                                 onCustomEvent={onCustomEvent}

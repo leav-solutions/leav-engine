@@ -66,7 +66,7 @@ type LinkFieldProps = IFormElementProps<
 const LinkField: FunctionComponent<LinkFieldProps> = ({
     element,
     readonly,
-    formIdToLoad,
+    isCreationForm,
     pendingValues,
     onDeleteMultipleValues,
     onValueSubmit,
@@ -116,7 +116,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         activeAttribute: state.activeAttribute,
         attributePrefix: LINK_FIELD_ID_PREFIX,
         dispatch,
-        formIdToLoad,
+        isCreationForm,
         elementValues: backendValues,
         pendingValues: attributePendingValues,
         allowedSelectors: [
@@ -135,7 +135,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         pendingValues: attributePendingValues,
         activeAttribute: state.activeAttribute,
         dispatch,
-        isHookUsed: formIdToLoad === 'creation',
+        isHookUsed: isCreationForm,
         isReadOnly,
         isFieldInError,
         onValueSubmit,
@@ -152,7 +152,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         setBackendValues,
         activeAttribute: state.activeAttribute,
         dispatch,
-        isHookUsed: formIdToLoad !== 'creation',
+        isHookUsed: !isCreationForm,
         isReadOnly,
         isFieldInError,
         tagDisplayMode: settings.tagDisplayMode,
@@ -177,11 +177,11 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
                             <KitInputExtraAlignLeft>
                                 <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
                             </KitInputExtraAlignLeft>
-                            {formIdToLoad === 'creation' ? UnlinkAllRecordsInCreation : UnlinkAllRecordsInEdition}
+                            {isCreationForm ? UnlinkAllRecordsInCreation : UnlinkAllRecordsInEdition}
                         </>
                     }
                 >
-                    {formIdToLoad === 'creation' ? LinkRecordsInCreation : LinkRecordsInEditionExplorer}
+                    {isCreationForm ? LinkRecordsInCreation : LinkRecordsInEditionExplorer}
                 </KitInputWrapperStyled>
             </AntForm.Item>
         </Wrapper>

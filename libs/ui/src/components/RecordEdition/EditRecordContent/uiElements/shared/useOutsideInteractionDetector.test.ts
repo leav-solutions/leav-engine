@@ -22,14 +22,14 @@ describe('useOutsideInteractionDetector', () => {
 
     let mockDispatch: jest.Mock;
     let mockActiveAttribute: IRecordPropertyWithAttribute | null;
-    let mockFormIdToLoad: string | 'edition' | 'creation';
+    let mockisCreationForm: boolean;
 
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
         mockDispatch = jest.fn();
         mockActiveAttribute = null;
-        mockFormIdToLoad = 'creation';
+        mockisCreationForm = true;
 
         document.body.innerHTML = '';
         user = userEvent.setup();
@@ -41,7 +41,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                formIdToLoad: mockFormIdToLoad,
+                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
@@ -63,14 +63,14 @@ describe('useOutsideInteractionDetector', () => {
     });
 
     it('should set active value with backendValues on click inside the target element if formdIdToLoad is in edition', async () => {
-        mockFormIdToLoad = 'edition';
+        mockisCreationForm = false;
 
         renderHook(() =>
             useOutsideInteractionDetector({
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                formIdToLoad: mockFormIdToLoad,
+                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
@@ -97,7 +97,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                formIdToLoad: mockFormIdToLoad,
+                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
@@ -124,7 +124,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                formIdToLoad: mockFormIdToLoad,
+                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
@@ -154,7 +154,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                formIdToLoad: mockFormIdToLoad,
+                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
@@ -184,7 +184,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                formIdToLoad: mockFormIdToLoad,
+                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: ['#allowed-element'],
@@ -210,7 +210,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                formIdToLoad: mockFormIdToLoad,
+                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
@@ -237,7 +237,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                formIdToLoad: mockFormIdToLoad,
+                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
@@ -262,7 +262,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                formIdToLoad: mockFormIdToLoad,
+                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],
@@ -282,7 +282,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                formIdToLoad: mockFormIdToLoad,
+                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
                 pendingValues: mockPendingValues,
                 allowedSelectors: [],

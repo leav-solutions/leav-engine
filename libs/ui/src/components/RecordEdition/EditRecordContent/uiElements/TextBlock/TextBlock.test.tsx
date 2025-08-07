@@ -7,7 +7,7 @@ import TextBlock from './TextBlock';
 
 describe('TextBlock', () => {
     test('Render text block with markdown converted', async () => {
-        render(<TextBlock {...mockCommonFormElementProps} element={mockFormElementTextBlock} formIdToLoad="edition" />);
+        render(<TextBlock {...mockCommonFormElementProps} element={mockFormElementTextBlock} isCreationForm={false} />);
 
         expect(screen.getByText(/text content/i)).toBeInTheDocument();
         expect(screen.getByText('text content')).toHaveStyle('font-weight: bold');

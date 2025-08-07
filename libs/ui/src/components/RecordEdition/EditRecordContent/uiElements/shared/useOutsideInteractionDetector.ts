@@ -20,7 +20,7 @@ interface IUseOutsideInteractionDetectorProps {
     attribute: RecordFormElementFragment['attribute'];
     activeAttribute: IRecordPropertyWithAttribute | null;
     dispatch: Dispatch<IEditRecordReducerActions>;
-    formIdToLoad: string | 'edition' | 'creation';
+    isCreationForm: boolean;
     elementValues: RecordFormElementsValue[];
     pendingValues: RecordFormElementsValue[];
     allowedSelectors?: string[];
@@ -32,7 +32,7 @@ export const useOutsideInteractionDetector = ({
     activeAttribute,
     attributePrefix,
     dispatch,
-    formIdToLoad,
+    isCreationForm,
     elementValues,
     pendingValues,
     allowedSelectors = []
@@ -44,7 +44,7 @@ export const useOutsideInteractionDetector = ({
         activeAttribute,
         attributePrefix,
         allowedSelectors,
-        formIdToLoad,
+        isCreationForm,
         elementValues,
         pendingValues
     });
@@ -55,11 +55,11 @@ export const useOutsideInteractionDetector = ({
             activeAttribute,
             attributePrefix,
             allowedSelectors,
-            formIdToLoad,
+            isCreationForm,
             elementValues,
             pendingValues
         };
-    }, [attribute, activeAttribute, attributePrefix, allowedSelectors, formIdToLoad, elementValues, pendingValues]);
+    }, [attribute, activeAttribute, attributePrefix, allowedSelectors, isCreationForm, elementValues, pendingValues]);
 
     useEffect(() => {
         const handleClick = (event: MouseEvent) => {
@@ -73,7 +73,7 @@ export const useOutsideInteractionDetector = ({
                 dispatch({
                     type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
                     attribute: currentProps.attribute,
-                    values: formIdToLoad === 'creation' ? currentProps.pendingValues : currentProps.elementValues
+                    values: isCreationForm ? currentProps.pendingValues : currentProps.elementValues
                 });
                 return;
             }
@@ -109,7 +109,7 @@ export const useOutsideInteractionDetector = ({
                 dispatch({
                     type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
                     attribute: currentProps.attribute,
-                    values: formIdToLoad === 'creation' ? currentProps.pendingValues : currentProps.elementValues
+                    values: isCreationForm ? currentProps.pendingValues : currentProps.elementValues
                 });
             }
         };

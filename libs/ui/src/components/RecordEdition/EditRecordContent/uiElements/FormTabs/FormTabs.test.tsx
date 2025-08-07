@@ -34,7 +34,7 @@ const createMockEditRecordReducerProvider = (tabActiveIndex = null) => {
 
 describe('Tabs', () => {
     test('Render Tabs', async () => {
-        render(<FormTabs {...mockCommonFormElementProps} element={mockFormElementTabs} formIdToLoad="edition" />);
+        render(<FormTabs {...mockCommonFormElementProps} element={mockFormElementTabs} isCreationForm={false} />);
 
         expect(screen.getAllByRole('tab').length).toBe(2);
     });
@@ -47,7 +47,7 @@ describe('Tabs', () => {
                     ...mockFormElementTabs,
                     settings: {...mockFormElementTabs.settings, direction: TabsDirection.VERTICAL}
                 }}
-                formIdToLoad="edition"
+                isCreationForm={false}
             />
         );
 
@@ -60,7 +60,7 @@ describe('Tabs', () => {
 
         render(
             <MockEditRecordReducerProvider>
-                <FormTabs {...mockCommonFormElementProps} element={mockFormElementTabs} formIdToLoad="edition" />
+                <FormTabs {...mockCommonFormElementProps} element={mockFormElementTabs} isCreationForm={false} />
             </MockEditRecordReducerProvider>
         );
 
@@ -78,7 +78,7 @@ describe('Tabs', () => {
 
         render(
             <MockEditRecordReducerProvider>
-                <FormTabs {...mockCommonFormElementProps} element={mockFormElementTabs} formIdToLoad="edition" />
+                <FormTabs {...mockCommonFormElementProps} element={mockFormElementTabs} isCreationForm={false} />
             </MockEditRecordReducerProvider>
         );
 
@@ -101,7 +101,7 @@ describe('Tabs', () => {
 
         render(
             <MockEditRecordReducerProvider>
-                <FormTabs {...mockCommonFormElementProps} element={mockFormElementTabs} formIdToLoad="edition" />
+                <FormTabs {...mockCommonFormElementProps} element={mockFormElementTabs} isCreationForm={false} />
             </MockEditRecordReducerProvider>
         );
 

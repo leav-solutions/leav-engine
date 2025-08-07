@@ -61,6 +61,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     readonly
 }) => {
     let formIdToLoad = formId;
+    const isCreationForm = !record?.id;
     if (!formId) {
         formIdToLoad = record ? 'edition' : 'creation';
     }
@@ -104,7 +105,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         refetchRecordFormWithValues,
         recordFormWithValues,
         error: errorOnGetValues
-    } = useFetchVisibleFormValue(formIdToLoad, recordForm, tabIdVisible);
+    } = useFetchVisibleFormValue(formIdToLoad, isCreationForm, recordForm, tabIdVisible);
 
     useEffect(() => {
         if (!recordFormWithValues?.recordId || !recordFormWithValues?.elements?.length) {
@@ -137,7 +138,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     useEffect(() => {
         if (state.refreshRequested) {
             // Create form
-            if (formIdToLoad !== 'creation') {
+            if (!isCreationForm) {
                 refetchRecordFormWithValues();
             }
             dispatch({type: EditRecordReducerActionsTypes.REFRESH_DONE});
@@ -230,7 +231,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                 key={recordFormHash}
                 antdForm={antdForm}
                 valuesMappedByAttributeId={valuesMappedByAttributeId}
-                formIdToLoad={formIdToLoad}
+                isCreationForm={isCreationForm}
                 element={rootElement}
                 readonly={readonly}
                 // todo there is two readonly, one for form and for the attribut

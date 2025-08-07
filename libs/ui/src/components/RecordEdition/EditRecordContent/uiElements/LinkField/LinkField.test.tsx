@@ -85,7 +85,6 @@ describe('LinkField', () => {
             }
         },
         readonly: false,
-        formIdToLoad: 'creation',
         onValueSubmit: jest.fn(),
         onValueDelete: jest.fn(),
         onDeleteMultipleValues: jest.fn(),
@@ -137,7 +136,7 @@ describe('LinkField', () => {
             render(
                 <KitApp>
                     <MockedLangContextProvider>
-                        <LinkField {...props} formIdToLoad="creation" readonly={false} />
+                        <LinkField {...props} isCreationForm={true} readonly={false} />
                     </MockedLangContextProvider>
                 </KitApp>
             );
@@ -147,12 +146,12 @@ describe('LinkField', () => {
         });
     });
 
-    describe('with formIdToLoad equal to creation', () => {
+    describe('with form in creation', () => {
         it('should call useLinkRecordsInCreation with default props', () => {
             render(
                 <KitApp>
                     <MockedLangContextProvider>
-                        <LinkField {...linkFieldDefaultProps} formIdToLoad="creation" />
+                        <LinkField {...linkFieldDefaultProps} isCreationForm={true} />
                     </MockedLangContextProvider>
                 </KitApp>
             );
@@ -180,7 +179,7 @@ describe('LinkField', () => {
             render(
                 <KitApp>
                     <MockedLangContextProvider>
-                        <LinkField {...linkFieldDefaultProps} formIdToLoad="creation" readonly={true} />
+                        <LinkField {...linkFieldDefaultProps} isCreationForm={true} readonly={true} />
                     </MockedLangContextProvider>
                 </KitApp>
             );
@@ -197,7 +196,7 @@ describe('LinkField', () => {
             render(
                 <KitApp>
                     <MockedLangContextProvider>
-                        <LinkField {...linkFieldDefaultProps} formIdToLoad="creation" />
+                        <LinkField {...linkFieldDefaultProps} isCreationForm={true} />
                     </MockedLangContextProvider>
                 </KitApp>
             );
@@ -251,7 +250,7 @@ describe('LinkField', () => {
             render(
                 <KitApp>
                     <MockedLangContextProvider>
-                        <LinkField {...linkFieldDefaultProps} formIdToLoad="creation" pendingValues={pendingValues} />
+                        <LinkField {...linkFieldDefaultProps} isCreationForm={true} pendingValues={pendingValues} />
                     </MockedLangContextProvider>
                 </KitApp>
             );
@@ -261,7 +260,7 @@ describe('LinkField', () => {
         });
     });
 
-    describe('with formIdToLoad different from creation', () => {
+    describe('with form in creation', () => {
         it('should call useLinkRecordsInEdition with default props', () => {
             mockInitialState.libraryId = 'test_lib';
             mockInitialState.record = mockRecord;
@@ -269,7 +268,7 @@ describe('LinkField', () => {
             render(
                 <KitApp>
                     <MockedLangContextProvider>
-                        <LinkField {...linkFieldDefaultProps} formIdToLoad="edition" />
+                        <LinkField {...linkFieldDefaultProps} isCreationForm={false} />
                     </MockedLangContextProvider>
                 </KitApp>
             );
@@ -300,7 +299,7 @@ describe('LinkField', () => {
             render(
                 <KitApp>
                     <MockedLangContextProvider>
-                        <LinkField {...linkFieldDefaultProps} formIdToLoad="edition" readonly={true} />
+                        <LinkField {...linkFieldDefaultProps} isCreationForm={false} readonly={true} />
                     </MockedLangContextProvider>
                 </KitApp>
             );
@@ -317,7 +316,7 @@ describe('LinkField', () => {
             render(
                 <KitApp>
                     <MockedLangContextProvider>
-                        <LinkField {...linkFieldDefaultProps} formIdToLoad="edition" />
+                        <LinkField {...linkFieldDefaultProps} isCreationForm={false} />
                     </MockedLangContextProvider>
                 </KitApp>
             );
