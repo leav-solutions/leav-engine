@@ -136,7 +136,10 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
     useEffect(() => {
         if (state.refreshRequested) {
-            refetchRecordFormWithValues();
+            // Create form
+            if (formIdToLoad !== 'creation') {
+                refetchRecordFormWithValues();
+            }
             dispatch({type: EditRecordReducerActionsTypes.REFRESH_DONE});
         }
     }, [state.refreshRequested]);

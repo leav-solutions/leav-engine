@@ -54,6 +54,11 @@ export const useFetchVisibleFormValue = (formIdToLoad: string, recordForm: IReco
                 return;
             }
 
+            // skip on creation form
+            if (formIdToLoad === 'creation') {
+                return;
+            }
+
             const elementIds = getElementIdsVisible();
             setElementIdsVisible(elementIds);
 

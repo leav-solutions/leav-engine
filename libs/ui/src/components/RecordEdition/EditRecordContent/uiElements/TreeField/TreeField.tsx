@@ -61,7 +61,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
     } = element;
 
     useEffect(() => {
-        setBackendValues(values);
+        setBackendValues(values || []);
     }, [values]);
 
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueTreeValue[]>([]);
