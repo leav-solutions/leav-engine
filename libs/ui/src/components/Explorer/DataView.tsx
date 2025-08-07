@@ -154,7 +154,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     title={resolveItemActionProp(item, label) as string}
                                     icon={resolveItemActionProp(item, icon) as ReactElement}
                                     onClick={callback}
-                                    danger={isDanger}
+                                    danger={resolveItemActionProp(item, isDanger) as boolean}
                                     size="m"
                                     disabled={resolveItemActionProp(item, disabled) as boolean}
                                 >
@@ -171,7 +171,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                 icon={resolveItemActionProp(item, actions[0].icon) as ReactNode}
                                 title={resolveItemActionProp(item, actions[0].label) as string}
                                 onClick={actions[0].callback}
-                                danger={actions[0].isDanger}
+                                danger={resolveItemActionProp(item, actions[0].isDanger) as boolean}
                                 disabled={resolveItemActionProp(item, actions[0].disabled) as boolean}
                             />
                             <KitButton
@@ -179,7 +179,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                 icon={resolveItemActionProp(item, actions[1].icon) as ReactElement}
                                 onClick={actions[1].callback}
                                 title={resolveItemActionProp(item, actions[1].label) as string}
-                                danger={actions[1].isDanger}
+                                danger={resolveItemActionProp(item, actions[1].isDanger) as boolean}
                                 disabled={resolveItemActionProp(item, actions[1].disabled) as boolean}
                             />
                             <KitDropDown
@@ -187,7 +187,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     items: actions.slice(2).map(({callback, icon, label, isDanger, disabled}) => ({
                                         key: resolveItemActionProp(item, label) as string,
                                         title: resolveItemActionProp(item, label) as string,
-                                        danger: isDanger,
+                                        danger: resolveItemActionProp(item, isDanger) as boolean,
                                         disabled: resolveItemActionProp(item, disabled) as boolean,
                                         label: resolveItemActionProp(item, label) as string,
                                         icon: icon

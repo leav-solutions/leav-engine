@@ -50,7 +50,7 @@ export interface IItemAction {
     icon: ReactElement | ((item: IItemData) => ReactElement);
     label: string | ((item: IItemData) => string);
     iconOnly?: boolean;
-    isDanger?: boolean;
+    isDanger?: boolean | ((item: IItemData) => boolean);
     disabled?: boolean | ((item: IItemData) => boolean);
 }
 
