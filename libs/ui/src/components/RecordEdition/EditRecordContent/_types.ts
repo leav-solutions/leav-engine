@@ -122,7 +122,7 @@ export interface IFormElementProps<SettingsType, RecordFormElements = RecordForm
     onDeleteMultipleValues?: DeleteMultipleValuesFunc;
     metadataEdit?: boolean;
     record?: IRecordIdentityWhoAmI;
-    elementsByContainer?: any;
+    elementsByContainer?: Record<string, Array<FormElement<unknown>>>;
 }
 
 export type FormElement<SettingsType, RecordFormElements = RecordFormElementsValue> = Override<
