@@ -1,12 +1,34 @@
+YARN_INSTALL_DONE=node_modules/.yarn_install_done
+ROOT_YARN_LOCK=../../yarn.lock
+PLUGINS_PATH=./src/plugins
+PLUGINS_YARN_LOCK=yarn.lock
+
 # Install dependencies
-echo "Install apps dependencies"
-yarn install
+echo "Install apps dependencies $PWD"
+if [ ! -f $YARN_INSTALL_DONE ] || [ $YARN_INSTALL_DONE -ot $ROOT_YARN_LOCK ]; then
+  echo "Do yarn install"
+  yarn install
+  touch $YARN_INSTALL_DONE
+else
+  echo "Dependencies already installed, skipping yarn install."
+fi
 
 # Install plugins dependencies
-find ./src/plugins -name package.json -not -path "*/node_modules/*" -exec sh -c '
-  echo "🚧 Install dependencies for plugin $(basename $(dirname {}))"
-  (cd $(dirname {}) && yarn install)
-' \;
+find $PLUGINS_PATH -name package.json -not -path "*/node_modules/*" | while read -r pkg_file; do
+  plugin_dir=$(dirname "$pkg_file")
+  cd "$plugin_dir" 
+  echo "🚧 Install dependencies for plugin $plugin_dir"
+  if [ ! -f $YARN_INSTALL_DONE ] || [ $YARN_INSTALL_DONE -ot $PLUGINS_YARN_LOCK ]; then
+    yarn install
+    if [ ! -d $(dirname "$YARN_INSTALL_DONE") ]; then
+      mkdir -p $(dirname "$YARN_INSTALL_DONE")
+    fi
+    touch $YARN_INSTALL_DONE
+  else
+    echo "Dependencies already installed for plugin $plugin_dir, skipping yarn install."
+  fi
+  cd -
+done
 
 echo "📚 Run migration scripts"
 yarn run db:migrate:dev
