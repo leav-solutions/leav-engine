@@ -53,6 +53,7 @@ const depsBase: ToAny<IIndexationManagerDomainDeps> = {
     'core.domain.tasksManager': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     'core.utils.logger': jest.fn(),
+    'core.utils.getSystemQueryContext': jest.fn(),
     translator: {},
     config: {}
 };

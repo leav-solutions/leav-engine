@@ -23,6 +23,7 @@ import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {TriggerNames} from '../../_types/eventsManager';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
+import {GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 
 interface IIndexDatabaseParams {
     findRecordParams: IFindRecordParams | IFindRecordParams[];
@@ -46,6 +47,7 @@ export interface IIndexationManagerDomainDeps {
     'core.domain.tasksManager': ITasksManagerDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.utils.logger': winston.Winston;
+    'core.utils.getSystemQueryContext': GetSystemQueryContext;
     translator: i18n;
 }
 
@@ -59,6 +61,7 @@ export default function ({
     'core.infra.indexation.indexationService': indexationService,
     'core.domain.eventsManager': eventsManager,
     'core.utils.logger': logger,
+    'core.utils.getSystemQueryContext': getSystemQueryContext,
     translator
 }: IIndexationManagerDomainDeps): IIndexationManagerDomain {
     const _indexRecords = async (
@@ -218,10 +221,7 @@ export default function ({
         amqpService.consumer.channel.ack(msg);
 
         const event: IDbEvent = JSON.parse(msg.content.toString());
-        const ctx: IQueryInfos = {
-            userId: '1',
-            queryId: uuidv4()
-        };
+        const ctx = getSystemQueryContext();
 
         try {
             _validateMsg(event);
