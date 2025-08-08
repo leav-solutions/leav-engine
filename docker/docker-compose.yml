@@ -178,7 +178,9 @@ services:
     working_dir: *dir-core
     healthcheck:
       test: ["CMD-SHELL", "nc -z core 4001 || exit 1"]
-      interval: 5s
+      start_period: 30s
+      start_interval: 5s
+      interval: 60s
       timeout: 2s
       retries: 50
     depends_on:
@@ -523,7 +525,9 @@ services:
       # The arango image does not embed any health checking tool, thus we have to run a custom command to do the healthcheck.
       # The test uses wget to make an internal HTTP request to the ArangoDB server's version endpoint.
       test: ["CMD-SHELL", "wget -qO- http://0.0.0.0:8529/_api/version"]
-      interval: 5s
+      start_period: 30s
+      start_interval: 5s
+      interval: 60s
       timeout: 2s
       retries: 15
 
@@ -543,7 +547,9 @@ services:
       - message-broker_data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
-      interval: 5s
+      start_period: 30s
+      start_interval: 5s
+      interval: 60s
       timeout: 2s
       retries: 15
 
@@ -557,7 +563,9 @@ services:
       - redis_data:/data
     healthcheck:
         test: [ "CMD", "redis-cli", "ping" ]
-        interval: 5s
+        start_period: 30s
+        start_interval: 5s
+        interval: 60s
         timeout: 2s
         retries: 15
 
@@ -582,7 +590,9 @@ services:
     image: elasticsearch:8.10.2
     healthcheck:
         test: [ "CMD-SHELL", "curl -s --fail http://elasticsearch:9200" ]
-        interval: 5s
+        start_period: 30s
+        start_interval: 5s
+        interval: 60s
         timeout: 2s
         retries: 15
     environment:
