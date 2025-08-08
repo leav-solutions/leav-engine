@@ -6,8 +6,8 @@
     "scripts": {
         "start": "node .",
         "start:watch": "npm run start:dev",
-        "start:dev": "ts-node-dev --respawn ./src ",
-        "start:watch:test": "NODE_ENV=test ts-node-dev --respawn src/",
+        "start:dev": "ts-node-dev --transpile-only --respawn ./src ",
+        "start:watch:test": "NODE_ENV=test ts-node-dev --transpile-only --respawn src/",
         "dev": "npm run start:watch",
         "build": "tsc -b tsconfig.build.json",
         "test": "jest -c jest-unit-config.json",

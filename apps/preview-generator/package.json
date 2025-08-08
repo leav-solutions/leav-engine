@@ -5,7 +5,7 @@
     "main": "dist/index.js",
     "scripts": {
         "start": "node .",
-        "start:watch": "ts-node-dev --respawn src/",
+        "start:watch": "ts-node-dev --transpile-only --respawn src/",
         "build": "tsc -b tsconfig.build.json",
         "test:watch": "jest -c jest-unit-config.json --watch",
         "test": "jest -c jest-unit-config.json",
