@@ -5,6 +5,9 @@ import {Log} from '@leav/utils';
 import {ILogRepo} from 'infra/log/logRepo';
 import {ILogFilters, ILogPagination, ILogSort} from '_types/log';
 import {IQueryInfos} from '_types/queryInfos';
+import {AdminPermissionsActions} from '../../_types/permissions';
+import PermissionError from '../../errors/PermissionError';
+import {adminUserId} from '../../_constants/users';
 
 export interface ILogDomain {
     getLogs: (
@@ -20,6 +23,13 @@ interface IDeps {
 export default function ({'core.infra.log': logRepo}: IDeps): ILogDomain {
     return {
         async getLogs({pagination, filters, sort}, ctx) {
+            // For now, do not allow non-admin users to access logs
+            // Later, if a user interface can display logs, maybe add a permission to be setup in admin panel, like others
+            const canAccessAllLogs = ctx.userId === adminUserId;
+            if (!canAccessAllLogs) {
+                throw new PermissionError(AdminPermissionsActions.ACCESS_LOGS);
+            }
+
             const defaultSort: ILogSort = {field: 'time', order: 'desc'};
             const logs = await logRepo.getLogs({filters, sort: sort ?? defaultSort, pagination}, ctx);
 

@@ -88,7 +88,9 @@ export enum AdminPermissionsActions {
     CREATE_API_KEY = 'admin_create_api_key',
     EDIT_API_KEY = 'admin_edit_api_key',
     DELETE_API_KEY = 'admin_delete_api_key',
-    EDIT_GLOBAL_SETTINGS = 'admin_edit_global_settings'
+    EDIT_GLOBAL_SETTINGS = 'admin_edit_global_settings',
+    // Only backend for now, not configurable from the admin UI
+    ACCESS_LOGS = 'admin_access_logs'
 }
 
 export type PermissionsActions =
