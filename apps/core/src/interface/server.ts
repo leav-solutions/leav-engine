@@ -314,10 +314,6 @@ export default function ({
                     responseFormattingPlugin
                 ];
 
-                if (config.debug) {
-                    plugins.push(require('apollo-tracing').plugin());
-                }
-
                 const server = new ApolloServer<IQueryInfos>({
                     // Hiding error details in production is handled in _handleError
                     includeStacktraceInErrorResponses: true,

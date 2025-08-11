@@ -76,7 +76,6 @@
         "@leav/utils": "workspace:*",
         "add-filename-increment": "1.0.0",
         "amqplib": "0.8.0",
-        "apollo-tracing": "0.15.0",
         "app-root-path": "3.1.0",
         "arangojs": "8.1.0",
         "awilix": "3.0.9",
