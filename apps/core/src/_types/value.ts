@@ -4,7 +4,7 @@
 import {AnyPrimitive, Override} from '@leav/utils';
 import {IDbEdge} from 'infra/db/_types';
 import {IRecord} from './record';
-import {ITreeNode, TreePaths} from './tree';
+import {ITreeNode, TreePath} from './tree';
 import {EMPTY_VALUE} from 'infra/value/valueRepo';
 import {AttributeTypes} from './attribute';
 
@@ -138,7 +138,7 @@ export interface IValuesOptions {
 export interface IFindValueTree {
     name: string;
     currentIndex: number;
-    elements: TreePaths;
+    elements: TreePath;
 }
 
 export interface IValueEdge extends IDbEdge {

@@ -35,7 +35,7 @@ import {
     ITreeNodeLight,
     TreeBehavior,
     TreeEventTypes,
-    TreePaths
+    TreePath
 } from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
@@ -131,7 +131,7 @@ export interface ITreeDomain {
     /**
      * Retrieve all ancestors of an element, including element itself and starting from the root
      */
-    getElementAncestors(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<TreePaths>;
+    getElementAncestors(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<TreePath>;
 
     /**
      * Retrieve all records linked to an element via given attribute
@@ -290,7 +290,7 @@ export default function ({
             .filter(tree => !!tree.permissions_conf)
             .filter(tree => {
                 let isUsingAttributes = false;
-                for (const [lib, treePermissionsConf] of Object.entries(tree.permissions_conf)) {
+                for (const treePermissionsConf of Object.values(tree.permissions_conf)) {
                     isUsingAttributes =
                         !!attributes.filter(a => treePermissionsConf.permissionTreeAttributes.includes(a.id)).length ||
                         isUsingAttributes;
@@ -792,7 +792,7 @@ export default function ({
 
             return treeRepo.getElementChildren({treeId, nodeId, childrenCount, withTotalCount, pagination, ctx});
         },
-        async getElementAncestors({treeId, nodeId, ctx}): Promise<TreePaths> {
+        async getElementAncestors({treeId, nodeId, ctx}): Promise<TreePath> {
             return elementAncestorsHelper.getCachedElementAncestors({treeId, nodeId, ctx});
         },
         async getLinkedRecords({treeId, attribute, nodeId, ctx}): Promise<IRecord[]> {

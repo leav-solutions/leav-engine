@@ -50,7 +50,7 @@ export interface ITreeNodeWithTreeId extends ITreeNode {
     treeId: string;
 }
 
-export type TreePaths = ITreeNode[];
+export type TreePath = ITreeNode[];
 
 export enum TreeBehavior {
     STANDARD = 'standard',

@@ -7,9 +7,9 @@ import {IList, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
 import {IGetCoreEntitiesParams} from '_types/shared';
-import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, ITreeNodeLight, TreePaths} from '_types/tree';
-import {IDbDocument, IDbEdge, IExecuteWithCount, isExecuteWithCount} from '../../infra/db/_types';
-import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
+import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, ITreeNodeLight, TreePath} from '_types/tree';
+import {IDbDocument, IDbEdge, IExecuteWithCount, isExecuteWithCount} from '../db/_types';
+import {VALUES_LINKS_COLLECTION} from '../value/valueRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {
@@ -125,7 +125,7 @@ export interface ITreeRepo {
      * @param treeId
      * @param element
      */
-    getElementAncestors(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<TreePaths>;
+    getElementAncestors(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<TreePath>;
 
     getLinkedRecords(params: {treeId: string; attribute: string; nodeId: string; ctx: IQueryInfos}): Promise<IRecord[]>;
 
@@ -383,7 +383,6 @@ export default function ({
         },
         async isRecordPresent({treeId, record, ctx}): Promise<boolean> {
             const collec = dbService.db.collection(getNodesCollectionName(treeId));
-            const elementId = `${record.library}/${record.id}`;
 
             const query = aql`
                 FOR n IN ${collec}
@@ -570,7 +569,7 @@ export default function ({
                 })
             };
         },
-        async getElementAncestors({treeId, nodeId, ctx}): Promise<TreePaths> {
+        async getElementAncestors({treeId, nodeId, ctx}): Promise<TreePath> {
             if (!nodeId) {
                 return [];
             }
@@ -591,11 +590,10 @@ export default function ({
                 order: number;
             }> = await dbService.execute({query, ctx});
 
-            const cleanResult = res.reverse().map(elem => {
+            return res.reverse().map(elem => {
                 elem.record.library = elem.record?._id ? getLibraryFromDbId(elem.record._id) : null;
                 return {id: elem.id, order: elem.order, record: dbUtils.cleanup(elem.record)};
             });
-            return cleanResult;
         },
         async getLinkedRecords({treeId, attribute, nodeId, ctx}): Promise<IRecord[]> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
@@ -653,9 +651,8 @@ export default function ({
                     FILTER n.${NODE_LIBRARY_ID_FIELD} == ${record.library} && n.${NODE_RECORD_ID_FIELD} == ${record.id}
                     RETURN n._key
             `;
-            const nodes = await dbService.execute<string[]>({query, ctx});
 
-            return nodes;
+            return dbService.execute<string[]>({query, ctx});
         },
         async getNodesByLibrary({treeId, libraryId, ctx}) {
             const nodesCollec = dbService.db.collection(getNodesCollectionName(treeId));
@@ -665,9 +662,8 @@ export default function ({
                     FILTER n.${NODE_LIBRARY_ID_FIELD} == ${libraryId}
                     RETURN n._key
             `;
-            const nodes = await dbService.execute<string[]>({query, ctx});
 
-            return nodes;
+            return dbService.execute<string[]>({query, ctx});
         }
     };
 }

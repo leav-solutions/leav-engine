@@ -29,7 +29,7 @@ import {
     ITreeNodeWithTreeId,
     TreeBehavior,
     TreeEventTypes,
-    TreePaths
+    TreePath
 } from '../../../_types/tree';
 import {IGraphqlAppModule, IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
@@ -138,7 +138,7 @@ export default function ({
         _,
         ctx: IQueryInfos,
         info: GraphQLResolveInfo
-    ): Promise<TreePaths> => {
+    ): Promise<TreePath> => {
         const treeId = parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
 
         const ancestors = await treeDomain.getElementAncestors({treeId, nodeId: parent.id, ctx});

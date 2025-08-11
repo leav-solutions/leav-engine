@@ -5,7 +5,7 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IQueryInfos} from '_types/queryInfos';
-import {TreePaths} from '_types/tree';
+import {TreePath} from '_types/tree';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsActions, PermissionsRelations, PermissionTypes} from '../../../_types/permissions';
 import {IGetInheritedTreeBasedPermissionParams, IGetTreeBasedPermissionParams} from '../_types';
@@ -49,7 +49,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
         type: PermissionTypes;
         action: PermissionsActions;
         applyTo: string;
-        userGroupsPaths: TreePaths[];
+        userGroupsPaths: TreePath[];
         permTreeId: string;
         permTreeValues: string[];
         getDefaultPermission: () => Promise<boolean> | boolean;

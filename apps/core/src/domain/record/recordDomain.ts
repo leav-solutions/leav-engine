@@ -24,7 +24,7 @@ import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import {getPreviewUrl} from '../../utils/preview/preview';
-import {TypeGuards} from '../../utils/typeGuards';
+import {TypeGuards} from '../../utils';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
@@ -47,7 +47,7 @@ import {
     Operator,
     TreeCondition
 } from '../../_types/record';
-import {TreePaths} from '../../_types/tree';
+import {TreePath} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
@@ -729,8 +729,8 @@ export default function ({
         const getSubLabel = conf.subLabel ? () => _getSubLabel(record, [], ctx) : null;
 
         // look in tree if not defined on current record for color and preview
-        let _getAncestorsPromise: Promise<TreePaths | null> | null = null;
-        const _getAncestors = async (): Promise<TreePaths | null> => {
+        let _getAncestorsPromise: Promise<TreePath | null> | null = null;
+        const _getAncestors = async (): Promise<TreePath | null> => {
             if (_getAncestorsPromise !== null) {
                 return _getAncestorsPromise;
             }
@@ -811,7 +811,7 @@ export default function ({
             return preview;
         };
 
-        const identity = {
+        return {
             id: record.id,
             library: lib,
             getLabel,
@@ -819,8 +819,6 @@ export default function ({
             getColor,
             getPreview
         };
-
-        return identity;
     };
 
     const ret: IRecordDomain = {
@@ -1386,11 +1384,9 @@ export default function ({
 
             recordsToActivate = recordsToActivate.filter(recordId => recordId !== null);
 
-            const activeRecords = await Promise.all(
+            return Promise.all(
                 recordsToActivate.map(recordId => this.activateRecord({id: recordId, library: libraryId}, ctx))
             );
-
-            return activeRecords;
         },
         async deactivateRecordsBatch({libraryId, recordsIds, filters, ctx}) {
             let recordsToDeactivate: string[] = recordsIds ?? [];
@@ -1423,11 +1419,9 @@ export default function ({
             );
             recordsToDeactivate = recordsToDeactivate.filter(recordId => recordId !== null);
 
-            const inactiveRecords = await Promise.all(
+            return Promise.all(
                 recordsToDeactivate.map(recordId => this.deactivateRecord({id: recordId, library: libraryId}, ctx))
             );
-
-            return inactiveRecords;
         },
         async purgeInactiveRecords({libraryId, ctx}): Promise<IRecord[]> {
             const inactiveRecords = await this.find({

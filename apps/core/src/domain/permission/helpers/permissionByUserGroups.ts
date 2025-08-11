@@ -6,7 +6,7 @@ import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import {ISimplePermissionHelper} from './simplePermission';
 import {IDefaultPermissionHelper} from './defaultPermission';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
-import {ITreeNode, TreePaths} from '../../../_types/tree';
+import {ITreeNode, TreePath} from '../../../_types/tree';
 import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {IQueryInfos} from '../../../_types/queryInfos';
 
@@ -21,7 +21,7 @@ export interface IPermissionByUserGroupsHelperDeps {
 interface IGetPermissionByUserGroupsParams {
     type: PermissionTypes;
     action: PermissionsActions;
-    userGroupsPaths: TreePaths[]; // from the most general to the most specific (no root required)
+    userGroupsPaths: TreePath[]; // from the most general to the most specific (no root required)
     applyTo?: string;
     treeTarget?: {tree: string; path: ITreeNode[]}; // from the most general to the most specific (add root if needed)
     getDefaultPermission?: () => Promise<boolean> | boolean;
