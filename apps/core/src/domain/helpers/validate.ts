@@ -8,9 +8,8 @@ import {IUtils} from 'utils/utils';
 import {ILibrary} from '_types/library';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
-import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {AttributeCondition, IRecord} from '../../_types/record';
+import {IRecord} from '../../_types/record';
 import {GetCoreEntityByIdFunc} from './getCoreEntityById';
 
 interface IDeps {
@@ -46,20 +45,11 @@ export default function ({
         },
         async validateRecord(library, recordId, ctx): Promise<IRecord> {
             async function _fetchRecordFromDB() {
-                const recordsRes = await recordRepo.find({
+                return recordRepo.getRecord({
                     libraryId: library,
-                    filters: [
-                        {
-                            attributes: [{id: 'id', type: AttributeTypes.SIMPLE}],
-                            condition: AttributeCondition.EQUAL,
-                            value: String(recordId)
-                        }
-                    ],
-                    retrieveInactive: true,
+                    recordId,
                     ctx
                 });
-
-                return recordsRes.list[0];
             }
 
             const cacheKey = utils.getRecordsCacheKey(library, recordId);

@@ -28,7 +28,6 @@ import {InitQueryContextFunc} from '../helpers/initQueryContext';
 import {IConvertOIDCIdentifier} from '../helpers/convertOIDCIdentifier';
 import {IncomingHttpHeaders} from 'http';
 import {IRecordRepo} from '../../infra/record/recordRepo';
-import {AttributeTypes} from '../../_types/attribute';
 import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {IServerRouteAppModule} from 'interface/server';
 
@@ -189,21 +188,11 @@ export default function ({
             resolvers: {
                 Query: {
                     async me(parent, args, ctx: IQueryInfos, info): Promise<IRecord> {
-                        const users = await recordRepo.find({
+                        return recordRepo.getRecord({
                             libraryId: USERS_LIBRARY,
-                            filters: [
-                                {
-                                    attributes: [{id: 'id', type: AttributeTypes.SIMPLE}],
-                                    condition: AttributeCondition.EQUAL,
-                                    value: ctx.userId
-                                }
-                            ],
-                            withCount: false,
-                            retrieveInactive: true,
+                            recordId: ctx.userId,
                             ctx
                         });
-
-                        return users.list[0];
                     }
                 }
             }

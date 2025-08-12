@@ -735,7 +735,7 @@ describe('ValueDomain', () => {
             };
 
             const mockRecordRepoNotfound: Mockify<IRecordRepo> = {
-                find: global.__mockPromise({totalCount: 0, list: []})
+                getRecord: global.__mockPromise(null)
             };
 
             const valDomain = valueDomain({

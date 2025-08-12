@@ -9,7 +9,6 @@ import {difference} from 'lodash';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {ErrorFieldDetail, Errors, IExtendedErrorMsg} from '../../../_types/errors';
 import {IQueryInfos} from '../../../_types/queryInfos';
-import {AttributeCondition} from '../../../_types/record';
 import {ISaveLinkValue, ISaveTreeValue, ISaveValue, IValueVersion} from '../../../_types/value';
 import doesValueExist from './doesValueExist';
 
@@ -43,28 +42,13 @@ const _validateLinkedRecord = async (
     if (typeof value.payload !== 'string') {
         throw new Error('Link attribute value must be a string representing the linked record ID.');
     }
-    const idAttrProps = await deps.attributeDomain.getAttributeProperties({id: 'id', ctx});
-    let reverseLink: IAttribute;
-    if (!!idAttrProps.reverse_link) {
-        reverseLink = await deps.attributeDomain.getAttributeProperties({
-            id: idAttrProps.reverse_link as string,
-            ctx
-        });
-    }
-
-    const records = await deps.recordRepo.find({
+    const record = await deps.recordRepo.getRecord({
         libraryId: attribute.linked_library,
-        filters: [
-            {
-                attributes: [{...idAttrProps, reverse_link: reverseLink}],
-                condition: AttributeCondition.EQUAL,
-                value: value.payload
-            }
-        ],
+        recordId: value.payload,
         ctx
     });
 
-    return records.list.length
+    return !!record
         ? {isValid: true}
         : {
               isValid: false,

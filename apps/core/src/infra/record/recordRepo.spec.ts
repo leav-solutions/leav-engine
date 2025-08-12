@@ -4,7 +4,7 @@
 import {aql, Database} from 'arangojs';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
-import {cloneDeep} from 'lodash';
+import {cloneDeep, omit} from 'lodash';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition, IRecordFilterOption, Operator} from '../../_types/record';
@@ -15,6 +15,7 @@ import recordRepo, {IRecordRepoDeps} from './recordRepo';
 import {ToAny} from 'utils/utils';
 import {SortOrder} from '../../_types/list';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
+import {IQueryInfos} from '_types/queryInfos';
 
 const depsBase: ToAny<IRecordRepoDeps> = {
     'core.infra.db.dbService': jest.fn(),
@@ -29,9 +30,8 @@ const depsBase: ToAny<IRecordRepoDeps> = {
 };
 
 describe('RecordRepo', () => {
-    const ctx = {
-        userId: '0',
-        requestId: '123465'
+    const ctx: IQueryInfos = {
+        userId: '0'
     };
     describe('createRecord', () => {
         test('Should create a new record', async function () {
@@ -691,6 +691,100 @@ describe('RecordRepo', () => {
                     }
                 ]
             });
+        });
+    });
+
+    describe('getRecord', () => {
+        beforeEach(() => {
+            delete ctx.dataLoaders;
+        });
+
+        const mockRecord1 = {
+            _key: '222536283',
+            _id: 'ubs/222536283',
+            _rev: '_WgM_51a--_',
+            created_at: 1520931427,
+            modified_at: 1520931427,
+            ean: '9876543219999999',
+            visual_simple: '222713677'
+        };
+        const mockRecord2 = {
+            _key: '222536515',
+            _id: 'ubs/222536515',
+            _rev: '_WgFARB6--_',
+            created_at: 1520931648,
+            modified_at: 1520931648,
+            ean: '9876543219999999'
+        };
+
+        test('Should return records in same order', async function () {
+            const mockDbServ = {
+                db: new Database(),
+                execute: jest.fn().mockResolvedValue([mockRecord1, mockRecord2])
+            };
+
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockImplementation(record => ({
+                    ...record,
+                    cleanedUp: true
+                }))
+            };
+
+            const recRepo = recordRepo({
+                ...depsBase,
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
+
+            const records = await Promise.all(
+                [mockRecord1._key, mockRecord2._key].map(recordId =>
+                    recRepo.getRecord({
+                        libraryId: 'test_lib',
+                        recordId,
+                        ctx
+                    })
+                )
+            );
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+
+            expect(omit(mockDbServ.execute.mock.calls[0][0], 'ctx')).toMatchSnapshot();
+
+            expect(records).toHaveLength(2);
+            expect(records.map(r => r?._id)).toEqual([mockRecord1._id, mockRecord2._id]);
+        });
+
+        test('Should return null for unknown record', async function () {
+            const mockDbServ = {
+                db: new Database(),
+                execute: jest.fn().mockResolvedValue([mockRecord1, null, mockRecord2])
+            };
+
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockImplementation(record => ({
+                    ...record,
+                    cleanedUp: true
+                }))
+            };
+
+            const recRepo = recordRepo({
+                ...depsBase,
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
+
+            const records = await Promise.all(
+                [mockRecord1._key, 'unknown-record', mockRecord2._key].map(recordId =>
+                    recRepo.getRecord({
+                        libraryId: 'test_lib',
+                        recordId,
+                        ctx
+                    })
+                )
+            );
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+
+            expect(records).toHaveLength(3);
+            expect(records.map(r => r?._id || r)).toEqual([mockRecord1._id, null, mockRecord2._id]);
         });
     });
 });

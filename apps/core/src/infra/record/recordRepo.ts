@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
+import DataLoader from 'dataloader';
 import {GetConditionPart} from 'infra/attributeTypes/helpers/getConditionPart';
 import {IDbDocument, IExecuteWithCount} from 'infra/db/_types';
 import {GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
@@ -30,6 +31,7 @@ import {GetSearchVariableName} from './helpers/getSearchVariableName';
 import {GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
 import {IGetAccessPermissionsValue} from 'domain/record/helpers/getAccessPermissionFilters';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
+import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 
 export interface IFindRequestResult {
     initialVars: GeneratedAqlQuery[]; // Some "global" variables needed later on the query (eg. "classified in" subquery)
@@ -68,6 +70,12 @@ export interface IRecordRepo {
         ctx: IQueryInfos;
         accessPermissionFilters?: IGetAccessPermissionsValue[];
     }): Promise<IListWithCursor<IRecord>>;
+
+    /**
+     * get record by recordId, return null if record not found
+     * NB: use internal dataloader to mutualize query when possible for a given ctx
+     */
+    getRecord(params: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<IRecord | null>;
 }
 
 export interface IRecordRepoDeps {
@@ -81,6 +89,8 @@ export interface IRecordRepoDeps {
     'core.infra.record.helpers.filterTypes': IFilterTypesHelper;
     'core.infra.indexation.helpers.getSearchQuery': GetSearchQuery;
 }
+
+type GetRecordDataLoader = DataLoader<string, IRecord>;
 
 export default function ({
     'core.infra.db.dbService': dbService,
@@ -117,6 +127,61 @@ export default function ({
             direction,
             from
         };
+    };
+
+    const computeGetRecordDataLoaderKey = (libraryId: string): string => `recordRepo.getRecord-${libraryId}`;
+
+    const getRecordDataLoader = (libraryId: string, ctx: IQueryInfos): GetRecordDataLoader => {
+        const dataLoaderKey = computeGetRecordDataLoaderKey(libraryId);
+        return getOrCreateDataLoaderInCtx<GetRecordDataLoader>(
+            ctx,
+            dataLoaderKey,
+            () =>
+                new DataLoader<string, IRecord>(
+                    async (recordIds: readonly string[]) =>
+                        getRecords({
+                            libraryId,
+                            recordIds: [...recordIds],
+                            ctx
+                        }),
+                    {
+                        cache: false // May be experiment later with caching
+                    }
+                )
+        );
+    };
+
+    const getRecords = async ({
+        libraryId,
+        recordIds,
+        ctx
+    }: {
+        libraryId: string;
+        recordIds: string[];
+        ctx: IQueryInfos;
+    }): Promise<Array<IRecord | null>> => {
+        const coll = dbService.db.collection(libraryId);
+        const query = aql`FOR id IN ${recordIds}
+                LET rec = DOCUMENT(${coll}, id)
+                RETURN rec`;
+
+        const records = await dbService.execute<IDbDocument[]>({
+            query,
+            ctx
+        });
+
+        // Replace missing records with null to match input order
+        const recordsById = new Map(records.map(r => [r?._key ?? r?._id, r]));
+        const result = recordIds.map(id => {
+            const rec = recordsById.get(id);
+            return rec
+                ? (dbUtils.cleanup({
+                      ...rec,
+                      library: libraryId
+                  }) as IRecord)
+                : null;
+        });
+        return result;
     };
 
     return {
@@ -374,6 +439,9 @@ export default function ({
             oldRecord.library = libraryId;
 
             return {old: dbUtils.cleanup(oldRecord), new: dbUtils.cleanup(updatedRecord)};
+        },
+        async getRecord({libraryId, recordId, ctx}): Promise<IRecord | null> {
+            return getRecordDataLoader(libraryId, ctx).load(recordId);
         }
     };
 }
