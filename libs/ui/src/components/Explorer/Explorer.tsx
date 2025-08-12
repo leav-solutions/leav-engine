@@ -103,7 +103,6 @@ export interface IExplorerProps {
     };
     showFilters?: boolean;
     showSorts?: boolean;
-    enableConfigureView?: boolean;
     ignoreViewByDefault?: boolean;
     showTitle?: boolean;
     showSearch?: boolean;
@@ -137,7 +136,6 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             editionFormId,
             showFilters = false,
             showSorts = false,
-            enableConfigureView = false,
             disableSelection = false,
             hideSelectAllAction = false,
             iconsOnlyItemActions = false,
@@ -298,12 +296,12 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                             </KitTypography.Title>
                         </ExplorerHeaderDivStyled>
                     )}
-                    {(showSearch || enableConfigureView || !hidePrimaryActions) && (
+                    {(showSearch || view?.enableConfigureView || !hidePrimaryActions) && (
                         <ExplorerActionsDivStyled>
                             <div>{showSearch && searchInput}</div>
                             <KitSpace size="xs">
-                                {enableConfigureView && viewListButton}
-                                {enableConfigureView && viewSettingsButton}
+                                {view?.enableConfigureView && viewListButton}
+                                {view?.enableConfigureView && viewSettingsButton}
                                 {!hidePrimaryActions && primaryButton}
                             </KitSpace>
                         </ExplorerActionsDivStyled>

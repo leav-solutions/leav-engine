@@ -67,7 +67,9 @@ describe('CommonFilterItem', () => {
             };
 
             render(
-                <MockViewSettingsContextProvider viewMock={{...viewSettingsInitialState, filters: [filter]}}>
+                <MockViewSettingsContextProvider
+                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
+                >
                     <CommonFilterItemContainer />
                 </MockViewSettingsContextProvider>
             );
@@ -124,7 +126,9 @@ describe('CommonFilterItem', () => {
             };
 
             render(
-                <MockViewSettingsContextProvider viewMock={{...viewSettingsInitialState, filters: [filter]}}>
+                <MockViewSettingsContextProvider
+                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
+                >
                     <CommonFilterItemContainer />
                 </MockViewSettingsContextProvider>
             );
@@ -180,7 +184,9 @@ describe('CommonFilterItem', () => {
             };
 
             render(
-                <MockViewSettingsContextProvider viewMock={{...viewSettingsInitialState, filters: [filter]}}>
+                <MockViewSettingsContextProvider
+                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
+                >
                     <CommonFilterItemContainer />
                 </MockViewSettingsContextProvider>
             );
@@ -253,7 +259,9 @@ describe('CommonFilterItem', () => {
             };
 
             render(
-                <MockViewSettingsContextProvider viewMock={{...viewSettingsInitialState, filters: [filter]}}>
+                <MockViewSettingsContextProvider
+                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
+                >
                     <CommonFilterItemContainer />
                 </MockViewSettingsContextProvider>
             );
@@ -423,7 +431,9 @@ describe('CommonFilterItem', () => {
 
             // WHEN the filter dropdown is displayed
             const {baseElement} = render(
-                <MockViewSettingsContextProvider viewMock={{...viewSettingsInitialState, filters: [filter]}}>
+                <MockViewSettingsContextProvider
+                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
+                >
                     <CommonFilterItem filter={filter} />
                 </MockViewSettingsContextProvider>
             );

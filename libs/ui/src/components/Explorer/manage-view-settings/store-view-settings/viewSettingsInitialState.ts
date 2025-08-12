@@ -40,5 +40,6 @@ export const viewSettingsInitialState: IViewSettingsState = {
         attributesIds: [],
         sort: [],
         filters: []
-    }
+    },
+    enableConfigureView: true
 };

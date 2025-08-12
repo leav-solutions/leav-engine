@@ -31,7 +31,6 @@ describe('useExplorerProps', () => {
                 defaultMassActions: ['deactivate'],
                 showFilters: true,
                 showSorts: true,
-                enableConfigureView: false,
                 ignoreViewByDefault: true,
                 hideTableHeader: false,
                 creationFormId: 'create-id',
@@ -66,7 +65,6 @@ describe('useExplorerProps', () => {
                 defaultMassActions: ['deactivate'],
                 showFilters: false,
                 showSorts: false,
-                enableConfigureView: true,
                 ignoreViewByDefault: false,
                 hideTableHeader: true,
                 creationFormId: 'create-id',
@@ -81,7 +79,6 @@ describe('useExplorerProps', () => {
         const {result} = renderHook(() => useExplorerProps({explorerProps}));
 
         expect(result.current.commonExplorerProps.showSearch).toBeUndefined();
-        expect(result.current.commonExplorerProps.enableConfigureView).toBeUndefined();
         expect(result.current.commonExplorerProps.ignoreViewByDefault).toBeUndefined();
         expect(result.current.commonExplorerProps.hideTableHeader).toBeUndefined();
     });

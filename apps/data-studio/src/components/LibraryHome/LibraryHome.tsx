@@ -150,9 +150,9 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 }}
                 showTitle
                 showSearch
-                enableConfigureView
                 showFilters
                 showSorts
+                defaultViewSettings={{enableConfigureView: true}}
                 defaultActionsForItem={['edit', 'remove', 'activate']}
                 defaultPrimaryActions={['create']}
                 defaultMassActions={['deactivate']}
@@ -193,7 +193,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
             <Explorer
                 showTitle
                 showSearch
-                enableConfigureView
+                defaultViewSettings={{enableConfigureView: true}}
                 showFilters
                 showSorts
                 entrypoint={{

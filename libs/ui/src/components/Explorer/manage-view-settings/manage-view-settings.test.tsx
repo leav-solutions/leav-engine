@@ -222,7 +222,7 @@ describe('Integration tests about managing view settings feature', () => {
     test('should be able to open panel and navigate inside to advanced setting and go back', async () => {
         render(
             <EditSettingsContextProvider>
-                <MockViewSettingsContextProvider>
+                <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                     <MockOpenEditSettings />
                     <SidePanel />
                 </MockViewSettingsContextProvider>
@@ -246,7 +246,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle attribute visibility', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -295,7 +295,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle sort activation', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -342,7 +342,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             render(
                 <EditSettingsContextProvider panelElement={() => document.body}>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -398,7 +398,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle filter activation', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -437,7 +437,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('Should be able to update view', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -470,7 +470,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('Should be able to edit view name', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -515,7 +515,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('Should be able to delete view', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -554,7 +554,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('Should be able to share view', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -619,7 +619,7 @@ describe('Integration tests about managing view settings feature', () => {
         test('Should be able to save view as', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -679,7 +679,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -698,7 +698,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -802,7 +802,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>

@@ -14,7 +14,6 @@ type CommonOverridablePropsByUser =
     | 'defaultMassActions'
     | 'showFilters'
     | 'showSorts'
-    | 'enableConfigureView'
     | 'ignoreViewByDefault'
     | 'hideTableHeader'
     | 'creationFormId'
@@ -30,7 +29,6 @@ export const useExplorerProps = ({explorerProps}: {explorerProps: LibraryExplore
         defaultMassActions: explorerProps?.defaultMassActions,
         showFilters: explorerProps?.showFilters,
         showSorts: explorerProps?.showSorts,
-        enableConfigureView: isBoolean(explorerProps?.freezeView) ? !explorerProps.freezeView : undefined,
         ignoreViewByDefault: isBoolean(explorerProps?.freezeView) ? explorerProps.freezeView : undefined,
         hideTableHeader: isBoolean(explorerProps?.showAttributeLabels) ? !explorerProps.showAttributeLabels : undefined,
         creationFormId: explorerProps?.creationFormId,

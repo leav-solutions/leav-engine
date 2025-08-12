@@ -19,7 +19,7 @@ const FilterDropDownStyledDiv = styled.div`
 
 export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
     const {t} = useSharedTranslation();
-    const {dispatch} = useViewSettingsContext();
+    const {view, dispatch} = useViewSettingsContext();
     const selectDropDownRef = useRef<HTMLDivElement>(null);
 
     const onFilterChange: ComponentProps<typeof FilterDropdownContent>['onFilterChange'] = (
@@ -58,9 +58,11 @@ export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}
             <KitButton type="action" icon={<FaClock />} onClick={_onResetFilter}>
                 {t('explorer.reset-filter')}
             </KitButton>
-            <KitButton type="action" icon={<FaTrash />} onClick={_onDeleteFilter}>
-                {t('global.delete')}
-            </KitButton>
+            {view?.enableConfigureView && (
+                <KitButton type="action" icon={<FaTrash />} onClick={_onDeleteFilter}>
+                    {t('global.delete')}
+                </KitButton>
+            )}
         </FilterDropDownStyledDiv>
     );
 };

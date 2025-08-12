@@ -929,7 +929,7 @@ describe('Explorer', () => {
         test('should not display the settings button', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
+                    <Explorer entrypoint={libraryEntrypoint} defaultViewSettings={{enableConfigureView: false}} />
                 </Explorer.EditSettingsContextProvider>
             );
 
@@ -939,7 +939,7 @@ describe('Explorer', () => {
         test('should display the settings button', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} enableConfigureView />
+                    <Explorer entrypoint={libraryEntrypoint} />
                 </Explorer.EditSettingsContextProvider>
             );
 
@@ -1112,7 +1112,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>
             );
 
-            expect(screen.getByText('Here\'s my explorer!')).toBeInTheDocument();
+            expect(screen.getByText("Here's my explorer!")).toBeInTheDocument();
         });
     });
 
@@ -1722,13 +1722,21 @@ describe('Explorer', () => {
                         entrypoint={linkEntrypoint}
                         defaultPrimaryActions={[]}
                         defaultCallbacks={{primary: {link: onLink}}}
+                        defaultViewSettings={{
+                            enableConfigureView: true
+                        }}
                     />
                 </Explorer.EditSettingsContextProvider>,
                 {
                     mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock]
                 }
             );
-            const linkExistingButton = await screen.findByRole('button', {name: 'explorer.add-existing-item'});
+
+            const linkExistingButton = await screen.findByRole(
+                'button',
+                {name: 'explorer.add-existing-item'},
+                {timeout: 5000}
+            );
             await user.click(linkExistingButton);
 
             expect(screen.getByText(LinkRecordModalMock)).toBeVisible();
@@ -1924,8 +1932,8 @@ describe('Explorer', () => {
                         entrypoint={{type: 'library', libraryId: 'campaigns'}}
                         showFilters
                         showSorts
-                        enableConfigureView
                         defaultViewSettings={{
+                            enableConfigureView: true,
                             filters: [
                                 {
                                     id: '',
@@ -1986,8 +1994,8 @@ describe('Explorer', () => {
                         entrypoint={{type: 'library', libraryId: 'campaigns'}}
                         showFilters
                         showSorts
-                        enableConfigureView
                         defaultViewSettings={{
+                            enableConfigureView: true,
                             filtersOperator: 'OR',
                             filters: [
                                 {
@@ -2274,10 +2282,10 @@ describe('Explorer', () => {
                         entrypoint={libraryEntrypoint}
                         showFilters
                         showSorts
-                        enableConfigureView
                         defaultMassActions={[]}
                         massActions={[testMassAction]}
                         defaultViewSettings={{
+                            enableConfigureView: true,
                             pageSize: 1, // configuration to be in multi-pages (2 pages of 1 record)
                             filters: [
                                 {
@@ -2390,12 +2398,12 @@ describe('Explorer', () => {
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
                         entrypoint={libraryEntrypoint}
-                        enableConfigureView
                         showFilters
                         showSorts
                         defaultMassActions={[]}
                         massActions={[testMassAction]}
                         defaultViewSettings={{
+                            enableConfigureView: true,
                             pageSize: 1, // configuration to be in multi-pages (2 pages of 1 record)
                             filters: [
                                 {
@@ -2766,9 +2774,11 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
-                        enableConfigureView
                         showFilters
                         showSorts
+                        defaultViewSettings={{
+                            enableConfigureView: true
+                        }}
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
                     />
@@ -2814,11 +2824,13 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
-                        enableConfigureView
                         showFilters
                         showSorts
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
+                        defaultViewSettings={{
+                            enableConfigureView: true
+                        }}
                     />
                 </Explorer.EditSettingsContextProvider>
             );
@@ -3143,7 +3155,11 @@ describe('Explorer', () => {
                     ]
                 }
             );
-            const linkExistingButton = await screen.findByRole('button', {name: 'explorer.add-existing-item'});
+            const linkExistingButton = await screen.findByRole(
+                'button',
+                {name: 'explorer.add-existing-item'},
+                {timeout: 5000}
+            );
             expect(linkExistingButton).toBeVisible();
             expect(linkExistingButton).toBeDisabled();
         });
@@ -3154,11 +3170,13 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
-                        enableConfigureView
                         showFilters
                         showSorts
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
+                        defaultViewSettings={{
+                            enableConfigureView: true
+                        }}
                     />
                 </Explorer.EditSettingsContextProvider>
             );
@@ -3179,12 +3197,14 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
-                        enableConfigureView
                         showFilters
                         showSorts
                         ignoreViewByDefault
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
+                        defaultViewSettings={{
+                            enableConfigureView: true
+                        }}
                     />
                 </Explorer.EditSettingsContextProvider>
             );
@@ -3196,13 +3216,13 @@ describe('Explorer', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
-                        enableConfigureView
                         showFilters
                         showSorts
                         entrypoint={libraryEntrypoint}
                         defaultPrimaryActions={[]}
                         defaultViewSettings={{
-                            viewId: '43'
+                            viewId: '43',
+                            enableConfigureView: true
                         }}
                     />
                 </Explorer.EditSettingsContextProvider>

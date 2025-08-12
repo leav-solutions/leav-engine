@@ -10,8 +10,8 @@ import EditLibraryPreviewsSettings from './EditLibraryPreviewsSettings';
 jest.mock('../../../../hooks/useSharedTranslation/useSharedTranslation');
 
 jest.mock('./EditPreviewsSettingsModal', () => ({
-        EditPreviewsSettingsModal: () => <div>EditPreviewsSettingsModal</div>
-    }));
+    EditPreviewsSettingsModal: () => <div>EditPreviewsSettingsModal</div>
+}));
 
 describe('EditLibraryPreviewsSettings', () => {
     test('Display list of previews settings', async () => {
@@ -40,8 +40,8 @@ describe('EditLibraryPreviewsSettings', () => {
         const editButtons = screen.getAllByRole('button', {name: /expand/, hidden: true});
         expect(editButtons).toHaveLength(2);
 
-        userEvent.click(editButtons[0]);
-        expect(await screen.findByText('EditPreviewsSettingsModal')).toBeInTheDocument();
+        await userEvent.click(editButtons[0]);
+        expect(await screen.findByText('EditPreviewsSettingsModal', {}, {timeout: 5000})).toBeInTheDocument();
     });
 
     test('Can add new settings', async () => {
