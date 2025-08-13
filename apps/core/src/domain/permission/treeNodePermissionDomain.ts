@@ -16,7 +16,6 @@ import {
     TreePermissionsActions
 } from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
@@ -26,6 +25,7 @@ import {
     IGetInheritedTreeNodePermissionParams,
     IGetTreeNodePermissionParams
 } from './_types';
+import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 
 export interface ITreeNodePermissionDomain {
     getTreeNodePermission(params: IGetTreeNodePermissionParams): Promise<boolean>;
@@ -37,7 +37,7 @@ export interface ITreeNodePermissionDomainDeps {
     'core.domain.permission.treeLibrary': ITreeLibraryPermissionDomain;
     'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
+    'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.infra.tree': ITreeRepo;
     'core.domain.attribute': IAttributeDomain;
@@ -50,7 +50,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
         'core.domain.permission.treeLibrary': treeLibraryPermissionDomain,
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupHelper,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+        'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
         'core.infra.tree': treeRepo,
         'core.domain.attribute': attributeDomain,
@@ -161,7 +161,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
 
             // Element has no permission defined. We check on its ancestors and return the first we find.
             // If we find nothing, we'll return global tree permission.
-            const ancestors = await treeRepo.getElementAncestors({
+            const ancestors = await elementAncestorsHelper.getCachedElementAncestors({
                 treeId,
                 nodeId,
                 ctx

@@ -121,6 +121,7 @@ export interface ITreeRepo {
 
     /**
      * Return all ancestors of an element, from root to element, but excluding tree root
+     * Prefer use core.domain.tree.helpers.elementAncestors.getCachedElementAncestors
      *
      * @param treeId
      * @param element

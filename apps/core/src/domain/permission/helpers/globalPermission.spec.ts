@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {LibraryPermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import globalPermissions, {IGlobalPermissionDeps} from './globalPermission';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {ToAny} from '../../../utils/utils';
+import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 
 const depsBase: ToAny<IGlobalPermissionDeps> = {
     'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
     'core.domain.permission.helpers.defaultPermission': jest.fn(),
-    'core.infra.tree': jest.fn()
+    'core.domain.tree.helpers.elementAncestors': jest.fn()
 };
 
 describe('globalPermissionsHelper', () => {
@@ -22,9 +22,8 @@ describe('globalPermissionsHelper', () => {
     };
 
     describe('getGlobalPermission', () => {
-        const mockTreeRepo: Mockify<ITreeRepo> = {
-            getNodesByRecord: global.__mockPromise([]),
-            getElementAncestors: global.__mockPromise([
+        const mockElementAncestors: Mockify<IElementAncestorsHelper> = {
+            getCachedElementAncestors: global.__mockPromise([
                 [
                     {
                         record: {
@@ -57,7 +56,7 @@ describe('globalPermissionsHelper', () => {
                 ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper
             });
 
             const perm = await permHelper.getGlobalPermission(
@@ -75,8 +74,8 @@ describe('globalPermissionsHelper', () => {
     });
 
     describe('getInheritedGlobalPermission', () => {
-        const mockTreeRepo: Mockify<ITreeRepo> = {
-            getElementAncestors: global.__mockPromise([
+        const mockElementAncestors: Mockify<IElementAncestorsHelper> = {
+            getCachedElementAncestors: global.__mockPromise([
                 [
                     {
                         record: {
@@ -108,7 +107,7 @@ describe('globalPermissionsHelper', () => {
                 ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestors as IElementAncestorsHelper
             });
 
             const perm = await permHelper.getInheritedGlobalPermission(

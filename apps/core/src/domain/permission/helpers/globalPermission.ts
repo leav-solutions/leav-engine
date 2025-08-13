@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {IDefaultPermissionHelper} from './defaultPermission';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
+import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 
 interface IGetGlobalPermissionParams {
     type: PermissionTypes;
@@ -37,13 +37,13 @@ export interface IGlobalPermissionHelper {
 export interface IGlobalPermissionDeps {
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
-    'core.infra.tree': ITreeRepo;
+    'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
 }
 
 export default function ({
     'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
     'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
-    'core.infra.tree': treeRepo
+    'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper
 }: IGlobalPermissionDeps): IGlobalPermissionHelper {
     return {
         async getGlobalPermission(
@@ -53,7 +53,7 @@ export default function ({
             const userGroupsPaths = !!ctx.groupsId
                 ? await Promise.all(
                       ctx.groupsId.map(async groupId =>
-                          treeRepo.getElementAncestors({
+                          elementAncestorsHelper.getCachedElementAncestors({
                               treeId: 'users_groups',
                               nodeId: groupId,
                               ctx
@@ -76,7 +76,7 @@ export default function ({
             ctx
         ): Promise<boolean> {
             // Get perm for user group's parent
-            const groupAncestors = await treeRepo.getElementAncestors({
+            const groupAncestors = await elementAncestorsHelper.getCachedElementAncestors({
                 treeId: 'users_groups',
                 nodeId: userGroupNodeId,
                 ctx

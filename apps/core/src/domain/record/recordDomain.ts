@@ -749,7 +749,7 @@ export default function ({
                         id: conf.treeColorPreview,
                         ctx
                     });
-                    return treeRepo.getElementAncestors({
+                    return elementAncestorsHelper.getCachedElementAncestors({
                         treeId: treeAttrProps.linked_tree,
                         nodeId: treeValues[0].payload.id,
                         ctx
