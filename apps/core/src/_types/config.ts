@@ -9,6 +9,7 @@ export interface IConfig {
     server: IServer;
     db: IDb;
     diskCache: IDiskCache;
+    dataLoaders: IDataLoaders;
     auth: IAuth;
     mailer: IMailer;
     lang: ILang;
@@ -198,6 +199,32 @@ export interface IImport {
     sizeLimit: number;
     groupData: number;
     maxStackedElements: number;
+}
+
+/**
+ * Data loaders configuration for performances
+ */
+export interface IDataLoaders {
+    valueRepo: {
+        getValues: {
+            /**
+             * @default false
+             *
+             * Enable cache inside data loaders in the query context
+             * Before enable, ensure that it has no side effects, for instance on saveValue/deleteValue mutations
+             */
+            enableCache: boolean;
+
+            /**
+             * @default true
+             *
+             * Enable: do batch arangodb query
+             * Disable: do one arangodb query per value, as before data loader use. For rollback if issue with batch query
+             * Temporary, to be removed in future
+             */
+            useBatch: boolean;
+        };
+    };
 }
 
 export interface IDiskCache {

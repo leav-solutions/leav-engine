@@ -244,6 +244,80 @@ export default function ({
                 return acc;
             }, []);
         },
+        async getValuesBatch({library, recordIds, attribute, options, ctx}): Promise<ITreeValue[][]> {
+            if (!attribute.linked_tree) {
+                return recordIds.map(() => []);
+            }
+
+            const valuesLinksCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            const treeEdgeCollec = dbService.db.collection(getEdgesCollectionName(attribute.linked_tree));
+
+            const recordsList = recordIds.map(id => library + '/' + id);
+            const queryParts = [
+                aql`
+                    FOR recordKey IN ${recordsList}
+                        FOR vertex, edge IN 1 OUTBOUND recordKey
+                            ${valuesLinksCollec}, ${treeEdgeCollec}
+                            LET record = DOCUMENT(
+                                vertex.${literal(NODE_LIBRARY_ID_FIELD)},
+                                vertex.${literal(NODE_RECORD_ID_FIELD)}
+                            )
+                            FILTER edge.attribute == ${attribute.id}
+                `
+            ];
+
+            if (!options?.forceGetAllValues && options?.version) {
+                queryParts.push(aql`FILTER edge.version == ${options.version}`);
+            }
+
+            if (!attribute.multiple_values && !options?.forceGetAllValues) {
+                queryParts.push(aql`
+                    COLLECT collectedRecId = recordKey INTO grouped
+                    LET first = FIRST(grouped)
+                    RETURN {
+                        recordId: PARSE_IDENTIFIER(collectedRecId).key,
+                        values: [{
+                            id: first.vertex._key,
+                            record: first.record,
+                            edge: first.edge
+                        }]
+                    }
+                `);
+            } else {
+                queryParts.push(aql`
+                    COLLECT collectedRecId = recordKey INTO grouped
+                    RETURN {
+                        recordId: PARSE_IDENTIFIER(collectedRecId).key,
+                        values: UNIQUE(grouped[* RETURN {
+                            id: CURRENT.vertex._key,
+                            record: CURRENT.record,
+                            edge: CURRENT.edge
+                        }])
+                    }
+                `);
+            }
+
+            const query = join(queryParts);
+            const treeElements = await dbService.execute<
+                Array<{
+                    recordId: string;
+                    values: Array<{id: string; record: IRecord; edge: IValueEdge}>;
+                }>
+            >({query, ctx});
+
+            return recordIds.map(recordId => {
+                const record = treeElements.find(r => r.recordId === recordId);
+                return (
+                    record?.values.map(r => {
+                        const linkedRecord = {
+                            ...r.record,
+                            library: r?.record?._id.split('/')[0]
+                        };
+                        return _buildTreeValue(attribute.linked_tree, r.id, dbUtils.cleanup(linkedRecord), r.edge);
+                    }) || []
+                );
+            });
+        },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ITreeValue> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 

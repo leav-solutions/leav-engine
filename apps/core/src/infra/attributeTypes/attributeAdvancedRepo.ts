@@ -229,6 +229,64 @@ export default function ({
                 version: r.edge.version ?? null
             }));
         },
+        async getValuesBatch({library, recordIds, attribute, options, ctx}): Promise<IStandardValue[][]> {
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+
+            const filterVersion =
+                !options?.forceGetAllValues && options?.version
+                    ? aql`FILTER edge.version == ${options.version}`
+                    : aql``;
+
+            const query: GeneratedAqlQuery =
+                !options?.forceGetAllValues && !attribute.multiple_values
+                    ? aql`
+                    FOR recordId IN ${recordIds}
+                        LET valueEdge = FIRST(
+                            FOR value, edge
+                            IN 1 OUTBOUND CONCAT(${library}, '/', recordId)
+                            ${edgeCollec}
+                            FILTER edge.attribute == ${attribute.id}
+                            ${filterVersion}
+                            RETURN { value, edge }
+                        )
+                        RETURN MERGE({ recordId: recordId }, valueEdge)
+                `
+                    : aql`
+                    FOR recordId IN ${recordIds}
+                        FOR value, edge
+                        IN 1 OUTBOUND CONCAT(${library}, '/', recordId)
+                        ${edgeCollec}
+                        FILTER edge.attribute == ${attribute.id}
+                        ${filterVersion}
+                        RETURN MERGE({ recordId: recordId }, { value, edge })
+                `;
+
+            const resArr = await dbService.execute<Array<{recordId: string; value: any; edge: IValueEdge}>>({
+                query,
+                ctx
+            });
+
+            const valuesByRecordId: Map<string, IStandardValue[]> = new Map(recordIds.map(recordId => [recordId, []]));
+
+            for (const res of resArr) {
+                const values = res && valuesByRecordId.get(res.recordId);
+                if (values) {
+                    values.push({
+                        id_value: res.value._key,
+                        payload: res.value.value,
+                        attribute: res.edge.attribute,
+                        modified_at: res.edge.modified_at,
+                        created_at: res.edge.created_at,
+                        modified_by: res.edge.modified_by,
+                        created_by: res.edge.created_by,
+                        metadata: res.edge.metadata,
+                        version: res.edge.version ?? null
+                    });
+                }
+            }
+
+            return recordIds.map(recordId => valuesByRecordId.get(recordId) || []);
+        },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IStandardValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION) as EdgeCollection<IDbEdge>;

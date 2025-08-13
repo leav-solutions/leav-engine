@@ -45,7 +45,7 @@ export default function ({
                             library: libraryId,
                             recordId: r.id,
                             attribute: a as IAttributeWithRevLink,
-                            options: {forceGetAllValues: true, forceArray: true},
+                            options: {forceGetAllValues: true},
                             ctx
                         });
 

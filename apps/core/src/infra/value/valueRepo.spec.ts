@@ -5,6 +5,7 @@ import {Database} from 'arangojs';
 import {IDbService} from 'infra/db/dbService';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import valueRepo from './valueRepo';
+import {IAttributeTypesRepo} from 'infra/attributeTypes/attributeTypesRepo';
 
 describe('valueRepo', () => {
     describe('deleteAllValuesByRecord', () => {
@@ -36,7 +37,8 @@ describe('valueRepo', () => {
             };
 
             const repo = valueRepo({
-                'core.infra.db.dbService': mockDbServ as IDbService
+                'core.infra.db.dbService': mockDbServ as IDbService,
+                'core.infra.attributeTypes': jest.fn() as unknown as IAttributeTypesRepo
             });
 
             await repo.deleteAllValuesByRecord({

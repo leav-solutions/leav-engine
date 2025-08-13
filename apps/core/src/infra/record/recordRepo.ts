@@ -141,7 +141,7 @@ export default function ({
                     async (recordIds: readonly string[]) =>
                         getRecords({
                             libraryId,
-                            recordIds: [...recordIds],
+                            recordIds: recordIds as string[],
                             ctx
                         }),
                     {

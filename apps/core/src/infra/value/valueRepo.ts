@@ -2,11 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
+import DataLoader from 'dataloader';
 import {IDbService} from 'infra/db/dbService';
+import {IConfig} from '_types/config';
 import {IAttribute} from '_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
-import {ISaveValue, IValue, IValuesOptions} from '_types/value';
-import {IAttributeTypesRepo, IAttributeWithRevLink} from '../attributeTypes/attributeTypesRepo';
+import {ISaveValue, IValue} from '_types/value';
+import {IAttributeTypesRepo, IAttributeWithRevLink, IGetValuesOptions} from '../attributeTypes/attributeTypesRepo';
+import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 export const VALUES_COLLECTION = 'core_values';
@@ -96,7 +99,7 @@ export interface IValueRepo {
         recordId: string;
         attribute: IAttributeWithRevLink;
         forceGetAllValues?: boolean;
-        options?: IValuesOptions;
+        options?: IGetValuesOptions;
         ctx: IQueryInfos;
     }): Promise<IValue[]>;
 
@@ -125,14 +128,75 @@ export interface IValueRepo {
 }
 
 interface IDeps {
-    'core.infra.attributeTypes'?: IAttributeTypesRepo;
-    'core.infra.db.dbService'?: IDbService;
+    config?: IConfig;
+    'core.infra.attributeTypes': IAttributeTypesRepo;
+    'core.infra.db.dbService': IDbService;
 }
 
+type GetValuesDataLoader = DataLoader<string, IValue[]>;
+
 export default function ({
+    config,
     'core.infra.attributeTypes': attributeTypesRepo = null,
     'core.infra.db.dbService': dbService = null
-}: IDeps = {}): IValueRepo {
+}: IDeps): IValueRepo {
+    const computeGetValuesDataLoaderKey = (
+        libraryId: string,
+        attribute: IAttributeWithRevLink,
+        options: IGetValuesOptions
+    ): string => {
+        const suffix = options.forceGetAllValues
+            ? '-all'
+            : options.version
+              ? `-version-${JSON.stringify(options.version)}`
+              : '';
+        return `valueRepo-getValues-${libraryId}-${attribute.id}${suffix}`;
+    };
+
+    const enableGetValueDataLoadersCache = config?.dataLoaders.valueRepo.getValues.enableCache ?? false;
+    const useBatchGetValueDataLoaders = config?.dataLoaders.valueRepo.getValues.useBatch ?? true;
+    const getValuesDataLoader = (
+        libraryId: string,
+        attribute: IAttributeWithRevLink,
+        options: IGetValuesOptions,
+        ctx: IQueryInfos
+    ): GetValuesDataLoader => {
+        const dataLoaderKey = computeGetValuesDataLoaderKey(libraryId, attribute, options);
+        return getOrCreateDataLoaderInCtx<GetValuesDataLoader>(
+            ctx,
+            dataLoaderKey,
+            () =>
+                new DataLoader<string, IValue[]>(
+                    async (recordIds: readonly string[]) => {
+                        const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
+                        return useBatchGetValueDataLoaders
+                            ? typeRepo.getValuesBatch({
+                                  library: libraryId,
+                                  attribute,
+                                  recordIds: recordIds as string[],
+                                  options,
+                                  ctx
+                              })
+                            : Promise.all(
+                                  recordIds.map(recordId =>
+                                      typeRepo.getValues({
+                                          library: libraryId,
+                                          recordId,
+                                          attribute,
+                                          forceGetAllValues: options.forceGetAllValues,
+                                          options,
+                                          ctx
+                                      })
+                                  )
+                              );
+                    },
+                    {
+                        cache: enableGetValueDataLoadersCache
+                    }
+                )
+        );
+    };
+
     return {
         createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
@@ -169,15 +233,7 @@ export default function ({
             return typeRepo.isValueUsed({library, excludedRecordId, attribute, value, ctx});
         },
         getValues({library, recordId, attribute, forceGetAllValues, options, ctx}): Promise<IValue[]> {
-            const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.getValues({
-                library,
-                recordId,
-                attribute,
-                forceGetAllValues,
-                options,
-                ctx
-            });
+            return getValuesDataLoader(library, attribute, {...options, forceGetAllValues}, ctx).load(recordId);
         },
         getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);

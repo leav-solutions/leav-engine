@@ -36,6 +36,14 @@ export const validateConfig = (conf: IConfig) => {
         diskCache: Joi.object().keys({
             directory: Joi.string().required()
         }),
+        dataLoaders: Joi.object().keys({
+            valueRepo: Joi.object().keys({
+                getValues: Joi.object().keys({
+                    enableCache: Joi.boolean().required(),
+                    useBatch: Joi.boolean().required()
+                })
+            })
+        }),
         auth: Joi.object().keys({
             scheme: Joi.string().required(),
             key: Joi.string(),

@@ -118,6 +118,42 @@ export default function ({
                 return {id_value: record.id, payload: record, created_by: null, modified_by: null};
             });
         },
+        // To get values from advanced reverse link attribute into simple link.
+        async getReverseValuesBatch({
+            advancedLinkAttr,
+            values,
+            forceGetAllValues = false,
+            ctx
+        }): Promise<ILinkValue[][]> {
+            const libCollec = dbService.db.collection(advancedLinkAttr.linked_library);
+            const query = aql`
+                FOR recordId IN ${values}
+                    LET records = (
+                        FOR r IN ${libCollec}
+                            FILTER r.${(advancedLinkAttr.reverse_link as IAttribute)?.id} == recordId
+                            ${!advancedLinkAttr.multiple_values && !forceGetAllValues ? aql`LIMIT 1` : aql``}
+                            RETURN r
+                    )
+                    RETURN { recordId: recordId, records }
+            `;
+            const res = await dbService.execute<Array<{recordId: string; records: IRecord[]}>>({query, ctx});
+
+            const valuesByRecordId = new Map(res.map(r => [r.recordId, r]));
+            return values.map(recordId => {
+                const val = valuesByRecordId.get(recordId);
+                return (
+                    val?.records.map(r => {
+                        const rec = dbUtils.cleanup<IRecord>(r);
+                        return {
+                            id_value: rec.id,
+                            payload: rec,
+                            created_by: null,
+                            modified_by: null
+                        };
+                    }) || []
+                );
+            });
+        },
         async getValues({library, recordId, attribute, ctx}): Promise<ILinkValue[]> {
             const libCollec = dbService.db.collection(library);
             const linkedLibCollec = dbService.db.collection(attribute.linked_library);
@@ -143,6 +179,40 @@ export default function ({
                     created_by: null,
                     modified_by: null
                 }));
+        },
+        async getValuesBatch({library, recordIds, attribute, ctx}): Promise<ILinkValue[][]> {
+            const libCollec = dbService.db.collection(library);
+            const linkedLibCollec = dbService.db.collection(attribute.linked_library);
+
+            const res = await dbService.execute<Array<{recordId: string; link: ILinkValue[]}>>({
+                query: aql`
+                    FOR recordId IN ${recordIds}
+                        LET rec = DOCUMENT(${libCollec}, recordId)
+                        LET link = DOCUMENT(${linkedLibCollec}, rec.${attribute.id})
+                        return { recordId: recordId, link: link }
+                `,
+                ctx
+            });
+
+            const valuesByRecordId = new Map(res.map(r => [r.recordId, r]));
+            return recordIds.map(
+                recordId => {
+                    const record = valuesByRecordId.get(recordId);
+                    const payload = record.link;
+                    return payload !== null && payload !== undefined
+                        ? [
+                              {
+                                  id_value: null,
+                                  payload: dbUtils.cleanup({...payload, library: attribute.linked_library}),
+                                  attribute: attribute.id,
+                                  modified_by: null,
+                                  created_by: null
+                              }
+                          ]
+                        : [];
+                },
+                {} as Record<string, ILinkValue[]>
+            );
         },
         sortQueryPart({attributes, order}) {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);

@@ -294,6 +294,87 @@ export default function ({
 
             return res.map(r => _buildLinkValue(dbUtils.cleanup(r.linkedRecord), r.edge, !!attribute.reverse_link));
         },
+        async getValuesBatch({library, recordIds, attribute, options, ctx}): Promise<ILinkValue[][]> {
+            if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
+                const results = await attributeSimpleLinkRepo.getReverseValuesBatch({
+                    advancedLinkAttr: attribute,
+                    values: recordIds,
+                    forceGetAllValues: options?.forceGetAllValues ?? false,
+                    ctx
+                });
+                return results;
+            }
+
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            const edgeAttribute = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
+            const direction = !!attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
+
+            const recordsList = recordIds.map(id => library + '/' + id);
+
+            const queryParts = [
+                aql`
+                    FOR recordKey IN ${recordsList}
+                        FOR linkedRecord, edge
+                            IN 1 ${direction} recordKey
+                            ${edgeCollec}
+                            FILTER edge.attribute == ${edgeAttribute}
+                `
+            ];
+
+            if (!options?.forceGetAllValues && options?.version) {
+                queryParts.push(aql`FILTER edge.version == ${options.version}`);
+            }
+
+            if (!attribute.multiple_values && !options?.forceGetAllValues) {
+                queryParts.push(aql`
+                    COLLECT collectedRecId = recordKey INTO grouped
+                    LET first = FIRST(grouped)
+                    RETURN {
+                        recordId: PARSE_IDENTIFIER(collectedRecId).key,
+                        values: [{
+                            linkedRecord: first.linkedRecord,
+                            edge: first.edge
+                        }]
+                    }
+                `);
+            } else {
+                queryParts.push(aql`
+                    COLLECT collectedRecId = recordKey INTO grouped
+                    RETURN {
+                        recordId: PARSE_IDENTIFIER(collectedRecId).key,
+                        values: UNIQUE(grouped[* RETURN {
+                            linkedRecord: CURRENT.linkedRecord, 
+                            edge: CURRENT.edge
+                        }])
+                    }
+                `);
+            }
+
+            const query = join(queryParts);
+
+            const res = await dbService.execute<
+                Array<{
+                    recordId: string;
+                    values: Array<{linkedRecord: IRecord; edge: IValueEdge}>;
+                }>
+            >({
+                query,
+                ctx
+            });
+
+            const valuesByRecordId: Map<string, Array<{linkedRecord: IRecord; edge: IValueEdge}>> = new Map(
+                res.map(r => [r.recordId, r.values])
+            );
+
+            return recordIds.map(recordId => {
+                const edgeLinkRecords = valuesByRecordId.get(recordId);
+                return (
+                    edgeLinkRecords?.map(v =>
+                        _buildLinkValue(dbUtils.cleanup(v.linkedRecord), v.edge, !!attribute.reverse_link)
+                    ) || []
+                );
+            });
+        },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 

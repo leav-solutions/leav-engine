@@ -105,6 +105,21 @@ export default function ({
                 ? [{payload: res[0], attribute: attribute.id, modified_by: null, created_by: null}]
                 : [];
         },
+        async getValuesBatch({library, recordIds, attribute, ctx}): Promise<IStandardValue[][]> {
+            const coll = dbService.db.collection(library);
+            const query = aql`
+                FOR recordId IN ${recordIds}
+                    LET r = DOCUMENT(${coll}, recordId)
+                    RETURN { recordId: recordId, ${attribute.id}: r.${attribute.id} }
+            `;
+            const res = await dbService.execute<Array<{recordId: string; [k: string]: any}>>({query, ctx});
+            const valuesByRecordId = new Map(res.map(r => [r.recordId, r]));
+            return recordIds.map(recordId => {
+                const record = valuesByRecordId.get(recordId);
+                const payload = record?.[attribute.id];
+                return payload != null ? [{payload, attribute: attribute.id, modified_by: null, created_by: null}] : [];
+            });
+        },
         sortQueryPart({attributes, order}) {
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
 

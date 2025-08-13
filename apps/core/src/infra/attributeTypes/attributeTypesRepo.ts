@@ -17,18 +17,17 @@ export type IAttributeWithRepo = IAttributeWithRevLink & {
     _repo: IAttributeTypeRepo;
 };
 
-type IAttributeRepoByType<AttributeType extends AttributeTypes | unknown> =
-    AttributeType extends AttributeTypes.SIMPLE
-        ? IAttributeSimpleRepo
-        : AttributeType extends AttributeTypes.SIMPLE_LINK
-          ? IAttributeSimpleLinkRepo
-          : AttributeType extends AttributeTypes.ADVANCED
-            ? IAttributeAdvancedRepo
-            : AttributeType extends AttributeTypes.ADVANCED_LINK
-              ? IAttributeAdvancedLinkRepo
-              : AttributeType extends AttributeTypes.TREE
-                ? IAttributeTreeRepo
-                : IAttributeTypeRepo;
+type IAttributeRepoByType<AttributeType extends AttributeTypes | unknown> = AttributeType extends AttributeTypes.SIMPLE
+    ? IAttributeSimpleRepo
+    : AttributeType extends AttributeTypes.SIMPLE_LINK
+      ? IAttributeSimpleLinkRepo
+      : AttributeType extends AttributeTypes.ADVANCED
+        ? IAttributeAdvancedRepo
+        : AttributeType extends AttributeTypes.ADVANCED_LINK
+          ? IAttributeAdvancedLinkRepo
+          : AttributeType extends AttributeTypes.TREE
+            ? IAttributeTreeRepo
+            : IAttributeTypeRepo;
 
 export interface IAttributeTypesRepo {
     getTypeRepo<AttributeType extends AttributeTypes | unknown>(
@@ -45,6 +44,8 @@ export type GetConditionPartParentFunc = (
     value: string | number | boolean,
     attribute: IAttribute
 ) => GetConditionPartFunc;
+
+export type IGetValuesOptions = Pick<IValuesOptions, 'forceGetAllValues' | 'version'>;
 
 export type GetConditionPartFunc = (valueIdentifier: string | AqlLiteral) => GeneratedAqlQuery;
 /**
@@ -136,9 +137,28 @@ export interface IAttributeTypeRepo<
         recordId: string;
         attribute: IAttributeWithRevLink;
         forceGetAllValues?: boolean;
-        options?: IValuesOptions;
+        options?: IGetValuesOptions;
         ctx: IQueryInfos;
     }): Promise<Value[]>;
+
+    /**
+     * Get all values for given records and attribute
+     *
+     * @return Array<{}>    Return an empty array if no value found for each record
+     */
+    getValuesBatch({
+        library,
+        attribute,
+        recordIds,
+        options,
+        ctx
+    }: {
+        library: string;
+        attribute: IAttributeWithRevLink;
+        recordIds: string[];
+        options?: IGetValuesOptions;
+        ctx: IQueryInfos;
+    }): Promise<Value[][]>;
 
     /**
      * Get all reverse values for given attribute / value
@@ -154,6 +174,21 @@ export interface IAttributeTypeRepo<
         forceGetAllValues: boolean;
         ctx: IQueryInfos;
     }): Promise<Value[]>;
+
+    /**
+     * Get all reverse values for given attribute / values
+     *
+     * @return Array<{}>    Return an empty array if no value found for each record
+     */
+    getReverseValuesBatch?({
+        advancedLinkAttr,
+        ctx
+    }: {
+        advancedLinkAttr: IAttributeWithRevLink;
+        values: string[];
+        forceGetAllValues: boolean;
+        ctx: IQueryInfos;
+    }): Promise<Value[][]>;
 
     /**
      * Return a specific value based on its ID. Field "id" is expect on the value
