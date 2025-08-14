@@ -929,7 +929,7 @@ describe('Explorer', () => {
         test('should not display the settings button', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} defaultViewSettings={{enableConfigureView: false}} />
+                    <Explorer entrypoint={libraryEntrypoint} />
                 </Explorer.EditSettingsContextProvider>
             );
 
@@ -939,7 +939,7 @@ describe('Explorer', () => {
         test('should display the settings button', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
+                    <Explorer entrypoint={libraryEntrypoint} defaultViewSettings={{enableConfigureView: true}} />
                 </Explorer.EditSettingsContextProvider>
             );
 

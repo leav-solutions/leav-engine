@@ -52,7 +52,7 @@ describe('FilterDropDown', () => {
 
     test('should not show delete button when enableConfigureView is false', async () => {
         render(
-            <MockViewSettingsContextProvider viewMock={{...viewSettingsInitialState, enableConfigureView: false}}>
+            <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
                 <FilterDropDown filter={mockFilter} />
             </MockViewSettingsContextProvider>
         );
@@ -62,7 +62,7 @@ describe('FilterDropDown', () => {
 
     test('should show delete button when enableConfigureView is true', async () => {
         render(
-            <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+            <MockViewSettingsContextProvider viewMock={{...viewSettingsInitialState, enableConfigureView: true}}>
                 <FilterDropDown filter={mockFilter} />
             </MockViewSettingsContextProvider>
         );
