@@ -546,7 +546,7 @@ services:
     volumes:
       - message-broker_data:/var/lib/rabbitmq
     healthcheck:
-      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      test: ["CMD-SHELL", "rabbitmq-diagnostics check_port_connectivity"]
       start_period: 30s
       start_interval: 5s
       interval: 60s
