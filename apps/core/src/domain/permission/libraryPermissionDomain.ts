@@ -27,8 +27,7 @@ export default function ({
             {
                 type: PermissionTypes.LIBRARY,
                 action,
-                applyTo: libraryId,
-                userId
+                applyTo: libraryId
             },
             ctx
         );

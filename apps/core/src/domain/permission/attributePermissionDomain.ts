@@ -26,8 +26,7 @@ export default function (deps: IDeps): IAttributePermissionDomain {
             {
                 type: PermissionTypes.ATTRIBUTE,
                 action,
-                applyTo: attributeId,
-                userId: ctx.userId
+                applyTo: attributeId
             },
             ctx
         );

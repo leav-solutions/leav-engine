@@ -21,8 +21,7 @@ export default function ({
         globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.ADMIN,
-                action,
-                userId
+                action
             },
             ctx
         );

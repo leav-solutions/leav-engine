@@ -27,8 +27,7 @@ export default function ({
             {
                 type: PermissionTypes.APPLICATION,
                 action,
-                applyTo: applicationId,
-                userId
+                applyTo: applicationId
             },
             ctx
         );

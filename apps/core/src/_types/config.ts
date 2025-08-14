@@ -121,6 +121,7 @@ export interface ILogs {
 
 export interface IPermissions {
     default: boolean;
+    enableCache: boolean;
 }
 
 export interface IAmqp {

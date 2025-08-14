@@ -7,14 +7,16 @@ import permissionByUserGroupsHelper, {type IPermissionByUserGroupsHelperDeps} fr
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import {ISimplePermissionHelper} from './simplePermission';
 import {IDefaultPermissionHelper} from './defaultPermission';
-import {IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
 import {ToAny} from '../../../utils/utils';
+import {ICachesService} from '../../../infra/cache/cacheService';
+import * as Config from '../../../_types/config';
 
 const depsBase: ToAny<IPermissionByUserGroupsHelperDeps> = {
     'core.domain.permission.helpers.simplePermission': jest.fn(),
     'core.domain.permission.helpers.reducePermissionsArray': jest.fn(),
     'core.domain.permission.helpers.defaultPermission': jest.fn(),
-    'core.domain.tree.helpers.elementAncestors': jest.fn()
+    'core.infra.cache.cacheService': jest.fn(),
+    config: {}
 };
 
 describe('getPermissionByUserGroups', () => {
@@ -62,12 +64,21 @@ describe('getPermissionByUserGroups', () => {
         reducePermissionsArray: jest.fn().mockReturnValue(false)
     };
 
-    const mockReducePermissionsArrayHelperNull: IReducePermissionsArrayHelper = {
-        reducePermissionsArray: jest.fn().mockReturnValue(null)
-    };
-
     const mockDefaultPermHelper: Mockify<IDefaultPermissionHelper> = {
         getDefaultPermission: jest.fn().mockReturnValue(true)
+    };
+
+    const mockCacheService: ICachesService = {
+        memoize: jest.fn().mockImplementation(({func}) => func()),
+        getCache: jest.fn()
+    };
+
+    const mockPermissionsConfig: Mockify<Config.IPermissions> = {
+        enableCache: true
+    };
+
+    const mockConfig: Mockify<Config.IConfig> = {
+        permissions: mockPermissionsConfig as Config.IPermissions
     };
 
     test('Retrieve first "allowed" permission', async () => {
@@ -87,7 +98,9 @@ describe('getPermissionByUserGroups', () => {
             ...depsBase,
             'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
             'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
-            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper
+            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+            'core.infra.cache.cacheService': mockCacheService as ICachesService,
+            config: mockConfig as Config.IConfig
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -115,7 +128,9 @@ describe('getPermissionByUserGroups', () => {
             ...depsBase,
             'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
             'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
-            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper
+            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+            'core.infra.cache.cacheService': mockCacheService as ICachesService,
+            config: mockConfig as Config.IConfig
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -143,7 +158,9 @@ describe('getPermissionByUserGroups', () => {
             ...depsBase,
             'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
             'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
-            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper
+            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+            'core.infra.cache.cacheService': mockCacheService as ICachesService,
+            config: mockConfig as Config.IConfig
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -168,7 +185,9 @@ describe('getPermissionByUserGroups', () => {
             ...depsBase,
             'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
             'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
-            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper
+            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+            'core.infra.cache.cacheService': mockCacheService as ICachesService,
+            config: mockConfig as Config.IConfig
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
@@ -191,7 +210,9 @@ describe('getPermissionByUserGroups', () => {
             ...depsBase,
             'core.domain.permission.helpers.simplePermission': mockSimplePermHelper as ISimplePermissionHelper,
             'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
-            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper
+            'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+            'core.infra.cache.cacheService': mockCacheService as ICachesService,
+            config: mockConfig as Config.IConfig
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({

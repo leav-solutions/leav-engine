@@ -77,7 +77,10 @@ module.exports = {
         destinationFile: process.env.LOG_FILE, // If logging in file
         useJsonFormat: process.env.LOG_USE_JSON_FORMAT || false // logging using json format
     },
-    permissions: {default: true},
+    permissions: {
+        default: true,
+        enableCache: process.env.PERMISSIONS_ENABLE_CACHE ?? true
+    },
     amqp: {
         connOpt: {
             protocol: 'amqp',

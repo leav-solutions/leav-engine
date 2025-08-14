@@ -25,11 +25,9 @@ const mockCachesService: Mockify<ICachesService> = {
 const depsBase: ToAny<ITreeBasedPermissionsDeps> = {
     'core.domain.attribute': jest.fn(),
     'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
-    'core.domain.permission.helpers.defaultPermission': jest.fn(),
     'core.domain.permission.helpers.reducePermissionsArray': jest.fn(),
     'core.domain.tree.helpers.elementAncestors': jest.fn(),
-    'core.infra.permission': jest.fn(),
-    'core.infra.cache.cacheService': jest.fn()
+    'core.infra.permission': jest.fn()
 };
 
 describe('TreeBasedPermissionDomain', () => {
@@ -227,8 +225,7 @@ describe('TreeBasedPermissionDomain', () => {
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(params, ctx);
@@ -249,8 +246,7 @@ describe('TreeBasedPermissionDomain', () => {
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(

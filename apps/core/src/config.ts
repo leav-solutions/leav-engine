@@ -89,7 +89,8 @@ export const validateConfig = (conf: IConfig) => {
             useJsonFormat: Joi.boolean()
         }),
         permissions: Joi.object().keys({
-            default: Joi.boolean().required()
+            default: Joi.boolean().required(),
+            enableCache: Joi.boolean().required()
         }),
         amqp: Joi.object().keys({
             connOpt: Joi.object().keys({
@@ -215,6 +216,5 @@ export const getConfig = async (folder?: string) => {
     const confRootFolder = folder ?? appRootPath();
     const confFolder = confRootFolder + '/config';
 
-    const conf = await loadConfig<IConfig>(confFolder, definedEnv);
-    return conf;
+    return loadConfig<IConfig>(confFolder, definedEnv);
 };

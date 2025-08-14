@@ -6,22 +6,17 @@ import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {TreePath} from '_types/tree';
-import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsActions, PermissionsRelations, PermissionTypes} from '../../../_types/permissions';
 import {IGetInheritedTreeBasedPermissionParams, IGetTreeBasedPermissionParams} from '../_types';
-import {IDefaultPermissionHelper} from './defaultPermission';
-import getPermissionCacheKey from './getPermissionCacheKey';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 
 export interface ITreeBasedPermissionsDeps {
     'core.domain.attribute': IAttributeDomain;
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.domain.permission.helpers.reducePermissionsArray': IReducePermissionsArrayHelper;
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.infra.permission': IPermissionRepo;
-    'core.infra.cache.cacheService': ICachesService;
 }
 
 export interface ITreeBasedPermissionHelper {
@@ -33,10 +28,8 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
     const {
         'core.domain.attribute': attributeDomain,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
         'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper,
-        'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
-        'core.infra.cache.cacheService': cacheService
+        'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper
     } = deps;
 
     /**
@@ -98,18 +91,6 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             return getDefaultPermission({action, applyTo, userId});
         }
 
-        const key = permissions_conf.permissionTreeAttributes.reduce((acc, permTreeAttr) => {
-            const values = treeValues[permTreeAttr];
-            return values.length ? acc + `${acc.length ? '_' : ''}${values.join('_')}` : acc;
-        }, '');
-
-        // disable cache temporary: const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, key);
-        // disable cache temporary: const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
-        // disable cache temporary: let perm: boolean;
-
-        /* disable cache temporary: if (permFromCache !== null) {
-            perm = permFromCache === 'true';
-        } else { */
         const userGroupsPaths = !!ctx.groupsId
             ? await Promise.all(
                   ctx.groupsId.map(async groupId =>
@@ -139,7 +120,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             })
         );
 
-        const perm = treePerms.reduce((globalPerm, treePerm) => {
+        return treePerms.reduce((globalPerm, treePerm) => {
             if (globalPerm === null) {
                 return treePerm;
             }
@@ -148,11 +129,6 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                 ? globalPerm && treePerm
                 : globalPerm || treePerm;
         }, null);
-
-        // disable cache temporary: await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: perm.toString()});
-        // }
-
-        return perm;
     };
 
     const getInheritedTreeBasedPermission = async (

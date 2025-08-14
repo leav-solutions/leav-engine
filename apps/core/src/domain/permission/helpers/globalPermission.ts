@@ -1,22 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
-import {ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
-import {PERMISSIONS_NULL_PLACEHOLDER} from '../_types';
 import {IDefaultPermissionHelper} from './defaultPermission';
-import getPermissionCacheKey from './getPermissionCacheKey';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 
 interface IGetGlobalPermissionParams {
     type: PermissionTypes;
     applyTo?: string;
-    userId: string;
     action: PermissionsActions;
     getDefaultPermission?: (params?: IGetDefaultGlobalPermissionParams) => Promise<boolean> | boolean;
 }
@@ -44,33 +37,19 @@ export interface IGlobalPermissionHelper {
 export interface IGlobalPermissionDeps {
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
-    'core.infra.permission': IPermissionRepo;
-    'core.infra.attribute': IAttributeRepo;
     'core.infra.tree': ITreeRepo;
-    'core.infra.value': IValueRepo;
-    'core.infra.cache.cacheService': ICachesService;
 }
 
 export default function ({
     'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
     'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
-    'core.infra.attribute': attributeRepo,
-    'core.infra.value': valueRepo,
-    'core.infra.tree': treeRepo,
-    'core.infra.cache.cacheService': cacheService
+    'core.infra.tree': treeRepo
 }: IGlobalPermissionDeps): IGlobalPermissionHelper {
     return {
         async getGlobalPermission(
-            {type, applyTo, userId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
+            {type, applyTo, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
             ctx
         ): Promise<boolean> {
-            // disable cache temporary: const cacheKey = getPermissionCacheKey(ctx.groupsId ?? null, type, applyTo, action, '');
-            // disable cache temporary: const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
-            // disable cache temporary: let perm: boolean;
-
-            /* disable cache temporary: if (permFromCache !== null) {
-                perm = permFromCache === 'true';
-            } else {*/
             const userGroupsPaths = !!ctx.groupsId
                 ? await Promise.all(
                       ctx.groupsId.map(async groupId =>
@@ -83,7 +62,7 @@ export default function ({
                   )
                 : [];
 
-            const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
+            return permByUserGroupsHelper.getPermissionByUserGroups({
                 type,
                 action,
                 userGroupsPaths,
@@ -91,11 +70,6 @@ export default function ({
                 getDefaultPermission,
                 ctx
             });
-
-            // disable cache temporary: await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: perm.toString()});
-            // }
-
-            return perm;
         },
         async getInheritedGlobalPermission(
             {type, applyTo, userGroupNodeId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},

@@ -134,7 +134,7 @@ export default function ({
                         logs: async (
                             _,
                             args: {filters: ILogFilters; sort: ILogSort; pagination: ILogPagination},
-                            ctx
+                            ctx: IQueryInfos
                         ) => {
                             const {filters, sort, pagination} = args;
 
@@ -145,9 +145,7 @@ export default function ({
                                 filters.time.to = filters.time.to * 1_000;
                             }
 
-                            const logs = await logDomain.getLogs({filters, sort, pagination}, ctx);
-
-                            return logs;
+                            return logDomain.getLogs({filters, sort, pagination}, ctx);
                         }
                     },
                     Log: {
@@ -190,9 +188,7 @@ export default function ({
                 }
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
-            return fullSchema;
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         }
     };
 }

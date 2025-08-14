@@ -21,8 +21,7 @@ export default function ({
             {
                 type: PermissionTypes.TREE,
                 action,
-                applyTo: treeId,
-                userId
+                applyTo: treeId
             },
             ctx
         );

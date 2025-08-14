@@ -109,65 +109,67 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         config
     }: IPermissionDomainDeps = deps;
 
-    const _cleanCacheOnSavingPermissions = async (permData: IPermission) => {
-        // clean permissions cached
-        for (const [name, v] of Object.entries(permData.actions)) {
-            const keys: string[] = [];
+    const _cleanCacheOnSavingPermissions = async (permissionData: IPermission) => {
+        const {applyTo, type, actions} = permissionData;
 
-            keys.push(
+        // clean cached permissions
+        for (const actionName of Object.keys(actions)) {
+            const patternKeys: string[] = [];
+
+            patternKeys.push(
                 getPermissionCachePatternKey({
-                    permissionType: permData.type,
-                    applyTo: permData.applyTo,
-                    permissionAction: name as PermissionsActions
+                    permissionType: type,
+                    applyTo,
+                    permissionAction: actionName as PermissionsActions
                 })
             );
 
-            if (permData.type === PermissionTypes.TREE) {
-                keys.push(
+            if (type === PermissionTypes.TREE) {
+                patternKeys.push(
                     getPermissionCachePatternKey({
                         permissionType: PermissionTypes.TREE_LIBRARY,
-                        applyTo: permData.applyTo,
-                        permissionAction: name as PermissionsActions
+                        applyTo,
+                        permissionAction: actionName as PermissionsActions
                     }),
                     getPermissionCachePatternKey({
                         permissionType: PermissionTypes.TREE_NODE,
-                        applyTo: permData.applyTo,
-                        permissionAction: name as PermissionsActions
+                        applyTo,
+                        permissionAction: actionName as PermissionsActions
                     })
                 );
             }
 
-            if (permData.type === PermissionTypes.LIBRARY) {
-                keys.push(
+            if (type === PermissionTypes.LIBRARY) {
+                patternKeys.push(
                     getPermissionCachePatternKey({
                         permissionType: PermissionTypes.RECORD,
-                        applyTo: permData.applyTo,
-                        permissionAction: name as PermissionsActions
+                        applyTo,
+                        permissionAction: actionName as PermissionsActions
                     })
                 );
             }
 
-            if (permData.type === PermissionTypes.ATTRIBUTE) {
-                keys.push(
+            if (type === PermissionTypes.ATTRIBUTE) {
+                patternKeys.push(
                     getPermissionCachePatternKey({
                         permissionType: PermissionTypes.RECORD_ATTRIBUTE,
-                        applyTo: permData.applyTo,
-                        permissionAction: name as PermissionsActions
+                        applyTo,
+                        permissionAction: actionName as PermissionsActions
                     })
                 );
             }
 
-            if (permData.type === PermissionTypes.APPLICATION) {
-                keys.push(
+            if (type === PermissionTypes.APPLICATION) {
+                patternKeys.push(
                     getPermissionCachePatternKey({
                         permissionType: PermissionTypes.APPLICATION,
-                        applyTo: permData.applyTo,
-                        permissionAction: name as PermissionsActions
+                        applyTo,
+                        permissionAction: actionName as PermissionsActions
                     })
                 );
             }
 
-            // disable cache temporary: await cacheService.getCache(ECacheType.RAM).deleteData(keys);
+            await cacheService.getCache(ECacheType.RAM).deleteData(patternKeys);
         }
     };
 
