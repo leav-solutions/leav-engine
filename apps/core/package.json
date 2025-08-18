@@ -1,6 +1,6 @@
 {
     "name": "core",
-    "version": "1.0.0-beta25",
+    "version": "1.0.0-beta26",
     "description": "",
     "scripts": {
         "start": "node .",
