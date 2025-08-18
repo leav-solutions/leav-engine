@@ -4,9 +4,12 @@
     height: 100%;
     flex-direction: column;
     gap: calc(var(--general-spacing-s) * 1px);
-    padding: calc(var(--general-spacing-m) * 1px);
     display: flex;
     overflow: hidden;
+
+    &:not(.sidePanel) {
+        padding: calc(var(--general-spacing-m) * 1px);
+    }
 }
 
 .pageHeader {
@@ -24,6 +27,9 @@
     flex: 1;
     background: var(--general-utilities-light);
     border-radius: calc(var(--general-border-radius-s) * 1px);
-    box-shadow: var(--general-utilities-shadow-light);
     overflow: hidden;
+
+    &:not(.sidePanel) {
+        box-shadow: var(--general-utilities-shadow-light);
+    }
 }

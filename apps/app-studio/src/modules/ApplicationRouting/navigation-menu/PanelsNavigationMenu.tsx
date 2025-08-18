@@ -4,6 +4,7 @@
 import {type ComponentProps, FunctionComponent, useContext} from 'react';
 import {generatePath, Outlet, useLocation, useNavigate, useOutletContext} from 'react-router-dom';
 import {KitTabs} from 'aristid-ds';
+import cn from 'classnames';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
 import type {ApplicationMatchingContextWithoutParentTuple, IApplicationMatchingContext} from '../types';
@@ -11,14 +12,18 @@ import {recordSearchParamsName, routes} from '../routes';
 import {SidePanelContent} from '../../layout/SidePanelContent';
 import {PanelIdCard} from './PanelIdCard';
 
-import {content, headerContent, page, pageHeader} from './panelsNavigationMenu.module.css';
+import {content, headerContent, page, pageHeader, sidePanel} from './panelsNavigationMenu.module.css';
+
+interface IPanelsNavigationMenuProps {
+    isInSidePanel?: boolean;
+}
 
 // TODO: Later if we want a clean rendering for the modal and the slider, we would need to duplicate this component like this:
 // - PanelsNavigationMenuFullPage
 // - PanelsNavigationMenuPopup (+ merge AddSidePanelForPopupPanel)
 // - PanelsNavigationMenuSlider (+ merge AddSidePanelForSliderPanel)
 // Each component would manage the rendering correctly (example for the popup, we would display the idCard in the header of the KitModal)
-export const PanelsNavigationMenu: FunctionComponent = () => {
+export const PanelsNavigationMenu: FunctionComponent<IPanelsNavigationMenuProps> = ({isInSidePanel}) => {
     const {currentPanel, currentPopupPanel, currentSliderPanel, currentWorkspace, currentParentTuple} =
         useOutletContext<IApplicationMatchingContext>();
     const {lang} = useContext(LangContext);
@@ -51,17 +56,27 @@ export const PanelsNavigationMenu: FunctionComponent = () => {
 
     const libraryId = tabLibraryId ?? panelLibraryId ?? workspaceLibraryId;
 
+    const pageClx= cn(page, {
+        [sidePanel]: isInSidePanel
+    });
+
+    const contentClx = cn(content, {
+        [sidePanel]: isInSidePanel
+    });
+
     return (
-        <section className={page}>
-            <div className={pageHeader}>
-                <div className={headerContent}>
-                    <PanelIdCard libraryId={libraryId} currentRecordId={searchParams.get(recordSearchParamsName)} />
+        <section className={pageClx}>
+            {!isInSidePanel && (
+                <div className={pageHeader}>
+                    <div className={headerContent}>
+                        <PanelIdCard libraryId={libraryId} currentRecordId={searchParams.get(recordSearchParamsName)} />
+                    </div>
+                    {tabItems.length !== 0 && (
+                        <KitTabs items={tabItems} onChange={onChangeTab} defaultKey={currentPanel.id} />
+                    )}
                 </div>
-                {tabItems.length !== 0 && (
-                    <KitTabs items={tabItems} onChange={onChangeTab} defaultKey={currentPanel.id} />
-                )}
-            </div>
-            <div className={content}>
+            )}
+            <div className={contentClx}>
                 <Outlet
                     context={
                         {

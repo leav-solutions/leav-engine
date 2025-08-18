@@ -18,6 +18,7 @@
         "@leav/utils": "workspace:libs/utils",
         "antd": "5.22.2",
         "aristid-ds": "14.0.0-7e64d60",
+        "classnames": "2.5.1",
         "dayjs": "1.11.13",
         "graphql": "15.0.0",
         "graphql-tag": "2.12.6",

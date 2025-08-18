@@ -59,7 +59,7 @@ export const InitApplicationRouter: FunctionComponent = () => {
                                           {
                                               element: (
                                                   <AddSidePanelForSliderPanel>
-                                                      <PanelsNavigationMenu />
+                                                      <PanelsNavigationMenu isInSidePanel />
                                                   </AddSidePanelForSliderPanel>
                                               ),
                                               children: [
