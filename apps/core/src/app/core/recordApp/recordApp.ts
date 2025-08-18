@@ -20,7 +20,7 @@ import {IPreview} from '../../../_types/preview';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors, ErrorTypes} from '../../../_types/errors';
 import {TriggerNames} from '../../../_types/eventsManager';
-import {PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
+import {AttributePermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
 import {
     AttributeCondition,
     IRecord,
@@ -125,6 +125,7 @@ export default function ({
                     type RecordProperty {
                         attributeId: ID!,
                         attributeProperties: Attribute!,
+                        recordAttributePermissions: AttributePermissions!
                         values: [GenericValue!]!
                     }
 
@@ -399,27 +400,58 @@ export default function ({
                             )
                         }
                     },
+                    RecordProperty: {
+                        attributeProperties: async (
+                            parent: {record: IRecord; attributeId: string},
+                            _,
+                            ctx: IQueryInfos
+                        ) =>
+                            attributeDomain.getAttributeProperties({
+                                id: parent.attributeId,
+                                ctx
+                            }),
+                        values: async (parent: {record: IRecord; attributeId: string}, _, ctx: IQueryInfos) =>
+                            _getPropertyValues(parent.record, parent.attributeId, ctx),
+                        recordAttributePermissions: async (
+                            parent: {record: IRecord; attributeId: string},
+                            _,
+                            ctx: IQueryInfos,
+                            graphqlInfo: GraphQLResolveInfo
+                        ) => {
+                            const requestedPermissionsActions =
+                                graphqlApp.getQueryFields(graphqlInfo).map(field => field.name) ?? [];
+
+                            return Object.fromEntries(
+                                await Promise.all(
+                                    requestedPermissionsActions.map(async action => [
+                                        action,
+                                        await permissionDomain.isAllowed({
+                                            type: PermissionTypes.RECORD_ATTRIBUTE,
+                                            applyTo: parent.record.library,
+                                            action: action as AttributePermissionsActions,
+                                            target: {
+                                                recordId: parent.record.id,
+                                                attributeId: parent.attributeId
+                                            },
+                                            userId: ctx.userId,
+                                            ctx
+                                        })
+                                    ])
+                                )
+                            );
+                        }
+                    },
                     Record: {
                         library: async (record: IRecord, _, ctx: IQueryInfos) =>
                             record.library ? libraryDomain.getLibraryProperties(record.library, ctx) : null,
                         whoAmI: async (rec: IRecord, _, ctx: IQueryInfos) => recordDomain.getRecordIdentity(rec, ctx),
                         property: async (parent: IRecord, {attribute}: {attribute: string}, ctx: IQueryInfos) =>
                             _getPropertyValues(parent, attribute, ctx),
-                        properties: async (
-                            parent: IRecord,
-                            {attributeIds}: {attributeIds: string[]},
-                            ctx: IQueryInfos
-                        ) =>
-                            Promise.all(
-                                attributeIds.map(async attributeId => ({
-                                    attributeId,
-                                    attributeProperties: await attributeDomain.getAttributeProperties({
-                                        id: attributeId,
-                                        ctx
-                                    }),
-                                    values: await _getPropertyValues(parent, attributeId, ctx)
-                                }))
-                            ),
+                        properties: (parent: IRecord, {attributeIds}: {attributeIds: string[]}) =>
+                            attributeIds.map(attributeId => ({
+                                record: parent,
+                                attributeId
+                            })),
                         permissions: (
                             record: IRecord,
                             _,
@@ -474,9 +506,7 @@ export default function ({
                 }
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
-            return fullSchema;
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         }
     };
 }

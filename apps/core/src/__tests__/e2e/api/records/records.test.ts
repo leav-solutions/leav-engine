@@ -9,11 +9,12 @@ import {
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
+    gqlSaveValue,
     makeGraphQlCall
 } from '../e2eUtils';
 import {adminUserId} from '../../../../_constants/users';
 import {usersLibraryId} from '../../../../_constants/libraries';
-import {PermissionTypes, RecordPermissionsActions} from '../../../../_types/permissions';
+import {AttributePermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../../../_types/permissions';
 import {ErrorTypes} from '../../../../_types/errors';
 
 describe('Records', () => {
@@ -49,7 +50,6 @@ describe('Records', () => {
         }`);
 
         recordId = resultCreation.data.data.c1.record.id;
-
         recordNode = await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId});
     });
 
@@ -199,6 +199,13 @@ describe('Records', () => {
                 list {
                     properties(attributeIds: ["created_at", "created_by", "user_groups"]) {
                         attributeId
+                        attributeProperties {
+                            id
+                        }
+                        recordAttributePermissions {
+                            ${AttributePermissionsActions.EDIT_VALUE}
+                            ${AttributePermissionsActions.ACCESS_ATTRIBUTE}
+                        }
                         values {
                             id_value
                             ... on Value {
@@ -227,6 +234,13 @@ describe('Records', () => {
         expect(result.data.data.records.list[0].properties).toEqual([
             {
                 attributeId: 'created_at',
+                attributeProperties: {
+                    id: 'created_at'
+                },
+                recordAttributePermissions: {
+                    [AttributePermissionsActions.EDIT_VALUE]: true,
+                    [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
+                },
                 values: [
                     {
                         id_value: null,
@@ -236,6 +250,13 @@ describe('Records', () => {
             },
             {
                 attributeId: 'created_by',
+                attributeProperties: {
+                    id: 'created_by'
+                },
+                recordAttributePermissions: {
+                    [AttributePermissionsActions.EDIT_VALUE]: true,
+                    [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
+                },
                 values: [
                     {
                         id_value: null,
@@ -249,6 +270,13 @@ describe('Records', () => {
             },
             {
                 attributeId: 'user_groups',
+                attributeProperties: {
+                    id: 'user_groups'
+                },
+                recordAttributePermissions: {
+                    [AttributePermissionsActions.EDIT_VALUE]: true,
+                    [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
+                },
                 values: [
                     {
                         id_value: expect.any(String),
@@ -257,6 +285,72 @@ describe('Records', () => {
                         }
                     }
                 ]
+            }
+        ]);
+    });
+
+    test('Get record properties with record attribute permissions', async () => {
+        // Add/set permissions to the requested attribute
+        await makeGraphQlCall(`mutation {
+                saveAttribute(attribute: {
+                    id: "${testAttributeId}",
+                    permissions_conf: {permissionTreeAttributes: ["${testTreeAttributeId}"], relation: and}
+                }) {
+                    permissions_conf {
+                        permissionTreeAttributes {
+                            id
+                        }
+                        relation
+                    }
+                }
+            }`);
+
+        await makeGraphQlCall(`mutation {
+                savePermission(
+                    permission: {
+                        type: record_attribute,
+                        applyTo: "${testAttributeId}",
+                        usersGroup: null,
+                        permissionTreeTarget: {
+                            tree: "${testTreeName}", nodeId: "${recordNode}"
+                        },
+                        actions: [
+                            {name: access_attribute, allowed: true},
+                            {name: edit_value, allowed: false}
+                        ]
+                    }
+                ) { type }
+            }`);
+
+        // Set a value for the tree attribute on which permissions are based
+        await gqlSaveValue(testTreeAttributeId, testLibName, recordId, recordNode);
+
+        const result = await makeGraphQlCall(`{
+            records(
+                library: "${testLibName}",
+                filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
+            ) {
+                list {
+                    properties(attributeIds: ["${testAttributeId}"]) {
+                        attributeId
+                        recordAttributePermissions {
+                            ${AttributePermissionsActions.EDIT_VALUE}
+                            ${AttributePermissionsActions.ACCESS_ATTRIBUTE}
+                        }
+                    }
+                }
+            }
+        }`);
+
+        expect(result.data.errors).toBeUndefined();
+        expect(result.status).toBe(200);
+        expect(result.data.data.records.list[0].properties).toEqual([
+            {
+                attributeId: testAttributeId,
+                recordAttributePermissions: {
+                    [AttributePermissionsActions.EDIT_VALUE]: false,
+                    [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
+                }
             }
         ]);
     });
