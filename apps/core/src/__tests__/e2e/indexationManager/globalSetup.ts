@@ -10,6 +10,10 @@ import {initRedis} from '../../../infra/cache/redis';
 import {initDb} from '../../../infra/db/db';
 import {initMailer} from '../../../infra/mailer';
 import {initOIDCClient} from '../../../infra/oidc';
+import {IDbUtils} from 'infra/db/dbUtils';
+import {IServer} from 'interface/server';
+import {ITasksManagerInterface} from 'interface/tasksManager';
+import {IIndexationManagerInterface} from 'interface/indexationManager';
 
 export async function setup() {
     try {
@@ -39,15 +43,15 @@ export async function setup() {
         await cacheService.getCache(ECacheType.DISK).deleteAll();
         await cacheService.getCache(ECacheType.RAM).deleteAll();
 
-        const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
+        const dbUtils: IDbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 
         await dbUtils.clearDatabase();
 
         await dbUtils.migrate(coreContainer);
 
-        const server = coreContainer.cradle['core.interface.server'];
-        const indexationManager = coreContainer.cradle['core.interface.indexationManager'];
-        const tasksManager = coreContainer.cradle['core.interface.tasksManager'];
+        const server: IServer = coreContainer.cradle['core.interface.server'];
+        const indexationManager: IIndexationManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
+        const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
 
         await server.init();
         await indexationManager.init();

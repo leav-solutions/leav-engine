@@ -4,7 +4,12 @@
         "js"
     ],
     "transform": {
-        "\\.(ts|tsx)$": "ts-jest"
+        "\\.(ts|tsx)$": [
+            "ts-jest",
+            {
+                "isolatedModules": true
+            }
+        ]
     },
     "testRegex": "src\/__tests__\/e2e\/api\/.*(.test.ts)$",
     "globalSetup": "./src/__tests__/e2e/api/globalSetupHook.ts",

@@ -384,28 +384,13 @@ apps/sync-scan-unit-tests:
   name: redis:latest
   alias: redis
 
-# Proposed by copilote after many tries, may be not optimal but it is working
-.e2e_service_elasticsearch: &e2e_service_elasticsearch
-  name: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
-  alias: elasticsearch
-  entrypoint: [""]
-  command:
-    - bash
-    - -c
-    - |
-      su -s /bin/bash elasticsearch -c "/usr/local/bin/docker-entrypoint.sh eswrapper"
-  variables:
-    discovery.type: single-node
-    xpack.security.enabled: "false"
-    ES_JAVA_OPTS: -Xms256m -Xmx256m
-
 e2e-api:
   stage: test
   services:
     - *e2e_service_arangodb
     - *e2e_service_rabbitmq
     - *e2e_service_redis
-    - *e2e_service_elasticsearch
+    # Dont need elasticsearch for api tests, but could be added if needed (see file history)
   variables:
     ARANGO_URL: "http://root:@arangodb:8529"
     AUTH_KEY: "123456789"
@@ -414,7 +399,6 @@ e2e-api:
     AMQP_USERNAME: "guest"
     AMQP_PWD: "guest"
     APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/core"
-    ELASTICSEARCH_URL: "http://elasticsearch:9200"
     IMPORT_DIR: "$CI_PROJECT_DIR/imports"
     DISK_CACHE_DIRECTORY: "$CI_PROJECT_DIR/cache"
     FILES_ROOT_PATHS: "files1:$CI_PROJECT_DIR/files"
@@ -443,7 +427,7 @@ e2e-indexation-manager:
     - *e2e_service_arangodb
     - *e2e_service_rabbitmq
     - *e2e_service_redis
-    - *e2e_service_elasticsearch
+    # Dont need elasticsearch for api tests, but could be added if needed (see file history)
   variables:
     ARANGO_URL: "http://root:@arangodb:8529"
     AUTH_KEY: "123456789"
@@ -452,7 +436,6 @@ e2e-indexation-manager:
     AMQP_USERNAME: "guest"
     AMQP_PWD: "guest"
     APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/core"
-    ELASTICSEARCH_URL: "http://elasticsearch:9200"
     REDIS_HOST: "redis"
     REDIS_PORT: "6379"
   script:

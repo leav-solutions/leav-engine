@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {amqpService} from '@leav/message-broker';
-import {Database} from 'arangojs';
 import fsremaned from 'fs';
 import path from 'path';
+import {AwilixContainer} from 'awilix';
 import {getConfig} from '../../../config';
 import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
@@ -14,6 +14,9 @@ import {initMailer} from '../../../infra/mailer';
 import {initPlugins} from '../../../pluginsLoader';
 import {IConfig} from '../../../_types/config';
 import {initOIDCClient} from '../../../infra/oidc';
+import {initDb} from '../../../infra/db/db';
+import {IDbUtils} from 'infra/db/dbUtils';
+import {IServer} from 'interface/server';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
@@ -34,7 +37,7 @@ const _setupFakePlugin = async () => {
     }
 };
 
-export const init = async (conf: IConfig): Promise<any> => {
+export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContainer; dbUtils: IDbUtils}> => {
     // Init i18next
     const translator = await i18nextInit(conf);
 
@@ -52,7 +55,7 @@ export const init = async (conf: IConfig): Promise<any> => {
         'core.infra.oidcClient': oidcClient
     });
 
-    const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
+    const dbUtils: IDbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 
     // Clear all caches (redis cache for example might persist between runs)
     const cacheService: ICachesService = coreContainer.cradle['core.infra.cache.cacheService'];
@@ -87,26 +90,14 @@ export async function setup() {
         const conf = await getConfig();
 
         await _createRequiredDirectories(conf);
-
-        // Init DB
-        const db = new Database({
-            url: conf.db.url
-        });
-
-        const databases = await db.listDatabases();
-        const dbExists = databases.reduce((exists, d) => exists || d === conf.db.name, false);
-
-        if (dbExists) {
-            await db.dropDatabase(conf.db.name);
-        }
-
-        await db.createDatabase(conf.db.name);
+        await initDb(conf);
 
         const {coreContainer, dbUtils} = await init(conf);
 
+        await dbUtils.clearDatabase();
         await dbUtils.migrate(coreContainer);
 
-        const server = coreContainer.cradle['core.interface.server'];
+        const server: IServer = coreContainer.cradle['core.interface.server'];
 
         await server.init();
     } catch (e) {
