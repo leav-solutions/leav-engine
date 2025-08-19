@@ -225,7 +225,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return only first value if n
                     IN 1 OUTBOUND @value0
                     @@value1
                     FILTER edge.attribute == @value2
-                 
+                 FILTER edge.version == null 
                 LIMIT 1
                 RETURN {linkedRecord, edge}
             "
@@ -257,7 +257,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced l
                     IN 1 OUTBOUND @value0
                     @@value1
                     FILTER edge.attribute == @value2
-                 
+                 FILTER edge.version == null 
                 
                 RETURN {linkedRecord, edge}
             "
@@ -277,7 +277,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return values for reverse ad
                     IN 1 INBOUND @value0
                     @@value1
                     FILTER edge.attribute == @value2
-                 
+                 FILTER edge.version == null 
                 
                 RETURN {linkedRecord, edge}
             "

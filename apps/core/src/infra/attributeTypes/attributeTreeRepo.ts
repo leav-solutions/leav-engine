@@ -57,6 +57,12 @@ export default function ({
         treeId
     });
 
+    const _buildRemoteRecord = (remoteRecord: IRecord & IDbDocument): IRecord =>
+        dbUtils.cleanup({
+            ...remoteRecord,
+            library: remoteRecord?._id?.split('/')[0]
+        });
+
     function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return aql`${
             attributes
@@ -96,7 +102,7 @@ export default function ({
             }
 
             const {id: nodeId, library: nodeCollection} = utils.decomposeValueEdgeDestination(edgeData._to);
-            const resEdge = await dbService.execute<Array<{newEdge: IValueEdge; linkedRecord: IRecord}>>({
+            const resEdge = await dbService.execute<Array<{newEdge: IValueEdge; linkedRecord: IDbDocument & IRecord}>>({
                 query: aql`
                     LET linkedNode = DOCUMENT(${nodeCollection}, ${nodeId})
                     LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
@@ -113,7 +119,7 @@ export default function ({
             return _buildTreeValue(
                 attribute.linked_tree,
                 nodeId,
-                dbUtils.cleanup(savedValue.linkedRecord),
+                _buildRemoteRecord(savedValue.linkedRecord),
                 savedValue.newEdge
             );
         },
@@ -139,7 +145,7 @@ export default function ({
             }
 
             const {id: nodeId, library: nodeCollection} = utils.decomposeValueEdgeDestination(edgeData._to);
-            const resEdge = await dbService.execute<Array<{newEdge: IValueEdge; linkedRecord: IRecord}>>({
+            const resEdge = await dbService.execute<Array<{newEdge: IValueEdge; linkedRecord: IDbDocument & IRecord}>>({
                 query: aql`
                     LET linkedNode = DOCUMENT(${nodeCollection}, ${nodeId})
                     LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
@@ -158,14 +164,14 @@ export default function ({
             return _buildTreeValue(
                 attribute.linked_tree,
                 nodeId,
-                dbUtils.cleanup(savedValue.linkedRecord),
+                _buildRemoteRecord(savedValue.linkedRecord),
                 savedValue.newEdge
             );
         },
         async deleteValue({attribute, value, library, recordId, ctx}): Promise<ITreeValue> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
-            const resEdge = await dbService.execute<Array<{edge: IValueEdge; linkedRecord: IRecord}>>({
+            const resEdge = await dbService.execute<Array<{edge: IValueEdge; linkedRecord: IDbDocument & IRecord}>>({
                 query: aql`
                     FOR linkedNode, edge IN 1 OUTBOUND ${library + '/' + recordId}
                         ${edgeCollec}
@@ -186,7 +192,7 @@ export default function ({
             return _buildTreeValue(
                 attribute.linked_tree,
                 nodeId,
-                dbUtils.cleanup(deletedValue.linkedRecord),
+                _buildRemoteRecord(deletedValue.linkedRecord),
                 deletedValue.edge
             );
         },
@@ -216,8 +222,12 @@ export default function ({
                 `
             ];
 
-            if (!forceGetAllValues && typeof options !== 'undefined' && options.version) {
-                queryParts.push(aql`FILTER edge.version == ${options.version}`);
+            if (!forceGetAllValues) {
+                if (options?.version) {
+                    queryParts.push(aql`FILTER edge.version == ${options.version}`);
+                } else {
+                    queryParts.push(aql`FILTER edge.version == null`);
+                }
             }
 
             const limitOne = literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
@@ -234,12 +244,7 @@ export default function ({
                     return acc;
                 }
 
-                const record = {
-                    ...r.record,
-                    library: r?.record?._id.split('/')[0]
-                };
-
-                acc.push(_buildTreeValue(attribute.linked_tree, r.id, dbUtils.cleanup(record), r.edge));
+                acc.push(_buildTreeValue(attribute.linked_tree, r.id, _buildRemoteRecord(r.record), r.edge));
 
                 return acc;
             }, []);
@@ -266,8 +271,12 @@ export default function ({
                 `
             ];
 
-            if (!options?.forceGetAllValues && options?.version) {
-                queryParts.push(aql`FILTER edge.version == ${options.version}`);
+            if (!options?.forceGetAllValues) {
+                if (options?.version) {
+                    queryParts.push(aql`FILTER edge.version == ${options.version}`);
+                } else {
+                    queryParts.push(aql`FILTER edge.version == null`);
+                }
             }
 
             if (!attribute.multiple_values && !options?.forceGetAllValues) {
@@ -301,20 +310,16 @@ export default function ({
             const treeElements = await dbService.execute<
                 Array<{
                     recordId: string;
-                    values: Array<{id: string; record: IRecord; edge: IValueEdge}>;
+                    values: Array<{id: string; record: IDbDocument & IRecord; edge: IValueEdge}>;
                 }>
             >({query, ctx});
 
             return recordIds.map(recordId => {
                 const record = treeElements.find(r => r.recordId === recordId);
                 return (
-                    record?.values.map(r => {
-                        const linkedRecord = {
-                            ...r.record,
-                            library: r?.record?._id.split('/')[0]
-                        };
-                        return _buildTreeValue(attribute.linked_tree, r.id, dbUtils.cleanup(linkedRecord), r.edge);
-                    }) || []
+                    record?.values.map(r =>
+                        _buildTreeValue(attribute.linked_tree, r.id, _buildRemoteRecord(r.record), r.edge)
+                    ) || []
                 );
             });
         },
@@ -332,7 +337,7 @@ export default function ({
             `;
 
             const res = await dbService.execute<
-                Array<{linkedNode: IDbDocument; edge: IValueEdge; linkedRecord: IRecord}>
+                Array<{linkedNode: IDbDocument; edge: IValueEdge; linkedRecord: IDbDocument & IRecord}>
             >({query, ctx});
 
             if (!res.length) {
@@ -342,7 +347,7 @@ export default function ({
             return _buildTreeValue(
                 attribute.linked_tree,
                 res[0].linkedNode._key,
-                dbUtils.cleanup(res[0].linkedRecord),
+                _buildRemoteRecord(res[0].linkedRecord),
                 res[0].edge
             );
         },

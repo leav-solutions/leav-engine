@@ -82,9 +82,17 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise([{edge: savedEdgeData, linkedRecord: mockRecord}])
             };
 
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValue({
+                    library: 'test_linked_lib',
+                    id: '987654'
+                })
+            };
+
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
             });
 
             const createdVal = await attrRepo.createValue({
@@ -141,9 +149,17 @@ describe('AttributeAdvancedLinkRepo', () => {
                 ])
             };
 
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValue({
+                    library: 'test_linked_lib',
+                    id: '987654'
+                })
+            };
+
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
             });
 
             await attrRepo.createValue({
@@ -204,9 +220,17 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise([{edge: savedEdgeData, linkedRecord: mockRecord}])
             };
 
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValue({
+                    library: 'test_linked_lib',
+                    id: '987654'
+                })
+            };
+
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
             });
 
             const savedVal = await attrRepo.updateValue({
@@ -250,9 +274,17 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise([{edge: savedEdgeData, linkedRecord: mockRecord}])
             };
 
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValue({
+                    library: 'test_linked_lib',
+                    id: '987654'
+                })
+            };
+
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
             });
 
             await attrRepo.updateValue({
@@ -321,9 +353,17 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise([deletedEdgeData])
             };
 
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValue({
+                    library: 'test_linked_lib',
+                    id: '987654'
+                })
+            };
+
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.utils': mockUtils as IUtils
+                'core.utils': mockUtils as IUtils,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup as IDbUtils
             });
 
             const deletedVal = await attrRepo.deleteValue({
@@ -420,8 +460,8 @@ describe('AttributeAdvancedLinkRepo', () => {
                 execute: global.__mockPromise(traversalRes)
             };
 
-            const mockCleanupRes = jest.fn().mockReturnValueOnce({
-                id: 123456,
+            const mockCleanupRes = jest.fn().mockReturnValue({
+                id: '123456',
                 created_at: 88888,
                 modified_at: 88888
             });
@@ -577,12 +617,12 @@ describe('AttributeAdvancedLinkRepo', () => {
             const mockCleanupRes = jest
                 .fn()
                 .mockReturnValueOnce({
-                    id: 123456,
+                    id: '123456',
                     created_at: 88888,
                     modified_at: 88888
                 })
                 .mockReturnValueOnce({
-                    id: 123457,
+                    id: '123457',
                     created_at: 77777,
                     modified_at: 77777
                 });
@@ -770,7 +810,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             };
 
             const mockCleanupRes = jest.fn().mockReturnValue({
-                id: 123456,
+                id: '123456',
                 created_at: 88888,
                 modified_at: 88888
             });

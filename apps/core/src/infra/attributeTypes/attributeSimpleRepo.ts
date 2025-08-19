@@ -47,6 +47,7 @@ export default function ({
 
         return {
             payload: typeof updatedDoc[attribute.id] !== 'undefined' ? updatedDoc[attribute.id] : null,
+            attribute: attribute.id,
             created_by: null,
             modified_by: null
         };

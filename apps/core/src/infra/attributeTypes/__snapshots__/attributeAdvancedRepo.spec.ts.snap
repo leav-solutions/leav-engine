@@ -113,7 +113,7 @@ exports[`AttributeStandardRepo getValues Should return values for advanced attri
                 IN 1 OUTBOUND @value0
                 @@value1
                 FILTER edge.attribute == @value2
-                 
+                 FILTER edge.version == null 
                 
                 RETURN {value, edge}
             "

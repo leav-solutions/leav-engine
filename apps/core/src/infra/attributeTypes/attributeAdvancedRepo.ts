@@ -205,8 +205,12 @@ export default function ({
                 `
             ];
 
-            if (!forceGetAllValues && typeof options !== 'undefined' && options.version) {
-                queryParts.push(aql`FILTER edge.version == ${options.version}`);
+            if (!forceGetAllValues) {
+                if (options?.version) {
+                    queryParts.push(aql`FILTER edge.version == ${options.version}`);
+                } else {
+                    queryParts.push(aql`FILTER edge.version == null`);
+                }
             }
 
             const limitOne = literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
@@ -232,10 +236,11 @@ export default function ({
         async getValuesBatch({library, recordIds, attribute, options, ctx}): Promise<IStandardValue[][]> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
-            const filterVersion =
-                !options?.forceGetAllValues && options?.version
+            const filterVersion = !options?.forceGetAllValues
+                ? options?.version
                     ? aql`FILTER edge.version == ${options.version}`
-                    : aql``;
+                    : aql`FILTER edge.version == null`
+                : aql``;
 
             const query: GeneratedAqlQuery =
                 !options?.forceGetAllValues && !attribute.multiple_values

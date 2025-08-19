@@ -131,7 +131,7 @@ exports[`AttributeTreeRepo getValues Should return linked tree element 1`] = `
                         vertex.recordId
                     )
                     FILTER edge.attribute == @value3
-                 
+                 FILTER edge.version == null 
                 
                 RETURN {id: vertex._key, record, edge}
             "

@@ -62,6 +62,8 @@ export default function ({
         const updatedDoc = res.length ? res[0] : null;
 
         const savedVal = {
+            id_value: null,
+            attribute: attribute.id,
             payload: updatedDoc?.doc?.[attribute.id]
                 ? {...dbUtils.cleanup(updatedDoc.linkedRecord), library: attribute.linked_library}
                 : null,
@@ -114,7 +116,7 @@ export default function ({
 
             // id value of advanced revert link is the id of the record
             return res.map(r => {
-                const record = dbUtils.cleanup<IRecord>(r);
+                const record = dbUtils.cleanup<IRecord>({...r, library: advancedLinkAttr.linked_library});
                 return {id_value: record.id, payload: record, created_by: null, modified_by: null};
             });
         },
@@ -143,7 +145,7 @@ export default function ({
                 const val = valuesByRecordId.get(recordId);
                 return (
                     val?.records.map(r => {
-                        const rec = dbUtils.cleanup<IRecord>(r);
+                        const rec = dbUtils.cleanup<IRecord>({...r, library: advancedLinkAttr.linked_library});
                         return {
                             id_value: rec.id,
                             payload: rec,
@@ -174,8 +176,8 @@ export default function ({
                 .slice(0, 1)
                 .map(r => ({
                     id_value: null,
-                    library: attribute.linked_library,
                     payload: dbUtils.cleanup({...r, library: attribute.linked_library}),
+                    attribute: attribute.id,
                     created_by: null,
                     modified_by: null
                 }));

@@ -13,10 +13,11 @@ import {IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 import {IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
+import {IDbDocument} from 'infra/db/_types';
 
 interface ISavedValueResult {
     edge: IValueEdge;
-    linkedRecord: IRecord;
+    linkedRecord: IDbDocument & IRecord;
 }
 
 export type IAttributeAdvancedLinkRepo = IAttributeTypeRepo<AttributeTypes.ADVANCED_LINK>;
@@ -53,12 +54,16 @@ export default function ({
         }`;
     }
 
-    const _buildLinkValue = (linkedRecord: IRecord, valueEdge: IValueEdge, reverseLink: boolean): ILinkValue => {
+    const _buildLinkValue = (
+        linkedRecord: (IDbDocument & IRecord) | {library: string; id: string},
+        valueEdge: IValueEdge,
+        reverseLink: boolean
+    ): ILinkValue => {
         const recordIdField = reverseLink ? '_from' : '_to';
         const [recordLibrary, recordId] = valueEdge[recordIdField].split('/');
         return {
             id_value: valueEdge._key,
-            payload: linkedRecord ? {...linkedRecord, library: recordLibrary, id: recordId} : null,
+            payload: linkedRecord ? dbUtils.cleanup({...linkedRecord, library: recordLibrary, id: recordId}) : null,
             attribute: valueEdge.attribute,
             modified_at: valueEdge.modified_at,
             modified_by: valueEdge.modified_by,
@@ -277,8 +282,12 @@ export default function ({
                     FILTER edge.attribute == ${edgeAttribute}
                 `);
 
-            if (!forceGetAllValues && typeof options !== 'undefined' && options.version) {
-                queryParts.push(aql`FILTER edge.version == ${options.version}`);
+            if (!forceGetAllValues) {
+                if (options?.version) {
+                    queryParts.push(aql`FILTER edge.version == ${options.version}`);
+                } else {
+                    queryParts.push(aql`FILTER edge.version == null`);
+                }
             }
 
             const limitOne = literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
@@ -292,7 +301,7 @@ export default function ({
 
             const res = await dbService.execute({query, ctx});
 
-            return res.map(r => _buildLinkValue(dbUtils.cleanup(r.linkedRecord), r.edge, !!attribute.reverse_link));
+            return res.map(r => _buildLinkValue(r.linkedRecord, r.edge, !!attribute.reverse_link));
         },
         async getValuesBatch({library, recordIds, attribute, options, ctx}): Promise<ILinkValue[][]> {
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
@@ -321,8 +330,12 @@ export default function ({
                 `
             ];
 
-            if (!options?.forceGetAllValues && options?.version) {
-                queryParts.push(aql`FILTER edge.version == ${options.version}`);
+            if (!options?.forceGetAllValues) {
+                if (options?.version) {
+                    queryParts.push(aql`FILTER edge.version == ${options.version}`);
+                } else {
+                    queryParts.push(aql`FILTER edge.version == null`);
+                }
             }
 
             if (!attribute.multiple_values && !options?.forceGetAllValues) {
@@ -355,23 +368,22 @@ export default function ({
             const res = await dbService.execute<
                 Array<{
                     recordId: string;
-                    values: Array<{linkedRecord: IRecord; edge: IValueEdge}>;
+                    values: Array<{linkedRecord: IDbDocument & IRecord; edge: IValueEdge}>;
                 }>
             >({
                 query,
                 ctx
             });
 
-            const valuesByRecordId: Map<string, Array<{linkedRecord: IRecord; edge: IValueEdge}>> = new Map(
-                res.map(r => [r.recordId, r.values])
-            );
+            const valuesByRecordId: Map<
+                string,
+                Array<{linkedRecord: IDbDocument & IRecord; edge: IValueEdge}>
+            > = new Map(res.map(r => [r.recordId, r.values]));
 
             return recordIds.map(recordId => {
                 const edgeLinkRecords = valuesByRecordId.get(recordId);
                 return (
-                    edgeLinkRecords?.map(v =>
-                        _buildLinkValue(dbUtils.cleanup(v.linkedRecord), v.edge, !!attribute.reverse_link)
-                    ) || []
+                    edgeLinkRecords?.map(v => _buildLinkValue(v.linkedRecord, v.edge, !!attribute.reverse_link)) || []
                 );
             });
         },
@@ -399,7 +411,7 @@ export default function ({
                 return null;
             }
 
-            return _buildLinkValue(dbUtils.cleanup(res[0].linkedRecord), res[0].edge, !!attribute.reverse_link);
+            return _buildLinkValue(res[0].linkedRecord, res[0].edge, !!attribute.reverse_link);
         },
         sortQueryPart({attributes, order}) {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
