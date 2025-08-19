@@ -302,17 +302,19 @@ exports[`TreeRepo getNodesByRecord Return nodes linked to record 2`] = `
 
 exports[`TreeRepo getRecordByNodeId Return record linked to node 1`] = `
 "
-                FOR n IN @@value0
-                    FILTER n._key == @value1
-                    LET record = DOCUMENT(n.@value2, n.@value3)
-                    RETURN record
-            "
+            FOR nodeId IN @value0
+                LET node = DOCUMENT(@@value1, nodeId)
+                LET record = DOCUMENT(node.@value2, node.@value3)
+                RETURN { nodeId, record }
+        "
 `;
 
 exports[`TreeRepo getRecordByNodeId Return record linked to node 2`] = `
 {
-  "@value0": "core_nodes_test_tree",
-  "value1": "123458",
+  "@value1": "core_nodes_test_tree",
+  "value0": [
+    "123458",
+  ],
   "value2": "libraryId",
   "value3": "recordId",
 }

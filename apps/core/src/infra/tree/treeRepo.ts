@@ -20,6 +20,8 @@ import {
     getRootId
 } from './helpers/utils';
 import {IChildrenResultNode, NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from './_types';
+import DataLoader from 'dataloader';
+import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 
 export interface ITreeRepo {
     createTree(params: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
@@ -156,6 +158,8 @@ interface ITreeEdge extends IDbEdge {
     order: number;
 }
 
+type RecordByNodeIdDataLoader = DataLoader<string, IRecord>;
+
 export interface ITreeRepoDeps {
     'core.infra.db.dbService': IDbService;
     'core.infra.db.dbUtils': IDbUtils;
@@ -164,6 +168,62 @@ export default function ({
     'core.infra.db.dbService': dbService,
     'core.infra.db.dbUtils': dbUtils
 }: ITreeRepoDeps): ITreeRepo {
+    const computeGetRecordByNodeIdDataLoaderKey = (treeId: string): string => `treeRepo.getRecordByNodeId-${treeId}`;
+
+    const getRecordByNodeIdDataLoader = (treeId: string, ctx: IQueryInfos): RecordByNodeIdDataLoader => {
+        const dataLoaderKey = computeGetRecordByNodeIdDataLoaderKey(treeId);
+
+        return getOrCreateDataLoaderInCtx<RecordByNodeIdDataLoader>(
+            ctx,
+            dataLoaderKey,
+            () =>
+                new DataLoader<string, IRecord>(
+                    async (keys: readonly string[]) =>
+                        getRecordsByNodeIds({
+                            treeId,
+                            nodeIds: keys as string[],
+                            ctx
+                        }),
+                    {
+                        cache: false
+                    }
+                )
+        );
+    };
+
+    const getRecordsByNodeIds = async ({
+        treeId,
+        nodeIds,
+        ctx
+    }: {
+        treeId: string;
+        nodeIds: string[];
+        ctx: IQueryInfos;
+    }): Promise<Array<IRecord | null>> => {
+        const nodesCollec = dbService.db.collection(getNodesCollectionName(treeId));
+
+        // It is very frequent that we have the same nodeId multiple times in the list, so we can optimize
+        const uniqNodeIds = Array.from(new Set(nodeIds));
+        // Build a single query to fetch all records for the given nodeIds in the given treeId
+        const query = aql`
+            FOR nodeId IN ${uniqNodeIds}
+                LET node = DOCUMENT(${nodesCollec}, nodeId)
+                LET record = DOCUMENT(node.${NODE_LIBRARY_ID_FIELD}, node.${NODE_RECORD_ID_FIELD})
+                RETURN { nodeId, record }
+        `;
+
+        const queryRes = await dbService.execute<Array<{nodeId: string; record: IDbDocument}>>({query, ctx});
+
+        const recordsById = new Map(queryRes.map(r => [r?.nodeId, r?.record]));
+        return nodeIds.map(nodeId => {
+            const recordDoc = recordsById.get(nodeId);
+            if (!recordDoc) {
+                return null;
+            }
+            return dbUtils.cleanup<IRecord>({...recordDoc, library: getLibraryFromDbId(recordDoc._id)});
+        });
+    };
+
     return {
         async createTree({treeData, ctx}): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);
@@ -616,25 +676,7 @@ export default function ({
             });
         },
         async getRecordByNodeId({treeId, nodeId, ctx}): Promise<IRecord> {
-            const nodesCollec = dbService.db.collection(getNodesCollectionName(treeId));
-
-            const query = aql`
-                FOR n IN ${nodesCollec}
-                    FILTER n._key == ${nodeId}
-                    LET record = DOCUMENT(n.${NODE_LIBRARY_ID_FIELD}, n.${NODE_RECORD_ID_FIELD})
-                    RETURN record
-            `;
-
-            const queryRes = await dbService.execute({query, ctx});
-            const recordDoc = queryRes[0];
-
-            if (!recordDoc) {
-                return null;
-            }
-
-            recordDoc.library = getLibraryFromDbId(recordDoc._id);
-
-            return dbUtils.cleanup<IRecord>(recordDoc);
+            return getRecordByNodeIdDataLoader(treeId, ctx).load(nodeId);
         },
         async getNodesByRecord({
             treeId,

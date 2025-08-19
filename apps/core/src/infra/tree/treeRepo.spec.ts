@@ -1002,12 +1002,15 @@ describe('TreeRepo', () => {
 
     describe('getRecordByNodeId', () => {
         test('Return record linked to node', async () => {
-            const traversalRes: IDbDocument[] = [
+            const traversalRes: Array<{nodeId: string; record: IDbDocument}> = [
                 {
-                    _key: '123456',
-                    _id: 'mylib/123456',
-                    _rev: '_WgJhrXO--_',
-                    label: 'my record'
+                    nodeId: '123458',
+                    record: {
+                        _key: '123456',
+                        _id: 'mylib/123456',
+                        _rev: '_WgJhrXO--_',
+                        label: 'my record'
+                    }
                 }
             ];
 
