@@ -384,6 +384,30 @@ apps/sync-scan-unit-tests:
   name: redis:latest
   alias: redis
 
+integration-test-core:
+  stage: test
+  services:
+    - *e2e_service_arangodb
+  variables:
+    ARANGO_URL: "http://root:@arangodb:8529"
+    APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/core"
+  script:
+    - yarn workspaces focus core
+    - yarn workspace core run test:integration
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_e2e_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - apps/core/**/*
+        - libs/app-root-path/**/*
+        - libs/config-manager/**/*
+        - libs/message-broker/**/*
+        - libs/utils/**/*
+
 e2e-api:
   stage: test
   services:

@@ -396,8 +396,7 @@ export default function ({
         },
         async createRecord({libraryId, recordData, ctx}): Promise<IRecord> {
             const collection = dbService.db.collection(libraryId);
-            let newRecord = await collection.save(recordData);
-            newRecord = await collection.document(newRecord);
+            const {new: newRecord} = await collection.save(recordData, {returnNew: true});
 
             (newRecord as IRecord).library = newRecord._id.split('/')[0];
 

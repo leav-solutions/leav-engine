@@ -37,11 +37,13 @@ describe('RecordRepo', () => {
         test('Should create a new record', async function () {
             const recordData = {created_at: 1519303348, modified_at: 1519303348};
             const createdRecordData = {
-                _id: 'users/222435651',
-                _rev: '_WSywvyC--_',
-                _key: 222435651,
-                created_at: 1519303348,
-                modified_at: 1519303348
+                new: {
+                    _id: 'users/222435651',
+                    _rev: '_WSywvyC--_',
+                    _key: 222435651,
+                    created_at: 1519303348,
+                    modified_at: 1519303348
+                }
             };
 
             const cleanCreatedRecordData = {
@@ -52,8 +54,7 @@ describe('RecordRepo', () => {
             };
 
             const mockDbCollec = {
-                save: global.__mockPromise(createdRecordData),
-                document: global.__mockPromise(createdRecordData)
+                save: global.__mockPromise(createdRecordData)
             };
 
             const mockDb = new Database();
@@ -73,7 +74,7 @@ describe('RecordRepo', () => {
 
             const createdRecord = await recRepo.createRecord({libraryId: 'test', recordData, ctx});
             expect(mockDbCollec.save.mock.calls.length).toBe(1);
-            expect(mockDbCollec.save).toBeCalledWith(recordData);
+            expect(mockDbCollec.save).toBeCalledWith(recordData, {returnNew: true});
 
             expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
             expect(mockDbUtils.cleanup.mock.calls[0][0].hasOwnProperty('library')).toBe(true);
