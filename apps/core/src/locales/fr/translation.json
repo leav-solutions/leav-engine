@@ -201,6 +201,7 @@
         "date_range": "Du {{from}} au {{to}}"
     },
     "tasks": {
+        "import_config_label": "Import du fichier de configuration {{filename}}",
         "import_label": "Import du fichier {{filename}}",
         "import_description": {
             "elements_process": "Import des éléments",

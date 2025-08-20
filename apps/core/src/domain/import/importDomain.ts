@@ -10,6 +10,8 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {IPermissionDomain} from 'domain/permission/permissionDomain';
+import {AwilixContainer} from 'awilix';
 import ExcelJS from 'exceljs';
 import fs from 'fs';
 import {i18n} from 'i18next';
@@ -22,8 +24,10 @@ import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
 import PermissionError from '../../errors/PermissionError';
+import {AdminPermissionsActions} from '../../_types/permissions';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {IDbUtils} from '../../infra/db/dbUtils';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {
@@ -44,6 +48,7 @@ import {ITreeElement} from '../../_types/tree';
 import {ISaveValue, IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import {IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
+import winston from 'winston';
 
 export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
 export const IMPORT_CONFIG_SCHEMA_PATH = path.resolve(__dirname, './import-config-schema.json');
@@ -75,6 +80,8 @@ interface IImportConfigParams {
     filepath: string;
     ctx: IQueryInfos;
     forceNoTask?: boolean;
+    clearDatabase?: boolean; // only for admin or system users for now
+    dbMigrate?: boolean;
 }
 
 export interface IImportDomain {
@@ -122,12 +129,16 @@ export interface IImportDomainDeps {
     'core.domain.tree': ITreeDomain;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.domain.tasksManager': ITasksManagerDomain;
+    'core.domain.permission': IPermissionDomain;
     'core.domain.helpers.updateTaskProgress': UpdateTaskProgress;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.cache.cacheService': ICachesService;
+    'core.infra.db.dbUtils': IDbUtils;
+    'core.depsManager': AwilixContainer;
     config: Config.IConfig;
     translator: i18n;
     'core.utils': IUtils;
+    'core.utils.logger'?: winston.Winston;
 }
 
 export default function ({
@@ -139,10 +150,14 @@ export default function ({
     'core.domain.tree': treeDomain,
     'core.domain.versionProfile': versionProfileDomain,
     'core.domain.tasksManager': tasksManagerDomain,
+    'core.domain.permission': permissionDomain,
     'core.domain.helpers.updateTaskProgress': updateTaskProgress,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.infra.cache.cacheService': cacheService,
+    'core.infra.db.dbUtils': dbUtils,
+    'core.depsManager': depsManager,
     'core.utils': utils,
+    'core.utils.logger': logger,
     config,
     translator
 }: IImportDomainDeps): IImportDomain {
@@ -666,7 +681,12 @@ export default function ({
 
     return {
         async importConfig(params: IImportConfigParams, task?: ITaskFuncParams): Promise<string | undefined> {
-            const {filepath, ctx, forceNoTask} = params;
+            const {filepath, ctx, forceNoTask, clearDatabase, dbMigrate} = params;
+
+            const canClearDatabase = permissionDomain.isAdminOrSystemUser(ctx);
+            if (!canClearDatabase && clearDatabase) {
+                throw new PermissionError(AdminPermissionsActions.IMPORT_CONFIG_CLEAR_DATABASE);
+            }
 
             if (!forceNoTask && typeof task?.id === 'undefined') {
                 const newTaskId = uuidv4();
@@ -675,7 +695,7 @@ export default function ({
                     {
                         id: newTaskId,
                         label: config.lang.available.reduce((labels, lang) => {
-                            labels[lang] = `${translator.t('tasks.import_label', {
+                            labels[lang] = `${translator.t('tasks.import_config_label', {
                                 lng: lang,
                                 filename: path.parse(filepath).name
                             })}`;
@@ -708,6 +728,17 @@ export default function ({
                 ctx
             );
 
+            if (clearDatabase) {
+                logger.info('Clear database before configuration import...');
+                await dbUtils.clearDatabase();
+            }
+
+            if (dbMigrate) {
+                logger.info('Execute database migration script before configuration import...');
+                await dbUtils.migrate(depsManager);
+            }
+
+            logger.info('Starting configuration import...');
             const reportFileName = nanoid() + '.config.report.txt';
             const reportFilePath = `${config.import.directory}/${reportFileName}`;
             const lang = ctx.lang || config.lang.default;

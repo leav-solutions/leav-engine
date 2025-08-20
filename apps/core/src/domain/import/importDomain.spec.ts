@@ -20,6 +20,9 @@ import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import {Action, ImportMode} from '../../_types/import';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import importDomain, {IImportDomainDeps} from './importDomain';
+import {IPermissionDomain} from 'domain/permission/permissionDomain';
+import mockLogger from '../../__tests__/mockers/logger';
+import PermissionError from '../../errors/PermissionError';
 
 const importMockConfig = {
     directory: path.resolve(__dirname, './imports'),
@@ -30,6 +33,10 @@ const importMockConfig = {
 const mockConfig: Mockify<Config.IConfig> = {
     import: importMockConfig as Config.IImport,
     lang: {available: ['fr', 'en'], default: 'fr'}
+};
+
+const mockPermissionDomain: Mockify<IPermissionDomain> = {
+    isAdminOrSystemUser: jest.fn().mockReturnValue(true)
 };
 
 const depsBase: ToAny<IImportDomainDeps> = {
@@ -45,6 +52,10 @@ const depsBase: ToAny<IImportDomainDeps> = {
     'core.domain.eventsManager': jest.fn(),
     'core.infra.cache.cacheService': jest.fn(),
     'core.utils': jest.fn(),
+    'core.domain.permission': mockPermissionDomain as IPermissionDomain,
+    'core.depsManager': {},
+    'core.infra.db.dbUtils': {},
+    'core.utils.logger': mockLogger,
     translator: {},
     config: {}
 };
@@ -88,6 +99,20 @@ describe('importDomain', () => {
             });
 
             await expect(imprtDomain.importConfig({filepath: 'path', ctx, forceNoTask: true})).rejects.toThrow();
+        });
+
+        test('Only admin or system user can clear database (for now)', async () => {
+            const imprtDomain = importDomain({
+                ...depsBase,
+                config: mockConfig as Config.IConfig,
+                translator: mockTranslator as i18n
+            });
+
+            mockPermissionDomain.isAdminOrSystemUser.mockReturnValue(false);
+
+            await expect(
+                imprtDomain.importConfig({filepath: 'path', clearDatabase: true, ctx, forceNoTask: true})
+            ).rejects.toThrow(PermissionError);
         });
 
         test('Invalid json schema', async () => {

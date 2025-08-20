@@ -84,16 +84,9 @@ export default function ({
         clearDatabase: boolean,
         ctx: IQueryInfos,
         forceNoTask?: boolean
-    ): Promise<string | undefined> => {
-        if (clearDatabase) {
-            await dbUtils.clearDatabase();
-        }
-
-        // Run DB migration before doing anything
-        await dbUtils.migrate(depsManager);
-
-        return importDomain.importConfig(
-            {filepath, forceNoTask, ctx},
+    ): Promise<string | undefined> =>
+        importDomain.importConfig(
+            {filepath, forceNoTask, clearDatabase, dbMigrate: true, ctx},
             {
                 ...(!forceNoTask && {
                     // Delete remaining import file.
@@ -115,7 +108,6 @@ export default function ({
                 })
             }
         );
-    };
 
     return {
         importConfig: async (filepath: string, clear: boolean): Promise<void> => {

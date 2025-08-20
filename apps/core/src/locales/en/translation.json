@@ -201,6 +201,7 @@
         "previews_status": "Preview status"
     },
     "tasks": {
+        "import_config_label": "Import configuration file {{filename}}",
         "import_label": "Import file {{filename}}",
         "import_description": {
             "elements_process": "Import of elements",

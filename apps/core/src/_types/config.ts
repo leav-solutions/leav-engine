@@ -42,7 +42,8 @@ export enum CoreMode {
     FILES_MANAGER = 'filesManager',
     INDEXATION_MANAGER = 'indexationManager',
     TASKS_MANAGER_MASTER = 'tasksManager:master',
-    TASKS_MANAGER_WORKER = 'tasksManager:worker'
+    TASKS_MANAGER_WORKER = 'tasksManager:worker',
+    CLI = 'cli' // default
 }
 
 export interface IServer {

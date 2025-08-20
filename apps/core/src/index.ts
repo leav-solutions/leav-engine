@@ -104,6 +104,7 @@ import {initOIDCClient} from './infra/oidc';
             case CoreMode.TASKS_MANAGER_WORKER:
                 await tasksManager.initWorker();
                 break;
+            case CoreMode.CLI:
             default:
                 await cli.run();
         }
