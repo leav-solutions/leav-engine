@@ -46,7 +46,7 @@ export const PanelsNavigationMenu: FunctionComponent<IPanelsNavigationMenuProps>
         }
     };
 
-    // TODO: When we will adress the issue where we can't display the library name in the id card, we should move this logic to a proper component (maybe inside <PanelIdCard />)
+    // TODO: When we will address the issue where we can't display the library name in the id card, we should move this logic to a proper component (maybe inside <PanelIdCard />)
     const tabLibraryId = currentParentTuple?.[0]?.libraryId;
     const panelLibraryId =
         currentPanel.content?.libraryId === '<props>'
@@ -56,7 +56,7 @@ export const PanelsNavigationMenu: FunctionComponent<IPanelsNavigationMenuProps>
 
     const libraryId = tabLibraryId ?? panelLibraryId ?? workspaceLibraryId;
 
-    const pageClx= cn(page, {
+    const pageClx = cn(page, {
         [sidePanel]: isInSidePanel
     });
 
@@ -72,7 +72,7 @@ export const PanelsNavigationMenu: FunctionComponent<IPanelsNavigationMenuProps>
                         <PanelIdCard libraryId={libraryId} currentRecordId={searchParams.get(recordSearchParamsName)} />
                     </div>
                     {tabItems.length !== 0 && (
-                        <KitTabs items={tabItems} onChange={onChangeTab} defaultKey={currentPanel.id} />
+                        <KitTabs items={tabItems} onChange={onChangeTab} activeKey={currentPanel.id} />
                     )}
                 </div>
             )}

@@ -5,23 +5,27 @@ import {renderHook} from '_ui/_tests/testUtils';
 import * as ReactRouter from 'react-router-dom';
 import {useNavigateToPanel} from '../useNavigateToPanel';
 import {INestedPanel} from '_ui/hooks/useIFrameMessenger/types';
+import {useLocation} from 'react-router-dom';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: jest.fn(),
     useOutletContext: jest.fn(),
-    useParams: jest.fn()
+    useParams: jest.fn(),
+    useLocation: jest.fn()
 }));
 
 describe('useNavigateToPanel', () => {
     const spyUseOutletContext = jest.spyOn(ReactRouter, 'useOutletContext');
     const spyUseNavigate = jest.spyOn(ReactRouter, 'useNavigate');
+    const spyUseLocation = jest.spyOn(ReactRouter, 'useLocation');
     const spyUseParamsMock = jest.spyOn(ReactRouter, 'useParams');
     const navigateMock = jest.fn();
 
     beforeEach(() => {
         jest.clearAllMocks();
         spyUseNavigate.mockReturnValue(navigateMock);
+        spyUseLocation.mockReturnValue({search: '?recordId=fakeId'} as any);
         spyUseOutletContext.mockReturnValue({
             currentPanel: {id: 'currentPanelId'},
             currentWorkspace: {id: 'workspaceId'}
@@ -36,7 +40,7 @@ describe('useNavigateToPanel', () => {
 
         current.navigateToPanel({panelId: 'panelIdTest'});
 
-        expect(navigateMock).toHaveBeenCalledWith('/panelIdTest');
+        expect(navigateMock).toHaveBeenCalledWith('/panelIdTest?recordId=fakeId');
     });
 
     describe('when data includes a panel', () => {
@@ -48,8 +52,15 @@ describe('useNavigateToPanel', () => {
             } = renderHook(() => useNavigateToPanel(addPanelMock));
 
             const panelData: INestedPanel = {
+                panelTargetId: 'panelIdChild',
+                recordId: '1234567890',
                 where: 'fullpage',
-                what: {id: 'panelIdTest', name: 'Test Panel', children: []}
+                what: {
+                    id: 'panelIdTest',
+                    children: [
+                        {id: 'panelIdChild', content: {type: 'custom', iframeSource: 'https://test.aristid.com'}}
+                    ]
+                }
             };
 
             current.navigateToPanel(panelData);
@@ -58,7 +69,7 @@ describe('useNavigateToPanel', () => {
                 workspaceId: 'workspaceId',
                 panelId: 'currentPanelId'
             });
-            expect(navigateMock).toHaveBeenCalledWith('/panelIdTest');
+            expect(navigateMock).toHaveBeenCalledWith('/panelIdChild?recordId=1234567890');
         });
 
         it('should call addPanel and navigate to the panel when where is popup', () => {
@@ -69,8 +80,15 @@ describe('useNavigateToPanel', () => {
             } = renderHook(() => useNavigateToPanel(addPanelMock));
 
             const panelData: INestedPanel = {
+                panelTargetId: 'panelIdChild',
+                recordId: '1234567890',
                 where: 'popup',
-                what: {id: 'popupPanelIdTest', name: 'Test Panel', children: []}
+                what: {
+                    id: 'popupPanelIdTest',
+                    children: [
+                        {id: 'panelIdChild', content: {type: 'custom', iframeSource: 'https://test.aristid.com'}}
+                    ]
+                }
             };
 
             current.navigateToPanel(panelData);
@@ -80,7 +98,7 @@ describe('useNavigateToPanel', () => {
                 panelId: 'currentPanelId'
             });
 
-            expect(navigateMock).toHaveBeenCalledWith('popup/popupPanelIdTest');
+            expect(navigateMock).toHaveBeenCalledWith('popup/panelIdChild?recordId=fakeId');
         });
 
         it('should call addPanel and navigate to the panel when where is slider', () => {
@@ -91,8 +109,15 @@ describe('useNavigateToPanel', () => {
             } = renderHook(() => useNavigateToPanel(addPanelMock));
 
             const panelData: INestedPanel = {
+                panelTargetId: 'panelIdChild',
+                recordId: '1234567890',
                 where: 'slider',
-                what: {id: 'sliderPanelIdTest', name: 'Test Panel', children: []}
+                what: {
+                    id: 'sliderPanelIdTest',
+                    children: [
+                        {id: 'panelIdChild', content: {type: 'custom', iframeSource: 'https://test.aristid.com'}}
+                    ]
+                }
             };
 
             current.navigateToPanel(panelData);
@@ -102,7 +127,35 @@ describe('useNavigateToPanel', () => {
                 panelId: 'currentPanelId'
             });
 
-            expect(navigateMock).toHaveBeenCalledWith('slider/sliderPanelIdTest');
+            expect(navigateMock).toHaveBeenCalledWith('slider/panelIdChild?recordId=fakeId');
+        });
+
+        it('should validate the nested panel structure before navigate (error case)', async () => {
+            const addPanelMock = jest.fn();
+            const spyOnConsoleError = jest.spyOn(console, 'error').mockImplementation(jest.fn);
+
+            const {
+                result: {current}
+            } = renderHook(() => useNavigateToPanel(addPanelMock));
+
+            const panelData: INestedPanel = {
+                panelTargetId: 'panelIdChild',
+                recordId: '1234567890',
+                where: 'slider',
+                what: {
+                    id: 'sliderPanelIdTest',
+                    name: 'wrong format',
+                    children: [
+                        {id: 'panelIdChild', content: {type: 'custom', iframeSource: 'https://test.aristid.com'}}
+                    ]
+                }
+            };
+
+            current.navigateToPanel(panelData);
+
+            expect(addPanelMock).toHaveBeenCalledTimes(0);
+            expect(navigateMock).toHaveBeenCalledTimes(0);
+            expect(spyOnConsoleError).toHaveBeenCalledTimes(1);
         });
     });
 });

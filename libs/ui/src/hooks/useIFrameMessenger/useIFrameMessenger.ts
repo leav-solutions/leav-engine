@@ -14,13 +14,12 @@ import {
 } from './types';
 import {encodeMessage, decodeMessage, getExposedMethods, initClientHandlers} from './messageHandlers';
 
-/**
- * This is the core of useIFrameMessenger. should be used for top level apps, such as app-studio
- * For client apps (apps that need to consume the messenger), please use the useIFrameMessengerClient
- */
-
 export {IUseIFrameMessengerOptions};
 
+/**
+ * This is the core of `useIFrameMessenger`. Should be used for top-level apps, such as **app-studio**.
+ * For client apps (apps that need to consume the messenger), please use the `useIFrameMessengerClient`
+ */
 export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
     const registry = useRef<Record<string, Window>>({});
     const selfId = useRef(options?.id ?? uuid());
@@ -56,7 +55,7 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
             } else if (frameId === 'all') {
                 Object.entries(registry.current).forEach(([id, frame]) => {
                     if (id !== message.__frameId) {
-                        // DO not send message to sender
+                        // DO not send the message to the sender
                         frame.postMessage(encodeMessage({...message, __frameId: selfId.current}), '*');
                     }
                 });

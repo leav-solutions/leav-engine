@@ -32,30 +32,35 @@ export type SidePanelFormMessage = IMessageBase & {
     data: ComponentPropsWithKey<typeof EditRecordModal>;
     overrides?: string[];
 };
+
 export type ModalConfirmMessage = IMessageBase & {
     type: 'modal-confirm';
     id: string;
     data: IKitConfirmDialog;
     overrides?: string[];
 };
+
 export type ModalFormMessage = IMessageBase & {
     type: 'modal-form';
     id: string;
     data: ComponentPropsWithKey<typeof EditRecordModal> | {open: false};
     overrides?: string[];
 };
+
 export type AlertMessage = IMessageBase & {
     type: 'alert';
     id: string;
     data: ToastedAlertProps;
     overrides?: string[];
 };
+
 export type NotificationMessage = IMessageBase & {
     type: 'notification';
     id: string;
     data: ComponentPropsWithKey<typeof KitNotification>;
     overrides?: string[];
 };
+
 export type ChangeLanguageMessage = IMessageBase & {
     type: 'change-language';
     language: string;
@@ -84,6 +89,8 @@ type PanelId = z.infer<typeof PanelIdSchema>;
 type ItemActions = z.infer<typeof ItemActionsSchema>;
 
 export interface INestedPanel {
+    panelTargetId?: PanelId;
+    recordId?: string;
     where: ItemActions[number]['where'];
     what: Panel & {recordId?: string};
 }
