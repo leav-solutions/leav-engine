@@ -23,7 +23,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@types/amqplib": "0.8.2",
+        "@types/amqplib": "0.10.7",
         "@types/jest": "29.0.3",
         "@types/node": "18.7.18",
         "jest": "29.0.3",
@@ -40,7 +40,7 @@
         "@leav/message-broker": "workspace:libs/message-broker",
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
-        "amqplib": "0.8.0",
+        "amqplib": "0.10.9",
         "joi": "17.11.0",
         "lodash": "4.17.21"
     }

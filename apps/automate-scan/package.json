@@ -27,7 +27,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@types/amqplib": "0.8.2",
+        "@types/amqplib": "0.10.7",
         "@types/chokidar": "2.1.3",
         "@types/jest": "24.9.1",
         "@types/node": "18.7.18",
@@ -45,7 +45,7 @@
         "@leav/config-manager": "workspace:libs/config-manager",
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
-        "amqplib": "0.8.0",
+        "amqplib": "0.10.9",
         "app-root-path": "3.1.0",
         "chokidar": "3.5.3",
         "lodash": "4.17.21",

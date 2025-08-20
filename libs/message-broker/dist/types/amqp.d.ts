@@ -12,4 +12,4 @@ export interface IAmqpConn {
 export interface IMessageBody {
     [key: string]: any;
 }
-export declare type onMessageFunc = (msg: amqp.ConsumeMessage) => Promise<void>;
+export type onMessageFunc = (msg: amqp.ConsumeMessage) => Promise<void>;

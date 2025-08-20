@@ -37,7 +37,7 @@
     "author": "",
     "license": "LGPL3",
     "devDependencies": {
-        "@types/amqplib": "0.8.2",
+        "@types/amqplib": "0.10.7",
         "@types/cacache": "15.0.1",
         "@types/compression": "1.7.5",
         "@types/debug": "0.0.31",
@@ -77,7 +77,7 @@
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
         "add-filename-increment": "1.0.0",
-        "amqplib": "0.8.0",
+        "amqplib": "0.10.9",
         "app-root-path": "3.1.0",
         "arangojs": "8.1.0",
         "awilix": "3.0.9",

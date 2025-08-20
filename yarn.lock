@@ -5,17 +5,6 @@ __metadata:
   version: 8
   cacheKey: 10
 
-"@acuminous/bitsyntax@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "@acuminous/bitsyntax@npm:0.1.2"
-  dependencies:
-    buffer-more-ints: "npm:~1.0.0"
-    debug: "npm:^4.3.4"
-    safe-buffer: "npm:~5.1.2"
-  checksum: abdc4313ae08e52fb8eeaebf53759c3b9a38983a696d77c46c24de1c065247355a1b5c02ad3618700d3fb3628ccf3ec39227a080bd1fe7adc864144ccf84b0cc
-  languageName: node
-  linkType: hard
-
 "@adobe/css-tools@npm:^4.0.1":
   version: 4.3.2
   resolution: "@adobe/css-tools@npm:4.3.2"
@@ -647,10 +636,10 @@ __metadata:
   resolution: "@aristid/leav-types@workspace:libs/types"
   dependencies:
     "@leav/utils": "workspace:libs/utils"
-    "@types/amqplib": "npm:^0"
+    "@types/amqplib": "npm:0.10.7"
     "@types/express": "npm:5.0.0"
     "@types/jest": "npm:29.5.14"
-    amqplib: "npm:0.10.5"
+    amqplib: "npm:0.10.9"
     arangojs: "npm:8.1.0"
     awilix: "npm:12.0.4"
     i18next: "npm:24.2.0"
@@ -10183,9 +10172,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/message-broker@workspace:libs/message-broker"
   dependencies:
-    "@types/amqplib": "npm:0.8.2"
+    "@types/amqplib": "npm:0.10.7"
     "@types/jest": "npm:29.0.2"
-    amqplib: "npm:0.10.3"
+    amqplib: "npm:0.10.9"
     eslint: "npm:8.57.0"
     jest: "npm:29.0.3"
     ts-jest: "npm:29.0.1"
@@ -12103,22 +12092,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/amqplib@npm:0.8.2":
-  version: 0.8.2
-  resolution: "@types/amqplib@npm:0.8.2"
-  dependencies:
-    "@types/bluebird": "npm:*"
-    "@types/node": "npm:*"
-  checksum: c770d1b815f8225dbe4dc5b99f4050f924e473d7f9859baeea1469afb6323175499fcd16cfa1fd5beb35d83088f1f9c2c00c0a6c5b41fce01389f21b8a09d845
-  languageName: node
-  linkType: hard
-
-"@types/amqplib@npm:^0":
-  version: 0.10.6
-  resolution: "@types/amqplib@npm:0.10.6"
+"@types/amqplib@npm:0.10.7":
+  version: 0.10.7
+  resolution: "@types/amqplib@npm:0.10.7"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 63548c4d0e0fc6f09db04c94084116d6dfdd84ce82fdff82cb89518b1e4cd9e94f4a5768913ee5c2dcc17f390bd890fed534c0f17aaf84aa2049e96841a08350
+  checksum: a16a23283aa167f4d4ab46e5e0653f6009f673bdc39cc18aba8d11a81bac5fc1becc9cd7a6b40191b111d5df59a36e7cb2b07117b7035e8adb7e80a06e4c41dd
   languageName: node
   linkType: hard
 
@@ -12201,13 +12180,6 @@ __metadata:
   dependencies:
     "@babel/types": "npm:^7.3.0"
   checksum: dc3fa66e5a51e2e448f08d31d2516c99f3bc8cf60ca646ae1722947d38384955adbf757edc6af8040c570225f126c1edc4e80e4984a8f64d0f82b1f7dff17aee
-  languageName: node
-  linkType: hard
-
-"@types/bluebird@npm:*":
-  version: 3.5.36
-  resolution: "@types/bluebird@npm:3.5.36"
-  checksum: 74d3870a745a3a70a5f516b8a85746938506b013ca4f8722b4f9b252860efd645d7ce7599dca8e0c86b4145c290f67daa812ad6c9274cc1b450d690b60de7b19
   languageName: node
   linkType: hard
 
@@ -14247,40 +14219,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"amqplib@npm:0.10.3":
-  version: 0.10.3
-  resolution: "amqplib@npm:0.10.3"
+"amqplib@npm:0.10.9":
+  version: 0.10.9
+  resolution: "amqplib@npm:0.10.9"
   dependencies:
-    "@acuminous/bitsyntax": "npm:^0.1.2"
-    buffer-more-ints: "npm:~1.0.0"
-    readable-stream: "npm:1.x >=1.1.9"
-    url-parse: "npm:~1.5.10"
-  checksum: ec96c384e659cda401ecd512b94aa0d5a0632a8c0a78c1d054bc4ac34d18f512fc9b150ae906f70701d36cc22bd337fe6bd127f65e0c294731b6c10350c4830d
-  languageName: node
-  linkType: hard
-
-"amqplib@npm:0.10.5":
-  version: 0.10.5
-  resolution: "amqplib@npm:0.10.5"
-  dependencies:
-    "@acuminous/bitsyntax": "npm:^0.1.2"
     buffer-more-ints: "npm:~1.0.0"
     url-parse: "npm:~1.5.10"
-  checksum: bcf4bda790f8a356ba4c7d3054ae3ee397a48d6c4d51f1015f703dd7205c097ba9772577567a06eb470d13e0becdc4163c857299e50eb5a4bc888e3007832f87
-  languageName: node
-  linkType: hard
-
-"amqplib@npm:0.8.0":
-  version: 0.8.0
-  resolution: "amqplib@npm:0.8.0"
-  dependencies:
-    bitsyntax: "npm:~0.1.0"
-    bluebird: "npm:^3.7.2"
-    buffer-more-ints: "npm:~1.0.0"
-    readable-stream: "npm:1.x >=1.1.9"
-    safe-buffer: "npm:~5.2.1"
-    url-parse: "npm:~1.5.1"
-  checksum: bebc60f9ae6e983b01113b9167039ca4c83f9169cbb2936eece5d32f66ecec6d8dded506aa38aa862db1d4d893b457ec911f47a77e711de15f8419f06baa179b
+  checksum: 99f8cb123cd92903b314e2c829cee080c1d86e702c827624ff7dca4422af23d57301b193441796c0f52ad3544f177484cfe18be25f5d039f80ec7322eedcea5b
   languageName: node
   linkType: hard
 
@@ -15605,11 +15550,11 @@ __metadata:
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
-    "@types/amqplib": "npm:0.8.2"
+    "@types/amqplib": "npm:0.10.7"
     "@types/chokidar": "npm:2.1.3"
     "@types/jest": "npm:24.9.1"
     "@types/node": "npm:18.7.18"
-    amqplib: "npm:0.8.0"
+    amqplib: "npm:0.10.9"
     app-root-path: "npm:3.1.0"
     chokidar: "npm:3.5.3"
     dateformat: "npm:5.0.3"
@@ -16370,17 +16315,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bitsyntax@npm:~0.1.0":
-  version: 0.1.0
-  resolution: "bitsyntax@npm:0.1.0"
-  dependencies:
-    buffer-more-ints: "npm:~1.0.0"
-    debug: "npm:~2.6.9"
-    safe-buffer: "npm:~5.1.2"
-  checksum: a03da5da5ed97e3cbfb1567b927a6ff14dda77810e78ce71c9b5a7ac50a225664d3956d38d69a5def46e052a58652887d9a20fc1f7ad93d05938024aa704ed80
-  languageName: node
-  linkType: hard
-
 "bl@npm:^4.0.3, bl@npm:^4.1.0":
   version: 4.1.0
   resolution: "bl@npm:4.1.0"
@@ -16389,13 +16323,6 @@ __metadata:
     inherits: "npm:^2.0.4"
     readable-stream: "npm:^3.4.0"
   checksum: b7904e66ed0bdfc813c06ea6c3e35eafecb104369dbf5356d0f416af90c1546de3b74e5b63506f0629acf5e16a6f87c3798f16233dcff086e9129383aa02ab55
-  languageName: node
-  linkType: hard
-
-"bluebird@npm:^3.7.2":
-  version: 3.7.2
-  resolution: "bluebird@npm:3.7.2"
-  checksum: 007c7bad22c5d799c8dd49c85b47d012a1fe3045be57447721e6afbd1d5be43237af1db62e26cb9b0d9ba812d2e4ca3bac82f6d7e016b6b88de06ee25ceb96e7
   languageName: node
   linkType: hard
 
@@ -18129,7 +18056,7 @@ __metadata:
     "@leav/message-broker": "workspace:libs/message-broker"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
-    "@types/amqplib": "npm:0.8.2"
+    "@types/amqplib": "npm:0.10.7"
     "@types/cacache": "npm:15.0.1"
     "@types/compression": "npm:1.7.5"
     "@types/debug": "npm:0.0.31"
@@ -18145,7 +18072,7 @@ __metadata:
     "@types/winston": "npm:2.3.9"
     "@types/ws": "npm:8.5.3"
     add-filename-increment: "npm:1.0.0"
-    amqplib: "npm:0.8.0"
+    amqplib: "npm:0.10.9"
     app-root-path: "npm:3.1.0"
     arangojs: "npm:8.1.0"
     awilix: "npm:3.0.9"
@@ -18867,7 +18794,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:2.6.9, debug@npm:^2.2.0, debug@npm:^2.3.3, debug@npm:^2.6.9, debug@npm:~2.6.9":
+"debug@npm:2.6.9, debug@npm:^2.2.0, debug@npm:^2.3.3, debug@npm:^2.6.9":
   version: 2.6.9
   resolution: "debug@npm:2.6.9"
   dependencies:
@@ -23816,7 +23743,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inherits@npm:2, inherits@npm:2.0.4, inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:^2.0.4, inherits@npm:~2.0.0, inherits@npm:~2.0.1, inherits@npm:~2.0.3":
+"inherits@npm:2, inherits@npm:2.0.4, inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:^2.0.4, inherits@npm:~2.0.0, inherits@npm:~2.0.3":
   version: 2.0.4
   resolution: "inherits@npm:2.0.4"
   checksum: cd45e923bee15186c07fa4c89db0aace24824c482fb887b528304694b2aa6ff8a898da8657046a5dcf3e46cd6db6c61629551f9215f208d7c3f157cf9b290521
@@ -28685,10 +28612,10 @@ __metadata:
     "@leav/message-broker": "workspace:libs/message-broker"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
-    "@types/amqplib": "npm:0.8.2"
+    "@types/amqplib": "npm:0.10.7"
     "@types/jest": "npm:29.0.3"
     "@types/node": "npm:18.7.18"
-    amqplib: "npm:0.8.0"
+    amqplib: "npm:0.10.9"
     jest: "npm:29.0.3"
     joi: "npm:17.11.0"
     lint-staged: "npm:9.5.0"
@@ -31767,11 +31694,11 @@ __metadata:
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
-    "@types/amqplib": "npm:0.8.2"
+    "@types/amqplib": "npm:0.10.7"
     "@types/jest": "npm:29.0.2"
     "@types/node": "npm:18.7.18"
     "@types/uuid": "npm:3.4.10"
-    amqplib: "npm:0.10.3"
+    amqplib: "npm:0.10.9"
     jest: "npm:29.0.3"
     lint-staged: "npm:9.5.0"
     nodemon: "npm:1.19.4"
@@ -33852,18 +33779,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:1.x >=1.1.9":
-  version: 1.1.14
-  resolution: "readable-stream@npm:1.1.14"
-  dependencies:
-    core-util-is: "npm:~1.0.0"
-    inherits: "npm:~2.0.1"
-    isarray: "npm:0.0.1"
-    string_decoder: "npm:~0.10.x"
-  checksum: 1aa2cf4bd02f9ab3e1d57842a43a413b52be5300aa089ad1f2e3cea00684532d73edc6a2ba52b0c3210d8b57eb20a695a6d2b96d1c6085ee979c6021ad48ad20
-  languageName: node
-  linkType: hard
-
 "readable-stream@npm:^2.0.0, readable-stream@npm:^2.0.2, readable-stream@npm:^2.0.5, readable-stream@npm:~2.3.6":
   version: 2.3.7
   resolution: "readable-stream@npm:2.3.7"
@@ -34877,14 +34792,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"safe-buffer@npm:5.1.2, safe-buffer@npm:~5.1.0, safe-buffer@npm:~5.1.1, safe-buffer@npm:~5.1.2":
+"safe-buffer@npm:5.1.2, safe-buffer@npm:~5.1.0, safe-buffer@npm:~5.1.1":
   version: 5.1.2
   resolution: "safe-buffer@npm:5.1.2"
   checksum: 7eb5b48f2ed9a594a4795677d5a150faa7eb54483b2318b568dc0c4fc94092a6cce5be02c7288a0500a156282f5276d5688bce7259299568d1053b2150ef374a
   languageName: node
   linkType: hard
 
-"safe-buffer@npm:5.2.1, safe-buffer@npm:^5.0.1, safe-buffer@npm:~5.2.0, safe-buffer@npm:~5.2.1":
+"safe-buffer@npm:5.2.1, safe-buffer@npm:^5.0.1, safe-buffer@npm:~5.2.0":
   version: 5.2.1
   resolution: "safe-buffer@npm:5.2.1"
   checksum: 32872cd0ff68a3ddade7a7617b8f4c2ae8764d8b7d884c651b74457967a9e0e886267d3ecc781220629c44a865167b61c375d2da6c720c840ecd73f45d5d9451
@@ -36126,13 +36041,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"string_decoder@npm:~0.10.x":
-  version: 0.10.31
-  resolution: "string_decoder@npm:0.10.31"
-  checksum: cc43e6b1340d4c7843da0e37d4c87a4084c2342fc99dcf6563c3ec273bb082f0cbd4ebf25d5da19b04fb16400d393885fda830be5128e1c416c73b5a6165f175
-  languageName: node
-  linkType: hard
-
 "string_decoder@npm:~1.1.1":
   version: 1.1.1
   resolution: "string_decoder@npm:1.1.1"
@@ -36452,11 +36360,11 @@ __metadata:
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/message-broker": "workspace:libs/message-broker"
     "@leav/utils": "workspace:*"
-    "@types/amqplib": "npm:0.8.2"
+    "@types/amqplib": "npm:0.10.7"
     "@types/jest": "npm:29.0.2"
     "@types/joi": "npm:14.3.4"
     "@types/node": "npm:18.7.18"
-    amqplib: "npm:0.10.3"
+    amqplib: "npm:0.10.9"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-client: "npm:2.6.10"
     apollo-link: "npm:1.2.14"
@@ -38219,7 +38127,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"url-parse@npm:^1.5.3, url-parse@npm:~1.5.1, url-parse@npm:~1.5.10":
+"url-parse@npm:^1.5.3, url-parse@npm:~1.5.10":
   version: 1.5.10
   resolution: "url-parse@npm:1.5.10"
   dependencies:

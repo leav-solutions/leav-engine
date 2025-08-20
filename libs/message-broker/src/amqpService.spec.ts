@@ -23,7 +23,7 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     close: jest.fn()
 };
 
-const mockAmqpConnection: Mockify<amqp.Connection> = {
+const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
     close: jest.fn(),
     createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
 };

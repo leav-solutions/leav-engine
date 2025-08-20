@@ -2,11 +2,11 @@ import * as amqp from 'amqplib';
 import { IAmqp, onMessageFunc } from './types/amqp';
 export interface IAmqpService {
     publisher: {
-        connection: amqp.Connection;
+        connection: amqp.ChannelModel;
         channel: amqp.ConfirmChannel;
     };
     consumer: {
-        connection: amqp.Connection;
+        connection: amqp.ChannelModel;
         channel: amqp.ConfirmChannel;
     };
     publish(exchange: string, routingKey: string, msg: string, priority?: number): Promise<void>;

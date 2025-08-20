@@ -5,8 +5,8 @@ import * as amqp from 'amqplib';
 import {IAmqp, onMessageFunc} from './types/amqp';
 
 export interface IAmqpService {
-    publisher: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
-    consumer: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
+    publisher: {connection: amqp.ChannelModel; channel: amqp.ConfirmChannel};
+    consumer: {connection: amqp.ChannelModel; channel: amqp.ConfirmChannel};
     publish(exchange: string, routingKey: string, msg: string, priority?: number): Promise<void>;
     consume(
         queue: string,
@@ -22,8 +22,8 @@ interface IDeps {
 }
 
 export default async function ({config}: IDeps): Promise<IAmqpService> {
-    let publisher: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
-    let consumer: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
+    let publisher: {connection: amqp.ChannelModel; channel: amqp.ConfirmChannel};
+    let consumer: {connection: amqp.ChannelModel; channel: amqp.ConfirmChannel};
 
     const _init = async () => {
         const publisherConnection = await amqp.connect(config.connOpt);

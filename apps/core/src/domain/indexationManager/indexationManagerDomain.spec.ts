@@ -26,7 +26,7 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     prefetch: jest.fn()
 };
 
-const mockAmqpConnection: Mockify<amqp.Connection> = {
+const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
     close: jest.fn(),
     createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
 };
@@ -86,7 +86,7 @@ describe('Indexation Manager', () => {
         const mockAmqpService: Mockify<IAmqpService> = {
             consume: jest.fn(),
             consumer: {
-                connection: mockAmqpConnection as amqp.Connection,
+                connection: mockAmqpConnection as amqp.ChannelModel,
                 channel: mockAmqpChannel as amqp.ConfirmChannel
             }
         };
