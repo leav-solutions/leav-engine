@@ -23,22 +23,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// Copyright LEAV Solutions 2017
+exports.default = default_1;
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const amqp = __importStar(require("amqplib"));
 async function default_1({ config }) {
     let publisher;
     let consumer;
-    let retries = 0;
     const _init = async () => {
         const publisherConnection = await amqp.connect(config.connOpt);
         const publisherChannel = await publisherConnection.createConfirmChannel();
         await publisherChannel.assertExchange(config.exchange, config.type);
-        await publisherChannel.prefetch(config.prefetch);
         const consumerConnection = await amqp.connect(config.connOpt);
         const consumerChannel = await consumerConnection.createConfirmChannel();
-        await consumerChannel.assertExchange(config.exchange, config.type);
         await consumerChannel.prefetch(config.prefetch);
         publisher = { connection: publisherConnection, channel: publisherChannel };
         consumer = { connection: consumerConnection, channel: consumerChannel };
@@ -47,47 +45,42 @@ async function default_1({ config }) {
     const publish = async (exchange, routingKey, msg, priority) => {
         try {
             await publisher.channel.checkExchange(exchange);
-            const response = publisher.channel.publish(exchange, routingKey, Buffer.from(msg), { persistent: true, priority });
-            await publisher.channel.waitForConfirms();
-            retries = 0;
-            return response;
+            await new Promise((resolve, reject) => {
+                publisher.channel.publish(exchange, routingKey, Buffer.from(msg), {
+                    persistent: true,
+                    priority
+                }, (err, ok) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(ok);
+                    }
+                });
+            });
         }
         catch (e) {
-            if (!retries) {
-                retries += 1;
-                try {
-                    await _init();
-                    await publish(exchange, routingKey, msg, priority);
-                }
-                catch (err) {
-                    throw new Error('2 tries reached. Stop sync.');
-                }
-            }
-            else {
-                throw new Error('2 tries reached. Stop sync.');
-            }
+            throw new Error(`Fail to publish message to ${exchange}.`, { cause: e });
         }
     };
-    const consume = async (queue, routingKey, onMessage, consumerTag) => {
-        return consumer.channel.consume(queue, async (msg) => {
-            if (!msg) {
-                return;
-            }
-            try {
-                await onMessage(msg);
-            }
-            catch (e) {
-                console.error(process.pid, 'err amqp', e);
-                console.error(`[${queue}/${routingKey}] Error while processing message:
+    const consume = async (queue, routingKey, onMessage, consumerTag) => consumer.channel.consume(queue, async (msg) => {
+        if (!msg) {
+            return;
+        }
+        try {
+            await onMessage(msg);
+        }
+        catch (e) {
+            console.error(process.pid, 'err amqp', e);
+            console.error(`[${queue}/${routingKey}] Error while processing message:
                         ${e}.
                         Message was: ${msg.content.toString()}
                     `);
-            }
-            finally {
-                // TODO: add ack if msg has not been acked
-            }
-        }, { consumerTag });
-    };
+        }
+        finally {
+            // TODO: add ack if msg has not been acked
+        }
+    }, { consumerTag });
     const close = async () => {
         await publisher.channel.close();
         await publisher.connection.close();
@@ -102,5 +95,4 @@ async function default_1({ config }) {
         close
     };
 }
-exports.default = default_1;
 //# sourceMappingURL=amqpService.js.map

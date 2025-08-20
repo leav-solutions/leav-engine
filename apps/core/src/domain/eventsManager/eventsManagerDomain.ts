@@ -14,8 +14,8 @@ import {Errors} from '../../_types/errors';
 import {IDbPayloadInternal} from '_types/events';
 
 export interface IEventsManagerDomain {
-    sendDatabaseEvent<DBPayloadAction extends EventAction>(payload: IDbPayloadInternal<DBPayloadAction>, ctx: IQueryInfos): Promise<boolean>;
-    sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<boolean>;
+    sendDatabaseEvent<DBPayloadAction extends EventAction>(payload: IDbPayloadInternal<DBPayloadAction>, ctx: IQueryInfos): Promise<void>;
+    sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void>;
     subscribe(triggersName: string[]): AsyncIterator<any>;
     initPubSubEventsConsumer(): Promise<void>;
     initCustomConsumer(
@@ -86,7 +86,7 @@ export default function ({
         await pubsub.publish(pubSubEvent.payload.triggerName, publishedPayload);
     };
 
-    const _send = (routingKey: string, payload: any, ctx: IQueryInfos): Promise<boolean> =>
+    const _send = (routingKey: string, payload: any, ctx: IQueryInfos): Promise<void> =>
         amqpService
             .publish(
                 config.amqp.exchange,
@@ -103,7 +103,6 @@ export default function ({
             )
             .catch(e => {
                 console.error('Error while sending event to rabbitMQ', e);
-                return false;
             });
 
     return {

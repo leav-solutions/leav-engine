@@ -7,7 +7,7 @@ import {IAmqp, onMessageFunc} from './types/amqp';
 export interface IAmqpService {
     publisher: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
     consumer: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
-    publish(exchange: string, routingKey: string, msg: string, priority?: number): Promise<boolean>;
+    publish(exchange: string, routingKey: string, msg: string, priority?: number): Promise<void>;
     consume(
         queue: string,
         routingKey: string,
@@ -24,17 +24,14 @@ interface IDeps {
 export default async function ({config}: IDeps): Promise<IAmqpService> {
     let publisher: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
     let consumer: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
-    let retries = 0;
 
     const _init = async () => {
         const publisherConnection = await amqp.connect(config.connOpt);
         const publisherChannel = await publisherConnection.createConfirmChannel();
         await publisherChannel.assertExchange(config.exchange, config.type);
-        await publisherChannel.prefetch(config.prefetch);
 
         const consumerConnection = await amqp.connect(config.connOpt);
         const consumerChannel = await consumerConnection.createConfirmChannel();
-        await consumerChannel.assertExchange(config.exchange, config.type);
         await consumerChannel.prefetch(config.prefetch);
 
         publisher = {connection: publisherConnection, channel: publisherChannel};
@@ -43,30 +40,29 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
 
     await _init();
 
-    const publish: IAmqpService['publish'] = async (exchange, routingKey, msg, priority): Promise<boolean> => {
+    const publish: IAmqpService['publish'] = async (exchange, routingKey, msg, priority): Promise<void> => {
         try {
             await publisher.channel.checkExchange(exchange);
-            const response = publisher.channel.publish(exchange, routingKey, Buffer.from(msg), {
-                persistent: true,
-                priority
+            await new Promise((resolve, reject) => {
+                publisher.channel.publish(
+                    exchange,
+                    routingKey,
+                    Buffer.from(msg),
+                    {
+                        persistent: true,
+                        priority
+                    },
+                    (err, ok) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(ok);
+                        }
+                    }
+                );
             });
-            await publisher.channel.waitForConfirms();
-            retries = 0;
-
-            return response;
         } catch (e) {
-            if (!retries) {
-                retries += 1;
-
-                try {
-                    await _init();
-                    return await publish(exchange, routingKey, msg, priority);
-                } catch (err) {
-                    throw new Error('2 tries reached. Stop sync.');
-                }
-            } else {
-                throw new Error('2 tries reached. Stop sync.');
-            }
+            throw new Error(`Fail to publish message to ${exchange}.`, {cause: e});
         }
     };
 

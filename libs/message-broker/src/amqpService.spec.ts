@@ -15,7 +15,9 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertQueue: jest.fn(),
     bindQueue: jest.fn(),
     consume: jest.fn(),
-    publish: jest.fn(),
+    publish: jest.fn().mockImplementation((exchange, routingKey, content, options, cb) => {
+        cb(null, true);
+    }),
     waitForConfirms: jest.fn(),
     prefetch: jest.fn(),
     close: jest.fn()
@@ -60,7 +62,6 @@ describe('amqp', () => {
 
         expect(mockAmqpChannel.checkExchange).toBeCalled();
         expect(mockAmqpChannel.publish).toBeCalled();
-        expect(mockAmqpChannel.waitForConfirms).toBeCalled();
     });
 
     test('Publish a message with priority', async () => {
