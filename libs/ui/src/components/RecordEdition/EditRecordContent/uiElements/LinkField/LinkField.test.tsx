@@ -292,7 +292,6 @@ describe('LinkField', () => {
             expect(callArgs.isHookUsed).toBe(true);
             expect(callArgs.isReadOnly).toBe(false);
             expect(callArgs.isFieldInError).toBe(false);
-            expect(callArgs.hasNoValue).toBe(false);
         });
 
         it('should call useLinkRecordsInEdition with isReadOnly to true', () => {

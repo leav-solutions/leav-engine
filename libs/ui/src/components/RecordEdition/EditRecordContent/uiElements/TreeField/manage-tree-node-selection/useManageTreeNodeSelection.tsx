@@ -10,6 +10,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {APICallStatus, DeleteMultipleValuesFunc, DeleteValueFunc, SubmitValueFunc} from '../../../_types';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {SelectTreeNodeModal} from './SelectTreeNodeModal';
+import {Form} from 'antd';
 
 interface IUseManageTreeNodeSelectionProps {
     modaleTitle: string;
@@ -39,19 +40,25 @@ export const useManageTreeNodeSelection = ({
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
 
+    // Used to force the input error display when a value is set
+    const treeNodeValue = Form.useWatch(attribute.id, form);
+
     const [isModalHidden, setIsModalHidden] = useState(true);
 
     useEffect(() => {
-        if (backendValues.length === 0 && attribute.required) {
-            // Set the field in error when TreeField is displayed for the first time. Otherwise, errors will be handled by other functions in this file.
+        if (!attribute.required || (attribute.required && backendValues.length > 0)) {
             form.setFields([
                 {
                     name: attribute.id,
-                    errors: [t('errors.standard_field_required')]
+                    value: backendValues.map(({treeValue}) => treeValue.id),
+                    errors: []
                 }
             ]);
+        } else {
+            // Set the field in error when TreeField is displayed for the first time. Otherwise, errors will be handled by other functions in this file.
+            form.setFields([{name: attribute.id, errors: [t('errors.standard_field_required')]}]);
         }
-    }, []);
+    }, [backendValues, attribute, treeNodeValue]);
 
     const _closeModal: ComponentProps<typeof SelectTreeNodeModal>['onClose'] = () => {
         setIsModalHidden(true);

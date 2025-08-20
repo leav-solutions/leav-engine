@@ -156,7 +156,6 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         isReadOnly,
         isFieldInError,
         tagDisplayMode: settings.tagDisplayMode,
-        hasNoValue: backendValues.length === 0,
         onDeleteMultipleValues
     });
 

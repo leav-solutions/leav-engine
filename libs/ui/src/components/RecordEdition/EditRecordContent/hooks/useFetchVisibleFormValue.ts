@@ -28,7 +28,6 @@ export const useFetchVisibleFormValue = (
     });
 
     // Get all elements visible
-    // Exclude uiElement of a type link
     const getElementIdsVisible = (): string[] => {
         // Find element ids from record.elements that are in the first page of a tab or are not a tab
         const containerToExclude = [];
@@ -44,7 +43,6 @@ export const useFetchVisibleFormValue = (
 
         // Find all elements visible
         return recordForm.elements
-            .filter(e => e.uiElementType !== FormUIElementTypes.LINK)
             .filter(
                 e =>
                     // filters all elements where containers id contains /${e.id}

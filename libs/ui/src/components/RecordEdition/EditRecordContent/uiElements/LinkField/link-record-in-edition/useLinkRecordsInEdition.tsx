@@ -52,7 +52,6 @@ interface ILinkRecordsInCreationProps {
     isReadOnly: boolean;
     isFieldInError: boolean;
     tagDisplayMode: boolean;
-    hasNoValue: boolean;
     onDeleteMultipleValues: DeleteMultipleValuesFunc;
 }
 
@@ -85,6 +84,7 @@ export const useLinkRecordsInEdition = ({
     const [fullTextSearchAttributes, setFullTextSearchAttributes] = useState<FullTextAttribute[]>([]);
     const [linkedIds, setLinkIds] = useState<string[]>([]);
     const [selectOptions, setSelectOptions] = useState<IKitOption[]>([]);
+    const [totalCountInExplorer, setTotalCountInExplorer] = useState<number>(0);
     /**
      * Keys is joined record id (e.g. thematic), values is join record Id (e.g. structure_item)
      * Necessary to get the id_value of the link when we want to delete a value
@@ -233,18 +233,16 @@ export const useLinkRecordsInEdition = ({
     }, [libraryItems]);
 
     useEffect(() => {
-        if (isHookUsed && backendValues.length === 0 && attribute.required) {
-            // Set field in error when LinkField is displayed for the first time. Otherwise, errors will be handled by _removeValues() or _handleExplorerLinkValue()
-            form.setFields([
-                {
-                    name: attribute.id,
-                    errors: [t('errors.standard_field_required')]
-                }
-            ]);
+        if (!totalCountInExplorer && attribute.required) {
+            form.setFields([{name: attribute.id, errors: [t('errors.standard_field_required')]}]);
+        } else {
+            form.setFields([{name: attribute.id, errors: []}]);
         }
-    }, []);
+    }, [totalCountInExplorer]);
 
     const _handleExplorerRef = (ref: IExplorerRef) => {
+        setTotalCountInExplorer(ref?.totalCount);
+
         if (_shouldUpdateExplorerActions(ref, explorerActions)) {
             setExplorerActions({
                 createAction: ref?.createAction,
