@@ -45,7 +45,6 @@ export const AddSidePanelForSliderPanel: FunctionComponent = ({children}) => {
                       }, 300);
                   }}
                   closeOnEsc
-                  closeOnOutsideClick
               >
                   {children}
               </KitSidePanel>,
