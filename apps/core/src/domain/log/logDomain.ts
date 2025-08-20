@@ -7,7 +7,7 @@ import {ILogFilters, ILogPagination, ILogSort} from '_types/log';
 import {IQueryInfos} from '_types/queryInfos';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
-import {adminUserId} from '../../_constants/users';
+import {IPermissionDomain} from 'domain/permission/permissionDomain';
 
 export interface ILogDomain {
     getLogs: (
@@ -18,14 +18,15 @@ export interface ILogDomain {
 
 interface IDeps {
     'core.infra.log': ILogRepo;
+    'core.domain.permission': IPermissionDomain;
 }
 
-export default function ({'core.infra.log': logRepo}: IDeps): ILogDomain {
+export default function ({'core.infra.log': logRepo, 'core.domain.permission': permissionDomain}: IDeps): ILogDomain {
     return {
         async getLogs({pagination, filters, sort}, ctx) {
             // For now, do not allow non-admin users to access logs
             // Later, if a user interface can display logs, maybe add a permission to be setup in admin panel, like others
-            const canAccessAllLogs = ctx.userId === adminUserId;
+            const canAccessAllLogs = permissionDomain.isAdminOrSystemUser(ctx);
             if (!canAccessAllLogs) {
                 throw new PermissionError(AdminPermissionsActions.ACCESS_LOGS);
             }

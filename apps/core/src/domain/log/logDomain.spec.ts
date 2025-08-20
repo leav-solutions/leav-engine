@@ -6,6 +6,7 @@ import {mockLog} from '../../__tests__/mocks/log';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import logDomain from './logDomain';
 import {adminUserId} from '../../_constants/users';
+import {IPermissionDomain} from 'domain/permission/permissionDomain';
 
 describe('logDomain', () => {
     describe('getLogs', () => {
@@ -13,9 +14,13 @@ describe('logDomain', () => {
             const mockLogRepo: Mockify<ILogRepo> = {
                 getLogs: global.__mockPromise([mockLog])
             };
+            const mockPermissionDomain: Mockify<IPermissionDomain> = {
+                isAdminOrSystemUser: jest.fn().mockReturnValue(true)
+            };
 
             const domain = logDomain({
-                'core.infra.log': mockLogRepo as ILogRepo
+                'core.infra.log': mockLogRepo as ILogRepo,
+                'core.domain.permission': mockPermissionDomain as IPermissionDomain
             });
 
             const logs = await domain.getLogs(
@@ -34,9 +39,13 @@ describe('logDomain', () => {
             const mockLogRepo: Mockify<ILogRepo> = {
                 getLogs: global.__mockPromise([mockLog])
             };
+            const mockPermissionDomain: Mockify<IPermissionDomain> = {
+                isAdminOrSystemUser: jest.fn().mockReturnValue(false)
+            };
 
             const domain = logDomain({
-                'core.infra.log': mockLogRepo as ILogRepo
+                'core.infra.log': mockLogRepo as ILogRepo,
+                'core.domain.permission': mockPermissionDomain as IPermissionDomain
             });
 
             await expect(

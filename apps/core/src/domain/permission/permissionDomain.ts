@@ -9,6 +9,7 @@ import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {adminUserId, systemUserId} from '../../_constants/users';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
 import {
@@ -71,6 +72,8 @@ export interface IPermissionDomain {
     getActionsByType(params: IGetActionsByTypeParams): ILabeledPermissionsAction[];
 
     registerActions(type: PermissionTypes, actions: string[], applyOn?: string[]): void;
+
+    isAdminOrSystemUser(ctx: IQueryInfos): boolean;
 }
 
 export interface IPermissionDomainDeps {
@@ -511,12 +514,16 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
         _pluginPermissions[type] = [...(_pluginPermissions[type] ?? []), ...actions.map(a => ({name: a, applyOn}))];
     };
 
+    const isAdminOrSystemUser = (ctx: IQueryInfos): boolean =>
+        ctx.userId === adminUserId || ctx.userId === systemUserId;
+
     return {
         savePermission,
         getPermissionsByActions,
         getInheritedPermissions,
         isAllowed,
         getActionsByType,
-        registerActions
+        registerActions,
+        isAdminOrSystemUser
     };
 }

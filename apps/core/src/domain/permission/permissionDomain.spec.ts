@@ -8,6 +8,7 @@ import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
+import {adminUserId, systemUserId} from '../../_constants/users';
 import {
     AdminPermissionsActions,
     PermissionTypes,
@@ -375,6 +376,21 @@ describe('PermissionDomain', () => {
             const permsByType = permsDomain.getActionsByType({type: PermissionTypes.ADMIN, skipApplyOn: true});
 
             expect(permsByType.findIndex(p => p.name === 'test_perm')).toBeGreaterThanOrEqual(0);
+        });
+    });
+
+    describe('isAdminOrSystemUser', () => {
+        test('Should return true for admin user', async () => {
+            const permsDomain = permissionDomain(depsBase);
+
+            expect(await permsDomain.isAdminOrSystemUser({userId: adminUserId})).toBe(true);
+            expect(await permsDomain.isAdminOrSystemUser({userId: systemUserId})).toBe(true);
+        });
+
+        test('Should return false for non-admin user', async () => {
+            const permsDomain = permissionDomain(depsBase);
+
+            expect(await permsDomain.isAdminOrSystemUser({userId: '123'})).toBe(false);
         });
     });
 });
