@@ -41,6 +41,7 @@ import _ from 'lodash';
 interface ILinkRecordsInCreationProps {
     libraryId: string;
     recordId: string;
+    isFormCreationMode: boolean;
     attribute: RecordFormAttributeLinkAttributeFragment;
     joinLibraryContext: JoinLibraryContextFragment;
     columnsToDisplay: ComponentProps<typeof Explorer>['defaultViewSettings']['attributesIds'];
@@ -63,6 +64,7 @@ const _shouldUpdateExplorerActions = (ref: IExplorerRef, explorerActions: IExplo
 export const useLinkRecordsInEdition = ({
     libraryId,
     recordId,
+    isFormCreationMode,
     attribute,
     joinLibraryContext,
     columnsToDisplay,
@@ -233,7 +235,7 @@ export const useLinkRecordsInEdition = ({
     }, [libraryItems]);
 
     useEffect(() => {
-        if (!totalCountInExplorer && attribute.required) {
+        if (!isFormCreationMode && !totalCountInExplorer && attribute.required) {
             form.setFields([{name: attribute.id, errors: [t('errors.standard_field_required')]}]);
         } else {
             form.setFields([{name: attribute.id, errors: []}]);

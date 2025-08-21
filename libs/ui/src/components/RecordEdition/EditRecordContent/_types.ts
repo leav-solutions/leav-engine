@@ -92,6 +92,7 @@ export type SubmittedValue = ISubmittedValueStandard | ISubmittedValueLink | ISu
 export type SubmitValueFunc = (values: SubmittedValue[], version: IValueVersion) => Promise<ISubmitMultipleResult>;
 export type DeleteValueFunc = (value: ValueInput | null, attribute: string) => Promise<IDeleteValueResult>;
 export type CustomEventFunc = (details: ICustomEventResult) => void;
+export type CreateEmptyRecordFunc = (library: string) => Promise<ICreateRecordResult>;
 export type CreateRecordFunc = (library: string, values: ValueBatchInput[]) => Promise<ICreateRecordResult>;
 export type DeleteMultipleValuesFunc = (
     attribute: string,
@@ -113,8 +114,6 @@ export interface ISubmittedValueBase {
 
 export interface IFormElementProps<SettingsType, RecordFormElements = RecordFormElementsValue> {
     element: FormElement<SettingsType, RecordFormElements>;
-    isCreationForm: boolean;
-    pendingValues?: IPendingValues;
     readonly?: boolean;
     onValueSubmit?: SubmitValueFunc;
     onValueDelete?: DeleteValueFunc;
@@ -122,6 +121,7 @@ export interface IFormElementProps<SettingsType, RecordFormElements = RecordForm
     onDeleteMultipleValues?: DeleteMultipleValuesFunc;
     metadataEdit?: boolean;
     record?: IRecordIdentityWhoAmI;
+    isFormCreationMode?: boolean;
     elementsByContainer?: Record<string, Array<FormElement<unknown>>>;
 }
 
@@ -175,5 +175,3 @@ export interface IProvidedByAntFormItem<
     value?: InputFieldProps['value'];
     onChange?: AntNotifier['onChange'];
 }
-
-export type IPendingValues = Record<string, {[idValue: string]: ValueDetailsFragment}>;

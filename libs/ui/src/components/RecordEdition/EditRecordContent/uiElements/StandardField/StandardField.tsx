@@ -71,17 +71,7 @@ const StandardField: FunctionComponent<
     IFormElementProps<IRequiredFieldsSettings, RecordFormElementsValueStandardValue> & {
         antdForm?: FormInstance;
     }
-> = ({
-    element,
-    antdForm,
-    readonly,
-    isCreationForm,
-    pendingValues,
-    onValueSubmit,
-    onValueDelete,
-    onDeleteMultipleValues,
-    metadataEdit = false
-}) => {
+> = ({element, antdForm, readonly, onValueSubmit, onValueDelete, onDeleteMultipleValues, metadataEdit = false}) => {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
 
@@ -120,16 +110,6 @@ const StandardField: FunctionComponent<
     const inheritedFlags = computeInheritedFlags(element.values ?? []);
     const defaultValueToAddInAntdForm = getEmptyInitialValue(attribute);
 
-    const [attributePendingValues, setAttributePendingValues] = useState<RecordFormElementsValueStandardValue[]>([]);
-
-    useEffect(() => {
-        setAttributePendingValues(
-            pendingValues?.[attribute.id]
-                ? (Object.values(pendingValues?.[attribute.id]) as unknown as RecordFormElementsValueStandardValue[])
-                : []
-        );
-    }, [pendingValues, attribute.id]);
-
     useEffect(() => {
         if (state.activeAttribute?.attribute.id === attribute.id) {
             dispatch({
@@ -154,9 +134,7 @@ const StandardField: FunctionComponent<
         activeAttribute: state.activeAttribute,
         attributePrefix: STANDARD_FIELD_ID_PREFIX,
         dispatch,
-        isCreationForm,
         elementValues: element.values ?? [],
-        pendingValues: attributePendingValues,
         allowedSelectors: ['.ant-popover.ant-color-picker', '.ant-picker-dropdown', '.kit-modal-wrapper.link-modal']
     });
 

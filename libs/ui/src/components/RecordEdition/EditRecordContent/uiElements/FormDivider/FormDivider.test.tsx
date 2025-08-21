@@ -7,7 +7,7 @@ import FormDivider from './FormDivider';
 
 describe('FormDivider', () => {
     test('Render divider', async () => {
-        render(<FormDivider {...mockCommonFormElementProps} element={mockFormElementDivider} isCreationForm={false} />);
+        render(<FormDivider {...mockCommonFormElementProps} element={mockFormElementDivider} />);
 
         expect(screen.getByRole('separator')).toBeInTheDocument();
     });
@@ -17,7 +17,6 @@ describe('FormDivider', () => {
             <FormDivider
                 {...mockCommonFormElementProps}
                 element={{...mockFormElementDivider, settings: {title: 'divider title'}}}
-                isCreationForm={false}
             />
         );
 

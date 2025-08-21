@@ -115,6 +115,12 @@ const allowedTypeOperator = {
 };
 
 export interface IRecordDomain {
+    /**
+     * Create empty record
+     * Used when create a record, set active to false and inCreation to true
+     */
+    createEmptyRecord(params: {library: string; ctx: IQueryInfos}): Promise<ICreateRecordResult>;
+
     createRecord(params: {
         library: string;
         values?: ISaveValue[];
@@ -822,6 +828,18 @@ export default function ({
     };
 
     const ret: IRecordDomain = {
+        async createEmptyRecord({library, ctx}) {
+            const {record, valuesErrors} = await createRecordHelper({
+                library,
+                ctx,
+                active: false
+            });
+
+            return {
+                record,
+                valuesErrors: valuesErrors ?? null
+            };
+        },
         async createRecord({library, values, ctx, verifyRequiredAttributes}) {
             const {record, valuesErrors} = await createRecordHelper({
                 library,
@@ -984,7 +1002,8 @@ export default function ({
                     }
                     return [];
                 },
-                ctx
+                ctx,
+                active: true
             });
 
             if (valuesErrors?.length) {

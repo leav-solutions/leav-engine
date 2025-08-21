@@ -12,12 +12,7 @@ import {FormUIElementTypes} from '@leav/utils';
  * @param recordForm
  * @param tabIdVisible
  */
-export const useFetchVisibleFormValue = (
-    formIdToLoad: string,
-    isCreationForm: boolean,
-    recordForm: IRecordForm,
-    tabIdVisible: string
-) => {
+export const useFetchVisibleFormValue = (formIdToLoad: string, recordForm: IRecordForm, tabIdVisible: string) => {
     const [error, setError] = useState(null);
     const [recordFormWithValues, setRecordFormWithValues] = useState<IRecordForm>(null);
     const [elementIdsVisible, setElementIdsVisible] = useState<string[]>([]);
@@ -57,11 +52,6 @@ export const useFetchVisibleFormValue = (
                 return;
             }
 
-            // skip on creation form
-            if (isCreationForm) {
-                return;
-            }
-
             const elementIds = getElementIdsVisible();
             setElementIdsVisible(elementIds);
 
@@ -91,7 +81,7 @@ export const useFetchVisibleFormValue = (
                 setError(e);
             }
         })();
-    }, [formIdToLoad, isCreationForm, recordForm, tabIdVisible]);
+    }, [formIdToLoad, recordForm, tabIdVisible]);
 
     // Merge new values into recordForm
     const updateRecordFormWithValues = (elementsValues: RecordFormElement[]) => {

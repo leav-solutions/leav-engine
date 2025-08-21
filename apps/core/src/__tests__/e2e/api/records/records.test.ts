@@ -53,6 +53,28 @@ describe('Records', () => {
         recordNode = await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId});
     });
 
+    test('Create Empty records with active set to false', async () => {
+        const res = await makeGraphQlCall(`mutation {
+            c1: createEmptyRecord(library: "${testLibName}") { record {id permissions {edit_record} active } },
+            c2: createEmptyRecord(library: "${testLibName}") { record {id} },
+            c3: createEmptyRecord(library: "${testLibName}") { record {id} },
+            c4: createEmptyRecord(library: "${testLibName}") { record {id} },
+            c5: createEmptyRecord(library: "${testLibName}") { record {id} },
+            c6: createEmptyRecord(library: "${testLibName}") { record {id} },
+            c7: createEmptyRecord(library: "${testLibName}") { record {id} },
+            c8: createEmptyRecord(library: "${testLibName}") { record {id} },
+            c9: createEmptyRecord(library: "${testLibName}") { record {id} },
+            c10: createEmptyRecord(library: "${testLibName}") { record {id} },
+        }`);
+
+        expect(res.status).toBe(200);
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.c1.record.id).toBeTruthy();
+        expect(res.data.data.c1.record.permissions.edit_record).toBeDefined();
+        expect(res.data.data.c1.record.active).toEqual(false);
+    });
+
     test('Create records', async () => {
         const res = await makeGraphQlCall(`mutation {
             c1: createRecord(library: "${testLibName}") { record {id permissions {edit_record} } },

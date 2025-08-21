@@ -15,6 +15,7 @@ import {Form} from 'antd';
 interface IUseManageTreeNodeSelectionProps {
     modaleTitle: string;
     attribute: RecordFormAttributeTreeAttributeFragment;
+    isFormCreationMode: boolean;
     backendValues: RecordFormElementsValueTreeValue[];
     setBackendValues: Dispatch<SetStateAction<RecordFormElementsValueTreeValue[]>>;
     onValueSubmit: SubmitValueFunc;
@@ -28,6 +29,7 @@ interface IUseManageTreeNodeSelectionProps {
 export const useManageTreeNodeSelection = ({
     modaleTitle,
     attribute,
+    isFormCreationMode,
     backendValues,
     setBackendValues,
     onValueSubmit,
@@ -46,7 +48,7 @@ export const useManageTreeNodeSelection = ({
     const [isModalHidden, setIsModalHidden] = useState(true);
 
     useEffect(() => {
-        if (!attribute.required || (attribute.required && backendValues.length > 0)) {
+        if (isFormCreationMode || !attribute.required || (attribute.required && backendValues.length > 0)) {
             form.setFields([
                 {
                     name: attribute.id,

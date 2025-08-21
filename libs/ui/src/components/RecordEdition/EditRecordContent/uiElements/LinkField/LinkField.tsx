@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {FunctionComponent, useEffect, useState} from 'react';
+import {FunctionComponent, useState} from 'react';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
 import {JoinLibraryContextFragment, RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
@@ -66,8 +66,7 @@ type LinkFieldProps = IFormElementProps<
 const LinkField: FunctionComponent<LinkFieldProps> = ({
     element,
     readonly,
-    isCreationForm,
-    pendingValues,
+    isFormCreationMode,
     onDeleteMultipleValues,
     onValueSubmit,
     onValueDelete,
@@ -85,14 +84,10 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         joinLibraryContext?: JoinLibraryContextFragment;
     } = element;
 
-    const attributesPendingDefaultValues = pendingValues?.[attribute.id]
-        ? (Object.values(pendingValues?.[attribute.id]) as unknown as RecordFormElementsValueLinkValue[])
-        : [];
-
-    const [attributePendingValues, setAttributePendingValues] =
-        useState<RecordFormElementsValueLinkValue[]>(attributesPendingDefaultValues);
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueLinkValue[]>(element.values);
 
+    // to avoid missing props
+    const isCreationForm = null;
     const calculatedFlags = computeCalculatedFlags(backendValues);
     const inheritedFlags = computeInheritedFlags(backendValues);
     const form = AntForm.useFormInstance();
@@ -103,22 +98,12 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
     const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
     const isFieldInError = fieldErrors.length > 0;
 
-    useEffect(() => {
-        setAttributePendingValues(
-            pendingValues?.[attribute.id]
-                ? (Object.values(pendingValues?.[attribute.id]) as unknown as RecordFormElementsValueLinkValue[])
-                : []
-        );
-    }, [pendingValues, attribute.id]);
-
     useOutsideInteractionDetector({
         attribute,
         activeAttribute: state.activeAttribute,
         attributePrefix: LINK_FIELD_ID_PREFIX,
         dispatch,
-        isCreationForm,
         elementValues: backendValues,
-        pendingValues: attributePendingValues,
         allowedSelectors: [
             'div[role="status"]:has(.kit-snackbar-message)',
             '.kit-modal-wrapper',
@@ -132,7 +117,6 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
     const {UnlinkAllRecordsInCreation, LinkRecordsInCreation} = useLinkRecordsInCreation({
         attribute,
         libraryId: attribute.linked_library.id,
-        pendingValues: attributePendingValues,
         activeAttribute: state.activeAttribute,
         dispatch,
         isHookUsed: isCreationForm,
@@ -145,6 +129,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
     const {UnlinkAllRecordsInEdition, LinkRecordsInEditionExplorer} = useLinkRecordsInEdition({
         libraryId: state.libraryId,
         recordId: state.record?.id,
+        isFormCreationMode,
         attribute,
         joinLibraryContext,
         columnsToDisplay,

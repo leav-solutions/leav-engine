@@ -28,7 +28,7 @@ describe('Container', () => {
                 {...mockCommonFormElementProps}
                 element={mockFormElementContainer}
                 elementsByContainer={mockElementsByContainer}
-                isCreationForm={false}
+                isFormCreationMode={false}
             />
         );
 

@@ -41,8 +41,7 @@ type TreeFieldProps = IFormElementProps<ICommonFieldsSettings>;
 const TreeField: FunctionComponent<TreeFieldProps> = ({
     element,
     readonly,
-    isCreationForm,
-    pendingValues,
+    isFormCreationMode,
     onDeleteMultipleValues,
     onValueSubmit,
     onValueDelete,
@@ -65,7 +64,6 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
     }, [values]);
 
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueTreeValue[]>([]);
-    const [attributePendingValues, setAttributePendingValues] = useState<RecordFormElementsValueTreeValue[]>([]);
 
     const calculatedFlags = computeCalculatedFlags(backendValues);
     const inheritedFlags = computeInheritedFlags(backendValues);
@@ -75,14 +73,6 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
 
     const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
     const isFieldInError = fieldErrors.length > 0;
-
-    useEffect(() => {
-        setAttributePendingValues(
-            pendingValues?.[attribute.id]
-                ? (Object.values(pendingValues?.[attribute.id]) as unknown as RecordFormElementsValueTreeValue[])
-                : []
-        );
-    }, [pendingValues, attribute.id]);
 
     useEffect(() => {
         if (state.activeAttribute?.attribute.id === attribute.id) {
@@ -98,9 +88,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         activeAttribute: state.activeAttribute,
         attributePrefix: TREE_FIELD_ID_PREFIX,
         dispatch,
-        isCreationForm,
         elementValues: backendValues,
-        pendingValues: attributePendingValues,
         allowedSelectors: ['.kit-modal-wrapper']
     });
 
@@ -114,6 +102,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         useManageTreeNodeSelection({
             modaleTitle: label,
             attribute,
+            isFormCreationMode,
             backendValues,
             setBackendValues,
             onValueSubmit,

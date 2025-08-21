@@ -21,6 +21,8 @@ export type CreateRecordHelper = (params: {
      */
     preCreateCallback?: IPreCreateRecordCallback;
     ctx: IQueryInfos;
+    // TODO : remove after creation process completed
+    active?: boolean;
 }) => Promise<ICreateRecordResult>;
 
 interface IDeps {
@@ -34,13 +36,13 @@ export default function ({
     'core.domain.permission.library': libraryPermissionDomain,
     'core.infra.record': recordRepo
 }: IDeps): CreateRecordHelper {
-    return async ({library, preCreateCallback, ctx}) => {
+    return async ({library, preCreateCallback, active, ctx}) => {
         const recordData = {
             created_at: moment().unix(),
             created_by: String(ctx.userId),
             modified_at: moment().unix(),
             modified_by: String(ctx.userId),
-            active: true
+            active
         };
 
         const canCreate = await libraryPermissionDomain.getLibraryPermission({

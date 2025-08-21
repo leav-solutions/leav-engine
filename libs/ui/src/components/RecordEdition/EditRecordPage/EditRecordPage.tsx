@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, ReactNode, useRef, useState} from 'react';
+import {FunctionComponent, ReactNode, useEffect, useRef, useState} from 'react';
 import {KitButton, KitDivider, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -16,6 +16,8 @@ import {v4 as uuidv4} from 'uuid';
 import {EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS} from '../constants';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
+import {APICallStatus} from '../EditRecordContent/_types';
+import useExecuteCreateEmptyRecordMutation from '../EditRecordContent/hooks/useCreateEmptyRecordMutation';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
@@ -58,7 +60,6 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     onCreateAndEdit,
     valuesVersion,
     title,
-    showRefreshButton = true,
     showHeader = true,
     submitButtons = ['create'],
     withInfoButton,
@@ -72,7 +73,26 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     const [clickedSubmitButton, setClickedSubmitButton] = useState<submitButtonsName | null>(null);
     const showCancelConfirm = useCreateCancelConfirm(onClose);
     const formElementId = useRef(uuidv4());
-    const isCreation = !currentRecord;
+    const [isCreation, setIsCreation] = useState(!record);
+    const {createEmptyRecord} = useExecuteCreateEmptyRecordMutation();
+    const [formId, setFormId] = useState<string>(
+        isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition')
+    );
+
+    useEffect(() => {
+        const createEmptyRecordFunction = async () => {
+            const res = await createEmptyRecord(library);
+            if (res?.status === APICallStatus.ERROR) {
+                // TODO : call KitNotification error
+                return null;
+            }
+            setCurrentRecord(res?.record ?? null);
+        };
+
+        if (isCreation) {
+            createEmptyRecordFunction();
+        }
+    }, []);
 
     const _handleClickSubmit = (button: submitButtonsName) => {
         setClickedSubmitButton(button);
@@ -100,6 +120,8 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
         setCurrentRecord(newRecord);
 
         if (onCreateAndEdit && clickedSubmitButton === 'createAndEdit') {
+            setFormId(editionFormId ?? 'edition');
+            setIsCreation(false);
             onCreateAndEdit(newRecord);
             return;
         }
@@ -109,8 +131,6 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
             return;
         }
     };
-
-    const formId = isCreation ? creationFormId : editionFormId;
 
     return (
         <>
@@ -139,6 +159,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
             <EditRecord
                 antdForm={antdForm}
                 formId={formId}
+                isFormCreationMode={isCreation}
                 formElementId={formElementId.current}
                 record={currentRecord}
                 library={library}

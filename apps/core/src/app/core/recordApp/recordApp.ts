@@ -258,6 +258,7 @@ export default function ({
                     }
 
                     extend type Mutation {
+                        createEmptyRecord(library: ID!): CreateRecordResult!
                         createRecord(library: ID!, data: CreateRecordDataInput): CreateRecordResult!
                         deleteRecord(library: ID, id: ID): Record!
                         indexRecords(libraryId: String!, records: [String!]): Boolean!
@@ -328,6 +329,13 @@ export default function ({
                         }
                     },
                     Mutation: {
+                        async createEmptyRecord(_, {library}: ICreateRecordParams, ctx: IQueryInfos) {
+                            return recordDomain.createEmptyRecord({
+                                library,
+                                ctx
+                            });
+                        },
+                        // TODO : remove after creation process completed
                         async createRecord(_, {library, data}: ICreateRecordParams, ctx: IQueryInfos) {
                             const valuesVersion = data?.version ? convertVersionFromGqlFormat(data.version) : null;
                             const valuesToSave = data

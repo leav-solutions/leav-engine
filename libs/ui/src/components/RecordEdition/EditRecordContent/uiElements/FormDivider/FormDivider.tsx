@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IFormDividerSettings} from '@leav/utils';
 import {Divider} from 'antd';
-import React from 'react';
 import {IFormElementProps} from '../../_types';
 
 function FormDivider({element}: IFormElementProps<IFormDividerSettings>): JSX.Element {

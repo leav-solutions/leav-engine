@@ -8,19 +8,19 @@ import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumn
 function Container({
     element,
     antdForm,
-    isCreationForm,
     readonly,
-    pendingValues,
     onValueSubmit,
     onValueDelete,
     onCustomEvent,
     onDeleteMultipleValues,
     record,
+    isFormCreationMode,
     valuesMappedByAttributeId,
     elementsByContainer
 }: IFormElementProps<{}> & {
     antdForm?: FormInstance;
     valuesMappedByAttributeId?: GetRecordColumnsValuesRecord;
+    isFormCreationMode: boolean;
 }): JSX.Element {
     const children = elementsByContainer?.[element.id] ?? [];
 
@@ -37,13 +37,12 @@ function Container({
                                 valuesMappedByAttributeId={valuesMappedByAttributeId}
                                 readonly={readonly}
                                 antdForm={antdForm}
-                                pendingValues={pendingValues}
-                                isCreationForm={isCreationForm}
                                 onValueSubmit={onValueSubmit}
                                 onValueDelete={onValueDelete}
                                 onCustomEvent={onCustomEvent}
                                 onDeleteMultipleValues={onDeleteMultipleValues}
                                 record={record}
+                                isFormCreationMode={isFormCreationMode}
                                 elementsByContainer={elementsByContainer}
                             />
                         )}

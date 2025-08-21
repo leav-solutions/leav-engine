@@ -1023,29 +1023,4 @@ describe('Values', () => {
             expect(res.data.errors[0].extensions.fields[attrDateRangeName]).toBeDefined();
         });
     });
-
-    test('Run actions list and format on value', async () => {
-        const res = await makeGraphQlCall(`query {
-            runActionsListAndFormatOnValue(
-                library: "${testLibName}",
-                value: {
-                    attribute: "${attrSimpleNameWithFormat}",
-                    payload: "test",
-                    metadata: null
-                },
-                version: null
-            ) {
-                id_value
-                payload
-                raw_payload
-            }
-        }`);
-
-        expect(res.status).toBe(200);
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.runActionsListAndFormatOnValue[0].id_value).toBeNull();
-        expect(res.data.data.runActionsListAndFormatOnValue[0].payload).toBe('TEST');
-        expect(res.data.data.runActionsListAndFormatOnValue[0].raw_payload).toBe('test');
-    });
 });

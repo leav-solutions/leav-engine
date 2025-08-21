@@ -28,9 +28,9 @@ jest.mock('_ui/hooks/useCanEditRecord', () => ({
     useCanEditRecord: () => ({loading: false, canEdit: true, isReadOnly: false})
 }));
 
-const createRecordMock = jest.fn();
-jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useCreateRecordMutation.ts', () => () => ({
-    createRecord: createRecordMock
+const createEmptyRecordMock = jest.fn();
+jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useCreateEmptyRecordMutation.ts', () => () => ({
+    createEmptyRecord: createEmptyRecordMock
 }));
 
 const saveValuesMock = jest.fn();
@@ -56,13 +56,6 @@ const useFetchVisibleFormValueMock = jest.fn().mockImplementation(() => ({
 
 jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useFetchVisibleFormValue', () => ({
     useFetchVisibleFormValue: () => useFetchVisibleFormValueMock()
-}));
-
-const useRunActionsListAndFormatOnValueMock = jest.fn(() => ({payload: 12}));
-jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useRunActionsListAndFormatOnValue.ts', () => ({
-    useRunActionsListAndFormatOnValue: () => ({
-        runActionsListAndFormatOnValue: useRunActionsListAndFormatOnValueMock
-    })
 }));
 
 const mocks = [
@@ -383,7 +376,7 @@ describe('EditRecordPage', () => {
 
             render(
                 <EditRecordPage
-                    onCreate={createRecordMock}
+                    onCreate={createEmptyRecordMock}
                     library={mockRecord.library.id}
                     onClose={jest.fn()}
                     record={mockRecord}

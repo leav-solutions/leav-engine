@@ -6,6 +6,7 @@ import {screen, render} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {EditRecordPage} from './EditRecordPage';
 import {Form} from 'antd';
+import * as gqlTypes from '_ui/_gqlTypes';
 
 let user!: ReturnType<typeof userEvent.setup>;
 
@@ -25,9 +26,28 @@ jest.mock('../EditRecord', () => ({
     }
 }));
 
+const mockUseCreateEmptyRecordMutation = jest.fn().mockReturnValue({
+    data: {
+        createEmptyRecord: {
+            record: {
+                id: 'new_record_id',
+                whoAmI: {
+                    id: 'new_record_id',
+                    label: 'New Record',
+                    library: {id: 'test_lib'}
+                }
+            }
+        }
+    }
+});
+
 describe('EditRecordPage', () => {
     beforeEach(() => {
         user = userEvent.setup();
+        jest.spyOn(gqlTypes, 'useCreateEmptyRecordMutation').mockImplementation(() => [
+            mockUseCreateEmptyRecordMutation,
+            {loading: false, called: false, client: null, reset: null, error: null}
+        ]);
     });
 
     describe('create mode', () => {

@@ -122,6 +122,7 @@ export interface IValueDomain {
 
     runActionsList(params: IRunActionListParams): Promise<IValue[]>;
 
+    // TODO : remove after creation process completed
     runActionsListAndFormatOnValue({
         library,
         value,
@@ -356,7 +357,8 @@ const valueDomain = function ({
                 async (joinLibId: string, joinAttributeProps: IAttribute) => {
                     const {record: joinRecord} = await createRecordHelper({
                         library: joinLibId,
-                        ctx
+                        ctx,
+                        active: true
                     });
 
                     logger.debug(
@@ -1063,6 +1065,7 @@ const valueDomain = function ({
             await validate.validateRecord(library, recordId, ctx);
             return _executeDeleteValue({library, recordId, attribute, value, ctx});
         },
+        // TODO : remove after creation process completed
         async runActionsListAndFormatOnValue({library, value, ctx}) {
             const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
 

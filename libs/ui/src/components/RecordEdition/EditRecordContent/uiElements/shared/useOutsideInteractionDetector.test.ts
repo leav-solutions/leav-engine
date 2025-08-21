@@ -16,63 +16,27 @@ describe('useOutsideInteractionDetector', () => {
     const mockElementValues: RecordFormElementsValue[] = [
         {id_value: 'backend-value', linkValue: {id: 'test', whoAmI: {id: 'test', library: {id: 'linked_library'}}}}
     ];
-    const mockPendingValues: RecordFormElementsValue[] = [
-        {id_value: 'pending-value', linkValue: {id: 'test', whoAmI: {id: 'test', library: {id: 'linked_library'}}}}
-    ];
 
     let mockDispatch: jest.Mock;
     let mockActiveAttribute: IRecordPropertyWithAttribute | null;
-    let mockisCreationForm: boolean;
 
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
         mockDispatch = jest.fn();
         mockActiveAttribute = null;
-        mockisCreationForm = true;
 
         document.body.innerHTML = '';
         user = userEvent.setup();
     });
 
-    it('should set active value with pendingValues on click inside the target element if formdIdToLoad is in creation', async () => {
-        renderHook(() =>
-            useOutsideInteractionDetector({
-                attribute: mockFormAttribute,
-                activeAttribute: mockActiveAttribute,
-                dispatch: mockDispatch,
-                isCreationForm: mockisCreationForm,
-                elementValues: mockElementValues,
-                pendingValues: mockPendingValues,
-                allowedSelectors: [],
-                attributePrefix: 'standardfield-'
-            })
-        );
-
-        const targetElement = document.createElement('div');
-        targetElement.id = 'standardfield-test_attribute';
-        document.body.appendChild(targetElement);
-
-        await user.click(targetElement);
-
-        expect(mockDispatch).toHaveBeenCalledWith({
-            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            attribute: mockFormAttribute,
-            values: mockPendingValues
-        });
-    });
-
     it('should set active value with backendValues on click inside the target element if formdIdToLoad is in edition', async () => {
-        mockisCreationForm = false;
-
         renderHook(() =>
             useOutsideInteractionDetector({
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
-                pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -97,9 +61,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
-                pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -124,9 +86,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
-                pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -154,9 +114,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
-                pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -184,9 +142,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
-                pendingValues: mockPendingValues,
                 allowedSelectors: ['#allowed-element'],
                 attributePrefix: 'standardfield-'
             })
@@ -210,9 +166,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
-                pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -227,7 +181,7 @@ describe('useOutsideInteractionDetector', () => {
         expect(mockDispatch).toHaveBeenCalledWith({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             attribute: mockFormAttribute,
-            values: mockPendingValues
+            values: mockElementValues
         });
     });
 
@@ -237,9 +191,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
-                pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -262,9 +214,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
-                pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -282,9 +232,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                isCreationForm: mockisCreationForm,
                 elementValues: mockElementValues,
-                pendingValues: mockPendingValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })

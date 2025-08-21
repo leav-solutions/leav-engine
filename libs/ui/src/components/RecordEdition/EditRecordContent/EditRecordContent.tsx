@@ -13,14 +13,7 @@ import {FormElementTypes, RecordFormAttributeStandardAttributeFragment} from '_u
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import {formComponents} from './uiElements';
-import {
-    DeleteMultipleValuesFunc,
-    DeleteValueFunc,
-    FormElement,
-    ICustomEventResult,
-    IPendingValues,
-    SubmitValueFunc
-} from './_types';
+import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, ICustomEventResult, SubmitValueFunc} from './_types';
 import {Form, FormInstance} from 'antd';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 import EditRecordSkeleton from '../EditRecordSkeleton';
@@ -32,6 +25,7 @@ import useTabManagement from '_ui/components/RecordEdition/EditRecordContent/hoo
 interface IEditRecordContentProps {
     antdForm: FormInstance;
     formId?: string;
+    isFormCreationMode: boolean;
     formElementId?: string;
     record: IRecordIdentityWhoAmI | null;
     library: string;
@@ -40,7 +34,6 @@ interface IEditRecordContentProps {
     onValueDelete: DeleteValueFunc;
     onDeleteMultipleValues: DeleteMultipleValuesFunc;
     readonly: boolean;
-    pendingValues: IPendingValues;
 }
 
 const WrappedForm = styled(Form)`
@@ -50,21 +43,16 @@ const WrappedForm = styled(Form)`
 const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     antdForm,
     formId,
+    isFormCreationMode,
     formElementId,
     record,
     library,
-    pendingValues,
     onRecordSubmit,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues,
     readonly
 }) => {
-    let formIdToLoad = formId;
-    const isCreationForm = !record?.id;
-    if (!formId) {
-        formIdToLoad = record ? 'edition' : 'creation';
-    }
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
 
@@ -92,7 +80,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const {loading, error, recordForm} = useGetRecordForm({
         libraryId: library,
         recordId: record?.id,
-        formId: formIdToLoad,
+        formId,
         version: state.valuesVersion
     });
 
@@ -105,7 +93,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         refetchRecordFormWithValues,
         recordFormWithValues,
         error: errorOnGetValues
-    } = useFetchVisibleFormValue(formIdToLoad, isCreationForm, recordForm, tabIdVisible);
+    } = useFetchVisibleFormValue(formId, recordForm, tabIdVisible);
 
     useEffect(() => {
         if (!recordFormWithValues?.recordId || !recordFormWithValues?.elements?.length) {
@@ -137,10 +125,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
     useEffect(() => {
         if (state.refreshRequested) {
-            // Create form
-            if (!isCreationForm) {
-                refetchRecordFormWithValues();
-            }
+            refetchRecordFormWithValues();
             dispatch({type: EditRecordReducerActionsTypes.REFRESH_DONE});
         }
     }, [state.refreshRequested]);
@@ -229,13 +214,12 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
             <rootElement.uiElement
                 // Use a hash of a record form as a key to force a full re-render when the form changes
                 key={recordFormHash}
+                isFormCreationMode={isFormCreationMode}
                 antdForm={antdForm}
                 valuesMappedByAttributeId={valuesMappedByAttributeId}
-                isCreationForm={isCreationForm}
                 element={rootElement}
-                readonly={readonly}
                 // todo there is two readonly, one for form and for the attribut
-                pendingValues={pendingValues}
+                readonly={readonly}
                 onValueSubmit={_handleValueSubmit}
                 onValueDelete={_handleValueDelete}
                 onDeleteMultipleValues={onDeleteMultipleValues}

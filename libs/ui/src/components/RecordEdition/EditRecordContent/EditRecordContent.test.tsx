@@ -115,8 +115,8 @@ describe('EditRecordContent', () => {
         render(
             <EditRecordContentWithForm
                 record={mockRecord}
+                isFormCreationMode={false}
                 library={mockRecord.library.id}
-                pendingValues={{}}
                 onRecordSubmit={jest.fn()}
                 onValueDelete={jest.fn()}
                 onValueSubmit={jest.fn()}
@@ -150,8 +150,8 @@ describe('EditRecordContent', () => {
         render(
             <EditRecordContentWithForm
                 record={mockRecord}
+                isFormCreationMode={false}
                 library={mockRecord.library.id}
-                pendingValues={{}}
                 onRecordSubmit={jest.fn()}
                 onValueDelete={jest.fn()}
                 onValueSubmit={jest.fn()}
@@ -179,8 +179,8 @@ describe('EditRecordContent', () => {
             <EditRecordContentWithForm
                 record={mockRecord}
                 formId="test"
+                isFormCreationMode={false}
                 library={mockRecord.library.id}
-                pendingValues={{}}
                 onRecordSubmit={jest.fn()}
                 onValueDelete={jest.fn()}
                 onValueSubmit={jest.fn()}
@@ -224,8 +224,8 @@ describe('EditRecordContent', () => {
         render(
             <EditRecordContentWithForm
                 record={mockRecord}
+                isFormCreationMode={false}
                 library={mockRecord.library.id}
-                pendingValues={{}}
                 onRecordSubmit={jest.fn()}
                 onValueDelete={jest.fn()}
                 onValueSubmit={jest.fn()}

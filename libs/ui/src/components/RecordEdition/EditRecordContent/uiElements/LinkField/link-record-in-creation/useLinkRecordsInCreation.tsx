@@ -28,7 +28,7 @@ import {
 interface IUseLinkRecordsInCreationProps {
     attribute: RecordFormAttributeFragment;
     libraryId: string;
-    pendingValues: RecordFormElementsValueLinkValue[];
+    pendingValues?: RecordFormElementsValueLinkValue[];
     activeAttribute: IRecordPropertyWithAttribute | null;
     dispatch: Dispatch<IEditRecordReducerActions>;
     isHookUsed: boolean;

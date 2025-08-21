@@ -23,13 +23,7 @@ describe('ErrorField', () => {
         };
         render(
             <MockedLangContextProvider>
-                <ErrorField
-                    element={formElement}
-                    isCreationForm={false}
-                    onValueSubmit={jest.fn()}
-                    onValueDelete={jest.fn()}
-                    onDeleteMultipleValues={jest.fn()}
-                />
+                <ErrorField element={formElement} />
             </MockedLangContextProvider>
         );
 
@@ -52,13 +46,7 @@ describe('ErrorField', () => {
         };
         render(
             <MockedLangContextProvider>
-                <ErrorField
-                    isCreationForm={false}
-                    element={formElement}
-                    onValueSubmit={jest.fn()}
-                    onValueDelete={jest.fn()}
-                    onDeleteMultipleValues={jest.fn()}
-                />
+                <ErrorField element={formElement} />
             </MockedLangContextProvider>
         );
 

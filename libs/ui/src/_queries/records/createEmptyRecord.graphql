@@ -1,0 +1,13 @@
+mutation createEmptyRecord($library: ID!) {
+    createEmptyRecord(library: $library) {
+        record {
+            ...RecordIdentity
+        }
+        valuesErrors {
+            type
+            attribute
+            input
+            message
+        }
+    }
+}
