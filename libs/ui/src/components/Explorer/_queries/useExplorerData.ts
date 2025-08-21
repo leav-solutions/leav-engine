@@ -140,7 +140,6 @@ export const useExplorerData = ({
     const isLink = entrypoint.type === 'link';
 
     const {data: attributeData} = useExplorerLinkAttributeQuery({
-        skip: entrypoint.type !== 'link',
         variables: {
             id: (entrypoint as IEntrypointLink).linkAttributeId
         }

@@ -5,9 +5,9 @@ import {useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {Entrypoint, FeatureHook, IEntrypointLink, IPrimaryAction} from '../_types';
+import {FeatureHook, IPrimaryAction} from '../_types';
 import {LinkModal} from '../link-item/LinkModal';
-import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
+import {JoinLibraryContextFragment} from '_ui/_gqlTypes';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -23,39 +23,26 @@ import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 export const useLinkPrimaryAction = ({
     isEnabled,
     maxItemsLeft,
-    entrypoint,
     linkId,
     canAddLinkValue,
+    joinLibraryContext,
+    isMultivalue,
     onLink
 }: FeatureHook<{
-    entrypoint: Entrypoint;
     linkId?: string;
     maxItemsLeft: number | null;
     canAddLinkValue: boolean;
+    joinLibraryContext?: JoinLibraryContextFragment;
+    isMultivalue: boolean;
     onLink?: (saveValuesResult: ISubmitMultipleResult) => void;
 }>) => {
     const {t} = useSharedTranslation();
 
     const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
-    const [multipleValues, setIsMultivalues] = useState(false);
 
     const disableAddItemAction = maxItemsLeft === 0 || !canAddLinkValue;
 
-    useExplorerLinkAttributeQuery({
-        skip: entrypoint.type !== 'link',
-        variables: {
-            id: (entrypoint as IEntrypointLink).linkAttributeId
-        },
-        onCompleted: data => {
-            const attributeData = data?.attributes?.list?.[0];
-            if (!attributeData) {
-                throw new Error('Unknown link attribute');
-            }
-            setIsMultivalues(attributeData.multiple_values);
-        }
-    });
-
-    const replacementMode = linkId && !multipleValues;
+    const replacementMode = linkId && !isMultivalue;
 
     const _linkPrimaryAction: IPrimaryAction = {
         callback: () => {
@@ -72,6 +59,8 @@ export const useLinkPrimaryAction = ({
             <LinkModal
                 open
                 onLink={onLink}
+                joinLibraryContext={joinLibraryContext}
+                isMultivalue={isMultivalue}
                 linkId={replacementMode ? linkId : undefined}
                 onClose={() => {
                     setIsLinkModalVisible(false);

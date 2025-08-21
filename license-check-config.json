@@ -53,6 +53,7 @@
         "**/*.tsbuildinfo",
         ".idea",
         "**/ADR.md",
-        "**/docs/adr/*.md"
+        "**/docs/adr/*.md",
+        "**/_gqlTypes/index.*"
     ]
 }

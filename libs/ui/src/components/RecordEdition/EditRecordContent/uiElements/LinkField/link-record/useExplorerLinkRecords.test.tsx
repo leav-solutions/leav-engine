@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {renderHook, act} from '@testing-library/react';
-import {useLinkRecords} from './useLinkRecords';
+import {useExplorerLinkRecords} from './useExplorerLinkRecords';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {mockLinkValue} from '_ui/__mocks__/common/form';
 import {mockModifier} from '_ui/__mocks__/common/value';
@@ -69,14 +69,14 @@ jest.mock('aristid-ds', () => ({
     }
 }));
 
-describe('useLinkRecords', () => {
+describe('useExplorerLinkRecords', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
     it('should initialize with default values', () => {
         const {result} = renderHook(() =>
-            useLinkRecords({
+            useExplorerLinkRecords({
                 attribute: mockFormAttribute,
                 backendValues: [],
                 setBackendValues: mockSetBackendValues,
@@ -96,7 +96,7 @@ describe('useLinkRecords', () => {
             mockOnDeleteMultipleValues.mockResolvedValue({status: 'SUCCESS'});
 
             const {result} = renderHook(() =>
-                useLinkRecords({
+                useExplorerLinkRecords({
                     attribute: mockFormAttribute,
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
@@ -123,7 +123,7 @@ describe('useLinkRecords', () => {
             mockOnDeleteMultipleValues.mockResolvedValue({status: 'SUCCESS'});
 
             const {result} = renderHook(() =>
-                useLinkRecords({
+                useExplorerLinkRecords({
                     attribute: {...mockFormAttribute, required: true},
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
@@ -147,7 +147,7 @@ describe('useLinkRecords', () => {
     describe('handleExplorerRemoveValue', () => {
         it('should remove value when called', () => {
             const {result} = renderHook(() =>
-                useLinkRecords({
+                useExplorerLinkRecords({
                     attribute: mockFormAttribute,
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
@@ -179,7 +179,7 @@ describe('useLinkRecords', () => {
 
         it('should set field in error if attribute is required', () => {
             const {result} = renderHook(() =>
-                useLinkRecords({
+                useExplorerLinkRecords({
                     attribute: {...mockFormAttribute, required: true},
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
@@ -213,7 +213,7 @@ describe('useLinkRecords', () => {
     describe('handleExplorerMassDeactivateValues', () => {
         it('should remove values when called', () => {
             const {result} = renderHook(() =>
-                useLinkRecords({
+                useExplorerLinkRecords({
                     attribute: mockFormAttribute,
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
@@ -235,7 +235,7 @@ describe('useLinkRecords', () => {
 
         it('should set field in error if attribute is required', () => {
             const {result} = renderHook(() =>
-                useLinkRecords({
+                useExplorerLinkRecords({
                     attribute: {...mockFormAttribute, required: true},
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
@@ -260,7 +260,7 @@ describe('useLinkRecords', () => {
         describe('with successfull response', () => {
             it('should add new values when called', () => {
                 const {result} = renderHook(() =>
-                    useLinkRecords({
+                    useExplorerLinkRecords({
                         attribute: mockFormAttribute,
                         backendValues: mockBackendValues,
                         setBackendValues: mockSetBackendValues,
@@ -277,16 +277,19 @@ describe('useLinkRecords', () => {
                     mockLinkSubmitValue.linkValue.id
                 ]);
                 expect(mockSetFields).toHaveBeenCalledWith([{name: mockFormAttribute.id, errors: []}]);
-                expect(mockSetBackendValues).toHaveBeenCalledWith(
-                    expect.arrayContaining([...mockBackendValues, ...mockSubmitRes.values])
-                );
+                expect(mockSetBackendValues).toHaveBeenCalled();
+
+                // Simulate the update function with the current values
+                const updateFn = mockSetBackendValues.mock.calls[0][0];
+                const updatedValues = updateFn(mockBackendValues);
+                expect(updatedValues).toEqual([...mockBackendValues, ...mockSubmitRes.values]);
             });
         });
 
         describe('with error response', () => {
             it('should set field in error using submit result error type', () => {
                 const {result} = renderHook(() =>
-                    useLinkRecords({
+                    useExplorerLinkRecords({
                         attribute: mockFormAttribute,
                         backendValues: mockBackendValues,
                         setBackendValues: mockSetBackendValues,
@@ -308,7 +311,7 @@ describe('useLinkRecords', () => {
 
             it('should set field in error using submit result error message', () => {
                 const {result} = renderHook(() =>
-                    useLinkRecords({
+                    useExplorerLinkRecords({
                         attribute: mockFormAttribute,
                         backendValues: mockBackendValues,
                         setBackendValues: mockSetBackendValues,
@@ -336,7 +339,7 @@ describe('useLinkRecords', () => {
     describe('handleExplorerCreateValue', () => {
         it('should not call handleExplorerLinkValue if saveValuesResultOnLink is not provided', () => {
             const {result} = renderHook(() =>
-                useLinkRecords({
+                useExplorerLinkRecords({
                     attribute: mockFormAttribute,
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
@@ -355,7 +358,7 @@ describe('useLinkRecords', () => {
 
         it('should call handleExplorerLinkValue if saveValuesResultOnLink is provided', () => {
             const {result} = renderHook(() =>
-                useLinkRecords({
+                useExplorerLinkRecords({
                     attribute: mockFormAttribute,
                     backendValues: mockBackendValues,
                     setBackendValues: mockSetBackendValues,
@@ -370,9 +373,12 @@ describe('useLinkRecords', () => {
                 });
             });
 
-            expect(mockSetBackendValues).toHaveBeenCalledWith(
-                expect.arrayContaining([...mockBackendValues, ...mockSubmitRes.values])
-            );
+            expect(mockSetBackendValues).toHaveBeenCalled();
+
+            // Simulate the update function with the current values
+            const updateFn = mockSetBackendValues.mock.calls[0][0];
+            const updatedValues = updateFn(mockBackendValues);
+            expect(updatedValues).toEqual([...mockBackendValues, ...mockSubmitRes.values]);
         });
     });
 });

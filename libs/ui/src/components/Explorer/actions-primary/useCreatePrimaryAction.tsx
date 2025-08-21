@@ -11,10 +11,9 @@ import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordCont
 import {
     JoinLibraryContextFragment,
     LibraryBehavior,
-    useExplorerLibraryDetailsQuery,
-    useExplorerLinkAttributeQuery
+    useExplorerLibraryDetailsQuery
 } from '_ui/_gqlTypes';
-import {FeatureHook, Entrypoint, IEntrypointLink, IPrimaryAction} from '../_types';
+import {FeatureHook, Entrypoint, IPrimaryAction} from '../_types';
 import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
 
 /**
@@ -37,6 +36,7 @@ export const useCreatePrimaryAction = ({
     entrypoint,
     totalCount,
     canCreateAndLinkValue,
+    isMultivalue,
     onCreate,
     formId,
     joinLibraryContext,
@@ -46,6 +46,7 @@ export const useCreatePrimaryAction = ({
     entrypoint: Entrypoint;
     totalCount: number;
     canCreateAndLinkValue: boolean;
+    isMultivalue: boolean;
     onCreate?: ({
         recordIdCreated,
         saveValuesResultOnLink
@@ -60,23 +61,8 @@ export const useCreatePrimaryAction = ({
     const {t} = useSharedTranslation();
 
     const [isModalCreationVisible, setIsModalCreationVisible] = useState(false);
-    const [multipleValues, setIsMultivalues] = useState(false);
     const {saveValues} = useSaveValueBatchMutation();
     const {kitNotification} = useKitNotification();
-
-    useExplorerLinkAttributeQuery({
-        skip: entrypoint.type !== 'link',
-        variables: {
-            id: joinLibraryContext?.mandatoryAttribute.id || (entrypoint as IEntrypointLink).linkAttributeId
-        },
-        onCompleted: data => {
-            const attributeData = data?.attributes?.list?.[0];
-            if (!attributeData) {
-                throw new Error('Unknown link attribute');
-            }
-            setIsMultivalues(attributeData.multiple_values);
-        }
-    });
 
     const _getLibraryId = () =>
         (joinLibraryContext?.mandatoryAttribute &&
@@ -97,7 +83,7 @@ export const useCreatePrimaryAction = ({
     if (entrypoint.type === 'library') {
         canCreateRecord = true;
     } else {
-        canCreateRecord = canCreateAndLinkValue && (multipleValues || totalCount === 0);
+        canCreateRecord = canCreateAndLinkValue && (isMultivalue || totalCount === 0);
     }
 
     const _createPrimaryAction: IPrimaryAction = {

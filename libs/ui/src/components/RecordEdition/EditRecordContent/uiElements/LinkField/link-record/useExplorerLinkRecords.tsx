@@ -10,19 +10,19 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {ErrorTypes} from '@leav/utils';
 
-interface IUseLinkRecordsProps {
+interface IUseExplorerLinkRecordsProps {
     attribute: RecordFormAttributeLinkAttributeFragment;
     backendValues: RecordFormElementsValueLinkValue[];
     setBackendValues: Dispatch<SetStateAction<RecordFormElementsValueLinkValue[]>>;
     onDeleteMultipleValues: DeleteMultipleValuesFunc;
 }
 
-export const useLinkRecords = ({
+export const useExplorerLinkRecords = ({
     attribute,
     backendValues,
     setBackendValues,
     onDeleteMultipleValues
-}: IUseLinkRecordsProps) => {
+}: IUseExplorerLinkRecordsProps) => {
     const {t} = useSharedTranslation();
 
     const form = AntForm.useFormInstance();
@@ -102,7 +102,7 @@ export const useLinkRecords = ({
                 }
             ]);
 
-            setBackendValues([...backendValues, ...saveLinkValues]);
+            setBackendValues(previousBackendValues => [...previousBackendValues, ...saveLinkValues]);
         }
 
         if (saveValuesResult.status === APICallStatus.ERROR && saveValuesResult.errors) {

@@ -23,8 +23,10 @@ import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordCont
 export const useReplaceItemAction = ({
     isEnabled,
     onReplace,
+    isMultivalue,
     canReplaceLinkValues
 }: FeatureHook<{
+    isMultivalue: boolean;
     onReplace?: (replaceValuesResult: ISubmitMultipleResult) => void;
     canReplaceLinkValues: boolean;
 }>) => {
@@ -34,7 +36,7 @@ export const useReplaceItemAction = ({
 
     const _replaceItemAction: IItemAction = useMemo(
         () => ({
-            label: t('explorer.replace-item'),
+            label: t('explorer.replace-item')!,
             icon: <FaExchangeAlt />,
             disabled: !canReplaceLinkValues,
             callback: item => {
@@ -53,6 +55,7 @@ export const useReplaceItemAction = ({
                     <LinkModal
                         open
                         linkId={linkIdSelected}
+                        isMultivalue={isMultivalue}
                         onReplace={onReplace}
                         onClose={() => {
                             setIsReplaceModalOpen(false);

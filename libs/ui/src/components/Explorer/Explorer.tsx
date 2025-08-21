@@ -129,7 +129,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             primaryActions = [],
             massActions = [],
             title,
-            selectionMode,
+            selectionMode = 'multiple',
             emptyPlaceholder,
             noPagination,
             creationFormId,
@@ -197,6 +197,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {replaceItemAction, replaceItemModal} = useReplaceItemAction({
             isEnabled: isLink && isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('replaceLink'),
+            isMultivalue,
             onReplace: defaultCallbacks?.item?.replaceLink,
             canReplaceLinkValues: canEditLinkAttributeValues
         });
@@ -217,16 +218,18 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             onCreate: defaultCallbacks?.primary?.create,
             joinLibraryContext,
             entrypoint,
+            isMultivalue,
             totalCount,
             formId: creationFormId,
             refetch
         });
         const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
-            entrypoint,
             isEnabled: isLink,
+            joinLibraryContext,
             canAddLinkValue: canEditLinkAttributeValues,
             onLink: defaultCallbacks?.primary?.link,
             linkId: data?.totalCount === 0 ? undefined : data?.records[0]?.id_value,
+            isMultivalue,
             maxItemsLeft: null // TODO: use KitTable.row
         });
 

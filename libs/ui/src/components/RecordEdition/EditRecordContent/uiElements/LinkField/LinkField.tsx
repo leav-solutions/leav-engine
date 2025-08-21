@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent, useEffect, useState} from 'react';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
 import {JoinLibraryContextFragment, RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
@@ -15,8 +15,7 @@ import {LINK_FIELD_ID_PREFIX} from '_ui/constants';
 import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
 import {ComputeIndicator} from '../shared/ComputeIndicator';
 import {useOutsideInteractionDetector} from '../shared/useOutsideInteractionDetector';
-import {useLinkRecordsInCreation} from './link-record-in-creation/useLinkRecordsInCreation';
-import {useLinkRecordsInEdition} from './link-record-in-edition/useLinkRecordsInEdition';
+import {useLinkRecords} from './link-record/useLinkRecords';
 import {
     CREATE_RECORD_MODAL_CLASSNAME,
     EDIT_RECORD_MODAL_CLASSNAME,
@@ -68,8 +67,6 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
     readonly,
     isFormCreationMode,
     onDeleteMultipleValues,
-    onValueSubmit,
-    onValueDelete,
     metadataEdit = false
 }) => {
     const {state, dispatch} = useEditRecordReducer();
@@ -84,10 +81,12 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         joinLibraryContext?: JoinLibraryContextFragment;
     } = element;
 
-    const [backendValues, setBackendValues] = useState<RecordFormElementsValueLinkValue[]>(element.values);
+    const [backendValues, setBackendValues] = useState<RecordFormElementsValueLinkValue[]>([]);
 
-    // to avoid missing props
-    const isCreationForm = null;
+    useEffect(() => {
+        setBackendValues(element.values);
+    }, [element.values]);
+
     const calculatedFlags = computeCalculatedFlags(backendValues);
     const inheritedFlags = computeInheritedFlags(backendValues);
     const form = AntForm.useFormInstance();
@@ -114,19 +113,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         ]
     });
 
-    const {UnlinkAllRecordsInCreation, LinkRecordsInCreation} = useLinkRecordsInCreation({
-        attribute,
-        libraryId: attribute.linked_library.id,
-        activeAttribute: state.activeAttribute,
-        dispatch,
-        isHookUsed: isCreationForm,
-        isReadOnly,
-        isFieldInError,
-        onValueSubmit,
-        onValueDelete
-    });
-
-    const {UnlinkAllRecordsInEdition, LinkRecordsInEditionExplorer} = useLinkRecordsInEdition({
+    const {UnlinkAllRecords, LinkRecordsExplorer} = useLinkRecords({
         libraryId: state.libraryId,
         recordId: state.record?.id,
         isFormCreationMode,
@@ -135,12 +122,9 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         columnsToDisplay,
         backendValues,
         setBackendValues,
-        activeAttribute: state.activeAttribute,
-        dispatch,
-        isHookUsed: !isCreationForm,
         isReadOnly,
         isFieldInError,
-        tagDisplayMode: settings.tagDisplayMode,
+        hasNoValue: backendValues.length === 0,
         onDeleteMultipleValues
     });
 
@@ -161,11 +145,11 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
                             <KitInputExtraAlignLeft>
                                 <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
                             </KitInputExtraAlignLeft>
-                            {isCreationForm ? UnlinkAllRecordsInCreation : UnlinkAllRecordsInEdition}
+                            {UnlinkAllRecords}
                         </>
                     }
                 >
-                    {isCreationForm ? LinkRecordsInCreation : LinkRecordsInEditionExplorer}
+                    {LinkRecordsExplorer}
                 </KitInputWrapperStyled>
             </AntForm.Item>
         </Wrapper>

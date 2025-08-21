@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IPreviewScalar} from '@leav/utils'
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
@@ -202,6 +199,16 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  category: Scalars['String'];
+  endDate: Scalars['String'];
+  id: Scalars['String'];
+  label: Scalars['String'];
+  startDate: Scalars['String'];
+  thematics: Array<InputMaybe<Scalars['String']>>;
+  type: Scalars['String'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID'];
@@ -296,6 +303,17 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
+}
+
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -1533,15 +1551,6 @@ export type UpdateViewMutationVariables = Exact<{
 
 
 export type UpdateViewMutation = { updateView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
-
-export type GetJoinLibraryMandatoryAttributeValuesQueryVariables = Exact<{
-  joinLibraryId: Scalars['ID'];
-  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
-  mandatoryAttributeId: Scalars['ID'];
-}>;
-
-
-export type GetJoinLibraryMandatoryAttributeValuesQuery = { records: { list: Array<{ id: string, property: Array<{ payload?: { id: string } | null }> }> } };
 
 export type TreeDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID'];
@@ -5048,62 +5057,6 @@ export function useUpdateViewMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateViewMutationHookResult = ReturnType<typeof useUpdateViewMutation>;
 export type UpdateViewMutationResult = Apollo.MutationResult<UpdateViewMutation>;
 export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMutation, UpdateViewMutationVariables>;
-export const GetJoinLibraryMandatoryAttributeValuesDocument = gql`
-    query getJoinLibraryMandatoryAttributeValues($joinLibraryId: ID!, $filters: [RecordFilterInput], $mandatoryAttributeId: ID!) {
-  records(library: $joinLibraryId, filters: $filters) {
-    list {
-      id
-      property(attribute: $mandatoryAttributeId) {
-        ... on LinkValue {
-          payload {
-            id
-          }
-        }
-        ... on TreeValue {
-          payload {
-            id
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetJoinLibraryMandatoryAttributeValuesQuery__
- *
- * To run a query within a React component, call `useGetJoinLibraryMandatoryAttributeValuesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetJoinLibraryMandatoryAttributeValuesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetJoinLibraryMandatoryAttributeValuesQuery({
- *   variables: {
- *      joinLibraryId: // value for 'joinLibraryId'
- *      filters: // value for 'filters'
- *      mandatoryAttributeId: // value for 'mandatoryAttributeId'
- *   },
- * });
- */
-export function useGetJoinLibraryMandatoryAttributeValuesQuery(baseOptions: Apollo.QueryHookOptions<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>(GetJoinLibraryMandatoryAttributeValuesDocument, options);
-      }
-export function useGetJoinLibraryMandatoryAttributeValuesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>(GetJoinLibraryMandatoryAttributeValuesDocument, options);
-        }
-export function useGetJoinLibraryMandatoryAttributeValuesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>(GetJoinLibraryMandatoryAttributeValuesDocument, options);
-        }
-export type GetJoinLibraryMandatoryAttributeValuesQueryHookResult = ReturnType<typeof useGetJoinLibraryMandatoryAttributeValuesQuery>;
-export type GetJoinLibraryMandatoryAttributeValuesLazyQueryHookResult = ReturnType<typeof useGetJoinLibraryMandatoryAttributeValuesLazyQuery>;
-export type GetJoinLibraryMandatoryAttributeValuesSuspenseQueryHookResult = ReturnType<typeof useGetJoinLibraryMandatoryAttributeValuesSuspenseQuery>;
-export type GetJoinLibraryMandatoryAttributeValuesQueryResult = Apollo.QueryResult<GetJoinLibraryMandatoryAttributeValuesQuery, GetJoinLibraryMandatoryAttributeValuesQueryVariables>;
 export const TreeDataQueryDocument = gql`
     query TreeDataQuery($treeId: ID!) {
   trees(filters: {id: [$treeId]}) {
