@@ -1001,6 +1001,25 @@ describe('Explorer', () => {
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
         });
 
+        test('showCreateOnNoResultOnly: should not display the primary actions button if not empty', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} showCreateOnNoResultOnly />
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+        });
+
+        test('showCreateOnNoResultOnly: should display the primary actions button if empty', () => {
+            spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} showCreateOnNoResultOnly />
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).toBeInTheDocument();
+        });
+
         test('should display the table headers', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>

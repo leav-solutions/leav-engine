@@ -131,6 +131,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                             valuesList,
                             allowFreeEntry
                         }}
+                        showCreateOnNoResultOnly
                         selectionMode={selectionMode}
                         hideSelectAllAction={hideSelectAllAction}
                         massActions={[
@@ -153,7 +154,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                         defaultActionsForItem={[]}
                         defaultMassActions={[]}
                         itemActions={[]}
-                        defaultPrimaryActions={[]}
+                        defaultPrimaryActions={['create']}
                         joinLibraryContext={joinLibraryContext}
                         showSearch
                         ignoreViewByDefault

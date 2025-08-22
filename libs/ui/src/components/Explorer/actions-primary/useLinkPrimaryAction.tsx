@@ -17,11 +17,13 @@ import {JoinLibraryContextFragment} from '_ui/_gqlTypes';
  * It returns also two parts : one for the call action button - one for displaying the modal required by the action.
  *
  * @param isEnabled - whether the action is present
+ * @param isVisible - wether the button should be visible or not
  * @param maxItemsLeft - the number of items that can be added
  * @param onLink - callback to let outside world know about linking feedback
  */
 export const useLinkPrimaryAction = ({
     isEnabled,
+    isVisible,
     maxItemsLeft,
     linkId,
     canAddLinkValue,
@@ -54,7 +56,7 @@ export const useLinkPrimaryAction = ({
     };
 
     return {
-        linkPrimaryAction: isEnabled ? _linkPrimaryAction : null,
+        linkPrimaryAction: isEnabled && isVisible ? _linkPrimaryAction : null,
         linkModal: isLinkModalVisible ? (
             <LinkModal
                 open

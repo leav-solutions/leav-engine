@@ -24,6 +24,7 @@ import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
  * It returns also two parts : one for the call action button - one for displayed the modal required by the action.
  *
  * @param isEnabled - whether the action is present
+ * @param isVisible - wether the button should be visible or not
  * @param libraryId - the library's id to add new item
  * @param entrypoint - represent the current entrypoint
  * @param totalCount - used for display purpose only
@@ -32,6 +33,7 @@ import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
  */
 export const useCreatePrimaryAction = ({
     isEnabled,
+    isVisible,
     libraryId,
     entrypoint,
     totalCount,
@@ -75,7 +77,7 @@ export const useCreatePrimaryAction = ({
         skip: !isEnabled
     });
 
-    if (error || loading) {
+    if (error || loading || !isVisible) {
         return {createPrimaryAction: null, createModal: null};
     }
 

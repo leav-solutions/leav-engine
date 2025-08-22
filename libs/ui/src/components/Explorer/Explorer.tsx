@@ -101,6 +101,7 @@ export interface IExplorerProps {
             deactivate?: IMassActions['callback'];
         };
     };
+    showCreateOnNoResultOnly?: boolean;
     showFilters?: boolean;
     showSorts?: boolean;
     ignoreViewByDefault?: boolean;
@@ -134,6 +135,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             noPagination,
             creationFormId,
             editionFormId,
+            showCreateOnNoResultOnly = false,
             showFilters = false,
             showSorts = false,
             disableSelection = false,
@@ -211,8 +213,15 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const totalCount = data?.totalCount ?? 0;
 
+        const hasNoResults = data === null || data.totalCount === 0;
+
+        const showCreatePrimaryButton = showCreateOnNoResultOnly
+            ? !hidePrimaryActions && !loadingData && hasNoResults
+            : true;
+
         const {createPrimaryAction, createModal} = useCreatePrimaryAction({
             isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
+            isVisible: showCreatePrimaryButton,
             libraryId: view.libraryId,
             canCreateAndLinkValue: canEditLinkAttributeValues,
             onCreate: defaultCallbacks?.primary?.create,
@@ -226,6 +235,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {linkPrimaryAction, linkModal} = useLinkPrimaryAction({
             isEnabled: isLink,
             joinLibraryContext,
+            isVisible: showCreatePrimaryButton,
             canAddLinkValue: canEditLinkAttributeValues,
             onLink: defaultCallbacks?.primary?.link,
             linkId: data?.totalCount === 0 ? undefined : data?.records[0]?.id_value,
@@ -282,8 +292,6 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             }),
             [createPrimaryAction?.disabled, linkPrimaryAction?.disabled, totalCount]
         );
-
-        const hasNoResults = data === null || data.totalCount === 0;
 
         return (
             <ViewSettingsContext.Provider value={{view, dispatch}}>

@@ -67,7 +67,7 @@ export interface IMassActions {
     label: string;
 }
 
-export type FeatureHook<T = {}> = {isEnabled: boolean} & T;
+export type FeatureHook<T = {}> = {isEnabled: boolean; isVisible?: boolean} & T;
 
 interface IExplorerFilterBaseAttribute {
     type: AttributeType;
