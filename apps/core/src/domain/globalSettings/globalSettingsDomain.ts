@@ -70,7 +70,7 @@ export default function ({
 
             await cacheService.getCache(ECacheType.RAM).deleteData([globalSettingsCacheKey]);
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent<EventAction.GLOBAL_SETTINGS_SAVE>(
                 {
                     action: EventAction.GLOBAL_SETTINGS_SAVE,
                     topic: null,

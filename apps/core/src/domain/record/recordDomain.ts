@@ -1048,7 +1048,7 @@ export default function ({
                 ctx
             });
 
-            await eventsManager.sendDatabaseEvent(
+            await eventsManager.sendDatabaseEvent<EventAction.RECORD_SAVE>(
                 {
                     action: EventAction.RECORD_SAVE,
                     topic: {

@@ -89,7 +89,7 @@ export default function ({
         // Everything is clean, we can actually delete the record
         const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
 
-        await eventsManager.sendDatabaseEvent(
+        await eventsManager.sendDatabaseEvent<EventAction.RECORD_DELETE>(
             {
                 action: EventAction.RECORD_DELETE,
                 topic: {

@@ -115,7 +115,7 @@ describe('Events Manager', () => {
             'core.utils': mockUtils as IUtils
         });
 
-        await events.sendDatabaseEvent(
+        await events.sendDatabaseEvent<EventAction.LIBRARY_SAVE>(
             {action: EventAction.LIBRARY_SAVE, topic: {library: 'test'}, after: {id: 'test'}},
             ctx
         );

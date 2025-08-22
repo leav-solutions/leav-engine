@@ -289,7 +289,7 @@ export default function ({
                 return newTaskId;
             }
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent<EventAction.EXPORT_START>(
                 {
                     action: EventAction.EXPORT_START,
                     topic: null,
@@ -406,7 +406,7 @@ export default function ({
             const url = `/${config.export.endpoint}/${filename}`;
             await tasksManager.setLink(task.id, {name: 'export file', url}, ctx);
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent<EventAction.EXPORT_END>(
                 {
                     action: EventAction.EXPORT_END,
                     topic: {

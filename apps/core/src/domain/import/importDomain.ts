@@ -720,7 +720,7 @@ export default function ({
                 return newTaskId;
             }
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent<EventAction.CONFIG_IMPORT_START>(
                 {
                     action: EventAction.CONFIG_IMPORT_START,
                     topic: null
@@ -809,7 +809,7 @@ export default function ({
                 }
             }
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent<EventAction.CONFIG_IMPORT_END>(
                 {
                     action: EventAction.CONFIG_IMPORT_END,
                     topic: null
@@ -858,7 +858,7 @@ export default function ({
             }
 
             ctx.trigger = 'data_import';
-            await eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent<EventAction.DATA_IMPORT_START>(
                 {
                     action: EventAction.DATA_IMPORT_START,
                     topic: {filename}
@@ -1111,7 +1111,7 @@ export default function ({
                 ctx
             );
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent<EventAction.DATA_IMPORT_END>(
                 {
                     action: EventAction.DATA_IMPORT_END,
                     topic: {filename},

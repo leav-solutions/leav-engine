@@ -521,7 +521,7 @@ const valueDomain = function ({
                 // Make sure attribute is returned here
                 deletedValue.attribute = attribute;
 
-                await eventsManager.sendDatabaseEvent(
+                await eventsManager.sendDatabaseEvent<EventAction.VALUE_DELETE>(
                     {
                         action: EventAction.VALUE_DELETE,
                         topic: {
@@ -532,7 +532,7 @@ const valueDomain = function ({
                             },
                             attribute: attributeProps.id
                         },
-                        before: actionsListRes
+                        before: actionsListResValue
                     },
                     ctx
                 );
@@ -597,7 +597,7 @@ const valueDomain = function ({
         const processedValues = await _runActionsListAndFormatValue(library, attribute, savedValue, ctx, record);
 
         if (!areValuesIdentical) {
-            await eventsManager.sendDatabaseEvent(
+            await eventsManager.sendDatabaseEvent<EventAction.VALUE_SAVE>(
                 {
                     action: EventAction.VALUE_SAVE,
                     topic: {

@@ -11,9 +11,10 @@ import winston from 'winston';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {Errors} from '../../_types/errors';
+import {IDbPayloadInternal} from '_types/events';
 
 export interface IEventsManagerDomain {
-    sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos): Promise<boolean>;
+    sendDatabaseEvent<DBPayloadAction extends EventAction>(payload: IDbPayloadInternal<DBPayloadAction>, ctx: IQueryInfos): Promise<boolean>;
     sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<boolean>;
     subscribe(triggersName: string[]): AsyncIterator<any>;
     initPubSubEventsConsumer(): Promise<void>;
@@ -128,7 +129,10 @@ export default function ({
 
             await amqpService.consume(queue, routingKey, msg => onMessage(msg, amqpService.consumer.channel));
         },
-        sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos) {
+        sendDatabaseEvent<DBPayloadAction extends EventAction>(
+            payload: IDbPayloadInternal<DBPayloadAction>,
+            ctx: IQueryInfos
+        ) {
             return _send(config.eventsManager.routingKeys.data_events, payload, ctx);
         },
         sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos) {

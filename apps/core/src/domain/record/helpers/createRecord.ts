@@ -68,7 +68,7 @@ export default function ({
 
         // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
         // important to send for indexation manager
-        await eventsManager.sendDatabaseEvent(
+        await eventsManager.sendDatabaseEvent<EventAction.RECORD_SAVE>(
             {
                 action: EventAction.RECORD_SAVE,
                 topic: {

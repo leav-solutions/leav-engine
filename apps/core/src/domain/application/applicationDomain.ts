@@ -45,6 +45,11 @@ export interface IApplicationDomain {
     getApplicationUrl(params: {application: IApplication; ctx: IQueryInfos}): string;
 }
 
+const applicationEventActionByEventType = {
+    [ApplicationEventTypes.SAVE]: EventAction.APP_SAVE,
+    [ApplicationEventTypes.DELETE]: EventAction.APP_DELETE
+} as const;
+
 export interface IApplicationDomainDeps {
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.user': IUserDomain;
@@ -90,11 +95,6 @@ export default function ({
     ): Promise<void> => {
         const {application, applicationBefore, type} = params;
 
-        const actionByType: {[key in ApplicationEventTypes]: EventAction} = {
-            [ApplicationEventTypes.SAVE]: EventAction.APP_SAVE,
-            [ApplicationEventTypes.DELETE]: EventAction.APP_DELETE
-        };
-
         let appBeforeToSend: IApplication | null = null;
         switch (type) {
             case ApplicationEventTypes.SAVE:
@@ -120,9 +120,9 @@ export default function ({
             ctx
         );
 
-        await eventsManagerDomain.sendDatabaseEvent(
+        await eventsManagerDomain.sendDatabaseEvent<typeof applicationEventActionByEventType[typeof type]>(
             {
-                action: actionByType[type],
+                action: applicationEventActionByEventType[type],
                 topic: {
                     application: application.id
                 },

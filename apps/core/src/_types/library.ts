@@ -49,6 +49,14 @@ export interface ILibrary extends ICoreEntity {
     settings?: IKeyValue<any>;
 }
 
+/**
+ * Library as stored in the DB, without embedded attributes
+ */
+export interface ILibraryDbEvent extends Omit<ILibrary, 'attributes' | 'fullTextAttributes'> {
+    attributes?: string[];
+    fullTextAttributes?: string[];
+}
+
 export interface ILibraryFilterOptions extends ICoreEntityFilterOptions {
     system?: boolean;
 }

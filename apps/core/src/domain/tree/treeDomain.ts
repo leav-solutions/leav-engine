@@ -144,6 +144,12 @@ export interface ITreeDomain {
     getDefaultElement(params: {treeId: string; ctx: IQueryInfos}): Promise<ITreeNode>;
 }
 
+const treeEventActionByEventType = {
+    [TreeEventTypes.ADD]: EventAction.TREE_ADD_ELEMENT,
+    [TreeEventTypes.REMOVE]: EventAction.TREE_DELETE_ELEMENT,
+    [TreeEventTypes.MOVE]: EventAction.TREE_MOVE_ELEMENT
+} as const;
+
 export interface ITreeDomainDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.attribute': IAttributeDomain;
@@ -332,11 +338,6 @@ export default function ({
         ctx: IQueryInfos
     ): Promise<void> => {
         const {treeId, type, record, element, parentNode, parentNodeBefore, order} = params;
-        const actionByType: {[key in TreeEventTypes]: EventAction} = {
-            [TreeEventTypes.ADD]: EventAction.TREE_ADD_ELEMENT,
-            [TreeEventTypes.REMOVE]: EventAction.TREE_DELETE_ELEMENT,
-            [TreeEventTypes.MOVE]: EventAction.TREE_MOVE_ELEMENT
-        };
 
         await eventsManagerDomain.sendPubSubEvent(
             {
@@ -355,9 +356,9 @@ export default function ({
             ctx
         );
 
-        await eventsManagerDomain.sendDatabaseEvent(
+        await eventsManagerDomain.sendDatabaseEvent<typeof treeEventActionByEventType[typeof type]>(
             {
-                action: actionByType[type],
+                action: treeEventActionByEventType[type],
                 topic: {
                     tree: treeId,
                     record: {
@@ -416,7 +417,7 @@ export default function ({
                 ? await treeRepo.updateTree({treeData: dataToSave as ITree, ctx})
                 : await treeRepo.createTree({treeData: dataToSave as ITree, ctx});
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent<EventAction.TREE_SAVE>(
                 {
                     action: EventAction.TREE_SAVE,
                     topic: {
@@ -479,7 +480,7 @@ export default function ({
 
             const deletedTree = await treeRepo.deleteTree({id, ctx});
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent<EventAction.TREE_DELETE>(
                 {
                     action: EventAction.TREE_DELETE,
                     topic: {
