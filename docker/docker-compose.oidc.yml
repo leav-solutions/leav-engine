@@ -42,8 +42,8 @@ services:
         ]
         labels:
             - traefik.enable=true
-            - traefik.http.routers.redis-commander.rule=Host(`keycloak.leav.localhost`)
-            - traefik.http.services.redis-commander.loadbalancer.server.port=8080
+            - traefik.http.routers.keycloak.rule=Host(`keycloak.leav.localhost`)
+            - traefik.http.services.keycloak.loadbalancer.server.port=8080
             - traefik.http.routers.keycloak.entrypoints=web
         ports:
             - '8080:8080'

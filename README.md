@@ -280,6 +280,7 @@ A few URLs are handled by the proxy (Traefik) to manage and access your app:
 - http://core.leav.localhost/graphql: GraphQL playground
 - http://rabbitmq.leav.localhost: RabbitMQ admin
 - http://data-studio.leav.localhost/: Data Studio app
+- http://keycloak.leav.localhost: Keycloak (if [Oidc](#oidc) started)
 
 You might need to add it to your `/etc/hosts` file to access it:
 
@@ -289,6 +290,7 @@ You might need to add it to your `/etc/hosts` file to access it:
 127.0.0.1       arango.leav.localhost
 127.0.0.1       rabbitmq.leav.localhost
 127.0.0.1       data-studio.leav.localhost
+127.0.0.1       keycloak.leav.localhost
 ```
 
 ---
@@ -462,8 +464,12 @@ login/password default authentification mechanism.
    ```
 
 4. Currently, the træfik roots you to dev version of front apps (**portal**, **data-studio**…), 2 solutions:
-    - Manually stop docker front containers and build apps to [`/applications`](./apps/core/applications).
-    - Build apps to [`/applications`](./apps/core/applications) and register under new paths.
+    - Manually stop docker front containers and build apps to [`/applications`](./apps/core/applications) folder in core.
+
+        For instance for portal:
+        `docker stop docker-portal-1 && yarn workspace portal build && rm -rf apps/core/applications/portal && mv apps/portal/dist apps/core/applications/portal`
+
+    - Build apps to [`/applications`](./apps/core/applications) and register under new paths
 
 ### Credentials
 
