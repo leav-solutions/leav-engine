@@ -30,6 +30,7 @@ import {IncomingHttpHeaders} from 'http';
 import {IRecordRepo} from '../../infra/record/recordRepo';
 import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {IServerRouteAppModule} from 'interface/server';
+import {adminsGroupId} from '../../_constants/users';
 
 export interface IAuthApp extends IGraphqlAppModule, IServerRouteAppModule {
     validateRequestToken(
@@ -220,6 +221,7 @@ export default function ({
                         });
 
                         const decodedToken = jwt.decode(oidcTokenSet.id_token) as jwt.JwtPayload;
+                        const decodedAccessToken = jwt.decode(oidcTokenSet.access_token) as jwt.JwtPayload;
                         const email = decodedToken[config.auth.oidc.idTokenUserClaim];
 
                         const ctx: IQueryInfos = {
@@ -237,11 +239,33 @@ export default function ({
                             ctx
                         });
 
-                        if (userRecords.list.length < 1) {
-                            throw new AuthenticationError('Invalid user');
-                        }
+                        let user = userRecords.list[0];
 
-                        const user = userRecords.list[0];
+                        // If no user found in DB, auto provision the user
+                        if (!user) {
+                            const {record: createdUser} = await recordDomain.createRecord({
+                                library: 'users',
+                                values: [
+                                    {payload: email, attribute: 'email'},
+                                    {payload: decodedToken.name, attribute: 'login'} // used to display the username in the UI instead of record id
+                                ],
+                                ctx
+                            });
+                            logger.info(`User ${email} created during auto provisioning step`);
+                            user = createdUser;
+                            // if the user has role admin, put it in the admin group (id = 1)
+                            if (
+                                decodedAccessToken?.resource_access[config.auth.oidc.clientId]?.roles?.includes('admin')
+                            ) {
+                                await valueDomain.saveValue({
+                                    library: 'users',
+                                    recordId: user.id,
+                                    attribute: 'user_groups',
+                                    value: {payload: adminsGroupId},
+                                    ctx
+                                });
+                            }
+                        }
 
                         await oidcClientService.saveOIDCTokens({userId: user.id, tokens: oidcTokenSet});
 

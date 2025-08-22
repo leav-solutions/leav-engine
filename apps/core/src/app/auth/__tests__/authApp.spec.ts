@@ -7,7 +7,10 @@ import {Express} from 'express';
 import {identity} from 'lodash';
 import {convertOIDCIdentifier} from '../../helpers';
 import initQueryContext from '../../helpers/initQueryContext';
-import jwt from 'jsonwebtoken';
+
+jest.mock('jsonwebtoken');
+
+import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import {IRecordDomain} from '../../../domain/record/recordDomain';
 import {ICacheService, ICachesService} from '../../../infra/cache/cacheService';
@@ -16,6 +19,7 @@ import {IConfig} from '../../../_types/config';
 import {DeepPartial} from '../../../_types/utils';
 import {Mockify} from '@leav/utils';
 import {ToAny} from '../../../utils/utils';
+import {adminsGroupId} from '../../../_constants/users';
 
 const depsBase: ToAny<IAuthAppDeps> = {
     'core.domain.value': jest.fn(),
@@ -24,7 +28,10 @@ const depsBase: ToAny<IAuthAppDeps> = {
     'core.domain.apiKey': jest.fn(),
     'core.domain.user': jest.fn(),
     'core.infra.cache.cacheService': jest.fn(),
-    'core.utils.logger': jest.fn(),
+    'core.utils.logger': {
+        info: jest.fn(),
+        error: jest.fn()
+    },
     'core.infra.oidc.oidcClientService': jest.fn(),
     'core.app.helpers.initQueryContext': jest.fn(),
     'core.app.helpers.convertOIDCIdentifier': jest.fn(),
@@ -542,6 +549,177 @@ describe('authApp', () => {
             const result = await verifyHandler(request, response);
 
             expect(result).toEqual(401);
+        });
+
+        it('Should auto provision a user when not found (no admin role)', async () => {
+            const mockConfig: DeepPartial<IConfig> = {
+                defaultUserId: 'system',
+                auth: {
+                    key: 'key',
+                    algorithm: 'HS256',
+                    tokenExpiration: '15m',
+                    refreshTokenExpiration: '2h',
+                    cookie: {sameSite: 'lax', secure: false},
+                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client'}
+                }
+            };
+
+            const mockRecordDomain = {
+                find: jest.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0}),
+                createRecord: jest.fn().mockResolvedValue({record: {id: 'new-user-id', email: 'user@example.com'}})
+            } as unknown as Mockify<IRecordDomain>;
+
+            const mockValueDomain: Mockify<IValueDomain> = {
+                saveValue: jest.fn(),
+                getValues: jest.fn().mockResolvedValue([])
+            };
+
+            const mockCachesService: Mockify<ICachesService> = {
+                getCache: jest.fn().mockReturnValue({storeData: jest.fn()})
+            };
+
+            const mockOidcService: Mockify<IOIDCClientService> = {
+                getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
+                saveOIDCTokens: jest.fn(),
+                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl')
+            };
+
+            const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
+
+            const authApp = createAuthApp({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as any,
+                'core.domain.value': mockValueDomain as any,
+                'core.infra.cache.cacheService': mockCachesService as any,
+                'core.infra.oidc.oidcClientService': mockOidcService as any,
+                'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
+                'core.app.helpers.initQueryContext': initQueryContext({}),
+                config: mockConfig as IConfig
+            });
+
+            const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
+            authApp.registerRoute(expressMock as unknown as Express);
+            const verifyHandler = expressMock.get.mock.calls.find(
+                args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
+            )[1];
+
+            // Mock jwt.decode calls for id_token then access_token
+            const decodeSpy = jest.spyOn(jwt, 'decode');
+            decodeSpy
+                .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe'}) as any)
+                .mockImplementationOnce(() => ({resource_access: {client: {roles: []}}}) as any);
+
+            const request: any = {
+                params: {identifierBase64Url: 'whatever'},
+                query: {code: 'authCode', lang: 'fr'},
+                body: {requestId: '0'},
+                headers: {host: 'host', 'user-agent': 'jest'}
+            };
+            const response: any = {
+                cookie: jest.fn(),
+                redirect: jest.fn()
+            };
+
+            // Act
+            await verifyHandler(request, response, jest.fn());
+
+            // Assert
+            expect(mockRecordDomain.createRecord).toHaveBeenCalledTimes(1);
+            expect(mockRecordDomain.createRecord).toHaveBeenCalledWith({
+                library: 'users',
+                values: [
+                    {payload: 'user@example.com', attribute: 'email'},
+                    {payload: 'john.doe', attribute: 'login'}
+                ],
+                ctx: expect.any(Object)
+            });
+            expect((mockValueDomain as any).saveValue).not.toHaveBeenCalled();
+            expect(response.redirect).toHaveBeenCalledWith('redirectUrl');
+        });
+
+        it('Should add user to admin group when token contains admin role', async () => {
+            // Arrange
+            const mockConfig: DeepPartial<IConfig> = {
+                defaultUserId: 'system',
+                auth: {
+                    key: 'key',
+                    algorithm: 'HS256',
+                    tokenExpiration: '15m',
+                    refreshTokenExpiration: '2h',
+                    cookie: {sameSite: 'lax', secure: false},
+                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client'}
+                }
+            };
+
+            const mockRecordDomain = {
+                find: jest.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0}),
+                createRecord: jest.fn().mockResolvedValue({record: {id: 'new-user-id', email: 'user@example.com'}})
+            } as unknown as Mockify<IRecordDomain>;
+
+            const mockValueDomain = {
+                saveValue: jest.fn(),
+                getValues: jest.fn().mockResolvedValue([])
+            } as unknown as Mockify<IValueDomain>;
+
+            const mockCachesService: Mockify<ICachesService> = {
+                getCache: jest.fn().mockReturnValue({storeData: jest.fn()})
+            };
+
+            const mockOidcService: Mockify<IOIDCClientService> = {
+                getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
+                saveOIDCTokens: jest.fn(),
+                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl')
+            };
+
+            const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
+
+            const authApp = createAuthApp({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as any,
+                'core.domain.value': mockValueDomain as any,
+                'core.infra.cache.cacheService': mockCachesService as any,
+                'core.infra.oidc.oidcClientService': mockOidcService as any,
+                'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
+                'core.app.helpers.initQueryContext': initQueryContext({}),
+                config: mockConfig as IConfig
+            });
+
+            const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
+            authApp.registerRoute(expressMock as unknown as Express);
+            const verifyHandler = expressMock.get.mock.calls.find(
+                args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
+            )[1];
+
+            // Mock jwt.decode calls for id_token then access_token with admin role
+            const decodeSpy = jest.spyOn(jwt, 'decode');
+            decodeSpy
+                .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe'}) as any)
+                .mockImplementationOnce(() => ({resource_access: {client: {roles: ['admin']}}}) as any);
+
+            const request: any = {
+                params: {identifierBase64Url: 'whatever'},
+                query: {code: 'authCode', lang: 'fr'},
+                body: {requestId: '0'},
+                headers: {host: 'host', 'user-agent': 'jest'}
+            };
+            const response: any = {
+                cookie: jest.fn(),
+                redirect: jest.fn()
+            };
+
+            // Act
+            await verifyHandler(request, response, jest.fn());
+
+            // Assert admin group assignment
+            expect(mockValueDomain.saveValue).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    library: 'users',
+                    recordId: 'new-user-id',
+                    attribute: 'user_groups',
+                    value: {payload: adminsGroupId}
+                })
+            );
+            expect(response.redirect).toHaveBeenCalledWith('redirectUrl');
         });
     });
 });
