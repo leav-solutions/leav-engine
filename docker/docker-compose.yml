@@ -500,13 +500,19 @@ services:
       - "--api.insecure"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
+      - "--api.dashboard=true"
       - "--entrypoints.web.address=:80"
     ports:
       - "80:80"
       - "8000:8000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-
+    labels:
+      # Enable self‑routing for Traefik dashboard
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.leav.localhost`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+    
   arangodb:
     image: *arango_image
     environment:
@@ -542,7 +548,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.message-broker.rule=Host(`rabbitmq.leav.localhost`)
-      - traefik.http.services.message-broker.loadbalancer.server.port=5672
+      - traefik.http.services.message-broker.loadbalancer.server.port=15672
     volumes:
       - message-broker_data:/var/lib/rabbitmq
     healthcheck:
