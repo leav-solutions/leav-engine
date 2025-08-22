@@ -56,7 +56,8 @@ interface ISelectRecordForLinkModalProps {
     open: boolean;
     childLibraryId: string;
     replacementMode: boolean;
-
+    valuesList?: string[];
+    allowFreeEntry: boolean;
     joinLibraryContext?: JoinLibraryContextFragment;
     selectionMode: ComponentProps<typeof Explorer>['selectionMode'];
     hideSelectAllAction: ComponentProps<typeof Explorer>['hideSelectAllAction'];
@@ -69,6 +70,8 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
     open,
     childLibraryId,
     replacementMode,
+    valuesList,
+    allowFreeEntry,
     selectionMode,
     joinLibraryContext,
     hideSelectAllAction,
@@ -124,7 +127,9 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                     <Explorer
                         entrypoint={{
                             type: 'library',
-                            libraryId: childLibraryId
+                            libraryId: childLibraryId,
+                            valuesList,
+                            allowFreeEntry
                         }}
                         selectionMode={selectionMode}
                         hideSelectAllAction={hideSelectAllAction}
@@ -151,6 +156,7 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                         defaultPrimaryActions={[]}
                         joinLibraryContext={joinLibraryContext}
                         showSearch
+                        ignoreViewByDefault
                     />
                     {/* TODO: avoid getting last view for user */}
                 </Explorer.EditSettingsContextProvider>

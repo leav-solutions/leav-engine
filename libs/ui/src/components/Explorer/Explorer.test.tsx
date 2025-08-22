@@ -6,7 +6,7 @@
 // Prefer using spyOn method for Mocking hooks except for hooks using onCompleted callback.
 // In this case, the spyOn is too complex to implement, prefer using the mocks parameter of render method.
 //
-import {createRef} from 'react';
+import {createRef, useState} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {waitFor} from '@testing-library/react';
@@ -797,8 +797,7 @@ describe('Explorer', () => {
         );
 
         jest.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
-            () =>
-                [fetch, mockExplorerAttributesQueryResult] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult
+            () => [() => mockExplorerAttributesQueryResult] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult
         );
 
         jest.spyOn(gqlTypes, 'useGetViewsListQuery').mockReturnValue(
@@ -3183,14 +3182,12 @@ describe('Explorer', () => {
 
             const manageViewsButton = screen.getByRole('button', {name: /My view/});
             expect(manageViewsButton).toBeVisible();
-            expect(manageViewsButton).toHaveTextContent('My view');
             await user.click(manageViewsButton);
 
-            const viewItem = screen.getByRole('radio', {name: /Second view/});
-            expect(viewItem).toBeInTheDocument();
-
+            const viewItem = screen.getByLabelText(/Second view/);
             await user.click(viewItem);
-            waitFor(() => expect(manageViewsButton).toHaveTextContent('Second view'));
+
+            await waitFor(() => expect(screen.getByRole('button', {name: /Second view/})).toBeVisible());
         });
 
         test('Should ignore default view', async () => {
@@ -3229,6 +3226,118 @@ describe('Explorer', () => {
             );
 
             expect(screen.queryByRole('button', {name: /Second view/})).toBeInTheDocument();
+        });
+    });
+
+    describe('Entrypoint with values list', () => {
+        const mockValuesList = [mockRecords[0].id, mockRecords[1].id];
+
+        const expectedFiltersWithValuesList = {
+            filters: [
+                {
+                    operator: 'OPEN_BRACKET'
+                },
+                {
+                    condition: 'EQUAL',
+                    field: 'id',
+                    value: mockRecords[0].id
+                },
+                {
+                    operator: 'OR'
+                },
+                {
+                    condition: 'EQUAL',
+                    field: 'id',
+                    value: mockRecords[1].id
+                },
+                {
+                    operator: 'CLOSE_BRACKET'
+                }
+            ]
+        };
+
+        const expectedFiltersWithValuesListAndFulltextSearch = {
+            filters: []
+        };
+
+        test('Should call the library data query with filters for values list', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={{...libraryEntrypoint, valuesList: mockValuesList}} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining(expectedFiltersWithValuesList)
+                })
+            );
+        });
+
+        test('Should call the library data query with filters for values list on search when allowFreeEntry is set to false', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={{
+                            ...libraryEntrypoint,
+                            valuesList: mockValuesList,
+                            allowFreeEntry: false
+                        }}
+                        showSearch
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const searchInput = screen.getByRole('textbox', {name: /search/});
+            await userEvent.type(searchInput, 'Hall{Enter}');
+
+            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining(expectedFiltersWithValuesList)
+                })
+            );
+
+            const clearButton = screen.getByLabelText('clear');
+            await user.click(clearButton);
+
+            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining(expectedFiltersWithValuesList)
+                })
+            );
+        });
+
+        test('Should call the library data query without filters for values list on search when allowFreeEntry is set to true', async () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={{
+                            ...libraryEntrypoint,
+                            valuesList: mockValuesList,
+                            allowFreeEntry: true
+                        }}
+                        showSearch
+                    />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const searchInput = screen.getByRole('textbox', {name: /search/});
+            await userEvent.type(searchInput, 'Hall{Enter}');
+
+            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining(expectedFiltersWithValuesListAndFulltextSearch)
+                })
+            );
+
+            const clearButton = screen.getByLabelText('clear');
+            await user.click(clearButton);
+
+            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining(expectedFiltersWithValuesList)
+                })
+            );
         });
     });
 });

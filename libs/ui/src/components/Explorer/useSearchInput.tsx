@@ -38,6 +38,7 @@ export const useSearchInput = ({
         if (!e.target.value) {
             setSearch('');
             dispatch({type: ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH});
+            setNewPage(1, 0);
         } else {
             setSearch(e.target.value);
         }

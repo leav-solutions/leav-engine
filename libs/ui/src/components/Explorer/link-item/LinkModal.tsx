@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
-import {JoinLibraryContextFragment} from '_ui/_gqlTypes';
+import {FunctionComponent, useMemo} from 'react';
+import {JoinLibraryContextFragment, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {SelectRecordForLinkModal} from '_ui/components/SelectRecordForLinkModal';
-import {IEntrypointLink} from '../_types';
+import {IEntrypointLibrary, IEntrypointLink} from '../_types';
 import {useAddLinkMassAction} from './useAddLinkMassAction';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {useReplaceLinkMassAction} from './useReplaceLinkMassAction';
@@ -38,6 +38,13 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
 
     const isReplacement = !!linkId;
 
+    const {data: attributeData} = useExplorerLinkAttributeQuery({
+        skip: view.entrypoint.type !== 'link',
+        variables: {
+            id: (view.entrypoint as IEntrypointLink).linkAttributeId
+        }
+    });
+
     const {createLinks} = useAddLinkMassAction({
         store: {view},
         linkAttributeId: (view.entrypoint as IEntrypointLink).linkAttributeId,
@@ -53,6 +60,19 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
         closeModal: onClose
     });
 
+    const linkAttributeData = attributeData?.attributes?.list[0];
+    const isValuesListEnabled =
+        linkAttributeData && 'values_list' in linkAttributeData && linkAttributeData.values_list?.enable;
+
+    const valuesList = useMemo(
+        () => (isValuesListEnabled ? linkAttributeData.values_list?.values?.map(value => value.id) : undefined),
+        [isValuesListEnabled, linkAttributeData]
+    );
+    const allowFreeEntry = useMemo(
+        () => (isValuesListEnabled ? Boolean(linkAttributeData.values_list?.allowFreeEntry) : false),
+        [isValuesListEnabled, linkAttributeData]
+    );
+
     return (
         <SelectRecordForLinkModal
             className={LINK_RECORDS_MODAL_CLASSNAME}
@@ -62,6 +82,8 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
             replacementMode={isReplacement}
             selectionMode={isReplacement || !isMultivalue ? 'simple' : 'multiple'}
             hideSelectAllAction={(isReplacement || !isMultivalue) && view.entrypoint.type === 'link'}
+            valuesList={valuesList}
+            allowFreeEntry={allowFreeEntry}
             onClose={onClose}
         />
     );

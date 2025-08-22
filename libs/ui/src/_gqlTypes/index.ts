@@ -1022,7 +1022,7 @@ export type AttributesByLibAttributeWithPermissionsFragment = AttributesByLibAtt
 
 export type AttributesByLibLinkAttributeWithPermissionsFragment = { linked_library?: { id: string } | null };
 
-export type LinkAttributeDetailsFragment = { label?: any | null, linked_library?: { id: string, label?: any | null } | null };
+export type LinkAttributeDetailsFragment = { label?: any | null, linked_library?: { id: string, label?: any | null } | null, values_list?: { allowFreeEntry?: boolean | null, enable: boolean, values?: Array<{ id: string, whoAmI: { id: string, library: { id: string } } }> | null } | null };
 
 export type AttributePropertiesFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiLinkDisplayOption | null };
 
@@ -1487,14 +1487,14 @@ export type ExplorerAttributesQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerAttributesQuery = { attributes?: { list: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_library?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } } | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, permissions: { access_attribute: boolean } }> } | null };
+export type ExplorerAttributesQuery = { attributes?: { list: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_library?: { id: string, label?: any | null } | null, values_list?: { allowFreeEntry?: boolean | null, enable: boolean, values?: Array<{ id: string, whoAmI: { id: string, library: { id: string } } }> | null } | null, permissions: { access_attribute: boolean } } | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, permissions: { access_attribute: boolean } }> } | null };
 
 export type ExplorerLinkAttributeQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<{ label?: any | null, id: string, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean, edit_value: boolean } } | { id: string, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean } }> } | null };
+export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<{ label?: any | null, id: string, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, values_list?: { allowFreeEntry?: boolean | null, enable: boolean, values?: Array<{ id: string, whoAmI: { id: string, library: { id: string } } }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean } } | { id: string, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean } }> } | null };
 
 export type ExplorerLibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -2177,6 +2177,19 @@ export const LinkAttributeDetailsFragmentDoc = gql`
   linked_library {
     id
     label
+  }
+  values_list {
+    allowFreeEntry
+    enable
+    values {
+      id
+      whoAmI {
+        id
+        library {
+          id
+        }
+      }
+    }
   }
 }
     `;

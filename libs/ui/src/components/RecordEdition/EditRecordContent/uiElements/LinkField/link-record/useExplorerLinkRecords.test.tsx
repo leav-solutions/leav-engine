@@ -226,7 +226,6 @@ describe('useExplorerLinkRecords', () => {
             });
 
             const updateFn = mockSetBackendValues.mock.calls[0][0];
-
             // Simulate the update function with the current values
             const updatedValues = updateFn(mockBackendValues);
 

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useExplorerAttributesLazyQuery, useMeQuery} from '_ui/_gqlTypes';
-import {useEffect, useRef} from 'react';
+import {useRef} from 'react';
 import {useViewSettingsContext} from './manage-view-settings/store-view-settings/useViewSettingsContext';
 import {IUserView, validFilter} from './_types';
 import {useEditSettings, ViewSettingsActionTypes} from './manage-view-settings';
@@ -14,47 +14,15 @@ export const useLoadView = () => {
     const {view, dispatch} = useViewSettingsContext();
     const {closeSettingsPanel} = useEditSettings();
     const {toExplorerFilters, toValidFilters} = useTransformFilters();
-    const curentView = useRef<IUserView | null>(null);
+    const currentView = useRef<IUserView | null>(null);
 
-    const [fetchAttributes, {data: attributesData, loading: attributesLoading}] = useExplorerAttributesLazyQuery({
-        fetchPolicy: 'network-only',
-        onCompleted: () => {
-            closeSettingsPanel();
-        }
+    const [fetchAttributes] = useExplorerAttributesLazyQuery({
+        fetchPolicy: 'network-only'
     });
 
     const {data} = useMeQuery();
 
-    useEffect(() => {
-        if (!attributesLoading && attributesData) {
-            const attributesDataById = (attributesData?.attributes?.list ?? []).reduce((acc, attr) => {
-                acc[attr.id] = attr;
-                return acc;
-            }, {});
-            const viewSettings: IViewSettingsActionLoadViewPayload = {
-                viewId: curentView.current?.id ?? null,
-                viewLabels: curentView.current?.label ?? {},
-                viewType: curentView.current?.display
-                    ? mapViewTypeFromLegacyToExplorer[curentView.current?.display.type]
-                    : view.viewType,
-                attributesIds: curentView.current?.attributes ?? [],
-                sort: (curentView.current?.sort ?? []).map(s => ({
-                    field: s.field,
-                    order: s.order
-                })),
-                filters: toExplorerFilters({
-                    filters: toValidFilters((curentView.current?.filters as validFiltersArgument) ?? []),
-                    attributesDataById
-                })
-            };
-            dispatch({
-                type: ViewSettingsActionTypes.LOAD_VIEW,
-                payload: viewSettings
-            });
-        }
-    }, [attributesData, attributesLoading]);
-
-    const loadView = (viewId: string | null) => {
+    const loadView = async (viewId: string | null) => {
         let viewData: IUserView | null;
         if (!viewId) {
             viewData = {
@@ -74,16 +42,45 @@ export const useLoadView = () => {
             return;
         }
 
-        curentView.current = viewData;
+        currentView.current = viewData;
 
         const attributesToHydrate = [
             ...new Set([...(viewData?.sort ?? []), ...(viewData?.sort ?? [])].map(({field}) => field))
         ];
 
-        fetchAttributes({
+        const fetchAttributesResult = await fetchAttributes({
             variables: {
                 ids: attributesToHydrate
             }
+        });
+
+        closeSettingsPanel();
+
+        const attributesDataById = (fetchAttributesResult.data?.attributes?.list ?? []).reduce((acc, attr) => {
+            acc[attr.id] = attr;
+            return acc;
+        }, {});
+
+        const viewSettings: IViewSettingsActionLoadViewPayload = {
+            viewId: currentView.current?.id ?? null,
+            viewLabels: currentView.current?.label ?? {},
+            viewType: currentView.current?.display
+                ? mapViewTypeFromLegacyToExplorer[currentView.current?.display.type]
+                : view.viewType,
+            attributesIds: currentView.current?.attributes ?? [],
+            sort: (currentView.current?.sort ?? []).map(s => ({
+                field: s.field,
+                order: s.order
+            })),
+            filters: toExplorerFilters({
+                filters: toValidFilters((currentView.current?.filters as validFiltersArgument) ?? []),
+                attributesDataById
+            })
+        };
+
+        dispatch({
+            type: ViewSettingsActionTypes.LOAD_VIEW,
+            payload: viewSettings
         });
     };
 

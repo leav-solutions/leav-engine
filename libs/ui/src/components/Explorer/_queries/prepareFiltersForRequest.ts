@@ -73,11 +73,27 @@ const _getBooleanRequestFilters = (filter: IExplorerFilterStandard): RecordFilte
     return [{field: filter.field, condition: filter.condition, value: filter.value}];
 };
 
+const _addValuesListForFilters = (valuesList: string[]): RecordFilterInput[] => [
+    {operator: RecordFilterOperator.OPEN_BRACKET},
+    ...(interleaveElement(
+        {operator: RecordFilterOperator.OR},
+        valuesList.map(value => [
+            {
+                field: 'id',
+                condition: AttributeConditionFilter.EQUAL,
+                value
+            }
+        ])
+    ) as RecordFilterInput[]),
+    {operator: RecordFilterOperator.CLOSE_BRACKET}
+];
+
 export const prepareFiltersForRequest = (
     filters: ExplorerFilter[],
-    filtersOperator: DefaultViewSettings['filtersOperator']
-): RecordFilterInput[] =>
-    interleaveElement(
+    filtersOperator: DefaultViewSettings['filtersOperator'],
+    valuesList?: string[]
+): RecordFilterInput[] => {
+    const interleaveFilter = interleaveElement(
         {operator: filtersOperator === 'OR' ? RecordFilterOperator.OR : RecordFilterOperator.AND},
         filters
             .filter(filter => {
@@ -120,3 +136,10 @@ export const prepareFiltersForRequest = (
                 ];
             })
     );
+
+    return [
+        ...interleaveFilter,
+        ...(interleaveFilter.length > 0 && valuesList ? [{operator: RecordFilterOperator.AND}] : []),
+        ...(valuesList ? _addValuesListForFilters(valuesList) : [])
+    ];
+};

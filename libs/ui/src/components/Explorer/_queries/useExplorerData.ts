@@ -4,7 +4,14 @@
 import {localizedTranslation} from '@leav/utils';
 import {useMemo} from 'react';
 import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
-import {Entrypoint, IEntrypointLink, IExplorerData, ExplorerFilter, DefaultViewSettings} from '../_types';
+import {
+    Entrypoint,
+    IEntrypointLink,
+    IExplorerData,
+    ExplorerFilter,
+    DefaultViewSettings,
+    IEntrypointLibrary
+} from '../_types';
 import {
     ExplorerLibraryDataQuery,
     ExplorerLinkDataQuery,
@@ -73,35 +80,38 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
           )
         : {};
 
-    const records = data.records.list.length && data.records.list[0].property
-        .map((linkValue: LinkPropertyLinkValueFragment, index: number) => {
-            if (!linkValue.payload) {
-                return null;
-            }
+    const records =
+        (data.records.list.length &&
+            data.records.list[0].property
+                .map((linkValue: LinkPropertyLinkValueFragment, index: number) => {
+                    if (!linkValue.payload) {
+                        return null;
+                    }
 
-            return {
-                libraryId,
-                // same link id can be duplicated, so we add the index to the key
-                key: linkValue.payload.whoAmI.id + index, // For <KitTable /> only
-                itemId: linkValue.payload.whoAmI.id, // For <KitTable /> only
-                canActivate: true,
-                canDelete: true,
-                active: true,
-                whoAmI: {
-                    label: null,
-                    subLabel: null,
-                    color: null,
-                    preview: null,
-                    ...linkValue.payload.whoAmI
-                },
-                propertiesById: linkValue.payload.properties.reduce(
-                    (acc, {attributeId, values}) => ({...acc, [attributeId]: values}),
-                    {}
-                ),
-                id_value: linkValue.id_value ?? undefined
-            };
-        })
-        .filter(Boolean) || [];
+                    return {
+                        libraryId,
+                        // same link id can be duplicated, so we add the index to the key
+                        key: linkValue.payload.whoAmI.id + index, // For <KitTable /> only
+                        itemId: linkValue.payload.whoAmI.id, // For <KitTable /> only
+                        canActivate: true,
+                        canDelete: true,
+                        active: true,
+                        whoAmI: {
+                            label: null,
+                            subLabel: null,
+                            color: null,
+                            preview: null,
+                            ...linkValue.payload.whoAmI
+                        },
+                        propertiesById: linkValue.payload.properties.reduce(
+                            (acc, {attributeId, values}) => ({...acc, [attributeId]: values}),
+                            {}
+                        ),
+                        id_value: linkValue.id_value ?? undefined
+                    };
+                })
+                .filter(Boolean)) ||
+        [];
 
     return {
         totalCount: records.length,
@@ -161,6 +171,11 @@ export const useExplorerData = ({
         }
     });
 
+    const allowFreeEntry = isLibrary ? (entrypoint as IEntrypointLibrary).allowFreeEntry : undefined;
+    const valuesList =
+        !isLibrary || (fulltextSearch && allowFreeEntry) ? undefined : (entrypoint as IEntrypointLibrary).valuesList; // Remove values list for free entry values list on search
+    const preparedFilters = prepareFiltersForRequest(filters, filtersOperator, valuesList);
+
     const {
         data: libraryData,
         loading: libraryLoading,
@@ -174,7 +189,7 @@ export const useExplorerData = ({
             pagination,
             searchQuery: fulltextSearch,
             multipleSort: sorts,
-            filters: prepareFiltersForRequest(filters, filtersOperator)
+            filters: preparedFilters
         }
     });
 

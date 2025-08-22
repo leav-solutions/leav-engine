@@ -4,6 +4,19 @@ fragment LinkAttributeDetails on LinkAttribute {
         id
         label
     }
+    values_list {
+        allowFreeEntry
+        enable
+        values {
+            id
+            whoAmI {
+                id
+                library {
+                    id
+                }
+            }
+        }
+    }
 }
 
 query ExplorerAttributes($ids: [ID!]) {

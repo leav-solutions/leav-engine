@@ -142,6 +142,8 @@ export interface IEntrypointTree {
 export interface IEntrypointLibrary {
     type: 'library';
     libraryId: string;
+    valuesList?: string[];
+    allowFreeEntry?: boolean;
 }
 
 export interface IEntrypointLink {
