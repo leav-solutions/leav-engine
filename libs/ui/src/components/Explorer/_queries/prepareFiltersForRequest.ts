@@ -9,8 +9,10 @@ import {
     DefaultViewSettings,
     ExplorerFilter,
     IExplorerFilterStandard,
+    IExplorerFilterTree,
     isExplorerFilterStandard,
-    isExplorerFilterThrough
+    isExplorerFilterThrough,
+    isExplorerFilterTree
 } from '../_types';
 import {nullValueConditions} from '../conditionsHelper';
 
@@ -87,6 +89,34 @@ const _addValuesListForFilters = (valuesList: string[]): RecordFilterInput[] => 
     ) as RecordFilterInput[]),
     {operator: RecordFilterOperator.CLOSE_BRACKET}
 ];
+const _getTreeRequestFilters = (filter: IExplorerFilterTree): RecordFilterInput[] => {
+    if (!filter.value || filter.value.length === 0) {
+        return [];
+    }
+    const filtersWithOperators: RecordFilterInput[] = [];
+    filter.value.forEach((recordId, idx) => {
+        if (idx === 0 && filter.value && filter.value.length > 1) {
+            filtersWithOperators.push({operator: RecordFilterOperator.OPEN_BRACKET});
+        }
+        filtersWithOperators.push({
+            value: recordId,
+            condition: filter.condition,
+            field: filter.field[idx]
+        });
+        if (filter.value && idx < filter.value.length - 1) {
+            filtersWithOperators.push({
+                operator:
+                    filter.condition === RecordFilterCondition.NOT_EQUAL
+                        ? RecordFilterOperator.AND
+                        : RecordFilterOperator.OR
+            });
+        }
+        if (filter.value && filter.value.length > 1 && idx >= filter.value.length - 1) {
+            filtersWithOperators.push({operator: RecordFilterOperator.CLOSE_BRACKET});
+        }
+    });
+    return filtersWithOperators;
+};
 
 export const prepareFiltersForRequest = (
     filters: ExplorerFilter[],
@@ -108,6 +138,9 @@ export const prepareFiltersForRequest = (
                 return filter.value !== null || (filter.condition && nullValueConditions.includes(filter.condition));
             })
             .map(filter => {
+                if (isExplorerFilterTree(filter)) {
+                    return filter;
+                }
                 const condition =
                     filter.condition === AttributeConditionFilter.THROUGH ? filter.subCondition : filter.condition;
                 const field =
@@ -117,6 +150,9 @@ export const prepareFiltersForRequest = (
                 return {...filter, condition, field};
             })
             .map(filter => {
+                if (isExplorerFilterTree(filter)) {
+                    return _getTreeRequestFilters(filter);
+                }
                 if (isExplorerFilterStandard(filter)) {
                     switch (filter.attribute.format) {
                         case AttributeFormat.date:

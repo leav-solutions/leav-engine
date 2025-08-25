@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ViewInput} from '_ui/_gqlTypes';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
-import {isExplorerFilterThrough} from '../../_types';
+import {isExplorerFilterThrough, isExplorerFilterTree} from '../../_types';
 import {IViewSettingsState} from '../store-view-settings/viewSettingsReducer';
 
 export const prepareViewForRequest = (view: IViewSettingsState, label: Record<string, string>): ViewInput => ({
@@ -12,19 +12,28 @@ export const prepareViewForRequest = (view: IViewSettingsState, label: Record<st
     display: {
         type: mapViewTypeFromExplorerToLegacy[view.viewType]
     },
-    filters: view.filters.map(filter =>
-        isExplorerFilterThrough(filter)
-            ? {
-                  field: `${filter.field}.${filter.subField}`,
-                  value: filter.value,
-                  condition: filter.subCondition
-              }
-            : {
-                  field: filter.field,
-                  value: filter.value,
-                  condition: filter.condition
-              }
-    ),
+    filters: view.filters.map(filter => {
+        if (isExplorerFilterTree(filter)) {
+            return {
+                // TODO : save filter values as string[] when tree filter and handle fields with libraries
+                field: filter.attribute.id,
+                value: filter.value?.[0],
+                condition: filter.condition
+            };
+        }
+        if (isExplorerFilterThrough(filter)) {
+            return {
+                field: `${filter.field}.${filter.subField}`,
+                value: filter.value,
+                condition: filter.subCondition
+            };
+        }
+        return {
+            field: filter.field,
+            value: filter.value,
+            condition: filter.condition
+        };
+    }),
     sort: view.sort.map(({field, order}) => ({field, order})),
     attributes: view.attributesIds,
     label

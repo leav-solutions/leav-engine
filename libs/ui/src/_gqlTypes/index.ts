@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IPreviewScalar} from '@leav/utils'
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
@@ -199,16 +202,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  category: Scalars['String'];
-  endDate: Scalars['String'];
-  id: Scalars['String'];
-  label: Scalars['String'];
-  startDate: Scalars['String'];
-  thematics: Array<InputMaybe<Scalars['String']>>;
-  type: Scalars['String'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID'];
@@ -303,17 +296,6 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
-}
-
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -414,9 +396,6 @@ export enum LogAction {
   PERMISSION_SAVE = 'PERMISSION_SAVE',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
-  SDO_LOG_ERROR = 'SDO_LOG_ERROR',
-  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
-  SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -1024,6 +1003,8 @@ export type AttributesByLibLinkAttributeWithPermissionsFragment = { linked_libra
 
 export type LinkAttributeDetailsFragment = { label?: any | null, linked_library?: { id: string, label?: any | null } | null, values_list?: { allowFreeEntry?: boolean | null, enable: boolean, values?: Array<{ id: string, whoAmI: { id: string, library: { id: string } } }> | null } | null };
 
+export type TreeAttributeDetailsFragment = { id: string, label?: any | null, linked_tree?: { id: string, label?: any | null } | null };
+
 export type AttributePropertiesFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiLinkDisplayOption | null };
 
 export type PropertyValueLinkValueFragment = { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
@@ -1487,14 +1468,14 @@ export type ExplorerAttributesQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerAttributesQuery = { attributes?: { list: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_library?: { id: string, label?: any | null } | null, values_list?: { allowFreeEntry?: boolean | null, enable: boolean, values?: Array<{ id: string, whoAmI: { id: string, library: { id: string } } }> | null } | null, permissions: { access_attribute: boolean } } | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, permissions: { access_attribute: boolean } }> } | null };
+export type ExplorerAttributesQuery = { attributes?: { list: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_library?: { id: string, label?: any | null } | null, values_list?: { allowFreeEntry?: boolean | null, enable: boolean, values?: Array<{ id: string, whoAmI: { id: string, library: { id: string } } }> | null } | null, permissions: { access_attribute: boolean } } | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, permissions: { access_attribute: boolean } } | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_tree?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } }> } | null };
 
 export type ExplorerLinkAttributeQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<{ label?: any | null, id: string, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, values_list?: { allowFreeEntry?: boolean | null, enable: boolean, values?: Array<{ id: string, whoAmI: { id: string, library: { id: string } } }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean } } | { id: string, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean } }> } | null };
+export type ExplorerLinkAttributeQuery = { attributes?: { list: Array<{ label?: any | null, id: string, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, values_list?: { allowFreeEntry?: boolean | null, enable: boolean, values?: Array<{ id: string, whoAmI: { id: string, library: { id: string } } }> | null } | null, permissions: { access_attribute: boolean, edit_value: boolean } } | { id: string, multiple_values: boolean, permissions: { access_attribute: boolean, edit_value: boolean } } | { label?: any | null, id: string, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean, edit_value: boolean } }> } | null };
 
 export type ExplorerLibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -2190,6 +2171,16 @@ export const LinkAttributeDetailsFragmentDoc = gql`
         }
       }
     }
+  }
+}
+    `;
+export const TreeAttributeDetailsFragmentDoc = gql`
+    fragment TreeAttributeDetails on TreeAttribute {
+  id
+  label
+  linked_tree {
+    id
+    label
   }
 }
     `;
@@ -4648,10 +4639,12 @@ export const ExplorerAttributesDocument = gql`
         access_attribute
       }
       ...LinkAttributeDetails
+      ...TreeAttributeDetails
     }
   }
 }
-    ${LinkAttributeDetailsFragmentDoc}`;
+    ${LinkAttributeDetailsFragmentDoc}
+${TreeAttributeDetailsFragmentDoc}`;
 
 /**
  * __useExplorerAttributesQuery__
@@ -4696,10 +4689,12 @@ export const ExplorerLinkAttributeDocument = gql`
         edit_value
       }
       ...LinkAttributeDetails
+      ...TreeAttributeDetails
     }
   }
 }
-    ${LinkAttributeDetailsFragmentDoc}`;
+    ${LinkAttributeDetailsFragmentDoc}
+${TreeAttributeDetailsFragmentDoc}`;
 
 /**
  * __useExplorerLinkAttributeQuery__

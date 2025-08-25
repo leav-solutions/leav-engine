@@ -12,7 +12,14 @@ import {ExtendedAttributeDropDown} from './ExtendedAttributeDropDown';
 import {LinkAttributeDropDown} from './LinkAttributeDropdown';
 import {NumericAttributeDropDown} from './NumericAttributeDropDown';
 import {TextAttributeDropDown} from './TextAttributeDropDown';
-import {ExplorerFilter, isExplorerFilterLink, isExplorerFilterThrough, isExplorerFilterStandard} from '../../../_types';
+import {TreeAttributeDropDown} from './TreeAttributeDropDown';
+import {
+    ExplorerFilter,
+    isExplorerFilterLink,
+    isExplorerFilterThrough,
+    isExplorerFilterStandard,
+    isExplorerFilterTree
+} from '../../../_types';
 
 export const FilterDropdownContent: FunctionComponent<{
     filter: ExplorerFilter;
@@ -38,6 +45,16 @@ export const FilterDropdownContent: FunctionComponent<{
             [AttributeFormat.date_range]: <DateRangeAttributeDropDown {...commonDropDownProps} />
         };
         return standardFormatDropdown[filter.attribute.format ?? AttributeFormat.text];
+    }
+
+    if (isExplorerFilterTree(filter)) {
+        return (
+            <TreeAttributeDropDown
+                filter={filter}
+                onFilterChange={onFilterChange}
+                selectDropDownRef={selectDropDownRef}
+            />
+        );
     }
 
     if (isExplorerFilterLink(filter) || isExplorerFilterThrough(filter)) {

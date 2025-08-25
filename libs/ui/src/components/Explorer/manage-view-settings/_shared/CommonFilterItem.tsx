@@ -16,7 +16,7 @@ const getFilterValue = filter => {
     if (nullValueConditions.includes(filter.condition)) {
         return [filter.condition];
     }
-    return filter.value ? [filter.value] : [];
+    return Array.isArray(filter.value) ? filter.value : filter.value ? [filter.value] : [];
 };
 
 export const CommonFilterItem: FunctionComponent<{filter: ExplorerFilter; disabled?: boolean}> = ({

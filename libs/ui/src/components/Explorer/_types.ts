@@ -72,14 +72,20 @@ export type FeatureHook<T = {}> = {isEnabled: boolean; isVisible?: boolean} & T;
 interface IExplorerFilterBaseAttribute {
     type: AttributeType;
     label: string;
+    id: string;
 }
 
 interface IExplorerFilterStandardAttribute extends IExplorerFilterBaseAttribute {
     format: AttributeFormat;
 }
 
-interface IExplorerFilterLinkAttribute extends IExplorerFilterBaseAttribute {
+export interface IExplorerFilterLinkAttribute extends IExplorerFilterBaseAttribute {
     linkedLibrary?: {
+        id: string;
+    };
+}
+export interface IExplorerFilterTreeAttribute extends IExplorerFilterBaseAttribute {
+    linkedTree?: {
         id: string;
     };
 }
@@ -108,7 +114,18 @@ export interface IExplorerFilterThrough extends IExplorerBaseFilter {
     subField: string | null;
 }
 
-export type ExplorerFilter = IExplorerFilterStandard | IExplorerFilterLink | IExplorerFilterThrough;
+export interface IExplorerFilterTree extends Omit<IExplorerBaseFilter, 'value' | 'field'> {
+    attribute: IExplorerFilterTreeAttribute;
+    condition: RecordFilterCondition | null;
+    value: string[] | null;
+    field: string[];
+}
+
+export type ExplorerFilter =
+    | IExplorerFilterStandard
+    | IExplorerFilterLink
+    | IExplorerFilterThrough
+    | IExplorerFilterTree;
 
 export const isExplorerFilterStandard = (filter: ExplorerFilter): filter is IExplorerFilterStandard =>
     [AttributeType.simple, AttributeType.advanced].includes(filter.attribute.type);
@@ -120,6 +137,9 @@ export const isExplorerFilterLink = (filter: ExplorerFilter): filter is IExplore
 export const isExplorerFilterThrough = (filter: ExplorerFilter): filter is IExplorerFilterThrough =>
     [AttributeType.simple_link, AttributeType.advanced_link].includes(filter.attribute.type) &&
     filter.condition === ThroughConditionFilter.THROUGH;
+
+export const isExplorerFilterTree = (filter: ExplorerFilter): filter is IExplorerFilterTree =>
+    filter.attribute.type === AttributeType.tree;
 
 export interface IFilterDropDownProps {
     filter: ExplorerFilter;

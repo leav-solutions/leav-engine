@@ -2,20 +2,22 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {v4 as uuid} from 'uuid';
-import {SortOrder, AttributeFormat} from '_ui/_gqlTypes';
+import {SortOrder, AttributeFormat, RecordFilterCondition} from '_ui/_gqlTypes';
 import {
     DefaultViewSettings,
     Entrypoint,
     ExplorerFilter,
     IExplorerFilterStandard,
+    IExplorerFilterTree,
     isExplorerFilterLink,
     isExplorerFilterStandard,
     isExplorerFilterThrough,
+    isExplorerFilterTree,
     IUserView,
     MassSelection
 } from '../../_types';
 import {hasOnlyNoValueConditions} from '../../conditionsHelper';
-import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
+import {conditionsByFormat, getFirstConditionByFilterType} from '../filter-items/filter-type/useConditionOptionsByType';
 import {ThroughConditionFilter} from '_ui/types';
 import {DefaultViewId, viewSettingsInitialState} from './viewSettingsInitialState';
 
@@ -153,7 +155,7 @@ interface IViewSettingsActionRemoveFilter {
 
 interface IViewSettingsActionChangeFilterConfig {
     type: typeof ViewSettingsActionTypes.CHANGE_FILTER_CONFIG;
-    payload: ExplorerFilter;
+    payload: ExplorerFilter | IExplorerFilterTree;
 }
 
 interface IViewSettingsActionMoveFilter {
@@ -296,21 +298,32 @@ export const clearFulltextSearch: Reducer = state => ({
     fulltextSearch: ''
 });
 
-const addFilter: Reducer<IViewSettingsActionAddFilter> = (state, payload) => ({
-    ...state,
-    filters: [
-        ...state.filters,
-        {
-            ...payload,
-            id: uuid(),
-            condition: hasOnlyNoValueConditions((payload as IExplorerFilterStandard).attribute.format)
-                ? null
-                : (conditionsByFormat[(payload as IExplorerFilterStandard).attribute.format][0] ?? null),
-            value: null
-        }
-    ],
-    viewModified: true
-});
+const addFilter: Reducer<IViewSettingsActionAddFilter> = (state, payload) => {
+    const filterToAdd = isExplorerFilterTree(payload as ExplorerFilter)
+        ? {
+              ...payload,
+              id: uuid(),
+              field: Array.isArray(payload.field) ? payload.field : [payload.field],
+              condition: hasOnlyNoValueConditions((payload as IExplorerFilterStandard).attribute.format)
+                  ? null
+                  : (getFirstConditionByFilterType(payload as ExplorerFilter) as RecordFilterCondition[])[0],
+              value: null
+          }
+        : {
+              ...payload,
+              id: uuid(),
+              field: Array.isArray(payload.field) ? payload.field.toString() : payload.field,
+              condition: hasOnlyNoValueConditions((payload as IExplorerFilterStandard).attribute.format)
+                  ? null
+                  : (getFirstConditionByFilterType(payload as ExplorerFilter) as RecordFilterCondition[])[0],
+              value: null
+          };
+    return {
+        ...state,
+        filters: [...state.filters, filterToAdd],
+        viewModified: true
+    };
+};
 
 const resetFilter: Reducer<IViewSettingsActionResetFilter> = (state, payload) => ({
     ...state,
@@ -346,6 +359,14 @@ const resetFilter: Reducer<IViewSettingsActionResetFilter> = (state, payload) =>
                     value: null
                 };
             }
+
+            if (isExplorerFilterTree(filter)) {
+                return {
+                    ...filter,
+                    condition: null,
+                    value: null
+                };
+            }
         }
         return filter;
     })
@@ -359,7 +380,15 @@ const removeFilter: Reducer<IViewSettingsActionRemoveFilter> = (state, payload) 
 
 const changeFilterConfig: Reducer<IViewSettingsActionChangeFilterConfig> = (state, payload) => ({
     ...state,
-    filters: state.filters.map(filter => (filter.id === payload.id ? {...filter, ...payload} : filter)),
+    filters: state.filters.map(filter => {
+        if (filter.id !== payload.id) {
+            return filter;
+        }
+        if (isExplorerFilterTree(filter) && payload.value && payload.value.length === 0) {
+            return {...filter, ...payload, value: null};
+        }
+        return {...filter, ...payload};
+    }),
     viewModified: true
 });
 

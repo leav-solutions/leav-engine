@@ -840,6 +840,7 @@ describe('Explorer', () => {
                                 {
                                     id: '',
                                     attribute: {
+                                        id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
                                         type: simpleMockAttribute.type
@@ -867,6 +868,7 @@ describe('Explorer', () => {
                                 {
                                     id: '',
                                     attribute: {
+                                        id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
                                         type: simpleMockAttribute.type
@@ -879,6 +881,7 @@ describe('Explorer', () => {
                                 {
                                     id: '',
                                     attribute: {
+                                        id: '',
                                         format: booleanMockAttribute.format,
                                         label: booleanMockAttribute.label.fr,
                                         type: booleanMockAttribute.type
@@ -907,6 +910,7 @@ describe('Explorer', () => {
                                 {
                                     id: '',
                                     attribute: {
+                                        id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
                                         type: simpleMockAttribute.type
@@ -1956,6 +1960,7 @@ describe('Explorer', () => {
                                 {
                                     id: '',
                                     attribute: {
+                                        id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
                                         type: simpleMockAttribute.type
@@ -2019,6 +2024,7 @@ describe('Explorer', () => {
                                 {
                                     id: '',
                                     attribute: {
+                                        id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
                                         type: simpleMockAttribute.type
@@ -2030,6 +2036,7 @@ describe('Explorer', () => {
                                 {
                                     id: '',
                                     attribute: {
+                                        id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
                                         type: simpleMockAttribute.type
@@ -2309,6 +2316,7 @@ describe('Explorer', () => {
                                 {
                                     id: '',
                                     attribute: {
+                                        id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
                                         type: simpleColorMockAttribute.type
@@ -2427,6 +2435,7 @@ describe('Explorer', () => {
                                 {
                                     id: '',
                                     attribute: {
+                                        id: '',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
                                         type: simpleMockAttribute.type
@@ -2951,6 +2960,7 @@ describe('Explorer', () => {
                                 {
                                     id: '123',
                                     attribute: {
+                                        id: '123',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
                                         type: simpleMockAttribute.type
@@ -2962,6 +2972,7 @@ describe('Explorer', () => {
                                 {
                                     id: '456',
                                     attribute: {
+                                        id: '456',
                                         format: booleanMockAttribute.format,
                                         label: booleanMockAttribute.label.fr,
                                         type: booleanMockAttribute.type

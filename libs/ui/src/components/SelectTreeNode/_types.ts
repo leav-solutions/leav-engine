@@ -9,6 +9,7 @@ export interface ITreeMapElement extends ITreeNodeWithRecord {
     isLeaf?: boolean;
     paginationOffset: number;
     children: ITreeMapElement[];
+    parents?: string[];
     isShowMore?: boolean;
     selectable?: boolean;
     disabled?: boolean;

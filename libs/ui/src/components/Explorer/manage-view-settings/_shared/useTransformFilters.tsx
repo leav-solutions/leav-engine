@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     AttributeDetailsLinkAttributeFragment,
+    AttributeDetailsTreeAttributeFragment,
     ExplorerAttributesQuery,
     ExplorerLinkAttributeQuery,
     GetViewsListQuery,
@@ -15,12 +16,13 @@ import {
     IExplorerFilterLink,
     IExplorerFilterStandard,
     IExplorerFilterThrough,
+    IExplorerFilterTree,
     ValidFieldFilter,
     ValidFieldFilterThrough,
     validFilter
 } from '../../_types';
 import {ThroughConditionFilter} from '_ui/types';
-import {isLinkAttribute, isStandardAttribute} from '_ui/_utils/attributeType';
+import {isLinkAttribute, isStandardAttribute, isTreeAttribute} from '_ui/_utils/attributeType';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {v4 as uuid} from 'uuid';
@@ -42,6 +44,11 @@ type LinkAttributeDetailsWithPermissionsFragment = LinkAttributeDetailsFragment 
 };
 
 type AttributeDetailsLinkAttributeWithPermissionsFragment = AttributeDetailsLinkAttributeFragment & {
+    permissions: {
+        access_attribute: boolean;
+    };
+};
+type AttributeDetailsTreeAttributeWithPermissionsFragment = AttributeDetailsTreeAttributeFragment & {
     permissions: {
         access_attribute: boolean;
     };
@@ -105,7 +112,8 @@ export const useTransformFilters = () => {
 
             const filterAttributeBase = {
                 label: localizedTranslation(attributesDataById[filter.field].label, lang),
-                type: attributesDataById[filter.field].type
+                type: attributesDataById[filter.field].type,
+                id: attributesDataById[filter.field].id
             };
 
             // filter is standardFilter
@@ -158,6 +166,25 @@ export const useTransformFilters = () => {
                     acc.push(newFilter);
                 }
             }
+
+            if (isTreeAttribute(filterAttributeBase.type) && !_isValidFieldFilterThrough(filter)) {
+                const attributeData = attributesDataById[
+                    filter.field
+                ] as AttributeDetailsTreeAttributeWithPermissionsFragment;
+                const newFilter: IExplorerFilterTree = {
+                    field: [filter.field],
+                    value: filter.value ? [filter.value] : null,
+                    hidden: filter.hidden ?? false,
+                    id: uuid(),
+                    attribute: {
+                        ...filterAttributeBase,
+                        linkedTree: attributeData.linked_tree!
+                    },
+                    condition: filter.condition ?? RecordFilterCondition.EQUAL
+                };
+                acc.push(newFilter);
+            }
+
             return acc;
         }, []);
 

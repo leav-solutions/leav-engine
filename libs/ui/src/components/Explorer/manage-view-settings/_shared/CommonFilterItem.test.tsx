@@ -13,8 +13,9 @@ import {viewSettingsInitialState} from '../store-view-settings/viewSettingsIniti
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import dayjs from 'dayjs';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
-import {AttributeType} from '_ui/_gqlTypes';
-import userEvent, {PointerEventsCheckLevel} from '@testing-library/user-event';
+import {AttributeType, TreeDataQueryQueryHookResult} from '_ui/_gqlTypes';
+import userEvent from '@testing-library/user-event';
+import {Mockify} from '@leav/utils';
 
 const getAllConditionOptions = (base: ReturnType<typeof render>['baseElement']) =>
     base.getElementsByClassName('rc-virtual-list')[0].getElementsByClassName('kit-select-option');
@@ -38,6 +39,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'numeric filter',
+                    id: 'numeric filter',
                     format: gqlTypes.AttributeFormat.numeric,
                     type: AttributeType.simple
                 },
@@ -58,6 +60,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'numeric filter',
+                    id: 'numeric filter',
                     format: gqlTypes.AttributeFormat.numeric,
                     type: AttributeType.simple
                 },
@@ -92,6 +95,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'text filter',
+                    id: 'text filter',
                     format: gqlTypes.AttributeFormat.text,
                     type: AttributeType.simple
                 },
@@ -117,6 +121,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'text filter',
+                    id: 'text filter',
                     format: gqlTypes.AttributeFormat.text,
                     type: AttributeType.simple
                 },
@@ -150,6 +155,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'rich text filter',
+                    id: 'rich text filter',
                     format: gqlTypes.AttributeFormat.rich_text,
                     type: AttributeType.simple
                 },
@@ -175,6 +181,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'rich text filter',
+                    id: 'rich text filter',
                     format: gqlTypes.AttributeFormat.rich_text,
                     type: AttributeType.simple
                 },
@@ -208,6 +215,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'boolean filter',
+                    id: 'boolean filter',
                     format: gqlTypes.AttributeFormat.boolean,
                     type: AttributeType.simple
                 },
@@ -230,6 +238,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'date filter',
+                    id: 'date filter',
                     format: gqlTypes.AttributeFormat.date,
                     type: AttributeType.simple
                 },
@@ -250,6 +259,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'date filter',
+                    id: 'date filter',
                     format: gqlTypes.AttributeFormat.date,
                     type: AttributeType.simple
                 },
@@ -284,6 +294,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'color filter',
+                    id: 'color filter',
                     format: gqlTypes.AttributeFormat.color,
                     type: AttributeType.simple
                 },
@@ -304,6 +315,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'encrypted filter',
+                    id: 'encrypted filter',
                     format: gqlTypes.AttributeFormat.encrypted,
                     type: AttributeType.simple
                 },
@@ -324,6 +336,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'extended filter',
+                    id: 'extended filter',
                     format: gqlTypes.AttributeFormat.extended,
                     type: AttributeType.simple
                 },
@@ -344,6 +357,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'period filter',
+                    id: 'period filter',
                     format: gqlTypes.AttributeFormat.date_range,
                     type: AttributeType.simple
                 },
@@ -364,6 +378,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'link filter',
+                    id: 'link filter',
                     type: AttributeType.advanced_link
                 },
                 field: 'test',
@@ -417,6 +432,7 @@ describe('CommonFilterItem', () => {
                 id: 'test',
                 attribute: {
                     label: 'link filter',
+                    id: 'link filter',
                     type: AttributeType.advanced_link,
                     linkedLibrary: {
                         id: 'link_library'
@@ -470,6 +486,88 @@ describe('CommonFilterItem', () => {
 
             // THEN the value textbox is displayed
             expect(await screen.findByRole('textbox')).toBeVisible();
+        });
+    });
+
+    describe('tree filter', () => {
+        it('should render tree filter', async () => {
+            const mockUseTreeDataQueryQuery: Mockify<typeof gqlTypes.useTreeDataQueryQuery> = {
+                data: {
+                    trees: {
+                        list: [
+                            {
+                                id: 'tree_library',
+                                label: {
+                                    fr: 'Mon arbre',
+                                    en: 'My tree'
+                                }
+                            }
+                        ]
+                    }
+                }
+            };
+
+            jest.spyOn(gqlTypes, 'useTreeDataQueryQuery').mockReturnValue(
+                mockUseTreeDataQueryQuery as TreeDataQueryQueryHookResult
+            );
+
+            const mockResultFromChild = {
+                treeNodeChildren: {
+                    totalCount: 1,
+                    list: [
+                        {
+                            id: 'my_first_child',
+                            record: {
+                                id: 'my_first_child',
+                                whoAmI: {
+                                    label: 'Emile'
+                                }
+                            }
+                        },
+                        {
+                            id: 'my_second_child',
+                            record: {
+                                id: 'my_second_child',
+                                whoAmI: {
+                                    label: 'Jules'
+                                }
+                            }
+                        }
+                    ]
+                }
+            };
+
+            const mockResult: Mockify<gqlTypes.TreeNodeChildrenQueryResult> = {
+                called: true,
+                loading: false
+            };
+
+            jest.spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery').mockReturnValue([
+                jest.fn().mockImplementation(() => ({data: mockResultFromChild})),
+                mockResult as gqlTypes.TreeNodeChildrenQueryResult
+            ]);
+
+            const filter: ExplorerFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'tree filter',
+                    id: 'tree_filter',
+                    type: AttributeType.tree,
+                    linkedTree: {
+                        id: 'tree_library'
+                    }
+                },
+                field: ['test'],
+                value: [],
+                condition: AttributeConditionFilter.EQUAL
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            await userEvent.click(screen.getByRole('button', {name: /tree/}));
+            expect(screen.getByText(filter.attribute.label)).toBeVisible();
+
+            expect(screen.getByText(mockResultFromChild.treeNodeChildren.list[0].record.whoAmI.label)).toBeVisible();
+            expect(screen.getByText(mockResultFromChild.treeNodeChildren.list[1].record.whoAmI.label)).toBeVisible();
         });
     });
 });

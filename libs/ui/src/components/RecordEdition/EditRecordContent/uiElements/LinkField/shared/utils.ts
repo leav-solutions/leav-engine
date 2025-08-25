@@ -9,6 +9,7 @@ export const FILTER_ON_ID_DEFAULT_FIELDS: Omit<IExplorerFilterStandard, 'value'>
     attribute: {
         format: AttributeFormat.text,
         label: 'id',
+        id: 'id',
         type: AttributeType.simple
     },
     field: 'id',

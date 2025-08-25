@@ -10,6 +10,7 @@ import {
     AttributeFormat,
     AttributesByLibAttributeFragment,
     AttributesByLibAttributeLinkAttributeFragment,
+    AttributesByLibAttributeTreeAttributeFragment,
     AttributeType
 } from '_ui/_gqlTypes';
 import {
@@ -54,6 +55,11 @@ const _isLibraryLinkAttribute = (
 ): attribute is AttributesByLibAttributeLinkAttributeFragment =>
     [AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type) && 'linked_library' in attribute;
 
+const _isLibraryTreeAttribute = (
+    attribute: AttributesByLibAttributeFragment
+): attribute is AttributesByLibAttributeTreeAttributeFragment =>
+    attribute.type === AttributeType.tree && 'linked_tree' in attribute;
+
 export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId}) => {
     const {t} = useSharedTranslation();
     const {
@@ -76,12 +82,16 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
             payload: {
                 field: attributeId,
                 attribute: {
+                    id: attributeId,
                     label: attributeDetailsById[attributeId].label,
                     format: attributeDetailsById[attributeId].format ?? AttributeFormat.text,
                     type: attributeDetailsById[attributeId].type,
                     linkedLibrary: _isLibraryLinkAttribute(attributeDetailsById[attributeId])
                         ? (attributeDetailsById[attributeId].linked_library ?? undefined)
-                        : undefined // TODO : https://aristid.atlassian.net/browse/XSTREAM-1155
+                        : undefined, // TODO : https://aristid.atlassian.net/browse/XSTREAM-1155
+                    linkedTree: _isLibraryTreeAttribute(attributeDetailsById[attributeId])
+                        ? (attributeDetailsById[attributeId].linked_tree ?? undefined)
+                        : undefined
                 }
             }
         });
@@ -107,12 +117,9 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
         dispatch({type: ViewSettingsActionTypes.MOVE_FILTER, payload: {indexFrom, indexTo}});
     };
 
-    const ignoredTypes = [AttributeType.tree];
-    const activeFilters = filters.filter(({field}) => searchFilteredColumnsIds.includes(field));
-    const inactiveFilters = searchFilteredColumnsIds.filter(
-        attributeId =>
-            !ignoredTypes.includes(attributeDetailsById?.[attributeId]?.type) &&
-            filters.every(filterItem => filterItem.field !== attributeId)
+    const activeFilters = filters.filter(({attribute}) => searchFilteredColumnsIds.includes(attribute.id));
+    const inactiveFilters = searchFilteredColumnsIds.filter(attributeId =>
+        filters.every(filterItem => filterItem.attribute.id !== attributeId)
     );
 
     const canAddFilter = activeFilters.length < maxFilters;
@@ -123,13 +130,13 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                 <StyledList aria-label={t('explorer.filter-list.active')}>
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={_handleDragEnd}>
                         <SortableContext
-                            items={activeFilters.map(({field}) => ({id: field}))}
+                            items={activeFilters.map(({attribute}) => attribute.id)}
                             strategy={verticalListSortingStrategy}
                         >
                             {activeFilters.map(activeFilter => (
                                 <FilterListItem
-                                    key={activeFilter.field}
-                                    attributeId={activeFilter.field}
+                                    key={activeFilter.attribute.id}
+                                    attributeId={activeFilter.attribute.id}
                                     isDraggable
                                     visibilityButtonProps={{
                                         icon: <StyledFaEye />,

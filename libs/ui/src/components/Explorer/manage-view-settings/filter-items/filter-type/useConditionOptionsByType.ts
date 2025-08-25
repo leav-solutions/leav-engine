@@ -2,7 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormat, RecordFilterCondition} from '_ui/_gqlTypes';
-import {ExplorerFilter, isExplorerFilterStandard} from '../../../_types';
+import {
+    ExplorerFilter,
+    isExplorerFilterLink,
+    isExplorerFilterStandard,
+    isExplorerFilterThrough,
+    isExplorerFilterTree
+} from '../../../_types';
 import {AttributeConditionFilter, AttributeConditionType, ThroughConditionFilter} from '_ui/types';
 import {TFunction} from 'i18next';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -57,6 +63,10 @@ export const linkFilterConditions: Array<RecordFilterCondition | ThroughConditio
     ...conditionsByFormat[AttributeFormat.text],
     AttributeConditionFilter.THROUGH
 ];
+export const treeFilterConditions: RecordFilterCondition[] = [
+    AttributeConditionFilter.EQUAL,
+    AttributeConditionFilter.NOT_EQUAL
+];
 
 interface IExplorerFilterConditionOption<T> {
     label: string;
@@ -101,16 +111,40 @@ const _getAttributeConditionOptions = (t: TFunction): Array<IExplorerFilterCondi
     {label: t('filters.through'), value: AttributeConditionFilter.THROUGH}
 ];
 
+export const getFirstConditionByFilterType = (
+    filter: ExplorerFilter
+): Array<RecordFilterCondition | ThroughConditionFilter> => {
+    if (isExplorerFilterStandard(filter)) {
+        return conditionsByFormat[filter.attribute.format] ?? [];
+    }
+    if (isExplorerFilterLink(filter)) {
+        return linkFilterConditions ?? [];
+    }
+    if (isExplorerFilterTree(filter)) {
+        return treeFilterConditions ?? [];
+    }
+    if (isExplorerFilterThrough(filter)) {
+        return [AttributeConditionFilter.THROUGH];
+    }
+    return [];
+};
+
 export const useConditionsOptionsByType = (filter: ExplorerFilter) => {
     const {t} = useSharedTranslation();
 
     return {
         conditionOptionsByType: _getAttributeConditionOptions(t)
-            .filter(({value}) =>
-                isExplorerFilterStandard(filter)
-                    ? conditionsByFormat[filter.attribute.format].includes(value)
-                    : linkFilterConditions.includes(value)
-            )
+            .filter(({value}) => {
+                if (isExplorerFilterStandard(filter)) {
+                    return conditionsByFormat[filter.attribute.format].includes(value);
+                }
+                if (isExplorerFilterLink(filter) || isExplorerFilterThrough(filter)) {
+                    return linkFilterConditions.includes(value);
+                }
+                if (isExplorerFilterTree(filter)) {
+                    return treeFilterConditions.includes(value);
+                }
+            })
             .map(option => ({
                 ...option,
                 label:

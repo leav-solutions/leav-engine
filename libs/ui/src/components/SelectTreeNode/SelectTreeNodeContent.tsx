@@ -7,10 +7,7 @@ import {Spin} from 'antd';
 import {EventDataNode} from 'antd/lib/tree';
 import {ITreeNodeWithRecord} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {
-    ChildrenAsRecordValuePermissionFilterInput,
-    useTreeNodeChildrenLazyQuery
-} from '_ui/_gqlTypes';
+import {ChildrenAsRecordValuePermissionFilterInput, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
 import {defaultPaginationPageSize, ErrorDisplay} from '../..';
 import {TreeNodeTitle} from './TreeNodeTitle';
 import {_isObjectSelection, ITreeMap, ITreeMapElement} from './_types';
@@ -24,8 +21,10 @@ interface ISelectTreeNodeContentProps {
     onCheck?: (selection: ITreeNodeWithRecord[]) => void;
     multiple?: boolean;
     checkable?: boolean;
+    checkStrictly?: boolean;
     canSelectRoot?: boolean;
     selectableLibraries?: string[]; // all by default
+    loadRecursively?: boolean;
 }
 
 export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProps> = ({
@@ -37,8 +36,10 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     disabledNodes,
     multiple = false,
     checkable = false,
+    checkStrictly = true,
     canSelectRoot = false,
-    selectableLibraries
+    selectableLibraries,
+    loadRecursively = false
 }) => {
     const {t} = useSharedTranslation();
 
@@ -48,6 +49,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         id: tree.id,
         key: tree.id,
         isLeaf: false,
+        parents: [],
         paginationOffset: 0,
         children: []
     };
@@ -61,7 +63,12 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     const [fetchError, setFetchError] = useState<string | undefined>();
     const [loadTreeContent, {error, called}] = useTreeNodeChildrenLazyQuery();
 
-    const _fetchTreeContent = async (parentNodeKey?: string, offset = 0) => {
+    const _fetchTreeContent = async (
+        parentNodeKey?: string,
+        offset = 0,
+        recursive = false,
+        currentTreeMap = {...treeMap}
+    ) => {
         try {
             const {
                 data: {treeNodeChildren}
@@ -77,63 +84,59 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                 }
             });
 
-            const formattedNodes = treeNodeChildren.list.map(e => ({
-                record: e.record,
-                title: e.record.whoAmI.label || e.record.whoAmI.id,
-                id: e.id,
-                key: e.id,
-                isLeaf: !e.childrenCount,
-                children: []
-            }));
             const parentMapKey = parentNodeKey ?? tree.id;
+            const parentElement = currentTreeMap[parentMapKey];
 
-            const newTreeMap = {...treeMap};
-            const totalCount = treeNodeChildren.totalCount;
-            const parentElement = newTreeMap[parentMapKey];
-            const showMoreKey = '__showMore' + parentMapKey + offset;
+            const parentPath = parentElement?.parents ?? [];
 
-            parentElement.children = parentElement.children.filter(
-                child => !child.key.match(`__showMore${parentMapKey}`)
-            );
+            const formattedNodes = treeNodeChildren.list.map(e => {
+                const currentParents = [...parentPath, parentMapKey];
+
+                return {
+                    record: e.record,
+                    title: e.record.whoAmI.label || e.record.whoAmI.id,
+                    id: e.id,
+                    key: e.id,
+                    isLeaf: !e.childrenCount,
+                    children: [],
+                    parents: currentParents,
+                    paginationOffset: 0,
+                    disabled: disabledNodes?.includes(e.id)
+                };
+            });
+
+            parentElement.children = [
+                ...parentElement.children.filter(child => !child.key.startsWith(`__showMore${parentMapKey}`)),
+                ...formattedNodes
+            ];
 
             for (const node of formattedNodes) {
-                const nodeForTreeMap = {
-                    ...node,
-                    paginationOffset: 0,
-                    disabled: disabledNodes?.includes(node.id)
-                };
-
-                newTreeMap[nodeForTreeMap.key] = nodeForTreeMap as ITreeMapElement;
-                parentElement.paginationOffset = offset;
-                parentElement.children.push(nodeForTreeMap as ITreeMapElement);
+                currentTreeMap[node.key] = node as ITreeMapElement;
             }
 
-            if (totalCount > parentElement.paginationOffset + defaultPaginationPageSize) {
-                const showMoreElement: ITreeMapElement = {
-                    id: parentMapKey,
-                    key: showMoreKey,
-                    record: null,
-                    title: t('tree-node-selection.show_more'),
-                    isLeaf: false,
-                    paginationOffset: 0,
-                    isShowMore: true,
-                    selectable: false,
-                    children: []
-                };
-                parentElement.children.push(showMoreElement);
+            const newOffset = offset + defaultPaginationPageSize;
+            if (treeNodeChildren.totalCount > newOffset) {
+                await _fetchTreeContent(parentNodeKey, newOffset, recursive, currentTreeMap);
             }
-            setTreeMap(newTreeMap);
 
-            setFetchError(null);
+            if (recursive) {
+                for (const node of formattedNodes) {
+                    if (!node.isLeaf) {
+                        await _fetchTreeContent(node.key, 0, true, currentTreeMap);
+                    }
+                }
+            }
+
+            setTreeMap(currentTreeMap);
+            setFetchError(undefined);
         } catch (err) {
             setFetchError((err as Error).message);
         }
     };
 
     useEffect(() => {
-        // Load root
-        _fetchTreeContent();
-    }, []);
+        _fetchTreeContent(undefined, 0, loadRecursively);
+    }, [loadRecursively]);
 
     const _handleLoadData: ComponentProps<typeof KitTree>['loadData'] = async nodeData => {
         const {id, isShowMore} = nodeData as EventDataNode<ITreeMapElement>;
@@ -163,8 +166,27 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             return;
         }
 
+        const getAllDescendants = (nodeId: string): string[] =>
+            treeMap[nodeId].children.reduce<string[]>(
+                (acc, child) => [...acc, child.id, ...getAllDescendants(child.id)],
+                []
+            );
+
         if (node) {
-            onSelect(node, e.selected);
+            if (checkable) {
+                const isDeselecting = selectedNodes.includes(node.id);
+                if (isDeselecting) {
+                    const nodeToDeselect = [node.id, ...node.parents, ...getAllDescendants(node.id)];
+                    const selectionToKeep = selectedNodes.filter(
+                        selectedNode => !nodeToDeselect.includes(selectedNode)
+                    );
+                    _handleCheck(selectionToKeep, null);
+                } else {
+                    _handleCheck([...selectedNodes, node.id], null);
+                }
+            } else {
+                onSelect(node, e.selected);
+            }
         }
     };
 
@@ -184,12 +206,13 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
 
     return (
         <KitTree
-            checkStrictly
+            key={selectedNodes?.join('-')}
+            checkStrictly={checkStrictly}
             treeData={[treeMap[rootNode.key]]}
-            loadData={_handleLoadData}
+            {...(!loadRecursively && {loadData: _handleLoadData})}
             multiple={multiple}
             checkable={checkable}
-            defaultExpandedKeys={[tree.id]} // TODO: Should be selectedNode but more changes are needed
+            defaultExpandedKeys={selectedNodes?.length > 0 && checkable ? selectedNodes : [tree.id]}
             selectedKeys={selectedNodes}
             checkedKeys={selectedNodes}
             titleRender={node => {

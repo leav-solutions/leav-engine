@@ -27,6 +27,7 @@ describe('FilterDropDown', () => {
     const mockFilter: ExplorerFilter = {
         id: 'test',
         attribute: {
+            id: 'test_filter',
             label: 'test filter',
             format: AttributeFormat.text,
             type: AttributeType.simple

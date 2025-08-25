@@ -19,6 +19,15 @@ fragment LinkAttributeDetails on LinkAttribute {
     }
 }
 
+fragment TreeAttributeDetails on TreeAttribute {
+    id
+    label
+    linked_tree {
+        id
+        label
+    }
+}
+
 query ExplorerAttributes($ids: [ID!]) {
     attributes(filters: { ids: $ids }) {
         list {
@@ -30,6 +39,7 @@ query ExplorerAttributes($ids: [ID!]) {
                 access_attribute
             }
             ...LinkAttributeDetails
+            ...TreeAttributeDetails
         }
     }
 }
@@ -44,6 +54,7 @@ query ExplorerLinkAttribute($id: ID!) {
                 edit_value
             }
             ...LinkAttributeDetails
+            ...TreeAttributeDetails
         }
     }
 }

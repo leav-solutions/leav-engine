@@ -9,16 +9,19 @@ import {mapViewTypeFromLegacyToExplorer} from '../../_constants';
 
 const attributeDataStandard = {
     label: 'first',
+    id: 'first',
     format: AttributeFormat.text,
     type: AttributeType.simple
 };
 const attributeDataLink = {
     label: 'first',
+    id: 'first',
     linkedLibrary: {id: 'toto'},
     type: AttributeType.simple_link
 };
 const attributeDataThrough = {
     label: 'first',
+    id: 'first',
     linkedLibrary: {id: 'toto'},
     type: AttributeType.simple_link
 };
