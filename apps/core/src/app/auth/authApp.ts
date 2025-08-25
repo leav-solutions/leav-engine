@@ -241,8 +241,11 @@ export default function ({
 
                         let user = userRecords.list[0];
 
-                        // If no user found in DB, auto provision the user
                         if (!user) {
+                            if (!config.auth.oidc.enableAutoProvisioning) {
+                                throw new AuthenticationError('Invalid user');
+                            }
+                            // If no user found in DB, auto provision the user
                             const {record: createdUser} = await recordDomain.createRecord({
                                 library: 'users',
                                 values: [

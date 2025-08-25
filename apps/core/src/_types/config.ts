@@ -95,6 +95,7 @@ export interface IAuth {
               postLogoutRedirectUri: string;
               skipLogoutConfirmationPage?: boolean;
               idTokenUserClaim: string;
+              enableAutoProvisioning: boolean;
           };
     testApiKey?: string;
 }

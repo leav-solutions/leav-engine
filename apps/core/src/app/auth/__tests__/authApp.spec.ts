@@ -551,7 +551,7 @@ describe('authApp', () => {
             expect(result).toEqual(401);
         });
 
-        it('Should auto provision a user when not found (no admin role)', async () => {
+        it('Should redirect user to oidc login url when user exists and is token is valid', async () => {
             const mockConfig: DeepPartial<IConfig> = {
                 defaultUserId: 'system',
                 auth: {
@@ -561,6 +561,149 @@ describe('authApp', () => {
                     refreshTokenExpiration: '2h',
                     cookie: {sameSite: 'lax', secure: false},
                     oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client'}
+                }
+            };
+
+            const mockRecordDomain = {
+                find: jest.fn().mockResolvedValue({
+                    list: [{id: 'existing-user-id', email: 'user@example.com'}],
+                    cursor: {},
+                    totalCount: 1
+                }),
+                createRecord: jest.fn()
+            } as unknown as Mockify<IRecordDomain>;
+
+            const mockCachesService: Mockify<ICachesService> = {
+                getCache: jest.fn().mockReturnValue({storeData: jest.fn()})
+            };
+
+            const mockValueDomain: Mockify<IValueDomain> = {
+                saveValue: jest.fn(),
+                getValues: jest.fn().mockResolvedValue([])
+            };
+
+            const mockOidcService: Mockify<IOIDCClientService> = {
+                getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
+                saveOIDCTokens: jest.fn(),
+                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl')
+            };
+
+            const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
+
+            const authApp = createAuthApp({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as any,
+                'core.domain.value': mockValueDomain as any,
+                'core.infra.cache.cacheService': mockCachesService as any,
+                'core.infra.oidc.oidcClientService': mockOidcService as any,
+                'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
+                'core.app.helpers.initQueryContext': initQueryContext({}),
+                config: mockConfig as IConfig
+            });
+
+            const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
+            authApp.registerRoute(expressMock as unknown as Express);
+            const verifyHandler = expressMock.get.mock.calls.find(
+                args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
+            )[1];
+
+            // Mock jwt.decode calls for id_token then access_token
+            const decodeSpy = jest.spyOn(jwt, 'decode');
+            decodeSpy
+                .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe'}) as any)
+                .mockImplementationOnce(() => ({resource_access: {client: {roles: []}}}) as any);
+
+            const request: any = {
+                params: {identifierBase64Url: 'whatever'},
+                query: {code: 'authCode', lang: 'fr'},
+                body: {requestId: '0'},
+                headers: {host: 'host', 'user-agent': 'jest'}
+            };
+            const response: any = {
+                cookie: jest.fn(),
+                redirect: jest.fn()
+            };
+
+            // Act
+            await verifyHandler(request, response, jest.fn());
+
+            // Assert
+            expect(mockRecordDomain.createRecord).not.toHaveBeenCalled();
+            expect(response.redirect).toHaveBeenCalledWith('redirectUrl');
+        });
+
+        it('Should respond 401 when a user not found and oidc enable and auto-provisioning disable', async () => {
+            const mockConfig: DeepPartial<IConfig> = {
+                defaultUserId: 'system',
+                auth: {
+                    key: 'key',
+                    algorithm: 'HS256',
+                    tokenExpiration: '15m',
+                    refreshTokenExpiration: '2h',
+                    cookie: {sameSite: 'lax', secure: false},
+                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: false}
+                }
+            };
+
+            const mockRecordDomain = {
+                find: jest.fn().mockResolvedValue({list: [], cursor: {}, totalCount: 0})
+            } as unknown as Mockify<IRecordDomain>;
+
+            const mockOidcService: Mockify<IOIDCClientService> = {
+                getTokensFromCodes: jest.fn().mockResolvedValue({id_token: 'id-tok', access_token: 'acc-tok'}),
+                saveOIDCTokens: jest.fn(),
+                getOriginalUrl: jest.fn().mockResolvedValue('redirectUrl')
+            };
+
+            const mockConvert = {decodeIdentifierFromBase64Url: jest.fn().mockReturnValue('queryId')};
+
+            const authApp = createAuthApp({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as any,
+                'core.infra.oidc.oidcClientService': mockOidcService as any,
+                'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
+                config: mockConfig as IConfig
+            });
+
+            // Mock jwt.decode calls for id_token then access_token
+            const decodeSpy = jest.spyOn(jwt, 'decode');
+            decodeSpy
+                .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe'}) as any)
+                .mockImplementationOnce(() => ({resource_access: {client: {roles: []}}}) as any);
+
+            const expressMock = {get: jest.fn(), post: jest.fn()} satisfies Mockify<Express>;
+            authApp.registerRoute(expressMock as unknown as Express);
+            const verifyHandler = expressMock.get.mock.calls.find(
+                args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
+            )[1];
+
+            const request: any = {
+                params: {identifierBase64Url: 'whatever'},
+                query: {code: 'authCode', lang: 'fr'},
+                body: {requestId: '0'},
+                headers: {host: 'host', 'user-agent': 'jest'}
+            };
+            const response: any = {
+                cookie: jest.fn(),
+                redirect: jest.fn(),
+                status: jest.fn(identity)
+            };
+
+            // Act
+            const resultReqPromise = new Promise((resolve, reject) => verifyHandler(request, response, reject));
+            await expect(resultReqPromise).rejects.toEqual(new Error('Invalid user'));
+        });
+
+        it('Should auto provision a user when not found (no admin role)', async () => {
+            const mockConfig: DeepPartial<IConfig> = {
+                defaultUserId: 'system',
+                auth: {
+                    key: 'key',
+                    algorithm: 'HS256',
+                    tokenExpiration: '15m',
+                    refreshTokenExpiration: '2h',
+                    cookie: {sameSite: 'lax', secure: false},
+                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: true}
                 }
             };
 
@@ -647,7 +790,7 @@ describe('authApp', () => {
                     tokenExpiration: '15m',
                     refreshTokenExpiration: '2h',
                     cookie: {sameSite: 'lax', secure: false},
-                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client'}
+                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: true}
                 }
             };
 
