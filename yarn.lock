@@ -9447,7 +9447,7 @@ __metadata:
     "@types/uuid": "npm:^9"
     "@uidotdev/usehooks": "npm:2.4.1"
     antd: "npm:5.22.2"
-    aristid-ds: "npm:14.0.0-7e64d60"
+    aristid-ds: "npm:14.0.0-fa046aa"
     babel-jest: "npm:29.3.1"
     commander: "npm:9.5.0"
     dompurify: "npm:3.2.4"
@@ -13836,7 +13836,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.22.2"
     apollo: "npm:2.34.0"
-    aristid-ds: "npm:14.0.0-7e64d60"
+    aristid-ds: "npm:14.0.0-fa046aa"
     babel-jest: "npm:29.7.0"
     browserslist: "npm:4.24.4"
     classnames: "npm:2.5.1"
@@ -13982,9 +13982,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:14.0.0-7e64d60":
-  version: 14.0.0-7e64d60
-  resolution: "aristid-ds@npm:14.0.0-7e64d60"
+"aristid-ds@npm:14.0.0-fa046aa":
+  version: 14.0.0-fa046aa
+  resolution: "aristid-ds@npm:14.0.0-fa046aa"
   dependencies:
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
@@ -14041,7 +14041,7 @@ __metadata:
     react-uuid: ^2.0.0
     remark-gfm: ^3.0.1
     styled-components: ^6.0.7
-  checksum: a63b575091084c48a866e11ebe87b7810de31ae35fe6509288d00c28717724ee7f1f393f8d5a1a76002135418e2024744c82cd7fd1e87ba830ac77ddf1eb859d
+  checksum: b95522f3e6a00e948b038207cbbba7b104c9ad5406716e16e1c1a35b67d4ae13cf06a811e52d99a68591da14e4cb60e2030edf9abd857ea3fcf8cc3282df2526
   languageName: node
   linkType: hard
 
@@ -17309,7 +17309,7 @@ __metadata:
     apollo: "npm:2.34.0"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-upload-client: "npm:14.1.3"
-    aristid-ds: "npm:14.0.0-7e64d60"
+    aristid-ds: "npm:14.0.0-fa046aa"
     babel-jest: "npm:29.7.0"
     commander: "npm:5.1.0"
     dayjs: "npm:1.11.13"
@@ -26015,7 +26015,7 @@ __metadata:
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.22.2"
-    aristid-ds: "npm:14.0.0-7e64d60"
+    aristid-ds: "npm:14.0.0-fa046aa"
     babel-jest: "npm:29.7.0"
     graphql: "npm:15.0.0"
     i18next: "npm:22.5.0"
@@ -28801,7 +28801,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.22.2"
     apollo: "npm:2.34.0"
-    aristid-ds: "npm:14.0.0-7e64d60"
+    aristid-ds: "npm:14.0.0-fa046aa"
     babel-jest: "npm:29.7.0"
     commander: "npm:10.0.0"
     cross-fetch: "npm:3.1.5"
