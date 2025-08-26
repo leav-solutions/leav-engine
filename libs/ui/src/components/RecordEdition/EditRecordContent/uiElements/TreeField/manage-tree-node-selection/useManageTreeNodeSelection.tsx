@@ -48,19 +48,10 @@ export const useManageTreeNodeSelection = ({
     const [isModalHidden, setIsModalHidden] = useState(true);
 
     useEffect(() => {
-        if (isFormCreationMode || !attribute.required || (attribute.required && backendValues.length > 0)) {
-            form.setFields([
-                {
-                    name: attribute.id,
-                    value: backendValues.map(({treeValue}) => treeValue.id),
-                    errors: []
-                }
-            ]);
-        } else {
-            // Set the field in error when TreeField is displayed for the first time. Otherwise, errors will be handled by other functions in this file.
+        if (!isFormCreationMode && backendValues.length === 0 && attribute.required) {
             form.setFields([{name: attribute.id, errors: [t('errors.standard_field_required')]}]);
         }
-    }, [backendValues, attribute, treeNodeValue]);
+    }, []);
 
     const _closeModal: ComponentProps<typeof SelectTreeNodeModal>['onClose'] = () => {
         setIsModalHidden(true);

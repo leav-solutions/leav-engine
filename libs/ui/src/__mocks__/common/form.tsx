@@ -21,6 +21,23 @@ import {mockVersionProfile} from './versionProfile';
 const formElementBase = {
     type: FormElementTypes.layout,
     attribute: null,
+    valueError: null,
+    values: [
+        {
+            value: 'My value formatted',
+            raw_value: 'my_raw_value',
+            payload: 'My value formatted',
+            raw_payload: 'my_raw_payload',
+            created_at: 123456789,
+            modified_at: 123456789,
+            created_by: mockModifier,
+            modified_by: mockModifier,
+            id_value: null,
+            attribute: mockAttributeSimple,
+            metadata: null,
+            version: null
+        }
+    ],
     settings: {}
 };
 
@@ -252,13 +269,11 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
         },
         treeValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []}
     },
-    values: []
+    values: [
+        {...(mockTreeValueA as unknown as RecordFormElementsValueTreeValue)},
+        {...(mockTreeValueB as unknown as RecordFormElementsValueTreeValue)}
+    ]
 };
-
-export const mockFormElementTreeValues = [
-    {...(mockTreeValueA as unknown as RecordFormElementsValueTreeValue)},
-    {...(mockTreeValueB as unknown as RecordFormElementsValueTreeValue)}
-];
 
 export const mockFormElementTextBlock: FormElement<{}> = {
     ...formElementBase,
@@ -312,27 +327,4 @@ export const mockRecordForm: IRecordForm = {
         enable: true,
         isOpenByDefault: true
     }
-};
-
-export const mockElementValues1 = [
-    {
-        id_value: '123456',
-        value: 'My value formatted',
-        raw_value: 'My value formatted',
-        payload: 'My value formatted',
-        raw_payload: 'My value formatted',
-        created_at: 123456789,
-        modified_at: 123456789,
-        created_by: mockModifier,
-        modified_by: mockModifier
-    }
-];
-
-export const mockRecordFormWithValues = {
-    ...mockRecordForm,
-    elements: mockRecordForm.elements.map(element => ({
-        ...element,
-        values: mockElementValues1,
-        valueError: null
-    }))
 };

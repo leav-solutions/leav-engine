@@ -5,7 +5,7 @@ export declare enum FileType {
     DOCUMENT = "document",
     OTHER = "other"
 }
-export type FileRecord = Record<string, any> & {
+export declare type FileRecord = Record<string, any> & {
     type: FileType;
 };
 export interface IPreviewScalar {

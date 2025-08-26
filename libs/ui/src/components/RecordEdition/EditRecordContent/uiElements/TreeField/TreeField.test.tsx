@@ -14,6 +14,8 @@ import {
 } from '../shared/calculatedInheritedFlags';
 import {FormInstance} from 'antd';
 import {mockFormElementTree} from '_ui/__mocks__/common/form';
+import {RecordEditionContext} from '../../hooks/useRecordEditionContext';
+import {mockRecord} from '_ui/__mocks__/common/record';
 import {MockedLangContextProvider} from '_ui/testing';
 import {initialState} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
@@ -84,6 +86,12 @@ describe('TreeField', () => {
         metadataEdit: false
     };
 
+    const recordEditionContextDefaultProps = {
+        record: mockRecord,
+        readOnly: true,
+        elements: null
+    };
+
     const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
         isCalculatedValue: false,
         isCalculatedOverrideValue: false,
@@ -123,9 +131,11 @@ describe('TreeField', () => {
 
     it('should render with default props', () => {
         render(
-            <MockedLangContextProvider>
-                <TreeField {...treeFieldDefaultProps} />
-            </MockedLangContextProvider>
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...treeFieldDefaultProps} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
         );
 
         expect(screen.getByTestId('tree-node-list')).toBeInTheDocument();
@@ -139,9 +149,11 @@ describe('TreeField', () => {
         props.element.attribute.permissions.edit_value = false;
 
         render(
-            <MockedLangContextProvider>
-                <TreeField {...props} />
-            </MockedLangContextProvider>
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...props} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
         );
 
         const textInput = screen.getByTestId('tree-field');
@@ -150,9 +162,11 @@ describe('TreeField', () => {
 
     it('should call useManageTreeNodeSelection with default props', () => {
         render(
-            <MockedLangContextProvider>
-                <TreeField {...treeFieldDefaultProps} />
-            </MockedLangContextProvider>
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...treeFieldDefaultProps} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
         );
 
         expect(mockedUseManageTreeNodeSelection).toHaveBeenCalled();
@@ -161,15 +175,18 @@ describe('TreeField', () => {
 
         expect(callArgs.modaleTitle).toBe('arbre');
         expect(callArgs.attribute).toBe(treeFieldDefaultProps.element.attribute);
+        expect(callArgs.backendValues).toEqual(mockFormElementTree.values);
         expect(callArgs.isReadOnly).toBe(false);
         expect(callArgs.isFieldInError).toBe(false);
     });
 
     it('should call useDisplayTreeNode with default props', () => {
         render(
-            <MockedLangContextProvider>
-                <TreeField {...treeFieldDefaultProps} />
-            </MockedLangContextProvider>
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...treeFieldDefaultProps} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
         );
 
         expect(mockedTreeNodeList).toHaveBeenCalled();
@@ -183,9 +200,11 @@ describe('TreeField', () => {
 
     it('should call useManageTreeNodeSelection with isReadOnly to true', () => {
         render(
-            <MockedLangContextProvider>
-                <TreeField {...treeFieldDefaultProps} readonly={true} />
-            </MockedLangContextProvider>
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...treeFieldDefaultProps} readonly={true} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
         );
 
         const callArgs = mockedUseManageTreeNodeSelection.mock.calls[0][0];
@@ -198,9 +217,11 @@ describe('TreeField', () => {
         } as unknown as FormInstance);
 
         render(
-            <MockedLangContextProvider>
-                <TreeField {...treeFieldDefaultProps} />
-            </MockedLangContextProvider>
+            <RecordEditionContext.Provider value={recordEditionContextDefaultProps}>
+                <MockedLangContextProvider>
+                    <TreeField {...treeFieldDefaultProps} />
+                </MockedLangContextProvider>
+            </RecordEditionContext.Provider>
         );
 
         const callArgs = mockedUseManageTreeNodeSelection.mock.calls[0][0];

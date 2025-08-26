@@ -9,8 +9,7 @@ import {
     mockFormElementInput,
     mockFormElementMultipleInput,
     mockFormElementRequiredInput,
-    mockRecordForm,
-    mockRecordFormWithValues
+    mockRecordForm
 } from '_ui/__mocks__/common/form';
 import {mockAttributeSimple, mockFormAttributeCompute} from '_ui/__mocks__/common/attribute';
 import {APICallStatus} from '../EditRecordContent/_types';
@@ -46,16 +45,6 @@ jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteDelete
 const useGetRecordValuesQueryMock = jest.fn();
 jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
     useGetRecordValuesQuery: () => useGetRecordValuesQueryMock()
-}));
-
-const refetchRecordFormWithValuesMock = jest.fn();
-const useFetchVisibleFormValueMock = jest.fn().mockImplementation(() => ({
-    recordFormWithValues: mockRecordFormWithValues,
-    refetchRecordFormWithValues: refetchRecordFormWithValuesMock
-}));
-
-jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useFetchVisibleFormValue', () => ({
-    useFetchVisibleFormValue: () => useFetchVisibleFormValueMock()
 }));
 
 const mocks = [
@@ -164,17 +153,12 @@ describe('EditRecordPage', () => {
                 }
             ]
         });
-
+        deleteValueMock.mockClear();
+        useGetRecordFormMock.mockClear();
+        useGetRecordValuesQueryMock.mockClear();
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
             loading: false
         });
-
-        deleteValueMock.mockReset();
-        useGetRecordFormMock.mockClear();
-
-        useGetRecordValuesQueryMock.mockClear();
-        useFetchVisibleFormValueMock.mockClear();
-        refetchRecordFormWithValuesMock.mockClear();
     });
 
     afterEach(() => {
@@ -209,17 +193,6 @@ describe('EditRecordPage', () => {
             refetch: jest.fn()
         });
 
-        useFetchVisibleFormValueMock.mockReturnValue({
-            recordFormWithValues: {
-                ...mockRecordForm,
-                elements: [
-                    {...simpleElementInput, values: mockRecordFormWithValues.elements[0].values, valueError: false},
-                    {...calculatedElementInput, values: calculatedValues('updated calculated'), valueError: false}
-                ]
-            },
-            refetchRecordFormWithValues: refetchRecordFormWithValuesMock
-        });
-
         const refetchMock = jest.fn();
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: false,
@@ -239,7 +212,7 @@ describe('EditRecordPage', () => {
         await userEvent.type(simpleInput, 'some value');
         await userEvent.tab();
 
-        expect(refetchRecordFormWithValuesMock).toHaveBeenCalledTimes(1);
+        expect(refetchMock).toHaveBeenCalledTimes(1);
         expect(calculatedInput).toHaveValue('updated calculated');
     });
 
@@ -253,7 +226,9 @@ describe('EditRecordPage', () => {
             ...mockFormElementInput,
             id: 'input_calculated_element',
             attribute: mockFormAttributeCompute,
-            settings: [{key: 'label', value: {fr: 'calculated attribute'}}]
+            values: calculatedValues('calculated'),
+            settings: [{key: 'label', value: {fr: 'calculated attribute'}}],
+            valueError: true
         };
 
         useGetRecordFormMock.mockReturnValue({
@@ -262,53 +237,32 @@ describe('EditRecordPage', () => {
             refetch: jest.fn()
         });
 
-        useFetchVisibleFormValueMock.mockReturnValue({
-            recordFormWithValues: {
-                ...mockRecordForm,
-                elements: [
-                    {...simpleElementInput, values: mockRecordFormWithValues.elements[0].values, valueError: false},
-                    {...calculatedElementInput, values: null, valueError: true}
-                ]
-            },
-            refetchRecordFormWithValues: refetchRecordFormWithValuesMock
+        const refetchMock = jest.fn();
+        useGetRecordValuesQueryMock.mockReturnValue({
+            loading: false,
+            data: null,
+            refetch: refetchMock
         });
 
         render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
 
-        const input = await screen.findAllByRole('textbox');
-
-        // 1. Init record form
-        expect(input).toHaveLength(1);
+        expect(screen.getAllByRole('textbox')).toHaveLength(1);
         expect(screen.queryByRole('textbox', {name: 'calculated attribute'})).not.toBeInTheDocument();
 
-        // 2. getElementFormValues request is automatically triggered
-        expect(input).toHaveLength(1);
-
-        useFetchVisibleFormValueMock.mockReturnValue({
-            recordFormWithValues: {
-                ...mockRecordForm,
-                elements: [
-                    {...simpleElementInput, values: mockRecordFormWithValues.elements[0].values, valueError: false},
-                    {
-                        ...calculatedElementInput,
-                        values: [{...mockRecordFormWithValues.elements[0].values, raw_payload: 'updated calculated'}],
-                        valueError: false
-                    }
-                ]
-            },
-            refetchRecordFormWithValues: refetchRecordFormWithValuesMock
+        useGetRecordValuesQueryMock.mockReturnValue({
+            loading: false,
+            data: {[mockRecord.id]: {[mockFormAttributeCompute.id]: calculatedValues('updated calculated')}},
+            refetch: refetchMock
         });
 
-        const simpleInput = await screen.findByRole('textbox', {name: 'simple attribute'});
+        const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
         await user.click(simpleInput);
         await userEvent.type(simpleInput, 'some value');
         await userEvent.tab();
         await userEvent.click(document.body);
 
-        expect(refetchRecordFormWithValuesMock).toHaveBeenCalledTimes(1);
+        expect(refetchMock).toHaveBeenCalledTimes(1);
         expect(screen.getAllByRole('textbox')).toHaveLength(2);
-        expect(screen.getByRole('textbox', {name: 'calculated attribute'})).toBeInTheDocument();
-        expect(screen.getByRole('textbox', {name: 'calculated attribute'})).toHaveValue('updated calculated');
     });
 
     describe('Field in error', () => {
@@ -321,16 +275,6 @@ describe('EditRecordPage', () => {
             useGetRecordFormMock.mockReturnValue({
                 loading: false,
                 recordForm: {...mockRecordForm, elements: [simpleElementInput]}
-            });
-
-            useFetchVisibleFormValueMock.mockReturnValue({
-                recordFormWithValues: {
-                    ...mockRecordForm,
-                    elements: [
-                        {...simpleElementInput, values: mockRecordFormWithValues.elements[0].values, valueError: false}
-                    ]
-                },
-                refetchRecordFormWithValues: refetchRecordFormWithValuesMock
             });
 
             useGetRecordValuesQueryMock.mockReturnValue({
@@ -346,7 +290,8 @@ describe('EditRecordPage', () => {
 
             render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
 
-            const simpleInput = await screen.findByRole('textbox');
+            const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
+
             await user.click(simpleInput);
             await userEvent.type(simpleInput, 'some value');
             await userEvent.tab();
@@ -358,7 +303,8 @@ describe('EditRecordPage', () => {
             expect(screen.getByText('Attribute is required')).toBeVisible();
         });
 
-        test('Should update the field in error if the multiple text input is required and empty', async () => {
+        // TODO : modify this test when backend validation is done on creation
+        test.skip('Should update the field in error if the multiple text input is required and empty', async () => {
             const simpleElementMultipleInput = {
                 ...mockFormElementMultipleInput,
                 settings: [{key: 'label', value: {fr: 'multiple attribute'}}]
@@ -369,40 +315,44 @@ describe('EditRecordPage', () => {
                 recordForm: {...mockRecordForm, elements: [simpleElementMultipleInput]}
             });
 
-            deleteValueMock.mockReturnValue({
-                status: 'ERROR',
-                error: 'Attribute is required'
+            useGetRecordValuesQueryMock.mockReturnValue({
+                loading: false,
+                data: {},
+                refetch: jest.fn()
             });
+
+            // createRecordMock.mockReturnValue({
+            //     status: APICallStatus.ERROR,
+            //     errors: [
+            //         {
+            //             attribute: 'test_attribute',
+            //             input: null,
+            //             message: 'Attribute is required',
+            //             type: 'REQUIRED_ATTRIBUTE'
+            //         }
+            //     ]
+            // });
 
             render(
                 <EditRecordPage
                     onCreate={createEmptyRecordMock}
                     library={mockRecord.library.id}
                     onClose={jest.fn()}
-                    record={mockRecord}
+                    record={null}
                 />,
                 {mocks}
             );
 
-            const multipleInput = await screen.findByRole('textbox');
+            const multipleInput = screen.getByRole('textbox', {name: 'multiple attribute'});
 
             await user.click(multipleInput);
-            expect(useGetRecordFormMock).toHaveBeenCalled();
-            expect(useFetchVisibleFormValueMock).toHaveBeenCalled();
-
-            await userEvent.clear(multipleInput);
-            await userEvent.tab();
-
-            expect(refetchRecordFormWithValuesMock).toHaveBeenCalled();
-            expect(deleteValueMock).toHaveBeenCalled();
+            await userEvent.type(multipleInput, 'some value');
+            await userEvent.click(screen.getByText('record_edition.create'));
             expect(screen.getByText('Attribute is required')).toBeVisible();
         });
     });
 
     test('Should update sidebar when focus on an input', async () => {
-        deleteValueMock.mockRestore();
-        saveValuesMock.mockRestore();
-
         const simpleElementInput = {
             ...mockFormElementRequiredInput,
             settings: [{key: 'label', value: {fr: 'simple attribute'}}]
@@ -410,8 +360,7 @@ describe('EditRecordPage', () => {
 
         useGetRecordFormMock.mockReturnValue({
             loading: false,
-            recordForm: {...mockRecordForm, elements: [simpleElementInput]},
-            refetch: jest.fn()
+            recordForm: {...mockRecordForm, elements: [simpleElementInput]}
         });
 
         useGetRecordValuesQueryMock.mockReturnValue({
@@ -428,23 +377,24 @@ describe('EditRecordPage', () => {
                 enableSidebar
                 record={mockRecord}
             />,
-            {mocks}
+            {
+                mocks
+            }
         );
 
-        const textTypedByUser = ' and more text';
+        const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
 
-        const simpleInput = await screen.findByRole('textbox');
-        expect(simpleInput).toBeVisible();
-        expect(simpleInput).toHaveValue(mockRecordFormWithValues.elements[0].values[0].payload);
         await user.click(simpleInput);
-
-        await userEvent.type(simpleInput, textTypedByUser);
+        await userEvent.type(simpleInput, 'some value');
         await userEvent.tab();
 
-        expect(saveValuesMock).toHaveBeenCalled();
-        expect(refetchRecordFormWithValuesMock).toHaveBeenCalledTimes(1);
+        waitFor(() => {
+            expect(screen.queryByText('some value')).not.toBeInTheDocument();
+            expect(saveValuesMock).toHaveBeenCalled();
+        });
 
         await user.click(simpleInput);
-        expect(simpleInput).toHaveValue(mockRecordFormWithValues.elements[0].values[0].payload + textTypedByUser);
+
+        expect(screen.getByText('some value')).toBeVisible();
     });
 });

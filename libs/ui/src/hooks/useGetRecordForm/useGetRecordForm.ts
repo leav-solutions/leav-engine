@@ -14,6 +14,7 @@ import {
     ValueDetailsTreeValueFragment,
     ValueDetailsValueFragment
 } from '_ui/_gqlTypes';
+import {arrayValueVersionToObject} from '_ui/_utils';
 
 export type RecordFormElementsValueStandardValue = Override<
     ValueDetailsValueFragment,
@@ -59,8 +60,7 @@ export type RecordFormElementsValue =
 export type RecordFormElement = Override<
     RecordFormElementFragment,
     {
-        values?: RecordFormElementsValue[];
-        valueError?: string;
+        values: RecordFormElementsValue[];
     }
 >;
 
@@ -111,14 +111,24 @@ const useGetRecordForm = ({
             formId,
             version: requestVersion
         },
-        onCompleted: (data: RecordFormQuery) => {
+        onCompleted: data => {
             // Transform result to format values version to a more convenient object
             const recordFormFormatted: IRecordForm = {
                 ...data.recordForm,
                 elements: data.recordForm.elements.map(
                     (element): RecordFormElement => ({
                         ...element,
-                        values: []
+                        values: (element?.values ?? []).map(value => ({
+                            ...value,
+                            version: arrayValueVersionToObject(value.version ?? []),
+                            metadata: (value.metadata ?? []).map(metadata => ({
+                                ...metadata,
+                                value: {
+                                    ...metadata.value,
+                                    version: arrayValueVersionToObject(metadata.value?.version ?? [])
+                                }
+                            }))
+                        }))
                     })
                 )
             };

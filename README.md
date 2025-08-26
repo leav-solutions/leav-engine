@@ -264,7 +264,7 @@ To use it in a project, just add it with a `yarn add @leav/my_lib`.
 Then, in your code, you can import it and use it like a regular package:
 
 ```typescript
-import {mySuperFunc} from '@leav/my_lib'
+import { mySuperFunc } from '@leav/my_lib'
 
 mySuperFunc();
 ```

@@ -5,12 +5,7 @@ import userEvent from '@testing-library/user-event';
 import {AttributeFormat, AttributeType, ValueDetailsValueFragment} from '_ui/_gqlTypes';
 import {IRecordPropertyAttribute} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {render, screen} from '_ui/_tests/testUtils';
-import {
-    mockElementValues1,
-    mockFormElementInput,
-    mockFormElementMultipleInput,
-    mockRecordFormWithValues
-} from '_ui/__mocks__/common/form';
+import {mockFormElementInput, mockFormElementMultipleInput} from '_ui/__mocks__/common/form';
 import {mockModifier} from '_ui/__mocks__/common/value';
 import {
     APICallStatus,
@@ -59,7 +54,7 @@ describe('StandardField', () => {
             }
         ]
     };
-    const mockHandleSubmit: SubmitValueFunc = jest.fn().mockResolvedValue(mockSubmitRes);
+    const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
     const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
     const mockHandleMultipleValues: DeleteMultipleValuesFunc = jest
         .fn()
@@ -88,7 +83,7 @@ describe('StandardField', () => {
     describe('Mono value attribute', () => {
         const initialValues = {
             [mockFormElementInput.attribute.id]: (
-                mockRecordFormWithValues.elements[0].values[0] as RecordFormElementsValueStandardValue
+                mockFormElementInput.values[0] as RecordFormElementsValueStandardValue
             ).raw_payload
         };
 
@@ -105,7 +100,7 @@ describe('StandardField', () => {
         test('Should display the formated value', async () => {
             render(
                 <AntForm>
-                    <StandardField element={{...mockFormElementInput, values: mockElementValues1}} {...baseProps} />
+                    <StandardField element={mockFormElementInput} {...baseProps} />
                 </AntForm>
             );
 
@@ -124,7 +119,7 @@ describe('StandardField', () => {
             const textInput = screen.getByRole('textbox');
             await userEvent.click(textInput);
 
-            expect(textInput).toHaveValue('My value formatted');
+            expect(textInput).toHaveValue('my_raw_payload');
         });
 
         test('Should do nothing on blur without change', async () => {
@@ -147,27 +142,25 @@ describe('StandardField', () => {
         test('Should save the value on blur with change', async () => {
             mockEditRecordInitialState.mockReturnValue(initialState);
 
-            let currentElementProps = {
-                ...mockFormElementInput,
-                values: [{...mockRecordFormWithValues.elements[0].values[0], id_value: idValue}]
-            };
-
-            const {rerender} = render(
+            render(
                 <AntForm initialValues={initialValues}>
-                    <StandardField element={currentElementProps} {...baseProps} />
+                    <StandardField
+                        element={{
+                            ...mockFormElementInput,
+                            values: [{...mockFormElementInput.values[0], id_value: idValue}]
+                        }}
+                        {...baseProps}
+                    />
                 </AntForm>
             );
 
             let textInput = screen.getByRole('textbox');
             await userEvent.click(textInput);
 
+            const newValue = 'New Value';
             const clearIcon = screen.getByLabelText('clear');
             await userEvent.click(clearIcon);
-            expect(textInput).toHaveValue('');
-
-            await userEvent.type(textInput, newFormatedValue);
-            expect(textInput).toHaveValue(newFormatedValue);
-
+            await userEvent.type(textInput, newValue);
             await userEvent.tab();
 
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
@@ -176,33 +169,13 @@ describe('StandardField', () => {
                     {
                         attribute: mockFormElementInput.attribute,
                         idValue,
-                        value: newFormatedValue
+                        value: newValue
                     }
                 ],
                 null
             );
             expect(mockHandleDelete).not.toHaveBeenCalled();
             expect(mockHandleMultipleValues).not.toHaveBeenCalled();
-
-            // Update the 'values' property in your element props to reflect the "saved" new value
-            currentElementProps = {
-                ...currentElementProps,
-                values: [
-                    {
-                        ...currentElementProps.values[0],
-                        value: newFormatedValue,
-                        payload: newFormatedValue,
-                        id_value: idValue
-                    }
-                ]
-            };
-
-            // Re-render the component with the updated props
-            rerender(
-                <AntForm initialValues={initialValues}>
-                    <StandardField element={currentElementProps} {...baseProps} />
-                </AntForm>
-            );
 
             textInput = screen.getByRole('textbox');
             expect(textInput).toHaveValue(newFormatedValue);
@@ -261,7 +234,7 @@ describe('StandardField', () => {
                             element={{
                                 ...mockFormElementInput,
                                 attribute: {...mockFormElementInput.attribute, character_limit: 5},
-                                values: [{...mockRecordFormWithValues.elements[0].values[0], payload: ''}]
+                                values: [{...mockFormElementInput.values[0], payload: ''}]
                             }}
                             {...baseProps}
                         />
@@ -281,8 +254,8 @@ describe('StandardField', () => {
     describe('Multiple values attribute', () => {
         const initialValues = {
             [mockFormElementInput.attribute.id]: [
-                (mockRecordFormWithValues.elements[0].values[0] as RecordFormElementsValueStandardValue).raw_payload,
-                (mockRecordFormWithValues.elements[0].values[0] as RecordFormElementsValueStandardValue).raw_payload
+                (mockFormElementInput.values[0] as RecordFormElementsValueStandardValue).raw_payload,
+                (mockFormElementInput.values[0] as RecordFormElementsValueStandardValue).raw_payload
             ]
         };
 
@@ -292,7 +265,7 @@ describe('StandardField', () => {
                     <StandardField
                         element={{
                             ...mockFormElementMultipleInput,
-                            values: [{...mockRecordFormWithValues.elements[0], id_value: idValue}]
+                            values: [{...mockFormElementMultipleInput.values[0], id_value: idValue}]
                         }}
                         {...baseProps}
                     />
@@ -314,8 +287,8 @@ describe('StandardField', () => {
             test('Should not call onDeleteMultipleValues click on delete all and cancel', async () => {
                 const idValue2 = 'idValue2';
                 const backendValues = [
-                    {...mockElementValues1[0], id_value: idValue},
-                    {...mockElementValues1[0], id_value: idValue2}
+                    {...mockFormElementMultipleInput.values[0], id_value: idValue},
+                    {...mockFormElementMultipleInput.values[0], id_value: idValue2}
                 ];
 
                 render(
@@ -341,8 +314,8 @@ describe('StandardField', () => {
             test('Should call onDeleteMultipleValues click on delete all and confirm', async () => {
                 const idValue2 = 'idValue2';
                 const backendValues = [
-                    {...mockElementValues1[0], id_value: idValue},
-                    {...mockElementValues1[0], id_value: idValue2}
+                    {...mockFormElementMultipleInput.values[0], id_value: idValue},
+                    {...mockFormElementMultipleInput.values[0], id_value: idValue2}
                 ];
 
                 render(

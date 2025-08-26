@@ -15,7 +15,6 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     isLastValueOfMultivalues,
     removeLastValueOfMultivalues,
     onChange,
-    onFocus,
     attribute,
     readonly,
     handleSubmit,
@@ -47,7 +46,6 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     };
 
     const _handleOnFocus = () => {
-        onFocus?.();
         setIsFocused(true);
     };
 

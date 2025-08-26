@@ -25,10 +25,10 @@ export declare const getInvertColor: (color: string) => string;
 export declare const extractArgsFromString: (mapping: string) => {
     [arg: string]: string;
 };
-export declare const objectToNameValueArray: <T>(obj: IKeyValue<T>) => Array<{
+export declare const objectToNameValueArray: <T>(obj: IKeyValue<T>) => {
     name: string;
     value: T;
-}>;
+}[];
 export declare const nameValArrayToObj: (arr?: Array<{}>, keyFieldName?: string, valueFieldName?: string) => {
     [key: string]: any;
 };
@@ -47,7 +47,7 @@ export declare const _getInitialEngine: (words: string[], length: number) => str
  * @param id
  * @returns formatted ID
  */
-export declare const slugifyString: (id: string, separator?: "-" | "_") => string;
+export declare const slugifyString: (id: string, separator?: '-' | '_') => string;
 /**
  * Returns a hash code from a string
  * @param  {String} str The string to hash.
@@ -60,8 +60,8 @@ export declare const waitFor: (predicate: () => Promise<boolean> | boolean, opti
     timeout?: number;
     interval?: number;
 }) => Promise<boolean>;
-export declare const isTypeLink: (type: AttributeType) => type is AttributeType.advanced_link | AttributeType.simple_link;
-export declare const isTypeStandard: (type: AttributeType) => type is AttributeType.advanced | AttributeType.simple;
+export declare const isTypeLink: (type: AttributeType) => boolean;
+export declare const isTypeStandard: (type: AttributeType) => boolean;
 /**
  * Return a new object without the keys passed in parameter
  */

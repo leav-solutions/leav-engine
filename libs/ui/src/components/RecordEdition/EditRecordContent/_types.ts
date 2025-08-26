@@ -59,16 +59,16 @@ export interface IDeleteValueResult {
     error?: string;
 }
 
-export interface ICustomEventResult {
-    [key: string]: any;
-    eventName: string;
-    element: FormElement<unknown>;
-}
-
 export interface ICreateRecordResult {
     status: APICallStatus;
     record?: RecordIdentityFragment['whoAmI'];
     errors?: CreateRecordMutation['createRecord']['valuesErrors'];
+}
+
+export interface IRecordEditionContext {
+    elements: IFormElementsByContainer;
+    readOnly: boolean;
+    record: IRecordIdentityWhoAmI;
 }
 
 export interface IFormElementsByContainer {
@@ -91,7 +91,6 @@ export type SubmittedValue = ISubmittedValueStandard | ISubmittedValueLink | ISu
 
 export type SubmitValueFunc = (values: SubmittedValue[], version: IValueVersion) => Promise<ISubmitMultipleResult>;
 export type DeleteValueFunc = (value: ValueInput | null, attribute: string) => Promise<IDeleteValueResult>;
-export type CustomEventFunc = (details: ICustomEventResult) => void;
 export type CreateEmptyRecordFunc = (library: string) => Promise<ICreateRecordResult>;
 export type CreateRecordFunc = (library: string, values: ValueBatchInput[]) => Promise<ICreateRecordResult>;
 export type DeleteMultipleValuesFunc = (
@@ -117,12 +116,9 @@ export interface IFormElementProps<SettingsType, RecordFormElements = RecordForm
     readonly?: boolean;
     onValueSubmit?: SubmitValueFunc;
     onValueDelete?: DeleteValueFunc;
-    onCustomEvent?: CustomEventFunc;
     onDeleteMultipleValues?: DeleteMultipleValuesFunc;
     metadataEdit?: boolean;
-    record?: IRecordIdentityWhoAmI;
     isFormCreationMode?: boolean;
-    elementsByContainer?: Record<string, Array<FormElement<unknown>>>;
 }
 
 export type FormElement<SettingsType, RecordFormElements = RecordFormElementsValue> = Override<
@@ -130,15 +126,13 @@ export type FormElement<SettingsType, RecordFormElements = RecordFormElementsVal
     {
         settings: SettingsType;
         uiElementType: FormUIElementTypes | FormFieldTypes;
-        values?: RecordFormElements[];
-        valueError?: string;
-        record?: IRecordIdentityWhoAmI;
+        values: RecordFormElements[];
     }
 > & {
     uiElement: (
         props: IFormElementProps<unknown> & {
             antdForm?: FormInstance;
-            valuesMappedByAttributeId?: GetRecordColumnsValuesRecord;
+            computedValues?: GetRecordColumnsValuesRecord;
         }
     ) => JSX.Element;
 };

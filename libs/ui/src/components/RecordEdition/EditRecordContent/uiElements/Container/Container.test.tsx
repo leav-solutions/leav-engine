@@ -11,24 +11,24 @@ import {
     mockFormElementTextBlock
 } from '_ui/__mocks__/common/form';
 import Container from './Container';
-import {IFormElementsByContainer} from '_ui/components/RecordEdition/EditRecordContent/_types';
+
+jest.mock('../../hooks/useRecordEditionContext', () => ({
+    useRecordEditionContext: () => ({
+        elements: {
+            container: [mockFormElementContainer, mockFormElementInput, mockFormElementTabs, mockFormElementTextBlock]
+        },
+        readonly: false
+    })
+}));
 
 describe('Container', () => {
     test('Render children', async () => {
-        const mockElementsByContainer: IFormElementsByContainer = {
-            [mockFormElementContainer.id]: [
-                mockFormElementContainer,
-                mockFormElementInput,
-                mockFormElementTabs,
-                mockFormElementTextBlock
-            ]
-        };
         render(
             <Container
                 {...mockCommonFormElementProps}
                 element={mockFormElementContainer}
-                elementsByContainer={mockElementsByContainer}
                 isFormCreationMode={false}
+                computedValues={null}
             />
         );
 

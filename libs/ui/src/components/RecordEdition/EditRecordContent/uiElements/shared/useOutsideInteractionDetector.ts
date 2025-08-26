@@ -20,7 +20,7 @@ interface IUseOutsideInteractionDetectorProps {
     attribute: RecordFormElementFragment['attribute'];
     activeAttribute: IRecordPropertyWithAttribute | null;
     dispatch: Dispatch<IEditRecordReducerActions>;
-    elementValues: RecordFormElementsValue[];
+    backendValues: RecordFormElementsValue[];
     allowedSelectors?: string[];
     attributePrefix?: typeof LINK_FIELD_ID_PREFIX | typeof STANDARD_FIELD_ID_PREFIX | typeof TREE_FIELD_ID_PREFIX;
 }
@@ -30,7 +30,7 @@ export const useOutsideInteractionDetector = ({
     activeAttribute,
     attributePrefix,
     dispatch,
-    elementValues,
+    backendValues,
     allowedSelectors = []
 }: IUseOutsideInteractionDetectorProps) => {
     // Use a ref to store the current props to access them in the event handlers
@@ -40,7 +40,7 @@ export const useOutsideInteractionDetector = ({
         activeAttribute,
         attributePrefix,
         allowedSelectors,
-        elementValues
+        backendValues
     });
 
     useEffect(() => {
@@ -49,9 +49,9 @@ export const useOutsideInteractionDetector = ({
             activeAttribute,
             attributePrefix,
             allowedSelectors,
-            elementValues
+            backendValues
         };
-    }, [attribute, activeAttribute, attributePrefix, allowedSelectors, elementValues]);
+    }, [attribute, activeAttribute, attributePrefix, allowedSelectors, backendValues]);
 
     useEffect(() => {
         const handleClick = (event: MouseEvent) => {
@@ -65,7 +65,7 @@ export const useOutsideInteractionDetector = ({
                 dispatch({
                     type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
                     attribute: currentProps.attribute,
-                    values: currentProps.elementValues
+                    values: currentProps.backendValues
                 });
                 return;
             }
@@ -101,7 +101,7 @@ export const useOutsideInteractionDetector = ({
                 dispatch({
                     type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
                     attribute: currentProps.attribute,
-                    values: currentProps.elementValues
+                    values: currentProps.backendValues
                 });
             }
         };

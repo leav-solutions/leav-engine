@@ -13,7 +13,7 @@ import {RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 describe('useOutsideInteractionDetector', () => {
-    const mockElementValues: RecordFormElementsValue[] = [
+    const mockBackendValues: RecordFormElementsValue[] = [
         {id_value: 'backend-value', linkValue: {id: 'test', whoAmI: {id: 'test', library: {id: 'linked_library'}}}}
     ];
 
@@ -36,7 +36,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                elementValues: mockElementValues,
+                backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -51,7 +51,7 @@ describe('useOutsideInteractionDetector', () => {
         expect(mockDispatch).toHaveBeenCalledWith({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             attribute: mockFormAttribute,
-            values: mockElementValues
+            values: mockBackendValues
         });
     });
 
@@ -61,7 +61,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                elementValues: mockElementValues,
+                backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -86,7 +86,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                elementValues: mockElementValues,
+                backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -114,7 +114,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                elementValues: mockElementValues,
+                backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -142,7 +142,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                elementValues: mockElementValues,
+                backendValues: mockBackendValues,
                 allowedSelectors: ['#allowed-element'],
                 attributePrefix: 'standardfield-'
             })
@@ -166,7 +166,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                elementValues: mockElementValues,
+                backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -181,7 +181,7 @@ describe('useOutsideInteractionDetector', () => {
         expect(mockDispatch).toHaveBeenCalledWith({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             attribute: mockFormAttribute,
-            values: mockElementValues
+            values: mockBackendValues
         });
     });
 
@@ -191,7 +191,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                elementValues: mockElementValues,
+                backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -214,7 +214,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                elementValues: mockElementValues,
+                backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })
@@ -232,7 +232,7 @@ describe('useOutsideInteractionDetector', () => {
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
                 dispatch: mockDispatch,
-                elementValues: mockElementValues,
+                backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-'
             })

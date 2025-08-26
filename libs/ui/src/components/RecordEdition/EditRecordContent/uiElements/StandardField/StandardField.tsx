@@ -18,6 +18,7 @@ import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculate
 import {useGetPresentationValues} from './useGetPresentationValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {getAntdDisplayedValue, getEmptyInitialValue} from '../../antdUtils';
+import {GetRecordColumnsValuesRecord, IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {STANDARD_FIELD_ID_PREFIX} from '_ui/constants';
 import {ComputeIndicator} from '../shared/ComputeIndicator';
@@ -70,14 +71,21 @@ const KitAddValueButton = styled(KitButton)`
 const StandardField: FunctionComponent<
     IFormElementProps<IRequiredFieldsSettings, RecordFormElementsValueStandardValue> & {
         antdForm?: FormInstance;
+        computedValues?: GetRecordColumnsValuesRecord<IRecordColumnValueStandard>;
     }
-> = ({element, antdForm, readonly, onValueSubmit, onValueDelete, onDeleteMultipleValues, metadataEdit = false}) => {
+> = ({
+    element,
+    computedValues,
+    isFormCreationMode,
+    antdForm,
+    readonly,
+    onValueSubmit,
+    onValueDelete,
+    onDeleteMultipleValues,
+    metadataEdit = false
+}) => {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
-
-    const [elementValuesWithoutCalculatedOrInherited, setElementValuesWithoutCalculatedOrInherited] = useState<
-        RecordFormElementsValueStandardValue[]
-    >([]);
 
     const antdListFieldsRef = useRef<{
         add: FormListOperation['add'];
@@ -88,17 +96,11 @@ const StandardField: FunctionComponent<
     const {attribute} = element;
 
     useEffect(() => {
-        if (element?.values?.length && antdForm && attribute) {
-            if (attribute.multiple_values) {
-                const antdDisplayedValues = element.values
-                    .sort((a, b) => Number(a.id_value) - Number(b.id_value))
-                    .map(v => getAntdDisplayedValue([v], attribute));
-                antdForm.setFieldValue(attribute.id, antdDisplayedValues);
-            } else {
-                antdForm.setFieldValue(attribute.id, getAntdDisplayedValue(element.values, attribute));
-            }
+        if (computedValues && computedValues[attribute.id]) {
+            setBackendValues(computedValues[attribute.id]);
+            antdForm.setFieldValue(attribute.id, getAntdDisplayedValue(computedValues[attribute.id], attribute));
         }
-    }, [element.values]);
+    }, [computedValues]);
 
     if (!attribute) {
         return <ErrorDisplay message={t('record_edition.missing_attribute')} />;
@@ -106,41 +108,43 @@ const StandardField: FunctionComponent<
 
     const {state, dispatch} = useEditRecordReducer();
 
-    const calculatedFlags = computeCalculatedFlags(element.values ?? []);
-    const inheritedFlags = computeInheritedFlags(element.values ?? []);
+    const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
+
+    const calculatedFlags = computeCalculatedFlags(backendValues);
+    const inheritedFlags = computeInheritedFlags(backendValues);
     const defaultValueToAddInAntdForm = getEmptyInitialValue(attribute);
 
     useEffect(() => {
         if (state.activeAttribute?.attribute.id === attribute.id) {
             dispatch({
                 type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                values: element.values
+                values: backendValues
             });
         }
+    }, [backendValues]);
 
-        // Refresh elementValuesWithoutCalculatedOrInherited that depends on element.values
-        // Todo, ideally refactor this part
-        // If the backend send back inherited value as an attribute of the value and not as another value
-        // it would simplify the code and permit to use element.values as it is
-        setElementValuesWithoutCalculatedOrInherited(
-            (element.values ?? [])
-                .filter(elementValue => !elementValue.isCalculated && !elementValue.isInherited)
-                .sort((a, b) => Number(a.id_value) - Number(b.id_value))
-        );
-    }, [element.values]);
+    useEffect(() => {
+        if (!isFormCreationMode && backendValues.length === 0 && attribute.required) {
+            antdForm.setFields([{name: attribute.id, errors: [t('errors.standard_field_required')]}]);
+        }
+    }, []);
 
     useOutsideInteractionDetector({
         attribute,
         activeAttribute: state.activeAttribute,
         attributePrefix: STANDARD_FIELD_ID_PREFIX,
         dispatch,
-        elementValues: element.values ?? [],
+        backendValues,
         allowedSelectors: ['.ant-popover.ant-color-picker', '.ant-picker-dropdown', '.kit-modal-wrapper.link-modal']
     });
 
+    const backendWithoutCalculatedOrInheritedValues = backendValues
+        .filter(backendValue => !backendValue.isCalculated && !backendValue.isInherited)
+        .sort((a, b) => Number(a.id_value) - Number(b.id_value));
+
     const {presentationValues} = useGetPresentationValues({
         //TODO fix type
-        values: elementValuesWithoutCalculatedOrInherited as unknown as ValueDetailsFragment[],
+        values: backendWithoutCalculatedOrInheritedValues as unknown as ValueDetailsFragment[],
         format: attribute.format,
         calculatedValue: calculatedFlags.calculatedValue,
         inheritedValue: inheritedFlags.inheritedValue
@@ -151,22 +155,68 @@ const StandardField: FunctionComponent<
         async (valueToSave: AnyPrimitive): Promise<ISubmitMultipleResult> => {
             const shouldSpecifyFieldName = attribute.multiple_values && fieldName !== undefined;
             const name = shouldSpecifyFieldName ? [attribute.id, fieldName] : attribute.id;
-
-            // Clear error on the input
             if (antdForm) {
-                antdForm.setFields([{name, errors: undefined}]);
+                antdForm.setFields([
+                    {
+                        name,
+                        errors: null
+                    }
+                ]);
             }
 
-            // Send request to api
             let submitRes;
-
             if (attribute.multiple_values) {
                 submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
+                if (submitRes.status === APICallStatus.SUCCESS) {
+                    setBackendValues(previousBackendValues => {
+                        const newBackendValues = [...previousBackendValues, ...submitRes.values].reduce(
+                            (acc, backendValue) => {
+                                const existingValue = acc.find(
+                                    o =>
+                                        o.id_value === backendValue.id_value &&
+                                        o.isCalculated === backendValue.isCalculated &&
+                                        o.isInherited === backendValue.isInherited
+                                );
+
+                                if (existingValue) {
+                                    Object.assign(existingValue, backendValue);
+                                } else {
+                                    acc.push(backendValue);
+                                }
+
+                                return acc;
+                            },
+                            []
+                        );
+
+                        return newBackendValues;
+                    });
+
+                    return submitRes;
+                }
             } else {
-                if (!valueToSave) {
-                    submitRes = await onValueDelete({id_value: idValue, payload: null}, attribute.id);
-                } else {
+                if (valueToSave) {
                     submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
+                    if (submitRes.status === APICallStatus.SUCCESS) {
+                        setBackendValues((submitRes.values as unknown as RecordFormElementsValueStandardValue[]) ?? []);
+
+                        return submitRes;
+                    }
+                } else {
+                    if (backendWithoutCalculatedOrInheritedValues.length > 0) {
+                        submitRes = await onValueDelete({id_value: idValue, payload: null}, attribute.id);
+
+                        if (submitRes.status === APICallStatus.SUCCESS) {
+                            setBackendValues(previousBackendValues =>
+                                previousBackendValues.filter(
+                                    value =>
+                                        (value.isCalculated !== null && value.isCalculated !== undefined) ||
+                                        (value.isInherited !== null && value.isInherited !== undefined)
+                                )
+                            );
+                            return submitRes;
+                        }
+                    }
                 }
             }
 
@@ -174,11 +224,6 @@ const StandardField: FunctionComponent<
                 return;
             }
 
-            if (submitRes.status === APICallStatus.SUCCESS) {
-                return submitRes;
-            }
-
-            // Parse errors from api response
             if (!submitRes.error && submitRes.errors) {
                 const attributeError = submitRes.errors.filter(err => err.attribute === attribute.id)?.[0];
 
@@ -190,54 +235,47 @@ const StandardField: FunctionComponent<
                 }
             }
 
-            // Display errors on input if found
             if (submitRes.error && antdForm) {
-                antdForm.setFields([{name, errors: [submitRes.error]}]);
+                antdForm.setFields([
+                    {
+                        name,
+                        errors: [submitRes.error]
+                    }
+                ]);
             }
 
             return submitRes;
         };
 
-    const resetErrors = (fieldName?: number) => {
-        // Re check error if we click in the input
-        if (attribute.multiple_values && fieldName !== undefined) {
-            antdForm?.setFields([{name: [attribute.id, fieldName], errors: undefined}]);
-        } else {
-            antdForm?.setFields([{name: attribute.id, errors: undefined}]);
-        }
-    };
-
     const _handleDeleteValue = async (
-        idValue: string,
+        idValue: string | undefined,
         antdRemove: FormListOperation['remove'],
         deletedFieldIndex: number
     ) => {
         if (idValue) {
             await onValueDelete({id_value: idValue}, attribute.id);
 
-            // remove the value from element.values
-            setElementValuesWithoutCalculatedOrInherited(
-                elementValuesWithoutCalculatedOrInherited
-                    .filter(elementValue => elementValue.id_value !== idValue)
-                    .sort((a, b) => Number(a.id_value) - Number(b.id_value))
+            setBackendValues(previousBackendValues =>
+                previousBackendValues.filter(backendValue => backendValue.id_value !== idValue)
             );
         }
-
         antdRemove(deletedFieldIndex);
     };
 
     const _handleDeleteAllValues = async () => {
         const deleteRes = await onDeleteMultipleValues(
             attribute.id,
-            (element.values ?? []).filter(b => b.id_value),
+            backendValues.filter(b => b.id_value),
             null
         );
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
             antdListFieldsRef.current.remove(antdListFieldsRef.current.indexes);
             antdListFieldsRef.current.add(defaultValueToAddInAntdForm);
+            setBackendValues(previousBackendValues =>
+                previousBackendValues.filter(backendValue => !backendValue.id_value)
+            );
 
-            setElementValuesWithoutCalculatedOrInherited([]);
             return;
         }
     };
@@ -245,7 +283,7 @@ const StandardField: FunctionComponent<
     let isFieldInError = false;
 
     if (antdForm) {
-        const hasErrorsInFormList = element.values?.some((_, index) => {
+        const hasErrorsInFormList = backendValues.some((_, index) => {
             const errors = antdForm.getFieldError([attribute.id, index]);
             return errors.length > 0;
         });
@@ -257,15 +295,15 @@ const StandardField: FunctionComponent<
             antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList || multipleFieldRequiredInError;
     }
 
-    const isMultipleValues = element.attribute?.multiple_values;
-    const hasValue = isMultipleValues && (element.values ?? []).length > 0;
+    const isMultipleValues = element.attribute.multiple_values;
+    const hasValue = isMultipleValues && backendValues.length > 0;
     const canAddAnotherValue =
         !readonly &&
         isMultipleValues &&
         !isFieldInError &&
         attribute.format !== AttributeFormat.boolean &&
         attribute.format !== AttributeFormat.encrypted;
-    const canDeleteAllValues = hasValue && element.values.length > 1 && !attribute.required;
+    const canDeleteAllValues = hasValue && backendValues.length > 1 && !attribute.required;
 
     const label = localizedTranslation(element.settings.label, lang);
     const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
@@ -298,11 +336,10 @@ const StandardField: FunctionComponent<
                 {!attribute.multiple_values && (
                     <StandardFieldValue
                         presentationValue={presentationValues[0] ?? ''}
-                        handleSubmit={_handleSubmit(elementValuesWithoutCalculatedOrInherited[0]?.id_value)}
+                        handleSubmit={_handleSubmit(backendWithoutCalculatedOrInheritedValues[0]?.id_value)}
                         attribute={attribute}
                         readonly={isReadOnly}
                         label={label}
-                        onFocus={resetErrors}
                         calculatedFlags={calculatedFlags}
                         inheritedFlags={inheritedFlags}
                     />
@@ -313,7 +350,7 @@ const StandardField: FunctionComponent<
                             antdListFieldsRef.current = {add, remove, indexes: fields.map((_, index) => index)};
 
                             const shouldDisabledAddValueButton =
-                                fields.length > elementValuesWithoutCalculatedOrInherited.length;
+                                fields.length > backendWithoutCalculatedOrInheritedValues.length;
 
                             return (
                                 <>
@@ -325,13 +362,12 @@ const StandardField: FunctionComponent<
                                                         listField={field}
                                                         presentationValue={presentationValues[index] ?? ''}
                                                         handleSubmit={_handleSubmit(
-                                                            elementValuesWithoutCalculatedOrInherited[index]?.id_value,
+                                                            backendWithoutCalculatedOrInheritedValues[index]?.id_value,
                                                             field.name
                                                         )}
                                                         attribute={attribute}
                                                         label={label}
                                                         readonly={isReadOnly}
-                                                        onFocus={() => resetErrors(field.name)}
                                                         calculatedFlags={calculatedFlags}
                                                         inheritedFlags={inheritedFlags}
                                                         isLastValueOfMultivalues={
@@ -347,8 +383,8 @@ const StandardField: FunctionComponent<
                                                         icon={<FaTrash />}
                                                         onClick={() =>
                                                             _handleDeleteValue(
-                                                                elementValuesWithoutCalculatedOrInherited[index]
-                                                                    .id_value,
+                                                                backendWithoutCalculatedOrInheritedValues[index]
+                                                                    ?.id_value,
                                                                 remove,
                                                                 index
                                                             )

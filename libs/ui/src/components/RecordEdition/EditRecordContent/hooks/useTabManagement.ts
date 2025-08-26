@@ -7,12 +7,11 @@ import {IRecordForm, RecordFormElement} from '_ui/hooks/useGetRecordForm';
 /**
  * Hook to manage tab visibility and tab click events in the EditRecordContent component
  * @returns Object containing the visible tab ID and a handler for tab click events
- * undefined = not loaded yet, null = no tabs found, string = id found
  * @param elements
  */
 export const useTabManagement = (elements: RecordFormElement[]) => {
     // State to track the currently visible tab ID
-    const [tabIdVisible, setTabIdVisible] = useState<string | undefined | null>(undefined);
+    const [tabIdVisible, setTabIdVisible] = useState<string | undefined>(undefined);
 
     // Initialize the visible tab ID when the record form is loaded
     useEffect(() => {
@@ -22,8 +21,6 @@ export const useTabManagement = (elements: RecordFormElement[]) => {
 
         if (firstTabId) {
             setTabIdVisible(firstTabId);
-        } else {
-            setTabIdVisible(null);
         }
     }, [elements]);
 

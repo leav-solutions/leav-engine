@@ -15,11 +15,15 @@ export const getRecordFormQuery = gql`
         }
     }
 
-    fragment RecordFormElement on FormElement {
+    fragment RecordFormElement on FormElementWithValues {
         id
         containerId
         uiElementType
         type
+        valueError
+        values {
+            ...ValueDetails
+        }
         attribute {
             ...RecordFormAttribute
         }

@@ -10,13 +10,6 @@ import EditRecordContent from './EditRecordContent';
 import {Form} from 'antd';
 import {ComponentProps, FunctionComponent} from 'react';
 
-const refetchRecordFormWithValuesMock = jest.fn();
-const useFetchVisibleFormValueMock = jest.fn();
-
-jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useFetchVisibleFormValue', () => ({
-    useFetchVisibleFormValue: () => useFetchVisibleFormValueMock()
-}));
-
 jest.mock('./uiElements/StandardField', () => () => <div>StandardField</div>);
 
 const EditRecordContentWithForm: FunctionComponent<
@@ -86,25 +79,11 @@ describe('EditRecordContent', () => {
         }
     ];
 
-    beforeEach(() => {
-        // Reset mocks before each test
-        useFetchVisibleFormValueMock.mockReset();
-        refetchRecordFormWithValuesMock.mockReset();
-
-        useFetchVisibleFormValueMock.mockImplementation(() => ({
-            loading: false,
-            recordFormWithValues: null,
-            refetchRecordFormWithValues: refetchRecordFormWithValuesMock,
-            error: null
-        }));
-    });
-
     afterAll(() => {
         jest.restoreAllMocks();
     });
 
     test('Display skeleton while loading', async () => {
-        // Mock useGetRecordForm to return a loading state
         jest.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
             loading: true,
             error: null,
@@ -198,46 +177,5 @@ describe('EditRecordContent', () => {
             formId: 'test',
             version: null
         });
-    });
-
-    test('Display skeleton when useFetchVisibleFormValue is loading', async () => {
-        // Mock useGetRecordForm to return a non-loading state with a valid recordForm
-        jest.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
-            loading: false,
-            error: null,
-            recordForm: {
-                dependencyAttributes: [],
-                id: mockRecordForm.id,
-                recordId: '123456',
-                library: mockRecordForm.library,
-                system: false,
-                elements: mockRecordForm.elements,
-                sidePanel: mockRecordForm.sidePanel
-            },
-            refetch: jest.fn()
-        }));
-
-        useFetchVisibleFormValueMock.mockImplementation(() => ({
-            loading: true
-        }));
-
-        render(
-            <EditRecordContentWithForm
-                record={mockRecord}
-                isFormCreationMode={false}
-                library={mockRecord.library.id}
-                onRecordSubmit={jest.fn()}
-                onValueDelete={jest.fn()}
-                onValueSubmit={jest.fn()}
-                onDeleteMultipleValues={jest.fn()}
-                readonly={false}
-            />,
-            {
-                mocks
-            }
-        );
-
-        // Verify that the skeleton loader is displayed
-        expect(screen.getAllByTestId('edit-record-skeleton').length).toBeGreaterThan(0);
     });
 });

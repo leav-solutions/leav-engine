@@ -10,29 +10,29 @@ describe('Forms', () => {
     const fieldAttributeId = 'forms_test_attribute';
     const formName = 'test_form';
     const formName2 = 'test_other_form';
-    let recordId: string;
+    let recordId;
 
     beforeAll(async () => {
         // Create libraries
         await makeGraphQlCall(`mutation {
-        a: saveAttribute(
+            l1: saveLibrary(library: {
+                id: "${libraryId}",
+                label: {en: "Test lib"}
+            }) { id },
+            l2: saveLibrary(library: {
+                id: "${libraryId2}",
+                label: {en: "Test lib"}
+            }) { id },
+            a: saveAttribute(
                 attribute: {
                     id: "${fieldAttributeId}",
                     type: simple,
                     format: text,
                     label: {en: "Test attr simple"}
                 }
-            ) { id },
-            l1: saveLibrary(library: {
-                id: "${libraryId}",
-                label: {en: "Test lib"},
-                attributes: ["${fieldAttributeId}"],
-            }) { id },
-            l2: saveLibrary(library: {
-                id: "${libraryId2}",
-                label: {en: "Test lib"},
-                attributes: ["${fieldAttributeId}"],
-            }) { id }
+            ) {
+                id
+            }
         }`);
 
         recordId = await gqlCreateRecord(libraryId);
@@ -325,6 +325,14 @@ describe('Forms', () => {
                     order
                     uiElementType
                     settings { key value }
+                    values {
+                        id_value
+
+                        ...on Value {
+                          payload
+                          raw_payload
+                        }
+                    }
                 }
             }
         }`);
@@ -333,115 +341,5 @@ describe('Forms', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.recordForm.id).toBe(`${formName}_for_record_form`);
         expect(res.data.data.recordForm.elements.length).toBe(2);
-    });
-    test('Get form element values by record', async () => {
-        // Create a form with elements
-        await makeGraphQlCall(`mutation {
-            saveForm(
-                form: {
-                    id: "${formName}_for_element_values"
-                    library: "${libraryId}"
-                    label: { en: "Form for element values" }
-                    elements: [
-                        {
-                            elements: [
-                                {
-                                    id: "some_container"
-                                    containerId: "${FORM_ROOT_CONTAINER_ID}"
-                                    order: 0
-                                    type: layout
-                                    uiElementType: "fields_container"
-                                    settings: []
-                                },
-                                {
-                                    id: "element_id_1"
-                                    containerId: "some_container"
-                                    order: 1
-                                    uiElementType: "input"
-                                    type: field
-                                    settings: [
-                                        {
-                                            key: "attribute"
-                                            value: "${fieldAttributeId}"
-                                        }
-                                    ]
-                                },
-                                {
-                                    id: "element_id_2"
-                                    containerId: "some_container"
-                                    order: 2
-                                    uiElementType: "input"
-                                    type: field
-                                    settings: [
-                                        {
-                                            key: "attribute"
-                                            value: "${fieldAttributeId}"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ) {
-                id
-                label
-                elements {
-                    elements {
-                        id
-                    }
-                }
-            }
-        }`);
-
-        // Save a value for the field attribute
-        await makeGraphQlCall(`mutation {
-            saveValue(
-                library: "${libraryId}", 
-                recordId: "${recordId}", 
-                attribute: "${fieldAttributeId}", 
-                value: { payload: "Test value" }
-            ) {
-                id_value
-            }
-        }`);
-
-        // Test getting values for specific elements
-        const res = await makeGraphQlCall(`{
-            getRecordFormElementsValues(
-                recordId: "${recordId}", 
-                libraryId: "${libraryId}", 
-                formId: "${formName}_for_element_values",
-                elementIds: ["element_id_1", "element_id_2"]
-            ) {
-                id
-                values { 
-                    id_value
-                    
-                    ... on Value {
-                        payload
-                        raw_payload
-                    }
-                 }
-            }
-        }`);
-
-        expect(res.status).toBe(200);
-        expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.getRecordFormElementsValues).toHaveLength(2);
-
-        // Check that both elements have the same value
-        const elements = res.data.data.getRecordFormElementsValues;
-        expect(elements[0].id).toBe('element_id_1');
-        expect(elements[1].id).toBe('element_id_2');
-
-        // Both elements should have values
-        expect(elements[0].values).toBeDefined();
-        expect(elements[0].values).toHaveLength(1);
-        expect(elements[0].values[0].payload).toBe('Test value');
-
-        expect(elements[1].values).toBeDefined();
-        expect(elements[1].values).toHaveLength(1);
-        expect(elements[1].values[0].payload).toBe('Test value');
     });
 });

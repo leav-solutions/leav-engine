@@ -65,7 +65,7 @@ export interface IDbEvent extends IEvent {
     payload: IDbPayload;
 }
 /*** PubSub events ***/
-export type PublishedEvent<T> = IEvent & T;
+export declare type PublishedEvent<T> = IEvent & T;
 export interface IPubSubEvent extends IEvent {
     payload: IPubSubPayload;
 }

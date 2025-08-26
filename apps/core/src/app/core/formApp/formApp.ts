@@ -6,17 +6,10 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IFormDomain} from 'domain/form/formDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
-import {IAttribute} from '../../../_types/attribute';
-import {
-    IForm,
-    IFormDependentElements,
-    IFormElement,
-    IFormElementJoinLibraryContext,
-    IFormElementValues,
-    IRecordForm
-} from '_types/forms';
+import {AttributeTypes, IAttribute} from '../../../_types/attribute';
+import {IForm, IFormDependentElements, IFormElement, IFormElementJoinLibraryContext, IRecordForm} from '_types/forms';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {ILibrary} from '../../../_types/library';
+import {ILibrary, LibraryBehavior} from '../../../_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {
@@ -24,12 +17,14 @@ import {
     IFormDependentElementsForGraphQL,
     IFormElementForGraphQL,
     IFormForGraphql,
-    IGetElementFormValuesArgs,
     IGetFormArgs,
     IGetRecordFormArgs,
     ISaveFormArgs
 } from './_types';
 import {IfLibraryJoinLinkAttribute} from 'domain/attribute/helpers/ifLibraryJoinLinkAttribute';
+import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
+
+export type ICoreFormApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.attribute': IAttributeDomain;
@@ -151,7 +146,7 @@ export default function ({
                         library: Library!,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        elements: [FormElement!]!,
+                        elements: [FormElementWithValues!]!,
                         dependencyAttributes: [Attribute!],
                         sidePanel: FormSidePanel,
                     }
@@ -222,8 +217,16 @@ export default function ({
                         joinLibraryContext: FormElementJoinLibraryContext
                     }
 
-                    type FormElementValues {
+                    type FormElementWithValues {
                         id: ID!,
+                        containerId: ID!,
+                        order: Int!,
+                        uiElementType: String!,
+                        type: FormElementTypes!,
+                        attribute: Attribute,
+                        settings: [FormElementSettings!]!
+                        "In case the form element is a join library link"
+                        joinLibraryContext: FormElementJoinLibraryContext
                         values: [GenericValue!]
                         valueError: String
                     }
@@ -274,16 +277,8 @@ export default function ({
                             recordId: String,
                             libraryId: String!,
                             formId: String!,
-                            version: [ValueVersionInput!] 
+                            version: [ValueVersionInput!],
                         ): RecordForm
-                        
-                        getRecordFormElementsValues(
-                            recordId: String,
-                            libraryId: String!,
-                            formId: String!,
-                            version: [ValueVersionInput!]
-                            elementIds: [ID!]
-                        ): [FormElementValues!]
                     }
 
                     extend type Mutation {
@@ -323,24 +318,6 @@ export default function ({
                                 version: formattedVersion,
                                 ctx
                             });
-                        },
-                        async getRecordFormElementsValues(
-                            _,
-                            {recordId, libraryId, formId, version, elementIds}: IGetElementFormValuesArgs,
-                            ctx: IQueryInfos
-                        ): Promise<IFormElementValues[]> {
-                            const formattedVersion = convertVersionFromGqlFormat(version);
-
-                            const data = await formDomain.getRecordFormElementsValues({
-                                recordId,
-                                libraryId,
-                                formId,
-                                elementIds,
-                                version: formattedVersion,
-                                ctx
-                            });
-
-                            return data;
                         }
                     },
                     Mutation: {
@@ -373,7 +350,8 @@ export default function ({
                                 )
                             )
                     },
-                    FormElement: commonFormElementResolvers
+                    FormElement: commonFormElementResolvers,
+                    FormElementWithValues: commonFormElementResolvers
                 }
             };
         }

@@ -81,11 +81,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         joinLibraryContext?: JoinLibraryContextFragment;
     } = element;
 
-    const [backendValues, setBackendValues] = useState<RecordFormElementsValueLinkValue[]>([]);
-
-    useEffect(() => {
-        setBackendValues(element.values);
-    }, [element.values]);
+    const [backendValues, setBackendValues] = useState<RecordFormElementsValueLinkValue[]>(element.values);
 
     const calculatedFlags = computeCalculatedFlags(backendValues);
     const inheritedFlags = computeInheritedFlags(backendValues);
@@ -102,7 +98,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         activeAttribute: state.activeAttribute,
         attributePrefix: LINK_FIELD_ID_PREFIX,
         dispatch,
-        elementValues: backendValues,
+        backendValues,
         allowedSelectors: [
             'div[role="status"]:has(.kit-snackbar-message)',
             '.kit-modal-wrapper',

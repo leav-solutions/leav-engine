@@ -59,11 +59,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         values?: RecordFormElementsValueTreeValue[];
     } = element;
 
-    useEffect(() => {
-        setBackendValues(values || []);
-    }, [values]);
-
-    const [backendValues, setBackendValues] = useState<RecordFormElementsValueTreeValue[]>([]);
+    const [backendValues, setBackendValues] = useState<RecordFormElementsValueTreeValue[]>(values);
 
     const calculatedFlags = computeCalculatedFlags(backendValues);
     const inheritedFlags = computeInheritedFlags(backendValues);
@@ -88,7 +84,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         activeAttribute: state.activeAttribute,
         attributePrefix: TREE_FIELD_ID_PREFIX,
         dispatch,
-        elementValues: backendValues,
+        backendValues,
         allowedSelectors: ['.kit-modal-wrapper']
     });
 

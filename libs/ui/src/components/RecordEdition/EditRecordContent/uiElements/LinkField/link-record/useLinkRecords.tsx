@@ -94,10 +94,8 @@ export const useLinkRecords = ({
     useEffect(() => {
         if (!isFormCreationMode && backendValues.length === 0 && attribute.required) {
             form.setFields([{name: attribute.id, errors: [t('errors.standard_field_required')]}]);
-        } else {
-            form.setFields([{name: attribute.id, errors: []}]);
         }
-    }, [backendValues, isFormCreationMode, attribute]);
+    }, []);
 
     return {
         UnlinkAllRecords: backendValues.length > 1 && attribute.multiple_values && !attribute.required && (
