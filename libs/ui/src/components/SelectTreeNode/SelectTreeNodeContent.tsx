@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
+import {ComponentProps, FunctionComponent, useEffect, useRef, useState} from 'react';
 import {KitTree} from 'aristid-ds';
 import {Spin} from 'antd';
 import {EventDataNode} from 'antd/lib/tree';
 import {ITreeNodeWithRecord} from '_ui/types';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ChildrenAsRecordValuePermissionFilterInput, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
 import {defaultPaginationPageSize, ErrorDisplay} from '../..';
 import {TreeNodeTitle} from './TreeNodeTitle';
@@ -41,8 +40,6 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     selectableLibraries,
     loadRecursively = false
 }) => {
-    const {t} = useSharedTranslation();
-
     const rootNode: ITreeMapElement = {
         title: tree.label,
         record: null,
@@ -62,14 +59,14 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
 
     const [fetchError, setFetchError] = useState<string | undefined>();
     const [loadTreeContent, {error, called}] = useTreeNodeChildrenLazyQuery();
+    const isFetching = useRef(false);
 
-    const _fetchTreeContent = async (
-        parentNodeKey?: string,
-        offset = 0,
-        recursive = false,
-        currentTreeMap = {...treeMap}
-    ) => {
+    const _fetchTreeContent = async (parentNodeKey?: string, offset = 0, currentTreeMap = {...treeMap}) => {
         try {
+            if (isFetching.current) {
+                return;
+            }
+            isFetching.current = true;
             const {
                 data: {treeNodeChildren}
             } = await loadTreeContent({
@@ -88,22 +85,19 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             const parentElement = currentTreeMap[parentMapKey];
 
             const parentPath = parentElement?.parents ?? [];
+            const currentParents = [...parentPath, parentMapKey];
 
-            const formattedNodes = treeNodeChildren.list.map(e => {
-                const currentParents = [...parentPath, parentMapKey];
-
-                return {
-                    record: e.record,
-                    title: e.record.whoAmI.label || e.record.whoAmI.id,
-                    id: e.id,
-                    key: e.id,
-                    isLeaf: !e.childrenCount,
-                    children: [],
-                    parents: currentParents,
-                    paginationOffset: 0,
-                    disabled: disabledNodes?.includes(e.id)
-                };
-            });
+            const formattedNodes = treeNodeChildren.list.map(e => ({
+                record: e.record,
+                title: e.record.whoAmI.label || e.record.whoAmI.id,
+                id: e.id,
+                key: e.id,
+                isLeaf: !e.childrenCount,
+                children: [],
+                parents: currentParents,
+                paginationOffset: 0,
+                disabled: disabledNodes?.includes(e.id)
+            }));
 
             parentElement.children = [
                 ...parentElement.children.filter(child => !child.key.startsWith(`__showMore${parentMapKey}`)),
@@ -116,13 +110,13 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
 
             const newOffset = offset + defaultPaginationPageSize;
             if (treeNodeChildren.totalCount > newOffset) {
-                await _fetchTreeContent(parentNodeKey, newOffset, recursive, currentTreeMap);
+                await _fetchTreeContent(parentNodeKey, newOffset, currentTreeMap);
             }
 
-            if (recursive) {
+            if (loadRecursively) {
                 for (const node of formattedNodes) {
                     if (!node.isLeaf) {
-                        await _fetchTreeContent(node.key, 0, true, currentTreeMap);
+                        await _fetchTreeContent(node.key, 0, currentTreeMap);
                     }
                 }
             }
@@ -131,13 +125,19 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             setFetchError(undefined);
         } catch (err) {
             setFetchError((err as Error).message);
+        } finally {
+            isFetching.current = false;
         }
     };
 
     useEffect(() => {
-        _fetchTreeContent(undefined, 0, loadRecursively);
-    }, [loadRecursively]);
+        _fetchTreeContent(undefined, 0);
+    }, []);
 
+    /**
+     * In strict mode, loadData handler is called twice
+     * https://github.com/ant-design/ant-design/issues/54497
+     */
     const _handleLoadData: ComponentProps<typeof KitTree>['loadData'] = async nodeData => {
         const {id, isShowMore} = nodeData as EventDataNode<ITreeMapElement>;
 
@@ -206,10 +206,9 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
 
     return (
         <KitTree
-            key={selectedNodes?.join('-')}
             checkStrictly={checkStrictly}
             treeData={[treeMap[rootNode.key]]}
-            {...(!loadRecursively && {loadData: _handleLoadData})}
+            loadData={loadRecursively ? undefined : _handleLoadData}
             multiple={multiple}
             checkable={checkable}
             defaultExpandedKeys={selectedNodes?.length > 0 && checkable ? selectedNodes : [tree.id]}
