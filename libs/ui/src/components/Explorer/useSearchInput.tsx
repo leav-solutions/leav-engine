@@ -46,6 +46,7 @@ export const useSearchInput = ({
 
     const _handleSubmit: DOMAttributes<HTMLFormElement>['onSubmit'] = e => {
         e.preventDefault();
+        e.stopPropagation();
         dispatch({type: ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH, payload: {search}});
         setNewPage(1, 0);
     };
