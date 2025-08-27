@@ -114,10 +114,10 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
             setCurrentRecord(res?.record ?? null);
         };
 
-        if (isCreation) {
+        if (open && isCreation && !currentRecord) {
             createEmptyRecordFunction();
         }
-    }, []);
+    }, [open, currentRecord]);
 
     const _handleClickSubmit = (button: submitButtonsName) => {
         setClickedSubmitButton(button);

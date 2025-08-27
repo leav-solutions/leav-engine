@@ -27,29 +27,34 @@ jest.mock('../EditRecord', () => ({
     }
 }));
 
-const mockUseCreateEmptyRecordMutation = jest.fn().mockReturnValue({
-    data: {
-        createEmptyRecord: {
-            record: {
-                id: 'new_record_id',
-                whoAmI: {
-                    id: 'new_record_id',
-                    label: 'New Record',
-                    library: {id: 'test_lib'}
-                }
-            }
-        }
-    }
-});
-
 describe('EditRecordModal', () => {
+    let mockUseCreateEmptyRecordMutation = jest.fn();
+
     beforeEach(() => {
         user = userEvent.setup();
         ReactModal.setAppElement(document.createElement('div'));
+        mockUseCreateEmptyRecordMutation = jest.fn().mockReturnValue({
+            data: {
+                createEmptyRecord: {
+                    record: {
+                        id: 'new_record_id',
+                        whoAmI: {
+                            id: 'new_record_id',
+                            label: 'New Record',
+                            library: {id: 'test_lib'}
+                        }
+                    }
+                }
+            }
+        });
         jest.spyOn(gqlTypes, 'useCreateEmptyRecordMutation').mockImplementation(() => [
             mockUseCreateEmptyRecordMutation,
             {loading: false, called: false, client: null, reset: null, error: null}
         ]);
+    });
+
+    afterEach(() => {
+        mockUseCreateEmptyRecordMutation.mockReset();
     });
 
     describe('create mode', () => {
@@ -117,6 +122,18 @@ describe('EditRecordModal', () => {
             await userEvent.click(screen.queryByText('global.confirm'));
             expect(screen.queryByText('record_edition.cancel_confirm_modal_title')).not.toBeInTheDocument();
             expect(mockOnClose).toHaveBeenCalled();
+        });
+
+        test('Should call createEmptyRecord if modal is opened', async () => {
+            render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={null} />);
+
+            expect(mockUseCreateEmptyRecordMutation).toHaveBeenCalled();
+        });
+
+        test('Should not call createEmptyRecord if modal is not opened', async () => {
+            render(<EditRecordModal open={false} library="test_lib" onClose={jest.fn()} record={null} />);
+
+            expect(mockUseCreateEmptyRecordMutation).not.toHaveBeenCalled();
         });
     });
 
