@@ -10,7 +10,6 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {APICallStatus, DeleteMultipleValuesFunc, DeleteValueFunc, SubmitValueFunc} from '../../../_types';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {SelectTreeNodeModal} from './SelectTreeNodeModal';
-import {Form} from 'antd';
 
 interface IUseManageTreeNodeSelectionProps {
     modaleTitle: string;
@@ -42,10 +41,10 @@ export const useManageTreeNodeSelection = ({
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
 
-    // Used to force the input error display when a value is set
-    const treeNodeValue = Form.useWatch(attribute.id, form);
-
     const [isModalHidden, setIsModalHidden] = useState(true);
+
+    // Used to force the input error display when a value is set
+    AntForm.useWatch(attribute.id, form);
 
     useEffect(() => {
         if (!isFormCreationMode && backendValues.length === 0 && attribute.required) {

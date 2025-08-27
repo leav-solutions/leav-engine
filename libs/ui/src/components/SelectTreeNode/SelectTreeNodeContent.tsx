@@ -211,7 +211,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             loadData={loadRecursively ? undefined : _handleLoadData}
             multiple={multiple}
             checkable={checkable}
-            defaultExpandedKeys={selectedNodes?.length > 0 && checkable ? selectedNodes : [tree.id]}
+            defaultExpandedKeys={selectedNodes?.length > 0 ? [...selectedNodes, tree.id] : [tree.id]}
             selectedKeys={selectedNodes}
             checkedKeys={selectedNodes}
             titleRender={node => {

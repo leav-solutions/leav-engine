@@ -20,7 +20,8 @@ jest.mock('aristid-ds', () => ({
         useFormInstance: jest.fn(() => ({
             setFieldValue: mockSetFieldValue,
             setFields: mockSetFields
-        }))
+        })),
+        useWatch: jest.fn()
     }
 }));
 
