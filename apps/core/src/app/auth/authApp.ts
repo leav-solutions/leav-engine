@@ -341,7 +341,7 @@ export default function ({
                         });
 
                         const isValidPwd =
-                            !!userPwd[0].raw_payload && (await bcrypt.compare(password, userPwd[0].raw_payload));
+                            !!userPwd[0]?.raw_payload && (await bcrypt.compare(password, userPwd[0].raw_payload));
 
                         if (!isValidPwd) {
                             return res.status(401).send('Invalid credentials');
