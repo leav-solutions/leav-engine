@@ -632,6 +632,7 @@
     },
     "tree-node-selection": {
         "title": "Sélectionner un nœud de l'arbre",
+        "title_many": "Sélectionner un ou plusieurs nœuds de l'arbre",
         "show_more": "Éléments suivants..."
     },
     "files": {

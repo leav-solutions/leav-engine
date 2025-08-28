@@ -631,7 +631,8 @@
         "not_found": "Unknown library \"{{libraryId}}\""
     },
     "tree-node-selection": {
-        "title": "Select Tree Node",
+        "title": "Select one tree node",
+        "title_many": "Select one or many tree nodes",
         "show_more": "Next items..."
     },
     "files": {

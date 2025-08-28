@@ -9,6 +9,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {
+    AttributeType,
     JoinLibraryContextFragment,
     LibraryBehavior,
     useExplorerLibraryDetailsQuery
@@ -82,7 +83,9 @@ export const useCreatePrimaryAction = ({
     }
 
     let canCreateRecord;
-    if (entrypoint.type === 'library') {
+    if (joinLibraryContext?.mandatoryAttribute?.type === AttributeType.tree) {
+        canCreateRecord = false;
+    } else if (entrypoint.type === 'library') {
         canCreateRecord = true;
     } else {
         canCreateRecord = canCreateAndLinkValue && (isMultivalue || totalCount === 0);
