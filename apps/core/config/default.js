@@ -9,7 +9,7 @@ module.exports = {
         port: process.env.SERVER_PORT || 4001,
         publicUrl: process.env.SERVER_PUBLIC_URL || 'http://localhost:4001',
         wsUrl: process.env.SERVER_WS_URL || 'ws://localhost:4001',
-        allowIntrospection: process.env.SERVER_ALLOW_INTROSPECTION ?? true,
+        allowIntrospection: process.env.SERVER_ALLOW_INTROSPECTION ?? false,
         /**
          * Controls the maximum request body size. If this is a number,
          * then the value specifies the number of bytes; if it is a string,

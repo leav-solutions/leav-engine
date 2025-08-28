@@ -3,7 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 module.exports = {
     server: {
-        publicUrl: process.env.SERVER_PUBLIC_URL || 'http://core.leav.localhost'
+        publicUrl: process.env.SERVER_PUBLIC_URL || 'http://core.leav.localhost',
+        allowIntrospection: true
     },
     logs: {
         level: 'silly',

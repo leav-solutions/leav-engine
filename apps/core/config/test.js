@@ -9,7 +9,8 @@ module.exports = {
             login: 'admin',
             password: 'admin',
             email: 'email@domain.com'
-        }
+        },
+        allowIntrospection: true
     },
     db: {
         name: 'leav_test'
