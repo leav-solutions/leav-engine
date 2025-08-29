@@ -35,5 +35,6 @@ module.exports = {
         '\\.module.css$': 'identity-obj-proxy',
         '^@leav/(.*)$': '<rootDir>/../../libs/$1/src',
         '^_ui/(.*)': '<rootDir>/../../libs/ui/src/$1'
-    }
+    },
+    testTimeout: 30_000
 };

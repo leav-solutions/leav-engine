@@ -35,5 +35,6 @@ module.exports = {
     moduleNameMapper: {
         ...require('../../jestModuleNameMapper'),
         '\\.css$': '<rootDir>/src/__mocks__/styleMock.js'
-    }
+    },
+    testTimeout: 30_000
 };

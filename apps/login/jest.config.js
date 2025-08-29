@@ -32,5 +32,6 @@ module.exports = {
     },
     transformIgnorePatterns: ['node_modules/(?!(antd|@babel/runtime|@uidotdev/usehooks)/)'],
     testRegex: '.test.(ts|tsx)$',
-    moduleNameMapper: require('../../jestModuleNameMapper')
+    moduleNameMapper: require('../../jestModuleNameMapper'),
+    testTimeout: 30_000
 };

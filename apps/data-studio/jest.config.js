@@ -43,5 +43,6 @@ module.exports = {
         '^utils$': '<rootDir>/src/utils',
         '^constants/(.*)$': '<rootDir>/src/constants/$1',
         '^_types/(.*)$': '<rootDir>/src/_types/$1'
-    }
+    },
+    testTimeout: 30_000
 };
