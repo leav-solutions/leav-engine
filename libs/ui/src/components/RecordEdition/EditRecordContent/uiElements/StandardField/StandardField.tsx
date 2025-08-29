@@ -306,7 +306,9 @@ const StandardField: FunctionComponent<
         !isFieldInError &&
         attribute.format !== AttributeFormat.boolean &&
         attribute.format !== AttributeFormat.encrypted;
-    const canDeleteAllValues = hasValue && backendValues.length > 1 && !attribute.required;
+    const canDeleteAllValues = !attribute.required && hasValue && backendValues.length > 1;
+    const canDeleteSingleValue =
+        !attribute.required || (attribute.required && backendWithoutCalculatedOrInheritedValues.length > 1);
 
     const label = localizedTranslation(element.settings.label, lang);
     const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
@@ -336,18 +338,7 @@ const StandardField: FunctionComponent<
                 }
                 htmlFor={attribute.id}
             >
-                {!attribute.multiple_values && (
-                    <StandardFieldValue
-                        presentationValue={presentationValues[0] ?? ''}
-                        handleSubmit={_handleSubmit(backendWithoutCalculatedOrInheritedValues[0]?.id_value)}
-                        attribute={attribute}
-                        readonly={isReadOnly}
-                        label={label}
-                        calculatedFlags={calculatedFlags}
-                        inheritedFlags={inheritedFlags}
-                    />
-                )}
-                {attribute.multiple_values && (
+                {attribute.multiple_values ? (
                     <Form.List name={attribute.id}>
                         {(fields, {add, remove}) => {
                             antdListFieldsRef.current = {add, remove, indexes: fields.map((_, index) => index)};
@@ -380,11 +371,12 @@ const StandardField: FunctionComponent<
                                                         removeLastValueOfMultivalues={() => remove(index)}
                                                     />
                                                 </StandardFieldValueWrapper>
-                                                {backendWithoutCalculatedOrInheritedValues.length > 0 && (
+                                                {canDeleteSingleValue && (
                                                     <KitDeleteValueButton
                                                         type="tertiary"
                                                         title={t('record_edition.delete_value')}
                                                         icon={<FaTrash />}
+                                                        disabled={isReadOnly}
                                                         onClick={() =>
                                                             _handleDeleteValue(
                                                                 backendWithoutCalculatedOrInheritedValues[index]
@@ -392,7 +384,6 @@ const StandardField: FunctionComponent<
                                                                 index
                                                             )
                                                         }
-                                                        disabled={isReadOnly}
                                                     />
                                                 )}
                                             </RowValueWrapper>
@@ -421,6 +412,16 @@ const StandardField: FunctionComponent<
                             );
                         }}
                     </Form.List>
+                ) : (
+                    <StandardFieldValue
+                        presentationValue={presentationValues[0] ?? ''}
+                        handleSubmit={_handleSubmit(backendWithoutCalculatedOrInheritedValues[0]?.id_value)}
+                        attribute={attribute}
+                        readonly={isReadOnly}
+                        label={label}
+                        calculatedFlags={calculatedFlags}
+                        inheritedFlags={inheritedFlags}
+                    />
                 )}
             </KitInputWrapperStyled>
         </Wrapper>
