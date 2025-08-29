@@ -13,7 +13,7 @@
         "antd": "5.22.2",
         "apollo-cache-inmemory": "1.6.6",
         "apollo-upload-client": "14.1.3",
-        "aristid-ds": "14.0.0-fa046aa",
+        "aristid-ds": "14.0.0-c902742",
         "dayjs": "1.11.13",
         "graphql": "15.0.0",
         "graphql-tag": "2.12.6",

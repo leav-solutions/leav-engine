@@ -84,7 +84,7 @@ query ExplorerLinkData(
       field: "id",
       condition: EQUAL,
       value: $parentRecordId
-    }]) {
+    }], retrieveInactive: true) {
     list {
       id
       whoAmI {
