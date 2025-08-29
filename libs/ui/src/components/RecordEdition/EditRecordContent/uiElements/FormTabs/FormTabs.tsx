@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FunctionComponent} from 'react';
 import {FormUIElementTypes, IFormTabsSettings, localizedTranslation, TabsDirection} from '@leav/utils';
 import {Tabs} from 'antd';
 import styled from 'styled-components';
@@ -25,13 +26,13 @@ const StyledTabs = styled(Tabs)`
     }
 `;
 
-function FormTabs({element, ...elementProps}: IFormElementProps<IFormTabsSettings>): JSX.Element {
+const FormTabs: FunctionComponent<IFormElementProps<IFormTabsSettings>> = ({element, ...elementProps}) => {
     const {lang} = useLang();
     const tabPosition = element.settings.direction === TabsDirection.VERTICAL ? 'left' : 'top';
 
-    const tabItems = element.settings.tabs.map(tab => {
+    const tabItems = element.settings.tabs.map(({id, label}) => {
         const tabContainer: FormElement<{}> = {
-            id: `${element.id}/${tab.id}`,
+            id: `${element.id}/${id}`,
             containerId: element.id,
             settings: {},
             attribute: null,
@@ -43,13 +44,13 @@ function FormTabs({element, ...elementProps}: IFormElementProps<IFormTabsSetting
         };
 
         return {
-            label: localizedTranslation(tab.label, lang),
-            key: tab.id,
+            label: localizedTranslation(label, lang),
+            key: id,
             children: <tabContainer.uiElement {...elementProps} element={tabContainer} />
         };
     });
 
     return <StyledTabs tabPosition={tabPosition} data-testid="form-tabs" items={tabItems} />;
-}
+};
 
 export default FormTabs;

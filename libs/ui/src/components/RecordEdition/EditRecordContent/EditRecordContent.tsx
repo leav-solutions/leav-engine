@@ -1,8 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FunctionComponent, useCallback, useEffect, useMemo} from 'react';
 import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes, simpleStringHash} from '@leav/utils';
-import {FunctionComponent, useEffect, useMemo} from 'react';
+import {Form, FormInstance} from 'antd';
+import styled from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
 import useGetRecordForm from '_ui/hooks/useGetRecordForm';
 import {useGetRecordUpdatesSubscription} from '_ui/hooks/useGetRecordUpdatesSubscription';
@@ -16,12 +18,10 @@ import extractFormElements from './helpers/extractFormElements';
 import {RecordEditionContext} from './hooks/useRecordEditionContext';
 import {formComponents} from './uiElements';
 import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
-import {Form, FormInstance} from 'antd';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import EditRecordSkeleton from '../EditRecordSkeleton';
-import styled from 'styled-components';
 
 interface IEditRecordContentProps {
     antdForm: FormInstance;
@@ -104,13 +104,11 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         true
     );
 
-    // Generate a hash of recordForm to detect changes
-    const recordFormHash = useMemo(() => simpleStringHash(JSON.stringify(recordForm)), [recordForm]);
-
     useEffect(() => {
         if (state.refreshRequested) {
-            refetch();
-            dispatch({type: EditRecordReducerActionsTypes.REFRESH_DONE});
+            refetch().then(() => {
+                dispatch({type: EditRecordReducerActionsTypes.REFRESH_DONE});
+            });
         }
     }, [state.refreshRequested]);
 
@@ -127,8 +125,11 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         return <ErrorDisplay message={message ?? t('record_edition.no_form_error')} />;
     }
 
+    /**
+     * If a dependency attribute has changed, we need to refresh the form.
+     * @param changedAttribute - string
+     */
     const _checkDependencyChange = (changedAttribute: string) => {
-        // If a dependency attribute has changed, we need to refresh the form
         if (recordForm.dependencyAttributes.map(depAttribute => depAttribute.id).includes(changedAttribute)) {
             dispatch({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
         }
@@ -139,7 +140,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
         _checkDependencyChange(element[0].attribute.id);
 
-        refetchComputeFields([record.id]);
+        await refetchComputeFields([record.id]);
 
         return submitRes;
     };
@@ -163,7 +164,6 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         values: null,
         uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
     };
-
     const antdFormInitialValues = getAntdFormInitialValues(recordForm);
     const recordComputedValues = computeFieldsData && record ? computeFieldsData[record.id] : null;
     const elementsByContainer = extractFormElements(recordForm, recordComputedValues, computeFieldsError);
@@ -187,8 +187,6 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                 }}
             >
                 <rootElement.uiElement
-                    // Use a hash of record form as a key to force a full re-render when the form changes
-                    key={recordFormHash}
                     isFormCreationMode={isFormCreationMode}
                     antdForm={antdForm}
                     element={rootElement}

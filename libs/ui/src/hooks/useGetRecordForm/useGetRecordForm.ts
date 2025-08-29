@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApolloError} from '@apollo/client';
 import {objectToNameValueArray, Override} from '@leav/utils';
-import React from 'react';
+import {useState} from 'react';
 import {IValueVersion} from '_ui/types/values';
 import {
     RecordFormElementFragment,
@@ -76,7 +76,7 @@ export type RecordFormElementAttribute = RecordFormElement['attribute'];
 export interface IUseGetRecordFormHook {
     loading: boolean;
     error: ApolloError;
-    recordForm: IRecordForm;
+    recordForm: IRecordForm | null;
     refetch: RecordFormQueryResult['refetch'];
 }
 
@@ -91,7 +91,7 @@ const useGetRecordForm = ({
     formId: string;
     version: IValueVersion;
 }): IUseGetRecordFormHook => {
-    const [recordForm, setRecordForm] = React.useState<IRecordForm>(null);
+    const [recordForm, setRecordForm] = useState<IRecordForm | null>(null);
 
     const requestVersion = version
         ? objectToNameValueArray(version)

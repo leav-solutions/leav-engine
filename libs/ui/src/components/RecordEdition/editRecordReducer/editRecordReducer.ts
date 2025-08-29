@@ -1,15 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordIdentityWhoAmI} from '../../../types/records';
-import {IValueVersion} from '../../../types/values';
-import {RecordFormAttributeFragment, RecordUpdateSubscription, ValueDetailsFragment} from '../../../_gqlTypes';
+import {IRecordIdentityWhoAmI, SystemTranslation, IValueVersion} from '_ui/types';
+import {RecordFormAttributeFragment, RecordUpdateSubscription, ValueDetailsFragment} from '_ui/_gqlTypes';
 import {
     RecordFormElementsValueLinkValue,
     RecordFormElementsValueStandardValue,
     RecordFormElementsValueTreeValue
 } from '_ui/hooks/useGetRecordForm';
-import {SystemTranslation} from '_ui/types';
 import {TypeGuards} from '_ui/components/LibraryItemsList/LibraryItemsListTable/Cell/typeGuards';
 
 export interface IRecordPropertyWithAttribute {
@@ -25,7 +23,7 @@ export const EditRecordSidebarContentTypeMap = {
     NONE: 'none'
 } as const;
 
-export type EditRecordSidebarContentType =
+type EditRecordSidebarContentType =
     (typeof EditRecordSidebarContentTypeMap)[keyof typeof EditRecordSidebarContentTypeMap];
 
 export interface IEditRecordReducerState {
@@ -121,8 +119,6 @@ export type IEditRecordReducerActions =
     | {
           type: EditRecordReducerActionsTypes.CLEAR_EXTERNAL_UPDATE;
       };
-
-export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void;
 
 export const initialState: IEditRecordReducerState = {
     record: null,
@@ -234,7 +230,7 @@ const editRecordReducer = (
             return {...state, refreshRequested: false};
         case EditRecordReducerActionsTypes.ADD_EXTERNAL_UPDATE:
             const newState = {...state};
-            const newModifiers = state.externalUpdate?.modifiers.find(m => m.id === action.modifier.id)
+            const newModifiers = state.externalUpdate?.modifiers.find(({id}) => id === action.modifier.id)
                 ? (newState.externalUpdate?.modifiers ?? [])
                 : [...(newState.externalUpdate?.modifiers ?? []), action.modifier];
 

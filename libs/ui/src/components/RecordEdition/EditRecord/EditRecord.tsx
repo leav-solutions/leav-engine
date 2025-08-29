@@ -90,8 +90,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     containerStyle,
     withInfoButton
 }) => {
-    const isCreationMode = !record;
-
     const [state, dispatch] = useReducer(editRecordReducer, {
         ...initialState,
         record,

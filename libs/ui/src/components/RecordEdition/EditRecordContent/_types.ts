@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FunctionComponent} from 'react';
 import {
     AnyPrimitive,
     FormFieldTypes,
@@ -17,13 +18,12 @@ import {
     RecordFormAttributeFragment,
     SaveValueBatchMutation,
     CreateRecordMutation,
+    RecordFormElementFragment,
     RecordIdentityFragment,
-    ValueBatchInput,
     ValueDetailsFragment,
     ValueInput
 } from '_ui/_gqlTypes';
 import {RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
-import {RecordFormElementFragment} from '../../../_gqlTypes';
 import {FormInstance} from 'antd/lib/form/Form';
 import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
 
@@ -92,7 +92,6 @@ export type SubmittedValue = ISubmittedValueStandard | ISubmittedValueLink | ISu
 export type SubmitValueFunc = (values: SubmittedValue[], version: IValueVersion) => Promise<ISubmitMultipleResult>;
 export type DeleteValueFunc = (value: ValueInput | null, attribute: string) => Promise<IDeleteValueResult>;
 export type CreateEmptyRecordFunc = (library: string) => Promise<ICreateRecordResult>;
-export type CreateRecordFunc = (library: string, values: ValueBatchInput[]) => Promise<ICreateRecordResult>;
 export type DeleteMultipleValuesFunc = (
     attribute: string,
     values: RecordProperty[],
@@ -129,17 +128,13 @@ export type FormElement<SettingsType, RecordFormElements = RecordFormElementsVal
         values: RecordFormElements[];
     }
 > & {
-    uiElement: (
-        props: IFormElementProps<unknown> & {
+    uiElement: FunctionComponent<
+        IFormElementProps<unknown> & {
             antdForm?: FormInstance;
             computedValues?: GetRecordColumnsValuesRecord;
         }
-    ) => JSX.Element;
+    >;
 };
-
-export interface IDependencyValues {
-    [attributeId: string]: Array<{id: string; library: string}>;
-}
 
 export type StandardValueTypes = AnyPrimitive;
 
