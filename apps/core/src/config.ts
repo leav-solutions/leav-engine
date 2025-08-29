@@ -180,7 +180,8 @@ export const validateConfig = (conf: IConfig) => {
             endpoint: Joi.string().required(),
             sizeLimit: Joi.number().required(),
             groupData: Joi.number().required(),
-            maxStackedElements: Joi.number().required()
+            maxStackedElements: Joi.number().required(),
+            delayTaskExecMs: Joi.number().required()
         }),
         plugins: Joi.object().keys().unknown(),
         preview: Joi.object().keys({

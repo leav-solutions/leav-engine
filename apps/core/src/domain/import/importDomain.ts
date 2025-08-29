@@ -679,6 +679,17 @@ export default function ({
         });
     };
 
+    // Temporary hack to ensure file is written in nfs due to async behavior
+    // May be remove when nfs mount is sync.
+    const _delayJobToEnsureFileIsWrittenInNfsDueToAsync = async () => {
+        if (config.import.delayTaskExecMs > 0) {
+            logger.debug(
+                `Wait ${config.import.delayTaskExecMs}ms to ensure file is written in nfs due to async behavior`
+            );
+            await new Promise(resolve => setTimeout(resolve, config.import.delayTaskExecMs));
+        }
+    };
+
     return {
         async importConfig(params: IImportConfigParams, task?: ITaskFuncParams): Promise<string | undefined> {
             const {filepath, ctx, forceNoTask, clearDatabase, dbMigrate} = params;
@@ -719,6 +730,8 @@ export default function ({
 
                 return newTaskId;
             }
+
+            await _delayJobToEnsureFileIsWrittenInNfsDueToAsync();
 
             await eventsManagerDomain.sendDatabaseEvent<EventAction.CONFIG_IMPORT_START>(
                 {
@@ -856,6 +869,8 @@ export default function ({
 
                 return newTaskId;
             }
+
+            await _delayJobToEnsureFileIsWrittenInNfsDueToAsync();
 
             ctx.trigger = 'data_import';
             await eventsManagerDomain.sendDatabaseEvent<EventAction.DATA_IMPORT_START>(
@@ -1331,6 +1346,7 @@ export default function ({
 
             // End of file.
             writeLine('], "trees": []}');
+            await new Promise(resolve => writeStream.end(resolve));
 
             // Delete xlsx file
             await utils.deleteFile(`${config.import.directory}/${filename}`);

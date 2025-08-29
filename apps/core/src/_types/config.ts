@@ -201,6 +201,12 @@ export interface IImport {
     sizeLimit: number;
     groupData: number;
     maxStackedElements: number;
+
+    /**
+     * Hack for leav deploy on nfs which is asynchronous for file write (by default)
+     * Wait this delay before submitting import data job
+     */
+    delayTaskExecMs: number;
 }
 
 /**

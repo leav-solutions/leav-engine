@@ -164,7 +164,8 @@ module.exports = {
         endpoint: process.env.IMPORT_ENDPOINT || 'imports',
         sizeLimit: process.env.IMPORT_SIZE_LIMIT || 10, // megabytes
         groupData: process.env.IMPORT_GROUP_DATA || 50, // number of elements processed at the same time,
-        maxStackedElements: process.env.IMPORT_MAX_STACKED_ELEMENTS || 10000 // We clear the parser value stack based on the number of elements present
+        maxStackedElements: process.env.IMPORT_MAX_STACKED_ELEMENTS || 10000, // We clear the parser value stack based on the number of elements present
+        delayTaskExecMs: process.env.IMPORT_DELAY_TASK_EXEC_MS || 0 // Delay to ensure file is written in nfs due to async behavior
     },
     preview: {
         directory: process.env.PREVIEWS_DIRECTORY || '/results'
