@@ -19,19 +19,12 @@ import {getMainDefinition} from '@apollo/client/utilities';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
 import useRedirectToLogin from 'hooks/useRedirectToLogin';
-import {ReactNode} from 'react';
+import {FunctionComponent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
-import {addMessage, MessagesTypes} from 'reduxStore/messages/messages';
 import {endMutation, startMutation} from 'reduxStore/mutationsWatcher/mutationsWatcher';
-import {SemanticICONS} from 'semantic-ui-react';
 import * as yup from 'yup';
-import {ErrorTypes} from '_types/errors';
 import {API_ENDPOINT, ORIGIN_URL, UNAUTHENTICATED, WS_URL} from '../../../constants';
-
-interface IApolloHandlerProps {
-    children: ReactNode;
-}
 
 const gqlPossibleTypes: PossibleTypesMap = {
     Attribute: ['StandardAttribute', 'LinkAttribute', 'TreeAttribute'],
@@ -39,19 +32,12 @@ const gqlPossibleTypes: PossibleTypesMap = {
     GenericValue: ['Value', 'LinkValue', 'TreeValue']
 };
 
-const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
+const ApolloHandler: FunctionComponent = ({children}) => {
     const dispatch = useDispatch();
     const {t, i18n} = useTranslation();
     const {redirectToLogin} = useRedirectToLogin();
 
-    const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
-        let title: string;
-        let content: string;
-        let icon: SemanticICONS;
-        const isMutation = operation.query.definitions.some(
-            def => def.kind === 'OperationDefinition' && def.operation === 'mutation'
-        );
-
+    const errorLink = onError(({graphQLErrors, networkError, operation, forward}) => {
         if (
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? []).some(err => err.extensions.code === UNAUTHENTICATED)
@@ -74,42 +60,16 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
             });
         }
 
-        if (graphQLErrors) {
-            graphQLErrors.map(graphqlError => {
-                const {message, extensions} = graphqlError;
+        graphQLErrors?.forEach(({message, locations, path}) => {
+            console.warn(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
+        });
 
-                title = t(`errors.${extensions?.code ?? ErrorTypes.PERMISSION_ERROR}`);
-                switch (extensions?.code) {
-                    case ErrorTypes.VALIDATION_ERROR:
-                        content = message !== 'Validation error' ? message : '';
-                        break;
-                    case ErrorTypes.PERMISSION_ERROR:
-                        content = '';
-                        icon = 'frown outline';
-                        break;
-                    case ErrorTypes.INTERNAL_ERROR:
-                    default:
-                        content = message;
-                        break;
-                }
-            });
-        } else if (networkError) {
-            title = t('errors.network_error');
-            icon = 'plug';
-        }
-
+        const isMutation = operation.query.definitions.some(
+            def => def.kind === 'OperationDefinition' && def.operation === 'mutation'
+        );
         if (isMutation) {
             dispatch(endMutation());
         }
-
-        dispatch(
-            addMessage({
-                type: MessagesTypes.ERROR,
-                title,
-                content,
-                icon
-            })
-        );
     });
 
     const _mutationsWatcherLink = new ApolloLink((operation, forward) => {
@@ -147,7 +107,7 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
 
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
-            _handleApolloError,
+            errorLink,
             splitLink,
             _mutationsWatcherLink,
             new HttpLink({

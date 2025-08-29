@@ -26,9 +26,6 @@ describe('useExplorerProps', () => {
 
             expect(result.current.commonExplorerProps).toEqual({
                 showSearch: true,
-                defaultPrimaryActions: ['create'],
-                defaultActionsForItem: ['activate'],
-                defaultMassActions: ['deactivate'],
                 showFilters: true,
                 showSorts: true,
                 ignoreViewByDefault: true,
@@ -38,6 +35,9 @@ describe('useExplorerProps', () => {
             });
 
             expect(result.current.libraryExplorerProps).toEqual({
+                defaultPrimaryActions: ['create'],
+                defaultActionsForItem: ['activate'],
+                defaultMassActions: ['deactivate'],
                 noPagination: true
             });
         });
@@ -60,9 +60,6 @@ describe('useExplorerProps', () => {
 
             expect(result.current.commonExplorerProps).toEqual({
                 showSearch: false,
-                defaultPrimaryActions: ['create'],
-                defaultActionsForItem: ['activate'],
-                defaultMassActions: ['deactivate'],
                 showFilters: false,
                 showSorts: false,
                 ignoreViewByDefault: false,

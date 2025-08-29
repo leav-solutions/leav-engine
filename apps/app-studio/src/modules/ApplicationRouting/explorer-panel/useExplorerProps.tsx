@@ -9,9 +9,6 @@ const isBoolean = (val: unknown) => 'boolean' === typeof val;
 
 type CommonOverridablePropsByUser =
     | 'showSearch'
-    | 'defaultPrimaryActions'
-    | 'defaultActionsForItem'
-    | 'defaultMassActions'
     | 'showFilters'
     | 'showSorts'
     | 'ignoreViewByDefault'
@@ -19,14 +16,15 @@ type CommonOverridablePropsByUser =
     | 'creationFormId'
     | 'editionFormId';
 
-type LibraryOverridablePropsByUser = 'noPagination';
+type LibraryOverridablePropsByUser =
+    | 'defaultPrimaryActions'
+    | 'defaultActionsForItem'
+    | 'defaultMassActions'
+    | 'noPagination';
 
 export const useExplorerProps = ({explorerProps}: {explorerProps: LibraryExplorerProps}) => {
     const commonExplorerProps: Pick<ComponentProps<typeof Explorer>, CommonOverridablePropsByUser> = {
         showSearch: isBoolean(explorerProps?.showSearch) ? explorerProps.showSearch : undefined,
-        defaultPrimaryActions: explorerProps?.defaultPrimaryActions,
-        defaultActionsForItem: explorerProps?.defaultActionsForItem,
-        defaultMassActions: explorerProps?.defaultMassActions,
         showFilters: explorerProps?.showFilters,
         showSorts: explorerProps?.showSorts,
         ignoreViewByDefault: isBoolean(explorerProps?.freezeView) ? explorerProps.freezeView : undefined,
@@ -36,6 +34,9 @@ export const useExplorerProps = ({explorerProps}: {explorerProps: LibraryExplore
     };
 
     const libraryExplorerProps: Pick<ComponentProps<typeof Explorer>, LibraryOverridablePropsByUser> = {
+        defaultPrimaryActions: explorerProps?.defaultPrimaryActions,
+        defaultActionsForItem: explorerProps?.defaultActionsForItem,
+        defaultMassActions: explorerProps?.defaultMassActions,
         noPagination: explorerProps?.noPagination ?? undefined
     };
 

@@ -72,20 +72,21 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, work
             );
         }
         if (panel.content.type === 'explorer') {
-            if ('libraryId' in panel.content) {
-                if (panel.content.libraryId === '<props>') {
-                    return (
-                        <PanelLibraryExplorer
-                            libraryId={workspace.entrypoint.libraryId}
-                            viewId={panel.content.viewId}
-                            explorerProps={panel.content.explorerProps}
-                            actions={panel.content.actions}
-                        />
-                    );
-                }
+            if ('attributeSource' in panel.content) {
+                return (
+                    <PanelAttributeExplorer
+                        libraryId={panel.content.libraryId}
+                        attributeSource={panel.content.attributeSource}
+                        viewId={panel.content.viewId}
+                        explorerProps={panel.content.explorerProps}
+                        actions={panel.content.actions}
+                    />
+                );
+            }
+            if (panel.content.libraryId === '<props>') {
                 return (
                     <PanelLibraryExplorer
-                        libraryId={panel.content.libraryId}
+                        libraryId={workspace.entrypoint.libraryId}
                         viewId={panel.content.viewId}
                         explorerProps={panel.content.explorerProps}
                         actions={panel.content.actions}
@@ -93,9 +94,8 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, work
                 );
             }
             return (
-                <PanelAttributeExplorer
+                <PanelLibraryExplorer
                     libraryId={panel.content.libraryId}
-                    attributeSource={panel.content.attributeSource}
                     viewId={panel.content.viewId}
                     explorerProps={panel.content.explorerProps}
                     actions={panel.content.actions}

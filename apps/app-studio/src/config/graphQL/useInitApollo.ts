@@ -21,12 +21,9 @@ export const useInitApollo = (
             return unauthorizedHandler(forward, operation);
         }
 
-        if (graphQLErrors && response?.data === null) {
-            graphQLErrors.map(
-                ({message, locations, path}) =>
-                    `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-            );
-        }
+        graphQLErrors.forEach(({message, locations, path}) => {
+            console.warn(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
+        });
 
         if (networkError) {
             // Check if the error response is JSON

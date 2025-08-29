@@ -13,20 +13,16 @@ import {
 } from '@apollo/client';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
-import {onError} from '@apollo/link-error';
+import {onError} from '@apollo/client/link/error';
 import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {message} from 'antd';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
-import {ReactNode, useMemo} from 'react';
+import {FunctionComponent, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 
-interface IApolloHandlerProps {
-    children: ReactNode;
-}
-
-function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
+const ApolloHandler: FunctionComponent = ({children}) => {
     const {t} = useTranslation();
     const {redirectToLogin} = useRedirectToLogin();
 
@@ -42,13 +38,10 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     );
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
-    const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
-        if (graphQLErrors) {
-            graphQLErrors.map(({message: origMessage, locations, path}) => {
-                const errorMessage = `[GraphQL error]: Message: ${origMessage}, Location: ${locations}, Path: ${path}`;
-                return errorMessage;
-            });
-        }
+    const errorLink = onError(({graphQLErrors, networkError, operation, forward}) => {
+        graphQLErrors?.forEach(({message: origMessage, locations, path}) => {
+            console.warn(`[GraphQL error]: Message: ${origMessage}, Location: ${locations}, Path: ${path}`);
+        });
 
         let errorContent: string = t('error.error_occurred');
         if (networkError) {
@@ -87,7 +80,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
 
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
-            _handleApolloError as unknown as ApolloLink,
+            errorLink,
             splitLink,
             new HttpLink({
                 uri: `${ORIGIN_URL}/${API_ENDPOINT}`,
@@ -111,6 +104,6 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     });
 
     return <ApolloProvider client={gqlClient}>{children}</ApolloProvider>;
-}
+};
 
 export default ApolloHandler;

@@ -17,24 +17,20 @@ import {onError} from '@apollo/link-error';
 import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {createUploadLink} from 'apollo-upload-client';
 import {createClient} from 'graphql-ws';
-import {ReactNode} from 'react';
+import {FunctionComponent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';
 import {useAppDispatch} from 'reduxStore/store';
 import {IInfo, InfoChannel, InfoType} from '_types/types';
 import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
 
-interface IApolloHandlerProps {
-    children: ReactNode;
-}
-
-function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
+const ApolloHandler: FunctionComponent = ({children}) => {
     const {t, i18n} = useTranslation();
     const dispatch = useAppDispatch();
     const {redirectToLogin} = useRedirectToLogin();
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
-    const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward, response}) => {
+    const errorLink = onError(({graphQLErrors, networkError, operation, forward}) => {
         if (
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? [])?.some(err => err?.extensions?.code === 'UNAUTHENTICATED')
@@ -57,25 +53,9 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             });
         }
 
-        if (graphQLErrors && response?.data === null) {
-            graphQLErrors.map(({message, locations, path}) => {
-                const errorContent = t('error.graphql_error_occurred', {
-                    error: message,
-                    interpolation: {escapeValue: false}
-                });
-
-                dispatch(
-                    addInfo({
-                        content: errorContent,
-                        type: InfoType.error,
-                        channel: InfoChannel.trigger
-                    })
-                );
-
-                const errorMessage = `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`;
-                return errorMessage;
-            });
-        }
+        graphQLErrors.forEach(({message, locations, path}) => {
+            console.warn(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
+        });
 
         if (networkError) {
             // Check if error response is JSON
@@ -121,7 +101,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
 
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
-            _handleApolloError,
+            errorLink,
             splitLink,
             createUploadLink({
                 uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}`,
@@ -231,6 +211,6 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     });
 
     return <ApolloProvider client={gqlClient}>{children}</ApolloProvider>;
-}
+};
 
 export default ApolloHandler;

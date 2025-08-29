@@ -9,12 +9,12 @@ import i18n from './i18n';
 
 export function IndexComp() {
     const {lang, loading, error} = useAppLang();
-    const [i18nIsInitialized, seti18nIsInitialized] = useState(false);
+    const [i18nIsInitialized, setI18nIsInitialized] = useState(false);
 
     useEffect(() => {
         if (!i18nIsInitialized && lang) {
             i18n.init(lang);
-            seti18nIsInitialized(true);
+            setI18nIsInitialized(true);
         }
     }, [lang]);
 

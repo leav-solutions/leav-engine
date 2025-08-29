@@ -3,12 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
 import {useLocation} from 'react-router-dom';
-import {Explorer} from '@leav/ui';
+import {Explorer, ThroughConditionFilter} from '@leav/ui';
 import {explorerContainer} from './PanelContent.module.css';
 import {useExplorerProps} from '../../explorer-panel/useExplorerProps';
 import {useItemActions} from '../../explorer-panel/useItemActions';
 import {recordSearchParamsName} from '../../routes';
 import {ItemActions, LibraryExplorerProps} from '../../types';
+import {AttributeType, RecordFilterCondition} from '../../../../__generated__';
 
 interface IPanelExplorerProps {
     libraryId: string;
@@ -34,16 +35,33 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
         <div className={explorerContainer}>
             <Explorer
                 entrypoint={{
-                    type: 'link',
-                    linkAttributeId: attributeSource,
-                    parentLibraryId: libraryId,
-                    parentRecordId: searchParams.get(recordSearchParamsName)
+                    type: 'library',
+                    libraryId
                 }}
                 defaultViewSettings={{
-                    viewId
+                    viewId,
+                    filters: [
+                        {
+                            id: 'filter_to_linked_records',
+                            hidden: true,
+                            field: attributeSource,
+                            subField: 'id',
+                            attribute: {
+                                id: attributeSource,
+                                type: AttributeType.advanced_link,
+                                label: 'SHOULD BE HIDDEN'
+                            },
+                            condition: ThroughConditionFilter.THROUGH,
+                            subCondition: RecordFilterCondition.EQUAL,
+                            value: searchParams.get(recordSearchParamsName)
+                        }
+                    ]
                 }}
                 itemActions={itemActions}
                 {...commonExplorerProps}
+                defaultPrimaryActions={[]}
+                defaultMassActions={[]}
+                defaultActionsForItem={['edit']}
             />
         </div>
     );

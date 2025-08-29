@@ -71,7 +71,15 @@ export type FeatureHook<T = {}> = {isEnabled: boolean; isVisible?: boolean} & T;
 
 interface IExplorerFilterBaseAttribute {
     type: AttributeType;
+    /**
+     * Used to display the label of the filter.
+     *
+     * > Not displayed when filter is hidden
+     */
     label: string;
+    /**
+     * Used to verify unicity: one filter per attribute
+     */
     id: string;
 }
 
@@ -92,6 +100,12 @@ export interface IExplorerFilterTreeAttribute extends IExplorerFilterBaseAttribu
 
 interface IExplorerBaseFilter {
     id: string;
+    /**
+     * Used to build filter field.
+     *
+     * - ex: `campaigns_id_pac`
+     * - ex with **subField**: `campaigns_id_pac.id`
+     */
     field: string;
     value: string | null;
     hidden?: boolean;

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Explorer, useLang} from '@leav/ui';
 import {ComponentProps} from 'react';
-import {useNavigate, generatePath, useParams} from 'react-router-dom';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {FaPlus} from 'react-icons/fa';
 import {recordSearchParamsName, routes} from '../routes';
 import {ItemActions} from '../types';
@@ -20,7 +20,7 @@ export const useItemActions = ({actions}: {actions: ItemActions}) => {
         callback: item => {
             const query = new URLSearchParams({[recordSearchParamsName]: item.itemId});
 
-            // TODO: When we will adress the feature to open a popup trough a popup panel, we might need to use routes.panel/routes.popupPanel instead of routes.popupPanel
+            // TODO: When we will address the feature to open a popup trough a popup panel, we might need to use routes.panel/routes.popupPanel instead of routes.popupPanel
             const {route, params} = {
                 popup: {route: routes.popupPanel, params: {panelId, popupPanelId: action.what.id}},
                 slider: {route: routes.sliderPanel, params: {panelId, sliderPanelId: action.what.id}},
