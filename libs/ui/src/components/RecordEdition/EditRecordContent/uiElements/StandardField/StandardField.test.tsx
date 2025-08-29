@@ -283,6 +283,37 @@ describe('StandardField', () => {
             );
         });
 
+        test('Should call onValueDelete on submitting an empty value', async () => {
+            const initialValue = {
+                [mockFormElementInput.attribute.id]: [
+                    (mockFormElementInput.values[0] as RecordFormElementsValueStandardValue).raw_payload
+                ]
+            };
+
+            render(
+                <AntForm initialValues={initialValue}>
+                    <StandardField
+                        element={{
+                            ...mockFormElementMultipleInput,
+                            values: [{id_value: idValue}]
+                        }}
+                        {...baseProps}
+                    />
+                </AntForm>
+            );
+
+            const textInput = screen.getByRole('textbox');
+            await userEvent.clear(textInput);
+            await userEvent.tab();
+
+            expect(mockHandleDelete).toHaveBeenCalledWith(
+                {
+                    id_value: idValue
+                },
+                mockFormElementMultipleInput.attribute.id
+            );
+        });
+
         describe('Delete all values', () => {
             test('Should not call onDeleteMultipleValues click on delete all and cancel', async () => {
                 const idValue2 = 'idValue2';

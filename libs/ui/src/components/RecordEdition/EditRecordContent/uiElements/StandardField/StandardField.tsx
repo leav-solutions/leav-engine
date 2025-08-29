@@ -151,7 +151,7 @@ const StandardField: FunctionComponent<
     });
 
     const _handleSubmit =
-        (idValue?: string, fieldName?: number) =>
+        (idValue?: string, fieldName?: number, submittedFieldIndex?: number) =>
         async (valueToSave: AnyPrimitive): Promise<ISubmitMultipleResult> => {
             const shouldSpecifyFieldName = attribute.multiple_values && fieldName !== undefined;
             const name = shouldSpecifyFieldName ? [attribute.id, fieldName] : attribute.id;
@@ -166,6 +166,10 @@ const StandardField: FunctionComponent<
 
             let submitRes;
             if (attribute.multiple_values) {
+                if (valueToSave === '') {
+                    _handleDeleteValue(idValue, submittedFieldIndex);
+                    return;
+                }
                 submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
                 if (submitRes.status === APICallStatus.SUCCESS) {
                     setBackendValues(previousBackendValues => {
@@ -247,11 +251,7 @@ const StandardField: FunctionComponent<
             return submitRes;
         };
 
-    const _handleDeleteValue = async (
-        idValue: string | undefined,
-        antdRemove: FormListOperation['remove'],
-        deletedFieldIndex: number
-    ) => {
+    const _handleDeleteValue = async (idValue: string | undefined, deletedFieldIndex: number) => {
         if (idValue) {
             await onValueDelete({id_value: idValue}, attribute.id);
 
@@ -259,7 +259,10 @@ const StandardField: FunctionComponent<
                 previousBackendValues.filter(backendValue => backendValue.id_value !== idValue)
             );
         }
-        antdRemove(deletedFieldIndex);
+        antdListFieldsRef.current.remove(deletedFieldIndex);
+        if (backendWithoutCalculatedOrInheritedValues.length === 1) {
+            antdListFieldsRef.current.add(defaultValueToAddInAntdForm);
+        }
     };
 
     const _handleDeleteAllValues = async () => {
@@ -363,7 +366,8 @@ const StandardField: FunctionComponent<
                                                         presentationValue={presentationValues[index] ?? ''}
                                                         handleSubmit={_handleSubmit(
                                                             backendWithoutCalculatedOrInheritedValues[index]?.id_value,
-                                                            field.name
+                                                            field.name,
+                                                            index
                                                         )}
                                                         attribute={attribute}
                                                         label={label}
@@ -376,7 +380,7 @@ const StandardField: FunctionComponent<
                                                         removeLastValueOfMultivalues={() => remove(index)}
                                                     />
                                                 </StandardFieldValueWrapper>
-                                                {fields.length > 1 && (
+                                                {backendWithoutCalculatedOrInheritedValues.length > 0 && (
                                                     <KitDeleteValueButton
                                                         type="tertiary"
                                                         title={t('record_edition.delete_value')}
@@ -385,7 +389,6 @@ const StandardField: FunctionComponent<
                                                             _handleDeleteValue(
                                                                 backendWithoutCalculatedOrInheritedValues[index]
                                                                     ?.id_value,
-                                                                remove,
                                                                 index
                                                             )
                                                         }
