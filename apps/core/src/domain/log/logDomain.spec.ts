@@ -7,23 +7,34 @@ import {mockCtx} from '../../__tests__/mocks/shared';
 import logDomain from './logDomain';
 import {adminUserId} from '../../_constants/users';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
+import {IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
 
 describe('logDomain', () => {
+    const mockLogRepo: Mockify<ILogRepo> = {
+        getLogs: jest.fn()
+    };
+    const mockPermissionDomain: Mockify<IPermissionDomain> = {
+        isAdminOrSystemUser: jest.fn()
+    };
+    const mockRecordPermissionDomain: Mockify<IRecordPermissionDomain> = {
+        getRecordPermission: jest.fn()
+    };
+
+    beforeEach(() => {
+        jest.resetAllMocks();
+        mockLogRepo.getLogs.mockResolvedValue([mockLog]);
+    });
+
+    const _logDomain = logDomain({
+        'core.infra.log': mockLogRepo as ILogRepo,
+        'core.domain.permission': mockPermissionDomain as IPermissionDomain,
+        'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain
+    });
+
     describe('getLogs', () => {
         test('Get logs from repo allow for admin user', async () => {
-            const mockLogRepo: Mockify<ILogRepo> = {
-                getLogs: global.__mockPromise([mockLog])
-            };
-            const mockPermissionDomain: Mockify<IPermissionDomain> = {
-                isAdminOrSystemUser: jest.fn().mockReturnValue(true)
-            };
-
-            const domain = logDomain({
-                'core.infra.log': mockLogRepo as ILogRepo,
-                'core.domain.permission': mockPermissionDomain as IPermissionDomain
-            });
-
-            const logs = await domain.getLogs(
+            mockPermissionDomain.isAdminOrSystemUser.mockReturnValue(true);
+            const logs = await _logDomain.getLogs(
                 {},
                 {
                     ...mockCtx,
@@ -33,23 +44,13 @@ describe('logDomain', () => {
 
             expect(logs).toEqual([mockLog]);
             expect(mockLogRepo.getLogs).toHaveBeenCalled();
+            expect(mockPermissionDomain.isAdminOrSystemUser).toHaveBeenCalled();
         });
 
         test('Reject get logs for non admin user', async () => {
-            const mockLogRepo: Mockify<ILogRepo> = {
-                getLogs: global.__mockPromise([mockLog])
-            };
-            const mockPermissionDomain: Mockify<IPermissionDomain> = {
-                isAdminOrSystemUser: jest.fn().mockReturnValue(false)
-            };
-
-            const domain = logDomain({
-                'core.infra.log': mockLogRepo as ILogRepo,
-                'core.domain.permission': mockPermissionDomain as IPermissionDomain
-            });
-
+            mockPermissionDomain.isAdminOrSystemUser.mockReturnValue(false);
             await expect(
-                domain.getLogs(
+                _logDomain.getLogs(
                     {},
                     {
                         ...mockCtx,
@@ -59,6 +60,33 @@ describe('logDomain', () => {
             ).rejects.toThrow('Action forbidden');
 
             expect(mockLogRepo.getLogs).not.toHaveBeenCalled();
+            expect(mockPermissionDomain.isAdminOrSystemUser).toHaveBeenCalled();
+        });
+
+        test('Get logs for a record from repo allow if user can access this record', async () => {
+            mockPermissionDomain.isAdminOrSystemUser.mockReturnValue(false);
+            mockRecordPermissionDomain.getRecordPermission.mockResolvedValue(true);
+            const logs = await _logDomain.getLogs(
+                {
+                    filters: {
+                        topic: {
+                            record: {
+                                id: 'recordId',
+                                libraryId: 'libraryId'
+                            }
+                        }
+                    }
+                },
+                {
+                    ...mockCtx,
+                    userId: '99999' // Non-admin user
+                }
+            );
+
+            expect(logs).toEqual([mockLog]);
+            expect(mockLogRepo.getLogs).toHaveBeenCalled();
+            expect(mockPermissionDomain.isAdminOrSystemUser).not.toHaveBeenCalled();
+            expect(mockRecordPermissionDomain.getRecordPermission).toHaveBeenCalled();
         });
     });
 });
