@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Log} from '@leav/utils';
 import {IApplicationDomain} from 'domain/application/applicationDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -9,12 +8,15 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ILogDomain} from 'domain/log/logDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {ILogFilters, ILogPagination, ILogSort} from '_types/log';
+import {ILogFilters, ILogPagination, ILogSort, Log} from '_types/log';
 import {IQueryInfos} from '_types/queryInfos';
 import {IAppModule} from '_types/shared';
 import {USERS_LIBRARY} from '../../_types/library';
 import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {IAppGraphQLSchema} from '_types/graphql';
+import {EventAction} from '@leav/utils';
+import {IDBPayloadData} from '_types/events';
+import {IFormatLogValueHelper} from 'domain/value/helpers/formatLogValue';
 
 export type ICoreLogApp = IAppModule & IGraphqlAppModule;
 
@@ -24,6 +26,7 @@ interface IDeps {
     'core.domain.library': ILibraryDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.tree': ITreeDomain;
+    'core.domain.value.helpers.formatLogValue': IFormatLogValueHelper;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.domain.application': IApplicationDomain;
 }
@@ -34,6 +37,7 @@ export default function ({
     'core.domain.library': libraryDomain,
     'core.domain.attribute': attributeDomain,
     'core.domain.tree': treeDomain,
+    'core.domain.value.helpers.formatLogValue': formatLogValue,
     'core.domain.versionProfile': versionProfileDomain,
     'core.domain.application': applicationDomain
 }: IDeps): ICoreLogApp {
@@ -62,6 +66,11 @@ export default function ({
                         filename: String
                     }
 
+                    type LogData {
+                        raw: Any
+                        asString: String
+                    }
+
                     type Log {
                         time: Int!
                         user: Record!
@@ -70,8 +79,8 @@ export default function ({
                         trigger: String
                         action: LogAction
                         topic: LogTopic
-                        before: Any
-                        after: Any
+                        before: LogData
+                        after: LogData
                         metadata: Any
                     }
 
@@ -138,10 +147,10 @@ export default function ({
                         ) => {
                             const {filters, sort, pagination} = args;
 
-                            if (filters.time?.from) {
+                            if (filters?.time?.from) {
                                 filters.time.from = filters.time.from * 1_000;
                             }
-                            if (filters.time?.to) {
+                            if (filters?.time?.to) {
                                 filters.time.to = filters.time.to * 1_000;
                             }
 
@@ -153,7 +162,9 @@ export default function ({
                             id: log.userId,
                             library: USERS_LIBRARY
                         }),
-                        time: (log: Log) => Math.trunc(log.time / 1000)
+                        time: (log: Log) => Math.trunc(log.time / 1000),
+                        before: (log: Log): ILogData => (log.before ? {...log, rawData: log.before} : null),
+                        after: (log: Log): ILogData => (log.after ? {...log, rawData: log.after} : null)
                     },
                     LogTopic: {
                         record: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
@@ -166,7 +177,9 @@ export default function ({
                         library: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
                             topic.library ? libraryDomain.getLibraryProperties(topic.library, ctx) : null,
                         attribute: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
-                            topic.attribute ? attributeDomain.getAttributeProperties({id: topic.attribute, ctx}) : null,
+                            topic.attribute
+                                ? attributeDomain.getAttributeProperties({id: topic.attribute, ctx}).catch(() => null)
+                                : null,
                         tree: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
                             topic.tree ? treeDomain.getTreeProperties(topic.tree, ctx) : null,
                         profile: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
@@ -184,6 +197,26 @@ export default function ({
                             topic.application
                                 ? applicationDomain.getApplicationProperties({id: topic.application, ctx})
                                 : null
+                    },
+                    LogData: {
+                        raw: (logData: ILogData) => logData.rawData || null,
+                        asString: async (log: ILogData, _, ctx: IQueryInfos): Promise<string | null> => {
+                            const rawData = log.rawData;
+                            if (rawData == null) {
+                                return null;
+                            }
+                            switch (log.action) {
+                                case EventAction.VALUE_SAVE:
+                                case EventAction.VALUE_DELETE:
+                                    return formatLogValue.formatAsString(
+                                        log,
+                                        rawData as IDBPayloadData<EventAction.VALUE_DELETE | EventAction.VALUE_SAVE>,
+                                        ctx
+                                    );
+                                default:
+                                    return null;
+                            }
+                        }
                     }
                 }
             };
@@ -191,4 +224,8 @@ export default function ({
             return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         }
     };
+}
+
+interface ILogData extends Log {
+    rawData: any;
 }

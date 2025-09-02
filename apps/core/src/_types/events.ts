@@ -47,6 +47,6 @@ interface IDBPayloadDataMap {
     [EventAction.PERMISSION_SAVE]: IPermission;
 }
 
-type IDBPayloadData<DBPayloadAction extends EventAction> = DBPayloadAction extends keyof IDBPayloadDataMap
+export type IDBPayloadData<DBPayloadAction extends EventAction> = DBPayloadAction extends keyof IDBPayloadDataMap
     ? IDBPayloadDataMap[DBPayloadAction]
     : never;

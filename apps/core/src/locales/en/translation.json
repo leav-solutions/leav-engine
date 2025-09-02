@@ -1,4 +1,8 @@
 {
+    "global": {
+        "yes": "Yes",
+        "no": "No"
+    },
     "errors": {
         "ATTRIBUTE_USED_IN_METADATA": "This attribute is used in metadata for these attributes: {{attributes}}",
         "CANNOT_SAVE_METADATA": "Cannot save metadata on simple attribute",
@@ -199,6 +203,9 @@
         "default_users_group_label": "Files admins",
         "previews": "Previews",
         "previews_status": "Preview status"
+    },
+    "logs": {
+        "unknown_value": "Unknown value"
     },
     "tasks": {
         "import_config_label": "Import configuration file {{filename}}",

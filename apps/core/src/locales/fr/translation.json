@@ -1,4 +1,8 @@
 {
+    "global": {
+        "yes": "Oui",
+        "no": "Non"
+    },
     "errors": {
         "ATTRIBUTE_USED_IN_METADATA": "Cet attribut est utilisé dans les métadonnées des attributs suivants: {{attributes}}",
         "CANNOT_SAVE_METADATA": "Impossible de sauvegarder des métadonnées sur un attribut simple",
@@ -199,6 +203,9 @@
     },
     "labels": {
         "date_range": "Du {{from}} au {{to}}"
+    },
+    "logs": {
+        "unknown_value": "Valeur inconnue"
     },
     "tasks": {
         "import_config_label": "Import du fichier de configuration {{filename}}",
