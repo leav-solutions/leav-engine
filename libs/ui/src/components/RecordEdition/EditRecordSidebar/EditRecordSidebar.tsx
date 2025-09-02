@@ -34,6 +34,8 @@ const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubm
                 <KitSpace direction="vertical" size="s" style={{width: '100%'}}>
                     <AttributeSummary attribute={state.activeAttribute.attribute} />
                     <ValuesSummary
+                        record={state.record}
+                        attributeId={state.activeAttribute.attribute.id}
                         globalValues={state.activeAttribute.globalValues}
                         calculatedValue={state.activeAttribute.calculatedValue}
                     />

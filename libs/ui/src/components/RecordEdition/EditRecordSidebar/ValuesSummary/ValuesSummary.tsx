@@ -7,12 +7,16 @@ import {KitBadge, KitTabs, KitTree} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FaLayerGroup, FaSquareRootAlt} from 'react-icons/fa';
 import styled from 'styled-components';
+import {IRecordIdentityWhoAmI} from '_ui/types';
+import {RecordHistory} from '../../../RecordHistory/RecordHistory';
 
 const InformationsWrapper = styled.div`
     margin-top: calc(var(--general-spacing-s) * 1px);
 `;
 
 interface IValuesSummaryProps {
+    record: IRecordIdentityWhoAmI | null;
+    attributeId: string;
     globalValues?: Array<RecordFormElementsValueStandardValue['payload']>;
     calculatedValue?: RecordFormElementsValueStandardValue['payload'];
 }
@@ -29,7 +33,12 @@ const stripHtml = (html: string): string => {
 const _isDateRangeValue = (value: any): value is {from: string; to: string} =>
     !!value && typeof value === 'object' && 'from' in value && 'to' in value;
 
-export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({globalValues = [], calculatedValue}) => {
+export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
+    record,
+    attributeId,
+    globalValues = [],
+    calculatedValue
+}) => {
     const {t} = useSharedTranslation();
 
     const stringifyValue = (value: RecordFormElementsValueStandardValue['payload']): string => {
@@ -132,6 +141,11 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({globalVal
                             />
                         </InformationsWrapper>
                     )
+                },
+                {
+                    key: 'history',
+                    label: t('record_summary.history'),
+                    tabContent: <RecordHistory record={record} attributeId={attributeId} />
                 }
             ]}
         />
