@@ -9,6 +9,7 @@ import {FunctionComponent} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faRotateRight} from '@fortawesome/free-solid-svg-icons';
+import {RecordHistory} from '../../../RecordHistory/RecordHistory';
 
 interface IRecordSummaryProps {
     record: IRecordIdentityWhoAmI | null;
@@ -74,7 +75,7 @@ export const RecordSummary: FunctionComponent<IRecordSummaryProps> = ({record}) 
                 {
                     key: 'history',
                     label: t('record_summary.history'),
-                    disabled: true
+                    tabContent: <RecordHistory record={record} />
                 }
             ]}
         />
