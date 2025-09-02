@@ -523,6 +523,18 @@
             "refresh": "Refresh"
         }
     },
+    "record_history": {
+        "action": {
+            "value_add": "has added to",
+            "value_modify": "has modified",
+            "value_delete": "has deleted to"
+        },
+        "empty_history": "No history available",
+        "error_fetching": "Error while fetching record history",
+        "no_value": "None",
+        "unknown_attribute": "unknown attribute",
+        "unknown_user": "unknown user"
+    },
     "view": {
         "views": "Views",
         "search": "Search view",

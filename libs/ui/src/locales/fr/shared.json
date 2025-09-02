@@ -523,6 +523,18 @@
             "refresh": "Rafraîchir"
         }
     },
+    "record_history": {
+        "action": {
+            "value_add": "a ajouté à",
+            "value_modify": "a modifié",
+            "value_delete": "a supprimé à"
+        },
+        "empty_history": "Aucun historique disponible",
+        "error_fetching": "Erreur lors de la récupération de l'historique",
+        "no_value": "Aucune",
+        "unknown_attribute": "Attribut inconnu",
+        "unknown_user": "Utilisateur inconnu"
+    },
     "view": {
         "views": "Vues",
         "search": "Rechercher une vue",

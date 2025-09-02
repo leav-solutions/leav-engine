@@ -1030,6 +1030,8 @@ export type LibraryAttributeFragment = LibraryAttributeLinkAttributeFragment | L
 
 export type LibraryAttributeLinkFragment = { linked_library?: { id: string, label?: any | null, attributes?: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> | null } | null };
 
+export type RecordHistoryLogAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean };
+
 export type CheckApplicationExistenceQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
   endpoint?: InputMaybe<Scalars['String']>;
@@ -1537,6 +1539,16 @@ export type UpdateViewMutationVariables = Exact<{
 
 
 export type UpdateViewMutation = { updateView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
+
+export type GetRecordHistoryQueryVariables = Exact<{
+  record: LogTopicRecordFilterInput;
+  attributeId?: InputMaybe<Scalars['String']>;
+  actions?: InputMaybe<Array<LogAction> | LogAction>;
+  pagination?: InputMaybe<Pagination>;
+}>;
+
+
+export type GetRecordHistoryQuery = { logs?: Array<{ action?: LogAction | null, time: number, topic?: { attribute?: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean } | null } | null, user: { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }, before?: { asString?: string | null } | null, after?: { asString?: string | null } | null }> | null };
 
 export type TreeDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID'];
@@ -2312,6 +2324,15 @@ export const LibraryAttributeFragmentDoc = gql`
   ...LibraryAttributeLink
 }
     ${LibraryAttributeLinkFragmentDoc}`;
+export const RecordHistoryLogAttributeFragmentDoc = gql`
+    fragment RecordHistoryLogAttribute on Attribute {
+  id
+  label
+  type
+  format
+  multiple_values
+}
+    `;
 export const CheckApplicationExistenceDocument = gql`
     query CHECK_APPLICATION_EXISTENCE($id: ID, $endpoint: String) {
   applications(filters: {id: $id, endpoint: $endpoint}) {
@@ -5144,6 +5165,81 @@ export function useUpdateViewMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateViewMutationHookResult = ReturnType<typeof useUpdateViewMutation>;
 export type UpdateViewMutationResult = Apollo.MutationResult<UpdateViewMutation>;
 export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMutation, UpdateViewMutationVariables>;
+export const GetRecordHistoryDocument = gql`
+    query getRecordHistory($record: LogTopicRecordFilterInput!, $attributeId: String, $actions: [LogAction!], $pagination: Pagination) {
+  logs(
+    filters: {topic: {record: $record, attribute: $attributeId}, actions: $actions}
+    pagination: $pagination
+  ) {
+    action
+    time
+    topic {
+      attribute {
+        ...RecordHistoryLogAttribute
+      }
+    }
+    user {
+      id
+      whoAmI {
+        id
+        library {
+          id
+        }
+      }
+      properties(attributeIds: ["email"]) {
+        attributeId
+        values {
+          ... on Value {
+            payload
+          }
+        }
+      }
+    }
+    before {
+      asString
+    }
+    after {
+      asString
+    }
+  }
+}
+    ${RecordHistoryLogAttributeFragmentDoc}`;
+
+/**
+ * __useGetRecordHistoryQuery__
+ *
+ * To run a query within a React component, call `useGetRecordHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRecordHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRecordHistoryQuery({
+ *   variables: {
+ *      record: // value for 'record'
+ *      attributeId: // value for 'attributeId'
+ *      actions: // value for 'actions'
+ *      pagination: // value for 'pagination'
+ *   },
+ * });
+ */
+export function useGetRecordHistoryQuery(baseOptions: Apollo.QueryHookOptions<GetRecordHistoryQuery, GetRecordHistoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRecordHistoryQuery, GetRecordHistoryQueryVariables>(GetRecordHistoryDocument, options);
+      }
+export function useGetRecordHistoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRecordHistoryQuery, GetRecordHistoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRecordHistoryQuery, GetRecordHistoryQueryVariables>(GetRecordHistoryDocument, options);
+        }
+export function useGetRecordHistorySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetRecordHistoryQuery, GetRecordHistoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetRecordHistoryQuery, GetRecordHistoryQueryVariables>(GetRecordHistoryDocument, options);
+        }
+export type GetRecordHistoryQueryHookResult = ReturnType<typeof useGetRecordHistoryQuery>;
+export type GetRecordHistoryLazyQueryHookResult = ReturnType<typeof useGetRecordHistoryLazyQuery>;
+export type GetRecordHistorySuspenseQueryHookResult = ReturnType<typeof useGetRecordHistorySuspenseQuery>;
+export type GetRecordHistoryQueryResult = Apollo.QueryResult<GetRecordHistoryQuery, GetRecordHistoryQueryVariables>;
 export const TreeDataQueryDocument = gql`
     query TreeDataQuery($treeId: ID!) {
   trees(filters: {id: [$treeId]}) {

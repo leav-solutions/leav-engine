@@ -29,6 +29,7 @@ export * from './List';
 export * from './Loading';
 export * from './RecordCard';
 export * from './RecordEdition';
+export * from './RecordHistory';
 export * from './RecordPreviewWithModal';
 export * from './SearchModal';
 export * from './SelectTreeNode';

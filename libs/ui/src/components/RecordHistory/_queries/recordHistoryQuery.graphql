@@ -1,0 +1,48 @@
+fragment RecordHistoryLogAttribute on Attribute {
+    id
+    label
+    type
+    format
+    multiple_values
+}
+
+query getRecordHistory($record: LogTopicRecordFilterInput!, $attributeId: String, $actions: [LogAction!], $pagination: Pagination) {
+    logs(filters: {
+        topic: {
+            record: $record,
+            attribute: $attributeId
+        },
+        actions: $actions,
+    }, pagination: $pagination) {    
+        action
+        time
+        topic {
+            attribute {
+                ... RecordHistoryLogAttribute
+            }
+        }
+        user {
+            id
+            whoAmI { # Don't know why, but frontend need that to load record !
+                id
+                library {
+                    id
+                }
+            }
+            properties(attributeIds: ["email"]) {
+                attributeId
+                values {
+                    ... on Value {
+                        payload
+                    }
+                }
+            }
+        }
+        before {
+            asString
+        }
+        after {
+            asString
+        }
+    }
+}
