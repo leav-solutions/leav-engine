@@ -2,9 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen, within} from '_ui/_tests/testUtils';
-import {ExplorerFilter} from '../../_types';
+import {ExplorerFilter, IExplorerFilterStandardValueList, IExplorerFilterValueList} from '../../_types';
 import {CommonFilterItem} from './CommonFilterItem';
 import * as gqlTypes from '_ui/_gqlTypes';
+import {AttributeType, RecordFilterCondition, TreeDataQueryQueryHookResult} from '_ui/_gqlTypes';
 import {AttributeConditionFilter} from '_ui/types';
 import {FunctionComponent, useReducer} from 'react';
 import {IViewSettingsState, viewSettingsReducer} from '../store-view-settings/viewSettingsReducer';
@@ -13,7 +14,6 @@ import {viewSettingsInitialState} from '../store-view-settings/viewSettingsIniti
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import dayjs from 'dayjs';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
-import {AttributeType, TreeDataQueryQueryHookResult} from '_ui/_gqlTypes';
 import userEvent from '@testing-library/user-event';
 import {Mockify} from '@leav/utils';
 
@@ -568,6 +568,121 @@ describe('CommonFilterItem', () => {
 
             expect(screen.getByText(mockResultFromChild.treeNodeChildren.list[0].record.whoAmI.label)).toBeVisible();
             expect(screen.getByText(mockResultFromChild.treeNodeChildren.list[1].record.whoAmI.label)).toBeVisible();
+        });
+    });
+
+    describe('value list filter', () => {
+        test('should render standard value list and allow toggling', async () => {
+            const filter: IExplorerFilterStandardValueList = {
+                id: 'test',
+                attribute: {
+                    label: 'text value list',
+                    id: 'my_text_attr',
+                    format: gqlTypes.AttributeFormat.text,
+                    type: AttributeType.simple,
+                    valuesList: {
+                        enable: true,
+                        values: ['Red', 'Blue']
+                    }
+                },
+                field: 'my_text_attr',
+                value: [],
+                condition: RecordFilterCondition.EQUAL
+            };
+
+            const {baseElement} = render(
+                <MockViewSettingsContextProvider
+                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
+                >
+                    <CommonFilterItemContainer />
+                </MockViewSettingsContextProvider>
+            );
+            await userEvent.click(screen.getByRole('button', {name: /text/}));
+
+            // Condition select should only have 1 options (equal)
+            const conditionSelect = screen.getByRole('combobox');
+            await userEvent.click(conditionSelect);
+            const options = getAllConditionOptions(baseElement);
+            expect(options).toHaveLength(3);
+
+            // Options from values list should be visible and toggle-able
+            expect(await screen.findByText('Red')).toBeVisible();
+            expect(screen.getByText('Blue')).toBeVisible();
+
+            const red = screen.getByText('Red');
+            expect(red.closest('[role="button"]')).toHaveAttribute('aria-pressed', 'false');
+            // Toggle on
+            await userEvent.click(red);
+            expect(red.closest('[role="button"]')).toHaveAttribute('aria-pressed', 'true');
+
+            // Toggle off
+            await userEvent.click(red);
+            expect(red.closest('[role="button"]')).toHaveAttribute('aria-pressed', 'false');
+        });
+
+        test('should render link value list and allow selection', async () => {
+            const filter: IExplorerFilterValueList = {
+                id: 'test',
+                attribute: {
+                    label: 'link value list',
+                    id: 'link_attr',
+                    type: AttributeType.advanced_link,
+                    linkedLibrary: {id: 'link_library'},
+                    // Mock only the "enable" property as the linked values are fetched live based on the linked library
+                    valuesList: {
+                        enable: true,
+                        linkedValues: [
+                            {
+                                id: '1',
+                                whoAmI: {
+                                    id: '1',
+                                    label: 'Alpha',
+                                    library: {
+                                        id: 'link_library'
+                                    }
+                                }
+                            },
+                            {
+                                id: '2',
+                                whoAmI: {
+                                    id: '2',
+                                    label: 'Beta',
+                                    library: {
+                                        id: 'link_library'
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                field: 'link_attr',
+                value: [],
+                condition: 'EQUAL' as RecordFilterCondition.EQUAL
+            };
+
+            const {baseElement} = render(
+                <MockViewSettingsContextProvider
+                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
+                >
+                    <CommonFilterItemContainer />
+                </MockViewSettingsContextProvider>
+            );
+            await userEvent.click(screen.getByRole('button', {name: /link/}));
+
+            // Condition select should only have 1 options (equal)
+            const conditionSelect = screen.getByRole('combobox');
+            await userEvent.click(conditionSelect);
+            const options = getAllConditionOptions(baseElement);
+            expect(options).toHaveLength(3);
+
+            // Linked values visible and selectable
+            const alpha = await screen.findByText('Alpha');
+            expect(alpha).toBeVisible();
+            const beta = screen.getByText('Beta');
+            expect(beta).toBeVisible();
+
+            await userEvent.click(alpha);
+            expect(alpha.closest('[role="button"]')).toHaveAttribute('aria-pressed', 'true');
         });
     });
 });

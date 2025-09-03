@@ -4,20 +4,27 @@
 import {
     AttributeDetailsLinkAttributeFragment,
     AttributeDetailsTreeAttributeFragment,
+    AttributeType,
     ExplorerAttributesQuery,
     ExplorerLinkAttributeQuery,
     GetViewsListQuery,
     LinkAttributeDetailsFragment,
     RecordFilterCondition,
+    StandardAttributeDetailsFragment,
     ViewDetailsFilterFragment
 } from '_ui/_gqlTypes';
 import {
     ExplorerFilter,
+    IExplorerFilterBaseAttribute,
     IExplorerFilterLink,
+    IExplorerFilterLinkValueList,
     IExplorerFilterStandard,
+    IExplorerFilterStandardValueList,
     IExplorerFilterThrough,
     IExplorerFilterTree,
     ValidFieldFilter,
+    ValidFieldFilterLinkValuesList,
+    ValidFieldFilterStandardValuesList,
     ValidFieldFilterThrough,
     validFilter
 } from '../../_types';
@@ -26,22 +33,31 @@ import {isLinkAttribute, isStandardAttribute, isTreeAttribute} from '_ui/_utils/
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {v4 as uuid} from 'uuid';
+import {valueListTextConditions} from '../filter-items/filter-type/useConditionOptionsByType';
 
 export const _isValidFieldFilter = (filter: ViewDetailsFilterFragment | ExplorerFilter): filter is ValidFieldFilter =>
     !!filter.field;
 
-export const _isValidFieldFilterThrough = (
-    filter: ValidFieldFilter | ValidFieldFilterThrough
-): filter is ValidFieldFilterThrough =>
+export const _isValidFieldFilterThrough = (filter: validFilter): filter is ValidFieldFilterThrough =>
     filter.condition === ThroughConditionFilter.THROUGH && !!filter.subCondition && !!filter.subField;
 
-type LinkAttributeDetailsWithPermissionsFragment = LinkAttributeDetailsFragment & {
-    id: string;
-    multiple_values: boolean;
-    permissions: {
-        access_attribute: boolean;
-    };
-};
+export const _isValidFieldFilterStandardValuesList = (
+    filter: validFilter,
+    attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]
+): filter is ValidFieldFilterStandardValuesList & {attribute: StandardAttributeDetailsFragment} =>
+    valueListTextConditions.includes(filter.condition) &&
+    [AttributeType.simple, AttributeType.advanced].includes(attribute.type) &&
+    'valuesList' in attribute &&
+    !!attribute.valuesList?.enable;
+
+export const _isValidFieldFilterLinkValuesList = (
+    filter: validFilter,
+    attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]
+): filter is ValidFieldFilterLinkValuesList & {attribute: LinkAttributeDetailsFragment} =>
+    valueListTextConditions.includes(filter.condition) &&
+    [AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type) &&
+    'valuesList' in attribute &&
+    !!attribute.valuesList?.enable;
 
 type AttributeDetailsLinkAttributeWithPermissionsFragment = AttributeDetailsLinkAttributeFragment & {
     permissions: {
@@ -77,8 +93,8 @@ export const useTransformFilters = () => {
             if (!_isValidFieldFilter(filter)) {
                 return acc;
             }
-
             const _isThroughFilter = filter.field.includes('.');
+
             if (_isThroughFilter) {
                 const [field, subField] = filter.field.split('.');
                 const throughFilter: ValidFieldFilterThrough = {
@@ -110,26 +126,46 @@ export const useTransformFilters = () => {
                 return acc;
             }
 
-            const filterAttributeBase = {
+            const filterAttributeBase: IExplorerFilterBaseAttribute = {
+                id: attributesDataById[filter.field].id,
                 label: localizedTranslation(attributesDataById[filter.field].label, lang),
-                type: attributesDataById[filter.field].type,
-                id: attributesDataById[filter.field].id
+                type: attributesDataById[filter.field].type
             };
 
             // filter is standardFilter
             if (isStandardAttribute(filterAttributeBase.type)) {
-                const newFilter: IExplorerFilterStandard = {
-                    field: filter.field,
-                    value: filter.value ?? null,
-                    hidden: filter.hidden ?? false,
-                    id: uuid(),
-                    condition: (filter.condition as RecordFilterCondition) ?? null,
-                    attribute: {
-                        ...filterAttributeBase,
-                        format: attributesDataById[filter.field].format!
-                    }
-                };
-                acc.push(newFilter);
+                const attributeData = attributesDataById[
+                    filter.field
+                ];
+                if (_isValidFieldFilterStandardValuesList(filter, attributeData)) {
+                    const newFilter: IExplorerFilterStandardValueList = {
+                        field: filter.field,
+                        // TODO : save filter values as string[] when filter and handle fields with libraries
+                        value: filter.value ? [filter.value] : [],
+                        hidden: filter.hidden ?? false,
+                        id: uuid(),
+                        condition: (filter.condition as RecordFilterCondition) ?? null,
+                        attribute: {
+                            ...filterAttributeBase,
+                            format: attributeData.format!,
+                            valuesList: (attributeData as StandardAttributeDetailsFragment).valuesList!
+                        }
+                    };
+                    acc.push(newFilter);
+                } else {
+                    const newFilter: IExplorerFilterStandard = {
+                        field: filter.field,
+                        value: filter.value ?? null,
+                        hidden: filter.hidden ?? false,
+                        id: uuid(),
+                        condition: (filter.condition as RecordFilterCondition) ?? null,
+                        attribute: {
+                            ...filterAttributeBase,
+                            format: attributeData.format!
+                        }
+                    };
+                    acc.push(newFilter);
+                }
             }
 
             if (isLinkAttribute(filterAttributeBase.type)) {
@@ -151,6 +187,22 @@ export const useTransformFilters = () => {
                         subField: filter.subField
                     };
                     acc.push(newFilter);
+                } else if (_isValidFieldFilterLinkValuesList(filter, attributeData)) {
+                    const newFilter: IExplorerFilterLinkValueList = {
+                        field: filter.field,
+                        // TODO : save filter values as string[] when filter and handle fields with libraries
+                        value: filter.value ? [filter.value] : [],
+                        hidden: filter.hidden ?? false,
+                        id: uuid(),
+                        condition: filter.condition,
+                        attribute: {
+                            ...filterAttributeBase,
+                            linkedLibrary: attributeData.linked_library!,
+                            valuesList: (attributeData as LinkAttributeDetailsFragment).valuesList!
+                        }
+                    };
+
+                    acc.push(newFilter);
                 } else {
                     const newFilter: IExplorerFilterLink = {
                         field: filter.field,
@@ -163,6 +215,7 @@ export const useTransformFilters = () => {
                             linkedLibrary: attributeData.linked_library!
                         }
                     };
+
                     acc.push(newFilter);
                 }
             }
@@ -173,6 +226,7 @@ export const useTransformFilters = () => {
                 ] as AttributeDetailsTreeAttributeWithPermissionsFragment;
                 const newFilter: IExplorerFilterTree = {
                     field: [filter.field],
+                    // TODO : save filter values as string[] when tree filter and handle fields with libraries
                     value: filter.value ? [filter.value] : null,
                     hidden: filter.hidden ?? false,
                     id: uuid(),

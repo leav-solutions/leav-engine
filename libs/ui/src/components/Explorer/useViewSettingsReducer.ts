@@ -16,13 +16,7 @@ import {
     viewSettingsReducer
 } from './manage-view-settings';
 import {mapViewTypeFromLegacyToExplorer} from './_constants';
-import {
-    _isLinkAttributeDetails,
-    _isValidFieldFilter,
-    _isValidFieldFilterThrough,
-    useTransformFilters
-} from './manage-view-settings/_shared/useTransformFilters';
-import {ignore} from 'antd/es/theme/useToken';
+import {_isLinkAttributeDetails, useTransformFilters} from './manage-view-settings/_shared/useTransformFilters';
 
 const _entrypointsAreEqual = (entrypoint1, entrypoint2) =>
     Object.keys(entrypoint1).every(key => entrypoint1[key] === entrypoint2[key]);

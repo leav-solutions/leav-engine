@@ -37,7 +37,7 @@ export interface IView extends ICoreEntity {
     filters?: IRecordFilterLight[];
     sort?: IRecordSortLight[];
     valuesVersions?: IViewValuesVersion;
-    attributes?: string[];
+    attributes: string[];
 }
 
 export interface IViewValuesVersionForGraphql {

@@ -6,10 +6,12 @@ import {
     AttributeFormat,
     AttributePropertiesFragment,
     AttributeType,
+    LinkAttributeDetailsFragment,
     PropertyValueFragment,
     RecordFilterCondition,
     RecordFilterInput,
     RecordIdentityFragment,
+    StandardAttributeDetailsFragment,
     ViewDetailsFilterFragment
 } from '_ui/_gqlTypes';
 import {Key, ReactElement} from 'react';
@@ -69,7 +71,7 @@ export interface IMassActions {
 
 export type FeatureHook<T = {}> = {isEnabled: boolean; isVisible?: boolean} & T;
 
-interface IExplorerFilterBaseAttribute {
+export interface IExplorerFilterBaseAttribute {
     type: AttributeType;
     /**
      * Used to display the label of the filter.
@@ -81,9 +83,13 @@ interface IExplorerFilterBaseAttribute {
      * Used to verify unicity: one filter per attribute
      */
     id: string;
+    format?: AttributeFormat | null | undefined;
+    valuesList?:
+        | NonNullable<StandardAttributeDetailsFragment['valuesList']>
+        | NonNullable<LinkAttributeDetailsFragment['valuesList']>;
 }
 
-interface IExplorerFilterStandardAttribute extends IExplorerFilterBaseAttribute {
+export interface IExplorerFilterStandardAttribute extends IExplorerFilterBaseAttribute {
     format: AttributeFormat;
 }
 
@@ -92,6 +98,7 @@ export interface IExplorerFilterLinkAttribute extends IExplorerFilterBaseAttribu
         id: string;
     };
 }
+
 export interface IExplorerFilterTreeAttribute extends IExplorerFilterBaseAttribute {
     linkedTree?: {
         id: string;
@@ -100,6 +107,8 @@ export interface IExplorerFilterTreeAttribute extends IExplorerFilterBaseAttribu
 
 interface IExplorerBaseFilter {
     id: string;
+    attribute: IExplorerFilterBaseAttribute;
+    condition: RecordFilterCondition | ThroughConditionFilter | null;
     /**
      * Used to build filter field.
      *
@@ -108,7 +117,7 @@ interface IExplorerBaseFilter {
      */
     field: string;
     value: string | null;
-    hidden?: boolean;
+    hidden?: boolean | undefined;
 }
 
 export interface IExplorerFilterStandard extends IExplorerBaseFilter {
@@ -135,10 +144,37 @@ export interface IExplorerFilterTree extends Omit<IExplorerBaseFilter, 'value' |
     field: string[];
 }
 
+export interface IExplorerFilterValueList extends Omit<IExplorerBaseFilter, 'value'> {
+    attribute: (IExplorerFilterStandardAttribute | IExplorerFilterLinkAttribute) & {
+        valuesList:
+            | NonNullable<StandardAttributeDetailsFragment['valuesList']>
+            | NonNullable<LinkAttributeDetailsFragment['valuesList']>;
+    };
+    value: string[] | null;
+    condition: RecordFilterCondition | null;
+}
+
+export interface IExplorerFilterStandardValueList
+    extends Omit<IExplorerFilterStandard, 'attribute' | 'value'>,
+        IExplorerFilterValueList {
+    attribute: IExplorerFilterStandardAttribute & {
+        valuesList: NonNullable<StandardAttributeDetailsFragment['valuesList']>;
+    };
+}
+
+export interface IExplorerFilterLinkValueList
+    extends Omit<IExplorerFilterLink, 'attribute' | 'value'>,
+        IExplorerFilterValueList {
+    attribute: IExplorerFilterLinkAttribute & {
+        valuesList: NonNullable<LinkAttributeDetailsFragment['valuesList']>;
+    };
+}
+
 export type ExplorerFilter =
     | IExplorerFilterStandard
     | IExplorerFilterLink
     | IExplorerFilterThrough
+    | IExplorerFilterValueList
     | IExplorerFilterTree;
 
 export const isExplorerFilterStandard = (filter: ExplorerFilter): filter is IExplorerFilterStandard =>
@@ -152,8 +188,22 @@ export const isExplorerFilterThrough = (filter: ExplorerFilter): filter is IExpl
     [AttributeType.simple_link, AttributeType.advanced_link].includes(filter.attribute.type) &&
     filter.condition === ThroughConditionFilter.THROUGH;
 
+export const isExplorerFilterValueList = (filter: ExplorerFilter): filter is IExplorerFilterValueList =>
+    (isExplorerFilterStandard(filter) || isExplorerFilterLink(filter)) && isValueList(filter);
+
+export const isExplorerFilterStandardWithValueList = (
+    filter: ExplorerFilter
+): filter is IExplorerFilterStandardValueList =>
+    [AttributeType.simple, AttributeType.advanced].includes(filter.attribute.type) && isValueList(filter);
+
+export const isExplorerFilterLinkWithValueList = (filter: ExplorerFilter): filter is IExplorerFilterLinkValueList =>
+    [AttributeType.simple_link, AttributeType.advanced_link].includes(filter.attribute.type) && isValueList(filter);
+
 export const isExplorerFilterTree = (filter: ExplorerFilter): filter is IExplorerFilterTree =>
     filter.attribute.type === AttributeType.tree;
+
+const isValueList = (filter: ExplorerFilter): filter is ExplorerFilter & {attribute: {valuesList: {enabled: true}}} =>
+    !!filter.attribute?.valuesList && filter.attribute?.valuesList.enable;
 
 export interface IFilterDropDownProps {
     filter: ExplorerFilter;
@@ -196,6 +246,20 @@ export type ValidFieldFilter = Override<
     }
 >;
 
+export type ValidFieldFilterStandardValuesList = Override<
+    ValidFieldFilter,
+    {
+        valuesList: StandardAttributeDetailsFragment['valuesList'];
+    }
+>;
+
+export type ValidFieldFilterLinkValuesList = Override<
+    ValidFieldFilter,
+    {
+        valuesList: LinkAttributeDetailsFragment['valuesList'];
+    }
+>;
+
 export type ValidFieldFilterThrough = Override<
     ValidFieldFilter,
     {
@@ -207,7 +271,7 @@ export type ValidFieldFilterThrough = Override<
     subCondition?: ViewDetailsFilterFragment['condition'];
 };
 
-export type validFilter = ValidFieldFilter | ValidFieldFilterThrough;
+export type validFilter = ValidFieldFilter | ValidFieldFilterThrough | ValidFieldFilterStandardValuesList | ValidFieldFilterLinkValuesList;
 
 export type Entrypoint = IEntrypointTree | IEntrypointLibrary | IEntrypointLink;
 

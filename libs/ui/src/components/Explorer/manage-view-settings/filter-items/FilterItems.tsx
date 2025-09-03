@@ -28,6 +28,7 @@ import {CommonFilterItem} from '../_shared/CommonFilterItem';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {FilterListItem} from './FilterListItem';
+import {ExplorerFilter, IExplorerFilterBaseAttribute} from '_ui/components/Explorer/_types';
 
 const StyledListContainer = styled.div`
     display: flex;
@@ -86,6 +87,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                     label: attributeDetailsById[attributeId].label,
                     format: attributeDetailsById[attributeId].format ?? AttributeFormat.text,
                     type: attributeDetailsById[attributeId].type,
+                    valuesList: (attributeDetailsById[attributeId] as IExplorerFilterBaseAttribute).valuesList,
                     linkedLibrary: _isLibraryLinkAttribute(attributeDetailsById[attributeId])
                         ? (attributeDetailsById[attributeId].linked_library ?? undefined)
                         : undefined, // TODO : https://aristid.atlassian.net/browse/XSTREAM-1155
@@ -124,6 +126,10 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
 
     const canAddFilter = activeFilters.length < maxFilters;
 
+    if (!Object.keys(attributeDetailsById).length) {
+        return <></>;
+    }
+
     return (
         <StyledListContainer>
             {activeFilters.length > 0 && (
@@ -144,7 +150,17 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                                         onClick: removeFilter(activeFilter.id)
                                     }}
                                 >
-                                    <CommonFilterItem filter={activeFilter} />
+                                    <CommonFilterItem
+                                        filter={
+                                            {
+                                                ...activeFilter,
+                                                attribute: {
+                                                    ...activeFilter.attribute,
+                                                    ...attributeDetailsById[activeFilter?.attribute?.id]
+                                                }
+                                            } as ExplorerFilter
+                                        }
+                                    />
                                 </FilterListItem>
                             ))}
                         </SortableContext>

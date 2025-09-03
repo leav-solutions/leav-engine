@@ -12,10 +12,11 @@ const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
 `;
 
-const getFilterValue = filter => {
-    if (nullValueConditions.includes(filter.condition)) {
+const getFilterValues = (filter: ExplorerFilter) => {
+    if (filter.condition && nullValueConditions.includes(filter.condition)) {
         return [filter.condition];
     }
+
     return Array.isArray(filter.value) ? filter.value : filter.value ? [filter.value] : [];
 };
 
@@ -27,7 +28,7 @@ export const CommonFilterItem: FunctionComponent<{filter: ExplorerFilter; disabl
         expandable
         disabled={disabled}
         label={filter.attribute.label}
-        values={getFilterValue(filter)}
+        values={getFilterValues(filter)}
         dropDownProps={{
             placement: 'bottomLeft',
             dropdownRender: () => <FilterDropDown filter={filter} />

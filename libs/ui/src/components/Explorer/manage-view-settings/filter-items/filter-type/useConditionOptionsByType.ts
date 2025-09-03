@@ -7,7 +7,8 @@ import {
     isExplorerFilterLink,
     isExplorerFilterStandard,
     isExplorerFilterThrough,
-    isExplorerFilterTree
+    isExplorerFilterTree,
+    isExplorerFilterValueList
 } from '../../../_types';
 import {AttributeConditionFilter, AttributeConditionType, ThroughConditionFilter} from '_ui/types';
 import {TFunction} from 'i18next';
@@ -67,6 +68,11 @@ export const treeFilterConditions: RecordFilterCondition[] = [
     AttributeConditionFilter.EQUAL,
     AttributeConditionFilter.NOT_EQUAL
 ];
+export const valueListTextConditions: RecordFilterCondition[] = [
+    AttributeConditionFilter.EQUAL
+    // disable NOT_EQUAL for now because of backend condition filter issue
+    // AttributeConditionFilter.NOT_EQUAL
+];
 
 interface IExplorerFilterConditionOption<T> {
     label: string;
@@ -114,6 +120,9 @@ const _getAttributeConditionOptions = (t: TFunction): Array<IExplorerFilterCondi
 export const getFirstConditionByFilterType = (
     filter: ExplorerFilter
 ): Array<RecordFilterCondition | ThroughConditionFilter> => {
+    if (isExplorerFilterValueList(filter)) {
+        return valueListTextConditions;
+    }
     if (isExplorerFilterStandard(filter)) {
         return conditionsByFormat[filter.attribute.format] ?? [];
     }
@@ -135,6 +144,10 @@ export const useConditionsOptionsByType = (filter: ExplorerFilter) => {
     return {
         conditionOptionsByType: _getAttributeConditionOptions(t)
             .filter(({value}) => {
+                // Use special condition set for text fields with closed list values
+                if (isExplorerFilterValueList(filter)) {
+                    return valueListTextConditions.includes(value);
+                }
                 if (isExplorerFilterStandard(filter)) {
                     return conditionsByFormat[filter.attribute.format].includes(value);
                 }

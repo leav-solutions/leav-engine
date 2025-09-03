@@ -12,7 +12,10 @@ import {
     IExplorerFilterTree,
     isExplorerFilterStandard,
     isExplorerFilterThrough,
-    isExplorerFilterTree
+    isExplorerFilterLink,
+    isExplorerFilterTree,
+    isExplorerFilterValueList,
+    IExplorerFilterValueList
 } from '../_types';
 import {nullValueConditions} from '../conditionsHelper';
 
@@ -89,7 +92,10 @@ const _addValuesListForFilters = (valuesList: string[]): RecordFilterInput[] => 
     ) as RecordFilterInput[]),
     {operator: RecordFilterOperator.CLOSE_BRACKET}
 ];
-const _getTreeRequestFilters = (filter: IExplorerFilterTree): RecordFilterInput[] => {
+
+const _generateConditionsFromMultipleValues = (
+    filter: IExplorerFilterTree | IExplorerFilterValueList
+): RecordFilterInput[] => {
     if (!filter.value || filter.value.length === 0) {
         return [];
     }
@@ -101,7 +107,7 @@ const _getTreeRequestFilters = (filter: IExplorerFilterTree): RecordFilterInput[
         filtersWithOperators.push({
             value: recordId,
             condition: filter.condition,
-            field: filter.field[idx]
+            field: Array.isArray(filter.field) ? filter.field[idx] : filter.field
         });
         if (filter.value && idx < filter.value.length - 1) {
             filtersWithOperators.push({
@@ -135,6 +141,13 @@ export const prepareFiltersForRequest = (
                     );
                 }
 
+                if (isExplorerFilterValueList(filter)) {
+                    return (
+                        (!!filter.condition && filter.value?.length) ||
+                        (filter.condition && nullValueConditions.includes(filter.condition))
+                    );
+                }
+
                 return filter.value !== null || (filter.condition && nullValueConditions.includes(filter.condition));
             })
             .map(filter => {
@@ -143,16 +156,32 @@ export const prepareFiltersForRequest = (
                 }
                 const condition =
                     filter.condition === AttributeConditionFilter.THROUGH ? filter.subCondition : filter.condition;
-                const field =
+                let field =
                     filter.condition === AttributeConditionFilter.THROUGH
                         ? `${filter.field}.${filter.subField}`
                         : filter.field;
+
+                // When a link attribute has a values list, we must filter on the linked record id
+                if (isExplorerFilterLink(filter) && isExplorerFilterValueList(filter) && !field.endsWith('.id')) {
+                    field = `${field}.id`;
+                }
+
                 return {...filter, condition, field};
             })
             .map(filter => {
-                if (isExplorerFilterTree(filter)) {
-                    return _getTreeRequestFilters(filter);
+                if (isExplorerFilterTree(filter) || isExplorerFilterValueList(filter)) {
+                    if (filter.condition && nullValueConditions.includes(filter.condition)) {
+                        return [
+                            {
+                                field: Array.isArray(filter.field) ? filter.field[0] : filter.field,
+                                condition: filter.condition,
+                                value: null
+                            }
+                        ];
+                    }
+                    return _generateConditionsFromMultipleValues(filter);
                 }
+
                 if (isExplorerFilterStandard(filter)) {
                     switch (filter.attribute.format) {
                         case AttributeFormat.date:

@@ -1,16 +1,18 @@
 fragment LinkAttributeDetails on LinkAttribute {
     label
+    type
     linked_library {
         id
         label
     }
-    values_list {
+    valuesList: values_list {
         allowFreeEntry
         enable
-        values {
+        linkedValues: values {
             id
             whoAmI {
                 id
+                label
                 library {
                     id
                 }
@@ -28,6 +30,24 @@ fragment TreeAttributeDetails on TreeAttribute {
     }
 }
 
+fragment StandardAttributeDetails on StandardAttribute {
+    id
+    type
+    embedded_fields {
+        id
+        format
+        label
+    }
+    valuesList: values_list  {
+        ... on StandardStringValuesListConf {
+            enable
+            allowFreeEntry
+            allowListUpdate
+            values
+        }
+    }
+}
+
 query ExplorerAttributes($ids: [ID!]) {
     attributes(filters: { ids: $ids }) {
         list {
@@ -38,6 +58,7 @@ query ExplorerAttributes($ids: [ID!]) {
             permissions {
                 access_attribute
             }
+            ...StandardAttributeDetails
             ...LinkAttributeDetails
             ...TreeAttributeDetails
         }

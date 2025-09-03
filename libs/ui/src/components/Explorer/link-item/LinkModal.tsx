@@ -70,14 +70,14 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
 
     const linkAttributeData = attributeData?.attributes?.list[0];
     const isValuesListEnabled =
-        linkAttributeData && 'values_list' in linkAttributeData && linkAttributeData.values_list?.enable;
+        linkAttributeData && 'valuesList' in linkAttributeData && linkAttributeData.valuesList?.enable;
 
     const valuesList = useMemo(
-        () => (isValuesListEnabled ? linkAttributeData.values_list?.values?.map(value => value.id) : undefined),
+        () => (isValuesListEnabled ? linkAttributeData.valuesList?.linkedValues?.map(value => value.id) : undefined),
         [isValuesListEnabled, linkAttributeData]
     );
     const allowFreeEntry = useMemo(
-        () => (isValuesListEnabled ? Boolean(linkAttributeData.values_list?.allowFreeEntry) : false),
+        () => (isValuesListEnabled ? Boolean(linkAttributeData.valuesList?.allowFreeEntry) : false),
         [isValuesListEnabled, linkAttributeData]
     );
 

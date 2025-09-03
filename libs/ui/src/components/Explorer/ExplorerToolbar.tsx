@@ -10,6 +10,7 @@ import {useViewSettingsContext} from './manage-view-settings/store-view-settings
 import {CommonFilterItem} from './manage-view-settings/_shared/CommonFilterItem';
 import {useAttributeDetailsData} from './manage-view-settings/_shared/useAttributeDetailsData';
 import {useOpenViewSettings} from './manage-view-settings';
+import {ExplorerFilter} from './_types';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
@@ -72,6 +73,10 @@ export const ExplorerToolbar: FunctionComponent<{
     const _handleClickOnSort: ComponentProps<typeof FilterStyled>['onClick'] = () =>
         isMassSelectionAll ? undefined : openSettingsPanel('sort-items');
 
+    if (!Object.keys(attributeDetailsById).length) {
+        return <></>;
+    }
+
     return (
         <ExplorerToolbarListStyled aria-label={t('explorer.toolbar')} className={headless ? 'headless' : ''}>
             {!!children && (
@@ -87,7 +92,19 @@ export const ExplorerToolbar: FunctionComponent<{
                     {visibleFilters.length > 0 &&
                         visibleFilters.map(filter => (
                             <li key={filter.id}>
-                                <CommonFilterItem key={filter.id} filter={filter} disabled={isMassSelectionAll} />
+                                <CommonFilterItem
+                                    key={filter.id}
+                                    filter={
+                                        {
+                                            ...filter,
+                                            attribute: {
+                                                ...attributeDetailsById[filter?.attribute?.id],
+                                                ...filter.attribute
+                                            }
+                                        } as ExplorerFilter
+                                    }
+                                    disabled={isMassSelectionAll}
+                                />
                             </li>
                         ))}
                     {showSorts && sort.length > 0 && (

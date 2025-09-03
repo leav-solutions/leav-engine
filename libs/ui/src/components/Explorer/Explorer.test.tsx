@@ -23,6 +23,7 @@ import * as useColumnWidth from './useColumnWidth';
 import {SNACKBAR_MASS_ID} from './actions-mass/useMassActions';
 import {IExplorerRef} from './Explorer';
 import ResizeObserver from 'resize-observer-polyfill';
+import * as attributeDetailsModule from '_ui/components/Explorer/manage-view-settings/_shared/useAttributeDetailsData';
 
 global.ResizeObserver = ResizeObserver;
 
@@ -910,7 +911,7 @@ describe('Explorer', () => {
                                 {
                                     id: '',
                                     attribute: {
-                                        id: '',
+                                        id: simpleMockAttribute.id,
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
                                         type: simpleMockAttribute.type
@@ -1960,7 +1961,7 @@ describe('Explorer', () => {
                                 {
                                     id: '',
                                     attribute: {
-                                        id: '',
+                                        id: 'simple_attribute',
                                         format: simpleMockAttribute.format,
                                         label: simpleMockAttribute.label.fr,
                                         type: simpleMockAttribute.type
@@ -2942,6 +2943,27 @@ describe('Explorer', () => {
                 () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult
             );
 
+            const spyUseAttributeDetailsData = jest
+                .spyOn(attributeDetailsModule, 'useAttributeDetailsData')
+                .mockReturnValue({
+                    // Only attributes the user has access to
+                    attributeDetailsById: {
+                        [simpleMockAttribute.id]: {
+                            id: simpleMockAttribute.id,
+                            type: simpleMockAttribute.type,
+                            format: simpleMockAttribute.format,
+                            label: simpleMockAttribute.label.fr
+                        },
+                        [simpleColorMockAttribute.id]: {
+                            id: simpleColorMockAttribute.id,
+                            type: simpleColorMockAttribute.type,
+                            format: simpleColorMockAttribute.format,
+                            label: simpleColorMockAttribute.label.fr
+                        }
+                    },
+                    isLoading: false
+                } as any);
+
             jest.spyOn(console, 'warn').mockImplementationOnce(() => jest.fn());
 
             render(
@@ -2989,22 +3011,23 @@ describe('Explorer', () => {
 
             expect(console.warn).toHaveBeenCalledWith(expect.stringContaining(booleanMockAttribute.id));
 
-            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            const toolbar = await screen.findByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
-            expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
+            expect(await within(toolbar).findByText(simpleMockAttribute.label.fr)).toBeVisible();
 
             expect(within(toolbar).queryByText(booleanMockAttribute.label.fr)).not.toBeInTheDocument();
+            expect(spyUseAttributeDetailsData).toHaveBeenCalled();
 
             expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: expect.objectContaining({
-                        filters: [
-                            {
+                        filters: expect.arrayContaining([
+                            expect.objectContaining({
                                 field: simpleMockAttribute.id,
-                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Christmas'
-                            }
-                        ]
+                                value: 'Christmas',
+                                condition: 'CONTAINS'
+                            })
+                        ])
                     })
                 })
             );

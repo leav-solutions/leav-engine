@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {v4 as uuid} from 'uuid';
-import {SortOrder, AttributeFormat, RecordFilterCondition} from '_ui/_gqlTypes';
+import {AttributeFormat, RecordFilterCondition, SortOrder} from '_ui/_gqlTypes';
 import {
     DefaultViewSettings,
     Entrypoint,
@@ -13,13 +13,15 @@ import {
     isExplorerFilterStandard,
     isExplorerFilterThrough,
     isExplorerFilterTree,
+    isExplorerFilterValueList,
     IUserView,
     MassSelection
 } from '../../_types';
-import {hasOnlyNoValueConditions} from '../../conditionsHelper';
+import {hasOnlyNoValueConditions, nullValueConditions} from '../../conditionsHelper';
 import {conditionsByFormat, getFirstConditionByFilterType} from '../filter-items/filter-type/useConditionOptionsByType';
-import {ThroughConditionFilter} from '_ui/types';
-import {DefaultViewId, viewSettingsInitialState} from './viewSettingsInitialState';
+import {AttributeConditionFilter, ThroughConditionFilter} from '_ui/types';
+import {DefaultViewId} from './viewSettingsInitialState';
+import {isLinkAttribute} from '_ui/_utils/attributeType';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 
@@ -299,6 +301,15 @@ export const clearFulltextSearch: Reducer = state => ({
 });
 
 const addFilter: Reducer<IViewSettingsActionAddFilter> = (state, payload) => {
+    const hasValueList = payload.attribute.valuesList;
+
+    let condition = hasOnlyNoValueConditions((payload as IExplorerFilterStandard).attribute.format)
+        ? null
+        : (conditionsByFormat[(payload as IExplorerFilterStandard).attribute.format][0] ?? null);
+    if (hasValueList) {
+        condition = AttributeConditionFilter.EQUAL;
+    }
+
     const filterToAdd = isExplorerFilterTree(payload as ExplorerFilter)
         ? {
               ...payload,
@@ -311,12 +322,11 @@ const addFilter: Reducer<IViewSettingsActionAddFilter> = (state, payload) => {
           }
         : {
               ...payload,
+              field: isLinkAttribute(payload.attribute.type) ? `${payload.field}.id` : (payload.field as string),
               id: uuid(),
-              field: Array.isArray(payload.field) ? payload.field.toString() : payload.field,
-              condition: hasOnlyNoValueConditions((payload as IExplorerFilterStandard).attribute.format)
-                  ? null
-                  : (getFirstConditionByFilterType(payload as ExplorerFilter) as RecordFilterCondition[])[0],
-              value: null
+              condition,
+              value: null,
+              valuesList: hasValueList ? payload.attribute.valuesList : undefined
           };
     return {
         ...state,
@@ -332,6 +342,14 @@ const resetFilter: Reducer<IViewSettingsActionResetFilter> = (state, payload) =>
             const initialViewFilter = state.initialViewSettings.filters.find(({id}) => id === payload.id);
             if (initialViewFilter) {
                 return initialViewFilter;
+            }
+
+            if (isExplorerFilterValueList(filter)) {
+                return {
+                    ...filter,
+                    condition: null,
+                    value: null
+                };
             }
 
             if (isExplorerFilterStandard(filter)) {
@@ -385,6 +403,9 @@ const changeFilterConfig: Reducer<IViewSettingsActionChangeFilterConfig> = (stat
             return filter;
         }
         if (isExplorerFilterTree(filter) && payload.value && payload.value.length === 0) {
+            return {...filter, ...payload, value: null};
+        }
+        if (isExplorerFilterValueList(filter) && filter.condition && nullValueConditions.includes(filter.condition)) {
             return {...filter, ...payload, value: null};
         }
         return {...filter, ...payload};

@@ -1,4 +1,12 @@
 fragment AttributesByLibLinkAttributeWithPermissions on LinkAttribute {
+    valuesList: values_list {
+        enable
+        allowFreeEntry
+        allowListUpdate
+        linkedValues: values {
+            ...RecordIdentity
+        }
+    }
     linked_library {
         id
     }
@@ -33,6 +41,24 @@ fragment AttributesByLibAttributeWithPermissions on Attribute {
             id
             format
             label
+        }
+        valuesList: values_list {
+            ... on StandardStringValuesListConf {
+                enable
+                allowFreeEntry
+                allowListUpdate
+                values
+            }
+
+            ... on StandardDateRangeValuesListConf {
+                enable
+                allowFreeEntry
+                allowListUpdate
+                dateRangeValues: values {
+                    from
+                    to
+                }
+            }
         }
     }
 }

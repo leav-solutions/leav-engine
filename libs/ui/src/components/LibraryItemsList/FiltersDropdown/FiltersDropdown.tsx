@@ -3,10 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {BranchesOutlined, NumberOutlined} from '@ant-design/icons';
 import {isTypeLink, localizedTranslation} from '@leav/utils';
-import {Badge, Dropdown, Input, Menu} from 'antd';
+import {Badge, Dropdown, Input} from 'antd';
 import {ItemType} from 'antd/es/menu/interface';
 import React, {useState} from 'react';
-import styled from 'styled-components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
 import {useLang} from '_ui/hooks';
@@ -37,17 +36,6 @@ import {
 import {defaultLinkAttributeFilterFormat} from '../constants';
 import {getDefaultFilterValueByFormat} from '../FiltersPanel/Filter/Filter.utils';
 import {defaultFilterConditionByAttributeFormat} from '../helpers/defaultFilterConditionByAttributeFormat';
-
-const CustomMenu = styled(Menu)`
-    & .elements-wrapper {
-        max-height: 75vh;
-        overflow-y: auto;
-
-        > .ant-dropdown-menu-item-group-title {
-            display: none;
-        }
-    }
-`;
 
 interface IFiltersDropdownProps {
     libraryId: string;

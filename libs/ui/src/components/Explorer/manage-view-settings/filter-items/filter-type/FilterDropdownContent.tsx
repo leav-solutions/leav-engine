@@ -13,12 +13,14 @@ import {LinkAttributeDropDown} from './LinkAttributeDropdown';
 import {NumericAttributeDropDown} from './NumericAttributeDropDown';
 import {TextAttributeDropDown} from './TextAttributeDropDown';
 import {TreeAttributeDropDown} from './TreeAttributeDropDown';
+import {FilterValueListDropDown} from './FilterValueListDropDown';
 import {
     ExplorerFilter,
     isExplorerFilterLink,
-    isExplorerFilterThrough,
     isExplorerFilterStandard,
-    isExplorerFilterTree
+    isExplorerFilterThrough,
+    isExplorerFilterTree,
+    isExplorerFilterValueList
 } from '../../../_types';
 
 export const FilterDropdownContent: FunctionComponent<{
@@ -27,6 +29,16 @@ export const FilterDropdownContent: FunctionComponent<{
     selectDropDownRef?: RefObject<HTMLDivElement>;
     removeThroughCondition?: boolean;
 }> = ({filter, onFilterChange, selectDropDownRef, removeThroughCondition = false}) => {
+    if (isExplorerFilterValueList(filter)) {
+        return (
+            <FilterValueListDropDown
+                filter={filter}
+                onFilterChange={onFilterChange}
+                selectDropDownRef={selectDropDownRef}
+            />
+        );
+    }
+
     if (isExplorerFilterStandard(filter)) {
         const commonDropDownProps = {
             filter,
