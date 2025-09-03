@@ -199,16 +199,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  category: Scalars['String'];
-  endDate: Scalars['String'];
-  id: Scalars['String'];
-  label: Scalars['String'];
-  startDate: Scalars['String'];
-  thematics: Array<InputMaybe<Scalars['String']>>;
-  type: Scalars['String'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID'];
@@ -303,17 +293,6 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
-}
-
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -1254,6 +1233,15 @@ export type IsAllowedQueryVariables = Exact<{
 
 
 export type IsAllowedQuery = { isAllowed?: Array<{ name: PermissionsActions, allowed?: boolean | null }> | null };
+
+export type ActivateNewRecordMutationVariables = Exact<{
+  libraryId: Scalars['ID'];
+  recordId: Scalars['ID'];
+  formId?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type ActivateNewRecordMutation = { activateNewRecord: { record?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, valuesErrors?: Array<{ type: string, attribute: string, input?: string | null, message: string }> | null } };
 
 export type ActivateRecordsMutationVariables = Exact<{
   libraryId: Scalars['String'];
@@ -3454,6 +3442,49 @@ export type IsAllowedQueryHookResult = ReturnType<typeof useIsAllowedQuery>;
 export type IsAllowedLazyQueryHookResult = ReturnType<typeof useIsAllowedLazyQuery>;
 export type IsAllowedSuspenseQueryHookResult = ReturnType<typeof useIsAllowedSuspenseQuery>;
 export type IsAllowedQueryResult = Apollo.QueryResult<IsAllowedQuery, IsAllowedQueryVariables>;
+export const ActivateNewRecordDocument = gql`
+    mutation activateNewRecord($libraryId: ID!, $recordId: ID!, $formId: String) {
+  activateNewRecord(library: $libraryId, recordId: $recordId, formId: $formId) {
+    record {
+      ...RecordIdentity
+    }
+    valuesErrors {
+      type
+      attribute
+      input
+      message
+    }
+  }
+}
+    ${RecordIdentityFragmentDoc}`;
+export type ActivateNewRecordMutationFn = Apollo.MutationFunction<ActivateNewRecordMutation, ActivateNewRecordMutationVariables>;
+
+/**
+ * __useActivateNewRecordMutation__
+ *
+ * To run a mutation, you first call `useActivateNewRecordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useActivateNewRecordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [activateNewRecordMutation, { data, loading, error }] = useActivateNewRecordMutation({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *      recordId: // value for 'recordId'
+ *      formId: // value for 'formId'
+ *   },
+ * });
+ */
+export function useActivateNewRecordMutation(baseOptions?: Apollo.MutationHookOptions<ActivateNewRecordMutation, ActivateNewRecordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ActivateNewRecordMutation, ActivateNewRecordMutationVariables>(ActivateNewRecordDocument, options);
+      }
+export type ActivateNewRecordMutationHookResult = ReturnType<typeof useActivateNewRecordMutation>;
+export type ActivateNewRecordMutationResult = Apollo.MutationResult<ActivateNewRecordMutation>;
+export type ActivateNewRecordMutationOptions = Apollo.BaseMutationOptions<ActivateNewRecordMutation, ActivateNewRecordMutationVariables>;
 export const ActivateRecordsDocument = gql`
     mutation ACTIVATE_RECORDS($libraryId: String!, $recordsIds: [String!], $filters: [RecordFilterInput!]) {
   activateRecords(

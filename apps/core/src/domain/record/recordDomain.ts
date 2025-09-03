@@ -121,6 +121,13 @@ export interface IRecordDomain {
      */
     createEmptyRecord(params: {library: string; ctx: IQueryInfos}): Promise<ICreateRecordResult>;
 
+    activateNewRecord(params: {
+        library: string;
+        recordId: string;
+        formId?: string;
+        ctx: IQueryInfos;
+    }): Promise<ICreateRecordResult>;
+
     createRecord(params: {
         library: string;
         values?: ISaveValue[];
@@ -838,6 +845,96 @@ export default function ({
             return {
                 record,
                 valuesErrors: valuesErrors ?? null
+            };
+        },
+        async activateNewRecord({library, recordId, formId, ctx}) {
+            const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
+
+            const creationForm = (
+                await formRepo.getForms({
+                    params: {filters: {id: formId ?? 'creation', library}, strictFilters: true, withCount: false},
+                    ctx
+                })
+            ).list[0];
+
+            const requiredAttributes = (
+                creationForm
+                    ? await attributeDomain.getFormAttributes(library, formId ?? 'creation', ctx)
+                    : libraryAttributes
+            ).filter(attribute => attribute.required);
+
+            const valuesByAttribute: Record<string, IValue[]> = {};
+            await Promise.all(
+                (requiredAttributes ?? []).map(async attr => {
+                    const values = await this.getRecordFieldValue({
+                        library,
+                        record: {id: recordId, library},
+                        attributeId: attr.id ?? '',
+                        ctx
+                    });
+                    if (values?.length) {
+                        if (!valuesByAttribute[attr.id]) {
+                            valuesByAttribute[attr.id] = [];
+                        }
+                        valuesByAttribute[attr.id].push(...values);
+                    }
+                })
+            );
+
+            const missingAttributes = requiredAttributes.filter(
+                attribute =>
+                    !Object.keys(valuesByAttribute).includes(attribute.id) || !valuesByAttribute[attribute.id]?.length
+            );
+
+            if (missingAttributes.length) {
+                const valuesErrors = missingAttributes.map(
+                    (attribute): ICreateRecordValueError => ({
+                        type: Errors.REQUIRED_ATTRIBUTE,
+                        attribute: attribute.id,
+                        message: utils.translateError(
+                            {
+                                msg: Errors.REQUIRED_ATTRIBUTE,
+                                vars: {
+                                    attribute:
+                                        typeof attribute.label === 'string'
+                                            ? attribute.label
+                                            : localizedTranslation(attribute.label, [ctx.lang])
+                                }
+                            },
+                            ctx.lang
+                        )
+                    })
+                );
+                return {
+                    record: null,
+                    valuesErrors
+                };
+            }
+            const recordActivated = await this.activateRecordsBatch({libraryId: library, recordsIds: [recordId], ctx});
+
+            if (!recordActivated?.length) {
+                const valuesErrors: ICreateRecordValueError[] = [
+                    {
+                        type: Errors.RECORD_ACTIVATION_FAILED,
+                        attribute: null,
+                        message: utils.translateError(
+                            {
+                                msg: Errors.RECORD_ACTIVATION_FAILED,
+                                vars: {recordId}
+                            },
+                            ctx.lang
+                        )
+                    }
+                ];
+                return {
+                    record: null,
+                    valuesErrors
+                };
+            }
+
+            return {
+                record: recordActivated[0],
+                valuesErrors: []
             };
         },
         async createRecord({library, values, ctx, verifyRequiredAttributes}) {

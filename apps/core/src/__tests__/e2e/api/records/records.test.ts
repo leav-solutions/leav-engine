@@ -14,13 +14,14 @@ import {
 } from '../e2eUtils';
 import {adminUserId} from '../../../../_constants/users';
 import {usersLibraryId} from '../../../../_constants/libraries';
-import {AttributePermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../../../_types/permissions';
-import {ErrorTypes} from '../../../../_types/errors';
+import {AttributePermissionsActions} from '../../../../_types/permissions';
 
 describe('Records', () => {
     const testLibName = 'record_library_test';
+    const testLibLink = 'library_link_test';
     const testTreeName = 'test_tree';
     const testAttributeId = 'create_record_test_attribute';
+    const testLinkAttributeId = 'create_record_test_link_attribute';
     const testTreeAttributeId = 'create_record_test_tree_attribute';
 
     let recordId: string;
@@ -31,7 +32,15 @@ describe('Records', () => {
             id: testAttributeId,
             type: AttributeTypes.SIMPLE,
             format: AttributeFormats.TEXT,
+            required: true,
             label: 'test'
+        });
+        await gqlSaveAttribute({
+            id: testLinkAttributeId,
+            type: AttributeTypes.SIMPLE_LINK,
+            linkedLibrary: testLibLink,
+            required: true,
+            label: 'test_link'
         });
 
         await gqlSaveAttribute({
@@ -42,278 +51,333 @@ describe('Records', () => {
             linkedTree: testTreeName
         });
 
-        await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testTreeAttributeId]);
+        await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]);
+        await gqlSaveLibrary(testLibLink, 'Test2', [testAttributeId]);
         await gqlSaveTree(testTreeName, 'Test tree', [testLibName]);
 
         const resultCreation = await makeGraphQlCall(`mutation {
-            c1: createRecord(library: "${testLibName}") { record {id} }
+            c1: createEmptyRecord(library: "${testLibName}") { record {id} }
         }`);
-
+        const resCreationLink = await makeGraphQlCall(`mutation {
+            linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record {id} },
+        }`);
         recordId = resultCreation.data.data.c1.record.id;
+        await makeGraphQlCall(
+            `mutation {
+                saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testAttributeId}", value: {
+                    payload: "test value"
+                }) {
+                    id_value
+                }
+            }`,
+            true
+        );
+        await makeGraphQlCall(
+            `mutation {
+                saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testLinkAttributeId}", value: {
+                    payload: "${resCreationLink.data.data.linkRecordCreated.record.id}"
+                }) {
+                    id_value
+                }
+            }`,
+            true
+        );
+        await makeGraphQlCall(`mutation {
+            a1: activateNewRecord(library: "${testLibName}", recordId: "${recordId}") {
+                record {
+                    id
+                }
+                valuesErrors {
+                    message
+                }
+            }
+        }`);
         recordNode = await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId});
     });
 
-    test('Create Empty records with active set to false', async () => {
-        const res = await makeGraphQlCall(`mutation {
-            c1: createEmptyRecord(library: "${testLibName}") { record {id permissions {edit_record} active } },
-            c2: createEmptyRecord(library: "${testLibName}") { record {id} },
-            c3: createEmptyRecord(library: "${testLibName}") { record {id} },
-            c4: createEmptyRecord(library: "${testLibName}") { record {id} },
-            c5: createEmptyRecord(library: "${testLibName}") { record {id} },
-            c6: createEmptyRecord(library: "${testLibName}") { record {id} },
-            c7: createEmptyRecord(library: "${testLibName}") { record {id} },
-            c8: createEmptyRecord(library: "${testLibName}") { record {id} },
-            c9: createEmptyRecord(library: "${testLibName}") { record {id} },
-            c10: createEmptyRecord(library: "${testLibName}") { record {id} },
-        }`);
-
-        expect(res.status).toBe(200);
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.c1.record.id).toBeTruthy();
-        expect(res.data.data.c1.record.permissions.edit_record).toBeDefined();
-        expect(res.data.data.c1.record.active).toEqual(false);
-    });
-
-    test('Create records', async () => {
-        const res = await makeGraphQlCall(`mutation {
-            c1: createRecord(library: "${testLibName}") { record {id permissions {edit_record} } },
-            c2: createRecord(library: "${testLibName}") { record {id} },
-            c3: createRecord(library: "${testLibName}") { record {id} },
-            c4: createRecord(library: "${testLibName}") { record {id} },
-            c5: createRecord(library: "${testLibName}") { record {id} },
-            c6: createRecord(library: "${testLibName}") { record {id} },
-            c7: createRecord(library: "${testLibName}") { record {id} },
-            c8: createRecord(library: "${testLibName}") { record {id} },
-            c9: createRecord(library: "${testLibName}") { record {id} },
-            c10: createRecord(library: "${testLibName}") { record {id} },
-        }`);
-
-        expect(res.status).toBe(200);
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.c1.record.id).toBeTruthy();
-        expect(res.data.data.c1.record.permissions.edit_record).toBeDefined();
-    });
-
-    test('Should not create record if no allowed on tree attribute value', async () => {
-        await makeGraphQlCall(`mutation {
-                savePermission(
-                    permission: {
-                        type: ${PermissionTypes.RECORD},
-                        applyTo: "${testLibName}",
-                        usersGroup: null,
-                        permissionTreeTarget: {
-                            tree: "${testTreeName}", nodeId: "${recordNode}"
-                        },
-                        actions: [
-                            {name: ${RecordPermissionsActions.CREATE_RECORD}, allowed: false}
-                        ]
-                    }
-                ) { type }
+    describe('Creation', () => {
+        test('Create Empty records', async () => {
+            const res = await makeGraphQlCall(`mutation {
+                c1: createEmptyRecord(library: "${testLibName}") { record {id permissions {edit_record} active } }
             }`);
 
-        const res = await makeGraphQlCall(`mutation {
-            c1: createRecord(library: "${testLibName}", data: {
-                version: null,
-                values: [
-                    {
-                        attribute: "${testTreeAttributeId}",
-                        payload: "${recordNode}"
-                    }
-                ]
-            }) {
-                    valuesErrors {
-                      attribute
-                      input
-                      message
-                      type
-                    }
+            expect(res.status).toBe(200);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.c1.record.id).toBeTruthy();
+            expect(res.data.data.c1.record.permissions.edit_record).toBeDefined();
+            expect(res.data.data.c1.record.active).toEqual(false);
+        });
+
+        test('Should NOT activate a new record when required fields are missing', async () => {
+            const resCreation = await makeGraphQlCall(`mutation {
+                recordCreated: createEmptyRecord(library: "${testLibName}") { record {id} },
+            }`);
+            expect(resCreation.status).toBe(200);
+
+            const resActivation = await makeGraphQlCall(`mutation {
+                recordActivated: activateNewRecord(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}") {
                     record {
-                      id
+                        id
                     }
-            },
-        }`);
-
-        expect(res.status).toBe(200);
-        expect(res.data.data.c1.valuesErrors).toMatchObject([
-            {
-                attribute: testTreeAttributeId,
-                type: ErrorTypes.PERMISSION_ERROR,
-                message: `Record creation permission denied with nodeId ${recordNode}`
-            }
-        ]);
-    });
-
-    test('Create record with values', async () => {
-        const res = await makeGraphQlCall(`mutation {
-            c1: createRecord(library: "${testLibName}", data: {
-                version: null,
-                values: [
-                    {
-                        attribute: "${testAttributeId}",
-                        payload: "My value"
-                    }
-                ]
-            }) {
-                record {
-                    id
-                    ${testAttributeId}: property(attribute: "${testAttributeId}") {
-                        ...on Value {
-                            payload
-                        }
-                    }
-                }
-            },
-}`);
-
-        expect(res.status).toBe(200);
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.c1.record.id).toBeTruthy();
-        expect(res.data.data.c1.record[testAttributeId][0].payload).toBe('My value');
-    });
-
-    test('Get records filtered by ID', async () => {
-        const res = await makeGraphQlCall(`{
-            records(
-                library: "${testLibName}",
-                filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
-            ) {
-                list {
-                    id
-                    permissions {edit_record}
-                }
-            }
-        }`);
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data.records.list.length).toBe(1);
-        expect(res.data.data.records.list[0].id).toBe(recordId);
-        expect(res.data.data.records.list[0].permissions.edit_record).toBeDefined();
-    });
-
-    test('Get library details on a record', async () => {
-        const res = await makeGraphQlCall(`{
-            records(
-                library: "${testLibName}",
-                filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
-            ) {
-                 list {
-                     id
-                     library { id }
+                    valuesErrors {
+                        attribute
+                        message
                     }
                 }
             }`);
 
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data.records.list[0].library.id).toBe(testLibName);
+            expect(resActivation.status).toBe(200);
+
+            expect(resActivation.data.errors).toBeUndefined();
+            expect(resActivation.data.data.recordActivated.record).toBe(null);
+            expect(resActivation.data.data.recordActivated.valuesErrors[0].message).toBe(
+                'Attribute test_link is required'
+            );
+            expect(resActivation.data.data.recordActivated.valuesErrors[1].message).toBe('Attribute test is required');
+        });
+        test('Should activate a new record when all required fields are filled', async () => {
+            const resCreation = await makeGraphQlCall(`mutation {
+                recordCreated: createEmptyRecord(library: "${testLibName}") { record {id} },
+            }`);
+            const resCreationLink = await makeGraphQlCall(`mutation {
+                linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record {id} },
+            }`);
+            expect(resCreation.status).toBe(200);
+
+            await makeGraphQlCall(
+                `mutation {
+                saveValue(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}", attribute: "${testAttributeId}", value: {
+                    payload: "test value"
+                }) {
+                    id_value
+                }
+            }`,
+                true
+            );
+            await makeGraphQlCall(
+                `mutation {
+                saveValue(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}", attribute: "${testLinkAttributeId}", value: {
+                    payload: "${resCreationLink.data.data.linkRecordCreated.record.id}"
+                }) {
+                    id_value
+                }
+            }`,
+                true
+            );
+            const resActivation = await makeGraphQlCall(`mutation {
+                recordActivated: activateNewRecord(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}") {
+                    record {
+                        id
+                    }
+                    valuesErrors {
+                        attribute
+                        message
+                    }
+                }
+            }`);
+
+            expect(resActivation.status).toBe(200);
+
+            expect(resActivation.data.errors).toBeUndefined();
+            expect(resActivation.data.data.recordActivated.record).toEqual({
+                id: resCreation.data.data.recordCreated.record.id
+            });
+            expect(resActivation.data.data.recordActivated.valuesErrors).toEqual([]);
+        });
     });
 
-    test('Get record with properties', async () => {
-        const result = await makeGraphQlCall(`{
-            records(
-                library: "${usersLibraryId}",
-                filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${adminUserId}"}]
-            ) {
-                list {
-                    properties(attributeIds: ["created_at", "created_by", "user_groups"]) {
-                        attributeId
-                        attributeProperties {
-                            id
+    describe('Get records', () => {
+        beforeAll(async () => {
+            await gqlSaveAttribute({
+                id: testAttributeId,
+                type: AttributeTypes.SIMPLE,
+                format: AttributeFormats.TEXT,
+                required: false,
+                label: 'test'
+            });
+            await gqlSaveAttribute({
+                id: testLinkAttributeId,
+                type: AttributeTypes.SIMPLE_LINK,
+                linkedLibrary: testLibLink,
+                required: false,
+                label: 'test_link'
+            });
+            await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]);
+        });
+        test('Create and activate records', async () => {
+            const res = await makeGraphQlCall(`mutation {
+                c0: createEmptyRecord(library: "${testLibName}") { record {id permissions {edit_record} active } }
+                c1: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c2: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c3: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c4: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c5: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c6: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c7: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c8: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c9: createEmptyRecord(library: "${testLibName}") { record {id} }
+            }`);
+            expect(res.status).toBe(200);
+
+            const recordIds = Object.keys(res.data.data).map(key => res.data.data[key].record.id);
+
+            // On active chaque record et on vérifie le résultat
+            await Promise.all(
+                recordIds.map(async (id, idx) => {
+                    const activateRes = await makeGraphQlCall(`mutation {
+                a${idx}: activateNewRecord(library: "${testLibName}", recordId: "${id}") {
+                    valuesErrors {
+                        message
+                    }
+                }
+            }`);
+                    expect(activateRes.status).toBe(200);
+                    expect(activateRes.data.data[`a${idx}`].valuesErrors).toEqual([]);
+                })
+            );
+        });
+
+        test('Get records filtered by ID', async () => {
+            const res = await makeGraphQlCall(`{
+                records(
+                    library: "${testLibName}",
+                    filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
+                ) {
+                    list {
+                        id
+                        permissions {edit_record}
+                    }
+                }
+            }`);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.data.records.list.length).toBe(1);
+            expect(res.data.data.records.list[0].id).toBe(recordId);
+            expect(res.data.data.records.list[0].permissions.edit_record).toBeDefined();
+        });
+
+        test('Get library details on a record', async () => {
+            const res = await makeGraphQlCall(`{
+                records(
+                    library: "${testLibName}",
+                    filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
+                ) {
+                    list {
+                        id
+                        library { id }
                         }
-                        recordAttributePermissions {
-                            ${AttributePermissionsActions.EDIT_VALUE}
-                            ${AttributePermissionsActions.ACCESS_ATTRIBUTE}
-                        }
-                        values {
-                            id_value
-                            ... on Value {
-                                valuePayload: payload
+                    }
+            }`);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.data.records.list[0].library.id).toBe(testLibName);
+        });
+
+        test('Get record with properties', async () => {
+            const result = await makeGraphQlCall(`{
+                records(
+                    library: "${usersLibraryId}",
+                    filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${adminUserId}"}]
+                ) {
+                    list {
+                        properties(attributeIds: ["created_at", "created_by", "user_groups"]) {
+                            attributeId
+                            attributeProperties {
+                                id
                             }
-                            ... on LinkValue {
-                                linkPayload: payload {
-                                    whoAmI {
-                                        label
+                            recordAttributePermissions {
+                                ${AttributePermissionsActions.EDIT_VALUE}
+                                ${AttributePermissionsActions.ACCESS_ATTRIBUTE}
+                            }
+                            values {
+                                id_value
+                                ... on Value {
+                                    valuePayload: payload
+                                }
+                                ... on LinkValue {
+                                    linkPayload: payload {
+                                        whoAmI {
+                                            label
+                                        }
+                                    }
+                                }
+                                ... on TreeValue {
+                                    treePayload: payload {
+                                        id
                                     }
                                 }
                             }
-                            ... on TreeValue {
-                                treePayload: payload {
-                                    id
-                                }
-                            }
                         }
                     }
                 }
-            }
-        }`);
+            }`);
 
-        expect(result.data.errors).toBeUndefined();
-        expect(result.status).toBe(200);
-        expect(result.data.data.records.list[0].properties).toEqual([
-            {
-                attributeId: 'created_at',
-                attributeProperties: {
-                    id: 'created_at'
+            expect(result.data.errors).toBeUndefined();
+            expect(result.status).toBe(200);
+            expect(result.data.data.records.list[0].properties).toEqual([
+                {
+                    attributeId: 'created_at',
+                    attributeProperties: {
+                        id: 'created_at'
+                    },
+                    recordAttributePermissions: {
+                        [AttributePermissionsActions.EDIT_VALUE]: true,
+                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
+                    },
+                    values: [
+                        {
+                            id_value: null,
+                            valuePayload: expect.any(Number)
+                        }
+                    ]
                 },
-                recordAttributePermissions: {
-                    [AttributePermissionsActions.EDIT_VALUE]: true,
-                    [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
-                },
-                values: [
-                    {
-                        id_value: null,
-                        valuePayload: expect.any(Number)
-                    }
-                ]
-            },
-            {
-                attributeId: 'created_by',
-                attributeProperties: {
-                    id: 'created_by'
-                },
-                recordAttributePermissions: {
-                    [AttributePermissionsActions.EDIT_VALUE]: true,
-                    [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
-                },
-                values: [
-                    {
-                        id_value: null,
-                        linkPayload: {
-                            whoAmI: {
-                                label: 'system'
+                {
+                    attributeId: 'created_by',
+                    attributeProperties: {
+                        id: 'created_by'
+                    },
+                    recordAttributePermissions: {
+                        [AttributePermissionsActions.EDIT_VALUE]: true,
+                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
+                    },
+                    values: [
+                        {
+                            id_value: null,
+                            linkPayload: {
+                                whoAmI: {
+                                    label: 'system'
+                                }
                             }
                         }
-                    }
-                ]
-            },
-            {
-                attributeId: 'user_groups',
-                attributeProperties: {
-                    id: 'user_groups'
+                    ]
                 },
-                recordAttributePermissions: {
-                    [AttributePermissionsActions.EDIT_VALUE]: true,
-                    [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
-                },
-                values: [
-                    {
-                        id_value: expect.any(String),
-                        treePayload: {
-                            id: '1'
+                {
+                    attributeId: 'user_groups',
+                    attributeProperties: {
+                        id: 'user_groups'
+                    },
+                    recordAttributePermissions: {
+                        [AttributePermissionsActions.EDIT_VALUE]: true,
+                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
+                    },
+                    values: [
+                        {
+                            id_value: expect.any(String),
+                            treePayload: {
+                                id: '1'
+                            }
                         }
-                    }
-                ]
-            }
-        ]);
-    });
+                    ]
+                }
+            ]);
+        });
 
-    test('Get record properties with record attribute permissions', async () => {
-        // Add/set permissions to the requested attribute
-        await makeGraphQlCall(`mutation {
+        test('Get record properties with record attribute permissions', async () => {
+            // Add/set permissions to the requested attribute
+            await makeGraphQlCall(`mutation {
                 saveAttribute(attribute: {
                     id: "${testAttributeId}",
                     permissions_conf: {permissionTreeAttributes: ["${testTreeAttributeId}"], relation: and}
@@ -327,7 +391,7 @@ describe('Records', () => {
                 }
             }`);
 
-        await makeGraphQlCall(`mutation {
+            await makeGraphQlCall(`mutation {
                 savePermission(
                     permission: {
                         type: record_attribute,
@@ -344,108 +408,111 @@ describe('Records', () => {
                 ) { type }
             }`);
 
-        // Set a value for the tree attribute on which permissions are based
-        await gqlSaveValue(testTreeAttributeId, testLibName, recordId, recordNode);
+            // Set a value for the tree attribute on which permissions are based
+            await gqlSaveValue(testTreeAttributeId, testLibName, recordId, recordNode);
 
-        const result = await makeGraphQlCall(`{
-            records(
-                library: "${testLibName}",
-                filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
-            ) {
-                list {
-                    properties(attributeIds: ["${testAttributeId}"]) {
-                        attributeId
-                        recordAttributePermissions {
-                            ${AttributePermissionsActions.EDIT_VALUE}
-                            ${AttributePermissionsActions.ACCESS_ATTRIBUTE}
-                        }
-                    }
-                }
-            }
-        }`);
-
-        expect(result.data.errors).toBeUndefined();
-        expect(result.status).toBe(200);
-        expect(result.data.data.records.list[0].properties).toEqual([
-            {
-                attributeId: testAttributeId,
-                recordAttributePermissions: {
-                    [AttributePermissionsActions.EDIT_VALUE]: false,
-                    [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
-                }
-            }
-        ]);
-    });
-
-    test('Get record identity', async () => {
-        const res = await makeGraphQlCall(`
-            {
+            const result = await makeGraphQlCall(`{
                 records(
                     library: "${testLibName}",
                     filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
                 ) {
                     list {
-                        id
-                        whoAmI { id library { id } label }
+                        properties(attributeIds: ["${testAttributeId}"]) {
+                            attributeId
+                            recordAttributePermissions {
+                                ${AttributePermissionsActions.EDIT_VALUE}
+                                ${AttributePermissionsActions.ACCESS_ATTRIBUTE}
+                            }
+                        }
                     }
                 }
-            }
-        `);
+            }`);
 
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data.records.list[0].whoAmI.id).toBe(recordId);
-        expect(res.data.data.records.list[0].whoAmI.library.id).toBe(testLibName);
-        expect(res.data.data.records.list[0].whoAmI.label).toBe(null);
-    });
+            expect(result.data.errors).toBeUndefined();
+            expect(result.status).toBe(200);
+            expect(result.data.data.records.list[0].properties).toEqual([
+                {
+                    attributeId: testAttributeId,
+                    recordAttributePermissions: {
+                        [AttributePermissionsActions.EDIT_VALUE]: false,
+                        [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true
+                    }
+                }
+            ]);
+        });
 
-    test('Get records paginated', async () => {
-        const firstCallRes = await makeGraphQlCall(`{
-            records(
-                library: "${testLibName}",
-                pagination: {limit: 3, offset: 0}
-            ) {
-                totalCount
-                cursor {next prev}
-                list {id}
-            }
-        }`);
+        test('Get record identity', async () => {
+            const res = await makeGraphQlCall(`
+                {
+                    records(
+                        library: "${testLibName}",
+                        filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
+                    ) {
+                        list {
+                            id
+                            whoAmI { id library { id } label }
+                        }
+                    }
+                }
+            `);
 
-        expect(firstCallRes.data.errors).toBeUndefined();
-        expect(firstCallRes.status).toBe(200);
-        expect(firstCallRes.data.data.records.list.length).toBe(3);
-        expect(firstCallRes.data.data.records.totalCount).toBeGreaterThan(firstCallRes.data.data.records.list.length);
-        expect(firstCallRes.data.data.records.cursor.next).toBeTruthy();
+            expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.data.records.list[0].whoAmI.id).toBe(recordId);
+            expect(res.data.data.records.list[0].whoAmI.library.id).toBe(testLibName);
+            expect(res.data.data.records.list[0].whoAmI.label).toBe(null);
+        });
 
-        const cursorCallRes = await makeGraphQlCall(`{
-            records(
-                library: "${testLibName}",
-                pagination: {
-                    limit: 5,
-                    cursor: "${firstCallRes.data.data.records.cursor.next}"
-                }) {
+        test('Get records paginated', async () => {
+            const firstCallRes = await makeGraphQlCall(`{
+                records(
+                    library: "${testLibName}",
+                    pagination: {limit: 3, offset: 0}
+                ) {
                     totalCount
                     cursor {next prev}
                     list {id}
                 }
-            }
-        `);
+            }`);
 
-        expect(cursorCallRes.data.errors).toBeUndefined();
-        expect(cursorCallRes.data.data.records.list.length).toBe(5);
-        expect(cursorCallRes.data.data.records.cursor.next).toBeTruthy();
-    });
+            expect(firstCallRes.data.errors).toBeUndefined();
+            expect(firstCallRes.status).toBe(200);
+            expect(firstCallRes.data.data.records.list.length).toBe(3);
+            expect(firstCallRes.data.data.records.totalCount).toBeGreaterThan(
+                firstCallRes.data.data.records.list.length
+            );
+            expect(firstCallRes.data.data.records.cursor.next).toBeTruthy();
 
-    test('Delete a record', async () => {
-        const res = await makeGraphQlCall(
-            `mutation {deleteRecord(library: "${testLibName}", id: "${recordId}") { id }}
+            const cursorCallRes = await makeGraphQlCall(`{
+                records(
+                    library: "${testLibName}",
+                    pagination: {
+                        limit: 5,
+                        cursor: "${firstCallRes.data.data.records.cursor.next}"
+                    }) {
+                        totalCount
+                        cursor {next prev}
+                        list {id}
+                    }
+                }
+            `);
+
+            expect(cursorCallRes.data.errors).toBeUndefined();
+            expect(cursorCallRes.data.data.records.list.length).toBe(5);
+            expect(cursorCallRes.data.data.records.cursor.next).toBeTruthy();
+        });
+
+        test('Delete a record', async () => {
+            const res = await makeGraphQlCall(
+                `mutation {deleteRecord(library: "${testLibName}", id: "${recordId}") { id }}
         `
-        );
+            );
 
-        expect(res.status).toBe(200);
-        expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.deleteRecord).toBeDefined();
-        expect(res.data.data.deleteRecord.id).toBe(recordId);
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.deleteRecord).toBeDefined();
+            expect(res.data.data.deleteRecord.id).toBe(recordId);
+        });
     });
 
     describe('Sort/filter', () => {

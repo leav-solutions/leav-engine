@@ -11,7 +11,7 @@ import {
     AttributeType,
     RecordFormAttributeStandardAttributeFragment,
     RecordIdentityFragment,
-    useActivateRecordsMutation
+    useActivateNewRecordMutation
 } from '../../../_gqlTypes';
 import {
     IRecordPropertyLink,
@@ -112,6 +112,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
 
     const {saveValues} = useSaveValueBatchMutation();
     const {deleteValue} = useExecuteDeleteValueMutation(record);
+    const [activateNewRecordMutation] = useActivateNewRecordMutation();
 
     // Update record in reducer when it changes. Might happen on record identity change (after value save)
     useEffect(() => {
@@ -202,73 +203,42 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         );
     };
 
-    const [activateRecordsMutation] = useActivateRecordsMutation({
-        update(cache, activatedRecords) {
-            activatedRecords.data?.activateRecords.forEach(rec => {
-                cache.evict({
-                    id: cache.identify(rec)
-                });
-            });
-            cache.modify({
-                fields: {
-                    records: prev => ({
-                        ...prev,
-                        totalCount: prev.totalCount - 1
-                    })
-                },
-                broadcast: false
-            });
-            cache.gc();
-        }
-    });
-
     /**
      * Submit the whole record: create record and batch save all stored values
      */
     const _handleRecordSubmit = async (attributes: RecordFormAttributeStandardAttributeFragment[]) => {
-        // validate form with required fields
-        // TODO : Ajouter validateRecord
-
-        const libRes = await activateRecordsMutation({
+        const activateNewRecordResult = await activateNewRecordMutation({
+            fetchPolicy: 'network-only',
             variables: {
-                libraryId: state.record.library.id,
-                recordsIds: [state.record.id]
+                libraryId,
+                recordId: record.id,
+                formId
             }
         });
-
-        if (onCreate) {
-            onCreate(libRes.data.activateRecords[0].whoAmI);
+        const errors = activateNewRecordResult?.data?.activateNewRecord.valuesErrors;
+        if (errors?.length === 0) {
+            if (onCreate) {
+                onCreate(activateNewRecordResult?.data?.activateNewRecord?.record?.whoAmI);
+            }
+            return;
         }
+        antdForm.setFields(
+            errors.map(error => {
+                const attributeInError = attributes.find(attribute => attribute.id === error.attribute);
 
-        // KEEP for the moment while ticket Process Creation isn't finished
-        // const creationResult = await createRecord(libraryId, valuesToSave);
-        // if (creationResult.status === APICallStatus.SUCCESS) {
-        //     if (onCreate) {
-        //         onCreate(creationResult.record);
-        //     }
-        //     return;
-        // }
+                const doesAttributeHaveMultipleFields =
+                    attributeInError?.multiple_values &&
+                    ![AttributeType.simple_link, AttributeType.advanced_link].includes(attributeInError.type);
 
-        // TODO : adapter avec le validateRecord
-        // antdForm.setFields(
-        //     creationResult.errors.map(error => {
-        //         const attributeInError = attributes.find(attribute => attribute.id === error.attribute);
-
-        //         const doesAttributeHaveMultipleFields =
-        //             attributeInError?.multiple_values &&
-        //             ![AttributeType.simple_link, AttributeType.advanced_link].includes(attributeInError.type);
-
-        //         return {
-        //             name:
-        //                 doesAttributeHaveMultipleFields && error.type === 'REQUIRED_ATTRIBUTE'
-        //                     ? [error.attribute, 0]
-        //                     : error.attribute,
-        //             errors: [error.message]
-        //         };
-        //     })
-        // );
-
-        return;
+                return {
+                    name:
+                        doesAttributeHaveMultipleFields && error.type === 'REQUIRED_ATTRIBUTE'
+                            ? [error.attribute, 0]
+                            : error.attribute,
+                    errors: [error.message]
+                };
+            })
+        );
     };
 
     const _handleDeleteAllValues: DeleteMultipleValuesFunc = async (attribute, values, version) => {

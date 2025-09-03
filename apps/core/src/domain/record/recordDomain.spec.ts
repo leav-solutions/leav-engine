@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorTypes} from '@leav/utils';
+import {Errors} from '../../_types/errors';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IValidateHelper} from 'domain/helpers/validate';
@@ -45,6 +46,7 @@ import {IAttributePermissionDomain} from 'domain/permission/attributePermissionD
 import * as ValidateValue from '../value/helpers/validateValue';
 import {ICreateRecordValueError} from './_types';
 import {createRecord as createRecordHelper, deleteRecord as deleteRecordHelper} from './helpers';
+import {IFormRepo} from 'infra/form/formRepo';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
@@ -156,7 +158,7 @@ describe('RecordDomain', () => {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const mockAtrrPermissionDomain: Mockify<IAttributePermissionDomain> = {
+            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
                 getAttributePermission: global.__mockPromise(true)
             };
 
@@ -168,7 +170,7 @@ describe('RecordDomain', () => {
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.permission.attribute': mockAtrrPermissionDomain as IAttributePermissionDomain,
+                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
                 'core.domain.record.helpers.createRecord': createRecordHelper({
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
@@ -189,6 +191,129 @@ describe('RecordDomain', () => {
             expect(createdEmptyRecord.valuesErrors).toBe(null);
         });
     });
+    describe('Activate new record', () => {
+        test('Should activate a new record', async function () {
+            const createdRecordData = {
+                id: '222435651',
+                library: 'test'
+            };
+            const recRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
+            const formRepo = {getForms: global.__mockPromise({list: []})} satisfies Mockify<IFormRepo>;
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getLibraryFullTextAttributes: global.__mockPromise([]),
+                getLibraryAttributes: global.__mockPromise([])
+            };
+
+            const mockValueDomain: Mockify<IValueDomain> = {
+                saveValue: global.__mockPromise([{payload: true}])
+            };
+
+            const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
+                getLibraryPermission: global.__mockPromise(true)
+            };
+
+            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
+                getAttributePermission: global.__mockPromise(true)
+            };
+
+            const recDomain = recordDomain({
+                ...depsBase,
+                config: mockConfig as Config.IConfig,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.record': recRepo as IRecordRepo,
+                'core.infra.form': formRepo as IFormRepo,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
+                'core.domain.value': mockValueDomain as IValueDomain,
+                'core.domain.record.helpers.createRecord': createRecordHelper({
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.infra.record': recRepo as IRecordRepo
+                })
+            });
+
+            const createdEmptyRecord = await recDomain.createEmptyRecord({library: 'test', ctx});
+            const activatedRecord = await recDomain.activateNewRecord({
+                library: 'test',
+                recordId: createdEmptyRecord.record.id,
+                ctx
+            });
+
+            expect(recRepo.createRecord.mock.calls.length).toBe(1);
+            expect(typeof recRepo.createRecord.mock.calls[0][0]).toBe('object');
+            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
+            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
+            expect(recRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe('1');
+            expect(recRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
+
+            expect(activatedRecord.record).toMatchObject(createdRecordData);
+            expect(activatedRecord.valuesErrors).toEqual([]);
+        });
+        test('Should not activate a new record if required field is missing', async function () {
+            const createdRecordData = {
+                id: '222435651',
+                library: 'test'
+            };
+            const recRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
+            const formRepo = {getForms: global.__mockPromise({list: []})} satisfies Mockify<IFormRepo>;
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getLibraryFullTextAttributes: global.__mockPromise([]),
+                getLibraryAttributes: global.__mockPromise([{id: 'some_attribute', required: true}])
+            };
+
+            const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
+                getLibraryPermission: global.__mockPromise(true)
+            };
+
+            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
+                getAttributePermission: global.__mockPromise(true)
+            };
+
+            const recDomain = recordDomain({
+                ...depsBase,
+                config: mockConfig as Config.IConfig,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.record': recRepo as IRecordRepo,
+                'core.infra.form': formRepo as IFormRepo,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
+                'core.domain.record.helpers.createRecord': createRecordHelper({
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.infra.record': recRepo as IRecordRepo
+                }),
+                'core.utils': mockUtils as IUtils
+            });
+            recDomain.getRecordFieldValue = jest.fn();
+
+            const createdEmptyRecord = await recDomain.createEmptyRecord({library: 'test', ctx});
+            const activatedRecord = await recDomain.activateNewRecord({
+                library: 'test',
+                recordId: createdEmptyRecord.record.id,
+                ctx
+            });
+
+            expect(recRepo.createRecord.mock.calls.length).toBe(1);
+            expect(typeof recRepo.createRecord.mock.calls[0][0]).toBe('object');
+            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
+            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
+            expect(recRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe('1');
+            expect(recRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
+
+            expect(activatedRecord.record).toBe(null);
+            expect(activatedRecord.valuesErrors[0]).toMatchObject({
+                attribute: 'some_attribute',
+                type: Errors.REQUIRED_ATTRIBUTE,
+                message: 'mock error'
+            });
+        });
+    });
     describe('createRecord', () => {
         test('Should create a new record', async function () {
             const createdRecordData = {
@@ -207,7 +332,7 @@ describe('RecordDomain', () => {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const mockAtrrPermissionDomain: Mockify<IAttributePermissionDomain> = {
+            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
                 getAttributePermission: global.__mockPromise(true)
             };
 
@@ -219,7 +344,7 @@ describe('RecordDomain', () => {
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.permission.attribute': mockAtrrPermissionDomain as IAttributePermissionDomain,
+                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
                 'core.domain.record.helpers.createRecord': createRecordHelper({
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
@@ -258,7 +383,7 @@ describe('RecordDomain', () => {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const mockAtrrPermissionDomain: Mockify<IAttributePermissionDomain> = {
+            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
                 getAttributePermission: global.__mockPromise(true)
             };
 
@@ -276,7 +401,7 @@ describe('RecordDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                 'core.infra.record': recRepo as IRecordRepo,
-                'core.domain.permission.attribute': mockAtrrPermissionDomain as IAttributePermissionDomain,
+                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
                 'core.domain.record.helpers.createRecord': createRecordHelper({
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
@@ -321,7 +446,7 @@ describe('RecordDomain', () => {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const mockAtrrPermissionDomain: Mockify<IAttributePermissionDomain> = {
+            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
                 getAttributePermission: global.__mockPromise(true)
             };
 
@@ -369,7 +494,7 @@ describe('RecordDomain', () => {
                 'core.domain.value': mockValueDomain as IValueDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.permission.attribute': mockAtrrPermissionDomain as IAttributePermissionDomain,
+                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.utils': mockUtils as IUtils,
                 'core.domain.record.helpers.createRecord': createRecordHelper({
@@ -436,7 +561,7 @@ describe('RecordDomain', () => {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const mockAtrrPermissionDomain: Mockify<IAttributePermissionDomain> = {
+            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
                 getAttributePermission: global.__mockPromise(true)
             };
 
@@ -458,7 +583,7 @@ describe('RecordDomain', () => {
                 'core.domain.value': mockValueDomain as IValueDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.permission.attribute': mockAtrrPermissionDomain as IAttributePermissionDomain,
+                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.utils': mockUtils as IUtils,
                 'core.domain.record.helpers.createRecord': createRecordHelper({

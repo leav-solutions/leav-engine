@@ -114,6 +114,7 @@ export async function gqlSaveAttribute(params: {
     multipleValues?: boolean;
     reverseLink?: string;
     actionsList?: ActionsListConfig;
+    required?: boolean;
 }) {
     const {
         id,
@@ -128,7 +129,8 @@ export async function gqlSaveAttribute(params: {
         linkedTree,
         multipleValues,
         reverseLink,
-        actionsList
+        actionsList,
+        required
     } = params;
 
     const _convertEmbeddedFields = (field: IEmbeddedAttribute): string => `
@@ -185,6 +187,7 @@ export async function gqlSaveAttribute(params: {
                 embedded_fields: ${embeddedFields ? `${embeddedFields.map(_convertEmbeddedFields).join(', ')}` : 'null'}
                 multiple_values: ${multipleValues ? 'true' : 'false'},
                 actions_list: ${actionsList ? _convertActionsList(actionsList) : 'null'}
+                required: ${required ? 'true' : 'false'}
             }
         ) { id }
     }`;

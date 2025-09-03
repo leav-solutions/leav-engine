@@ -259,6 +259,7 @@ export default function ({
 
                     extend type Mutation {
                         createEmptyRecord(library: ID!): CreateRecordResult!
+                        activateNewRecord(library: ID!, recordId: ID!, formId: String): CreateRecordResult!
                         createRecord(library: ID!, data: CreateRecordDataInput): CreateRecordResult!
                         deleteRecord(library: ID, id: ID): Record!
                         indexRecords(libraryId: String!, records: [String!]): Boolean!
@@ -332,6 +333,14 @@ export default function ({
                         async createEmptyRecord(_, {library}: ICreateRecordParams, ctx: IQueryInfos) {
                             return recordDomain.createEmptyRecord({
                                 library,
+                                ctx
+                            });
+                        },
+                        async activateNewRecord(_, {library, recordId, formId}, ctx: IQueryInfos) {
+                            return recordDomain.activateNewRecord({
+                                library,
+                                recordId,
+                                formId,
                                 ctx
                             });
                         },
