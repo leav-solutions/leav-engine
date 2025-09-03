@@ -216,7 +216,10 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const hasNoResults = data === null || data.totalCount === 0;
 
         const showCreatePrimaryButton = showCreateOnNoResultOnly
-            ? !hidePrimaryActions && !loadingData && hasNoResults
+            ? !hidePrimaryActions &&
+              !loadingData &&
+              hasNoResults &&
+              !(entrypoint.type === 'library' && entrypoint.allowFreeEntry)
             : true;
 
         const {createPrimaryAction, createModal} = useCreatePrimaryAction({
