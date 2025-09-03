@@ -18823,6 +18823,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-formatter-gitlab@npm:5.1.0":
+  version: 5.1.0
+  resolution: "eslint-formatter-gitlab@npm:5.1.0"
+  dependencies:
+    chalk: "npm:^4.0.0"
+    yaml: "npm:^2.0.0"
+  peerDependencies:
+    eslint: ">=5"
+  checksum: cf5f7bcb884addd263be2126c21484e2eb9139ea5d89d484d65d4f332d35937d8dce5fb3b263037dad0088dfa1c16de82b18ba9eb79891f71897f34b807d1817
+  languageName: node
+  linkType: hard
+
 "eslint-import-resolver-node@npm:^0.3.6":
   version: 0.3.6
   resolution: "eslint-import-resolver-node@npm:0.3.6"
@@ -25208,6 +25220,7 @@ __metadata:
     commitizen: "npm:4.3.0"
     cz-conventional-changelog: "npm:3.3.0"
     eslint: "npm:8.57.0"
+    eslint-formatter-gitlab: "npm:5.1.0"
     eslint-plugin-import: "npm:2.26.0"
     eslint-plugin-jsdoc: "npm:39.2.1"
     eslint-plugin-jsx-a11y: "npm:6.5.1"
@@ -35989,6 +36002,15 @@ __metadata:
   version: 1.10.2
   resolution: "yaml@npm:1.10.2"
   checksum: e088b37b4d4885b70b50c9fa1b7e54bd2e27f5c87205f9deaffd1fb293ab263d9c964feadb9817a7b129a5bf30a06582cb08750f810568ecc14f3cdbabb79cb3
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^2.0.0":
+  version: 2.8.1
+  resolution: "yaml@npm:2.8.1"
+  bin:
+    yaml: bin.mjs
+  checksum: eae07b3947d405012672ec17ce27348aea7d1fa0534143355d24a43a58f5e05652157ea2182c4fe0604f0540be71f99f1173f9d61018379404507790dff17665
   languageName: node
   linkType: hard
 

@@ -35,8 +35,44 @@ module.exports = {
         '@typescript-eslint/explicit-member-accessibility': ['warn', {accessibility: 'explicit'}],
         '@typescript-eslint/indent': 'off',
         '@typescript-eslint/naming-convention': [
-            'error',
-            {selector: 'interface', format: ['PascalCase'], custom: {regex: '^I[A-Z]', match: true}}
+            'warn',
+            // Classes and interfaces
+            {selector: 'class', format: ['PascalCase']},
+            {selector: 'interface', format: ['PascalCase'], custom: {regex: '^I[A-Z]', match: true}},
+
+            // Enum
+            {selector: 'enum', format: ['PascalCase']},
+            {selector: 'enumMember', format: ['UPPER_CASE']},
+
+            // Variables
+            // React components and function variables: allow PascalCase for const variables, especially components.
+            {
+                selector: 'variable',
+                modifiers: ['exported'],
+                format: ['PascalCase', 'camelCase', 'UPPER_CASE'],
+                leadingUnderscore: 'forbid'
+            },
+            {
+                selector: 'variable',
+                modifiers: ['const'],
+                format: ['PascalCase', 'camelCase', 'UPPER_CASE'],
+                leadingUnderscore: 'allow'
+            },
+
+            // Functions
+            {
+                selector: 'function',
+                modifiers: ['exported'],
+                format: ['camelCase', 'PascalCase'],
+                leadingUnderscore: 'forbid'
+            },
+            {selector: 'function', format: ['camelCase', 'PascalCase'], leadingUnderscore: 'allow'},
+
+            // Parameters
+            {selector: 'parameter', format: ['camelCase'], leadingUnderscore: 'allow'},
+
+            // Types
+            {selector: 'typeLike', format: ['PascalCase']}
         ],
         '@typescript-eslint/member-delimiter-style': [
             'error',
@@ -63,7 +99,7 @@ module.exports = {
         curly: 'error',
         'dot-notation': 'error',
         'eol-last': 'off',
-        eqeqeq: ['warn', 'always', {"null": "ignore"}],
+        eqeqeq: ['warn', 'always', {null: 'ignore'}],
         'guard-for-in': 'error',
         'id-match': 'error',
         'import/no-extraneous-dependencies': 'off',

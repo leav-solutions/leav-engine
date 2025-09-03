@@ -73,11 +73,14 @@ lint:
   stage: test
   script:
     - yarn workspaces focus --all
-    - yarn run lint
+    - yarn run lint --format gitlab
   cache:
     <<: *yarn_cache
     policy: pull-push
   rules: *check_ci_rules
+  artifacts:
+    reports:
+      codequality: gl-codequality.json
 
 license-check:
   stage: test
