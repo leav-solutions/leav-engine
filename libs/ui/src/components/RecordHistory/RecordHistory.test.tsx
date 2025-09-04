@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import userEvent from '@testing-library/user-event';
 import {render, screen} from '_ui/_tests/testUtils';
 import RecordHistory from './RecordHistory';
 import {LogEntry} from './_types';
@@ -12,6 +13,10 @@ jest.mock('./hooks/useFetchRecordHistory', () => ({
 
 jest.mock('./RecordHistoryLogEntry', () => ({
     RecordHistoryLogEntry: () => <div data-testid="log-entry">log</div>
+}));
+
+jest.mock('../ShowMore', () => ({
+    ShowMore: () => <div data-testid="show-more" />
 }));
 
 describe('RecordHistory', () => {
@@ -67,7 +72,47 @@ describe('RecordHistory', () => {
         expect(screen.getByText('record_history.empty_history')).toBeVisible();
     });
 
-    it('Should display log element if any', async () => {
+    it('Should display log element without show all history button if only one element', async () => {
+        useFetchRecordHistoryMock.mockReturnValue({
+            loading: false,
+            logs: [
+                {
+                    action: 'VALUE_SAVE'
+                }
+            ] as LogEntry[],
+            total: 1,
+            hasMore: false
+        });
+
+        render(<RecordHistory record={{id: 'record-1', library: {id: 'lib-1'}}} />);
+
+        expect(screen.queryAllByTestId('log-entry')).toHaveLength(1);
+        expect(screen.queryByText(/record_history\.hide_history/)).toBeNull();
+        expect(screen.queryByText(/record_history\.show_history/)).toBeNull();
+        expect(screen.queryByTestId('show-more')).toBeNull();
+    });
+
+    it('Should display log element with pagination when more than 1', async () => {
+        // Simulate third page fetch with only one element
+        useFetchRecordHistoryMock.mockReturnValue({
+            loading: false,
+            logs: [
+                {
+                    action: 'VALUE_SAVE'
+                }
+            ] as LogEntry[],
+            total: 5,
+            hasMore: true
+        });
+
+        const {rerender} = render(<RecordHistory record={{id: 'record-1', library: {id: 'lib-1'}}} />);
+
+        const showMoreToggleButton = screen.getByText(/record_history\.show_history/);
+        expect(screen.queryAllByTestId('log-entry')).toHaveLength(1);
+        expect(showMoreToggleButton).toBeVisible();
+        expect(screen.queryByTestId('show-more')).toBeNull();
+
+        // Simulate second page fetch
         useFetchRecordHistoryMock.mockReturnValue({
             loading: false,
             logs: [
@@ -76,12 +121,56 @@ describe('RecordHistory', () => {
                 },
                 {
                     action: 'VALUE_SAVE'
+                },
+                {
+                    action: 'VALUE_SAVE'
                 }
-            ] as LogEntry[]
+            ] as LogEntry[],
+            total: 5,
+            hasMore: true
         });
+        await userEvent.click(showMoreToggleButton);
 
-        render(<RecordHistory record={{id: 'record-1', library: {id: 'lib-1'}}} />);
+        expect(screen.queryAllByTestId('log-entry')).toHaveLength(3);
+        expect(showMoreToggleButton).toBeVisible();
+        showMoreToggleButton.textContent.match(/record_history\.hide_history/);
+        expect(screen.getByTestId('show-more')).toBeInTheDocument();
 
-        expect(screen.queryAllByTestId('log-entry')).toHaveLength(2);
+        // Simulate third page fetch
+        useFetchRecordHistoryMock.mockReturnValue({
+            loading: false,
+            logs: [
+                {
+                    action: 'VALUE_SAVE'
+                },
+                {
+                    action: 'VALUE_SAVE'
+                },
+                {
+                    action: 'VALUE_SAVE'
+                },
+                {
+                    action: 'VALUE_SAVE'
+                },
+                {
+                    action: 'VALUE_SAVE'
+                }
+            ] as LogEntry[],
+            total: 5,
+            hasMore: false
+        });
+        // force rerender to simulate showMore trigger fetchMore !
+        rerender(<RecordHistory record={{id: 'record-1', library: {id: 'lib-1'}}} />);
+
+        expect(screen.queryAllByTestId('log-entry')).toHaveLength(5);
+        expect(showMoreToggleButton).toBeVisible();
+        showMoreToggleButton.textContent.match(/record_history\.hide_history/);
+
+        // Hide logs, keep only first log as in initial state
+        await userEvent.click(showMoreToggleButton);
+
+        expect(screen.queryAllByTestId('log-entry')).toHaveLength(1);
+        expect(showMoreToggleButton).toBeVisible();
+        showMoreToggleButton.textContent.match(/record_history\.show_history/);
     });
 });

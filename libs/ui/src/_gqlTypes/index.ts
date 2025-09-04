@@ -1030,6 +1030,8 @@ export type LibraryAttributeFragment = LibraryAttributeLinkAttributeFragment | L
 
 export type LibraryAttributeLinkFragment = { linked_library?: { id: string, label?: any | null, attributes?: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> | null } | null };
 
+export type RecordHistoryLogEntryFragment = { action?: LogAction | null, time: number, topic?: { attribute?: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean } | null } | null, user: { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }, before?: { asString?: string | null } | null, after?: { asString?: string | null } | null };
+
 export type RecordHistoryLogAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean };
 
 export type CheckApplicationExistenceQueryVariables = Exact<{
@@ -1548,7 +1550,7 @@ export type GetRecordHistoryQueryVariables = Exact<{
 }>;
 
 
-export type GetRecordHistoryQuery = { logs?: Array<{ action?: LogAction | null, time: number, topic?: { attribute?: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean } | null } | null, user: { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }, before?: { asString?: string | null } | null, after?: { asString?: string | null } | null }> | null };
+export type GetRecordHistoryQuery = { logs?: { total: number, logs: Array<{ action?: LogAction | null, time: number, topic?: { attribute?: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean } | null } | null, user: { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }, before?: { asString?: string | null } | null, after?: { asString?: string | null } | null }> } | null };
 
 export type TreeDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID'];
@@ -2333,6 +2335,40 @@ export const RecordHistoryLogAttributeFragmentDoc = gql`
   multiple_values
 }
     `;
+export const RecordHistoryLogEntryFragmentDoc = gql`
+    fragment RecordHistoryLogEntry on Log {
+  action
+  time
+  topic {
+    attribute {
+      ...RecordHistoryLogAttribute
+    }
+  }
+  user {
+    id
+    whoAmI {
+      id
+      library {
+        id
+      }
+    }
+    properties(attributeIds: ["email"]) {
+      attributeId
+      values {
+        ... on Value {
+          payload
+        }
+      }
+    }
+  }
+  before {
+    asString
+  }
+  after {
+    asString
+  }
+}
+    ${RecordHistoryLogAttributeFragmentDoc}`;
 export const CheckApplicationExistenceDocument = gql`
     query CHECK_APPLICATION_EXISTENCE($id: ID, $endpoint: String) {
   applications(filters: {id: $id, endpoint: $endpoint}) {
@@ -5171,39 +5207,13 @@ export const GetRecordHistoryDocument = gql`
     filters: {topic: {record: $record, attribute: $attributeId}, actions: $actions}
     pagination: $pagination
   ) {
-    action
-    time
-    topic {
-      attribute {
-        ...RecordHistoryLogAttribute
-      }
-    }
-    user {
-      id
-      whoAmI {
-        id
-        library {
-          id
-        }
-      }
-      properties(attributeIds: ["email"]) {
-        attributeId
-        values {
-          ... on Value {
-            payload
-          }
-        }
-      }
-    }
-    before {
-      asString
-    }
-    after {
-      asString
+    total
+    logs {
+      ...RecordHistoryLogEntry
     }
   }
 }
-    ${RecordHistoryLogAttributeFragmentDoc}`;
+    ${RecordHistoryLogEntryFragmentDoc}`;
 
 /**
  * __useGetRecordHistoryQuery__

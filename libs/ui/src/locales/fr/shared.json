@@ -533,7 +533,9 @@
         "error_fetching": "Erreur lors de la récupération de l'historique",
         "no_value": "Aucune",
         "unknown_attribute": "Attribut inconnu",
-        "unknown_user": "Utilisateur inconnu"
+        "unknown_user": "Utilisateur inconnu",
+        "show_history": "Voir tout l'historique ({{total}} événements)",
+        "hide_history": "Masquer l'historique ({{total}} événements)"
     },
     "view": {
         "views": "Vues",

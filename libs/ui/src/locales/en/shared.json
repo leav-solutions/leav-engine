@@ -533,7 +533,9 @@
         "error_fetching": "Error while fetching record history",
         "no_value": "None",
         "unknown_attribute": "unknown attribute",
-        "unknown_user": "unknown user"
+        "unknown_user": "unknown user",
+        "show_history": "See full history ({{total}} entries)",
+        "hide_history": "Hide history ({{total}} entries)"
     },
     "view": {
         "views": "Views",

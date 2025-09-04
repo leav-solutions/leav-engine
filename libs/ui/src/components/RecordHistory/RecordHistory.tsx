@@ -1,15 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordIdentityWhoAmI} from '_ui/types';
-import {KitSpace, KitTypography} from 'aristid-ds';
-import {FunctionComponent} from 'react';
-import styled from 'styled-components';
-import {RecordHistoryLogEntry} from './RecordHistoryLogEntry';
-import {useFetchRecordHistory} from './hooks/useFetchRecordHistory';
-import {ErrorDisplay} from '../ErrorDisplay';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {IRecordIdentityWhoAmI} from '_ui/types';
+import {KitButton, KitSpace, KitTypography} from 'aristid-ds';
+import {FunctionComponent, useState} from 'react';
+import styled from 'styled-components';
+import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
+import {ShowMore} from '../ShowMore';
+import {useFetchRecordHistory} from './hooks/useFetchRecordHistory';
+import {RecordHistoryLogEntry} from './RecordHistoryLogEntry';
 
 interface IRecordHistoryProps {
     record: IRecordIdentityWhoAmI;
@@ -22,7 +23,8 @@ const StyledDivContentWrapper = styled.div`
 
 export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, attributeId}) => {
     const {t} = useSharedTranslation();
-    const {loading, inError, logs} = useFetchRecordHistory({
+    const [showAllHistory, setShowAllHistory] = useState<boolean>(false);
+    const {loading, inError, logs, total, hasMore, fetchMore} = useFetchRecordHistory({
         record: {
             id: record.id,
             libraryId: record.library.id
@@ -30,7 +32,7 @@ export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, a
         attributeId
     });
 
-    if (loading) {
+    if (loading && logs.length === 0) {
         return <Loading />;
     }
 
@@ -49,9 +51,22 @@ export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, a
     return (
         <StyledDivContentWrapper>
             <KitSpace size="s" direction="vertical">
-                {logs.map((logEntry, index) => (
-                    <RecordHistoryLogEntry key={index} index={index} logEntry={logEntry} />
-                ))}
+                {total > 1 && (
+                    <KitButton type="secondary" size="s" onClick={() => setShowAllHistory(!showAllHistory)}>
+                        {showAllHistory
+                            ? t('record_history.hide_history', {total})
+                            : t('record_history.show_history', {total})}
+                    </KitButton>
+                )}
+                {showAllHistory && (
+                    <>
+                        {logs.map((logEntry, index) => (
+                            <RecordHistoryLogEntry key={index} index={index} logEntry={logEntry} />
+                        ))}
+                        <ShowMore hasMore={hasMore} fetchMore={fetchMore} />
+                    </>
+                )}
+                {!showAllHistory && <RecordHistoryLogEntry key={0} index={0} logEntry={logs[0]} />}
             </KitSpace>
         </StyledDivContentWrapper>
     );
