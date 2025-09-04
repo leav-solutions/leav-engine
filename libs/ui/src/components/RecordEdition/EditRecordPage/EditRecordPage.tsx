@@ -6,7 +6,7 @@ import {KitButton, KitDivider, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IValueVersion} from '_ui/types';
-import {RecordIdentityFragment} from '_ui/_gqlTypes';
+import {RecordIdentityFragment, usePurgeRecordMutation} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {possibleSubmitButtons, submitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
@@ -71,10 +71,10 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     const {t} = useSharedTranslation();
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
     const [clickedSubmitButton, setClickedSubmitButton] = useState<submitButtonsName | null>(null);
-    const showCancelConfirm = useCreateCancelConfirm(onClose);
     const formElementId = useRef(uuidv4());
     const [isCreation, setIsCreation] = useState(!record);
     const {createEmptyRecord} = useExecuteCreateEmptyRecordMutation();
+    const [purgeRecordMutation] = usePurgeRecordMutation();
     const [formId, setFormId] = useState<string>(
         isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition')
     );
@@ -98,6 +98,24 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
         setClickedSubmitButton(button);
     };
 
+    const _purgeRecordOnCreationCancel = () =>
+        purgeRecordMutation({
+            errorPolicy: 'ignore',
+            variables: {
+                libraryId: currentRecord?.library?.id,
+                recordId: currentRecord?.id
+            }
+        });
+
+    const _closeAfterConfirm = async () => {
+        if (currentRecord?.id && currentRecord?.library?.id) {
+            _purgeRecordOnCreationCancel();
+        }
+        return onClose();
+    };
+
+    const showCancelConfirm = useCreateCancelConfirm(_closeAfterConfirm);
+
     const displayedSubmitButtons = useGetSubmitButtons(
         submitButtons,
         formElementId.current,
@@ -107,8 +125,12 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     const [antdForm] = useForm();
 
     const _handleClose = () => {
-        if (isCreation && antdForm.isFieldsTouched()) {
-            return showCancelConfirm();
+        if (isCreation) {
+            if (antdForm.isFieldsTouched()) {
+                return showCancelConfirm();
+            } else {
+                _purgeRecordOnCreationCancel();
+            }
         }
 
         return onClose();

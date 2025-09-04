@@ -29,6 +29,7 @@ jest.mock('../EditRecord', () => ({
 
 describe('EditRecordModal', () => {
     let mockUseCreateEmptyRecordMutation = jest.fn();
+    let mockUsePurgeRecordMutation = jest.fn();
 
     beforeEach(() => {
         user = userEvent.setup();
@@ -47,8 +48,21 @@ describe('EditRecordModal', () => {
                 }
             }
         });
+        mockUsePurgeRecordMutation = jest.fn().mockReturnValue({
+            data: {
+                purgeRecord: {
+                    record: {
+                        id: 'new_record_id'
+                    }
+                }
+            }
+        });
         jest.spyOn(gqlTypes, 'useCreateEmptyRecordMutation').mockImplementation(() => [
             mockUseCreateEmptyRecordMutation,
+            {loading: false, called: false, client: null, reset: null, error: null}
+        ]);
+        jest.spyOn(gqlTypes, 'usePurgeRecordMutation').mockImplementation(() => [
+            mockUsePurgeRecordMutation,
             {loading: false, called: false, client: null, reset: null, error: null}
         ]);
     });
@@ -104,6 +118,15 @@ describe('EditRecordModal', () => {
 
             await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
             expect(mockOnClose).toHaveBeenCalledTimes(1);
+        });
+
+        test('Should call purgeRecord on cancel creation', async () => {
+            const mockOnClose = jest.fn();
+            render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={null} />);
+
+            await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
+            expect(mockOnClose).toHaveBeenCalledTimes(1);
+            expect(mockUsePurgeRecordMutation).toHaveBeenCalled();
         });
 
         test('Should call onClose if some fields are touched on confirm', async () => {

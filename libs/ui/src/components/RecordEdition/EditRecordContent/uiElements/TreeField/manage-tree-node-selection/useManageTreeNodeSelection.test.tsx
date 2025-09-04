@@ -205,7 +205,7 @@ describe('useManageTreeNodeSelection', () => {
             mockSelectedNode1.id,
             mockSelectedNode2.id
         ]);
-        expect(mockSetFields).toHaveBeenCalledWith([{name: mockFormAttribute.id, errors: []}]);
+        expect(mockSetFields).toHaveBeenCalledWith([{name: mockFormAttribute.id, errors: [], touched: true}]);
         expect(mockSetBackendValues).toHaveBeenCalledWith([
             {
                 id_value: 'new_value_1',

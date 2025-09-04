@@ -1328,6 +1328,14 @@ export type IndexRecordsMutationVariables = Exact<{
 
 export type IndexRecordsMutation = { indexRecords: boolean };
 
+export type PurgeRecordMutationVariables = Exact<{
+  libraryId: Scalars['ID'];
+  recordId: Scalars['ID'];
+}>;
+
+
+export type PurgeRecordMutation = { purgeRecord: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } };
+
 export type CancelTaskMutationVariables = Exact<{
   taskId: Scalars['ID'];
 }>;
@@ -3966,6 +3974,40 @@ export function useIndexRecordsMutation(baseOptions?: Apollo.MutationHookOptions
 export type IndexRecordsMutationHookResult = ReturnType<typeof useIndexRecordsMutation>;
 export type IndexRecordsMutationResult = Apollo.MutationResult<IndexRecordsMutation>;
 export type IndexRecordsMutationOptions = Apollo.BaseMutationOptions<IndexRecordsMutation, IndexRecordsMutationVariables>;
+export const PurgeRecordDocument = gql`
+    mutation purgeRecord($libraryId: ID!, $recordId: ID!) {
+  purgeRecord(libraryId: $libraryId, recordId: $recordId) {
+    ...RecordIdentity
+  }
+}
+    ${RecordIdentityFragmentDoc}`;
+export type PurgeRecordMutationFn = Apollo.MutationFunction<PurgeRecordMutation, PurgeRecordMutationVariables>;
+
+/**
+ * __usePurgeRecordMutation__
+ *
+ * To run a mutation, you first call `usePurgeRecordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePurgeRecordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [purgeRecordMutation, { data, loading, error }] = usePurgeRecordMutation({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *      recordId: // value for 'recordId'
+ *   },
+ * });
+ */
+export function usePurgeRecordMutation(baseOptions?: Apollo.MutationHookOptions<PurgeRecordMutation, PurgeRecordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<PurgeRecordMutation, PurgeRecordMutationVariables>(PurgeRecordDocument, options);
+      }
+export type PurgeRecordMutationHookResult = ReturnType<typeof usePurgeRecordMutation>;
+export type PurgeRecordMutationResult = Apollo.MutationResult<PurgeRecordMutation>;
+export type PurgeRecordMutationOptions = Apollo.BaseMutationOptions<PurgeRecordMutation, PurgeRecordMutationVariables>;
 export const CancelTaskDocument = gql`
     mutation CANCEL_TASK($taskId: ID!) {
   cancelTask(taskId: $taskId)

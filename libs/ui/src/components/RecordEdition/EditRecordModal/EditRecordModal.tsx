@@ -6,7 +6,7 @@ import {KitButton, KitModal, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IValueVersion} from '_ui/types';
-import {RecordIdentityFragment} from '_ui/_gqlTypes';
+import {RecordIdentityFragment, usePurgeRecordMutation} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
@@ -96,6 +96,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
     const [clickedSubmitButton, setClickedSubmitButton] = useState<submitButtonsName | null>(null);
     const {createEmptyRecord} = useExecuteCreateEmptyRecordMutation();
+    const [purgeRecordMutation] = usePurgeRecordMutation();
 
     const formElementId = useRef(uuidv4());
     const [isCreation, setIsCreation] = useState(!record);
@@ -123,7 +124,23 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
         setClickedSubmitButton(button);
     };
 
-    const showCancelConfirm = useCreateCancelConfirm(onClose);
+    const _purgeRecordOnCreationCancel = () =>
+        purgeRecordMutation({
+            errorPolicy: 'ignore',
+            variables: {
+                libraryId: currentRecord?.library?.id,
+                recordId: currentRecord?.id
+            }
+        });
+
+    const _closeAfterConfirm = async () => {
+        if (currentRecord?.id && currentRecord?.library?.id) {
+            _purgeRecordOnCreationCancel();
+        }
+        return onClose();
+    };
+
+    const showCancelConfirm = useCreateCancelConfirm(_closeAfterConfirm);
 
     const displayedSubmitButtons = useGetSubmitButtons(
         submitButtons,
@@ -149,8 +166,12 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     };
 
     const _handleClose = () => {
-        if (isCreation && antdForm.isFieldsTouched()) {
-            return showCancelConfirm();
+        if (isCreation) {
+            if (antdForm.isFieldsTouched()) {
+                return showCancelConfirm();
+            } else {
+                _purgeRecordOnCreationCancel();
+            }
         }
 
         return onClose();

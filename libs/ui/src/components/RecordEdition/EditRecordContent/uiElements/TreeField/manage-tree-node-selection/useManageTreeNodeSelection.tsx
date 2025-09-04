@@ -88,7 +88,8 @@ export const useManageTreeNodeSelection = ({
             form.setFields([
                 {
                     name: attribute.id,
-                    errors: []
+                    errors: [],
+                    touched: true // necessary for isFieldsTouched to work properly (only for tree fields)
                 }
             ]);
 

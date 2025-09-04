@@ -83,7 +83,7 @@ describe('Records', () => {
             true
         );
         await makeGraphQlCall(`mutation {
-            a1: activateNewRecord(library: "${testLibName}", recordId: "${recordId}") {
+            a1: activateNewRecord(library: "${testLibName}", recordId: "${recordId}", formId: "creation") {
                 record {
                     id
                 }
@@ -116,7 +116,7 @@ describe('Records', () => {
             expect(resCreation.status).toBe(200);
 
             const resActivation = await makeGraphQlCall(`mutation {
-                recordActivated: activateNewRecord(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}") {
+                recordActivated: activateNewRecord(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}", formId: "creation") {
                     record {
                         id
                     }
@@ -139,11 +139,12 @@ describe('Records', () => {
         test('Should activate a new record when all required fields are filled', async () => {
             const resCreation = await makeGraphQlCall(`mutation {
                 recordCreated: createEmptyRecord(library: "${testLibName}") { record {id} },
-            }`);
+                }`);
+            expect(resCreation.status).toBe(200);
             const resCreationLink = await makeGraphQlCall(`mutation {
                 linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record {id} },
             }`);
-            expect(resCreation.status).toBe(200);
+            expect(resCreationLink.status).toBe(200);
 
             await makeGraphQlCall(
                 `mutation {
@@ -166,7 +167,7 @@ describe('Records', () => {
                 true
             );
             const resActivation = await makeGraphQlCall(`mutation {
-                recordActivated: activateNewRecord(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}") {
+                recordActivated: activateNewRecord(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}", formId: "creation") {
                     record {
                         id
                     }
@@ -184,6 +185,35 @@ describe('Records', () => {
                 id: resCreation.data.data.recordCreated.record.id
             });
             expect(resActivation.data.data.recordActivated.valuesErrors).toEqual([]);
+        });
+        test('should purge the new record when cancel creation', async () => {
+            const resCreation = await makeGraphQlCall(`mutation {
+                c1: createEmptyRecord(library: "${testLibName}") { record {id} }
+            }`);
+            expect(resCreation.status).toBe(200);
+
+            const resPurge = await makeGraphQlCall(`mutation {
+                p1: purgeRecord(libraryId: "${testLibName}", recordId: "${resCreation.data.data.c1.record.id}") { id }
+            }`);
+
+            expect(resPurge.status).toBe(200);
+            expect(resPurge.data.errors).toBeUndefined();
+            expect(resPurge.data.data.p1.id).toBe(resCreation.data.data.c1.record.id);
+
+            const res = await makeGraphQlCall(`{
+                records(
+                    library: "${testLibName}",
+                    filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${resPurge.data.data.p1.id}"}],
+                    retrieveInactive: true
+                ) {
+                    list {
+                        id
+                    }
+                }
+            }`);
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.records.list.length).toBe(0);
         });
     });
 
@@ -226,7 +256,7 @@ describe('Records', () => {
             await Promise.all(
                 recordIds.map(async (id, idx) => {
                     const activateRes = await makeGraphQlCall(`mutation {
-                a${idx}: activateNewRecord(library: "${testLibName}", recordId: "${id}") {
+                a${idx}: activateNewRecord(library: "${testLibName}", recordId: "${id}", formId: "creation") {
                     valuesErrors {
                         message
                     }

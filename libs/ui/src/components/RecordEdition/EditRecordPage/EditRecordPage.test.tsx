@@ -40,12 +40,25 @@ const mockUseCreateEmptyRecordMutation = jest.fn().mockReturnValue({
         }
     }
 });
+const mockUsePurgeRecordMutation = jest.fn().mockReturnValue({
+    data: {
+        purgeRecord: {
+            record: {
+                id: 'new_record_id'
+            }
+        }
+    }
+});
 
 describe('EditRecordPage', () => {
     beforeEach(() => {
         user = userEvent.setup();
         jest.spyOn(gqlTypes, 'useCreateEmptyRecordMutation').mockImplementation(() => [
             mockUseCreateEmptyRecordMutation,
+            {loading: false, called: false, client: null, reset: null, error: null}
+        ]);
+        jest.spyOn(gqlTypes, 'usePurgeRecordMutation').mockImplementation(() => [
+            mockUsePurgeRecordMutation,
             {loading: false, called: false, client: null, reset: null, error: null}
         ]);
     });

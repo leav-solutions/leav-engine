@@ -63,6 +63,7 @@ import {IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermiss
 import {DeleteRecordHelper} from './helpers/deleteRecord';
 import {CreateRecordHelper} from './helpers/createRecord';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import winston from 'winston';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -205,6 +206,8 @@ export interface IRecordDomain {
     }): Promise<IRecord[]>;
 
     purgeInactiveRecords(params: {libraryId: string; ctx: IQueryInfos}): Promise<IRecord[]>;
+
+    purgeRecord(params: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<IRecord>;
 }
 
 export interface IRecordDomainDeps {
@@ -230,6 +233,7 @@ export interface IRecordDomainDeps {
     'core.infra.permission': IPermissionRepo;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.cache.cacheService': ICachesService;
+    'core.utils.logger': winston.Winston;
     'core.utils': IUtils;
     translator: i18n;
 }
@@ -257,6 +261,7 @@ export default function ({
     'core.infra.permission': permissionRepo,
     'core.domain.eventsManager': eventsManager,
     'core.infra.cache.cacheService': cacheService,
+    'core.utils.logger': logger,
     'core.utils': utils,
     translator
 }: IRecordDomainDeps): IRecordDomain {
@@ -910,9 +915,9 @@ export default function ({
                     valuesErrors
                 };
             }
-            const recordActivated = await this.activateRecordsBatch({libraryId: library, recordsIds: [recordId], ctx});
+            const recordActivateds = await this.activateRecordsBatch({libraryId: library, recordsIds: [recordId], ctx});
 
-            if (!recordActivated?.length) {
+            if (!recordActivateds?.length) {
                 const valuesErrors: ICreateRecordValueError[] = [
                     {
                         type: Errors.RECORD_ACTIVATION_FAILED,
@@ -933,7 +938,7 @@ export default function ({
             }
 
             return {
-                record: recordActivated[0],
+                record: recordActivateds[0],
                 valuesErrors: []
             };
         },
@@ -1560,6 +1565,35 @@ export default function ({
             }
 
             return purgedRecords;
+        },
+        async purgeRecord({libraryId, recordId, ctx}): Promise<IRecord> {
+            if (!libraryId) {
+                logger.warn(`Trying to purge record ${recordId} from unknown library`);
+                return null;
+            }
+            if (!recordId) {
+                logger.warn(`Trying to purge unknown record from library ${libraryId}`);
+                return null;
+            }
+            const record = await this.find({
+                params: {
+                    library: libraryId,
+                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: recordId}],
+                    retrieveInactive: true
+                },
+                ctx
+            });
+            if (!record.list.length) {
+                logger.warn(
+                    `Trying to purge record ${recordId} from library ${libraryId} but it doesn't exist or is active`
+                );
+                return null;
+            }
+            return this.deleteRecord({
+                library: libraryId,
+                id: recordId,
+                ctx
+            });
         }
     };
 

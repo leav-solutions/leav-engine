@@ -266,6 +266,7 @@ export default function ({
                         activateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!]): [Record!]!
                         deactivateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!]): [Record!]!
                         purgeInactiveRecords(libraryId: String!): [Record!]!
+                        purgeRecord(libraryId: ID!, recordId: ID!): Record!
                     }
 
                     extend type Subscription {
@@ -387,6 +388,9 @@ export default function ({
                         },
                         async purgeInactiveRecords(parent, {libraryId}, ctx): Promise<IRecord[]> {
                             return recordDomain.purgeInactiveRecords({libraryId, ctx});
+                        },
+                        async purgeRecord(parent, {libraryId, recordId}, ctx): Promise<IRecord> {
+                            return recordDomain.purgeRecord({libraryId, recordId, ctx});
                         }
                     },
                     Subscription: {

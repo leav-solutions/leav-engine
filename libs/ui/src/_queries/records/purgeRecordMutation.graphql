@@ -1,0 +1,5 @@
+mutation purgeRecord($libraryId: ID!, $recordId: ID!) {
+    purgeRecord(libraryId: $libraryId, recordId: $recordId) {
+        ...RecordIdentity
+    }
+}
