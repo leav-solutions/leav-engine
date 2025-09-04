@@ -15,7 +15,10 @@ describe('logRepo', () => {
         });
 
         const mockESService: Mockify<IElasticSearchService> = {
-            search: global.__mockPromise([mockLog])
+            search: global.__mockPromise({
+                hits: [mockLog],
+                total: 1
+            })
         };
 
         const mockConfig: Partial<IConfig> = {
@@ -29,7 +32,8 @@ describe('logRepo', () => {
             });
             const logs = await repo.getLogs({}, mockCtx);
 
-            expect(logs).toEqual([mockLog]);
+            expect(logs.logs).toEqual([mockLog]);
+            expect(logs.total).toEqual(1);
             expect(mockESService.search).toHaveBeenCalled();
         });
 
@@ -56,7 +60,7 @@ describe('logRepo', () => {
                 mockCtx
             );
 
-            expect(logs).toEqual([mockLog]);
+            expect(logs.logs).toEqual([mockLog]);
             expect(mockESService.search.mock.calls[0][0].query).toEqual({
                 bool: {
                     must: [

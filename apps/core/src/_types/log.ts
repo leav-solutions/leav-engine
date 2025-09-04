@@ -45,3 +45,8 @@ export interface ILogPagination {
 }
 
 export type Log<EA extends EventAction = EventAction> = LogExternal & IDbPayloadInternal<EA>;
+
+export interface ILogResponse {
+    logs: Log[];
+    total: number;
+}

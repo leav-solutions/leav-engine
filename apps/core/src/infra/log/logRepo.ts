@@ -4,14 +4,14 @@
 import {getLogsIndexName} from '@leav/utils';
 import {IElasticSearchService} from 'infra/elasticSearch/elasticSearchService';
 import {IConfig} from '_types/config';
-import {ILogFilters, ILogPagination, ILogSort, Log} from '_types/log';
+import {ILogFilters, ILogPagination, ILogResponse, ILogSort, Log} from '_types/log';
 import {IQueryInfos} from '_types/queryInfos';
 
 export interface ILogRepo {
     getLogs(
         params: {filters?: ILogFilters; sort?: ILogSort; pagination?: ILogPagination},
         ctx: IQueryInfos
-    ): Promise<Log[]>;
+    ): Promise<ILogResponse>;
 }
 
 interface IDeps {
@@ -100,7 +100,7 @@ export default function ({'core.infra.elasticSearch.service': esService, config}
                 return acc;
             }, []);
 
-            const logs = (await esService.search(
+            const response = (await esService.search<Log>(
                 {
                     index: indexName,
                     limit: pagination?.limit,
@@ -113,9 +113,12 @@ export default function ({'core.infra.elasticSearch.service': esService, config}
                     }
                 },
                 ctx
-            )) as Log[];
+            ));
 
-            return logs;
+            return {
+                logs: response.hits,
+                total: response.total
+            };
         }
     };
 }

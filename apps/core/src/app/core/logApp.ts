@@ -8,7 +8,7 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ILogDomain} from 'domain/log/logDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {ILogFilters, ILogPagination, ILogSort, Log} from '_types/log';
+import {ILogFilters, ILogPagination, ILogResponse, ILogSort, Log} from '_types/log';
 import {IQueryInfos} from '_types/queryInfos';
 import {IAppModule} from '_types/shared';
 import {USERS_LIBRARY} from '../../_types/library';
@@ -134,8 +134,13 @@ export default function ({
                         order: SortOrder!
                     }
 
+                    type Logs {
+                        logs: [Log!]!
+                        total: Int!
+                    }
+
                     extend type Query {
-                        logs(filters: LogFilterInput, sort: LogSortInput, pagination: Pagination): [Log!]
+                        logs(filters: LogFilterInput, sort: LogSortInput, pagination: Pagination): Logs
                     }
                 `,
                 resolvers: {
@@ -144,7 +149,7 @@ export default function ({
                             _,
                             args: {filters: ILogFilters; sort: ILogSort; pagination: ILogPagination},
                             ctx: IQueryInfos
-                        ) => {
+                        ): Promise<ILogResponse> => {
                             const {filters, sort, pagination} = args;
 
                             if (filters?.time?.from) {

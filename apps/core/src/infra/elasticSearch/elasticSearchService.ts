@@ -5,18 +5,22 @@ import {Client, estypes} from '@elastic/elasticsearch';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 
+export interface IElasticsearchServiceSearchResponse<T> {
+    total: number;
+    hits: T[];
+}
+
+interface IElasticsearchServiceSearchParams {
+    index: string;
+    offset?: number;
+    limit?: number;
+    sort?: {field: string; order: 'asc' | 'desc'};
+    query?: estypes.QueryDslQueryContainer;
+}
+
 export interface IElasticSearchService {
     client: Client;
-    search: (
-        params: {
-            index: string;
-            offset?: number;
-            limit?: number;
-            sort?: {field: string; order: 'asc' | 'desc'};
-            query?: estypes.QueryDslQueryContainer;
-        },
-        ctx: IQueryInfos
-    ) => Promise<Array<Record<string, any>>>;
+    search: <T>(params: IElasticsearchServiceSearchParams, ctx: IQueryInfos) => Promise<IElasticsearchServiceSearchResponse<T>>;
 }
 
 interface IDeps {
@@ -31,12 +35,16 @@ export default function ({config}: IDeps): IElasticSearchService {
 
     return {
         client,
-        async search({index, offset, limit, sort, query}, ctx) {
-            const response = await client.search({
+        async search<T>(
+            params: IElasticsearchServiceSearchParams,
+            ctx: IQueryInfos
+        ): Promise<IElasticsearchServiceSearchResponse<T>> {
+            const {index, offset, limit, sort, query} = params;
+            const response = await client.search<T>({
                 index,
                 from: offset,
                 size: limit,
-                sort: {[sort.field]: sort.order},
+                sort: sort ? {[sort.field]: sort.order} : undefined,
                 body: {
                     _source: true,
                     query: query ?? {
@@ -45,7 +53,10 @@ export default function ({config}: IDeps): IElasticSearchService {
                 }
             });
 
-            return response.hits.hits.map(h => h._source);
+            return {
+                total: typeof response.hits.total === 'object' ? response.hits.total.value : response.hits.total,
+                hits: response.hits.hits.map(h => h._source)
+            };
         }
     };
 }
