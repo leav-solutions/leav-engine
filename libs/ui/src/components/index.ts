@@ -34,6 +34,7 @@ export * from './RecordPreviewWithModal';
 export * from './SearchModal';
 export * from './SelectTreeNode';
 export * from './SelectTreeNodeModalOld';
+export * from './ShowMore';
 export * from './SimpleErrorBoundary';
 export * from './SubmitStateNotifier';
 export * from './TreePicker';
