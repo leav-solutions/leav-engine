@@ -1,4 +1,5 @@
 # LEAV Engine - Automate scan
+
 ## Error codes
 - Common error:
   - `0`: User stop the app

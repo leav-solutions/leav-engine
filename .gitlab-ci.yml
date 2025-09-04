@@ -422,7 +422,39 @@ integration-test-core:
     - *no_duplicate_rule
     - <<: *main_develop_or_mr_rule
       changes:
+        - *new_lib_installed_changes
         - apps/core/**/*
+        - libs/app-root-path/**/*
+        - libs/config-manager/**/*
+        - libs/message-broker/**/*
+        - libs/utils/**/*
+
+integration-test-automate-scan:
+  stage: test
+  services:
+    - *e2e_service_rabbitmq
+    - *e2e_service_redis
+  variables:
+    APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/automate-scan"
+    AMQP_HOST: "rabbitmq"
+    AMQP_PORT: "5672"
+    AMQP_USERNAME: "guest"
+    AMQP_PWD: "guest"
+    REDIS_HOST: "redis"
+    REDIS_PORT: "6379"
+  script:
+    - yarn workspaces focus automate-scan
+    - yarn workspace automate-scan run test:integration
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_e2e_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *main_develop_or_mr_rule
+      changes:
+        - *new_lib_installed_changes
+        - apps/automate-scan/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
         - libs/message-broker/**/*
