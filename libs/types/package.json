@@ -1,6 +1,6 @@
 {
   "name": "@aristid/leav-types",
-  "version": "0.0.7",
+  "version": "1.0.0",
   "description": "Shared Leav types",
   "scripts": {
     "tscheck": "",
@@ -14,7 +14,7 @@
   "license": "LGPL3",
   "repository": "https://github.com/leav-solutions/leav-engine",
   "dependencies": {
-    "@leav/utils": "0.0.3",
+    "@leav/utils": "workspace:libs/utils",
     "@types/amqplib": "^0",
     "@types/express": "5.0.0",
     "@types/jest": "29.5.14",

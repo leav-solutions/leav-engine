@@ -1,6 +1,6 @@
 {
   "name": "leav-monorepo",
-  "version": "1.0.0-beta26",
+  "version": "1.0.0",
   "private": true,
   "workspaces": {
     "packages": [
