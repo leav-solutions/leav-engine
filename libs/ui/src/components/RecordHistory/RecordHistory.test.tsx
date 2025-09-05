@@ -15,6 +15,10 @@ jest.mock('./RecordHistoryLogEntry', () => ({
     RecordHistoryLogEntry: () => <div data-testid="log-entry">log</div>
 }));
 
+jest.mock('./RecordHistoryGoUpButton', () => ({
+    RecordHistoryGoUpButton: ({children}) => <div>{children}</div>
+}));
+
 jest.mock('../ShowMore', () => ({
     ShowMore: () => <div data-testid="show-more" />
 }));

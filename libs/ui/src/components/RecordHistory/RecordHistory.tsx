@@ -10,6 +10,7 @@ import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import {ShowMore} from '../ShowMore';
 import {useFetchRecordHistory} from './hooks/useFetchRecordHistory';
+import {RecordHistoryGoUpButton} from './RecordHistoryGoUpButton';
 import {RecordHistoryLogEntry} from './RecordHistoryLogEntry';
 
 interface IRecordHistoryProps {
@@ -19,6 +20,12 @@ interface IRecordHistoryProps {
 
 const StyledDivContentWrapper = styled.div`
     margin-top: calc(var(--general-spacing-s) * 1px);
+    flex: 1 1 0;
+    overflow-y: auto;
+`;
+
+const StyledKitButtonShow = styled(KitButton)`
+    margin: 4px;
 `;
 
 export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, attributeId}) => {
@@ -50,24 +57,30 @@ export const RecordHistory: FunctionComponent<IRecordHistoryProps> = ({record, a
 
     return (
         <StyledDivContentWrapper>
-            <KitSpace size="s" direction="vertical">
-                {total > 1 && (
-                    <KitButton type="secondary" size="s" onClick={() => setShowAllHistory(!showAllHistory)}>
-                        {showAllHistory
-                            ? t('record_history.hide_history', {total})
-                            : t('record_history.show_history', {total})}
-                    </KitButton>
-                )}
-                {showAllHistory && (
-                    <>
-                        {logs.map((logEntry, index) => (
-                            <RecordHistoryLogEntry key={index} index={index} logEntry={logEntry} />
-                        ))}
-                        <ShowMore hasMore={hasMore} fetchMore={fetchMore} />
-                    </>
-                )}
-                {!showAllHistory && <RecordHistoryLogEntry key={0} index={0} logEntry={logs[0]} />}
-            </KitSpace>
+            <RecordHistoryGoUpButton>
+                <KitSpace size="s" direction="vertical">
+                    {total > 1 && (
+                        <StyledKitButtonShow
+                            type="secondary"
+                            size="s"
+                            onClick={() => setShowAllHistory(!showAllHistory)}
+                        >
+                            {showAllHistory
+                                ? t('record_history.hide_history', {total})
+                                : t('record_history.show_history', {total})}
+                        </StyledKitButtonShow>
+                    )}
+                    {showAllHistory && (
+                        <>
+                            {logs.map((logEntry, index) => (
+                                <RecordHistoryLogEntry key={index} index={index} logEntry={logEntry} />
+                            ))}
+                            <ShowMore hasMore={hasMore} fetchMore={fetchMore} />
+                        </>
+                    )}
+                    {!showAllHistory && <RecordHistoryLogEntry key={0} index={0} logEntry={logs[0]} />}
+                </KitSpace>
+            </RecordHistoryGoUpButton>
         </StyledDivContentWrapper>
     );
 };

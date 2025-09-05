@@ -14,6 +14,12 @@ const InformationsWrapper = styled.div`
     margin-top: calc(var(--general-spacing-s) * 1px);
 `;
 
+const StyledDivContentWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+`;
+
 interface IValuesSummaryProps {
     record: IRecordIdentityWhoAmI | null;
     attributeId: string;
@@ -67,88 +73,92 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
     const stripedCalculatedValue = stringifyValue(calculatedValue);
 
     return (
-        <KitTabs
-            items={[
-                {
-                    key: 'version_values',
-                    label: t('record_summary.values_version'),
-                    tabContent: (
-                        <InformationsWrapper>
-                            <KitTree
-                                defaultExpandAll
-                                selectedKeys={
-                                    calculatedValue && globalValues.length === 0
-                                        ? [calculatedValueKey]
-                                        : [globalValueKey]
-                                }
-                                treeData={[
-                                    {
-                                        key: calculatedValueKey,
-                                        title: (
-                                            <div
-                                                style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'space-between'
-                                                }}
-                                            >
-                                                <span>
-                                                    <FaSquareRootAlt /> {t('record_summary.calculated_value')}
-                                                </span>
-                                                <KitBadge
-                                                    count={stripedCalculatedValue ? 1 : undefined}
-                                                    color="primary"
-                                                />
-                                            </div>
-                                        ),
-                                        children: [
-                                            {
-                                                key: `${calculatedValueKey}-0`,
-                                                title: stripedCalculatedValue ?? <i>{t('record_summary.no_value')}</i>
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        key: globalValueKey,
-                                        title: (
-                                            <div
-                                                style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'space-between'
-                                                }}
-                                            >
-                                                <span>
-                                                    <FaLayerGroup /> {t('record_summary.global')}
-                                                </span>
-                                                <KitBadge count={stripedGlobalValues.length} color="primary" />
-                                            </div>
-                                        ),
-                                        children:
-                                            stripedGlobalValues.length > 0
-                                                ? stripedGlobalValues.map((value, index) => ({
-                                                      key: `${globalValueKey}-${index}`,
-                                                      title: value
-                                                  }))
-                                                : [
-                                                      {
-                                                          key: `${globalValueKey}-${0}`,
-                                                          title: <i>{t('record_summary.no_value')}</i>
-                                                      }
-                                                  ]
+        <StyledDivContentWrapper>
+            <KitTabs
+                items={[
+                    {
+                        key: 'version_values',
+                        label: t('record_summary.values_version'),
+                        tabContent: (
+                            <InformationsWrapper>
+                                <KitTree
+                                    defaultExpandAll
+                                    selectedKeys={
+                                        calculatedValue && globalValues.length === 0
+                                            ? [calculatedValueKey]
+                                            : [globalValueKey]
                                     }
-                                ]}
-                            />
-                        </InformationsWrapper>
-                    )
-                },
-                {
-                    key: 'history',
-                    label: t('record_summary.history'),
-                    tabContent: <RecordHistory record={record} attributeId={attributeId} />
-                }
-            ]}
-        />
+                                    treeData={[
+                                        {
+                                            key: calculatedValueKey,
+                                            title: (
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between'
+                                                    }}
+                                                >
+                                                    <span>
+                                                        <FaSquareRootAlt /> {t('record_summary.calculated_value')}
+                                                    </span>
+                                                    <KitBadge
+                                                        count={stripedCalculatedValue ? 1 : undefined}
+                                                        color="primary"
+                                                    />
+                                                </div>
+                                            ),
+                                            children: [
+                                                {
+                                                    key: `${calculatedValueKey}-0`,
+                                                    title: stripedCalculatedValue ?? (
+                                                        <i>{t('record_summary.no_value')}</i>
+                                                    )
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            key: globalValueKey,
+                                            title: (
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between'
+                                                    }}
+                                                >
+                                                    <span>
+                                                        <FaLayerGroup /> {t('record_summary.global')}
+                                                    </span>
+                                                    <KitBadge count={stripedGlobalValues.length} color="primary" />
+                                                </div>
+                                            ),
+                                            children:
+                                                stripedGlobalValues.length > 0
+                                                    ? stripedGlobalValues.map((value, index) => ({
+                                                          key: `${globalValueKey}-${index}`,
+                                                          title: value
+                                                      }))
+                                                    : [
+                                                          {
+                                                              key: `${globalValueKey}-${0}`,
+                                                              title: <i>{t('record_summary.no_value')}</i>
+                                                          }
+                                                      ]
+                                        }
+                                    ]}
+                                />
+                            </InformationsWrapper>
+                        )
+                    },
+                    {
+                        key: 'history',
+                        label: t('record_summary.history'),
+                        tabContent: <RecordHistory record={record} attributeId={attributeId} />
+                    }
+                ]}
+            />
+        </StyledDivContentWrapper>
     );
 };
 

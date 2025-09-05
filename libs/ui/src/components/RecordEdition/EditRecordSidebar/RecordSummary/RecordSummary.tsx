@@ -10,10 +10,17 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faRotateRight} from '@fortawesome/free-solid-svg-icons';
 import {RecordHistory} from '../../../RecordHistory/RecordHistory';
+import styled from 'styled-components';
 
 interface IRecordSummaryProps {
     record: IRecordIdentityWhoAmI | null;
 }
+
+const StyledDivContentWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+`;
 
 export const RecordSummary: FunctionComponent<IRecordSummaryProps> = ({record}) => {
     const {t} = useSharedTranslation();
@@ -60,25 +67,27 @@ export const RecordSummary: FunctionComponent<IRecordSummaryProps> = ({record}) 
     const recordData = data?.[record?.id];
 
     return (
-        <KitTabs
-            items={[
-                {
-                    key: 'informations',
-                    label: t('record_summary.informations'),
-                    tabContent: <RecordInformations record={record} recordData={recordData} />
-                },
-                {
-                    key: 'chat',
-                    label: t('record_summary.chat'),
-                    disabled: true
-                },
-                {
-                    key: 'history',
-                    label: t('record_summary.history'),
-                    tabContent: <RecordHistory record={record} />
-                }
-            ]}
-        />
+        <StyledDivContentWrapper>
+            <KitTabs
+                items={[
+                    {
+                        key: 'informations',
+                        label: t('record_summary.informations'),
+                        tabContent: <RecordInformations record={record} recordData={recordData} />
+                    },
+                    {
+                        key: 'chat',
+                        label: t('record_summary.chat'),
+                        disabled: true
+                    },
+                    {
+                        key: 'history',
+                        label: t('record_summary.history'),
+                        tabContent: <RecordHistory record={record} />
+                    }
+                ]}
+            />
+        </StyledDivContentWrapper>
     );
 };
 

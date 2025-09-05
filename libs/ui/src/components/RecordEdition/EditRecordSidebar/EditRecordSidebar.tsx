@@ -8,7 +8,7 @@ import RecordSummary from './RecordSummary';
 import ValuesVersions from './ValuesVersions';
 import {createPortal} from 'react-dom';
 import {EditRecordSidebarContentTypeMap, IEditRecordReducerState} from '../editRecordReducer/editRecordReducer';
-import {KitSidePanel, KitSpace} from 'aristid-ds';
+import {KitSidePanel} from 'aristid-ds';
 import {KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EDIT_RECORD_SIDEBAR_ID} from '_ui/constants';
@@ -24,6 +24,13 @@ interface IEditRecordSidebarProps {
     sidebarContainer?: HTMLElement;
 }
 
+const StyledDivContentWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-s) * 1px);
+    height: 100%;
+`;
+
 const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubmit: MetadataSubmitValueFunc) => {
     // TODO: ValuesVersions should be removed or refactored later
     switch (state.sidebarContent) {
@@ -31,7 +38,7 @@ const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubm
             return null;
         case 'valueDetails':
             return (
-                <KitSpace direction="vertical" size="s" style={{width: '100%'}}>
+                <StyledDivContentWrapper>
                     <AttributeSummary attribute={state.activeAttribute.attribute} />
                     <ValuesSummary
                         record={state.record}
@@ -39,7 +46,7 @@ const _getRecordSidebarContent = (state: IEditRecordReducerState, onMetadataSubm
                         globalValues={state.activeAttribute.globalValues}
                         calculatedValue={state.activeAttribute.calculatedValue}
                     />
-                </KitSpace>
+                </StyledDivContentWrapper>
             );
         case 'valuesVersions':
             return <ValuesVersions />;
