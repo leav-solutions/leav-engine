@@ -51,7 +51,7 @@ export const useSidePanelForm = () => {
                           initialOpen
                           floating
                           closable
-                          size="m"
+                          size="l"
                           onClose={() => closeSidePanelForm(editRecordPageInSidePanelProps.onClose)}
                           closeOnEsc
                       >
