@@ -226,7 +226,13 @@ export interface IEntrypointTree {
 export interface IEntrypointLibrary {
     type: 'library';
     libraryId: string;
+    /**
+     * Used to display a list of values instead of all library records when adding a link
+     */
     valuesList?: string[];
+    /**
+     * Used to allow free entry when adding a link with values list
+     */
     allowFreeEntry?: boolean;
 }
 
@@ -271,7 +277,11 @@ export type ValidFieldFilterThrough = Override<
     subCondition?: ViewDetailsFilterFragment['condition'];
 };
 
-export type validFilter = ValidFieldFilter | ValidFieldFilterThrough | ValidFieldFilterStandardValuesList | ValidFieldFilterLinkValuesList;
+export type validFilter =
+    | ValidFieldFilter
+    | ValidFieldFilterThrough
+    | ValidFieldFilterStandardValuesList
+    | ValidFieldFilterLinkValuesList;
 
 export type Entrypoint = IEntrypointTree | IEntrypointLibrary | IEntrypointLink;
 

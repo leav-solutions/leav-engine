@@ -988,43 +988,6 @@ describe('Explorer', () => {
             expect(screen.getByRole('textbox', {name: /search/})).toBeInTheDocument();
         });
 
-        test('should display the primary actions button', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>
-            );
-            expect(screen.getByRole('button', {name: 'explorer.create-one'})).toBeInTheDocument();
-        });
-
-        test('should not display the primary actions button', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} hidePrimaryActions />
-                </Explorer.EditSettingsContextProvider>
-            );
-            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
-        });
-
-        test('showCreateOnNoResultOnly: should not display the primary actions button if not empty', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} showCreateOnNoResultOnly />
-                </Explorer.EditSettingsContextProvider>
-            );
-            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
-        });
-
-        test('showCreateOnNoResultOnly: should display the primary actions button if empty', () => {
-            spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} showCreateOnNoResultOnly />
-                </Explorer.EditSettingsContextProvider>
-            );
-            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).toBeInTheDocument();
-        });
-
         test('should display the table headers', () => {
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1294,6 +1257,7 @@ describe('Explorer', () => {
             })
         );
     });
+
     test('Should be able to activate a record with default actions', async () => {
         spyUseExplorerLibraryDataQuery.mockReturnValue({
             ...mockExplorerLibraryDataQueryResult,
@@ -1523,6 +1487,75 @@ describe('Explorer', () => {
     });
 
     describe('Primary Action', () => {
+        test('should display the primary actions button', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} />
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(screen.getByRole('button', {name: 'explorer.create-one'})).toBeInTheDocument();
+        });
+
+        test('should not display the primary actions button', () => {
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} hidePrimaryActions />
+                </Explorer.EditSettingsContextProvider>
+            );
+            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+        });
+
+        describe('showCreateOnNoResultOnly property', () => {
+            test('should not display the primary actions button if library data is not empty', () => {
+                render(
+                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                        <Explorer entrypoint={libraryEntrypoint} showCreateOnNoResultOnly />
+                    </Explorer.EditSettingsContextProvider>
+                );
+                expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+            });
+
+            test('should not display the primary actions button if library data is empty and entrypoint is not a library', () => {
+                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+                render(
+                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                        <Explorer entrypoint={linkEntrypoint} showCreateOnNoResultOnly />
+                    </Explorer.EditSettingsContextProvider>
+                );
+                expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+            });
+
+            test('should not display the primary actions button if library data is empty and entrypoint has allowFreeEntry set to false', () => {
+                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+                render(
+                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                        <Explorer entrypoint={{...libraryEntrypoint, allowFreeEntry: false}} showCreateOnNoResultOnly />
+                    </Explorer.EditSettingsContextProvider>
+                );
+                expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+            });
+
+            test('should not display the primary actions button if library data is empty and hidePrimaryActions is set to true', () => {
+                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+                render(
+                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                        <Explorer entrypoint={libraryEntrypoint} showCreateOnNoResultOnly hidePrimaryActions />
+                    </Explorer.EditSettingsContextProvider>
+                );
+                expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+            });
+
+            test('should display the primary actions button if library data is empty and entrypoint is a library and allowFreeEntry is set to true', () => {
+                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+                render(
+                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                        <Explorer entrypoint={{...libraryEntrypoint, allowFreeEntry: true}} showCreateOnNoResultOnly />
+                    </Explorer.EditSettingsContextProvider>
+                );
+                expect(screen.queryByRole('button', {name: 'explorer.create-one'})).toBeInTheDocument();
+            });
+        });
+
         test('Should be able to create a new file when library has files behavior', async () => {
             jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
                 () => mockFilesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
@@ -1537,6 +1570,7 @@ describe('Explorer', () => {
 
             expect(screen.getByText(UploadFilesMock)).toBeVisible();
         });
+
         test('Should be able to create a new directory when library has directories behavior', async () => {
             jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
                 () => mockDirectoriesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult
@@ -1551,6 +1585,7 @@ describe('Explorer', () => {
 
             expect(screen.getByText(CreateDirectoryMock)).toBeVisible();
         });
+
         test('Should be able to create a new record when library has standard behavior', async () => {
             const onCreate = jest.fn();
             render(
