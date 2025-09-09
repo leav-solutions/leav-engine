@@ -150,8 +150,9 @@
         "validation_regex": "Règle de Validation",
         "reverse_link": "Lien inverse",
         "linked_attribute": "Attribut lié",
+        "multi_tree_display_option": "Option d’affichage des valeurs d’arbre",
         "multi_link_display_option": "Option d’affichage des valeurs liées multiples",
-        "multi_link_display_options": {
+        "multi_display_options": {
             "avatar": "Avatar",
             "tag": "Tag",
             "badge_qty": "Badge numérique"

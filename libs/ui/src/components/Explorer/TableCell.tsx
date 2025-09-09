@@ -10,7 +10,7 @@ import {
     PropertyValueLinkValueFragment,
     PropertyValueTreeValueFragment,
     PropertyValueValueFragment,
-    MultiLinkDisplayOption
+    MultiDisplayOption
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FaArrowRight, FaCalendar, FaListAlt} from 'react-icons/fa';
@@ -45,6 +45,10 @@ const isTreeValue = (
     v: PropertyValueFragment,
     attribute: AttributePropertiesFragment
 ): v is PropertyValueTreeValueFragment => [AttributeType.tree].includes(attribute.type);
+const isTreeValues = (
+    values: PropertyValueFragment[],
+    attribute: AttributePropertiesFragment
+): values is PropertyValueTreeValueFragment[] => values.every(value => isTreeValue(value, attribute));
 
 const isDateRangeValue = (v: PropertyValueValueFragment['valuePayload']): v is {from: string; to: string} =>
     'from' in v && 'to' in v;
@@ -147,7 +151,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
             return <TableTagGroup tags={tags} />;
         } else if (isLinkValues(values, attributeProperties)) {
             switch (attributeProperties.multi_link_display_option) {
-                case MultiLinkDisplayOption.tag:
+                case MultiDisplayOption.tag:
                     return (
                         <TableTagGroup
                             tags={values.map(value => ({
@@ -157,10 +161,10 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         />
                     );
 
-                case MultiLinkDisplayOption.badge_qty:
+                case MultiDisplayOption.badge_qty:
                     return <KitBadge count={values.length} color="primary" />;
 
-                case MultiLinkDisplayOption.avatar:
+                case MultiDisplayOption.avatar:
                 default:
                     return (
                         <KitAvatar.Group max={{count: 5}}>
@@ -182,9 +186,41 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         </KitAvatar.Group>
                     );
             }
-        } else {
-            // TODO: handle multiple tree values
-            return null;
+        } else if (isTreeValues(values, attributeProperties)) {
+            switch (attributeProperties.multi_tree_display_option) {
+                case MultiDisplayOption.tag:
+                    return (
+                        <TableTagGroup
+                            tags={values.map(value => ({
+                                type: 'primary',
+                                idCardProps: {description: value.treePayload?.record.whoAmI.label ?? undefined}
+                            }))}
+                        />
+                    );
+                case MultiDisplayOption.badge_qty:
+                    return <KitBadge count={values.length} color="primary" />;
+                case MultiDisplayOption.avatar:
+                default:
+                    return (
+                        <KitAvatar.Group max={{count: 5}}>
+                            {values.map((value, index) => {
+                                if (!isTreeValue(value, attributeProperties)) {
+                                    return null;
+                                }
+
+                                return (
+                                    <KitAvatar
+                                        key={index}
+                                        label={String(value.treePayload?.record.whoAmI.label)}
+                                        src={value.treePayload?.record.whoAmI.preview?.small}
+                                        color="primary"
+                                        secondaryColorInvert
+                                    />
+                                );
+                            })}
+                        </KitAvatar.Group>
+                    );
+            }
         }
     } else {
         const value = _getFirstValue(values[0], attributeProperties); // Not multiple_values attribute should not have more than one value
@@ -252,12 +288,14 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
         }
 
         if (isTreeValue(value, attributeProperties)) {
-            content = value.treePayload?.record.id ?? '';
+            content = value.treePayload?.record.whoAmI.label ? (
+                <IdCard key={attributeProperties.id} item={value.treePayload.record.whoAmI} />
+            ) : null;
         }
 
         if (isLinkValue(value, attributeProperties)) {
             content = value.linkPayload?.whoAmI ? (
-                <IdCard key={attributeProperties.id} item={value.linkPayload?.whoAmI} />
+                <IdCard key={attributeProperties.id} item={value.linkPayload.whoAmI} />
             ) : null;
         }
 

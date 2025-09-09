@@ -235,7 +235,8 @@ export type Attribute = {
   label?: Maybe<Scalars['SystemTranslation']>;
   libraries?: Maybe<Array<Library>>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
-  multi_link_display_option?: Maybe<MultiLinkDisplayOption>;
+  multi_link_display_option?: Maybe<MultiDisplayOption>;
+  multi_tree_display_option?: Maybe<MultiDisplayOption>;
   multiple_values: Scalars['Boolean'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;
@@ -286,7 +287,8 @@ export type AttributeInput = {
   linked_library?: InputMaybe<Scalars['String']>;
   linked_tree?: InputMaybe<Scalars['String']>;
   metadata_fields?: InputMaybe<Array<Scalars['String']>>;
-  multi_link_display_option?: InputMaybe<MultiLinkDisplayOption>;
+  multi_link_display_option?: InputMaybe<MultiDisplayOption>;
+  multi_tree_display_option?: InputMaybe<MultiDisplayOption>;
   multiple_values?: InputMaybe<Scalars['Boolean']>;
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
   readonly?: InputMaybe<Scalars['Boolean']>;
@@ -692,7 +694,8 @@ export type LinkAttribute = Attribute & {
   libraries?: Maybe<Array<Library>>;
   linked_library?: Maybe<Library>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
-  multi_link_display_option?: Maybe<MultiLinkDisplayOption>;
+  multi_link_display_option?: Maybe<MultiDisplayOption>;
+  multi_tree_display_option?: Maybe<MultiDisplayOption>;
   multiple_values: Scalars['Boolean'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;
@@ -852,7 +855,7 @@ export type LogTopicRecordFilterInput = {
   libraryId?: InputMaybe<Scalars['String']>;
 };
 
-export enum MultiLinkDisplayOption {
+export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
   tag = 'tag'
@@ -1746,7 +1749,8 @@ export type StandardAttribute = Attribute & {
   label?: Maybe<Scalars['SystemTranslation']>;
   libraries?: Maybe<Array<Library>>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
-  multi_link_display_option?: Maybe<MultiLinkDisplayOption>;
+  multi_link_display_option?: Maybe<MultiDisplayOption>;
+  multi_tree_display_option?: Maybe<MultiDisplayOption>;
   multiple_values: Scalars['Boolean'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;
@@ -1922,7 +1926,8 @@ export type TreeAttribute = Attribute & {
   libraries?: Maybe<Array<Library>>;
   linked_tree?: Maybe<Tree>;
   metadata_fields?: Maybe<Array<StandardAttribute>>;
-  multi_link_display_option?: Maybe<MultiLinkDisplayOption>;
+  multi_link_display_option?: Maybe<MultiDisplayOption>;
+  multi_tree_display_option?: Maybe<MultiDisplayOption>;
   multiple_values: Scalars['Boolean'];
   output_types: ActionListIoTypes;
   permissions: AttributePermissions;

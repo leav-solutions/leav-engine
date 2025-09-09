@@ -81,7 +81,8 @@ function InfosTab({attribute, onPostSave, forcedType, redirectAfterCreate = true
                     mode: dataToSave?.versions_conf?.mode,
                     profile: dataToSave?.versions_conf?.profile
                 },
-                multi_link_display_option: dataToSave.multi_link_display_option
+                multi_link_display_option: dataToSave.multi_link_display_option,
+                multi_tree_display_option: dataToSave.multi_tree_display_option
             }
         };
 

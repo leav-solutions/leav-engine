@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode, MultiLinkDisplayOption} from './globalTypes';
+import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode, MultiDisplayOption} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_ATTRIBUTE_BY_ID
@@ -76,7 +76,8 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute {
     description: SystemTranslation | null;
     multiple_values: boolean;
     settings: JSONObject | null;
-    multi_link_display_option: MultiLinkDisplayOption | null;
+    multi_link_display_option: MultiDisplayOption | null;
+    multi_tree_display_option: MultiDisplayOption | null;
     metadata_fields: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissions_conf | null;
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf | null;
@@ -153,7 +154,8 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute {
     description: SystemTranslation | null;
     multiple_values: boolean;
     settings: JSONObject | null;
-    multi_link_display_option: MultiLinkDisplayOption | null;
+    multi_link_display_option: MultiDisplayOption | null;
+    multi_tree_display_option: MultiDisplayOption | null;
     metadata_fields: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_permissions_conf | null;
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_versions_conf | null;
@@ -230,7 +232,8 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute {
     description: SystemTranslation | null;
     multiple_values: boolean;
     settings: JSONObject | null;
-    multi_link_display_option: MultiLinkDisplayOption | null;
+    multi_link_display_option: MultiDisplayOption | null;
+    multi_tree_display_option: MultiDisplayOption | null;
     metadata_fields: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf | null;
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf | null;

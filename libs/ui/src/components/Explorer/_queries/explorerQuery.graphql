@@ -24,6 +24,7 @@ fragment AttributeProperties on Attribute {
     format
     multiple_values
     multi_link_display_option
+    multi_tree_display_option
 }
 
 query ExplorerLibraryData(

@@ -246,6 +246,8 @@ describe('InfosForm', () => {
             userEvent.click(within(librariesWrapper).getByText('Categories'));
         });
 
-        expect(saveLibCalled).toBe(true);
+        await waitFor(() => {
+            expect(saveLibCalled).toBe(true);
+        });
     });
 });

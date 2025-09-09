@@ -22,7 +22,7 @@ import {
     AttributeFormat,
     AttributeType,
     ValueVersionMode,
-    MultiLinkDisplayOption
+    MultiDisplayOption
 } from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
@@ -69,7 +69,8 @@ const defaultAttributeData: AttributeInfosFormValues = {
         profile: null
     },
     libraries: [],
-    multi_link_display_option: MultiLinkDisplayOption.avatar
+    multi_link_display_option: MultiDisplayOption.avatar,
+    multi_tree_display_option: MultiDisplayOption.avatar
 };
 
 const FormWrapper = styled(Form)`
@@ -214,9 +215,11 @@ function InfosForm({
         );
         const isVersionable = !!values.versions_conf && values.versions_conf.versionable;
         const isLinkAttribute = [AttributeType.advanced_link, AttributeType.simple_link].includes(values.type);
+        const isTreeAttribute = AttributeType.tree === values.type;
         const isStandardAttribute = [AttributeType.advanced, AttributeType.simple].includes(values.type);
         const isTextAttribute = [AttributeFormat.text, AttributeFormat.rich_text].includes(values.format);
         const isMultiValuesLinkAttribute = AttributeType.advanced_link === values.type && !!values.multiple_values;
+        const isMultiValuesTreeAttribute = isTreeAttribute && !!values.multiple_values;
 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<GET_ATTRIBUTES_attributes_list>(
@@ -420,7 +423,7 @@ function InfosForm({
                         />
                     </FormFieldWrapper>
                 )}
-                {values.type === AttributeType.tree && (
+                {isTreeAttribute && (
                     <FormFieldWrapper error={_getErrorByField('versions_conf')}>
                         <TreesSelector
                             fluid
@@ -452,6 +455,22 @@ function InfosForm({
                         />
                     </FormFieldWrapper>
                 )}
+                {isMultiValuesTreeAttribute && (
+                    <FormFieldWrapper error={_getErrorByField('multi_tree_display_option')}>
+                        <Form.Select
+                            label={t('attributes.multi_tree_display_option')}
+                            disabled={readonly}
+                            width="4"
+                            name="multi_tree_display_option"
+                            onChange={_handleChangeWithSubmit}
+                            options={Object.keys(MultiDisplayOption).map(format => ({
+                                text: t('attributes.multi_display_options.' + format),
+                                value: format
+                            }))}
+                            value={values.multi_tree_display_option ?? ''}
+                        />
+                    </FormFieldWrapper>
+                )}
                 {isMultiValuesLinkAttribute && (
                     <FormFieldWrapper error={_getErrorByField('multi_link_display_option')}>
                         <Form.Select
@@ -460,8 +479,8 @@ function InfosForm({
                             width="4"
                             name="multi_link_display_option"
                             onChange={_handleChangeWithSubmit}
-                            options={Object.keys(MultiLinkDisplayOption).map(format => ({
-                                text: t('attributes.multi_link_display_options.' + format),
+                            options={Object.keys(MultiDisplayOption).map(format => ({
+                                text: t('attributes.multi_display_options.' + format),
                                 value: format
                             }))}
                             value={values.multi_link_display_option ?? ''}

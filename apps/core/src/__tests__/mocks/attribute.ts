@@ -5,7 +5,7 @@ import {ActionsListEvents} from '../../_types/actionsList';
 import {
     AttributeFormats,
     AttributeTypes,
-    MultiLinkDisplayOption,
+    MultiDisplayOption,
     IAttribute,
     ValueVersionMode
 } from '../../_types/attribute';
@@ -28,7 +28,8 @@ const base: IAttribute = {
     permissions_conf: null,
     versions_conf: {versionable: false},
     required: false,
-    multi_link_display_option: MultiLinkDisplayOption.AVATAR
+    multi_link_display_option: MultiDisplayOption.AVATAR,
+    multi_tree_display_option: MultiDisplayOption.AVATAR
 };
 
 export const mockAttrSimple: IAttribute = {...base, id: 'simple_attribute'};

@@ -14,6 +14,7 @@ export const attributeDetailsFragment = gql`
         description
         multiple_values
         multi_link_display_option
+        multi_tree_display_option
         metadata_fields {
             id
             label

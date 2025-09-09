@@ -7,97 +7,239 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {
     AttributePropertiesFragment,
     AttributeType,
-    MultiLinkDisplayOption,
-    PropertyValueLinkValueFragment
+    MultiDisplayOption,
+    PropertyValueLinkValueFragment,
+    PropertyValueTreeValueFragment
 } from '_ui/_gqlTypes';
 import {TableCell} from './TableCell';
 
 global.ResizeObserver = ResizeObserver;
 
 describe('TableCell component', () => {
-    describe('multiple link value', () => {
-        const linkValues: PropertyValueLinkValueFragment[] = [
-            {
-                linkPayload: {
-                    id: 'multivalRecord1',
-                    whoAmI: {...mockRecord, preview: null, label: 'Record A'}
+    describe('Attribute with single value', () => {
+        describe('For link attribute', () => {
+            const linkValue: PropertyValueLinkValueFragment[] = [
+                {
+                    linkPayload: {
+                        id: 'singlevalRecord1',
+                        whoAmI: {...mockRecord, label: 'Record A', subLabel: 'Sub Label A'}
+                    }
                 }
-            },
-            {
-                linkPayload: {
-                    id: 'multivalRecord2',
-                    whoAmI: {...mockRecord, preview: null, label: 'Record B'}
-                }
-            },
-            {
-                linkPayload: {
-                    id: 'multivalRecord3',
-                    whoAmI: {...mockRecord, preview: null, label: 'Record C'}
-                }
-            },
-            {
-                linkPayload: {
-                    id: 'multivalRecord4',
-                    whoAmI: {...mockRecord, preview: null, label: 'Record D'}
-                }
-            },
-            {
-                linkPayload: {id: 'multivalRecord5', whoAmI: {...mockRecord, label: 'Record E'}}
-            },
-            {
-                linkPayload: {id: 'multivalRecord6', whoAmI: {...mockRecord, label: 'Record F'}}
-            },
-            {
-                linkPayload: {id: 'multivalRecord7', whoAmI: {...mockRecord, label: 'Record G'}}
-            }
-        ];
+            ];
 
-        test('Should display list of avatar as default', async () => {
-            const attributeProperties: AttributePropertiesFragment = {
-                id: 'default',
-                multiple_values: true,
-                multi_link_display_option: MultiLinkDisplayOption.avatar,
-                type: AttributeType.advanced_link
-            };
+            test('Should display IdCard', async () => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    type: AttributeType.advanced_link,
+                    multiple_values: false
+                };
 
-            render(<TableCell values={linkValues} attributeProperties={attributeProperties} />);
+                render(<TableCell values={linkValue} attributeProperties={attributeProperties} />);
 
-            expect(screen.getByText('RA')).toBeVisible();
-            expect(screen.getByText('RB')).toBeVisible();
-            expect(screen.getByText('RC')).toBeVisible();
-            expect(screen.getByText('RD')).toBeVisible();
-            expect(screen.getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
-            expect(screen.getByText('+2')).toBeVisible();
-        });
-
-        test('Should display only quantity of links', async () => {
-            const attributeProperties: AttributePropertiesFragment = {
-                id: 'default',
-                multiple_values: true,
-                multi_link_display_option: MultiLinkDisplayOption.badge_qty,
-                type: AttributeType.advanced_link
-            };
-
-            render(<TableCell values={linkValues} attributeProperties={attributeProperties} />);
-
-            expect(screen.getByText(linkValues.length)).toBeVisible();
-        });
-
-        test('Should display list of tag', async () => {
-            const attributeProperties: AttributePropertiesFragment = {
-                id: 'default',
-                multiple_values: true,
-                multi_link_display_option: MultiLinkDisplayOption.tag,
-                type: AttributeType.advanced_link
-            };
-
-            render(<TableCell values={linkValues} attributeProperties={attributeProperties} />);
-
-            linkValues.forEach(value => {
-                expect(screen.getByText(value.linkPayload?.whoAmI.label as string)).toBeVisible();
+                expect(screen.getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
+                expect(screen.getByText('Record A')).toBeVisible();
+                expect(screen.getByText('Sub Label A')).toBeVisible();
             });
-            screen.getAllByText(`+${linkValues.length} Autres`).forEach(element => {
-                expect(element).toBeVisible();
+        });
+
+        describe('For tree attribute', () => {
+            const treeValue: PropertyValueTreeValueFragment[] = [
+                {
+                    treePayload: {
+                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record A', subLabel: 'Sub Label A'}}
+                    }
+                }
+            ];
+
+            test('Should display IdCard', async () => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    type: AttributeType.tree,
+                    multiple_values: false
+                };
+
+                render(<TableCell values={treeValue} attributeProperties={attributeProperties} />);
+
+                expect(screen.getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
+                expect(screen.getByText('Record A')).toBeVisible();
+                expect(screen.getByText('Sub Label A')).toBeVisible();
+            });
+        });
+    });
+    describe('Attribute with multiple values', () => {
+        describe('For link attribute', () => {
+            const linkValues: PropertyValueLinkValueFragment[] = [
+                {
+                    linkPayload: {
+                        id: 'multivalRecord1',
+                        whoAmI: {...mockRecord, preview: null, label: 'Record A'}
+                    }
+                },
+                {
+                    linkPayload: {
+                        id: 'multivalRecord2',
+                        whoAmI: {...mockRecord, preview: null, label: 'Record B'}
+                    }
+                },
+                {
+                    linkPayload: {
+                        id: 'multivalRecord3',
+                        whoAmI: {...mockRecord, preview: null, label: 'Record C'}
+                    }
+                },
+                {
+                    linkPayload: {
+                        id: 'multivalRecord4',
+                        whoAmI: {...mockRecord, preview: null, label: 'Record D'}
+                    }
+                },
+                {
+                    linkPayload: {id: 'multivalRecord5', whoAmI: {...mockRecord, label: 'Record E'}}
+                },
+                {
+                    linkPayload: {id: 'multivalRecord6', whoAmI: {...mockRecord, label: 'Record F'}}
+                },
+                {
+                    linkPayload: {id: 'multivalRecord7', whoAmI: {...mockRecord, label: 'Record G'}}
+                }
+            ];
+
+            test('Should display list of avatar as default', async () => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    multiple_values: true,
+                    multi_link_display_option: MultiDisplayOption.avatar,
+                    type: AttributeType.advanced_link
+                };
+
+                render(<TableCell values={linkValues} attributeProperties={attributeProperties} />);
+
+                expect(screen.getByText('RA')).toBeVisible();
+                expect(screen.getByText('RB')).toBeVisible();
+                expect(screen.getByText('RC')).toBeVisible();
+                expect(screen.getByText('RD')).toBeVisible();
+                expect(screen.getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
+                expect(screen.getByText('+2')).toBeVisible();
+            });
+
+            test('Should display only quantity of links', async () => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    multiple_values: true,
+                    multi_link_display_option: MultiDisplayOption.badge_qty,
+                    type: AttributeType.advanced_link
+                };
+
+                render(<TableCell values={linkValues} attributeProperties={attributeProperties} />);
+
+                expect(screen.getByText(linkValues.length)).toBeVisible();
+            });
+
+            test('Should display list of tag', async () => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    multiple_values: true,
+                    multi_link_display_option: MultiDisplayOption.tag,
+                    type: AttributeType.advanced_link
+                };
+
+                render(<TableCell values={linkValues} attributeProperties={attributeProperties} />);
+
+                linkValues.forEach(value => {
+                    expect(screen.getByText(value.linkPayload?.whoAmI.label as string)).toBeVisible();
+                });
+                screen.getAllByText(`+${linkValues.length} Autres`).forEach(element => {
+                    expect(element).toBeVisible();
+                });
+            });
+        });
+
+        describe('For tree attribute', () => {
+            const treeValues: PropertyValueTreeValueFragment[] = [
+                {
+                    treePayload: {
+                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record A'}}
+                    }
+                },
+                {
+                    treePayload: {
+                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record B'}}
+                    }
+                },
+                {
+                    treePayload: {
+                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record C'}}
+                    }
+                },
+                {
+                    treePayload: {
+                        record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record D'}}
+                    }
+                },
+                {
+                    treePayload: {
+                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record E'}}
+                    }
+                },
+                {
+                    treePayload: {
+                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record F'}}
+                    }
+                },
+                {
+                    treePayload: {
+                        record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record G'}}
+                    }
+                }
+            ];
+
+            test('Should display list of avatar as default', async () => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    multiple_values: true,
+                    multi_tree_display_option: MultiDisplayOption.avatar,
+                    type: AttributeType.tree
+                };
+
+                render(<TableCell values={treeValues} attributeProperties={attributeProperties} />);
+
+                expect(screen.getByText('RA')).toBeVisible();
+                expect(screen.getByText('RB')).toBeVisible();
+                expect(screen.getByText('RC')).toBeVisible();
+                expect(screen.getByText('RD')).toBeVisible();
+                expect(screen.getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
+                expect(screen.getByText('+2')).toBeVisible();
+            });
+
+            test('Should display only quantity of trees', async () => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    multiple_values: true,
+                    multi_tree_display_option: MultiDisplayOption.badge_qty,
+                    type: AttributeType.tree
+                };
+
+                render(<TableCell values={treeValues} attributeProperties={attributeProperties} />);
+
+                expect(screen.getByText(treeValues.length)).toBeVisible();
+            });
+
+            test('Should display list of tag', async () => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    multiple_values: true,
+                    multi_tree_display_option: MultiDisplayOption.tag,
+                    type: AttributeType.tree
+                };
+
+                render(<TableCell values={treeValues} attributeProperties={attributeProperties} />);
+
+                treeValues.forEach(value => {
+                    expect(screen.getByText(value.treePayload?.record.whoAmI.label as string)).toBeVisible();
+                });
+                screen.getAllByText(`+${treeValues.length} Autres`).forEach(element => {
+                    expect(element).toBeVisible();
+                });
             });
         });
     });
