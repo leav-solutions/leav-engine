@@ -1,23 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Client} from '@elastic/elasticsearch';
-import {getLogsIndexName} from '@leav/utils';
-import * as amqp from 'amqplib';
+import {getLogsIndexName, IDbEvent} from '@leav/utils';
 import {IConfig} from '_types/config';
-import {writeData} from '../elasticsearchService';
+import * as amqp from 'amqplib';
+import {IElasticsearchService} from '../elasticsearchService';
 
 export const handleMessage = async (
     msg: amqp.ConsumeMessage,
     channel: amqp.ConfirmChannel,
     config: IConfig,
-    esClient: Client
+    esService: IElasticsearchService
 ) => {
     try {
-        const msgContent = JSON.parse(msg.content.toString());
+        const msgContent: IDbEvent = JSON.parse(msg.content.toString());
 
         if (config.debug) {
-            console.info('📰 Received message', msgContent);
+            console.info('Received message', msgContent);
         }
 
         const {payload, emitter, ...msgMetadata} = msgContent;
@@ -29,10 +28,10 @@ export const handleMessage = async (
         };
 
         // Write data to elasticsearch
-        await writeData(indexName, dataToSave, esClient);
+        await esService.writeData(indexName, dataToSave);
 
         channel.ack(msg);
     } catch (e) {
-        console.error('📰 Error processing message', e, 'Message was:', msg);
+        console.error('Error processing message', e, 'Message was:', msg);
     }
 };
