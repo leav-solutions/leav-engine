@@ -27,7 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.omit = exports.isTypeStandard = exports.isTypeLink = exports.waitFor = exports.getLogsIndexName = exports.getFlagByLang = exports.simpleStringHash = exports.slugifyString = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const camelCase_1 = __importDefault(require("lodash/camelCase"));
@@ -269,14 +269,14 @@ const simpleStringHash = (str) => {
 exports.simpleStringHash = simpleStringHash;
 const getFlagByLang = (lang) => {
     const flagsByLang = {
-        en: '🇬🇧',
-        es: '🇪🇸',
-        fr: '🇫🇷',
-        de: '🇩🇪',
-        zh: '🇨🇳',
-        ru: '🇷🇺',
-        pt: '🇵🇹',
-        ja: '🇯🇵',
+        en: '🇬🇧', // English
+        es: '🇪🇸', // Spanish
+        fr: '🇫🇷', // French
+        de: '🇩🇪', // German
+        zh: '🇨🇳', // Chinese
+        ru: '🇷🇺', // Russian
+        pt: '🇵🇹', // Portuguese
+        ja: '🇯🇵', // Japanese
         ko: '🇰🇷' // Korean
     };
     return flagsByLang[lang] ?? '';

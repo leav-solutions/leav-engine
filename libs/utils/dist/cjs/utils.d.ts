@@ -1,18 +1,10 @@
-import {AttributeType} from './types/attributes';
-import {FileType} from './types/files';
-import {IKeyValue} from './types/helpers';
+import { AttributeType } from './types/attributes';
+import { FileType } from './types/files';
+import { IKeyValue } from './types/helpers';
 export declare const getGraphqlTypeFromLibraryName: (library: string) => string;
 export declare const getGraphqlQueryNameFromLibraryName: (library: string) => string;
-export declare const isFileAllowed: (
-    fsPath: string,
-    allowList: string[],
-    ignoreList: string[],
-    filePath: string
-) => boolean;
-export declare const localizedTranslation: (
-    translations: Record<string, string>,
-    availableLanguages: string[]
-) => string;
+export declare const isFileAllowed: (fsPath: string, allowList: string[], ignoreList: string[], filePath: string) => boolean;
+export declare const localizedTranslation: (translations: Record<string, string>, availableLanguages: string[]) => string;
 /**
  *
  * @param str
@@ -20,12 +12,7 @@ export declare const localizedTranslation: (
  * @param saturation in percent, default to 30
  * @param luminosity in percent, default to 80
  */
-export declare const stringToColor: (
-    str?: string | null,
-    format?: string,
-    saturation?: number,
-    luminosity?: number
-) => string;
+export declare const stringToColor: (str?: string | null, format?: string, saturation?: number, luminosity?: number) => string;
 export declare const getInvertColor: (color: string) => string;
 /**
  * Parse string to extract args.
@@ -38,15 +25,11 @@ export declare const getInvertColor: (color: string) => string;
 export declare const extractArgsFromString: (mapping: string) => {
     [arg: string]: string;
 };
-export declare const objectToNameValueArray: <T>(obj: IKeyValue<T>) => {
+export declare const objectToNameValueArray: <T>(obj: IKeyValue<T>) => Array<{
     name: string;
     value: T;
-}[];
-export declare const nameValArrayToObj: (
-    arr?: Array<{}>,
-    keyFieldName?: string,
-    valueFieldName?: string
-) => {
+}>;
+export declare const nameValArrayToObj: (arr?: Array<{}>, keyFieldName?: string, valueFieldName?: string) => {
     [key: string]: any;
 };
 export declare const getFileType: (fileName: string) => FileType;
@@ -64,7 +47,7 @@ export declare const _getInitialEngine: (words: string[], length: number) => str
  * @param id
  * @returns formatted ID
  */
-export declare const slugifyString: (id: string, separator?: '-' | '_') => string;
+export declare const slugifyString: (id: string, separator?: "-" | "_") => string;
 /**
  * Returns a hash code from a string
  * @param  {String} str The string to hash.
@@ -73,15 +56,12 @@ export declare const slugifyString: (id: string, separator?: '-' | '_') => strin
 export declare const simpleStringHash: (str: string) => number;
 export declare const getFlagByLang: (lang: string) => string;
 export declare const getLogsIndexName: (instanceId: string) => string;
-export declare const waitFor: (
-    predicate: () => Promise<boolean> | boolean,
-    options?: {
-        timeout?: number;
-        interval?: number;
-    }
-) => Promise<boolean>;
-export declare const isTypeLink: (type: AttributeType) => boolean;
-export declare const isTypeStandard: (type: AttributeType) => boolean;
+export declare const waitFor: (predicate: () => Promise<boolean> | boolean, options?: {
+    timeout?: number;
+    interval?: number;
+}) => Promise<boolean>;
+export declare const isTypeLink: (type: AttributeType) => type is AttributeType.advanced_link | AttributeType.simple_link;
+export declare const isTypeStandard: (type: AttributeType) => type is AttributeType.advanced | AttributeType.simple;
 /**
  * Return a new object without the keys passed in parameter
  */
