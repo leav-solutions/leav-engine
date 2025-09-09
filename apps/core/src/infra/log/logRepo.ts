@@ -51,7 +51,7 @@ export default function ({'core.infra.elasticSearch.service': esService, config}
                 return result;
             };
 
-            const indexName = getLogsIndexName(config.instanceId);
+            const indexName = getLogsIndexName(config.elasticSearch.indexPrefix, config.instanceId);
             const queryParts: SearchQueryType[] = Object.entries(filters ?? {}).reduce((acc, [field, value]) => {
                 if (value === null || typeof value === 'undefined') {
                     return acc;

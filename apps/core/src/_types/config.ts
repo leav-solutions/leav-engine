@@ -257,5 +257,6 @@ export interface IDbProfilerConfig {
 }
 
 export interface IElasticSearchConfig {
+    indexPrefix: string;
     url: string;
 }

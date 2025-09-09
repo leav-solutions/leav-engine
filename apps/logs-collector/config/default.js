@@ -14,6 +14,9 @@ module.exports = {
         routingKey: process.env.AMQP_ROUTING_KEY || 'data.events'
     },
     elasticsearch: {
+        indexPrefix: process.env.ELASTICSEARCH_INDEX_PREFIX || 'leav-logs-',
+        ilmPolicyName: process.env.ELASTICSEARCH_ILM_POLICY_NAME || 'leav-logs-policy',
+        templateName: process.env.ELASTICSEARCH_TEMPLATE_NAME || 'leav-logs-template',
         url: process.env.ELASTICSEARCH_URL || 'http://elasticsearch:9200'
     },
     debug: process.env.DEBUG || false

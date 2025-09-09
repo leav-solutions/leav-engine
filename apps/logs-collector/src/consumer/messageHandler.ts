@@ -21,8 +21,9 @@ export const handleMessage = async (
 
         const {payload, emitter, ...msgMetadata} = msgContent;
 
-        const indexName = getLogsIndexName(msgMetadata.instanceId);
+        const indexName = getLogsIndexName(config.elasticsearch.indexPrefix, msgMetadata.instanceId);
         const dataToSave = {
+            '@timestamp': msgContent.time,
             ...msgMetadata,
             ...payload
         };

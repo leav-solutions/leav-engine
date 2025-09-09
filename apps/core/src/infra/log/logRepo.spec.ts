@@ -22,7 +22,11 @@ describe('logRepo', () => {
         };
 
         const mockConfig: Partial<IConfig> = {
-            instanceId: 'instanceId'
+            instanceId: 'instanceId',
+            elasticSearch: {
+                indexPrefix: 'leav-logs-',
+                url: 'http://localhost:9200'
+            }
         };
 
         test('Read logs from ElasticSearch', async () => {

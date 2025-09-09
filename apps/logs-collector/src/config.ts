@@ -19,6 +19,12 @@ export const validateConfig = (conf: IConfig) => {
             queue: Joi.string().required(),
             routingKey: Joi.string().required()
         }),
+        elasticsearch: Joi.object().keys({
+            indexPrefix: Joi.string().required(),
+            ilmPolicyName: Joi.string().required(),
+            templateName: Joi.string().required(),
+            url: Joi.string().uri().required()
+        }),
         debug: Joi.boolean().required()
     });
 

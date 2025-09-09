@@ -280,7 +280,7 @@ export const getFlagByLang = (lang: string): string => {
     return flagsByLang[lang] ?? '';
 };
 
-export const getLogsIndexName = (instanceId: string): string => `logs-${instanceId}`;
+export const getLogsIndexName = (indexPrefix: string, instanceId: string): string => `${indexPrefix}${instanceId}`;
 
 export const waitFor = async (
     predicate: () => Promise<boolean> | boolean,

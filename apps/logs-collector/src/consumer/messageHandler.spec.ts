@@ -21,6 +21,9 @@ describe('handleMessage', () => {
             amqp: {
                 queue: 'queue',
                 routingKey: 'routingKey'
+            },
+            elasticsearch: {
+                indexPrefix: 'leav-logs-'
             }
         };
 

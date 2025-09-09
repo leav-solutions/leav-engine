@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getConfig} from './config';
 import {initConsumer} from './consumer';
-import {ElasticsearchService} from './elasticsearchService';
+import {elasticsearchService} from './elasticsearchService';
 
 (async function () {
     try {
         const config = await getConfig();
 
-        const esService = await ElasticsearchService(config);
+        const esService = await elasticsearchService(config);
         await initConsumer(config, esService);
     } catch (e) {
         console.error(e);

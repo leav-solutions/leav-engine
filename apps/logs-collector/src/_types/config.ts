@@ -14,6 +14,9 @@ export interface IConfig {
         routingKey: string;
     };
     elasticsearch: {
+        indexPrefix: string;
+        ilmPolicyName: string;
+        templateName: string;
         url: string;
     };
     debug: boolean;

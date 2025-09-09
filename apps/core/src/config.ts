@@ -199,6 +199,7 @@ export const validateConfig = (conf: IConfig) => {
         }),
         instanceId: Joi.string().required(),
         elasticSearch: Joi.object().keys({
+            indexPrefix: Joi.string().required(),
             url: Joi.string().required()
         }),
         pluginsPath: Joi.array().items(Joi.string()).required()

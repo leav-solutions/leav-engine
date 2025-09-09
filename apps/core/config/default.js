@@ -181,7 +181,8 @@ module.exports = {
         enable: typeof process.env.DB_PROFILER_ENABLE !== 'undefined' ? !!Number(process.env.DB_PROFILER_ENABLE) : false
     },
     elasticSearch: {
-        url: process.env.ELASTIC_SEARCH_URL || 'http://elasticsearch:9200'
+        indexPrefix: process.env.ELASTICSEARCH_INDEX_PREFIX || 'leav-logs-',
+        url: process.env.ELASTICSEARCH_URL || process.env.ELASTIC_SEARCH_URL || 'http://elasticsearch:9200'
     },
     pluginsPath: process.env.PLUGINS_PATH || []
 };
