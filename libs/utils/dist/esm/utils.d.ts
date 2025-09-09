@@ -55,7 +55,7 @@ export declare const slugifyString: (id: string, separator?: "-" | "_") => strin
  */
 export declare const simpleStringHash: (str: string) => number;
 export declare const getFlagByLang: (lang: string) => string;
-export declare const getLogsIndexName: (instanceId: string) => string;
+export declare const getLogsIndexName: (indexPrefix: string, instanceId: string) => string;
 export declare const waitFor: (predicate: () => Promise<boolean> | boolean, options?: {
     timeout?: number;
     interval?: number;

@@ -282,7 +282,7 @@ const getFlagByLang = (lang) => {
     return flagsByLang[lang] ?? '';
 };
 exports.getFlagByLang = getFlagByLang;
-const getLogsIndexName = (instanceId) => `logs-${instanceId}`;
+const getLogsIndexName = (indexPrefix, instanceId) => `${indexPrefix}${instanceId}`;
 exports.getLogsIndexName = getLogsIndexName;
 const waitFor = async (predicate, options = {}) => {
     const { timeout = 5000, interval = 250 } = options;
