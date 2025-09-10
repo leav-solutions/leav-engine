@@ -11,23 +11,23 @@ export const FontAwesomeIconSchema = z.string().regex(FONT_AWESOME_ICON_REGEX).o
 
 const CommonExplorerPropsSchema = z.object({
     showSearch: z.boolean().optional(),
-    defaultActionsForItem: z
-        .array(z.union([z.literal('edit'), z.literal('replaceLink'), z.literal('remove'), z.literal('activate')]))
-        .optional(),
-    defaultPrimaryActions: z.array(z.union([z.literal('create')])).optional(),
-    defaultMassActions: z.array(z.union([z.literal('deactivate')])).optional(),
     showFilters: z.boolean().optional(),
     showSorts: z.boolean().optional(),
     freezeView: z.boolean().optional(),
     showAttributeLabels: z.boolean().optional(),
     creationFormId: z.string().optional(),
-    editionFormId: z.string().optional()
+    editionFormId: z.string().optional(),
+    noPagination: z.literal(true).optional()
 });
 
 const LinkExplorerPropsSchema = CommonExplorerPropsSchema;
 
 export const LibraryExplorerPropsSchema = CommonExplorerPropsSchema.extend({
-    noPagination: z.literal(true).optional()
+    defaultPrimaryActions: z.array(z.union([z.literal('create')])).optional(),
+    defaultActionsForItem: z
+        .array(z.union([z.literal('edit'), z.literal('replaceLink'), z.literal('remove'), z.literal('activate')]))
+        .optional(),
+    defaultMassActions: z.array(z.union([z.literal('deactivate')])).optional()
 });
 
 export const ItemActionsSchema = z.array(

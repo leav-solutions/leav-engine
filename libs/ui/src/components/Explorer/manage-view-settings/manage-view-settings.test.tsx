@@ -33,7 +33,7 @@ const MockViewSettingsContextProvider: FunctionComponent<{defaultSettings?: Defa
     defaultSettings,
     children
 }) => {
-    const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, defaultSettings);
+    const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, defaultSettings, false);
     return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
 };
 

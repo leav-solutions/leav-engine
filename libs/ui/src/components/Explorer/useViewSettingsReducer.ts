@@ -1,38 +1,65 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useEffect, useMemo, useReducer, useState} from 'react';
 import {
+    GetViewsListQuery,
     useExplorerAttributesQuery,
     useExplorerLinkAttributeQuery,
     useGetViewsListQuery,
     ViewSizes
 } from '_ui/_gqlTypes';
-import {useEffect, useMemo, useReducer, useState} from 'react';
 import {DefaultViewSettings, Entrypoint, IEntrypointLink} from './_types';
+import {mapViewTypeFromLegacyToExplorer} from './_constants';
 import {
     IViewSettingsState,
     useEditSettings,
     viewSettingsInitialState,
     viewSettingsReducer
 } from './manage-view-settings';
-import {mapViewTypeFromLegacyToExplorer} from './_constants';
-import {_isLinkAttributeDetails, useTransformFilters} from './manage-view-settings/_shared/useTransformFilters';
+import {
+    isLinkAttributeDetails,
+    ExplorerAttributesById,
+    useTransformFilters
+} from './manage-view-settings/_shared/useTransformFilters';
 
-const _entrypointsAreEqual = (entrypoint1, entrypoint2) =>
-    Object.keys(entrypoint1).every(key => entrypoint1[key] === entrypoint2[key]);
+const _areDifferents = <T extends object>(object1: T, object2: T) =>
+    Object.keys(object1).some(key => object1[key] !== object2[key]);
 
 export const useViewSettingsReducer = (
     entrypoint: Entrypoint,
     defaultViewSettings: DefaultViewSettings = {},
-    ignoreViewByDefault = false
+    ignoreViewByDefault: boolean
 ) => {
+    /**
+     * Should be `true` during all the warm up, until we `RESET` the view.
+     */
     const [loading, setLoading] = useState(true);
     const [libraryId, setLibraryId] = useState(entrypoint.type === 'library' ? entrypoint.libraryId : null);
     const [view, dispatch] = useReducer(viewSettingsReducer, viewSettingsInitialState);
     const {closeSettingsPanel} = useEditSettings();
-    const entrypointsAreEqual = _entrypointsAreEqual(entrypoint, view.entrypoint);
+
+    // FIXME: should be two methods taking `lang` as argument
     const {toExplorerFilters, toValidFilters} = useTransformFilters();
 
+    /**
+     * We need to check if the `props.entrypoint` has changed to detect a new `props.entrypoint.libraryId`.
+     *
+     * If `false`, we reload from scratch and close the side panel that contains the views.
+     */
+    const needToReloadViewsFromScratch = _areDifferents(entrypoint, view.entrypoint);
+
+    useEffect(() => {
+        if (needToReloadViewsFromScratch) {
+            setLoading(true);
+            setLibraryId(entrypoint.type === 'library' ? entrypoint.libraryId : null);
+            closeSettingsPanel();
+        }
+    }, [needToReloadViewsFromScratch]);
+
+    /**
+     * On `entrypoint.type === 'link'`, we need to get the library id from the link attribute to get views et set up `<Explorer />`
+     */
     useExplorerLinkAttributeQuery({
         skip: entrypoint.type !== 'link',
         variables: {
@@ -43,32 +70,33 @@ export const useViewSettingsReducer = (
             if (!attributeData) {
                 throw new Error('Unknown link attribute');
             }
-            setLibraryId(_isLinkAttributeDetails(attributeData) ? (attributeData.linked_library?.id ?? '') : null);
+            setLibraryId(isLinkAttributeDetails(attributeData) ? (attributeData.linked_library?.id ?? '') : null);
         }
     });
 
     const {
+        /**
+         * List of my views and shared views
+         */
         data: viewData,
         loading: viewsLoading,
         error: viewError
     } = useGetViewsListQuery({
-        skip: entrypointsAreEqual || libraryId === null,
-        fetchPolicy: 'network-only',
+        skip: libraryId === null,
         variables: {
             libraryId: libraryId as string
         }
     });
 
-    let userView;
+    let userView: GetViewsListQuery['views']['list'][number] | undefined;
     if (defaultViewSettings?.viewId) {
         userView = viewData?.views?.list?.find(viewItem => viewItem.id === defaultViewSettings.viewId);
     }
 
-    // Take the last view from the array if not defined in defaultView Settings
+    // On still `undefined` view, we take the last added one
     userView = userView ?? viewData?.views?.list?.at(-1);
 
     const userViewFilters = ignoreViewByDefault ? [] : toValidFilters(userView?.filters ?? []);
-    const preparedDefaultFilters = toValidFilters(defaultViewSettings.filters ?? []);
 
     const userAttributesToHydrate = ignoreViewByDefault
         ? []
@@ -77,6 +105,8 @@ export const useViewSettingsReducer = (
               ...(userView?.sort ?? []),
               ...(userView?.attributes?.map(attribute => ({field: attribute.id})) ?? [])
           ];
+
+    const preparedDefaultFilters = toValidFilters(defaultViewSettings.filters ?? []);
 
     const attributesToHydrate = [
         ...new Set(
@@ -102,7 +132,7 @@ export const useViewSettingsReducer = (
 
     const attributesDataById = useMemo(
         () =>
-            (attributesData?.attributes?.list ?? []).reduce((acc, attr) => {
+            (attributesData?.attributes?.list ?? []).reduce<ExplorerAttributesById>((acc, attr) => {
                 if (attr.permissions.access_attribute) {
                     acc[attr.id] = attr;
                 }
@@ -110,14 +140,6 @@ export const useViewSettingsReducer = (
             }, {}),
         [attributesData]
     );
-
-    useEffect(() => {
-        if (!entrypointsAreEqual) {
-            setLoading(true);
-            setLibraryId(entrypoint.type === 'library' ? entrypoint.libraryId : null);
-            closeSettingsPanel();
-        }
-    }, [entrypointsAreEqual]);
 
     useEffect(() => {
         if (libraryId !== null && !viewsLoading && !attributesLoading) {
@@ -133,10 +155,14 @@ export const useViewSettingsReducer = (
                     attributes: attributes?.map(attribute => attribute.id) ?? []
                 })
             );
-            const allFilters = preparedDefaultFilters.length > 0 ? preparedDefaultFilters : userViewFilters;
+            /**
+             * Filters merged from `<Explorer />` props and `view`.
+             * > Could include hidden filters too.
+             */
+            const allFilters = preparedDefaultFilters.concat(userViewFilters);
             const defaultSorts = defaultViewSettings?.sort ?? [];
             const userViewSorts = ignoreViewByDefault ? [] : (userView?.sort ?? []);
-            const defaultattributesIds = (defaultViewSettings?.attributesIds ?? []).filter(
+            const defaultAttributesIds = (defaultViewSettings?.attributesIds ?? []).filter(
                 attr => attributesDataById[attr]
             );
             const userViewAttributesIds = ignoreViewByDefault
@@ -161,7 +187,7 @@ export const useViewSettingsReducer = (
                 ...viewProps,
                 savedViews,
                 ...defaultViewSettings,
-                attributesIds: defaultattributesIds.length > 0 ? defaultattributesIds : userViewAttributesIds,
+                attributesIds: defaultAttributesIds.length > 0 ? defaultAttributesIds : userViewAttributesIds,
                 sort: (defaultSorts.length > 0 ? defaultSorts : userViewSorts)
                     .map(s => ({
                         field: s.field,

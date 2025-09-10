@@ -1,11 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {renderHook} from '@testing-library/react';
-import {useExplorerProps} from '../useExplorerProps';
+import {mapToCommonExplorerProps, mapToLibraryExplorerProps} from '../mapperToExplorerProps';
 import {type LibraryExplorerProps} from '../../types';
 
-describe('useExplorerProps', () => {
+describe('mapperToExplorerProps', () => {
     describe('with defined values', () => {
         it('should return correct props when all values are defined with true boolean', () => {
             const explorerProps: LibraryExplorerProps = {
@@ -22,23 +21,21 @@ describe('useExplorerProps', () => {
                 noPagination: true
             };
 
-            const {result} = renderHook(() => useExplorerProps({explorerProps}));
-
-            expect(result.current.commonExplorerProps).toEqual({
+            expect(mapToCommonExplorerProps({explorerProps})).toEqual({
                 showSearch: true,
                 showFilters: true,
                 showSorts: true,
                 ignoreViewByDefault: true,
                 hideTableHeader: false,
                 creationFormId: 'create-id',
-                editionFormId: 'edit-id'
+                editionFormId: 'edit-id',
+                noPagination: true
             });
 
-            expect(result.current.libraryExplorerProps).toEqual({
+            expect(mapToLibraryExplorerProps({explorerProps})).toEqual({
                 defaultPrimaryActions: ['create'],
                 defaultActionsForItem: ['activate'],
-                defaultMassActions: ['deactivate'],
-                noPagination: true
+                defaultMassActions: ['deactivate']
             });
         });
 
@@ -53,19 +50,19 @@ describe('useExplorerProps', () => {
                 freezeView: false,
                 showAttributeLabels: false,
                 creationFormId: 'create-id',
-                editionFormId: 'edit-id'
+                editionFormId: 'edit-id',
+                noPagination: true
             };
 
-            const {result} = renderHook(() => useExplorerProps({explorerProps}));
-
-            expect(result.current.commonExplorerProps).toEqual({
+            expect(mapToCommonExplorerProps({explorerProps})).toEqual({
                 showSearch: false,
                 showFilters: false,
                 showSorts: false,
                 ignoreViewByDefault: false,
                 hideTableHeader: true,
                 creationFormId: 'create-id',
-                editionFormId: 'edit-id'
+                editionFormId: 'edit-id',
+                noPagination: true
             });
         });
     });
@@ -73,19 +70,17 @@ describe('useExplorerProps', () => {
     it('should return undefined where booleans are expected of none are provided', () => {
         const explorerProps: LibraryExplorerProps = {};
 
-        const {result} = renderHook(() => useExplorerProps({explorerProps}));
+        const commonExplorerProps = mapToCommonExplorerProps({explorerProps});
 
-        expect(result.current.commonExplorerProps.showSearch).toBeUndefined();
-        expect(result.current.commonExplorerProps.ignoreViewByDefault).toBeUndefined();
-        expect(result.current.commonExplorerProps.hideTableHeader).toBeUndefined();
+        expect(commonExplorerProps.showSearch).toBeUndefined();
+        expect(commonExplorerProps.ignoreViewByDefault).toBeUndefined();
+        expect(commonExplorerProps.hideTableHeader).toBeUndefined();
     });
 
     it('should handle missing optional props gracefully', () => {
         const explorerProps = {};
 
-        const {result} = renderHook(() => useExplorerProps({explorerProps}));
-
-        expect(result.current.commonExplorerProps).toEqual({});
-        expect(result.current.libraryExplorerProps).toEqual({});
+        expect(mapToCommonExplorerProps({explorerProps})).toEqual({});
+        expect(mapToLibraryExplorerProps({explorerProps})).toEqual({});
     });
 });

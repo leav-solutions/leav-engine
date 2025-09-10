@@ -35,13 +35,13 @@ import {useLang} from '_ui/hooks';
 import {v4 as uuid} from 'uuid';
 import {valueListTextConditions} from '../filter-items/filter-type/useConditionOptionsByType';
 
-export const _isValidFieldFilter = (filter: ViewDetailsFilterFragment | ExplorerFilter): filter is ValidFieldFilter =>
+const _isValidFieldFilter = (filter: ViewDetailsFilterFragment | ExplorerFilter): filter is ValidFieldFilter =>
     !!filter.field;
 
-export const _isValidFieldFilterThrough = (filter: validFilter): filter is ValidFieldFilterThrough =>
+const _isValidFieldFilterThrough = (filter: validFilter): filter is ValidFieldFilterThrough =>
     filter.condition === ThroughConditionFilter.THROUGH && !!filter.subCondition && !!filter.subField;
 
-export const _isValidFieldFilterStandardValuesList = (
+const _isValidFieldFilterStandardValuesList = (
     filter: validFilter,
     attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]
 ): filter is ValidFieldFilterStandardValuesList & {attribute: StandardAttributeDetailsFragment} =>
@@ -50,7 +50,7 @@ export const _isValidFieldFilterStandardValuesList = (
     'valuesList' in attribute &&
     !!attribute.valuesList?.enable;
 
-export const _isValidFieldFilterLinkValuesList = (
+const _isValidFieldFilterLinkValuesList = (
     filter: validFilter,
     attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]
 ): filter is ValidFieldFilterLinkValuesList & {attribute: LinkAttributeDetailsFragment} =>
@@ -70,7 +70,7 @@ type AttributeDetailsTreeAttributeWithPermissionsFragment = AttributeDetailsTree
     };
 };
 
-export const _isLinkAttributeDetails = (
+export const isLinkAttributeDetails = (
     linkAttributeData: NonNullable<ExplorerLinkAttributeQuery['attributes']>['list'][number]
 ): linkAttributeData is LinkAttributeDetailsFragment & {
     id: string;
@@ -81,14 +81,14 @@ export const _isLinkAttributeDetails = (
     };
 } => 'linked_library' in linkAttributeData;
 
-export type validFiltersArgument = GetViewsListQuery['views']['list'][number]['filters'] | ExplorerFilter[];
+export type ValidFiltersArgument = GetViewsListQuery['views']['list'][number]['filters'] | ExplorerFilter[];
 
 export type ExplorerAttributesById = Record<string, NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]>;
 
 export const useTransformFilters = () => {
     const {lang} = useLang();
 
-    const toValidFilters = (filters: validFiltersArgument): validFilter[] =>
+    const toValidFilters = (filters: ValidFiltersArgument): validFilter[] =>
         (filters ?? []).reduce<validFilter[]>((acc, filter) => {
             if (!_isValidFieldFilter(filter)) {
                 return acc;
@@ -134,9 +134,7 @@ export const useTransformFilters = () => {
 
             // filter is standardFilter
             if (isStandardAttribute(filterAttributeBase.type)) {
-                const attributeData = attributesDataById[
-                    filter.field
-                ];
+                const attributeData = attributesDataById[filter.field];
                 if (_isValidFieldFilterStandardValuesList(filter, attributeData)) {
                     const newFilter: IExplorerFilterStandardValueList = {
                         field: filter.field,

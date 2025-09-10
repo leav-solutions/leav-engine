@@ -6,7 +6,7 @@ import {useRef} from 'react';
 import {useViewSettingsContext} from './manage-view-settings/store-view-settings/useViewSettingsContext';
 import {IUserView, validFilter} from './_types';
 import {useEditSettings, ViewSettingsActionTypes} from './manage-view-settings';
-import {useTransformFilters, validFiltersArgument} from './manage-view-settings/_shared/useTransformFilters';
+import {useTransformFilters, ValidFiltersArgument} from './manage-view-settings/_shared/useTransformFilters';
 import {mapViewTypeFromExplorerToLegacy, mapViewTypeFromLegacyToExplorer} from './_constants';
 import {IViewSettingsActionLoadViewPayload} from './manage-view-settings/store-view-settings/viewSettingsReducer';
 
@@ -22,69 +22,67 @@ export const useLoadView = () => {
 
     const {data} = useMeQuery();
 
-    const loadView = async (viewId: string | null) => {
-        let viewData: IUserView | null;
-        if (!viewId) {
-            viewData = {
-                ...view.defaultViewSettings,
-                id: null,
-                ownerId: data?.me?.whoAmI?.id ?? null,
-                display: {type: mapViewTypeFromExplorerToLegacy[view.viewType]},
-                label: {},
-                shared: false,
-                filters: view.defaultViewSettings.filters as validFilter[]
-            };
-        } else {
-            viewData = view.savedViews.find(v => v.id === viewId) ?? null;
-        }
-
-        if (!viewData) {
-            return;
-        }
-
-        currentView.current = viewData;
-
-        const attributesToHydrate = [
-            ...new Set([...(viewData?.sort ?? []), ...(viewData?.sort ?? [])].map(({field}) => field))
-        ];
-
-        const fetchAttributesResult = await fetchAttributes({
-            variables: {
-                ids: attributesToHydrate
-            }
-        });
-
-        closeSettingsPanel();
-
-        const attributesDataById = (fetchAttributesResult.data?.attributes?.list ?? []).reduce((acc, attr) => {
-            acc[attr.id] = attr;
-            return acc;
-        }, {});
-
-        const viewSettings: IViewSettingsActionLoadViewPayload = {
-            viewId: currentView.current?.id ?? null,
-            viewLabels: currentView.current?.label ?? {},
-            viewType: currentView.current?.display
-                ? mapViewTypeFromLegacyToExplorer[currentView.current?.display.type]
-                : view.viewType,
-            attributesIds: currentView.current?.attributes ?? [],
-            sort: (currentView.current?.sort ?? []).map(s => ({
-                field: s.field,
-                order: s.order
-            })),
-            filters: toExplorerFilters({
-                filters: toValidFilters((currentView.current?.filters as validFiltersArgument) ?? []),
-                attributesDataById
-            })
-        };
-
-        dispatch({
-            type: ViewSettingsActionTypes.LOAD_VIEW,
-            payload: viewSettings
-        });
-    };
-
     return {
-        loadView
+        loadView: async (viewId: string | null) => {
+            let viewData: IUserView | null;
+            if (!viewId) {
+                viewData = {
+                    ...view.defaultViewSettings,
+                    id: null,
+                    ownerId: data?.me?.whoAmI?.id ?? null,
+                    display: {type: mapViewTypeFromExplorerToLegacy[view.viewType]},
+                    label: {},
+                    shared: false,
+                    filters: view.defaultViewSettings.filters as validFilter[]
+                };
+            } else {
+                viewData = view.savedViews.find(v => v.id === viewId) ?? null;
+            }
+
+            if (!viewData) {
+                return;
+            }
+
+            currentView.current = viewData;
+
+            const attributesToHydrate = [
+                ...new Set([...(viewData?.sort ?? []), ...(viewData?.sort ?? [])].map(({field}) => field))
+            ];
+
+            const fetchAttributesResult = await fetchAttributes({
+                variables: {
+                    ids: attributesToHydrate
+                }
+            });
+
+            closeSettingsPanel();
+
+            const attributesDataById = (fetchAttributesResult.data?.attributes?.list ?? []).reduce((acc, attr) => {
+                acc[attr.id] = attr;
+                return acc;
+            }, {});
+
+            const viewSettings: IViewSettingsActionLoadViewPayload = {
+                viewId: currentView.current?.id ?? null,
+                viewLabels: currentView.current?.label ?? {},
+                viewType: currentView.current?.display
+                    ? mapViewTypeFromLegacyToExplorer[currentView.current?.display.type]
+                    : view.viewType,
+                attributesIds: currentView.current?.attributes ?? [],
+                sort: (currentView.current?.sort ?? []).map(s => ({
+                    field: s.field,
+                    order: s.order
+                })),
+                filters: toExplorerFilters({
+                    filters: toValidFilters((currentView.current?.filters as ValidFiltersArgument) ?? []),
+                    attributesDataById
+                })
+            };
+
+            dispatch({
+                type: ViewSettingsActionTypes.LOAD_VIEW,
+                payload: viewSettings
+            });
+        }
     };
 };

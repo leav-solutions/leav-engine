@@ -2,16 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
-import {Explorer} from '@leav/ui';
-import {explorerContainer} from './PanelContent.module.css';
+import {Explorer, useLang} from '@leav/ui';
+import {useNavigate, useParams} from 'react-router-dom';
 import {ItemActions, LibraryExplorerProps} from '../../types';
-import {useExplorerProps} from '../../explorer-panel/useExplorerProps';
-import {useItemActions} from '../../explorer-panel/useItemActions';
+import {mapToCommonExplorerProps, mapToLibraryExplorerProps} from '../../explorer-panel/mapperToExplorerProps';
+import {mapperToItemActions} from '../../explorer-panel/mapperToItemActions';
+import {explorerContainer} from './PanelContent.module.css';
 
 interface IPanelLibraryExplorerProps {
     libraryId: string;
-    viewId: string | null;
-    explorerProps: LibraryExplorerProps;
+    viewId: string | undefined;
+    explorerProps: LibraryExplorerProps | undefined;
     actions: ItemActions;
 }
 
@@ -21,8 +22,13 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
     explorerProps,
     actions
 }) => {
-    const {commonExplorerProps, libraryExplorerProps} = useExplorerProps({explorerProps});
-    const {itemActions} = useItemActions({actions});
+    const {lang} = useLang();
+    const navigate = useNavigate();
+    const {panelId} = useParams();
+
+    const commonExplorerProps = explorerProps ? mapToCommonExplorerProps({explorerProps}) : {};
+    const libraryExplorerProps = explorerProps ? mapToLibraryExplorerProps({explorerProps}) : {};
+    const itemActions = mapperToItemActions({actions, lang, navigate, panelId});
 
     return (
         <div className={explorerContainer}>

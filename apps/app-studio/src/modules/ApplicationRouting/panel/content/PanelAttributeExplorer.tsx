@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
-import {useLocation} from 'react-router-dom';
-import {Explorer, ThroughConditionFilter} from '@leav/ui';
-import {explorerContainer} from './PanelContent.module.css';
-import {useExplorerProps} from '../../explorer-panel/useExplorerProps';
-import {useItemActions} from '../../explorer-panel/useItemActions';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {Explorer, ThroughConditionFilter, useLang} from '@leav/ui';
+import {mapToCommonExplorerProps} from '../../explorer-panel/mapperToExplorerProps';
+import {mapperToItemActions} from '../../explorer-panel/mapperToItemActions';
 import {recordSearchParamsName} from '../../routes';
 import {ItemActions, LibraryExplorerProps} from '../../types';
 import {AttributeType, RecordFilterCondition} from '../../../../__generated__';
+import {explorerContainer} from './PanelContent.module.css';
 
 interface IPanelExplorerProps {
     libraryId: string;
     attributeSource: string;
-    viewId: string | null;
-    explorerProps: LibraryExplorerProps;
+    viewId: string | undefined;
+    explorerProps: LibraryExplorerProps | undefined;
     actions: ItemActions;
 }
 
@@ -28,8 +28,12 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
 }) => {
     const {search} = useLocation();
     const searchParams = new URLSearchParams(search);
-    const {commonExplorerProps} = useExplorerProps({explorerProps});
-    const {itemActions} = useItemActions({actions});
+    const {lang} = useLang();
+    const navigate = useNavigate();
+    const {panelId} = useParams();
+
+    const linkExplorerProps = explorerProps ? mapToCommonExplorerProps({explorerProps}) : {};
+    const itemActions = mapperToItemActions({actions, lang, navigate, panelId});
 
     return (
         <div className={explorerContainer}>
@@ -58,7 +62,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                     ]
                 }}
                 itemActions={itemActions}
-                {...commonExplorerProps}
+                {...linkExplorerProps}
                 defaultPrimaryActions={[]}
                 defaultMassActions={[]}
                 defaultActionsForItem={['edit']}
