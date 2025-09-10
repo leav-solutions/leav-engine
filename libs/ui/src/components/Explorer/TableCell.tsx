@@ -162,7 +162,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     );
 
                 case MultiDisplayOption.badge_qty:
-                    return <KitBadge count={values.length} color="primary" />;
+                    return <KitBadge overflowCount={Infinity} count={values.length} color="primary" />;
 
                 case MultiDisplayOption.avatar:
                 default:
@@ -198,7 +198,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         />
                     );
                 case MultiDisplayOption.badge_qty:
-                    return <KitBadge count={values.length} color="primary" />;
+                    return <KitBadge overflowCount={Infinity} count={values.length} color="primary" />;
                 case MultiDisplayOption.avatar:
                 default:
                     return (
