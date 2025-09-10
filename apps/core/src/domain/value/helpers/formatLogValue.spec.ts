@@ -85,6 +85,21 @@ describe('formatLogValue', () => {
                 }
             } as Log;
 
+            it('Should return unknown value when log data contains undefined payload', async () => {
+                const rawData: IDBPayloadData<EventAction.VALUE_SAVE> = {
+                    payload: undefined
+                };
+
+                attributeDomainMock.getAttributeProperties.mockResolvedValue({
+                    id: 'standard_attribute',
+                    type: AttributeTypes.SIMPLE
+                });
+
+                const result = await _formatLogValue.formatAsString(log, rawData, ctx);
+
+                expect(result).toBe('logs.unknown_value');
+            });
+
             it('Should return standard attribute value as string', async () => {
                 const attributeValue = 'Standard attribute value';
 

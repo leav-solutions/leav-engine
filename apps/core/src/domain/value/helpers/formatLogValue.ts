@@ -96,7 +96,7 @@ export default function ({
             case AttributeFormats.ENCRYPTED:
                 return '*****';
         }
-        return String(rawData.payload);
+        return rawData.payload != null ? String(rawData.payload) : translator.t('logs.unknown_value', {lng: ctx.lang});
     };
 
     const getRecordIdentityLabel = async (record: IRecord, ctx: IQueryInfos): Promise<string | null> => {
