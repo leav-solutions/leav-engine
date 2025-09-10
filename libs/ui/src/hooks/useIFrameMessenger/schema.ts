@@ -3,8 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as z from 'zod/v4';
 
+export const FONT_AWESOME_ICON_REGEX = /^fa-/;
+
 export const PanelIdSchema = z.string();
 export const LanguageSchema = z.string();
+export const FontAwesomeIconSchema = z.string().regex(FONT_AWESOME_ICON_REGEX).optional();
 
 const CommonExplorerPropsSchema = z.object({
     showSearch: z.boolean().optional(),
@@ -38,7 +41,8 @@ export const PanelSchema = z.lazy(() =>
     z
         .object({
             id: PanelIdSchema,
-            name: z.record(LanguageSchema, z.string()).optional()
+            name: z.record(LanguageSchema, z.string()).optional(),
+            icon: FontAwesomeIconSchema
         })
         .and(
             z.union([

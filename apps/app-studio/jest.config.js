@@ -32,7 +32,7 @@ module.exports = {
     },
     transformIgnorePatterns: ['node_modules/(?!(antd|@babel/runtime|@uidotdev/usehooks)/)'],
     moduleNameMapper: {
-        '\\.module.css$': 'identity-obj-proxy',
+        '\\.(css|less|scss|sass)$': 'identity-obj-proxy', // Ignore module.css written by devs and all stylesheet from libs (ex: FontAwesome stylesheet)
         '^@leav/(.*)$': '<rootDir>/../../libs/$1/src',
         '^_ui/(.*)': '<rootDir>/../../libs/ui/src/$1'
     },
