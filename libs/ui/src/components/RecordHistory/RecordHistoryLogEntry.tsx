@@ -64,6 +64,18 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
 
     const formatValueChange = () => {
         const noValue = <KitTypography.Text size="fontSize7">{t('record_history.no_value')}</KitTypography.Text>;
+
+        if (attribute?.multiple_values) {
+            const uniqValue = !hasBefore && hasAfter ? after : hasBefore && !hasAfter ? before : null;
+            if (uniqValue != null) {
+                return (
+                    <KitSpace size="xxs" direction="horizontal" wrap>
+                        {formatValue(uniqValue)}
+                    </KitSpace>
+                );
+            }
+        }
+
         return (
             <KitSpace size="xxs" direction="horizontal" wrap>
                 {hasBefore ? formatValue(before) : noValue}
