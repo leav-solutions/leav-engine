@@ -311,7 +311,9 @@ describe('AttributeStandardRepo', () => {
                 _id: 'core_values/123456789',
                 _rev: '_WSywvyC--_',
                 _key: 123456789,
-                payload: 'test_val'
+                old: {
+                    payload: 'test_val'
+                }
             };
 
             const deletedEdgeData = {
@@ -366,7 +368,7 @@ describe('AttributeStandardRepo', () => {
             });
 
             expect(mockDbCollec.remove.mock.calls.length).toBe(1);
-            expect(mockDbCollec.remove).toBeCalledWith({_key: '123456789'});
+            expect(mockDbCollec.remove).toBeCalledWith({_key: '123456789'}, {returnOld: true});
 
             expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
             expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({

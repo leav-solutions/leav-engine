@@ -532,7 +532,7 @@ const valueDomain = function ({
                             },
                             attribute: attributeProps.id
                         },
-                        before: actionsListResValue
+                        before: deletedValue
                     },
                     ctx
                 );

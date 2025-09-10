@@ -167,7 +167,7 @@ export default function ({
             const valCollec = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION) as EdgeCollection<IDbEdge>;
 
-            const deletedVal = await valCollec.remove({_key: String(value.id_value)});
+            const deletedVal = await valCollec.remove({_key: String(value.id_value)}, {returnOld: true});
 
             // Delete the link record<->value and add some metadata on it
             const edgeData = {
@@ -179,11 +179,14 @@ export default function ({
 
             return {
                 id_value: deletedVal._key,
+                payload: deletedVal.old.value,
                 attribute: deletedEdge.attribute,
                 modified_at: deletedEdge.modified_at,
                 created_at: deletedEdge.created_at,
                 modified_by: deletedEdge.modified_by,
-                created_by: deletedEdge.created_by
+                created_by: deletedEdge.created_by,
+                metadata: deletedEdge.metadata,
+                version: deletedEdge.version ?? null
             };
         },
         async getValues({
