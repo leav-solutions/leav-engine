@@ -1,5 +1,5 @@
 .layout {
-    --header-height: 64px;
+    --header-height: 48px;
     --padding-bottom-height: var(--general-spacing-s);
     background-color: var(--general-colors-primary-50);
     display: flex;
@@ -15,7 +15,6 @@
         align-items: center;
     }
 }
-
 
 .mainContent {
     flex: auto;

@@ -12,7 +12,7 @@ import {recordSearchParamsName, routes} from '../routes';
 import {SidePanelContent} from '../../layout/SidePanelContent';
 import {PanelIdCard} from './PanelIdCard';
 
-import {content, headerContent, page, pageHeader, sidePanel} from './panelsNavigationMenu.module.css';
+import {content, headerContent, page, pageHeader, sidePanel, scrollable} from './panelsNavigationMenu.module.css';
 
 interface IPanelsNavigationMenuProps {
     isInSidePanel?: boolean;
@@ -72,7 +72,10 @@ export const PanelsNavigationMenu: FunctionComponent<IPanelsNavigationMenuProps>
                         <PanelIdCard libraryId={libraryId} currentRecordId={searchParams.get(recordSearchParamsName)} />
                     </div>
                     {tabItems.length !== 0 && (
-                        <KitTabs items={tabItems} onChange={onChangeTab} activeKey={currentPanel.id} />
+                        <div className={scrollable}>
+                            {/* TODO: Remove this scrollable div when KitTabs will be responsive */}
+                            <KitTabs items={tabItems} onChange={onChangeTab} activeKey={currentPanel.id} />
+                        </div>
                     )}
                 </div>
             )}

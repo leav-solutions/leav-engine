@@ -14,8 +14,13 @@
 
 .pageHeader {
     display: flex;
-    flex-direction: column;
     gap: calc(var(--general-spacing-s) * 1px);
+    justify-content: space-between;
+
+    @media screen and (max-width: 1024px) {
+        flex-direction: column;
+        justify-content: flex-start;
+    }
 
     .headerContent {
         display: flex;
@@ -32,4 +37,9 @@
     &:not(.sidePanel) {
         box-shadow: var(--general-utilities-shadow-light);
     }
+}
+
+/* TODO: Remove this when KitTabs will be responsive */
+.scrollable {
+    overflow-y: hidden;
 }

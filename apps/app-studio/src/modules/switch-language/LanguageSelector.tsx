@@ -36,6 +36,7 @@ export const LanguageSelector: FunctionComponent = () => {
             options={options}
             allowClear={false}
             defaultValue={defaultLanguage}
+            size="middle"
         />
     );
 };
