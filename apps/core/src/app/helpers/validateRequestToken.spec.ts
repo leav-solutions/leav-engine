@@ -257,6 +257,82 @@ describe('validateRequestToken', () => {
         });
     });
 
+    it('Should use refresh token when access token is expired (TokenExpiredError)', async () => {
+        const authApp = createAuthApp({
+            ...authAppdepsBase,
+            'core.app.helpers.initQueryContext': initQueryContext({config: mockConfig as IConfig}),
+            'core.infra.cache.cacheService': mockCachesService as ICachesService,
+            'core.domain.record': mockRecordDomain as IRecordDomain,
+            'core.domain.value': mockValueDomain as IValueDomain,
+            config: mockConfig as IConfig
+        });
+
+        const validateRequestToken = validateRequestTokenHelper({'core.app.auth': authApp as IAuthApp});
+
+        const requestMock: Mockify<IRequestWithContext> = {
+            cookies: {
+                accessToken: 'expired_access_token',
+                refreshToken: validRefreshToken
+            },
+            query: {
+                [API_KEY_PARAM_NAME]: '123456'
+            },
+            headers: {
+                host: 'host',
+                'user-agent': 'test',
+                'x-forwarded-for': '1'
+            }
+        };
+
+        const responseMock: Mockify<Response> = {
+            cookie: jest.fn()
+        };
+
+        const mockedVerify = jest.spyOn(jwt, 'verify');
+        mockedVerify.mockImplementation(token => {
+            if (token === 'expired_access_token') {
+                const err = new Error('jwt expired');
+                err.name = 'TokenExpiredError';
+                throw err;
+            }
+            return {
+                userId: '1',
+                ip: '1',
+                agent: 'test'
+            };
+        });
+
+        const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
+        mockedSign
+            .mockImplementationOnce(() => 'new_mocked_access_token_2')
+            .mockImplementationOnce(() => 'new_mocked_refresh_token_2');
+
+        const result = await validateRequestToken(
+            requestMock as unknown as IRequestWithContext,
+            responseMock as unknown as Response
+        );
+
+        expect(responseMock.cookie).toHaveBeenCalledWith('accessToken', 'new_mocked_access_token_2', {
+            expires: expect.any(Date),
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: false,
+            domain: 'host'
+        });
+        expect(responseMock.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token_2', {
+            expires: expect.any(Date),
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: false,
+            domain: 'host'
+        });
+
+        expect(result).toEqual({
+            userId: '1',
+            groupsId: ['1']
+        });
+    });
+
     it('Should return userId and groupId if accessToken is valid and userId payload exist', async () => {
         const authApp = createAuthApp({
             ...authAppdepsBase,

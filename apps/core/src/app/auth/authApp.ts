@@ -6,7 +6,7 @@ import {IApiKeyDomain} from 'domain/apiKey/apiKeyDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUserDomain} from 'domain/user/userDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {CookieOptions, Express, NextFunction, Request, Response} from 'express';
+import {CookieOptions, NextFunction, Request, Response} from 'express';
 import useragent from 'express-useragent';
 import jwt, {Algorithm} from 'jsonwebtoken';
 import ms from 'ms';
@@ -177,6 +177,37 @@ export default function ({
         const host = headers.host ?? null;
         res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, host));
         res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, host));
+    };
+
+    const _verifyRefreshToken = async (token: string, reqHeaders: IncomingHttpHeaders): Promise<ISessionPayload> => {
+        let refreshPayload: ISessionPayload;
+        try {
+            refreshPayload = jwt.verify(token, config.auth.key) as ISessionPayload;
+        } catch {
+            throw new AuthenticationError('Invalid refreshToken');
+        }
+
+        if (!refreshPayload.userId || !refreshPayload.ip || !refreshPayload.agent) {
+            throw new AuthenticationError('Invalid refreshToken');
+        }
+
+        if (config.auth.oidc.enable) {
+            try {
+                await oidcClientService.checkTokensValidity({userId: refreshPayload.userId});
+            } catch {
+                throw new AuthenticationError('OIDC session expired');
+            }
+        }
+
+        const userSessionId = (
+            await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${token}`])
+        )[0];
+
+        if (!userSessionId || refreshPayload.agent !== reqHeaders['user-agent']) {
+            throw new AuthenticationError('Invalid session');
+        }
+
+        return refreshPayload;
     };
 
     return {
@@ -581,79 +612,59 @@ export default function ({
             const accessToken = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
             const refreshToken = cookies?.[REFRESH_TOKEN_COOKIE_NAME];
 
+            const getUserGroups = async (uid: string): Promise<string[]> => {
+                const userGroups = (await valueDomain.getValues({
+                    library: USERS_LIBRARY,
+                    recordId: uid,
+                    attribute: USERS_GROUP_ATTRIBUTE_NAME,
+                    ctx
+                })) as ITreeValue[];
+                return userGroups.map(g => g.payload?.id);
+            };
+
             let userId: string;
             let groupsId: string[];
-            let payload: IAccessTokenPayload | ISessionPayload;
 
             if (accessToken) {
                 try {
-                    payload = jwt.verify(accessToken, config.auth.key) as IAccessTokenPayload;
-                } catch (e) {
-                    throw new AuthenticationError('Invalid accessToken');
-                }
-
-                userId = payload.userId;
-
-                if (!userId) {
-                    throw new AuthenticationError('Invalid accessToken');
-                }
-
-                groupsId = payload.groupsId;
-            } else if (refreshToken) {
-                try {
-                    payload = jwt.verify(refreshToken, config.auth.key) as ISessionPayload;
-                } catch (e) {
-                    throw new AuthenticationError('Invalid refreshToken');
-                }
-
-                if (!payload.userId || !payload.ip || !payload.agent) {
-                    throw new AuthenticationError('Invalid refreshToken');
-                }
-
-                if (config.auth.oidc.enable) {
-                    try {
-                        await oidcClientService.checkTokensValidity({userId: payload.userId});
-                    } catch (err) {
-                        throw new AuthenticationError('OIDC session expired');
+                    const payload = jwt.verify(accessToken, config.auth.key) as IAccessTokenPayload;
+                    userId = payload.userId;
+                    if (!userId) {
+                        throw new AuthenticationError('Invalid accessToken');
+                    }
+                    groupsId = payload.groupsId;
+                } catch (e: any) {
+                    // We could have a time race condition here, there is a delta between the time the token is signed and the time the cookie is created
+                    // We could end up with a token expired (from jwt) but not yet from the cookie
+                    // To avoid this, we check if the error is a token expired error, and if so, we regenerate the tokens
+                    if (e.name === 'TokenExpiredError' && refreshToken) {
+                        const refreshPayload = await _verifyRefreshToken(refreshToken, headers);
+                        await _generateAccessAndRefreshTokens(refreshPayload.userId, refreshToken, headers, res, ctx);
+                        userId = refreshPayload.userId;
+                        groupsId = await getUserGroups(userId);
+                    } else {
+                        throw new AuthenticationError('Invalid accessToken');
                     }
                 }
-
-                const userSessionId = (
-                    await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
-                )[0];
-
-                if (!userSessionId || payload.agent !== headers['user-agent']) {
-                    throw new AuthenticationError('Invalid session');
-                }
-
+            } else if (refreshToken) {
+                const payload = await _verifyRefreshToken(refreshToken, headers);
                 await _generateAccessAndRefreshTokens(payload.userId, refreshToken, headers, res, ctx);
-
                 userId = payload.userId;
-                groupsId = payload.groupsId;
+                groupsId = await getUserGroups(userId);
             } else {
                 if (!apiKey) {
                     throw new AuthenticationError('No api key provided');
                 }
 
-                // If no valid token in cookies, check api key
                 const apiKeyData = await apiKeyDomain.validateApiKey({apiKey, ctx});
 
-                // Check API key has not expired
                 const hasExpired = apiKeyData.expiresAt && new Date(apiKeyData.expiresAt) < new Date();
                 if (hasExpired) {
                     throw new AuthenticationError('API key expired');
                 }
 
                 userId = apiKeyData.userId;
-
-                // Fetch user groups
-                const userGroups = (await valueDomain.getValues({
-                    library: USERS_LIBRARY,
-                    recordId: userId,
-                    attribute: USERS_GROUP_ATTRIBUTE_NAME,
-                    ctx
-                })) as ITreeValue[];
-                groupsId = userGroups.map(g => g.payload?.id);
+                groupsId = await getUserGroups(userId);
             }
 
             await _checkIfUserExistsById(userId, ctx);
