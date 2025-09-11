@@ -49,7 +49,7 @@ module.exports = {
         refreshTokenExpiration: process.env.REFRESH_TOKEN_TTL || '2h',
         cookie: {
             sameSite: process.env.AUTH_COOKIE_SAMESITE || 'lax',
-            secure: process.env.AUTH_COOKIE_SECURE || false
+            secure: process.env.AUTH_COOKIE_SECURE || true
         },
         resetPasswordExpiration: process.env.AUTH_RESET_PWD_TTL || '20m',
         oidc: {

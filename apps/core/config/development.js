@@ -11,7 +11,10 @@ module.exports = {
         transport: 'console'
     },
     auth: {
-        refreshTokenExpiration: '99y'
+        refreshTokenExpiration: '99y',
+        cookie: {
+            secure: false
+        }
     },
     debug: true,
     dbProfiler: {
