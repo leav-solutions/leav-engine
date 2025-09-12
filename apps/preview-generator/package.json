@@ -36,6 +36,7 @@
     "dependencies": {
         "@leav/app-root-path": "workspace:libs/app-root-path",
         "@leav/config-manager": "workspace:libs/config-manager",
+        "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
         "amqplib": "0.10.3",
         "uuid": "3.3.3"

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {startWatch} from './setupWatcher/setupWatcher';
+import {monitoringServer} from '@leav/monitoring-server';
 
 process.on('uncaughtException', err => {
     console.error('1 - There was an uncaught error', err);
@@ -20,7 +21,11 @@ process.on('SIGINT', () => {
 });
 
 (async () => {
+    const monitoringServerInstance = monitoringServer();
+
     await startWatch();
+
+    await monitoringServerInstance.init();
 })().catch(e => {
     console.error(e);
     process.exit(1);

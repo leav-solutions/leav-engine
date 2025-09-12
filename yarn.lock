@@ -8428,6 +8428,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hono/node-server@npm:1.19.2":
+  version: 1.19.2
+  resolution: "@hono/node-server@npm:1.19.2"
+  peerDependencies:
+    hono: ^4
+  checksum: 883079fdc67067a26854cd8d34db7ad801613ab4bc17e3c41d455888013470d0da8f62630abfc9d87ae7c2b8bfed15e48e4bcd939e8439f840b7f71f2a858b4e
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.11.13, @humanwhocodes/config-array@npm:^0.11.14":
   version: 0.11.14
   resolution: "@humanwhocodes/config-array@npm:0.11.14"
@@ -9461,6 +9470,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@leav/monitoring-server@workspace:libs/monitoring-server":
+  version: 0.0.0-use.local
+  resolution: "@leav/monitoring-server@workspace:libs/monitoring-server"
+  dependencies:
+    "@hono/node-server": "npm:1.19.2"
+    "@types/jest": "npm:29.0.2"
+    hono: "npm:4.9.7"
+    jest: "npm:29.0.3"
+    node-fetch: "npm:2.6.7"
+    prom-client: "npm:15.1.3"
+    ts-jest: "npm:29.0.1"
+    typescript: "npm:5.5.3"
+  languageName: unknown
+  linkType: soft
+
 "@leav/ui@workspace:libs/ui":
   version: 0.0.0-use.local
   resolution: "@leav/ui@workspace:libs/ui"
@@ -9901,6 +9925,13 @@ __metadata:
   version: 3.0.2
   resolution: "@oclif/screen@npm:3.0.2"
   checksum: ed6d42dc74ccd4ddeaf3e32b97aed3f417c2d7659272c5de9b99209915f4e3089f4981f4b7eaed09687d710a3c082a15da0870b39fa0c70abb57d5034a4981cb
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/api@npm:^1.4.0":
+  version: 1.9.0
+  resolution: "@opentelemetry/api@npm:1.9.0"
+  checksum: a607f0eef971893c4f2ee2a4c2069aade6ec3e84e2a1f5c2aac19f65c5d9eeea41aa72db917c1029faafdd71789a1a040bdc18f40d63690e22ccae5d7070f194
   languageName: node
   linkType: hard
 
@@ -14427,6 +14458,7 @@ __metadata:
   dependencies:
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
+    "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.8.2"
     "@types/chokidar": "npm:2.1.3"
@@ -15105,6 +15137,13 @@ __metadata:
   dependencies:
     file-uri-to-path: "npm:1.0.0"
   checksum: 593d5ae975ffba15fbbb4788fe5abd1e125afbab849ab967ab43691d27d6483751805d98cb92f7ac24a2439a8a8678cd0131c535d5d63de84e383b0ce2786133
+  languageName: node
+  linkType: hard
+
+"bintrees@npm:1.0.2":
+  version: 1.0.2
+  resolution: "bintrees@npm:1.0.2"
+  checksum: 071896cea5ea5413316c8436e95799444c208630d5c539edd8a7089fc272fc5d3634aa4a2e4847b28350dda1796162e14a34a0eda53108cc5b3c2ff6a036c1fa
   languageName: node
   linkType: hard
 
@@ -16821,6 +16860,7 @@ __metadata:
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/message-broker": "workspace:libs/message-broker"
+    "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.8.2"
     "@types/cacache": "npm:15.0.1"
@@ -21449,6 +21489,13 @@ __metadata:
   dependencies:
     parse-passwd: "npm:^1.0.0"
   checksum: 18dd4db87052c6a2179d1813adea0c4bfcfa4f9996f0e226fefb29eb3d548e564350fa28ec46b0bf1fbc0a1d2d6922ceceb80093115ea45ff8842a4990139250
+  languageName: node
+  linkType: hard
+
+"hono@npm:4.9.7":
+  version: 4.9.7
+  resolution: "hono@npm:4.9.7"
+  checksum: e1fb57658396a530520583cd4feed160263c828461c532cfa907e7aedd2af0cc48fbfc349f01d6058bf4e3ebf6c601925e2c39400ae25cd4feed948c7ba873b3
   languageName: node
   linkType: hard
 
@@ -26200,6 +26247,7 @@ __metadata:
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/message-broker": "workspace:*"
+    "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.8.2"
     "@types/jest": "npm:29.0.3"
@@ -29145,6 +29193,7 @@ __metadata:
   dependencies:
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
+    "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.8.2"
     "@types/jest": "npm:29.0.2"
@@ -29184,6 +29233,16 @@ __metadata:
     speedometer: "npm:~1.0.0"
     through2: "npm:~2.0.3"
   checksum: 839f1009f9feb3d14cbb9bef16eebaecf9560af7b7f64003bfb42c4db1a8e52b32d6bb5a14299a38522046c26bac1bbad1a99eec6fb8fc42b1d4ed3f21f22a41
+  languageName: node
+  linkType: hard
+
+"prom-client@npm:15.1.3":
+  version: 15.1.3
+  resolution: "prom-client@npm:15.1.3"
+  dependencies:
+    "@opentelemetry/api": "npm:^1.4.0"
+    tdigest: "npm:^0.1.1"
+  checksum: eba75e15ab896845d39359e3a4d6f7913ea05339b3122d8dde8c8c374669ad1a1d1ab2694ab2101c420bd98086a564e4f2a18aa29018fc14a4732e57c1c19aec
   languageName: node
   linkType: hard
 
@@ -33639,6 +33698,15 @@ __metadata:
     mkdirp: "npm:^1.0.3"
     yallist: "npm:^4.0.0"
   checksum: bfbfbb2861888077fc1130b84029cdc2721efb93d1d1fb80f22a7ac3a98ec6f8972f29e564103bbebf5e97be67ebc356d37fa48dbc4960600a1eb7230fbd1ea0
+  languageName: node
+  linkType: hard
+
+"tdigest@npm:^0.1.1":
+  version: 0.1.2
+  resolution: "tdigest@npm:0.1.2"
+  dependencies:
+    bintrees: "npm:1.0.2"
+  checksum: 45be99fa52dab74b8edafe150e473cdc45aa1352c75ed516a39905f350a08c3175f6555598111042c3677ba042d7e3cae6b5ce4c663fe609bc634f326aabc9d6
   languageName: node
   linkType: hard
 

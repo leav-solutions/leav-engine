@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {amqpService} from '@leav/message-broker';
+import {monitoringServer} from '@leav/monitoring-server';
 import fs from 'fs';
 import {IConfig, CoreMode} from './_types/config';
 import {IFilesManagerInterface} from 'interface/filesManager';
@@ -51,6 +52,8 @@ import {initOIDCClient} from './infra/oidc';
         'core.infra.oidcClient': oidcClient
     });
 
+    const monitoringServerInstance = monitoringServer();
+
     const server: IServer = coreContainer.cradle['core.interface.server'];
     const filesManager: IFilesManagerInterface = coreContainer.cradle['core.interface.filesManager'];
     const indexationManager: IIndexationManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
@@ -86,6 +89,7 @@ import {initOIDCClient} from './infra/oidc';
                 await initPlugins(conf.pluginsPath, pluginsContainer);
                 await server.init();
                 await server.initConsumers();
+                await monitoringServerInstance.init();
                 break;
             case CoreMode.MIGRATE:
                 // Run db migrations
@@ -94,15 +98,19 @@ import {initOIDCClient} from './infra/oidc';
                 process.exit(0);
             case CoreMode.FILES_MANAGER:
                 await filesManager.init();
+                await monitoringServerInstance.init();
                 break;
             case CoreMode.INDEXATION_MANAGER:
                 await indexationManager.init();
+                await monitoringServerInstance.init();
                 break;
             case CoreMode.TASKS_MANAGER_MASTER:
                 await tasksManager.initMaster();
+                await monitoringServerInstance.init();
                 break;
             case CoreMode.TASKS_MANAGER_WORKER:
                 await tasksManager.initWorker();
+                await monitoringServerInstance.init();
                 break;
             case CoreMode.CLI:
             default:

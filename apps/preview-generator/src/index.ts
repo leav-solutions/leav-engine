@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {monitoringServer} from '@leav/monitoring-server';
 import fs from 'fs';
 import {startConsume} from './amqp/startConsume';
 import {getConfig} from './getConfig/getConfig';
@@ -8,6 +9,7 @@ import {getConfig} from './getConfig/getConfig';
 (async function () {
     try {
         const config = await getConfig();
+        const monitoringServerInstance = monitoringServer();
 
         // Ensure that the output directory exists
         if (!config.outputRootPath) {
@@ -20,6 +22,7 @@ import {getConfig} from './getConfig/getConfig';
         }
 
         await startConsume(config);
+        await monitoringServerInstance.init();
     } catch (e) {
         console.error(e);
         process.exit(1);

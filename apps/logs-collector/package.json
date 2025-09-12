@@ -38,6 +38,7 @@
         "@leav/app-root-path": "workspace:libs/app-root-path",
         "@leav/config-manager": "workspace:libs/config-manager",
         "@leav/message-broker": "workspace:*",
+        "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
         "amqplib": "0.8.0",
         "joi": "17.11.0",

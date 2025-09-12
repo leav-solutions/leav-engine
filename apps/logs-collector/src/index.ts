@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {monitoringServer} from '@leav/monitoring-server';
 import {getConfig} from './config';
 import {initConsumer} from './consumer';
 import {elasticsearchService} from './elasticsearchService';
@@ -8,9 +9,11 @@ import {elasticsearchService} from './elasticsearchService';
 (async function () {
     try {
         const config = await getConfig();
+        const monitoringServerInstance = monitoringServer();
 
         const esService = await elasticsearchService(config);
         await initConsumer(config, esService);
+        await monitoringServerInstance.init();
     } catch (e) {
         console.error(e);
         process.exit(1);
