@@ -160,7 +160,7 @@ describe('Trees', () => {
         expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
 
-        expect(res.data.data.rootChildren.totalCount).toBe(1);
+        expect(res.data.data.rootChildren.totalCount).toBe(2);
         expect(res.data.data.rootChildren.list).toHaveLength(1);
         expect(res.data.data.rootChildren.list[0].id).toBe(recordNode2);
     });

@@ -452,7 +452,8 @@ export default function ({
 
                                 // Apply permissions filter to children list
                                 children.list = children.list.filter((_treeNode, i) => permissionsFilter[i]);
-                                children.totalCount = children.list.length;
+                                // FIXME : should be the total totalCount regarding permissions https://aristid.atlassian.net/browse/LEAVC-323
+                                // children.totalCount = children.list.length;
                             }
 
                             return {

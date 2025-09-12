@@ -10,6 +10,7 @@ import {ChildrenAsRecordValuePermissionFilterInput, useTreeNodeChildrenLazyQuery
 import {defaultPaginationPageSize, ErrorDisplay} from '../..';
 import {TreeNodeTitle} from './TreeNodeTitle';
 import {_isObjectSelection, ITreeMap, ITreeMapElement} from './_types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 interface ISelectTreeNodeContentProps {
     treeData: {id: string; label: string};
@@ -40,6 +41,8 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     selectableLibraries,
     loadRecursively = false
 }) => {
+    const {t} = useSharedTranslation();
+
     const rootNode: ITreeMapElement = {
         title: tree.label,
         record: null,
@@ -82,7 +85,9 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             });
 
             const parentMapKey = parentNodeKey ?? tree.id;
+            const totalCount = treeNodeChildren.totalCount;
             const parentElement = currentTreeMap[parentMapKey];
+            const showMoreKey = '__showMore' + parentMapKey + offset;
 
             const parentPath = parentElement?.parents ?? [];
             const currentParents = [...parentPath, parentMapKey];
@@ -106,6 +111,22 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
 
             for (const node of formattedNodes) {
                 currentTreeMap[node.key] = node as ITreeMapElement;
+                parentElement.paginationOffset = offset;
+            }
+
+            if (totalCount > parentElement.paginationOffset + defaultPaginationPageSize) {
+                const showMoreElement: ITreeMapElement = {
+                    id: parentMapKey,
+                    key: showMoreKey,
+                    record: null,
+                    title: t('tree-node-selection.show_more'),
+                    isLeaf: false,
+                    paginationOffset: 0,
+                    isShowMore: true,
+                    selectable: false,
+                    children: []
+                };
+                parentElement.children.push(showMoreElement);
             }
 
             const newOffset = offset + defaultPaginationPageSize;
