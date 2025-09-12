@@ -8,7 +8,7 @@
     overflow: hidden;
 
     &:not(.sidePanel) {
-        padding: calc(var(--general-spacing-m) * 1px);
+        padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
     }
 }
 
@@ -42,4 +42,5 @@
 /* TODO: Remove this when KitTabs will be responsive */
 .scrollable {
     overflow-y: hidden;
+    min-width: fit-content;
 }

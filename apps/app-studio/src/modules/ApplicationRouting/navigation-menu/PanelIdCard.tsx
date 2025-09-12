@@ -22,7 +22,7 @@ export const PanelIdCard: FunctionComponent<{currentRecordId?: string; libraryId
         <PanelIdCardSkeleton />
     ) : (
         <KitIdCard
-            size="m"
+            size="s"
             title={data?.records?.list?.[0]?.whoAmI?.label}
             description={data?.records?.list?.[0]?.whoAmI?.subLabel}
         />
