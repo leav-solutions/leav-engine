@@ -39,7 +39,7 @@ export interface IEditRecordModalProps {
 
 const MODAL_HEIGHT = '80vh';
 const MODAL_WIDTH = '90vw';
-const MODAL_MAX_WIDTH = '1200px';
+const MODAL_MAX_WIDTH = '656px';
 
 const KitModalStyled = styled(KitModal)`
     && {

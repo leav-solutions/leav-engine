@@ -13,7 +13,8 @@ export const useOpenConfirmModal = () => {
             okCancel: true,
             onOk: data.onOk,
             onCancel: data.onCancel,
-            width: '50vw'
+            width: '100%',
+            style: {content: {width: '90vw', maxWidth: '656px'}}
         });
     };
 
