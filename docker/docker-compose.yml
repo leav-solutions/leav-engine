@@ -133,6 +133,15 @@ x-env-build-core: &env-build-core
   context: ../apps/core
   dockerfile: ../../docker/DOCKERFILES/CORE/Dockerfile
 
+# Healthcheck with libs/monitoring-server module
+x-healthcheck-localhost-44444: &healthcheck-localhost-44444
+  test: ["CMD-SHELL", "nc -z localhost 44444 || exit 1"]
+  start_period: 30s
+  start_interval: 5s
+  interval: 60s
+  timeout: 2s
+  retries: 50
+
 ############################
 
 services:
@@ -176,13 +185,7 @@ services:
       - "9229:9229"
       - "4001:4001"
     working_dir: *dir-core
-    healthcheck:
-      test: ["CMD-SHELL", "nc -z core 4001 || exit 1"]
-      start_period: 30s
-      start_interval: 5s
-      interval: 60s
-      timeout: 2s
-      retries: 50
+    healthcheck: *healthcheck-localhost-44444
     depends_on:
       message-broker:
         condition: service_healthy
@@ -205,6 +208,7 @@ services:
     ports:
       - "9231:9231"
     working_dir: *dir-core
+    healthcheck: *healthcheck-localhost-44444
     depends_on:
       core:
         condition: service_healthy
@@ -227,6 +231,7 @@ services:
     ports:
       - "9232:9232"
     working_dir: *dir-core
+    healthcheck: *healthcheck-localhost-44444
     depends_on:
       core:
         condition: service_healthy
@@ -247,6 +252,7 @@ services:
       - *volume-shared-modules
       - *volume-core-modules
     working_dir: *dir-core
+    healthcheck: *healthcheck-localhost-44444
     ports:
         - "9234:9234"
     depends_on:
@@ -395,6 +401,7 @@ services:
       - *volume-automate_scan-modules
       - *volume-config_manager-modules
     working_dir: *dir-automate_scan
+    healthcheck: *healthcheck-localhost-44444
     depends_on:
       core:
         condition: service_healthy
@@ -417,6 +424,7 @@ services:
     ports:
       - "9230:9230"
     working_dir: *dir-core
+    healthcheck: *healthcheck-localhost-44444
     depends_on:
       core:
         condition: service_healthy
@@ -440,6 +448,7 @@ services:
       - *volume-preview_generator-modules
       - *volume-config_manager-modules
     working_dir: *dir-preview_generator
+    healthcheck: *healthcheck-localhost-44444
     depends_on:
       core:
         condition: service_healthy
@@ -488,6 +497,7 @@ services:
       - *volume-config_manager-modules
       - *volume-message_broker-modules
     working_dir: *dir-logs_collector
+    healthcheck: *healthcheck-localhost-44444
     depends_on:
       message-broker:
         condition: service_healthy
