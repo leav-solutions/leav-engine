@@ -15,88 +15,102 @@ import {
 import {adminUserId} from '../../../../_constants/users';
 import {usersLibraryId} from '../../../../_constants/libraries';
 import {AttributePermissionsActions} from '../../../../_types/permissions';
+import {FormElementTypes} from '../../../../_types/forms';
 
 describe('Records', () => {
-    const testLibName = 'record_library_test';
-    const testLibLink = 'library_link_test';
-    const testTreeName = 'test_tree';
-    const testAttributeId = 'create_record_test_attribute';
-    const testLinkAttributeId = 'create_record_test_link_attribute';
-    const testTreeAttributeId = 'create_record_test_tree_attribute';
-
-    let recordId: string;
-    let recordNode: string;
-
-    beforeAll(async () => {
-        await gqlSaveAttribute({
-            id: testAttributeId,
-            type: AttributeTypes.SIMPLE,
-            format: AttributeFormats.TEXT,
-            required: true,
-            label: 'test'
-        });
-        await gqlSaveAttribute({
-            id: testLinkAttributeId,
-            type: AttributeTypes.SIMPLE_LINK,
-            linkedLibrary: testLibLink,
-            required: true,
-            label: 'test_link'
-        });
-
-        await gqlSaveAttribute({
-            id: testTreeAttributeId,
-            type: AttributeTypes.TREE,
-            multipleValues: false,
-            label: 'Test Tree attribute',
-            linkedTree: testTreeName
-        });
-
-        await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]);
-        await gqlSaveLibrary(testLibLink, 'Test2', [testAttributeId]);
-        await gqlSaveTree(testTreeName, 'Test tree', [testLibName]);
-
-        const resultCreation = await makeGraphQlCall(`mutation {
-            c1: createEmptyRecord(library: "${testLibName}") { record {id} }
-        }`);
-        const resCreationLink = await makeGraphQlCall(`mutation {
-            linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record {id} },
-        }`);
-        recordId = resultCreation.data.data.c1.record.id;
-        await makeGraphQlCall(
-            `mutation {
-                saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testAttributeId}", value: {
-                    payload: "test value"
-                }) {
-                    id_value
-                }
-            }`,
-            true
-        );
-        await makeGraphQlCall(
-            `mutation {
-                saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testLinkAttributeId}", value: {
-                    payload: "${resCreationLink.data.data.linkRecordCreated.record.id}"
-                }) {
-                    id_value
-                }
-            }`,
-            true
-        );
-        await makeGraphQlCall(`mutation {
-            a1: activateNewRecord(library: "${testLibName}", recordId: "${recordId}", formId: "creation") {
-                record {
-                    id
-                }
-                valuesErrors {
-                    message
-                }
-            }
-        }`);
-        recordNode = await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId});
-    });
-
     describe('Creation', () => {
+        const testLibName = 'record_library_test';
+        const testLibLink = 'library_link_test';
+        const testTreeName = 'test_tree';
+        const testAttributeId = 'create_record_test_attribute';
+        const testLinkAttributeId = 'create_record_test_link_attribute';
+        const testTreeAttributeId = 'create_record_test_tree_attribute';
+
+        beforeAll(async () => {
+            // Attribute and library setup
+            await gqlSaveAttribute({
+                id: testAttributeId,
+                type: AttributeTypes.SIMPLE,
+                format: AttributeFormats.TEXT,
+                required: true,
+                label: 'test'
+            });
+            await gqlSaveAttribute({
+                id: testLinkAttributeId,
+                type: AttributeTypes.SIMPLE_LINK,
+                linkedLibrary: testLibLink,
+                required: true,
+                label: 'test_link'
+            });
+            await gqlSaveAttribute({
+                id: testTreeAttributeId,
+                type: AttributeTypes.TREE,
+                multipleValues: false,
+                label: 'Test Tree attribute',
+                linkedTree: testTreeName
+            });
+
+            await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]);
+            await gqlSaveLibrary(testLibLink, 'Test2', [testAttributeId]);
+            await gqlSaveTree(testTreeName, 'Test tree', [testLibName]);
+
+            // Create and activate a record for later use
+            const resultCreation = await makeGraphQlCall(`mutation {
+                c1: createEmptyRecord(library: "${testLibName}") { record {id} }
+            }`);
+            const resCreationLink = await makeGraphQlCall(`mutation {
+                linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record {id} },
+            }`);
+            const recordId = resultCreation.data.data.c1.record.id;
+            await makeGraphQlCall(
+                `mutation {
+                    saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testAttributeId}", value: {
+                        payload: "test value"
+                    }) { id_value }
+                }`,
+                true
+            );
+            await makeGraphQlCall(
+                `mutation {
+                    saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testLinkAttributeId}", value: {
+                        payload: "${resCreationLink.data.data.linkRecordCreated.record.id}"
+                    }) { id_value }
+                }`,
+                true
+            );
+            await makeGraphQlCall(`mutation {
+                a1: activateNewRecord(library: "${testLibName}", recordId: "${recordId}", formId: "creation") {
+                    record { id }
+                    valuesErrors { message }
+                }
+            }`);
+            await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId});
+        });
+        afterAll(async () => {
+            // Clean up test data for Creation
+            // Purge all records in the test library using purgeRecord
+            const recordsRes = await makeGraphQlCall(`{
+                records(library: "${testLibName}", retrieveInactive: true) {
+                    list { id }
+                }
+            }`);
+            const recordIds = recordsRes.data.data.records.list.map((r: {id: string}) => r.id);
+            for (const id of recordIds) {
+                await makeGraphQlCall(
+                    `mutation { purgeRecord(libraryId: "${testLibName}", recordId: "${id}") { id } }`
+                );
+            }
+            // Need to delete attribute BEFORE library,
+            // Otherwise cache is not deleted and the next saveAttribute will try to update it
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testLinkAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testTreeAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibName}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibLink}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteTree(id: "${testTreeName}") { id } }`);
+        });
         test('Create Empty records', async () => {
+            // Create an empty record and check its initial state (not active, has permissions)
             const res = await makeGraphQlCall(`mutation {
                 c1: createEmptyRecord(library: "${testLibName}") { record {id permissions {edit_record} active } }
             }`);
@@ -110,11 +124,13 @@ describe('Records', () => {
         });
 
         test('Should NOT activate a new record when required fields are missing', async () => {
+            // Create an empty record without required fields
             const resCreation = await makeGraphQlCall(`mutation {
                 recordCreated: createEmptyRecord(library: "${testLibName}") { record {id} },
             }`);
             expect(resCreation.status).toBe(200);
 
+            // Try to activate the record, expecting validation errors for missing required fields
             const resActivation = await makeGraphQlCall(`mutation {
                 recordActivated: activateNewRecord(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}", formId: "creation") {
                     record {
@@ -136,16 +152,21 @@ describe('Records', () => {
             );
             expect(resActivation.data.data.recordActivated.valuesErrors[1].message).toBe('Attribute test is required');
         });
+
         test('Should activate a new record when all required fields are filled', async () => {
+            // Create an empty record
             const resCreation = await makeGraphQlCall(`mutation {
                 recordCreated: createEmptyRecord(library: "${testLibName}") { record {id} },
                 }`);
             expect(resCreation.status).toBe(200);
+
+            // Create a linked record for the required link attribute
             const resCreationLink = await makeGraphQlCall(`mutation {
                 linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record {id} },
             }`);
             expect(resCreationLink.status).toBe(200);
 
+            // Fill required simple attribute
             await makeGraphQlCall(
                 `mutation {
                 saveValue(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}", attribute: "${testAttributeId}", value: {
@@ -156,6 +177,7 @@ describe('Records', () => {
             }`,
                 true
             );
+            // Fill required link attribute
             await makeGraphQlCall(
                 `mutation {
                 saveValue(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}", attribute: "${testLinkAttributeId}", value: {
@@ -166,6 +188,7 @@ describe('Records', () => {
             }`,
                 true
             );
+            // Try to activate the record, expecting success (no validation errors)
             const resActivation = await makeGraphQlCall(`mutation {
                 recordActivated: activateNewRecord(library: "${testLibName}", recordId: "${resCreation.data.data.recordCreated.record.id}", formId: "creation") {
                     record {
@@ -186,12 +209,99 @@ describe('Records', () => {
             });
             expect(resActivation.data.data.recordActivated.valuesErrors).toEqual([]);
         });
+
+        describe('Dependent form with required attributes', () => {
+            const dependentAttrId = 'dependent_required_attr';
+            const formWithDependency = 'creation_with_dependency';
+
+            beforeAll(async () => {
+                // Create a required attribute that will be in a dependent form element
+                await gqlSaveAttribute({
+                    id: dependentAttrId,
+                    type: AttributeTypes.SIMPLE,
+                    format: AttributeFormats.TEXT,
+                    required: true,
+                    label: 'dependent required'
+                });
+                await gqlSaveLibrary(testLibName, 'Test', [
+                    testAttributeId,
+                    testLinkAttributeId,
+                    testTreeAttributeId,
+                    dependentAttrId
+                ]);
+
+                // Create a form with a dependent element that is never triggered (dependencyValue never set)
+                await makeGraphQlCall(`mutation {
+                    saveForm(form: {
+                        id: "${formWithDependency}",
+                        library: "${testLibName}",
+                        elements: [
+                            {
+                                dependencyValue: {
+                                    attribute: "never_triggered",
+                                    value: "${testTreeAttributeId}"
+                                },
+                                elements: [
+                                    {
+                                        id: "dep_elem",
+                                        containerId: "dep_elem_1",
+                                        order: 0,
+                                        uiElementType: "input_field",
+                                        type: ${FormElementTypes.field},
+                                        settings: [{ 
+                                            key: "attribute",
+                                            value: "${dependentAttrId}"
+                                        }]
+                                    }
+                                ]
+                            }
+                        ]
+                    }) { id }
+                }`);
+            });
+            afterAll(async () => {
+                await makeGraphQlCall(
+                    `mutation { deleteForm(library: "${testLibName}", id: "${formWithDependency}") { id } }`
+                );
+                await makeGraphQlCall(`mutation { deleteAttribute(id: "${dependentAttrId}") { id } }`);
+            });
+
+            test('Should activate a new record even if a required field is only in a dependent form (so not filled)', async () => {
+                // Create a record without filling the dependent attribute
+                const resCreation = await makeGraphQlCall(`mutation {
+                    recordCreated: createEmptyRecord(library: "${testLibName}") { record {id} }
+                }`);
+                expect(resCreation.status).toBe(200);
+
+                // Try to activate the record: no need to fill any attributes
+                // should succeed, as the required attribute is not displayed (dependency not triggered)
+                const resActivation = await makeGraphQlCall(`mutation {
+                    recordActivated: activateNewRecord(
+                        library: "${testLibName}",
+                        recordId: "${resCreation.data.data.recordCreated.record.id}",
+                        formId: "creation_with_dependency") {
+                            record { id }
+                            valuesErrors { attribute message }
+                        }
+                }`);
+
+                expect(resActivation.status).toBe(200);
+                expect(resActivation.data.errors).toBeUndefined();
+                expect(resActivation.data.data.recordActivated.record).toEqual({
+                    id: resCreation.data.data.recordCreated.record.id
+                });
+                expect(resActivation.data.data.recordActivated.valuesErrors).toEqual([]);
+            });
+        });
+
         test('should purge the new record when cancel creation', async () => {
+            // Create a new record
             const resCreation = await makeGraphQlCall(`mutation {
                 c1: createEmptyRecord(library: "${testLibName}") { record {id} }
             }`);
             expect(resCreation.status).toBe(200);
 
+            // Purge (delete) the record before activation
             const resPurge = await makeGraphQlCall(`mutation {
                 p1: purgeRecord(libraryId: "${testLibName}", recordId: "${resCreation.data.data.c1.record.id}") { id }
             }`);
@@ -200,6 +310,7 @@ describe('Records', () => {
             expect(resPurge.data.errors).toBeUndefined();
             expect(resPurge.data.data.p1.id).toBe(resCreation.data.data.c1.record.id);
 
+            // Check that the record no longer exists (even among inactive records)
             const res = await makeGraphQlCall(`{
                 records(
                     library: "${testLibName}",
@@ -218,7 +329,18 @@ describe('Records', () => {
     });
 
     describe('Get records', () => {
+        const testLibName = 'record_library_test';
+        const testLibLink = 'library_link_test';
+        const testTreeName = 'test_tree';
+        const testAttributeId = 'create_record_test_attribute';
+        const testLinkAttributeId = 'create_record_test_link_attribute';
+        const testTreeAttributeId = 'create_record_test_tree_attribute';
+
+        let recordId: string;
+        let recordNode: string;
+
         beforeAll(async () => {
+            // Attribute and library setup
             await gqlSaveAttribute({
                 id: testAttributeId,
                 type: AttributeTypes.SIMPLE,
@@ -233,7 +355,72 @@ describe('Records', () => {
                 required: false,
                 label: 'test_link'
             });
+            await gqlSaveAttribute({
+                id: testTreeAttributeId,
+                type: AttributeTypes.TREE,
+                multipleValues: false,
+                label: 'Test Tree attribute',
+                linkedTree: testTreeName
+            });
+
             await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]);
+            await gqlSaveLibrary(testLibLink, 'Test2', [testAttributeId]);
+            await gqlSaveTree(testTreeName, 'Test tree', [testLibName]);
+
+            // Create and activate a record for later use
+            const resultCreation = await makeGraphQlCall(`mutation {
+                c1: createEmptyRecord(library: "${testLibName}") { record {id} }
+            }`);
+            const resCreationLink = await makeGraphQlCall(`mutation {
+                linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record {id} },
+            }`);
+            recordId = resultCreation.data.data.c1.record.id;
+            await makeGraphQlCall(
+                `mutation {
+                    saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testAttributeId}", value: {
+                        payload: "test value"
+                    }) { id_value }
+                }`,
+                true
+            );
+            await makeGraphQlCall(
+                `mutation {
+                    saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testLinkAttributeId}", value: {
+                        payload: "${resCreationLink.data.data.linkRecordCreated.record.id}"
+                    }) { id_value }
+                }`,
+                true
+            );
+            await makeGraphQlCall(`mutation {
+                a1: activateNewRecord(library: "${testLibName}", recordId: "${recordId}", formId: "creation") {
+                    record { id }
+                    valuesErrors { message }
+                }
+            }`);
+            recordNode = await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId});
+        });
+        afterAll(async () => {
+            // Clean up test data for Get records
+            // Purge all records in the test library using purgeRecord
+            const recordsRes = await makeGraphQlCall(`{
+                records(library: "${testLibName}", retrieveInactive: true) {
+                    list { id }
+                }
+            }`);
+            const recordIds = recordsRes.data.data.records.list.map((r: {id: string}) => r.id);
+            for (const id of recordIds) {
+                await makeGraphQlCall(
+                    `mutation { purgeRecord(libraryId: "${testLibName}", recordId: "${id}") { id } }`
+                );
+            }
+            // Need to delete attribute BEFORE library,
+            // Otherwise cache is not deleted and the next saveAttribute will try to update it
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testLinkAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testTreeAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibName}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibLink}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteTree(id: "${testTreeName}") { id } }`);
         });
         test('Create and activate records', async () => {
             const res = await makeGraphQlCall(`mutation {
@@ -256,12 +443,12 @@ describe('Records', () => {
             await Promise.all(
                 recordIds.map(async (id, idx) => {
                     const activateRes = await makeGraphQlCall(`mutation {
-                a${idx}: activateNewRecord(library: "${testLibName}", recordId: "${id}", formId: "creation") {
-                    valuesErrors {
-                        message
-                    }
-                }
-            }`);
+                        a${idx}: activateNewRecord(library: "${testLibName}", recordId: "${id}", formId: "creation") {
+                            valuesErrors {
+                                message
+                            }
+                        }
+                    }`);
                     expect(activateRes.status).toBe(200);
                     expect(activateRes.data.data[`a${idx}`].valuesErrors).toEqual([]);
                 })
@@ -750,6 +937,57 @@ describe('Records', () => {
                 nodeTreeRecord4
             );
             await gqlAddElemToTree(testTreeId, {id: sfTreeRecord6, library: sfTestLibTreeId}, nodeTreeRecord5);
+        });
+        afterAll(async () => {
+            // Clean up test data for Sort/filter
+            // Purge all records in the test library using purgeRecord
+            const recordsRes = await makeGraphQlCall(`{
+                sfRecords: records(library: "${sfTestLibId}", retrieveInactive: true) {
+                    list { id }
+                }
+            }`);
+            const recordIds = recordsRes.data.data.sfRecords.list.map((r: {id: string}) => r.id);
+            for (const id of recordIds) {
+                await makeGraphQlCall(
+                    `mutation { purgeRecord(libraryId: "${sfTestLibId}", recordId: "${id}") { id } }`
+                );
+            }
+            // Purge all records in the test library using purgeRecord
+            const linkRecordsRes = await makeGraphQlCall(`{
+                sfLinkedRecords: records(library: "${sfTestLibLinkId}", retrieveInactive: true) {
+                    list { id }
+                }
+            }`);
+            const linkedRecordIds = linkRecordsRes.data.data.sfLinkedRecords.list.map((r: {id: string}) => r.id);
+            for (const id of linkedRecordIds) {
+                await makeGraphQlCall(
+                    `mutation { purgeRecord(libraryId: "${sfTestLibLinkId}", recordId: "${id}") { id } }`
+                );
+            }
+            // Purge all records in the test library using purgeRecord
+            const treeRecordsRes = await makeGraphQlCall(`{
+                sfTreeRecords: records(library: "${sfTestLibTreeId}", retrieveInactive: true) {
+                    list { id }
+                }
+            }`);
+            const treeRecordIds = treeRecordsRes.data.data.sfTreeRecords.list.map((r: {id: string}) => r.id);
+            for (const id of treeRecordIds) {
+                await makeGraphQlCall(
+                    `mutation { purgeRecord(libraryId: "${sfTestLibTreeId}", recordId: "${id}") { id } }`
+                );
+            }
+            // Need to delete attribute BEFORE library,
+            // Otherwise cache is not deleted and the next saveAttribute will try to update it
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleAttrId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleAttrId2}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleExtAttrId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleLinkAttrId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAdvAttrId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAdvLinkAttrId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${sfTestLibId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${sfTestLibLinkId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteLibrary(id: "${sfTestLibTreeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteTree(id: "${testTreeId}") { id } }`);
         });
 
         describe('On simple attribute', () => {

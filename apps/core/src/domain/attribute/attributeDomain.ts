@@ -18,7 +18,13 @@ import {IDateRangeValue} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
-import {AttributeFormats, IAttribute, IGetCoreAttributesParams, IOAllowedTypes} from '../../_types/attribute';
+import {
+    AttributeFormats,
+    IAttribute,
+    IGetCoreAttributesParams,
+    IGetCoreFormAttributesParams,
+    IOAllowedTypes
+} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
@@ -57,7 +63,7 @@ export interface IAttributeDomain {
      */
     getAttributeLibraries(params: {attributeId: string; ctx: IQueryInfos}): Promise<ILibrary[]>;
 
-    getFormAttributes(libraryId: string, formId: string, ctx: IQueryInfos): Promise<IAttribute[]>;
+    getFormAttributes(params: IGetCoreFormAttributesParams): Promise<IAttribute[]>;
 
     doesCompute(attrData: IAttribute): boolean;
 }
@@ -143,7 +149,12 @@ export default function ({
             );
         },
         getLibraryAttributes: _getLibraryAttributes,
-        async getFormAttributes(libraryId: string, formId: string, ctx): Promise<IAttribute[]> {
+        async getFormAttributes({
+            libraryId,
+            formId,
+            checkDependency,
+            ctx
+        }: IGetCoreFormAttributesParams): Promise<IAttribute[]> {
             const library = await getCoreEntityById('library', libraryId, ctx);
             if (!library) {
                 throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
@@ -161,9 +172,15 @@ export default function ({
 
             const libraryAttributes = await _getLibraryAttributes(libraryId, ctx);
 
-            const formAttributes = form.elements.flatMap(formDependentElement =>
-                formDependentElement.elements.flatMap(element => element.settings.attribute ?? [])
-            );
+            const formAttributes = form.elements.flatMap(formDependentElement => {
+                if (checkDependency === false && formDependentElement.dependencyValue) {
+                    return [];
+                } else {
+                    return formDependentElement.elements.flatMap(element =>
+                        element.settings.attribute !== undefined ? [element.settings.attribute] : []
+                    );
+                }
+            });
 
             return libraryAttributes.filter(attribute => formAttributes.includes(attribute.id));
         },

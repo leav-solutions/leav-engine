@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListEvents, ActionsListIOTypes, ActionsListConfig} from './actionsList';
 import {ITreePermissionsConf} from './permissions';
+import {IQueryInfos} from './queryInfos';
 import {IRecord} from './record';
 import {IGetCoreEntitiesParams, IKeyValue} from './shared';
 import {ISystemTranslation} from './systemTranslation';
@@ -73,6 +74,12 @@ export interface IAttributeFilterOptions extends ICoreEntityFilterOptions {
 
 export interface IGetCoreAttributesParams extends IGetCoreEntitiesParams {
     filters?: IAttributeFilterOptions;
+}
+export interface IGetCoreFormAttributesParams extends IGetCoreEntitiesParams {
+    libraryId: string;
+    formId: string;
+    checkDependency?: boolean;
+    ctx: IQueryInfos;
 }
 
 export interface IValuesListConf {

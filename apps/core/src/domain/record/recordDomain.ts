@@ -864,7 +864,12 @@ export default function ({
 
             const requiredAttributes = (
                 creationForm
-                    ? await attributeDomain.getFormAttributes(library, formId ?? 'creation', ctx)
+                    ? await attributeDomain.getFormAttributes({
+                          libraryId: library,
+                          formId: formId ?? 'creation',
+                          checkDependency: false,
+                          ctx
+                      })
                     : libraryAttributes
             ).filter(attribute => attribute.required);
 
@@ -964,7 +969,7 @@ export default function ({
 
                         const requiredAttributes = (
                             creationForm
-                                ? await attributeDomain.getFormAttributes(library, 'creation', ctx)
+                                ? await attributeDomain.getFormAttributes({libraryId: library, formId: 'creation', ctx})
                                 : await attributeDomain.getLibraryAttributes(library, ctx)
                         ).filter(attribute => attribute.required);
 
