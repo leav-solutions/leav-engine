@@ -5,6 +5,7 @@ import {getLogsIndexName, type IDbEvent} from '@leav/utils';
 import {type IConfig} from '_types/config';
 import type * as amqp from 'amqplib';
 import {type IElasticsearchService} from '../elasticsearchService';
+import {logger} from '@leav/logger';
 
 export const handleMessage = async (
     msg: amqp.ConsumeMessage,
@@ -12,13 +13,15 @@ export const handleMessage = async (
     config: IConfig,
     esService: IElasticsearchService
 ) => {
+    let msgContent: IDbEvent;
     try {
-        const msgContent: IDbEvent = JSON.parse(msg.content.toString());
+        msgContent = JSON.parse(msg.content.toString());
 
         if (config.debug) {
-            console.info('Received message', msgContent);
+            logger.info('Received message', {
+                msgContent
+            });
         }
-
         const {payload, emitter, ...msgMetadata} = msgContent;
 
         const indexName = getLogsIndexName(config.elasticsearch.indexPrefix, msgMetadata.instanceId);
@@ -33,6 +36,11 @@ export const handleMessage = async (
 
         channel.ack(msg);
     } catch (e) {
-        console.error('Error processing message', e, 'Message was:', msg);
+        logger.error(`Error processing message ${e.stack}`, {
+            msg: {
+                ...msg,
+                content: msgContent || 'Unable to parse json content' // override buffer data, may be undefined if JSON.parse failed
+            }
+        });
     }
 };

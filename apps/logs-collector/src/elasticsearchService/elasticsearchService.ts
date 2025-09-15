@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Client} from '@elastic/elasticsearch';
 import {type MappingProperty} from '@elastic/elasticsearch/lib/api/types';
+import {logger} from '@leav/logger';
 import {type Log} from '@leav/utils';
 import {type IConfig} from '_types/config';
 import {type WritableMessage} from '_types/message';
@@ -19,7 +20,7 @@ export const elasticsearchService = (config: IConfig): IElasticsearchService => 
     const _createILMPolicyIfNotExists = async (ilmPolicyName: string) => {
         const ilmPolicyExists = await esClient.ilm.getLifecycle({name: ilmPolicyName}).catch(() => null);
         if (!ilmPolicyExists || !ilmPolicyExists[ilmPolicyName]) {
-            console.info(`Creating elasticsearch index lifecycle policy ${ilmPolicyName}`);
+            logger.info(`Creating elasticsearch index lifecycle policy ${ilmPolicyName}`);
             await esClient.ilm.putLifecycle({
                 name: ilmPolicyName,
                 policy: {
@@ -56,7 +57,7 @@ export const elasticsearchService = (config: IConfig): IElasticsearchService => 
     const _createIndexTemplateIfNotExists = async (templateName: string, ilmPolicyName: string) => {
         const templateExists = await esClient.indices.existsIndexTemplate({name: templateName});
         if (!templateExists) {
-            console.info(`Creating elasticsearch index template ${templateName} with ILM policy ${ilmPolicyName}`);
+            logger.info(`Creating elasticsearch index template ${templateName} with ILM policy ${ilmPolicyName}`);
             await esClient.indices.putIndexTemplate({
                 name: templateName,
                 index_patterns: [`${config.elasticsearch.indexPrefix}*`],
@@ -95,7 +96,7 @@ export const elasticsearchService = (config: IConfig): IElasticsearchService => 
             const templateName = config.elasticsearch.templateName;
             await _createIndexTemplateIfNotExists(templateName, ilmPolicyName);
 
-            console.info(`Creating elasticsearch index ${indexName}`);
+            logger.info(`Creating elasticsearch index ${indexName}`);
             await esClient.indices.createDataStream({
                 name: indexName
             });

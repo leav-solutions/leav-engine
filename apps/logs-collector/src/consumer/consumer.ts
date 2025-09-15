@@ -5,6 +5,7 @@ import {amqpService} from '@leav/message-broker';
 import {type IConfig} from '_types/config';
 import {handleMessage} from './messageHandler';
 import {type IElasticsearchService} from 'elasticsearchService';
+import {logger} from '@leav/logger';
 
 export const initConsumer = async (config: IConfig, esService: IElasticsearchService) => {
     const service = await amqpService({
@@ -18,5 +19,5 @@ export const initConsumer = async (config: IConfig, esService: IElasticsearchSer
 
     await service.consume(queue, routingKey, msg => handleMessage(msg, service.consumer.channel, config, esService));
 
-    console.info('Logs collector ready. Waiting for messages... ');
+    logger.info('Logs collector ready. Waiting for messages... ');
 };

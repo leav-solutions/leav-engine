@@ -10,20 +10,19 @@ import {logger} from '@leav/logger';
 (async function () {
     try {
         const config = await getConfig();
-
         const monitoringServerInstance = monitoringServer();
 
         const esService = await elasticsearchService(config);
         await initConsumer(config, esService);
         await monitoringServerInstance.init();
     } catch (e) {
-        logger.error('Fatal error during startup ' + e.stack);
+        logger.error(`Fatal error during startup because: ${e.stack}`);
         process.exit(1);
     }
-})().catch(e => logger.error('Fatal error during initialization ' + e.stack));
+})().catch(e => logger.error(`Fatal error during initialization because ${e.stack}`));
 
 process.on('unhandledRejection', (reason: Error | any) => {
-    logger.error(`Unhandled Rejection at: ${reason.stack}`);
+    logger.error(`Unhandled Rejection at: ${reason.stack}`, {reason});
 });
 
 process.on('exit', code => {
