@@ -517,6 +517,7 @@ services:
       <<: [*env-amqp]
       APP_ROOT_PATH: *dir-logs_collector
       DEBUG: false
+      NODE_ENV: development
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
