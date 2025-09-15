@@ -40,11 +40,16 @@ export interface IEditRecordModalProps {
 const MODAL_HEIGHT = '80vh';
 const MODAL_WIDTH = '90vw';
 const MODAL_MAX_WIDTH = '656px';
+const MODAL_WITH_SIDEBAR_MAX_WIDTH = '900px';
 
 const KitModalStyled = styled(KitModal)`
     && {
         & > div {
             max-width: ${MODAL_MAX_WIDTH};
+
+            &:has(#edit_record_sidebar) {
+                max-width: ${MODAL_WITH_SIDEBAR_MAX_WIDTH};
+            }
 
             .kit-modal-header {
                 border-bottom: 1px solid var(--general-utilities-border);
