@@ -23,6 +23,7 @@
   "stableVersion": "1.0.0",
   "dependencies": {
     "@hono/node-server": "1.19.2",
+    "@leav/logger": "workspace:libs/logger",
     "hono": "4.9.7",
     "prom-client": "15.1.3"
   },

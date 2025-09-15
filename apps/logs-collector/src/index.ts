@@ -5,21 +5,27 @@ import {monitoringServer} from '@leav/monitoring-server';
 import {getConfig} from './config';
 import {initConsumer} from './consumer';
 import {elasticsearchService} from './elasticsearchService';
+import {logger} from '@leav/logger';
 
 (async function () {
     try {
         const config = await getConfig();
+
         const monitoringServerInstance = monitoringServer();
 
         const esService = await elasticsearchService(config);
         await initConsumer(config, esService);
         await monitoringServerInstance.init();
     } catch (e) {
-        console.error(e);
+        logger.error('Fatal error during startup ' + e.stack);
         process.exit(1);
     }
-})().catch(e => console.error(e));
+})().catch(e => logger.error('Fatal error during initialization ' + e.stack));
 
-process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+process.on('unhandledRejection', (reason: Error | any) => {
+    logger.error(`Unhandled Rejection at: ${reason.stack}`);
+});
+
+process.on('exit', code => {
+    logger.info(`Exiting process ${process.pid} with code ${code}`);
 });

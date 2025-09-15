@@ -4,6 +4,7 @@
 import {Hono} from 'hono';
 import {serve} from '@hono/node-server';
 import * as Prometheus from 'prom-client';
+import {logger} from '@leav/logger';
 
 export interface IMonitoringServer {
     init(): Promise<void>;
@@ -43,7 +44,7 @@ export function monitoringServer({healthCheckFunction}: IMonitoringServerParams 
                         return c.text('NOT OK', 500);
                     }
                 } catch (e) {
-                    console.error(`Health check function error: ${e.message}`);
+                    logger.error(`Health check function error: ${e.message}`);
                     return c.text('NOT OK', 500);
                 }
             }
@@ -55,7 +56,7 @@ export function monitoringServer({healthCheckFunction}: IMonitoringServerParams 
         });
 
         app.onError((err, c) => {
-            console.error(`Monitoring server error: ${err.message}`);
+            logger.error(`Monitoring server error: ${err.message}`);
             return c.text('Internal Server Error', 500);
         });
 
@@ -71,11 +72,11 @@ export function monitoringServer({healthCheckFunction}: IMonitoringServerParams 
                         fetch: createMonitoringApp().fetch
                     },
                     info => {
-                        console.info(`Monitoring server listening on http://localhost:${info.port}`);
+                        logger.info(`Monitoring server listening on http://localhost:${info.port}`);
                     }
                 );
             } catch (e) {
-                console.error(`Unable to start monitoring server because of error: ${e.message}`);
+                logger.error(`Unable to start monitoring server because of error: ${e.message}`);
             }
         },
         close: async () => {
@@ -90,7 +91,7 @@ export function monitoringServer({healthCheckFunction}: IMonitoringServerParams 
                     });
                 });
                 server = undefined;
-                console.info('Monitoring server closed');
+                logger.info('Monitoring server closed');
             }
         }
     };

@@ -30,6 +30,7 @@ exports.monitoringServer = monitoringServer;
 const hono_1 = require("hono");
 const node_server_1 = require("@hono/node-server");
 const Prometheus = __importStar(require("prom-client"));
+const logger_1 = require("@leav/logger");
 const DEFAULT_MONITORING_SERVER_PORT = 44444;
 function monitoringServer({ healthCheckFunction } = {}) {
     Prometheus.collectDefaultMetrics({ register: Prometheus.register });
@@ -51,7 +52,7 @@ function monitoringServer({ healthCheckFunction } = {}) {
                     }
                 }
                 catch (e) {
-                    console.error(`Health check function error: ${e.message}`);
+                    logger_1.logger.error(`Health check function error: ${e.message}`);
                     return c.text('NOT OK', 500);
                 }
             }
@@ -62,7 +63,7 @@ function monitoringServer({ healthCheckFunction } = {}) {
             return c.text(metrics);
         });
         app.onError((err, c) => {
-            console.error(`Monitoring server error: ${err.message}`);
+            logger_1.logger.error(`Monitoring server error: ${err.message}`);
             return c.text('Internal Server Error', 500);
         });
         return app;
@@ -74,11 +75,11 @@ function monitoringServer({ healthCheckFunction } = {}) {
                     port: serverPort,
                     fetch: createMonitoringApp().fetch
                 }, info => {
-                    console.info(`Monitoring server listening on http://localhost:${info.port}`);
+                    logger_1.logger.info(`Monitoring server listening on http://localhost:${info.port}`);
                 });
             }
             catch (e) {
-                console.error(`Unable to start monitoring server because of error: ${e.message}`);
+                logger_1.logger.error(`Unable to start monitoring server because of error: ${e.message}`);
             }
         },
         close: async () => {
@@ -94,7 +95,7 @@ function monitoringServer({ healthCheckFunction } = {}) {
                     });
                 });
                 server = undefined;
-                console.info('Monitoring server closed');
+                logger_1.logger.info('Monitoring server closed');
             }
         }
     };
