@@ -1,0 +1,28 @@
+{
+  "name": "@leav/logger",
+  "version": "1.2.1",
+  "description": "leav logger",
+  "scripts": {
+    "test": "",
+    "test:ci": "",
+    "test:commit": "",
+    "prepublishOnly": "npm run build",
+    "build": "tsc --build",
+    "build:watch": "tsc --build -w",
+    "tscheck": "tsc --noEmit -p .",
+    "tscheck:watch": "tsc -w --noEmit -p ."
+  },
+  "main": "dist/index",
+  "keywords": [
+    "logger"
+  ],
+  "author": "",
+  "license": "LGPL3",
+  "stableVersion": "1.0.0",
+  "dependencies": {
+    "winston": "3.17.0"
+  },
+  "devDependencies": {
+    "typescript": "5.5.3"
+  }
+}
