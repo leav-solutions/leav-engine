@@ -20,6 +20,9 @@
       },
       {
         "path": "../../libs/utils"
+      },
+      {
+        "path": "../../libs/monitoring-server"
       }
     ],
     "include": ["src/**/*"],

@@ -24,6 +24,9 @@
       },
       {
           "path": "../../libs/message-broker"
+      },
+      {
+          "path": "../../libs/monitoring-server"
       }
   ],
   "include": ["src/**/*"],
