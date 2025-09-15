@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {type ILoggerConfig} from '@leav/logger';
 import {type Options} from 'amqplib';
 import {type IKeyValue} from './shared';
 
@@ -118,11 +119,7 @@ export interface ILang {
     default: string;
 }
 
-export interface ILogs {
-    level: string;
-    transport: string;
-    destinationFile?: string;
-}
+export type ILogs = ILoggerConfig;
 
 export interface IPermissions {
     default: boolean;

@@ -19,6 +19,8 @@ import {initPlugins} from './pluginsLoader';
 import {initOIDCClient} from './infra/oidc';
 import Bugsnag from '@bugsnag/js';
 import {type IUtils} from './utils/utils';
+import {logger} from '@leav/logger';
+import {setupLogger} from './utils/logger/logger';
 
 (async function () {
     let conf: IConfig;
@@ -27,15 +29,18 @@ import {type IUtils} from './utils/utils';
         conf = await getConfig();
         validateConfig(conf);
     } catch (e) {
-        console.error('config error', e);
+        logger.error('config error' + e.stack);
         process.exit(1);
     }
+
+    setupLogger(conf);
 
     if (conf.bugsnag.enable) {
         Bugsnag.start({
             apiKey: conf.bugsnag.apiKey,
             appVersion: conf.bugsnag.appVersion,
-            appType: conf.bugsnag.appType
+            appType: conf.bugsnag.appType,
+            logger
         });
     }
 
@@ -93,7 +98,7 @@ import {type IUtils} from './utils/utils';
     try {
         await _createRequiredDirectories();
 
-        console.info('Starting core in mode', conf.coreMode);
+        logger.info('Starting core in mode', conf.coreMode);
 
         switch (conf.coreMode) {
             case CoreMode.SERVER:
@@ -128,15 +133,15 @@ import {type IUtils} from './utils/utils';
                 await cli.run();
         }
     } catch (e) {
-        console.error(e);
+        logger.error('Fatal error during startup ' + e.stack);
         process.exit(1);
     }
-})().catch(console.error);
+})().catch(e => logger.error('Fatal error during initialization ' + e.stack));
 
-process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+process.on('unhandledRejection', (reason: Error | any) => {
+    logger.error(`Unhandled Rejection at: ${reason.stack}`);
 });
 
 process.on('exit', code => {
-    console.info(`Exiting process ${process.pid} with code ${code}`);
+    logger.info(`Exiting process ${process.pid} with code ${code}`);
 });

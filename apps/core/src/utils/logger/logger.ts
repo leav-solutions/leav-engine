@@ -1,44 +1,30 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import winston from 'winston';
 import Bugsnag from '@bugsnag/js';
+import {configureLogger, logger} from '@leav/logger';
+import {type IConfig} from '_types/config';
 
-interface IDeps {
-    config?: any;
+export default function () {
+    // Do not configure logger here, should be done in app entry point
+
+    return logger;
 }
-export default function ({config = null}: IDeps = {}) {
-    if (typeof config.logs !== 'undefined') {
-        const transports = (config.logs.transport ?? '').split(',').map((transport: string) => {
-            if (transport === 'console') {
-                return new winston.transports.Console({
-                    colorize: true
-                });
-            } else if (transport === 'file') {
-                return new winston.transports.File({
-                    filename: config.logs.destinationFile,
-                    json: config.logs.useJsonFormat
-                });
-            }
 
-            throw new Error(`Unknown transport type: ${transport}`);
-        });
+export function setupLogger(config: IConfig) {
+    const onLogError = config.bugsnag.enable
+        ? (message: string, meta: any) => {
+              const error = new Error(JSON.stringify({message, meta}));
 
-        winston.configure({
-            level: config.logs.level,
-            handleExceptions: true,
-            transports
-        });
-    }
+              // When error log comes from bugsnag, do not notify again
+              if (!error.stack.match(/node_modules\/@bugsnag\//)) {
+                  Bugsnag.notify(error);
+              }
+          }
+        : undefined;
 
-    if (config.bugsnag.enable) {
-        const originalErrorFunc = winston.error.bind(winston);
-
-        winston.error = (message: string, ...meta: any[]) => {
-            Bugsnag.notify(new Error(JSON.stringify({message, meta})));
-            return originalErrorFunc(message, ...meta);
-        };
-    }
-
-    return winston;
+    configureLogger({
+        ...config.logs,
+        onErrorLog: onLogError
+    });
 }

@@ -21,6 +21,9 @@
             "path": "../../libs/config-manager"
         },
         {
+            "path": "../../libs/logger"
+        },
+        {
             "path": "../../libs/utils"
         },
         {

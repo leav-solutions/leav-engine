@@ -77,7 +77,7 @@ export default function ({
         try {
             _validateMsg(pubSubEvent);
         } catch (e) {
-            logger.error(e + `. Message was: ${msgContent}`);
+            logger.error(`Invalid message because ${e.message}. Message was: ${JSON.stringify(msgContent, null, 2)}`);
         }
 
         const publishedPayload = {
@@ -105,7 +105,7 @@ export default function ({
                 })
             )
             .catch(e => {
-                console.error('Error while sending event to rabbitMQ', e);
+                logger.error(`Error while sending event to rabbitMQ: ${e.stack}`);
             });
 
     return {
