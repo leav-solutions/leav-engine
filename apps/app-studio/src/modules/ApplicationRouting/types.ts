@@ -15,17 +15,22 @@ export type Workspace = z.infer<typeof WorkspaceSchema>;
 export type Application = z.infer<typeof ApplicationSchema>;
 
 export interface IApplicationMatchingContext {
-    currentWorkspace: Workspace;
-    currentPanel: Panel;
-    currentPopupPanel: Panel;
-    currentSliderPanel: Panel;
-    currentParentTuple: [Panel, Workspace] | null;
+    currentWorkspace: Workspace | null;
+    currentFullpagePanel: Panel | null;
+    currentPopupPanel: Panel | null;
+    currentSliderPanel: Panel | null;
+    currentFullpageParentTuple: [Panel, Workspace] | null;
+    currentPopupParentTuple: [Panel, Workspace] | null;
+    currentSliderParentTuple: [Panel, Workspace] | null;
 }
 
-export type ApplicationMatchingContextWithoutParentTuple = Omit<IApplicationMatchingContext, 'currentParentTuple'>;
-
-export type Nullable<T> = {
-    [P in keyof T]: T[P] | null;
+export type ApplicationMatchingContextWithoutFullpageParentTuple = Omit<
+    IApplicationMatchingContext,
+    'currentFullpageParentTuple'
+> & {
+    recordId: string | null;
 };
 
 export type AddPanel = (panel: Panel, destination: {workspaceId: string; panelId: string}) => void;
+
+export type PanelLevel = 'fullpage' | 'popup' | 'slider';

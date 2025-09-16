@@ -6,7 +6,7 @@ import {useGetRecordIdCardQuery} from '../../../__generated__';
 import {KitIdCard} from 'aristid-ds';
 import {PanelIdCardSkeleton} from './PanelIdCardSkeleton';
 
-export const PanelIdCard: FunctionComponent<{currentRecordId?: string; libraryId?: string}> = ({
+export const RecordIdCard: FunctionComponent<{currentRecordId?: string; libraryId?: string}> = ({
     currentRecordId,
     libraryId
 }) => {

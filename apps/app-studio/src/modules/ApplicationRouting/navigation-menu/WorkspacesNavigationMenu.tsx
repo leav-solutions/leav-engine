@@ -4,14 +4,14 @@
 import {KitSideMenu} from 'aristid-ds';
 import {useMemo, type FunctionComponent, ComponentProps, useContext} from 'react';
 import {useNavigate, generatePath, useParams, Outlet} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {IconProp} from '@fortawesome/fontawesome-svg-core';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
 import {Application} from '../types';
 import {routes} from '../routes';
-import {useApplicationMatching} from '../useApplicationMatching';
+import {useApplicationMatchingMemo} from '../useApplicationMatchingMemo';
 import {useWorkspacesNavigationMenu} from './useWorkspacesNavigationMenu';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {IconProp} from '@fortawesome/fontawesome-svg-core';
 
 interface IWorkspacesNavigationMenuProps {
     application: Application;
@@ -21,7 +21,12 @@ export const WorkspacesNavigationMenu: FunctionComponent<IWorkspacesNavigationMe
     const {panelId, popupPanelId, sliderPanelId} = useParams();
     const {isMenuOpen, handleToggleMenu} = useWorkspacesNavigationMenu();
 
-    const applicationMatching = useApplicationMatching(application.workspaces, panelId, popupPanelId, sliderPanelId);
+    const applicationMatching = useApplicationMatchingMemo(
+        application.workspaces,
+        panelId,
+        popupPanelId,
+        sliderPanelId
+    );
     const navigate = useNavigate();
     const {lang} = useContext(LangContext);
 

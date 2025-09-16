@@ -7,19 +7,26 @@ import {localizedTranslation} from '@leav/utils';
 import {generatePath} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
-import {recordSearchParamsName, routes} from '../routes';
+import {
+    fullpageRecordSearchParamsName,
+    popupRecordSearchParamsName,
+    routes,
+    sliderRecordSearchParamsName
+} from '../routes';
 import {ItemActions} from '../types';
 
 export const mapperToItemActions = ({
     actions,
     lang,
     navigate,
-    panelId
+    panelId,
+    searchParams
 }: {
     actions: ItemActions;
     lang: string[];
     navigate: (path: string) => void;
     panelId: string;
+    searchParams: URLSearchParams;
 }): ComponentProps<typeof Explorer>['itemActions'] =>
     actions.map(action => {
         // As suggested by FontAwesome documentation, we need this workaround to use the string notation
@@ -31,16 +38,24 @@ export const mapperToItemActions = ({
             icon: <FontAwesomeIcon icon={icon} />,
             label: localizedTranslation(action.what.name, lang),
             callback: item => {
-                const query = new URLSearchParams({[recordSearchParamsName]: item.itemId});
-
-                // TODO: When we will address the feature to open a popup trough a popup panel, we might need to use routes.panel/routes.popupPanel instead of routes.popupPanel
+                // TODO: When we will address the feature to open a popup through a popup panel, we might need to use routes.panel/routes.popupPanel instead of routes.popupPanel
                 const {route, params} = {
                     popup: {route: routes.popupPanel, params: {panelId, popupPanelId: action.what.id}},
                     slider: {route: routes.sliderPanel, params: {panelId, sliderPanelId: action.what.id}},
                     fullpage: {route: routes.panel, params: {panelId: action.what.id}}
                 }[action.where];
 
-                return navigate(generatePath(route, params) + '?' + query.toString());
+                if (action.where === 'popup') {
+                    searchParams.set(popupRecordSearchParamsName, item.itemId);
+                }
+                if (action.where === 'slider') {
+                    searchParams.set(sliderRecordSearchParamsName, item.itemId);
+                }
+                if (action.where === 'fullpage') {
+                    searchParams.set(fullpageRecordSearchParamsName, item.itemId);
+                }
+
+                return navigate(generatePath(route, params) + '?' + searchParams.toString());
             }
         };
     });

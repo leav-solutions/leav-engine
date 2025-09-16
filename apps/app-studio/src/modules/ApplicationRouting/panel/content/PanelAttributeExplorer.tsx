@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
-import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {useLocation, useNavigate, useParams, useSearchParams} from 'react-router-dom';
 import {Explorer, ThroughConditionFilter, useLang} from '@leav/ui';
 import {mapToCommonExplorerProps} from '../../explorer-panel/mapperToExplorerProps';
 import {mapperToItemActions} from '../../explorer-panel/mapperToItemActions';
-import {recordSearchParamsName} from '../../routes';
 import {ItemActions, LibraryExplorerProps} from '../../types';
 import {AttributeType, RecordFilterCondition} from '../../../../__generated__';
 import {explorerContainer} from './PanelContent.module.css';
@@ -17,6 +16,7 @@ interface IPanelExplorerProps {
     viewId: string | undefined;
     explorerProps: LibraryExplorerProps | undefined;
     actions: ItemActions;
+    recordId: string | null;
 }
 
 export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
@@ -24,16 +24,16 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
     attributeSource,
     viewId,
     explorerProps,
-    actions
+    actions,
+    recordId
 }) => {
-    const {search} = useLocation();
-    const searchParams = new URLSearchParams(search);
     const {lang} = useLang();
     const navigate = useNavigate();
     const {panelId} = useParams();
+    const [searchParams] = useSearchParams();
 
     const linkExplorerProps = explorerProps ? mapToCommonExplorerProps({explorerProps}) : {};
-    const itemActions = mapperToItemActions({actions, lang, navigate, panelId});
+    const itemActions = mapperToItemActions({actions, lang, navigate, panelId, searchParams});
 
     return (
         <div className={explorerContainer}>
@@ -57,7 +57,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                             },
                             condition: ThroughConditionFilter.THROUGH,
                             subCondition: RecordFilterCondition.EQUAL,
-                            value: searchParams.get(recordSearchParamsName)
+                            value: recordId
                         }
                     ]
                 }}

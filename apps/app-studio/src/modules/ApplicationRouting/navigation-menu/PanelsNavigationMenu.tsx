@@ -2,92 +2,101 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, FunctionComponent, useContext} from 'react';
-import {generatePath, Outlet, useLocation, useNavigate, useOutletContext} from 'react-router-dom';
+import {generatePath, Navigate, Outlet, useLocation, useNavigate, useOutletContext} from 'react-router-dom';
 import {KitTabs} from 'aristid-ds';
-import cn from 'classnames';
+import clx from 'classnames';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
-import type {ApplicationMatchingContextWithoutParentTuple, IApplicationMatchingContext} from '../types';
-import {recordSearchParamsName, routes} from '../routes';
+import {ApplicationMatchingContextWithoutFullpageParentTuple, IApplicationMatchingContext, PanelLevel} from '../types';
+import {routes} from '../routes';
 import {SidePanelContent} from '../../layout/SidePanelContent';
-import {PanelIdCard} from './PanelIdCard';
+import {usePanelHeader} from './usePanelHeader';
 
-import {content, headerContent, page, pageHeader, sidePanel, scrollable} from './panelsNavigationMenu.module.css';
+import {content, page, pageHeader, popupPanel, scrollable, sidePanel} from './panelsNavigationMenu.module.css';
 
 interface IPanelsNavigationMenuProps {
-    isInSidePanel?: boolean;
+    level: PanelLevel;
 }
 
-// TODO: Later if we want a clean rendering for the modal and the slider, we would need to duplicate this component like this:
-// - PanelsNavigationMenuFullPage
-// - PanelsNavigationMenuPopup (+ merge AddSidePanelForPopupPanel)
-// - PanelsNavigationMenuSlider (+ merge AddSidePanelForSliderPanel)
-// Each component would manage the rendering correctly (example for the popup, we would display the idCard in the header of the KitModal)
-export const PanelsNavigationMenu: FunctionComponent<IPanelsNavigationMenuProps> = ({isInSidePanel}) => {
-    const {currentPanel, currentPopupPanel, currentSliderPanel, currentWorkspace, currentParentTuple} =
-        useOutletContext<IApplicationMatchingContext>();
+export const PanelsNavigationMenu: FunctionComponent<IPanelsNavigationMenuProps> = ({level}) => {
+    const {
+        currentWorkspace,
+        currentFullpagePanel,
+        currentPopupPanel,
+        currentSliderPanel,
+        currentFullpageParentTuple,
+        currentPopupParentTuple,
+        currentSliderParentTuple
+    } = useOutletContext<IApplicationMatchingContext>();
     const {lang} = useContext(LangContext);
     const {search} = useLocation();
-    const searchParams = new URLSearchParams(search);
     const navigate = useNavigate();
 
+    const {PanelHeaderComponent, recordId} = usePanelHeader({level});
+
+    const [panel, route, slug, parentTuple] = {
+        fullpage: [currentFullpagePanel, routes.panel, 'panelId', currentFullpageParentTuple],
+        popup: [currentPopupPanel, routes.popupPanel, 'popupPanelId', currentPopupParentTuple],
+        slider: [currentSliderPanel, routes.sliderPanel, 'sliderPanelId', currentSliderParentTuple]
+    }[level];
+    if ('children' in panel) {
+        return <Navigate to={generatePath(route, {[slug]: panel.children.at(0)?.id}) + search} replace />;
+    }
+
     const tabItems: ComponentProps<typeof KitTabs>['items'] =
-        currentParentTuple && 'children' in currentParentTuple[0]
-            ? currentParentTuple[0].children.map(panel => ({
-                  key: panel.id,
-                  label: localizedTranslation(panel.name, lang)
+        parentTuple && 'children' in parentTuple[0]
+            ? parentTuple[0].children.map(({id, name}) => ({
+                  key: id,
+                  label: localizedTranslation(name, lang)
               }))
             : [];
 
     const onChangeTab: ComponentProps<typeof KitTabs>['onChange'] = key => {
         const currentTab = tabItems.find(tab => tab.key === key);
         if (currentTab) {
-            navigate(generatePath(routes.panel, {panelId: currentTab.key}) + search);
+            navigate(generatePath(route, {[slug]: currentTab.key}) + search);
         }
     };
 
-    // TODO: When we will address the issue where we can't display the library name in the id card, we should move this logic to a proper component (maybe inside <PanelIdCard />)
-    const tabLibraryId = currentParentTuple?.[0]?.libraryId;
-    const panelLibraryId =
-        currentPanel.content?.libraryId === '<props>'
-            ? currentWorkspace.entrypoint.libraryId
-            : currentPanel.content?.libraryId;
-    const workspaceLibraryId = currentWorkspace.entrypoint.libraryId;
-
-    const libraryId = tabLibraryId ?? panelLibraryId ?? workspaceLibraryId;
-
-    const pageClx = cn(page, {
-        [sidePanel]: isInSidePanel
+    const pageClx = clx(page, {
+        [sidePanel]: level === 'slider',
+        [popupPanel]: level === 'popup'
     });
 
-    const contentClx = cn(content, {
-        [sidePanel]: isInSidePanel
+    const contentClx = clx(content, {
+        [sidePanel]: level === 'slider',
+        [popupPanel]: level === 'popup'
     });
 
     return (
         <section className={pageClx}>
-            {!isInSidePanel && (
-                <div className={pageHeader}>
-                    <div className={headerContent}>
-                        <PanelIdCard libraryId={libraryId} currentRecordId={searchParams.get(recordSearchParamsName)} />
+            <div className={pageHeader}>
+                {
+                    /**
+                     * `popup` is managed by `<AddModalForPopupPanel />`
+                     * `slider` is managed by `<AddSidePanelForSliderPanel />`
+                     */
+                    level === 'fullpage' && PanelHeaderComponent
+                }
+                {tabItems.length !== 0 && (
+                    <div className={scrollable}>
+                        {/* TODO: Remove this scrollable div when KitTabs will be responsive */}
+                        <KitTabs items={tabItems} onChange={onChangeTab} activeKey={panel.id} />
                     </div>
-                    {tabItems.length !== 0 && (
-                        <div className={scrollable}>
-                            {/* TODO: Remove this scrollable div when KitTabs will be responsive */}
-                            <KitTabs items={tabItems} onChange={onChangeTab} activeKey={currentPanel.id} />
-                        </div>
-                    )}
-                </div>
-            )}
+                )}
+            </div>
             <div className={contentClx}>
                 <Outlet
                     context={
                         {
-                            currentPanel,
+                            currentWorkspace,
+                            currentFullpagePanel,
                             currentPopupPanel,
                             currentSliderPanel,
-                            currentWorkspace
-                        } satisfies ApplicationMatchingContextWithoutParentTuple
+                            currentPopupParentTuple,
+                            currentSliderParentTuple,
+                            recordId
+                        } satisfies ApplicationMatchingContextWithoutFullpageParentTuple
                     }
                 />
             </div>

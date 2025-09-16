@@ -351,6 +351,12 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type ChildrenAsRecordValuePermissionFilterInput = {
+  action: RecordPermissionsActions;
+  attributeId: Scalars['ID'];
+  libraryId: Scalars['ID'];
+};
+
 export type CreateRecordDataInput = {
   values?: InputMaybe<Array<ValueBatchInput>>;
   version?: InputMaybe<Array<ValueVersionInput>>;
@@ -433,6 +439,8 @@ export type FormElement = {
   attribute?: Maybe<Attribute>;
   containerId: Scalars['ID'];
   id: Scalars['ID'];
+  /** In case the form element is a join library link */
+  joinLibraryContext?: Maybe<FormElementJoinLibraryContext>;
   order: Scalars['Int'];
   settings: Array<FormElementSettings>;
   type: FormElementTypes;
@@ -446,6 +454,11 @@ export type FormElementInput = {
   settings: Array<FormElementSettingsInput>;
   type: FormElementTypes;
   uiElementType: Scalars['String'];
+};
+
+export type FormElementJoinLibraryContext = {
+  /** Mandatory attribute of the join library, can be simple or advanced mono link, or mono tree */
+  mandatoryAttribute: Attribute;
 };
 
 export type FormElementSettings = {
@@ -467,6 +480,8 @@ export type FormElementWithValues = {
   attribute?: Maybe<Attribute>;
   containerId: Scalars['ID'];
   id: Scalars['ID'];
+  /** In case the form element is a join library link */
+  joinLibraryContext?: Maybe<FormElementJoinLibraryContext>;
   order: Scalars['Int'];
   settings: Array<FormElementSettings>;
   type: FormElementTypes;
@@ -750,8 +765,8 @@ export type LinkValuesListConf = {
 
 export type Log = {
   action?: Maybe<LogAction>;
-  after?: Maybe<Scalars['Any']>;
-  before?: Maybe<Scalars['Any']>;
+  after?: Maybe<LogData>;
+  before?: Maybe<LogData>;
   instanceId: Scalars['String'];
   metadata?: Maybe<Scalars['Any']>;
   queryId: Scalars['String'];
@@ -792,6 +807,11 @@ export enum LogAction {
   VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
   VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
 }
+
+export type LogData = {
+  asString?: Maybe<Scalars['String']>;
+  raw?: Maybe<Scalars['Any']>;
+};
 
 export type LogFilterInput = {
   actions?: InputMaybe<Array<LogAction>>;
@@ -855,6 +875,11 @@ export type LogTopicRecordFilterInput = {
   libraryId?: InputMaybe<Scalars['String']>;
 };
 
+export type Logs = {
+  logs: Array<Log>;
+  total: Scalars['Int'];
+};
+
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -862,9 +887,11 @@ export enum MultiDisplayOption {
 }
 
 export type Mutation = {
+  activateNewRecord: CreateRecordResult;
   activateRecords: Array<Record>;
   cancelTask: Scalars['Boolean'];
   createDirectory: Record;
+  createEmptyRecord: CreateRecordResult;
   createRecord: CreateRecordResult;
   deactivateRecords: Array<Record>;
   deleteApiKey: ApiKey;
@@ -884,6 +911,7 @@ export type Mutation = {
   importExcel: Scalars['ID'];
   indexRecords: Scalars['Boolean'];
   purgeInactiveRecords: Array<Record>;
+  purgeRecord: Record;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -905,6 +933,13 @@ export type Mutation = {
 };
 
 
+export type MutationActivateNewRecordArgs = {
+  formId?: InputMaybe<Scalars['String']>;
+  library: Scalars['ID'];
+  recordId: Scalars['ID'];
+};
+
+
 export type MutationActivateRecordsArgs = {
   filters?: InputMaybe<Array<RecordFilterInput>>;
   libraryId: Scalars['String'];
@@ -921,6 +956,11 @@ export type MutationCreateDirectoryArgs = {
   library: Scalars['String'];
   name: Scalars['String'];
   nodeId: Scalars['String'];
+};
+
+
+export type MutationCreateEmptyRecordArgs = {
+  library: Scalars['ID'];
 };
 
 
@@ -1033,6 +1073,12 @@ export type MutationIndexRecordsArgs = {
 
 export type MutationPurgeInactiveRecordsArgs = {
   libraryId: Scalars['String'];
+};
+
+
+export type MutationPurgeRecordArgs = {
+  libraryId: Scalars['ID'];
+  recordId: Scalars['ID'];
 };
 
 
@@ -1209,6 +1255,7 @@ export enum PermissionsActions {
   admin_access_applications = 'admin_access_applications',
   admin_access_attributes = 'admin_access_attributes',
   admin_access_libraries = 'admin_access_libraries',
+  admin_access_logs = 'admin_access_logs',
   admin_access_permissions = 'admin_access_permissions',
   admin_access_tasks = 'admin_access_tasks',
   admin_access_trees = 'admin_access_trees',
@@ -1236,6 +1283,7 @@ export enum PermissionsActions {
   admin_edit_permission = 'admin_edit_permission',
   admin_edit_tree = 'admin_edit_tree',
   admin_edit_version_profile = 'admin_edit_version_profile',
+  admin_import_config_clear_database = 'admin_import_config_clear_database',
   admin_library = 'admin_library',
   admin_manage_global_preferences = 'admin_manage_global_preferences',
   create_record = 'create_record',
@@ -1311,7 +1359,7 @@ export type Query = {
   isAllowed?: Maybe<Array<PermissionAction>>;
   langs: Array<Maybe<Scalars['String']>>;
   libraries?: Maybe<LibrariesList>;
-  logs?: Maybe<Array<Log>>;
+  logs?: Maybe<Logs>;
   me?: Maybe<Record>;
   permissions?: Maybe<Array<PermissionAction>>;
   permissionsActionsByType: Array<LabeledPermissionsActions>;
@@ -1472,6 +1520,7 @@ export type QueryTreeContentArgs = {
 
 
 export type QueryTreeNodeChildrenArgs = {
+  childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
   node?: InputMaybe<Scalars['ID']>;
   pagination?: InputMaybe<Pagination>;
   treeId: Scalars['ID'];
@@ -1637,9 +1686,17 @@ export type RecordPermissions = {
   edit_record: Scalars['Boolean'];
 };
 
+export enum RecordPermissionsActions {
+  access_record = 'access_record',
+  create_record = 'create_record',
+  delete_record = 'delete_record',
+  edit_record = 'edit_record'
+}
+
 export type RecordProperty = {
   attributeId: Scalars['ID'];
   attributeProperties: Attribute;
+  recordAttributePermissions: AttributePermissions;
   values: Array<GenericValue>;
 };
 
@@ -2379,6 +2436,13 @@ export type GetUserIdentityQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUserIdentityQuery = { me?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } | null };
 
+export type GetLibraryNameQueryVariables = Exact<{
+  libraryId: Scalars['ID'];
+}>;
+
+
+export type GetLibraryNameQuery = { libraries?: { list: Array<{ label?: any | null }> } | null };
+
 export type GetRecordIdCardQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
   libraryId: Scalars['ID'];
@@ -2518,6 +2582,48 @@ export type GetUserIdentityQueryHookResult = ReturnType<typeof useGetUserIdentit
 export type GetUserIdentityLazyQueryHookResult = ReturnType<typeof useGetUserIdentityLazyQuery>;
 export type GetUserIdentitySuspenseQueryHookResult = ReturnType<typeof useGetUserIdentitySuspenseQuery>;
 export type GetUserIdentityQueryResult = Apollo.QueryResult<GetUserIdentityQuery, GetUserIdentityQueryVariables>;
+export const GetLibraryNameDocument = gql`
+    query GetLibraryName($libraryId: ID!) {
+  libraries(filters: {id: [$libraryId]}) {
+    list {
+      label
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetLibraryNameQuery__
+ *
+ * To run a query within a React component, call `useGetLibraryNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLibraryNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLibraryNameQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *   },
+ * });
+ */
+export function useGetLibraryNameQuery(baseOptions: Apollo.QueryHookOptions<GetLibraryNameQuery, GetLibraryNameQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLibraryNameQuery, GetLibraryNameQueryVariables>(GetLibraryNameDocument, options);
+      }
+export function useGetLibraryNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLibraryNameQuery, GetLibraryNameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLibraryNameQuery, GetLibraryNameQueryVariables>(GetLibraryNameDocument, options);
+        }
+export function useGetLibraryNameSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLibraryNameQuery, GetLibraryNameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLibraryNameQuery, GetLibraryNameQueryVariables>(GetLibraryNameDocument, options);
+        }
+export type GetLibraryNameQueryHookResult = ReturnType<typeof useGetLibraryNameQuery>;
+export type GetLibraryNameLazyQueryHookResult = ReturnType<typeof useGetLibraryNameLazyQuery>;
+export type GetLibraryNameSuspenseQueryHookResult = ReturnType<typeof useGetLibraryNameSuspenseQuery>;
+export type GetLibraryNameQueryResult = Apollo.QueryResult<GetLibraryNameQuery, GetLibraryNameQueryVariables>;
 export const GetRecordIdCardDocument = gql`
     query GetRecordIdCard($id: String, $libraryId: ID!) {
   records(

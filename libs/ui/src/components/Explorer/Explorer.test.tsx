@@ -6,7 +6,7 @@
 // Prefer using spyOn method for Mocking hooks except for hooks using onCompleted callback.
 // In this case, the spyOn is too complex to implement, prefer using the mocks parameter of render method.
 //
-import {createRef, useState} from 'react';
+import {createRef} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {waitFor} from '@testing-library/react';

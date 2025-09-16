@@ -9,7 +9,6 @@ module.exports = {
         '\\.(ts|tsx)$': [
             'ts-jest',
             {
-                isolatedModules: true,
                 astTransformers: {
                     before: [
                         {
@@ -35,6 +34,5 @@ module.exports = {
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy', // Ignore module.css written by devs and all stylesheet from libs (ex: FontAwesome stylesheet)
         '^@leav/(.*)$': '<rootDir>/../../libs/$1/src',
         '^_ui/(.*)': '<rootDir>/../../libs/ui/src/$1'
-    },
-    testTimeout: 30_000
+    }
 };

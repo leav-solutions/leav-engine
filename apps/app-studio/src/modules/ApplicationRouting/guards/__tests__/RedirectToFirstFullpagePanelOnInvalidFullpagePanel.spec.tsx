@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
-import {RedirectToFirstPanelOnInvalidPanel} from '../RedirectToFirstPanelOnInvalidPanel';
-import {Application} from '../../types';
 import * as ReactRouter from 'react-router-dom';
+import {RedirectToFirstFullpagePanelOnInvalidFullpagePanel} from '../RedirectToFirstFullpagePanelOnInvalidFullpagePanel';
+import {Application} from '../../types';
 import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 jest.mock('react-router-dom', () => ({
@@ -15,7 +15,7 @@ jest.mock('react-router-dom', () => ({
     generatePath: jest.fn()
 }));
 
-describe('RedirectToFirstPanelOnUnknownOne', () => {
+describe('RedirectToFirstFullpagePanelOnInvalidFullpagePanel', () => {
     const spyNavigate = jest.spyOn(ReactRouter, 'Navigate');
     const spyGeneratePath = jest.spyOn(ReactRouter, 'generatePath');
     const spyUseLocation = jest.spyOn(ReactRouter, 'useLocation');
@@ -57,9 +57,9 @@ describe('RedirectToFirstPanelOnUnknownOne', () => {
         jest.clearAllMocks();
     });
 
-    it('should not redirect when currentPanel is defined and display child', async () => {
+    it('should not redirect when currentFullpagePanel is defined and display child', async () => {
         spyUseOutletContext.mockReturnValue({
-            currentPanel: {
+            currentFullpagePanel: {
                 id: 'panelId',
                 name: {
                     en: 'Panel 1',
@@ -75,19 +75,23 @@ describe('RedirectToFirstPanelOnUnknownOne', () => {
         });
 
         render(
-            <RedirectToFirstPanelOnInvalidPanel application={application}>child</RedirectToFirstPanelOnInvalidPanel>
+            <RedirectToFirstFullpagePanelOnInvalidFullpagePanel application={application}>
+                child
+            </RedirectToFirstFullpagePanelOnInvalidFullpagePanel>
         );
 
         expect(spyNavigate).not.toHaveBeenCalled();
         expect(screen.getByText('child')).toBeVisible();
     });
 
-    it('should redirect when currentPanel is undefined to first panel', async () => {
+    it('should redirect when currentFullpagePanel is undefined to first panel', async () => {
         spyUseOutletContext.mockReturnValue({currentPanel: null});
         spyGeneratePath.mockReturnValueOnce('/panel1_generated');
 
         render(
-            <RedirectToFirstPanelOnInvalidPanel application={application}>child</RedirectToFirstPanelOnInvalidPanel>
+            <RedirectToFirstFullpagePanelOnInvalidFullpagePanel application={application}>
+                child
+            </RedirectToFirstFullpagePanelOnInvalidFullpagePanel>
         );
 
         expect(spyGeneratePath).toHaveBeenCalledTimes(1);

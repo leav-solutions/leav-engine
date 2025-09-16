@@ -1,0 +1,7 @@
+query GetLibraryName($libraryId: ID!) {
+    libraries(filters: {id: [$libraryId]}) {
+        list {
+            label
+        }
+    }
+}

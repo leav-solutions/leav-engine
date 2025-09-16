@@ -6,7 +6,7 @@ import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 import {getAllPanels} from './utils';
 import {IApplicationMatchingContext, Workspace} from './types';
 
-export const useApplicationMatching = (
+export const useApplicationMatchingMemo = (
     workspaces: Workspace[],
     panelId: string,
     popupPanelId?: string,
@@ -17,22 +17,34 @@ export const useApplicationMatching = (
             .map<[Panel[], Workspace]>(workspace => [getAllPanels(workspace), workspace])
             .flatMap(([panels, workspace]) => panels.map<[Panel, Workspace]>(panel => [panel, workspace]));
 
-        const _currentParentTuple = _tuplesPanelByWorkspace.find(([panel]) =>
+        const _currentFullpageParentTuple = _tuplesPanelByWorkspace.find(([panel]) =>
             'children' in panel ? panel.children.find(({id}) => id === panelId) : false
         );
-
-        const [_currentPopupPanel] = _tuplesPanelByWorkspace.find(([panel]) => panel.id === popupPanelId) ?? [null];
-
-        const [_currentSliderPanel] = _tuplesPanelByWorkspace.find(([panel]) => panel.id === sliderPanelId) ?? [null];
+        const _currentPopupParentTuple = _tuplesPanelByWorkspace.find(([panel]) =>
+            'children' in panel ? panel.children.find(({id}) => id === popupPanelId) : false
+        );
+        const _currentSliderParentTuple = _tuplesPanelByWorkspace.find(([panel]) =>
+            'children' in panel ? panel.children.find(({id}) => id === sliderPanelId) : false
+        );
 
         const [_currentPanel, _currentWorkspace] = _tuplesPanelByWorkspace.find(([panel]) => panel.id === panelId) ?? [
             null,
             null
         ];
+        /** `_ignoredWorkspace` should be the same as `_currentPanel` */
+        const [_currentPopupPanel, _ignoredWorkspace] = _tuplesPanelByWorkspace.find(
+            ([panel]) => panel.id === popupPanelId
+        ) ?? [null, null];
+        /** `_ignoredWorkspace2` should be the same as `_currentPanel` */
+        const [_currentSliderPanel, _ignoredWorkspace2] = _tuplesPanelByWorkspace.find(
+            ([panel]) => panel.id === sliderPanelId
+        ) ?? [null, null];
 
         return {
-            currentParentTuple: _currentParentTuple ?? null,
-            currentPanel: _currentPanel ?? null,
+            currentFullpageParentTuple: _currentFullpageParentTuple ?? null,
+            currentPopupParentTuple: _currentPopupParentTuple ?? null,
+            currentSliderParentTuple: _currentSliderParentTuple ?? null,
+            currentFullpagePanel: _currentPanel ?? null,
             currentPopupPanel: _currentPopupPanel ?? null,
             currentSliderPanel: _currentSliderPanel ?? null,
             currentWorkspace: _currentWorkspace ?? null

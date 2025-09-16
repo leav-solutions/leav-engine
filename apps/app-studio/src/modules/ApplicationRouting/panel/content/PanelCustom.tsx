@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent, useContext, useEffect} from 'react';
-import {iframe} from './PanelCustom.module.css';
 import {LangContext, useIFrameMessenger} from '@leav/ui';
 import {useNavigateToPanel} from '../../custom-panel-message-handlers/useNavigateToPanel';
 import {useOpenNotification} from '../../custom-panel-message-handlers/useOpenNotification';
@@ -12,14 +11,16 @@ import {useSidePanelForm} from '../../custom-panel-message-handlers/useSidePanel
 import {useModalForm} from '../../custom-panel-message-handlers/useModalForm';
 import {AddPanel} from '../../types';
 
+import {iframe} from './PanelCustom.module.css';
+
 interface IPanelCustomProps {
     source: string;
-    searchQuery: string;
     title: string;
     addPanel: AddPanel;
+    recordId: string | null;
 }
 
-export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, searchQuery, title, addPanel}) => {
+export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title, addPanel, recordId}) => {
     const {navigateToPanel} = useNavigateToPanel(addPanel);
     const {openNotification} = useOpenNotification();
     const {openAlert} = useOpenAlert();
@@ -49,7 +50,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, searc
             <iframe
                 className={iframe}
                 name="testFrame"
-                src={source + searchQuery}
+                src={source + (recordId ? '?' + new URLSearchParams({recordId}).toString() : '')}
                 title={title}
                 width="100%"
                 height="100%"

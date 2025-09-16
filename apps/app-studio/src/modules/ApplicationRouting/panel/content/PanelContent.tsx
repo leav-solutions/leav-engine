@@ -2,25 +2,25 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
-import {generatePath, Navigate, useLocation} from 'react-router-dom';
 import {EditRecordPage} from '@leav/ui';
+import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 import type {AddPanel, Workspace} from '../../types';
-import {recordSearchParamsName, routes} from '../../routes';
 import {SIDEBAR_CONTENT_ID} from '../../../../constants';
 import {PanelCustom} from './PanelCustom';
 import {PanelLibraryExplorer} from './PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './PanelAttributeExplorer';
-import {Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 interface IPanelContentProps {
+    /**
+     * This panel should always contain only `content`. The `children` case is managed above in `<PanelsNavigationMenu />`.
+     */
     panel: Panel;
     workspace: Workspace;
     addPanel: AddPanel;
+    recordId: string | null;
 }
 
-export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, workspace, addPanel}) => {
-    const {search} = useLocation();
-    const searchParams = new URLSearchParams(search);
+export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, workspace, addPanel, recordId}) => {
     const [sidebarContainer, setSidebarContainer] = useState<HTMLElement>();
 
     useEffect(() => {
@@ -51,7 +51,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, work
                 <EditRecordPage
                     {...commonFormProps}
                     record={{
-                        id: searchParams.get(recordSearchParamsName),
+                        id: recordId,
                         library: {
                             id: panel.content.libraryId
                         }
@@ -65,9 +65,9 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, work
             return (
                 <PanelCustom
                     source={panel.content.iframeSource}
-                    searchQuery={search}
                     title={panel.id}
                     addPanel={addPanel}
+                    recordId={recordId}
                 />
             );
         }
@@ -80,6 +80,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, work
                         viewId={panel.content.viewId}
                         explorerProps={panel.content.explorerProps}
                         actions={panel.content.actions}
+                        recordId={recordId}
                     />
                 );
             }
@@ -102,10 +103,6 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, work
                 />
             );
         }
-    }
-
-    if ('children' in panel) {
-        return <Navigate to={generatePath(routes.panel, {panelId: panel.children.at(0)?.id}) + search} replace />;
     }
 
     return null; // TODO: this case should not happen

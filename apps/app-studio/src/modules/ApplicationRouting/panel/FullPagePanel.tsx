@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
-import {AddPanel, ApplicationMatchingContextWithoutParentTuple} from '../types';
+import {AddPanel, ApplicationMatchingContextWithoutFullpageParentTuple} from '../types';
 import {PanelContent} from './content/PanelContent';
 import {Outlet, useOutletContext} from 'react-router-dom';
 
@@ -11,13 +11,34 @@ interface IFullPagePanelProps {
 }
 
 export const FullPagePanel: FunctionComponent<IFullPagePanelProps> = ({addPanel}) => {
-    const {currentPanel, currentPopupPanel, currentSliderPanel, currentWorkspace} =
-        useOutletContext<ApplicationMatchingContextWithoutParentTuple>();
+    const {
+        currentWorkspace,
+        recordId,
+        currentFullpagePanel,
+        currentPopupPanel,
+        currentSliderPanel,
+        currentPopupParentTuple,
+        currentSliderParentTuple
+    } = useOutletContext<ApplicationMatchingContextWithoutFullpageParentTuple>();
 
     return (
         <>
-            <PanelContent panel={currentPanel} workspace={currentWorkspace} addPanel={addPanel} />
-            <Outlet context={{currentPanel, currentPopupPanel, currentSliderPanel, currentWorkspace}} />
+            <PanelContent
+                panel={currentFullpagePanel}
+                workspace={currentWorkspace}
+                addPanel={addPanel}
+                recordId={recordId}
+            />
+            <Outlet
+                context={{
+                    currentWorkspace,
+                    currentFullpagePanel,
+                    currentPopupPanel,
+                    currentSliderPanel,
+                    currentPopupParentTuple,
+                    currentSliderParentTuple
+                }}
+            />
         </>
     );
 };

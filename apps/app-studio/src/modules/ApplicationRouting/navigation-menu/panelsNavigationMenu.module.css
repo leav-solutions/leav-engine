@@ -1,5 +1,5 @@
 .page {
-    position:relative;
+    position: relative;
     flex: 1;
     height: 100%;
     flex-direction: column;
@@ -9,6 +9,10 @@
 
     &:not(.sidePanel) {
         padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
+    }
+
+    &.popupPanel  {
+        padding: 0;
     }
 }
 
@@ -21,11 +25,6 @@
         flex-direction: column;
         justify-content: flex-start;
     }
-
-    .headerContent {
-        display: flex;
-        flex-direction: column;
-    }
 }
 
 .content {
@@ -34,7 +33,7 @@
     border-radius: calc(var(--general-border-radius-s) * 1px);
     overflow: hidden;
 
-    &:not(.sidePanel) {
+    &:not(.sidePanel), &:not(.popupPanel) {
         box-shadow: var(--general-utilities-shadow-light);
     }
 }
@@ -43,4 +42,5 @@
 .scrollable {
     overflow-y: hidden;
     min-width: fit-content;
+    padding-bottom: 2px ;
 }

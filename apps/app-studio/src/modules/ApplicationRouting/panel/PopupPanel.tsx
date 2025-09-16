@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
 import {PanelContent} from './content/PanelContent';
-import {AddPanel, ApplicationMatchingContextWithoutParentTuple} from '../types';
+import {AddPanel, ApplicationMatchingContextWithoutFullpageParentTuple} from '../types';
 import {useOutletContext} from 'react-router-dom';
 
 interface IPopupPanelProps {
@@ -11,7 +11,10 @@ interface IPopupPanelProps {
 }
 
 export const PopupPanel: FunctionComponent<IPopupPanelProps> = ({addPanel}) => {
-    const {currentPopupPanel, currentWorkspace} = useOutletContext<ApplicationMatchingContextWithoutParentTuple>();
+    const {currentPopupPanel, currentWorkspace, recordId} =
+        useOutletContext<ApplicationMatchingContextWithoutFullpageParentTuple>();
 
-    return <PanelContent panel={currentPopupPanel} workspace={currentWorkspace} addPanel={addPanel} />;
+    return (
+        <PanelContent panel={currentPopupPanel} workspace={currentWorkspace} addPanel={addPanel} recordId={recordId} />
+    );
 };

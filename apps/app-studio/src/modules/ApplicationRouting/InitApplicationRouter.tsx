@@ -8,7 +8,7 @@ import {routes} from './routes';
 import {AddPanel} from './types';
 import {addChildPanelToApplication} from './utils';
 import {RedirectToFirstPanelOnHome} from './guards/RedirectToFirstPanelOnHome';
-import {RedirectToFirstPanelOnInvalidPanel} from './guards/RedirectToFirstPanelOnInvalidPanel';
+import {RedirectToFirstFullpagePanelOnInvalidFullpagePanel} from './guards/RedirectToFirstFullpagePanelOnInvalidFullpagePanel';
 import {PanelsNavigationMenu} from './navigation-menu/PanelsNavigationMenu';
 import {WorkspacesNavigationMenu} from './navigation-menu/WorkspacesNavigationMenu';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/ApplicationSettingsContext';
@@ -34,9 +34,9 @@ export const InitApplicationRouter: FunctionComponent = () => {
                       children: [
                           {
                               element: (
-                                  <RedirectToFirstPanelOnInvalidPanel application={application}>
-                                      <PanelsNavigationMenu />
-                                  </RedirectToFirstPanelOnInvalidPanel>
+                                  <RedirectToFirstFullpagePanelOnInvalidFullpagePanel application={application}>
+                                      <PanelsNavigationMenu level="fullpage" />
+                                  </RedirectToFirstFullpagePanelOnInvalidFullpagePanel>
                               ),
                               children: [
                                   {
@@ -46,7 +46,7 @@ export const InitApplicationRouter: FunctionComponent = () => {
                                           {
                                               element: (
                                                   <AddModalForPopupPanel>
-                                                      <PanelsNavigationMenu />
+                                                      <PanelsNavigationMenu level="popup" />
                                                   </AddModalForPopupPanel>
                                               ),
                                               children: [
@@ -59,7 +59,7 @@ export const InitApplicationRouter: FunctionComponent = () => {
                                           {
                                               element: (
                                                   <AddSidePanelForSliderPanel>
-                                                      <PanelsNavigationMenu isInSidePanel />
+                                                      <PanelsNavigationMenu level="slider" />
                                                   </AddSidePanelForSliderPanel>
                                               ),
                                               children: [

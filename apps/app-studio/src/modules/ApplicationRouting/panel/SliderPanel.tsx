@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
 import {PanelContent} from './content/PanelContent';
-import {AddPanel, ApplicationMatchingContextWithoutParentTuple} from '../types';
+import {AddPanel, ApplicationMatchingContextWithoutFullpageParentTuple} from '../types';
 import {useOutletContext} from 'react-router-dom';
 
 interface ISliderPanelProps {
@@ -11,7 +11,10 @@ interface ISliderPanelProps {
 }
 
 export const SliderPanel: FunctionComponent<ISliderPanelProps> = ({addPanel}) => {
-    const {currentSliderPanel, currentWorkspace} = useOutletContext<ApplicationMatchingContextWithoutParentTuple>();
+    const {currentSliderPanel, currentWorkspace, recordId} =
+        useOutletContext<ApplicationMatchingContextWithoutFullpageParentTuple>();
 
-    return <PanelContent panel={currentSliderPanel} workspace={currentWorkspace} addPanel={addPanel} />;
+    return (
+        <PanelContent panel={currentSliderPanel} workspace={currentWorkspace} addPanel={addPanel} recordId={recordId} />
+    );
 };
