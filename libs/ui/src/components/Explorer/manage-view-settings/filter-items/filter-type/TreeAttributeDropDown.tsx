@@ -8,6 +8,7 @@ import {AttributeConditionFilter, ITreeNodeWithRecord} from '_ui/types';
 import {RecordFilterCondition} from '_ui/_gqlTypes';
 import {IFilterChildrenTreeDropDownProps} from './_types';
 import {SelectTreeNode} from '_ui/components/SelectTreeNode';
+import {useConditionsOptionsByType} from '_ui/components/Explorer/manage-view-settings/filter-items/filter-type/useConditionOptionsByType';
 
 export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDownProps> = ({
     filter,
@@ -18,10 +19,7 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
 
     const [selectedNodes, setSelectedNode] = useState<ITreeNodeWithRecord[]>([]);
 
-    const availableConditionsOptions = [
-        {label: t('filters.equal'), value: AttributeConditionFilter.EQUAL},
-        {label: t('filters.not-equal'), value: AttributeConditionFilter.NOT_EQUAL}
-    ];
+    const {conditionOptionsByType: availableConditionsOptions} = useConditionsOptionsByType(filter);
 
     const _handleOnSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
         if (selected) {
@@ -79,6 +77,10 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
         });
     };
 
+    const showSearch =
+        filter.condition &&
+        ![AttributeConditionFilter.IS_EMPTY, AttributeConditionFilter.IS_NOT_EMPTY].includes(filter.condition);
+
     return (
         <>
             <KitSelect
@@ -88,17 +90,19 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
                 getPopupContainer={() => selectDropDownRef?.current ?? document.body}
                 aria-label={String(t('explorer.filter-link-condition'))}
             />
-            <SelectTreeNode
-                treeId={filter.attribute.linkedTree?.id ?? ''}
-                selectedNodes={selectedNodes.map(node => node.id)}
-                onSelect={_handleOnSelect}
-                onCheck={_handleOnCheck}
-                multiple
-                canSelectRoot
-                checkStrictly={false}
-                checkable
-                loadRecursively={true}
-            />
+            {showSearch && (
+                <SelectTreeNode
+                    treeId={filter.attribute.linkedTree?.id ?? ''}
+                    selectedNodes={selectedNodes.map(node => node.id)}
+                    onSelect={_handleOnSelect}
+                    onCheck={_handleOnCheck}
+                    multiple
+                    canSelectRoot
+                    checkStrictly={false}
+                    checkable
+                    loadRecursively={true}
+                />
+            )}
         </>
     );
 };

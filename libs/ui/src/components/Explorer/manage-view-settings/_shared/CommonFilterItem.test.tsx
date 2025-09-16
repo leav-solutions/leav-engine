@@ -395,7 +395,10 @@ describe('CommonFilterItem', () => {
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
             const options = getAllConditionOptions(baseElement);
-            expect(options).toHaveLength(conditionsByFormat[gqlTypes.AttributeFormat.text].length + 1); // + 1 for "through" condition
+            expect(options).toHaveLength(
+                conditionsByFormat[gqlTypes.AttributeFormat.text].filter(f => f !== AttributeConditionFilter.NOT_EQUAL) // disable NOT_EQUAL for now because of backend condition filter issue
+                    .length + 1
+            ); // + 1 for "through" condition
         });
 
         test('should handle "through" condition', async () => {

@@ -61,12 +61,16 @@ export const conditionsByFormat: Record<AttributeFormat, RecordFilterCondition[]
 };
 
 export const linkFilterConditions: Array<RecordFilterCondition | ThroughConditionFilter> = [
-    ...conditionsByFormat[AttributeFormat.text],
+    // disable NOT_EQUAL for now because of backend condition filter issue
+    ...conditionsByFormat[AttributeFormat.text].filter(f => f !== AttributeConditionFilter.NOT_EQUAL),
     AttributeConditionFilter.THROUGH
 ];
 export const treeFilterConditions: RecordFilterCondition[] = [
     AttributeConditionFilter.EQUAL,
-    AttributeConditionFilter.NOT_EQUAL
+    AttributeConditionFilter.IS_EMPTY,
+    AttributeConditionFilter.IS_NOT_EMPTY
+    // disable NOT_EQUAL for now because of backend condition filter issue
+    // AttributeConditionFilter.NOT_EQUAL
 ];
 export const valueListTextConditions: RecordFilterCondition[] = [
     AttributeConditionFilter.EQUAL
