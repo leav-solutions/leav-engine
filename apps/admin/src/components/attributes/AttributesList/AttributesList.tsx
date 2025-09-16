@@ -146,29 +146,36 @@ const AttributesList = ({
                     </Table.Row>
                 ) : (
                     !!attributes &&
-                    attributes.map(a => {
-                        const onClick = () => onRowClick(a);
-                        const attrLabel = localizedLabel(a.label, availableLanguages);
-                        return (
-                            <Table.Row key={a.id} onClick={onClick}>
-                                <Table.Cell>{attrLabel}</Table.Cell>
-                                <Table.Cell>{a.id}</Table.Cell>
-                                <Table.Cell>{t('attributes.types.' + a.type)}</Table.Cell>
-                                <Table.Cell>{a.format ? t('attributes.formats.' + a.format) : ''}</Table.Cell>
-                                <Table.Cell width={1}>
-                                    <Checkbox readOnly checked={a.multiple_values} />
-                                </Table.Cell>
-                                <Table.Cell width={1}>
-                                    <Checkbox readOnly checked={a.system} />
-                                </Table.Cell>
-                                <Table.Cell textAlign="right" width={1} className="actions">
-                                    {actionsList.map(child =>
-                                        React.cloneElement(child as React.ReactElement<any>, {attribute: a})
-                                    )}
-                                </Table.Cell>
-                            </Table.Row>
-                        );
-                    })
+                    attributes
+                        .toSorted((a, b) =>
+                            localizedLabel(a.label, availableLanguages).localeCompare(
+                                localizedLabel(b.label, availableLanguages),
+                                availableLanguages
+                            )
+                        )
+                        .map(a => {
+                            const onClick = () => onRowClick(a);
+                            const attrLabel = localizedLabel(a.label, availableLanguages);
+                            return (
+                                <Table.Row key={a.id} onClick={onClick}>
+                                    <Table.Cell>{attrLabel}</Table.Cell>
+                                    <Table.Cell>{a.id}</Table.Cell>
+                                    <Table.Cell>{t('attributes.types.' + a.type)}</Table.Cell>
+                                    <Table.Cell>{a.format ? t('attributes.formats.' + a.format) : ''}</Table.Cell>
+                                    <Table.Cell width={1}>
+                                        <Checkbox readOnly checked={a.multiple_values} />
+                                    </Table.Cell>
+                                    <Table.Cell width={1}>
+                                        <Checkbox readOnly checked={a.system} />
+                                    </Table.Cell>
+                                    <Table.Cell textAlign="right" width={1} className="actions">
+                                        {actionsList.map(child =>
+                                            React.cloneElement(child as React.ReactElement<any>, {attribute: a})
+                                        )}
+                                    </Table.Cell>
+                                </Table.Row>
+                            );
+                        })
                 )}
             </Table.Body>
         </Table>
