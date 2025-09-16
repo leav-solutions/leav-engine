@@ -17,7 +17,8 @@ const CommonExplorerPropsSchema = z.object({
     showAttributeLabels: z.boolean().optional(),
     creationFormId: z.string().optional(),
     editionFormId: z.string().optional(),
-    noPagination: z.literal(true).optional()
+    noPagination: z.literal(true).optional(),
+    showActionsLabels: z.boolean().optional()
 });
 
 const LinkExplorerPropsSchema = CommonExplorerPropsSchema;

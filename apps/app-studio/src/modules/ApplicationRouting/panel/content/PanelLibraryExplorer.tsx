@@ -27,7 +27,7 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
     const {panelId} = useParams();
     const [searchParams] = useSearchParams();
 
-    const commonExplorerProps = explorerProps ? mapToCommonExplorerProps({explorerProps}) : {};
+    const commonExplorerProps = mapToCommonExplorerProps({explorerProps});
     const libraryExplorerProps = explorerProps ? mapToLibraryExplorerProps({explorerProps}) : {};
     const itemActions = mapperToItemActions({actions, lang, navigate, panelId, searchParams});
 
