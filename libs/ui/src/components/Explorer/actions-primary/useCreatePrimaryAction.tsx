@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ReactElement, useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
-import {useKitNotification} from 'aristid-ds';
+import {KitAlert} from 'aristid-ds';
 import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
@@ -16,6 +16,9 @@ import {
 } from '_ui/_gqlTypes';
 import {FeatureHook, Entrypoint, IPrimaryAction} from '../_types';
 import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
+import {SUCCESS_ALERT_DURATION} from '_ui/constants';
+import {localizedTranslation} from '@leav/utils';
+import {useLang} from '_ui/hooks';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -62,10 +65,10 @@ export const useCreatePrimaryAction = ({
     refetch: () => void;
 }>) => {
     const {t} = useSharedTranslation();
+    const {lang} = useLang();
 
     const [isModalCreationVisible, setIsModalCreationVisible] = useState(false);
     const {saveValues} = useSaveValueBatchMutation();
-    const {kitNotification} = useKitNotification();
 
     const _getLibraryId = () =>
         (joinLibraryContext?.mandatoryAttribute &&
@@ -100,10 +103,22 @@ export const useCreatePrimaryAction = ({
         label: t('explorer.create-one')
     };
 
-    const _notifyNewCreation = () => {
-        kitNotification.success({
-            message: t('items_list.created_in_success.message'),
-            description: ''
+    const _notifyNewCreation = (label?: string | null) => {
+        KitAlert.success({
+            showIcon: true,
+            duration: SUCCESS_ALERT_DURATION,
+            message: t('items_list.created_in_success.message', {
+                libName:
+                    localizedTranslation(data?.libraries?.list[0]?.label, lang) ||
+                    t('items_list.created_in_success.item')
+            }),
+            description: t('items_list.created_in_success.description', {
+                libName:
+                    localizedTranslation(data?.libraries?.list[0]?.label, lang) ||
+                    t('items_list.created_in_success.item'),
+                itemName: label || t('items_list.created_in_success.item')
+            }),
+            closable: true
         });
     };
 
@@ -117,7 +132,7 @@ export const useCreatePrimaryAction = ({
                     onClose={() => setIsModalCreationVisible(false)}
                     onCompleted={() => {
                         refetch();
-                        _notifyNewCreation();
+                        _notifyNewCreation(t('upload.file'));
                         setIsModalCreationVisible(false);
                     }}
                 />
@@ -130,7 +145,7 @@ export const useCreatePrimaryAction = ({
                     onClose={() => setIsModalCreationVisible(false)}
                     onCompleted={() => {
                         refetch();
-                        _notifyNewCreation();
+                        _notifyNewCreation(t('upload.folder'));
                         setIsModalCreationVisible(false);
                     }}
                 />
@@ -150,7 +165,7 @@ export const useCreatePrimaryAction = ({
                     }}
                     onCreate={newRecord => {
                         refetch();
-                        _notifyNewCreation();
+                        _notifyNewCreation(newRecord.label);
                         setIsModalCreationVisible(false);
                         if (entrypoint.type === 'link') {
                             saveValues(

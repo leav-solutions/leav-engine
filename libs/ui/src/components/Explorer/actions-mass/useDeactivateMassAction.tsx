@@ -3,13 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Dispatch, useMemo} from 'react';
 import {FaTrash} from 'react-icons/fa';
-import {KitModal, useKitNotification} from 'aristid-ds';
+import {KitAlert, KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FeatureHook, IMassActions} from '../_types';
 import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {MASS_SELECTION_ALL} from '../_constants';
 import type {useExplorerData} from '../_queries/useExplorerData';
+import {SUCCESS_ALERT_DURATION} from '_ui/constants';
 
 /**
  * Hook used to get the action for mass actions only available on selection.
@@ -42,7 +43,6 @@ export const useDeactivateMassAction = ({
     refetch: ReturnType<typeof useExplorerData>['refetch'];
 }>) => {
     const {t} = useSharedTranslation();
-    const {kitNotification} = useKitNotification();
 
     const [deactivateRecordsMutation] = useDeactivateRecordsMutation();
 
@@ -68,12 +68,15 @@ export const useDeactivateMassAction = ({
                         });
                         const total =
                             view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
-                        kitNotification.info({
-                            message: t('explorer.massAction.deactivate_message', {
+                        KitAlert.success({
+                            showIcon: true,
+                            duration: SUCCESS_ALERT_DURATION,
+                            message: t('explorer.massAction.deactivate_message'),
+                            description: t('explorer.massAction.deactivate_description', {
                                 count: data?.deactivateRecords.length,
                                 total
                             }),
-                            description: null as unknown as string
+                            closable: true
                         });
                         if (
                             view.massSelection === MASS_SELECTION_ALL ||

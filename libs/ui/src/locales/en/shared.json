@@ -184,7 +184,9 @@
         "columns": "Columns",
         "new": "New",
         "created_in_success": {
-            "message": "Element successfully created!"
+            "item": "element",
+            "message": "{{libName}} created",
+            "description": "Your {{libName}} ”{{itemName}}” has been created"
         },
         "display_type": "Display",
         "header_table": "Items from {{libName}}",
@@ -581,6 +583,8 @@
         "export_notification_description": "Scheduled for"
     },
     "upload": {
+        "file": "file",
+        "folder": "folder",
         "title": "Upload files",
         "select_path_step_title": "Select a path",
         "select_files_step_title": "Select files",
@@ -735,8 +739,8 @@
             "selectedItems_one": "{{count, number}} selected",
             "selectedItems_other": "{{count, number}} selected",
             "deactivate": "Deactivate",
-            "deactivate_message": "{{count, number}}/{{total, number}} element for which you have permissions have been deleted. Others remain unchanged.",
-            "deactivate_message_zero": "No element deleted, you don't have sufficient permissions.",
+            "deactivate_message": "Elements deleted",
+            "deactivate_description": "{{count, number}}/{{total, number}} element for which you have permissions have been deleted. Others remain unchanged.",
             "add-link": "Add",
             "replace-link": "Replace",
             "toggle_selection": {

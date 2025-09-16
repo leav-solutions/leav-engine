@@ -184,7 +184,9 @@
         "columns": "Colonnes",
         "new": "Nouveau",
         "created_in_success": {
-            "message": "Élément créé avec succès !"
+            "item": "élément",
+            "message": "{{libName}} créé",
+            "description": "Votre {{libName}} ”{{itemName}}” a bien été créé"
         },
         "display_type": "Affichage",
         "header_table": "Éléments de {{libName}}",
@@ -581,6 +583,8 @@
         "export_notification_description": "Planifié le"
     },
     "upload": {
+        "file": "fichier",
+        "folder": "dossier",
         "title": "Upload",
         "select_path_step_title": "Choisir une destination",
         "select_files_step_title": "Sélection des fichiers",
@@ -735,8 +739,8 @@
             "selectedItems_one": "{{count, number}} sélectionné",
             "selectedItems_other": "{{count, number}} sélectionnés",
             "deactivate": "Supprimer",
-            "deactivate_message": "{{count, number}}/{{total, number}} éléments pour lesquels vous disposez des permissions nécessaires ont été supprimés. Les autres éléments restent inchangés.",
-            "deactivate_message_zero": "Aucun élément n’a été supprimé, vous ne disposez pas des permissions nécessaires.",
+            "deactivate_message": "Élements supprimés",
+            "deactivate_description": "{{count, number}}/{{total, number}} éléments pour lesquels vous disposez des permissions nécessaires ont été supprimés. Les autres éléments restent inchangés.",
             "add-link": "Ajouter",
             "replace-link": "Remplacer",
             "toggle_selection": {

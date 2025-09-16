@@ -49,6 +49,9 @@ export const PREFIX_SHARED_VIEWS_ORDER_KEY = 'shared_views_order_';
 
 export const TOOLTIP_DEFAULT_DELAY_IN_SECONDS = 0.5;
 
+export const SUCCESS_ALERT_DURATION = 3_000;
+export const ERROR_ALERT_DURATION = 5_000;
+
 export const EDIT_RECORD_SIDEBAR_ID = 'edit_record_sidebar';
 
 export const STANDARD_FIELD_ID_PREFIX = 'standardfield-';
