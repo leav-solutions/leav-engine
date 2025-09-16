@@ -84,6 +84,8 @@ export const useMassActions = ({
         }
     }, [view.massSelection, view.filters, totalCount]);
 
+    useEffect(() => () => closeKitSnackBar(SNACKBAR_MASS_ID), []);
+
     const isOnePage = view.pageSize > totalCount;
     const hasSelectedAllAvailableItems =
         view.massSelection === MASS_SELECTION_ALL || view.massSelection.length === totalCount;
