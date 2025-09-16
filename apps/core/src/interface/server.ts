@@ -289,6 +289,11 @@ export default function ({
                                             message: formattedError.message
                                         });
 
+                                        // Hide stacktrace when not in debug mode
+                                        if (!config.debug) {
+                                            delete e.stack;
+                                        }
+
                                         return e;
                                     });
                                 }
