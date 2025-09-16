@@ -81,7 +81,13 @@ export const PanelsNavigationMenu: FunctionComponent<IPanelsNavigationMenuProps>
                 {tabItems.length !== 0 && (
                     <div className={scrollable}>
                         {/* TODO: Remove this scrollable div when KitTabs will be responsive */}
-                        <KitTabs items={tabItems} onChange={onChangeTab} activeKey={panel.id} />
+                        <KitTabs
+                                items={tabItems}
+                                variant="pill"
+                                size="small"
+                                onChange={onChangeTab}
+                                activeKey={panel.id}
+                            />
                     </div>
                 )}
             </div>
