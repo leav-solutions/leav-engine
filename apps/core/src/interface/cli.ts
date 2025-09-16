@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {logger} from '@leav/logger';
 import {type ICoreImportApp} from 'app/core/importApp';
 import program from 'commander';
 
@@ -19,7 +20,7 @@ export default function ({'core.app.core.import': importApp}: IDeps) {
                     await importApp.importConfig(filepath, options.clear);
                     process.exit(0);
                 } catch (e) {
-                    console.error(e);
+                    logger.error(`Error during config import ${e.stack}`);
                     process.exit(1);
                 }
             });
@@ -34,7 +35,7 @@ export default function ({'core.app.core.import': importApp}: IDeps) {
                     await importApp.importData(filepath);
                     process.exit(0);
                 } catch (e) {
-                    console.error(e);
+                    logger.error(`Error during data import ${e.stack}`);
                     process.exit(1);
                 }
             });

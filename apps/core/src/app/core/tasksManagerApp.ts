@@ -5,7 +5,7 @@ import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomai
 import {type IRecordDomain} from 'domain/record/recordDomain';
 import {withFilter} from 'graphql-subscriptions';
 import {type IUtils} from 'utils/utils';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IConfig} from '_types/config';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IList, type IPaginationParams, type ISortParams} from '_types/list';
@@ -25,7 +25,7 @@ export interface ITasksManagerApp extends IGraphqlAppModule {
 
 interface IDeps {
     'core.domain.tasksManager'?: ITasksManagerDomain;
-    'core.utils.logger'?: winston.Winston;
+    'core.utils.logger'?: ILogger;
     config?: IConfig;
     'core.utils'?: IUtils;
     'core.domain.record'?: IRecordDomain;

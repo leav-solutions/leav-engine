@@ -22,7 +22,7 @@ import {ACCESS_TOKEN_COOKIE_NAME, type ITokenUserData, REFRESH_TOKEN_COOKIE_NAME
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {type IRequestWithContext} from '../../_types/express';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IOIDCClientService} from '../../infra/oidc/oidcClientService';
 import {type InitQueryContextFunc} from '../helpers/initQueryContext';
 import {type IConvertOIDCIdentifier} from '../helpers/convertOIDCIdentifier';
@@ -60,7 +60,7 @@ export interface IAuthAppDeps {
     'core.domain.apiKey': IApiKeyDomain;
     'core.domain.user': IUserDomain;
     'core.infra.cache.cacheService': ICachesService;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     'core.infra.oidc.oidcClientService': IOIDCClientService;
     'core.app.helpers.initQueryContext': InitQueryContextFunc;
     'core.app.helpers.convertOIDCIdentifier': IConvertOIDCIdentifier;
@@ -326,7 +326,7 @@ export default function ({
                         const originalUrl = await oidcClientService.getOriginalUrl(queryId);
                         return res.redirect(originalUrl);
                     } catch (err) {
-                        logger.error(err);
+                        logger.error(`Auth oidc verify error ${err.stack}`);
                         return next(err);
                     }
                 }

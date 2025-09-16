@@ -11,7 +11,7 @@ import {nanoid} from 'nanoid';
 import process from 'process';
 import {type IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '_types/shared';
@@ -80,7 +80,7 @@ export interface ITasksManagerDomainDeps {
     'core.infra.task': ITaskRepo;
     'core.depsManager': AwilixContainer;
     'core.domain.eventsManager': IEventsManagerDomain;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     'core.utils': IUtils;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
 }
@@ -143,7 +143,7 @@ export default function ({
 
             status = TaskStatus.DONE;
         } catch (e) {
-            logger.error('Error executing task', e);
+            logger.error(`Error executing task ${task.id} because ${e.stack}`);
             status = TaskStatus.FAILED;
             errorMessage = e.message;
         }
@@ -200,7 +200,7 @@ export default function ({
 
                     status = TaskCallbackStatus.DONE;
                 } catch (e) {
-                    logger.error('Error executing callback', e);
+                    logger.error(`Error executing callback of task ${task.id} because ${e.stack}`);
                     status = TaskCallbackStatus.FAILED;
                 }
             } else {
@@ -410,7 +410,7 @@ export default function ({
         try {
             _validateMsg(order);
         } catch (e) {
-            logger.error(e);
+            logger.error(`Invalid task exec message because ${e.stack}`, {msgContent: msg.content.toString()});
             amqpService.consumer.channel.ack(msg);
         }
 
@@ -437,7 +437,7 @@ export default function ({
         try {
             _validateMsg(order);
         } catch (e) {
-            logger.error(e);
+            logger.error(`Invalid task cancel message because ${e.stack}`, {msgContent: msg.content.toString()});
         } finally {
             amqpService.consumer.channel.ack(msg);
         }

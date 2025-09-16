@@ -29,7 +29,7 @@ import {setupLogger} from './utils/logger/logger';
         conf = await getConfig();
         validateConfig(conf);
     } catch (e) {
-        logger.error('config error' + e.stack);
+        logger.error(`Config error because ${e.stack}`);
         process.exit(1);
     }
 
@@ -98,7 +98,7 @@ import {setupLogger} from './utils/logger/logger';
     try {
         await _createRequiredDirectories();
 
-        logger.info('Starting core in mode', conf.coreMode);
+        logger.info(`Starting core in mode ${conf.coreMode}`);
 
         switch (conf.coreMode) {
             case CoreMode.SERVER:
@@ -133,10 +133,10 @@ import {setupLogger} from './utils/logger/logger';
                 await cli.run();
         }
     } catch (e) {
-        logger.error('Fatal error during startup ' + e.stack);
+        logger.error(`Fatal error during startup ${e.stack}`);
         process.exit(1);
     }
-})().catch(e => logger.error('Fatal error during initialization ' + e.stack));
+})().catch(e => logger.error(`Fatal error during initialization ${e.stack}`));
 
 process.on('unhandledRejection', (reason: Error | any) => {
     logger.error(`Unhandled Rejection at: ${reason.stack}`);

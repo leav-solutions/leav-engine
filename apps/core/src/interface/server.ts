@@ -20,7 +20,7 @@ import {type ServerOptions} from 'graphql-ws';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
 import {createServer} from 'http';
 import {type IUtils} from 'utils/utils';
-import type * as winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {WebSocketServer} from 'ws';
 import {type IConfig} from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -59,7 +59,7 @@ interface IDeps {
     'core.app.core'?: ICoreApp;
     'core.app.helpers.validateRequestToken'?: ValidateRequestTokenFunc;
     'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
-    'core.utils.logger'?: winston.Winston;
+    'core.utils.logger'?: ILogger;
     'core.utils'?: IUtils;
     'core.depsManager'?: AwilixContainer;
 }
@@ -181,8 +181,7 @@ export default function ({
                             return res.status(403).json({error: 'FORBIDDEN'});
                         }
 
-                        logger.error(`[${req.ctx?.queryId ?? 'unknown_query'}] ${err}`);
-                        logger.error(err.stack);
+                        logger.error(`Server http error [${req.ctx?.queryId ?? 'unknown_query'}] ${err.stack}`);
 
                         res.status(500).json({error: 'INTERNAL_SERVER_ERROR'});
                     }

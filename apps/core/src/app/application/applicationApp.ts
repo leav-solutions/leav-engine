@@ -16,7 +16,7 @@ import {type GraphQLResolveInfo} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
 import path from 'path';
 import {type IUtils} from 'utils/utils';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IGetCoreAttributesParams} from '_types/attribute';
 import {type IRequestWithContext} from '_types/express';
 import {type IAppGraphQLSchema} from '_types/graphql';
@@ -56,7 +56,7 @@ export interface IApplicationAppDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.globalSettings': IGlobalSettingsDomain;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     'core.utils': IUtils;
     config: IConfig;
 }

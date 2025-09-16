@@ -7,7 +7,7 @@ import {CollectionType} from 'arangojs/collection';
 import {type AwilixContainer} from 'awilix';
 import * as fs from 'fs';
 import * as path from 'path';
-import type * as winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IAttribute} from '_types/attribute';
 import {type IConfig} from '_types/config';
 import {type ILibrary} from '_types/library';
@@ -56,7 +56,7 @@ export interface IDbUtils {
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils.logger'?: winston.Winston;
+    'core.utils.logger'?: ILogger;
     config?: IConfig;
     'core.utils.getSystemQueryContext'?: GetSystemQueryContext;
 }

@@ -8,13 +8,13 @@ import {type IDbDocument} from 'infra/db/_types';
 import {type IDbService} from 'infra/db/dbService';
 import {type IDbUtils} from 'infra/db/dbUtils';
 import {join as joinPath} from 'path';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {FilesAttributes} from '../../_types/filesManager';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
-    'core.utils.logger'?: winston.Winston;
+    'core.utils.logger'?: ILogger;
 }
 
 export interface IFilesManagerRepo {

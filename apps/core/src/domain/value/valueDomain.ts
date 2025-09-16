@@ -13,7 +13,7 @@ import {type IRecordRepo} from 'infra/record/recordRepo';
 import {type ITreeRepo} from 'infra/tree/treeRepo';
 import {type IValueRepo} from 'infra/value/valueRepo';
 import {type IUtils} from 'utils/utils';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import type * as Config from '_types/config';
 import {type IRecord} from '_types/record';
 import PermissionError from '../../errors/PermissionError';
@@ -160,7 +160,7 @@ export interface IValueDomainDeps {
     'core.infra.tree': ITreeRepo;
     'core.infra.value': IValueRepo;
     'core.utils': IUtils;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     'core.domain.tree': ITreeDomain;
 }
 
@@ -272,7 +272,7 @@ const valueDomain = function ({
                                   })
                                 : null;
                     } catch (err) {
-                        logger.error(err);
+                        logger.error(`Error formatting metadata field ${metadataField} : ${err.stack}`);
                         allValues[metadataField] = null;
                     }
 

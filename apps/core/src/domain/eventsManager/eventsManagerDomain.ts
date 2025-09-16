@@ -7,7 +7,7 @@ import type * as amqp from 'amqplib';
 import {PubSub} from 'graphql-subscriptions';
 import Joi from 'joi';
 import {type IUtils} from 'utils/utils';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {Errors} from '../../_types/errors';
@@ -16,6 +16,7 @@ import {type IDbPayloadInternal} from '_types/events';
 export interface IEventsManagerDomain {
     sendDatabaseEvent<DBPayloadAction extends EventAction>(
         payload: IDbPayloadInternal<DBPayloadAction>,
+
         ctx: IQueryInfos
     ): Promise<void>;
     sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void>;
@@ -33,7 +34,7 @@ export interface IEventsManagerDomain {
 export interface IEventsManagerDomainDeps {
     config: Config.IConfig;
     'core.infra.amqpService': IAmqpService;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     'core.utils': IUtils;
 }
 
@@ -77,7 +78,7 @@ export default function ({
         try {
             _validateMsg(pubSubEvent);
         } catch (e) {
-            logger.error(`Invalid message because ${e.message}. Message was: ${JSON.stringify(msgContent, null, 2)}`);
+            logger.error(`Invalid message because ${e.message}`, {msgContent});
         }
 
         const publishedPayload = {

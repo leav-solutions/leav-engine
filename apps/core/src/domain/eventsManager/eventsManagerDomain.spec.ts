@@ -9,9 +9,9 @@ import {type IConfig} from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import eventsManager, {type IEventsManagerDomainDeps} from './eventsManagerDomain';
-import winston = require('winston');
+import {type ILogger} from '@leav/logger';
 
-const logger: Mockify<winston.Winston> = {
+const logger: Mockify<ILogger> = {
     error: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
     warn: jest.fn((...args) => console.log(args)) // eslint-disable-line no-restricted-syntax
 };
@@ -98,7 +98,7 @@ describe('Events Manager', () => {
         const events = eventsManager({
             ...depsBase,
             config: conf as IConfig,
-            'core.utils.logger': logger as winston.Winston,
+            'core.utils.logger': logger as ILogger,
             'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
@@ -141,7 +141,7 @@ describe('Events Manager', () => {
             const events = eventsManager({
                 ...depsBase,
                 config: conf as IConfig,
-                'core.utils.logger': logger as winston.Winston,
+                'core.utils.logger': logger as ILogger,
                 'core.infra.amqpService': mockAmqpService as IAmqpService
             });
 
@@ -159,7 +159,7 @@ describe('Events Manager', () => {
             const events = eventsManager({
                 ...depsBase,
                 config: conf as IConfig,
-                'core.utils.logger': logger as winston.Winston,
+                'core.utils.logger': logger as ILogger,
                 'core.infra.amqpService': mockAmqpService as IAmqpService
             });
 

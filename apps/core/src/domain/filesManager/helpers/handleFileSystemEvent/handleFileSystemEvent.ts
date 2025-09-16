@@ -18,7 +18,7 @@ import {handleMoveEvent} from './handleMoveEvent';
 import {handleRemoveEvent} from './handleRemoveEvent';
 import {handleUpdateEvent} from './handleUpdateEvent';
 import {type HandleFileSystemEventFunc, type IHandleFileSystemEventDeps} from './_types';
-import winston = require('winston');
+import {type ILogger} from '@leav/logger';
 
 export interface IFileSystemEventDeps {
     'core.domain.library': ILibraryDomain;
@@ -30,7 +30,7 @@ export interface IFileSystemEventDeps {
     'core.infra.record': IRecordRepo;
     'core.infra.amqpService': IAmqpService;
     'core.infra.filesManager': IFilesManagerRepo;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     'core.utils': IUtils;
     config: IConfig;
 }

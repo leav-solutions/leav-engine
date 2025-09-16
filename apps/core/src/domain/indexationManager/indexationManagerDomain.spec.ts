@@ -12,7 +12,7 @@ import indexationManager, {type IIndexationManagerDomainDeps} from './indexation
 import {type IIndexationService} from 'infra/indexation/indexationService';
 import {AttributeCondition} from '../../_types/record';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type ToAny} from 'utils/utils';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
@@ -40,7 +40,7 @@ const ctx: IQueryInfos = {
     queryId: 'indexManagerDomainTest'
 };
 
-const mockLogger: Mockify<winston.Winston> = {
+const mockLogger: Mockify<ILogger> = {
     info: jest.fn((...args) => console.log(args)) // eslint-disable-line no-restricted-syntax
 };
 
@@ -99,7 +99,7 @@ describe('Indexation Manager', () => {
             ...depsBase,
             config: conf as IConfig,
             'core.infra.amqpService': mockAmqpService as IAmqpService,
-            'core.utils.logger': mockLogger as winston.Winston,
+            'core.utils.logger': mockLogger as ILogger,
             'core.infra.indexation.indexationService': mockIndexationService as IIndexationService
         });
 

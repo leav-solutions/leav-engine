@@ -15,7 +15,7 @@ import {type IFormRepo} from 'infra/form/formRepo';
 import {difference} from 'lodash';
 import omit from 'lodash/omit';
 import {type IUtils} from 'utils/utils';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '_types/shared';
 import {type IValueVersion} from '_types/value';
@@ -76,7 +76,7 @@ export interface IFormDomainDeps {
     'core.domain.tree': ITreeDomain;
     'core.infra.form': IFormRepo;
     'core.utils': IUtils;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     translator: i18n;
 }
 
@@ -237,8 +237,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                         } catch (error) {
                             // If something went wrong, we assume the element is not visible
                             isElementVisible = false;
-                            logger.error(error);
-                            logger.error('Form element was ', depElement);
+                            logger.error(`Form element error ${error.stack} `, {depElement});
                         }
                         if (isElementVisible) {
                             const {error: valueError, values} = await getElementValues({

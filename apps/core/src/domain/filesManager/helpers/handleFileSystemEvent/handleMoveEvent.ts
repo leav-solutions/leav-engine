@@ -111,9 +111,8 @@ export const handleMoveEvent = async (
             });
         } catch (e) {
             deps.logger.error(
-                `[${ctx.queryId}] event ${scanMsg.event}, move element in tree fail : ${originRecord.id}. ${e.message}`
+                `[${ctx.queryId}] event ${scanMsg.event}, move element in tree fail : ${originRecord.id}. ${e.stack}`
             );
-            deps.logger.error(`[${ctx.queryId}] ${e.stack}`);
         }
     }
 };

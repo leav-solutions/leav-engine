@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {logger} from '@leav/logger';
 import fs from 'fs';
 import {type FileUpload} from 'graphql-upload';
 import progress, {type Progress} from 'progress-stream';
@@ -40,7 +41,7 @@ export default function () {
             writeStream.on('finish', resolve);
 
             writeStream.on('error', error => {
-                console.error('Error while writing file', error);
+                logger.error(`Error while writing file because ${error.stack}`);
 
                 fs.unlink(storedFilePath, () => {
                     reject(error);

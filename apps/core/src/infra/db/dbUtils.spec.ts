@@ -7,7 +7,7 @@ import {asFunction, type AwilixContainer} from 'awilix';
 import {resolve} from 'dns';
 import * as fs from 'fs';
 import {type ICachesService} from 'infra/cache/cacheService';
-import {type Winston} from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IAttributeFilterOptions} from '_types/attribute';
 import {type IConfig} from '_types/config';
 import {type ITree} from '_types/tree';
@@ -364,14 +364,14 @@ describe('dbUtils', () => {
             };
             (asFunction as jest.FunctionLike) = m => m;
 
-            const mockLogger: Mockify<Winston> = {
+            const mockLogger: Mockify<ILogger> = {
                 info: jest.fn()
             };
 
             const testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.cache.cacheService': mockCacheService as ICachesService,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as ILogger,
                 config: mockConf as IConfig
             });
 

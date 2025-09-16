@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IAmqpService} from '@leav/message-broker';
 import {PreviewPriority} from '@leav/utils';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import type * as Config from '_types/config';
 import {type IPreviewMessage, type IPreviewResponseContext, type IPreviewVersion} from '../../../_types/filesManager';
 
@@ -65,7 +65,7 @@ export const requestPreviewGeneration = async ({
     libraryId: string;
     versions: IPreviewVersion[];
     priority?: PreviewPriority;
-    deps: {logger: winston.Winston; amqpService: IAmqpService; config: Config.IConfig};
+    deps: {logger: ILogger; amqpService: IAmqpService; config: Config.IConfig};
 }): Promise<void> => {
     const context: IPreviewResponseContext = {library: libraryId, recordId};
 

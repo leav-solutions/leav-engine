@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IRecordDomain} from 'domain/record/recordDomain';
 import {type IUtils} from 'utils/utils';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IValue, type IValueVersion} from '_types/value';
 import ValidationError from '../../../errors/ValidationError';
@@ -14,7 +14,7 @@ export const getElementValues = async (params: {
     recordId: string;
     libraryId: string;
     version?: IValueVersion;
-    deps: {'core.domain.record'?: IRecordDomain; 'core.utils'?: IUtils; 'core.utils.logger'?: winston.Winston};
+    deps: {'core.domain.record'?: IRecordDomain; 'core.utils'?: IUtils; 'core.utils.logger'?: ILogger};
     ctx: IQueryInfos;
 }): Promise<{error?: string; values: IValue[] | null}> => {
     const {element, recordId, libraryId, version, deps, ctx} = params;

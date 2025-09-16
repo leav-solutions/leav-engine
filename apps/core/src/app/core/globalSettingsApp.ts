@@ -7,7 +7,7 @@ import {type IRecordDomain} from 'domain/record/recordDomain';
 import {Express, type NextFunction, type Response} from 'express';
 import path from 'node:path';
 import {type IUtils} from 'utils/utils';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IConfig} from '_types/config';
 import {type IRequestWithContext} from '_types/express';
 import {type IGlobalSettings} from '_types/globalSettings';
@@ -26,7 +26,7 @@ interface IDeps {
     'core.app.helpers.initQueryContext': InitQueryContextFunc;
     'core.domain.globalSettings': IGlobalSettingsDomain;
     'core.domain.record': IRecordDomain;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     'core.utils': IUtils;
     config: IConfig;
 }
@@ -143,8 +143,7 @@ export default function ({
             };
 
             const _handleError = async (err, req, res, next) => {
-                logger.error(`[${req.ctx.queryId}] ${err}`);
-                logger.error(err.stack);
+                logger.error(`[${req.ctx.queryId}] Global setting error ${err.stack}`);
                 res.status(err.statusCode ?? 500).send(err.type ?? 'Internal server error');
             };
 

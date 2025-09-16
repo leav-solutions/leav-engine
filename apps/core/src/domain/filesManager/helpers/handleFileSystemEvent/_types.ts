@@ -11,7 +11,7 @@ import {type IValueDomain} from 'domain/value/valueDomain';
 import {type IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
 import {type IRecordRepo} from 'infra/record/recordRepo';
 import {type IUtils} from 'utils/utils';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IConfig} from '_types/config';
 import {type IFileEventData} from '_types/filesManager';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -24,7 +24,7 @@ export interface IHandleFileSystemEventDeps {
     recordRepo: IRecordRepo;
     amqpService: IAmqpService;
     updateRecordLastModif: UpdateRecordLastModifFunc;
-    logger: winston.Winston;
+    logger: ILogger;
     config: IConfig;
     utils: IUtils;
     filesManagerRepo: IFilesManagerRepo;

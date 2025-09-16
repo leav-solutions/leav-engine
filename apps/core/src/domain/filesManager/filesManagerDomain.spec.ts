@@ -25,8 +25,8 @@ import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
 import filesManager, {type IFilesManagerDomainDeps, type IStoreFilesParams} from './filesManagerDomain';
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import {systemPreviewsSettings} from './_constants';
-import winston = require('winston');
 import {mockSystemQueryContext} from '../../__tests__/mocks/shared';
+import {type ILogger} from '@leav/logger';
 
 const mockConfig: Mockify<Config.IConfig> = {
     amqp: {
@@ -77,7 +77,7 @@ jest.mock('amqplib', () => ({
     connect: jest.fn().mockImplementation(() => mockAmqpConnection)
 }));
 
-const logger: Mockify<winston.Winston> = {
+const logger: Mockify<ILogger> = {
     info: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
     error: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
     warn: jest.fn((...args) => console.log(args)) // eslint-disable-line no-restricted-syntax
@@ -178,7 +178,7 @@ describe('FilesManager', () => {
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': logger as winston.Winston,
+                'core.utils.logger': logger as ILogger,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
@@ -221,7 +221,7 @@ describe('FilesManager', () => {
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': logger as winston.Winston,
+                'core.utils.logger': logger as ILogger,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
@@ -300,7 +300,7 @@ describe('FilesManager', () => {
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': logger as winston.Winston,
+                'core.utils.logger': logger as ILogger,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomainForDirectories as ILibraryDomain,
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
@@ -349,7 +349,7 @@ describe('FilesManager', () => {
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': logger as winston.Winston,
+                'core.utils.logger': logger as ILogger,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
@@ -412,7 +412,7 @@ describe('FilesManager', () => {
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': logger as winston.Winston,
+                'core.utils.logger': logger as ILogger,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
@@ -456,7 +456,7 @@ describe('FilesManager', () => {
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': logger as winston.Winston,
+                'core.utils.logger': logger as ILogger,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,

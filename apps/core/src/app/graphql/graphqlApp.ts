@@ -7,7 +7,6 @@ import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {type GraphQLResolveInfo, type GraphQLSchema, Kind} from 'graphql';
 import {merge} from 'lodash';
 import {type IUtils} from 'utils/utils';
-import * as winston from 'winston';
 import {IConfig} from '_types/config';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IAppModule} from '_types/shared';

@@ -21,7 +21,7 @@ import Joi from 'joi';
 import * as Path from 'path';
 import {type Progress} from 'progress-stream';
 import {type IUtils} from 'utils/utils';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type ITreeNode} from '_types/tree';
@@ -93,7 +93,7 @@ export interface IFilesManagerDomainDeps {
     config: Config.IConfig;
     'core.utils': IUtils;
     'core.infra.amqpService': IAmqpService;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     'core.domain.record': IRecordDomain;
     'core.domain.value': IValueDomain;
     'core.domain.tree': ITreeDomain;
@@ -139,12 +139,7 @@ export default function ({
             msgBody = JSON.parse(msg.content.toString());
             _validateMsg(msgBody);
         } catch (e) {
-            logger.error(
-                `[FilesManager] Invalid message:
-                ${e.message}.
-                Message was: ${msg}
-                `
-            );
+            logger.error(`[FilesManager] Invalid message: ${e.stack}.`, {msgContent: msg.content.toString()});
 
             return;
         }

@@ -69,7 +69,7 @@ import {type IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPe
 import {type DeleteRecordHelper} from './helpers/deleteRecord';
 import {type CreateRecordHelper} from './helpers/createRecord';
 import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -239,7 +239,7 @@ export interface IRecordDomainDeps {
     'core.infra.permission': IPermissionRepo;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.cache.cacheService': ICachesService;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     'core.utils': IUtils;
     translator: i18n;
 }

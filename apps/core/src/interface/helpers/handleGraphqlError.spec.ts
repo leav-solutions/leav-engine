@@ -11,14 +11,14 @@ import {AdminPermissionsActions} from '../../_types/permissions';
 import {ErrorTypes, GRAPHQL_ERROR_CODES} from '../../_types/errors';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import handleGraphqlError from './handleGraphqlError';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 
 describe('handleGraphqlError', () => {
     const mockConfig = {
         debug: false
     };
 
-    const mockLogger: Mockify<winston.Winston> = {
+    const mockLogger: Mockify<ILogger> = {
         warn: jest.fn(),
         error: jest.fn()
     };
@@ -55,7 +55,7 @@ describe('handleGraphqlError', () => {
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
-                'core.utils.logger': mockLogger as winston.Winston,
+                'core.utils.logger': mockLogger as ILogger,
                 'core.utils': mockUtils as IUtils
             });
             const handledError = errorHandler(_makeError('Some error message', originalError), mockCtx);
@@ -76,7 +76,7 @@ describe('handleGraphqlError', () => {
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
-                'core.utils.logger': mockLogger as winston.Winston,
+                'core.utils.logger': mockLogger as ILogger,
                 'core.utils': mockUtils as IUtils
             });
             const handledError = errorHandler(_makeError('Some error message', originalError), mockCtx);
@@ -97,7 +97,7 @@ describe('handleGraphqlError', () => {
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
-                'core.utils.logger': mockLogger as winston.Winston,
+                'core.utils.logger': mockLogger as ILogger,
                 'core.utils': mockUtils as IUtils
             });
             const handledError = errorHandler(_makeError('Some error message', originalError), mockCtx);
@@ -119,7 +119,7 @@ describe('handleGraphqlError', () => {
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
-                'core.utils.logger': mockLogger as winston.Winston,
+                'core.utils.logger': mockLogger as ILogger,
                 'core.utils': mockUtils as IUtils
             });
             const handledError = errorHandler(_makeError('You shall not pass!', originalError), mockCtx);
@@ -133,7 +133,7 @@ describe('handleGraphqlError', () => {
         it('Should return GraphQL errors as they are', () => {
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
-                'core.utils.logger': mockLogger as winston.Winston,
+                'core.utils.logger': mockLogger as ILogger,
                 'core.utils': mockUtils as IUtils
             });
             const handledError = errorHandler(
@@ -155,7 +155,7 @@ describe('handleGraphqlError', () => {
 
             const errorHandler = handleGraphqlError({
                 config: mockConfigWithDebug as IConfig,
-                'core.utils.logger': mockLogger as winston.Winston,
+                'core.utils.logger': mockLogger as ILogger,
                 'core.utils': mockUtils as IUtils
             });
             const handledError = errorHandler(_makeError('Boom!', null, {}), mockCtx);
@@ -168,7 +168,7 @@ describe('handleGraphqlError', () => {
         it('Should hide the original message if not in debug mode', () => {
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
-                'core.utils.logger': mockLogger as winston.Winston,
+                'core.utils.logger': mockLogger as ILogger,
                 'core.utils': mockUtils as IUtils
             });
             const handledError = errorHandler(_makeError('Boom!', null, {}), mockCtx);

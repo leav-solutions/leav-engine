@@ -6,7 +6,7 @@ import {type Stats} from 'fs';
 import fs from 'fs/promises';
 import {type IDbUtils} from 'infra/db/dbUtils';
 import path from 'path';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IConfig} from '_types/config';
 import {mockApplication} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
@@ -209,12 +209,12 @@ describe('applicationRepo', () => {
                 {virtual: true}
             );
 
-            const mockLogger: Mockify<winston.Winston> = {
+            const mockLogger: Mockify<ILogger> = {
                 warn: jest.fn()
             };
 
             const repo = applicationRepo({
-                'core.utils.logger': mockLogger as winston.Winston,
+                'core.utils.logger': mockLogger as ILogger,
                 config: mockConfig as IConfig
             });
 

@@ -12,7 +12,7 @@ import {type IQueryInfos} from '_types/queryInfos';
 import {type IFileMetadata, type IPreviews, type IPreviewsStatus} from '../../../_types/filesManager';
 import {type IRecord} from '../../../_types/record';
 import {type IHandleFileSystemEventDeps} from './handleFileSystemEvent/_types';
-import winston = require('winston');
+import {type ILogger} from '@leav/logger';
 
 export const getRecord = async (
     {fileName, filePath, fileInode}: {fileName: string; filePath: string; fileInode?: number},
@@ -58,7 +58,7 @@ export const createRecordFile = async (
                 ctx
             });
         } catch (e) {
-            deps.logger.warn(`[FilesManager] Error when saving values for new record : ${newRecord.id}`, e.message);
+            deps.logger.warn(`[FilesManager] Error when saving values for new record ${newRecord.id}: ${e.message}`);
         }
     }
 
@@ -75,7 +75,7 @@ export const updateRecordFile = async (
         updateRecordLastModif: UpdateRecordLastModifFunc;
         sendRecordUpdateEvent: SendRecordUpdateEventHelper;
         config: Config.IConfig;
-        logger: winston.Winston;
+        logger: ILogger;
     },
     ctx: IQueryInfos
 ) => {
@@ -111,8 +111,7 @@ export const updateRecordFile = async (
             ctx
         );
     } catch (e) {
-        deps.logger.warn(`[${ctx.queryId}] Error when updating record: ${recordId}, ${e.message}`);
-        deps.logger.warn(`[${ctx.queryId}] ${e.stack}`);
+        deps.logger.warn(`[${ctx.queryId}] Error when updating record: ${recordId}, ${e.stack}`);
     }
 };
 
@@ -153,9 +152,8 @@ export const createFilesTreeElement = async (
         });
     } catch (e) {
         deps.logger.error(
-            `[${ctx.queryId}] Error on tree element creation, record id: ${record.id}, error: ${e.message}`
+            `[${ctx.queryId}] Error on tree element creation, record id: ${record.id}, error: ${e.stack}`
         );
-        deps.logger.error(`[${ctx.queryId}] ${e.stack}`);
     }
 };
 
@@ -183,10 +181,7 @@ export const deleteFilesTreeElement = async (
             ctx
         });
     } catch (e) {
-        deps.logger.warn(
-            `[${ctx.queryId}] Error on tree element deletion, record id: ${recordId}, error: ${e.message}`
-        );
-        deps.logger.error(`[${ctx.queryId}] ${e.stack}`);
+        deps.logger.warn(`[${ctx.queryId}] Error on tree element deletion, record id: ${recordId}, error: ${e.stack}`);
     }
 };
 

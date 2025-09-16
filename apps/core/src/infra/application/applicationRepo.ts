@@ -5,7 +5,7 @@ import {appRootPath} from '@leav/app-root-path';
 import {aql} from 'arangojs';
 import fs, {readdir} from 'fs/promises';
 import path from 'path';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IConfig} from '_types/config';
 import {type IList} from '_types/list';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -27,7 +27,7 @@ export const APPLICATIONS_COLLECTION_NAME = 'core_applications';
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
-    'core.utils.logger'?: winston.Winston;
+    'core.utils.logger'?: ILogger;
     config?: IConfig;
 }
 

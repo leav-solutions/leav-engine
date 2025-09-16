@@ -19,7 +19,7 @@ import {
     type IPreviewsStatus
 } from '../../../_types/filesManager';
 import {updateRecordFile} from './handleFileUtilsHelper';
-import winston = require('winston');
+import {type ILogger} from '@leav/logger';
 
 export interface IHandlePreviewResponseDeps {
     amqpService: IAmqpService;
@@ -30,13 +30,13 @@ export interface IHandlePreviewResponseDeps {
     updateRecordLastModif: UpdateRecordLastModifFunc;
     sendRecordUpdateEvent: SendRecordUpdateEventHelper;
     config: Config.IConfig;
-    logger: winston.Winston;
+    logger: ILogger;
     utils: IUtils;
 }
 
 const _onMessage = async (
     msg: amqp.ConsumeMessage,
-    logger: winston.Winston,
+    logger: ILogger,
     ctx: IQueryInfos,
     deps: IHandlePreviewResponseDeps
 ) => {
@@ -47,12 +47,7 @@ const _onMessage = async (
     try {
         previewResponse = JSON.parse(msg.content.toString());
     } catch (e) {
-        logger.error(
-            `[FilesManager] Preview return invalid message:
-            ${e.message}.
-            Message was: ${msg}'
-            `
-        );
+        logger.error(`[FilesManager] Preview return invalid message: ${e.stack}`, {msg});
         return;
     }
 
@@ -109,7 +104,7 @@ const _onMessage = async (
 
 export const initPreviewResponseHandler = async (
     config: Config.IConfig,
-    logger: winston.Winston,
+    logger: ILogger,
     ctx: IQueryInfos,
     deps: IHandlePreviewResponseDeps
 ) => {

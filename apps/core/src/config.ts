@@ -6,6 +6,7 @@ import {loadConfig} from '@leav/config-manager';
 import Joi from 'joi';
 import {CoreMode, type IConfig} from './_types/config';
 import {env as appEnv} from './env';
+import {logger} from '@leav/logger';
 
 export const validateConfig = (conf: IConfig) => {
     const configSchema = Joi.object().keys({
@@ -230,7 +231,7 @@ export const validateConfig = (conf: IConfig) => {
     }
 
     if (conf.env === 'production' && conf.auth.testApiKey) {
-        console.warn('/!\\ Test API key is set in config, it should be removed in production /!\\');
+        logger.warn('/!\\ Test API key is set in config, it should be removed in production /!\\');
     }
 };
 

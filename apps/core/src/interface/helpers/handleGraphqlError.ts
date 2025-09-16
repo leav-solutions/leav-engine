@@ -4,7 +4,7 @@
 import {ErrorTypes} from '@leav/utils';
 import {type GraphQLError, type GraphQLFormattedError} from 'graphql';
 import {type IUtils} from 'utils/utils';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IConfig} from '_types/config';
 import {GRAPHQL_ERROR_CODES, type IExtendedErrorMsg} from '../../_types/errors';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -15,7 +15,7 @@ export type HandleGraphqlErrorFunc = (err: GraphQLError, ctx: IQueryInfos) => Gr
 interface IDeps {
     config: IConfig;
     'core.utils': IUtils;
-    'core.utils.logger'?: winston.Winston;
+    'core.utils.logger'?: ILogger;
 }
 
 export default function ({
@@ -68,7 +68,7 @@ export default function ({
         newError.extensions.queryId = context.queryId;
 
         // @ts-ignore
-        logger.error(`${newError.message}\n${(err.extensions.exception?.stacktrace ?? []).join('\n')}`);
+        logger.error(`Graphql error: ${newError.message}\n${(err.extensions.exception?.stacktrace ?? []).join('\n')}`);
 
         if (!config.debug) {
             newError.message = `[${context.queryId}] Internal Error`;

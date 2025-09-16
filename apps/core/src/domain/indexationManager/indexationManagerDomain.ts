@@ -14,7 +14,7 @@ import {type i18n} from 'i18next';
 import Joi from 'joi';
 import {difference, intersectionBy, isEqual} from 'lodash';
 import {v4 as uuidv4} from 'uuid';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IValue} from '_types/value';
@@ -46,7 +46,7 @@ export interface IIndexationManagerDomainDeps {
     'core.infra.indexation.indexationService': IIndexationService;
     'core.domain.tasksManager': ITasksManagerDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
     translator: i18n;
 }
@@ -226,7 +226,12 @@ export default function ({
         try {
             _validateMsg(event);
         } catch (e) {
-            console.error(e);
+            logger.error(`Indexation Manager - Invalid message received: ${e.message}`, {
+                msg: {
+                    ...msg,
+                    content: msg.content.toString()
+                }
+            });
         }
 
         const payload = event.payload;

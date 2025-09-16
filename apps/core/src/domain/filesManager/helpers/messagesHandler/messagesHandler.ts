@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IConfig} from '_types/config';
 import {type IFileEventData} from '_types/filesManager';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -12,7 +12,7 @@ export interface IMessagesHandlerHelper {
 }
 
 export interface IMessagesHandlerDeps {
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     'core.domain.filesManager.helpers.handleFileSystemEvent': HandleFileSystemEventFunc;
     config: IConfig;
 }
@@ -42,8 +42,7 @@ export default function ({
             const library = config.filesManager.rootKeys[message.rootKey];
             await handleFileSystemEvent(message, {library}, ctx);
         } catch (e) {
-            console.error(e);
-            logger.error(`[FilesManager] Error when processing file event msg:${e.message}. Message was: ${message}`);
+            logger.error(`[FilesManager] Error when processing file event msg: ${e.stack}.`, {message});
         }
 
         _isWorking = false;

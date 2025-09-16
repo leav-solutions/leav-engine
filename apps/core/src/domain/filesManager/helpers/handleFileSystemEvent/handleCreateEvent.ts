@@ -55,8 +55,7 @@ export const handleCreateEvent = async (
             };
             await updateRecordFile(recordData, record.id!, recordLibrary, deps, ctx);
         } catch (e) {
-            console.error(e);
-            deps.logger.error(`[FilesManager] Event ${scanMsg.event} - Error on record activation : ${e.message}`);
+            deps.logger.error(`[FilesManager] Event ${scanMsg.event} - Error on record activation : ${e.stack}`);
         }
     } else {
         const recordData: IFileMetadata = {
@@ -73,8 +72,7 @@ export const handleCreateEvent = async (
         try {
             record = await createRecordFile(recordData, recordLibrary, deps, ctx);
         } catch (e) {
-            deps.logger.error(`[${ctx.queryId}] Event ${scanMsg.event} - Error on record creation: ${e.message}`);
-            deps.logger.error(`[${ctx.queryId}] ${e.stack}`);
+            deps.logger.error(`[${ctx.queryId}] Event ${scanMsg.event} - Error on record creation: ${e.stack}`);
         }
     }
 

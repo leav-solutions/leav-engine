@@ -7,7 +7,7 @@ import {type ITreeDomain} from 'domain/tree/treeDomain';
 import {type IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
 import {type IRecordRepo} from 'infra/record/recordRepo';
 import {type IUtils, type ToAny} from 'utils/utils';
-import {type Winston} from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IConfig} from '_types/config';
 import {FileEvents} from '../../../../_types/filesManager';
 import {mockFileMetadata} from '../../../../__tests__/mocks/file';
@@ -57,7 +57,7 @@ describe('handleFileSystemEvent', () => {
     const mockLogger = {
         warn: jest.fn(),
         error: jest.fn()
-    } satisfies Mockify<Winston>;
+    } satisfies Mockify<ILogger>;
 
     const mockRecordRepo = {
         updateRecord: jest.fn(),

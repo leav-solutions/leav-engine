@@ -11,7 +11,7 @@ import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IRecordDomain} from 'domain/record/recordDomain';
 import {type ITreeDomain} from 'domain/tree/treeDomain';
 import {type i18n} from 'i18next';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {AttributeCondition, type IRecord} from '../../../_types/record';
 
@@ -28,7 +28,7 @@ interface IDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.tree': ITreeDomain;
-    'core.utils.logger': winston.Winston;
+    'core.utils.logger': ILogger;
     translator: i18n;
 }
 

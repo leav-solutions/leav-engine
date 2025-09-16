@@ -48,7 +48,7 @@ import {type ITreeElement} from '../../_types/tree';
 import {type IValue} from '../../_types/value';
 import {type IValidateHelper} from '../helpers/validate';
 import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
-import type winston from 'winston';
+import {type ILogger} from '@leav/logger';
 
 export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
 export const IMPORT_CONFIG_SCHEMA_PATH = path.resolve(__dirname, './import-config-schema.json');
@@ -138,7 +138,7 @@ export interface IImportDomainDeps {
     config: Config.IConfig;
     translator: i18n;
     'core.utils': IUtils;
-    'core.utils.logger'?: winston.Winston;
+    'core.utils.logger'?: ILogger;
 }
 
 export default function ({
@@ -222,7 +222,7 @@ export default function ({
             const recordIdFound = recordsList.list[0]?.id;
 
             if (!recordIdFound) {
-                console.warn(`No record found for match ${JSON.stringify(v.element)}`);
+                logger.warn(`No record found for match ${JSON.stringify(v.element)}`);
                 return acc;
             }
 
@@ -791,37 +791,37 @@ export default function ({
             const buffer = await _getFileDataBuffer(filepath, ctx);
             const elements = JSON.parse(buffer.toString());
 
-            console.info('Starting configuration import...');
+            logger.info('Starting configuration import...');
 
-            console.info('Processing libraries...');
+            logger.info('Processing libraries...');
             if ('libraries' in elements) {
                 for (const library of elements.libraries) {
                     await libraryDomain.saveLibrary((({attributes, ...rest}) => rest)(library), ctx);
                 }
             }
 
-            console.info('Processing trees...');
+            logger.info('Processing trees...');
             if ('trees' in elements) {
                 for (const tree of elements.trees) {
                     await treeDomain.saveTree(tree, ctx);
                 }
             }
 
-            console.info('Processing version profiles...');
+            logger.info('Processing version profiles...');
             if ('version_profiles' in elements) {
                 for (const versionProfile of elements.version_profiles) {
                     await versionProfileDomain.saveVersionProfile({versionProfile, ctx});
                 }
             }
 
-            console.info('Processing attributes...');
+            logger.info('Processing attributes...');
             if ('attributes' in elements) {
                 for (const attribute of elements.attributes) {
                     await attributeDomain.saveAttribute({attrData: attribute, ctx});
                 }
             }
 
-            console.info('Add attributes to libraries...');
+            logger.info('Add attributes to libraries...');
             if ('libraries' in elements) {
                 for (const library of elements.libraries) {
                     library.attributes = library.attributes?.map((id: string) => ({id}));
@@ -837,7 +837,7 @@ export default function ({
                 ctx
             );
 
-            console.info('Configuration import completed.');
+            logger.info('Configuration import completed.');
 
             if (!forceNoTask) {
                 return task.id;

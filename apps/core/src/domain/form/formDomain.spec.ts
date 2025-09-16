@@ -12,7 +12,7 @@ import {type ITreeDomain} from 'domain/tree/treeDomain';
 import {type IFormRepo} from 'infra/form/formRepo';
 import {type IUtils, type ToAny} from 'utils/utils';
 import {FormElementTypes, type IForm, IFormElement, type IFormElementWithValues} from '../../_types/forms';
-import {type Winston} from 'winston';
+import {type ILogger} from '@leav/logger';
 import {type IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -475,7 +475,7 @@ describe('formDomain', () => {
                 getRecordFieldValue: jest.fn().mockRejectedValue(new Error('boom!'))
             };
 
-            const mockLogger: Mockify<Winston> = {
+            const mockLogger: Mockify<ILogger> = {
                 error: jest.fn()
             };
 
@@ -484,7 +484,7 @@ describe('formDomain', () => {
                 'core.domain.record': mockRecordDomainThrowing as IRecordDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
-                'core.utils.logger': mockLogger as Winston
+                'core.utils.logger': mockLogger as ILogger
             });
 
             const mockContainer = {...formLayoutElement};
