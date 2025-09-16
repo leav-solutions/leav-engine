@@ -710,8 +710,8 @@
         "type-a-value": "Type a value",
         "modified": "Modified",
         "select-condition": "Select condition",
-        "true": "True",
-        "false": "False",
+        "true": "Yes",
+        "false": "No",
         "filter-condition": "Condition",
         "filter-link-attribute": "Link attribute",
         "viewList": {

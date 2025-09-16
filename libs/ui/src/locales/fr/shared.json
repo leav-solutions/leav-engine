@@ -710,8 +710,8 @@
         "type-a-value": "Saisissez une valeur",
         "modified": "Modifiée",
         "select-condition": "Sélectionner une condition",
-        "true": "Vrai",
-        "false": "Faux",
+        "true": "Oui",
+        "false": "Non",
         "filter-condition": "Condition",
         "filter-link-attribute": "Attribut de liaison",
         "viewList": {
