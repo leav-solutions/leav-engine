@@ -800,13 +800,11 @@ build-docker-logs-collector:
   - |
     if [ -n "$NPM_TOKEN" ]; then
       echo "Login to public npm registry with NPM_TOKEN"
-      echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-    elif [ -n "$CI_JOB_TOKEN" ]; then
-      echo "Login to private npm $CI_SERVER_HOST with CI_JOB_TOKEN"
-      echo "registry=https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/" > .npmrc
-      echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+      echo "npmRegistries:" >> .yarnrc.yml
+      echo "  //registry.npmjs.org:" >> .yarnrc.yml
+      echo "    npmAuthToken: ${NPM_TOKEN}" >> .yarnrc.yml
     else
-      echo "NPM_TOKEN or CI_JOB_TOKEN not defined, skip npm login"
+      echo "NPM_TOKEN not defined, skip npm login"
     fi
 
 # Ensure we can build a package in MR
