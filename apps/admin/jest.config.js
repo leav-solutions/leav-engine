@@ -10,7 +10,6 @@ module.exports = {
         '\\.(ts|tsx|js|jsx)$': [
             'ts-jest',
             {
-                isolatedModules: true,
                 astTransformers: {
                     before: [
                         {

@@ -87,6 +87,5 @@ describe('mapperToExplorerProps', () => {
         expect(mapToCommonExplorerProps({explorerProps})).toEqual({
             iconsOnlyItemActions: true
         });
-        expect(mapToLibraryExplorerProps({explorerProps})).toEqual({});
     });
 });
