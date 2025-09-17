@@ -6,7 +6,7 @@
     "tscheck": "",
     "test:ci": "",
     "test:commit": "",
-    "publish-types": "npm publish --access public",
+    "publish-types": "yarn npm publish --access public",
     "generate": "yarn workspace core build-types && mv ../../apps/core/dist-types/* . && rmdir ../../apps/core/dist-types",
     "get-version": "jq -r '.version' package.json",
     "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"

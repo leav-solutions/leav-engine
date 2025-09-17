@@ -14,7 +14,7 @@
     "test": "jest -c jest-config.json",
     "test:ci": "jest -c jest-config.json --maxWorkers=2",
     "test:commit": "jest -c jest-config.json --maxWorkers=50% --onlyChanged ",
-    "publish-utils": "npm publish --access public",
+    "publish-utils": "yarn npm publish --access public",
     "get-version": "jq -r '.version' package.json"
   },
   "repository": "https://github.com/leav-solutions/leav-engine",

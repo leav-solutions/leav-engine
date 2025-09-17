@@ -13,7 +13,7 @@
     "test:ci": "jest --maxWorkers=2",
     "test:commit": "jest --maxWorkers=50% --onlyChanged",
     "create_comp": "scripts/createComponent.js",
-    "publish-ui": "npm publish --access public",
+    "publish-ui": "yarn npm publish --access public",
     "get-version": "jq -r '.version' package.json",
     "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"
   },
