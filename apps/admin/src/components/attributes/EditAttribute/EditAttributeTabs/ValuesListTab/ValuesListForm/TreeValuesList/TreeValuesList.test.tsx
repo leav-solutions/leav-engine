@@ -158,7 +158,7 @@ describe('TreeValuesList', () => {
 
         await wait(0);
 
-        expect(onValuesUpdate).toBeCalled();
+        expect(onValuesUpdate).toHaveBeenCalled();
     });
 
     test("When selecting a tree node, don't add a node already present in values", async () => {
@@ -211,6 +211,6 @@ describe('TreeValuesList', () => {
 
         await wait(0);
 
-        expect(onValuesUpdate).not.toBeCalled();
+        expect(onValuesUpdate).not.toHaveBeenCalled();
     });
 });

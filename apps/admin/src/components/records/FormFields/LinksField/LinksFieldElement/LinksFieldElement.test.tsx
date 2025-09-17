@@ -6,13 +6,21 @@ import React from 'react';
 import {ILinkValue} from '../../../../../_types/records';
 import LinksFieldElement from './LinksFieldElement';
 
-jest.mock('../../../../shared/RecordCard', () => function RecordCard() {
-        return <div data-test-id="record_card" />;
-    });
+jest.mock(
+    '../../../../shared/RecordCard',
+    () =>
+        function RecordCard() {
+            return <div data-test-id="record_card" />;
+        }
+);
 
-jest.mock('../../../EditRecordModal', () => function EditRecordModal() {
-        return <div data-test-id="edit_record_modal" />;
-    });
+jest.mock(
+    '../../../EditRecordModal',
+    () =>
+        function EditRecordModal() {
+            return <div data-test-id="edit_record_modal" />;
+        }
+);
 
 describe('EditRecordFormLinksElement', () => {
     const onDelete = jest.fn();
@@ -77,6 +85,6 @@ describe('EditRecordFormLinksElement', () => {
             onDeleteConfirmFunc();
         }
 
-        expect(onDelete).toBeCalled();
+        expect(onDelete).toHaveBeenCalled();
     });
 });

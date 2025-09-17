@@ -119,7 +119,7 @@ describe('InfosTab', () => {
         }
 
         expect(saveQueryCalled).toBe(true);
-        expect(onPostSave).toBeCalled();
+        expect(onPostSave).toHaveBeenCalled();
     });
 
     test('Pass saving errors to form', async () => {

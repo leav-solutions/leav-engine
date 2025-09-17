@@ -108,7 +108,7 @@ describe('PermissionsSettings', () => {
         expect(loadedAttribute).toBeInTheDocument();
         userEvent.click(loadedAttribute);
 
-        expect(_handleChangeSettings).toBeCalled();
+        expect(_handleChangeSettings).toHaveBeenCalled();
     });
 
     test('Can remove a permission attribute', async () => {

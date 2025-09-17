@@ -23,11 +23,11 @@ type LibraryOverridablePropsByUser = 'defaultPrimaryActions' | 'defaultActionsFo
 export const mapToLibraryExplorerProps = ({
     explorerProps
 }: {
-    explorerProps: LibraryExplorerProps;
+    explorerProps: LibraryExplorerProps | undefined;
 }): Pick<ComponentProps<typeof Explorer>, LibraryOverridablePropsByUser> => ({
-    defaultPrimaryActions: explorerProps.defaultPrimaryActions,
-    defaultActionsForItem: explorerProps.defaultActionsForItem,
-    defaultMassActions: explorerProps.defaultMassActions
+    defaultPrimaryActions: explorerProps?.defaultPrimaryActions,
+    defaultActionsForItem: explorerProps?.defaultActionsForItem,
+    defaultMassActions: explorerProps?.defaultMassActions
 });
 
 export const mapToCommonExplorerProps = ({

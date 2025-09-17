@@ -135,6 +135,6 @@ describe('EditRecord', () => {
 
         labelUpdateFunc();
 
-        expect(onLabelUpdate).toBeCalled();
+        expect(onLabelUpdate).toHaveBeenCalled();
     });
 });

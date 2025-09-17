@@ -81,6 +81,6 @@ describe('SelectTreeNodeModal', () => {
 
         userEvent.click(await screen.findByTestId('select_tree_node_close_btn'));
 
-        expect(onClose).toBeCalled();
+        expect(onClose).toHaveBeenCalled();
     });
 });

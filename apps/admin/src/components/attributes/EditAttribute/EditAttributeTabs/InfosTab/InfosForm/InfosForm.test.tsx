@@ -150,7 +150,7 @@ describe('InfosForm', () => {
             fireEvent.submit(screen.getByRole('form'));
         });
 
-        await waitFor(() => expect(onSubmit).toBeCalled());
+        await waitFor(() => expect(onSubmit).toHaveBeenCalled());
     });
 
     test('Autofill ID with label on new attribute', async () => {
@@ -185,7 +185,7 @@ describe('InfosForm', () => {
             await userEvent.type(screen.getByRole('textbox', {name: 'id'}), 'test');
         });
 
-        expect(_idNotUnique).toBeCalled();
+        expect(_idNotUnique).toHaveBeenCalled();
     });
 
     test('Can force values on new attribute', async () => {

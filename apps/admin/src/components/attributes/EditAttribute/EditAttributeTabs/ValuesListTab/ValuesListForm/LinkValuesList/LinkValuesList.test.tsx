@@ -97,7 +97,7 @@ describe('LinkValuesList', () => {
 
         await wait(0);
 
-        expect(onValuesUpdate).toBeCalled();
+        expect(onValuesUpdate).toHaveBeenCalled();
         expect(onValuesUpdate.mock.calls[0][0]).toHaveLength(3);
     });
 
@@ -126,7 +126,7 @@ describe('LinkValuesList', () => {
 
         await wait(0);
 
-        expect(onValuesUpdate).not.toBeCalled();
+        expect(onValuesUpdate).not.toHaveBeenCalled();
     });
 
     test('Delete a value', async () => {
@@ -140,7 +140,7 @@ describe('LinkValuesList', () => {
                 .simulate('click', {stopPropagation: jest.fn(), preventDefault: jest.fn()});
         });
 
-        expect(onValuesUpdate).toBeCalled();
+        expect(onValuesUpdate).toHaveBeenCalled();
         expect(onValuesUpdate.mock.calls[0][0]).toHaveLength(1);
     });
 

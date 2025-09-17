@@ -28,6 +28,6 @@ describe('EditRecordModal', () => {
 
         await wait(0);
 
-        expect(onClose).toBeCalled();
+        expect(onClose).toHaveBeenCalled();
     });
 });

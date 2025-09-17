@@ -95,7 +95,7 @@ describe('StandardValuesList', () => {
             fireEvent.blur(inputElem);
         });
 
-        expect(onValuesUpdate).toBeCalledWith(['value 1', 'value 2!']);
+        expect(onValuesUpdate).toHaveBeenCalledWith(['value 1', 'value 2!']);
     });
 
     test('When editing a value, calls value update on "enter""', async () => {
@@ -116,7 +116,7 @@ describe('StandardValuesList', () => {
             await userEvent.type(inputElem, '{Enter}');
         });
 
-        expect(onValuesUpdate).toBeCalledWith(['value 1', 'value 2!']);
+        expect(onValuesUpdate).toHaveBeenCalledWith(['value 1', 'value 2!']);
     });
 
     describe('Date range attribute', () => {
@@ -160,7 +160,7 @@ describe('StandardValuesList', () => {
                 fireEvent.change(screen.getByRole('textbox', {name: 'date-to'}), {target: {value: '2021-12-16'}});
             });
 
-            expect(onValuesUpdate).toBeCalled();
+            expect(onValuesUpdate).toHaveBeenCalled();
         });
     });
 });

@@ -7,13 +7,21 @@ import {ILinkValue, ITreeLinkValue} from '../../../../_types/records';
 import {mockAttrAdvLink, mockAttrTreeMultival} from '../../../../__mocks__/attributes';
 import LinksField from './LinksField';
 
-jest.mock('./LinksFieldElement', () => function LinksFieldElement() {
-        return <div data-test-id="record_links_element" />;
-    });
+jest.mock(
+    './LinksFieldElement',
+    () =>
+        function LinksFieldElement() {
+            return <div data-test-id="record_links_element" />;
+        }
+);
 
-jest.mock('./LinksFieldTreeElement', () => function LinksFieldTreeElement() {
-        return <div data-test-id="record_links_element" />;
-    });
+jest.mock(
+    './LinksFieldTreeElement',
+    () =>
+        function LinksFieldTreeElement() {
+            return <div data-test-id="record_links_element" />;
+        }
+);
 
 jest.mock('../../../../hooks/useLang');
 
@@ -138,7 +146,7 @@ describe('EditRecordFormLinks', () => {
             onDeleteFunc(linkValues[0]);
         }
 
-        expect(onChange).toBeCalledWith(
+        expect(onChange).toHaveBeenCalledWith(
             {
                 id_value: '98765',
                 linkValue: null,

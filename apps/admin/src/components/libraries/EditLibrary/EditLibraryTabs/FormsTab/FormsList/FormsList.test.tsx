@@ -10,9 +10,13 @@ import FormsList from './FormsList';
 jest.mock('../../../../../../hooks/useLang');
 jest.mock('../../../../../../hooks/useUserData');
 
-jest.mock('../../../../../shared/ConfirmedButton', () => function ConfirmedButton() {
-        return <div>ConfirmedButton</div>;
-    });
+jest.mock(
+    '../../../../../shared/ConfirmedButton',
+    () =>
+        function ConfirmedButton() {
+            return <div>ConfirmedButton</div>;
+        }
+);
 
 describe('FormsList', () => {
     const forms = [
@@ -46,13 +50,13 @@ describe('FormsList', () => {
     test('Calls onCreate', async () => {
         comp.find('[data-test-id="create-form-btn"]').simulate('click');
 
-        expect(onCreate).toBeCalled();
+        expect(onCreate).toHaveBeenCalled();
     });
 
     test('Calls onRowClick', async () => {
         comp.find('[data-test-id="form-list-row"]').first().simulate('click');
 
-        expect(onRowClick).toBeCalled();
+        expect(onRowClick).toHaveBeenCalled();
     });
 
     test('Call onFiltersChange', async () => {

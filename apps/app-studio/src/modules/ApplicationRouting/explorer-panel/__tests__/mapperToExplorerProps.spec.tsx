@@ -18,7 +18,8 @@ describe('mapperToExplorerProps', () => {
                 showAttributeLabels: true,
                 creationFormId: 'create-id',
                 editionFormId: 'edit-id',
-                noPagination: true
+                noPagination: true,
+                showActionsLabels: true
             };
 
             expect(mapToCommonExplorerProps({explorerProps})).toEqual({
@@ -29,7 +30,8 @@ describe('mapperToExplorerProps', () => {
                 hideTableHeader: false,
                 creationFormId: 'create-id',
                 editionFormId: 'edit-id',
-                noPagination: true
+                noPagination: true,
+                iconsOnlyItemActions: false
             });
 
             expect(mapToLibraryExplorerProps({explorerProps})).toEqual({
@@ -51,7 +53,8 @@ describe('mapperToExplorerProps', () => {
                 showAttributeLabels: false,
                 creationFormId: 'create-id',
                 editionFormId: 'edit-id',
-                noPagination: true
+                noPagination: true,
+                showActionsLabels: false
             };
 
             expect(mapToCommonExplorerProps({explorerProps})).toEqual({
@@ -62,7 +65,8 @@ describe('mapperToExplorerProps', () => {
                 hideTableHeader: true,
                 creationFormId: 'create-id',
                 editionFormId: 'edit-id',
-                noPagination: true
+                noPagination: true,
+                iconsOnlyItemActions: true
             });
         });
     });
@@ -77,10 +81,12 @@ describe('mapperToExplorerProps', () => {
         expect(commonExplorerProps.hideTableHeader).toBeUndefined();
     });
 
-    it('should handle missing optional props gracefully', () => {
-        const explorerProps = {};
+    it('should handle missing optional props gracefully with default value', () => {
+        const explorerProps = undefined;
 
-        expect(mapToCommonExplorerProps({explorerProps})).toEqual({});
+        expect(mapToCommonExplorerProps({explorerProps})).toEqual({
+            iconsOnlyItemActions: true
+        });
         expect(mapToLibraryExplorerProps({explorerProps})).toEqual({});
     });
 });

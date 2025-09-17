@@ -65,7 +65,7 @@ describe('EditRecordInput', () => {
             input.simulate('change', {target: {value: 'new_value'}});
         });
 
-        expect(onChange).toBeCalled();
+        expect(onChange).toHaveBeenCalled();
     });
 
     test('On click on "submit", submit value', async () => {
@@ -90,7 +90,7 @@ describe('EditRecordInput', () => {
         const submitButton = comp.find('[data-test-id="submit-btn"]');
         submitButton.simulate('click');
 
-        expect(onSubmit).toBeCalled();
+        expect(onSubmit).toHaveBeenCalled();
     });
 
     test('On "enter", submit value', async () => {
@@ -113,7 +113,7 @@ describe('EditRecordInput', () => {
             input.simulate('keypress', {key: 'Enter', target: {blur: jest.fn()}});
         });
 
-        expect(onSubmit).toBeCalled();
+        expect(onSubmit).toHaveBeenCalled();
     });
 
     test('On click on "delete", calls onDelete', async () => {
@@ -132,7 +132,7 @@ describe('EditRecordInput', () => {
         comp.find('Input').simulate('focus');
         comp.find('[data-test-id="delete-btn"]').simulate('click');
 
-        expect(onDelete).toBeCalled();
+        expect(onDelete).toHaveBeenCalled();
     });
 
     test('On click on "cancel", calls onCancel', async () => {
@@ -156,6 +156,6 @@ describe('EditRecordInput', () => {
 
         comp.find('[data-test-id="cancel-btn"]').simulate('click');
 
-        expect(onCancel).toBeCalled();
+        expect(onCancel).toHaveBeenCalled();
     });
 });

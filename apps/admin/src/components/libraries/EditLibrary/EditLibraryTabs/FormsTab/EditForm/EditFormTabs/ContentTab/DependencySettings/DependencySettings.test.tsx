@@ -57,6 +57,6 @@ describe('DependencySettings', () => {
         await wait(0);
         comp.update();
 
-        expect(mockDispatch).toBeCalled();
+        expect(mockDispatch).toHaveBeenCalled();
     });
 });

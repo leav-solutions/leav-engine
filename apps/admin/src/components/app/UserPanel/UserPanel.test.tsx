@@ -29,10 +29,6 @@ describe('UserPanel', () => {
     });
 
     test('On click on logout, log out and redirect to home', async () => {
-        const mockedLocation = {...window.location, replace: jest.fn()};
-        delete window.location;
-        window.location = mockedLocation;
-
         await act(async () => {
             render(
                 <BrowserRouter>

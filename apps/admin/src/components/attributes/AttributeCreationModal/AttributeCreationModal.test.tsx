@@ -5,9 +5,13 @@ import {shallow} from 'enzyme';
 import React from 'react';
 import AttributeCreationModal from './AttributeCreationModal';
 
-jest.mock('../EditAttribute', () => function EditAttribute() {
-        return <div>Edit attribute</div>;
-    });
+jest.mock(
+    '../EditAttribute',
+    () =>
+        function EditAttribute() {
+            return <div>Edit attribute</div>;
+        }
+);
 
 describe('AttributeCreationModal', () => {
     const onClose = jest.fn();
@@ -34,7 +38,7 @@ describe('AttributeCreationModal', () => {
             onCloseFunc();
         }
 
-        expect(onClose).toBeCalled();
+        expect(onClose).toHaveBeenCalled();
     });
 
     test('Calls onPostSave', async () => {
@@ -46,6 +50,6 @@ describe('AttributeCreationModal', () => {
             onPostSaveFunc();
         }
 
-        expect(onPostSave).toBeCalled();
+        expect(onPostSave).toHaveBeenCalled();
     });
 });

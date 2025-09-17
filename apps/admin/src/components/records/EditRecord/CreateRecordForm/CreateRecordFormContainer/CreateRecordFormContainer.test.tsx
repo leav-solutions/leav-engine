@@ -141,6 +141,6 @@ describe('CreateRecordFormContainer', () => {
             })
         );
 
-        expect(onPostSave).toBeCalled();
+        expect(onPostSave).toHaveBeenCalled();
     });
 });

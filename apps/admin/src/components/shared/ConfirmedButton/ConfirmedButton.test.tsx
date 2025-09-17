@@ -48,7 +48,7 @@ describe('ConfirmedButton', () => {
         comp.find('.my_child').simulate('click', mockEvent as React.SyntheticEvent);
         comp.find('Modal button.primary').simulate('click', mockEvent as React.SyntheticEvent);
 
-        expect(action).toBeCalled();
+        expect(action).toHaveBeenCalled();
         expect(comp.find('Modal').props().open).toBe(false);
     });
 });

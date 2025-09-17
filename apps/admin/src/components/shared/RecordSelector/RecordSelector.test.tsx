@@ -7,9 +7,13 @@ import {act, render, screen} from '_tests/testUtils';
 import {mockRecord} from '__mocks__/common/records';
 import RecordSelector from './RecordSelector';
 
-jest.mock('components/records/SelectRecordModal', () => function SelectRecordModal() {
-        return <div>SelectRecordModal</div>;
-    });
+jest.mock(
+    'components/records/SelectRecordModal',
+    () =>
+        function SelectRecordModal() {
+            return <div>SelectRecordModal</div>;
+        }
+);
 
 jest.mock('hooks/useLang');
 
@@ -62,7 +66,7 @@ describe('RecordSelector', () => {
         userEvent.click(deleteBtn);
         userEvent.click(screen.getByRole('button', {name: /submit/}));
 
-        expect(mockOnChange).toBeCalled();
+        expect(mockOnChange).toHaveBeenCalled();
     });
 
     test('If value is required, cannot delete', async () => {

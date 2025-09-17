@@ -30,7 +30,7 @@ describe('ActionsGroupSelector', () => {
                 userEvent.click(screen.getByText(/firstGroup/));
             });
 
-            expect(onSelect).toBeCalled();
+            expect(onSelect).toHaveBeenCalled();
         });
     });
 });
