@@ -118,7 +118,7 @@ const arePropsEqual = (prevProps: IDataViewProps, nextProps: IDataViewProps) =>
         }
     );
 
-export const resolveItemActionProp = (itemData: IItemData, itemActionProp: IItemAction[keyof IItemAction]) =>
+const resolveItemActionProp = (itemData: IItemData, itemActionProp: IItemAction[keyof IItemAction]) =>
     typeof itemActionProp === 'function' ? itemActionProp(itemData) : itemActionProp;
 
 export const DataView: FunctionComponent<IDataViewProps> = memo(

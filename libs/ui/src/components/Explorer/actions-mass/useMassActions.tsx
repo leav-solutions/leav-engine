@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {closeKitSnackBar, KitCheckbox, KitDropDown, KitSpace, openKitSnackBar} from 'aristid-ds';
-import {Dispatch, useCallback, useEffect} from 'react';
+import {Dispatch, useCallback, useEffect, useRef} from 'react';
 import {FaChevronDown} from 'react-icons/fa';
 import {RecordFilterCondition, RecordFilterOperator} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -20,7 +20,7 @@ export const SNACKBAR_MASS_ID = 'SNACKBAR_MASS_ID';
  * @param isEnabled - whether the selection is present
  * @param view - represent the current view
  * @param dispatch - method to change the current view
- * @param totalCount - used for display purpose only
+ * @param totalCount - used for display only
  * @param allVisibleKeys - list of all ids currently selected
  * @param massActions - array of all actions available on mass selection
  */
@@ -42,12 +42,19 @@ export const useMassActions = ({
 }) => {
     const {t} = useSharedTranslation();
 
+    /**
+     * Use in the case of two `<Explorer />` components on the same page to avoid closing the snackbar of the other one.
+     *
+     * > Can be replaced by `useId` when we will migrate to React 19.
+     */
+    const uniqId = useRef(Date.now());
+
     useEffect(() => {
         if (view.massSelection === MASS_SELECTION_ALL || view.massSelection.length !== 0) {
             openKitSnackBar({
                 duration: 0,
                 closable: true,
-                snackbarId: SNACKBAR_MASS_ID,
+                snackbarId: SNACKBAR_MASS_ID + uniqId.current,
                 onClose: () => _setSelectedKeys([]),
                 message: t('explorer.massAction.selectedItems', {
                     count: view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length
@@ -80,11 +87,11 @@ export const useMassActions = ({
                 }))
             });
         } else {
-            closeKitSnackBar(SNACKBAR_MASS_ID);
+            closeKitSnackBar(SNACKBAR_MASS_ID + uniqId.current);
         }
     }, [view.massSelection, view.filters, totalCount]);
 
-    useEffect(() => () => closeKitSnackBar(SNACKBAR_MASS_ID), []);
+    useEffect(() => () => closeKitSnackBar(SNACKBAR_MASS_ID + uniqId.current), []);
 
     const isOnePage = view.pageSize > totalCount;
     const hasSelectedAllAvailableItems =
