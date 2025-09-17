@@ -15,10 +15,11 @@ const Wrapper = styled.iframe`
     border: none;
 `;
 
-function Frame({element, onValueSubmit}: IFormElementProps<IFormFrameSettings>): JSX.Element {
+function Frame({element, onValueSubmit, isFormCreationMode}: IFormElementProps<IFormFrameSettings>): JSX.Element {
     const {record} = useRecordEditionContext();
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [iframeLoaded, setIframeLoaded] = useState(false);
+
     useEffect(() => {
         const iframe = iFrameRef.current;
         if (iframe) {
@@ -33,6 +34,7 @@ function Frame({element, onValueSubmit}: IFormElementProps<IFormFrameSettings>):
             };
         }
     }, [iFrameRef]);
+
     useEffect(() => {
         const handler = event => {
             switch (event.data.type) {
@@ -49,12 +51,14 @@ function Frame({element, onValueSubmit}: IFormElementProps<IFormFrameSettings>):
         // clean up
         return () => window.removeEventListener('message', handler);
     }, []);
+
     useEffect(() => {
         const iframe = iFrameRef.current;
         if (iframe && iframeLoaded) {
             iframe.contentWindow?.postMessage(
                 {
-                    currentRecord: record
+                    currentRecord: record,
+                    isFormCreationMode
                 },
                 element.settings.url
             );
