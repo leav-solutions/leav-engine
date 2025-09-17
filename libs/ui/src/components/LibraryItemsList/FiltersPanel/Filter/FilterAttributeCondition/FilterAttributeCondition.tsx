@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {isTypeLink} from '@leav/utils';
 import {Dropdown} from 'antd';
-import {ItemType} from 'antd/es/menu/interface';
+import {type ItemType} from 'antd/es/menu/interface';
 import styled from 'styled-components';
 import {formatNotUsingCondition} from '_ui/components/LibraryItemsList/constants';
 import BooleanFilter from '_ui/components/LibraryItemsList/FiltersPanel/Filter/FilterInput/BooleanFilter';
@@ -12,16 +12,16 @@ import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearch
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     AttributeConditionFilter,
-    AttributeConditionType,
+    type AttributeConditionType,
     FilterType,
-    IFilterAttribute,
-    IFilterLibrary
+    type IFilterAttribute,
+    type IFilterLibrary
 } from '_ui/types/search';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import FilterDropdownButton from '../../FilterDropdownButton';
 import {getConditionOptionsByType} from '../../FiltersOptions';
 import mustHideValue from '../../mustHideValue';
-import {getDefaultFilterValueByFormat} from '../Filter.utils';
+import {getDefaultFilterValueByFormat} from '../filterUtils';
 
 const BooleanWrapper = styled.span`
     padding: 0 1rem;

@@ -5,7 +5,7 @@ import {CloseCircleFilled, MoreOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Dropdown} from 'antd';
 import {useCallback, useState} from 'react';
-import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
+import {type DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import DateBetweenFilter from '_ui/components/LibraryItemsList/FiltersPanel/Filter/FilterInput/DateBetweenFilter';
@@ -16,27 +16,27 @@ import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     AttributeConditionFilter,
-    AttributeConditionType,
+    type AttributeConditionType,
     FilterType,
-    IAttribute,
-    IFilter,
-    IFilterAttribute,
-    IFilterLibrary,
-    IFilterTree,
+    type IAttribute,
+    type IFilter,
+    type IFilterAttribute,
+    type IFilterLibrary,
+    type IFilterTree,
     ThroughConditionFilter,
     TreeConditionFilter
 } from '_ui/types/search';
-import {ITreeNode} from '_ui/types/trees';
+import {type ITreeNode} from '_ui/types/trees';
 import {
     AttributeFormat,
-    AttributesByLibAttributeStandardAttributeFragment,
+    type AttributesByLibAttributeStandardAttributeFragment,
     AttributeType,
     RecordFilterCondition
 } from '_ui/_gqlTypes';
 import {
-    ILibraryDetailExtended,
-    ILibraryDetailExtendedAttribute,
-    ILibraryDetailExtendedAttributeParentLinkedTree
+    type ILibraryDetailExtended,
+    type ILibraryDetailExtendedAttribute,
+    type ILibraryDetailExtendedAttributeParentLinkedTree
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {formatNotUsingCondition} from '../../constants';
 import FiltersDropdown from '../../FiltersDropdown';
@@ -48,7 +48,7 @@ import FilterAttributeCondition from './FilterAttributeCondition';
 import DateFilter from './FilterInput/DateFilter';
 import NumericFilter from './FilterInput/NumericFilter';
 import TextFilter from './FilterInput/TextFilter';
-import {getDefaultFilterValueByFormat} from '_ui/components/LibraryItemsList/FiltersPanel/Filter/Filter.utils';
+import {getDefaultFilterValueByFormat} from '_ui/components/LibraryItemsList/FiltersPanel/Filter/filterUtils';
 
 interface IWrapperProps {
     $active: boolean;

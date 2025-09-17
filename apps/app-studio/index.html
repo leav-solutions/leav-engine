@@ -17,6 +17,25 @@ License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
     <link rel="manifest" href="/manifest.json" crossorigin="use-credentials"/>
     <title>LEAV Engine - App Studio - REPLACE ME</title>
     <script>window.__dynamic_base__ = `${window.location.origin}/app/${window.location.pathname.split('/').filter(e => e)[1]}`</script>
+    <script>
+      if (!window.location.hostname.includes('localhost')) {
+          // Code provided by Matomo
+          var _paq = (window._paq = window._paq || []);
+          _paq.push(['trackPageView']);
+          _paq.push(['enableLinkTracking']);
+          (function () {
+              var u = '//analytics.aristid.com/';
+              _paq.push(['setTrackerUrl', u + 'matomo.php']);
+              _paq.push(['setSiteId', '16']);
+              var d = document,
+                  g = d.createElement('script'),
+                  s = d.getElementsByTagName('script')[0];
+              g.async = true;
+              g.src = u + 'matomo.js';
+              s.parentNode.insertBefore(g, s);
+          })();
+      }
+  </script>
   </head>
   <body>
     <script type="module" src="/src/index.tsx"></script>

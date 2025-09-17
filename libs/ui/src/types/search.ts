@@ -1,22 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IDateRangeValue} from '@leav/utils';
-import {ReactNode} from 'react';
+import {type IDateRangeValue} from '@leav/utils';
+import {type ReactNode} from 'react';
 import {
-    AttributeFormat,
-    AttributesByLibAttributeStandardAttributeFragment,
-    AttributeType,
+    type AttributeFormat,
+    type AttributesByLibAttributeStandardAttributeFragment,
+    type AttributeType,
     RecordFilterCondition,
-    RecordFilterOperator
+    type RecordFilterOperator
 } from '_ui/_gqlTypes';
 import {
-    ILibraryDetailExtendedAttributeParentLinkedLibrary,
-    ILibraryDetailExtendedAttributeParentLinkedTree
+    type ILibraryDetailExtendedAttributeParentLinkedLibrary,
+    type ILibraryDetailExtendedAttributeParentLinkedTree
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
-import {ValueOf} from './misc';
-import {IRecordIdentityWhoAmI} from './records';
-import {SystemTranslation} from './scalars';
+import {type ValueOf} from './misc';
+import {type IRecordIdentityWhoAmI} from './records';
+import {type SystemTranslation} from './scalars';
 
 export type ExtendFormat = string | {[key: string]: ExtendFormat[]};
 
@@ -174,21 +174,6 @@ export interface ITableCell {
 export interface ITableRow {
     record: IRecordIdentityWhoAmI;
     [x: string]: ITableCell | IRecordIdentityWhoAmI | string;
-}
-
-export interface IFilterAttribute extends IFilter {
-    attribute: IAttribute; // Put the attribute in the filter to avoid having to fetch them multiple times
-    parentTreeLibrary?: IFilterLibrary; // on tree library attribute
-}
-
-export interface IFilterTree extends IFilter {
-    tree: {id: string; label?: SystemTranslation | null};
-}
-
-// on library's tree
-export interface IFilterLibrary extends IFilter {
-    library: {id: string; label?: SystemTranslation | null};
-    parentAttribute: IAttribute;
 }
 
 export interface ISelectedRecord {

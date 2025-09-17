@@ -29,7 +29,7 @@
     "typescript": "5.5.3"
   },
   "devDependencies": {
-    "@aristid/eslint-plugin": "1.1.4",
+    "@aristid/eslint-plugin": "1.2.2",
     "@babel/preset-env": "7.26.0",
     "@commitlint/cli": "19.2.1",
     "@commitlint/config-conventional": "19.1.0",
@@ -42,7 +42,7 @@
     "commitizen": "4.3.0",
     "cz-conventional-changelog": "3.3.0",
     "eslint-formatter-gitlab": "5.1.0",
-    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsdoc": "39.2.1",
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-no-only-tests": "3.3.0",

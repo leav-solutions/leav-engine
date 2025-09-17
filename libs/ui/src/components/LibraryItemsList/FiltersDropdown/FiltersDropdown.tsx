@@ -4,37 +4,37 @@
 import {BranchesOutlined, NumberOutlined} from '@ant-design/icons';
 import {isTypeLink, localizedTranslation} from '@leav/utils';
 import {Badge, Dropdown, Input} from 'antd';
-import {ItemType} from 'antd/es/menu/interface';
+import {type ItemType} from 'antd/es/menu/interface';
 import React, {useState} from 'react';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {SystemTranslation} from '_ui/types/scalars';
+import {type SystemTranslation} from '_ui/types/scalars';
 import {
     AttributeConditionFilter,
     FilterType,
-    IFilter,
-    IFilterAttribute,
-    IFilterLibrary,
-    IFilterTree,
+    type IFilter,
+    type IFilterAttribute,
+    type IFilterLibrary,
+    type IFilterTree,
     SidebarContentType,
     ThroughConditionFilter,
     TreeConditionFilter
 } from '_ui/types/search';
 import {AttributeType} from '_ui/_gqlTypes';
 import {
-    ILibraryDetailExtendedAttribute,
-    ILibraryDetailExtendedAttributeChild,
-    ILibraryDetailExtendedAttributeLink,
-    ILibraryDetailExtendedAttributeParentLinkedTree,
-    ILibraryDetailExtendedAttributeParentLinkedTreeLibrary,
-    ILibraryDetailExtendedAttributeStandard,
-    ILibraryDetailExtendedAttributeTree,
-    ILibraryDetailExtendedLinkedTree
+    type ILibraryDetailExtendedAttribute,
+    type ILibraryDetailExtendedAttributeChild,
+    type ILibraryDetailExtendedAttributeLink,
+    type ILibraryDetailExtendedAttributeParentLinkedTree,
+    type ILibraryDetailExtendedAttributeParentLinkedTreeLibrary,
+    type ILibraryDetailExtendedAttributeStandard,
+    type ILibraryDetailExtendedAttributeTree,
+    type ILibraryDetailExtendedLinkedTree
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {defaultLinkAttributeFilterFormat} from '../constants';
-import {getDefaultFilterValueByFormat} from '../FiltersPanel/Filter/Filter.utils';
+import {getDefaultFilterValueByFormat} from '../FiltersPanel/Filter/filterUtils';
 import {defaultFilterConditionByAttributeFormat} from '../helpers/defaultFilterConditionByAttributeFormat';
 
 interface IFiltersDropdownProps {

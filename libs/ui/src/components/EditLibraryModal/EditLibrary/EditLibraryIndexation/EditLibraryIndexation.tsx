@@ -2,14 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    GetLibraryByIdQuery,
+    type GetLibraryByIdQuery,
     useSaveLibraryMutation,
     useCancelTaskMutation,
     useIndexRecordsMutation
 } from '../../../../_gqlTypes';
-import {Divider, SelectProps} from 'antd';
-// eslint-disable-next-line no-duplicate-imports
-import {Select, Button, Alert, Space} from 'antd';
+import {Divider, type SelectProps, Select, Button, Alert, Space} from 'antd';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '../../../../hooks';
 import {useEffect, useState} from 'react';
