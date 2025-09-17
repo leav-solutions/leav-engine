@@ -1,6 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+const {envToBool, envToNumber} = require('@leav/config-manager');
+
 module.exports = {
     inputRootPath: process.env.INPUT_ROOT_PATH,
     outputRootPath: process.env.OUTPUT_ROOT_PATH,
@@ -8,7 +10,7 @@ module.exports = {
     amqp: {
         protocol: 'amqp',
         hostname: process.env.AMQP_HOST,
-        port: process.env.AMQP_PORT || 5672,
+        port: envToNumber(process.env.AMQP_PORT, 5672),
         username: process.env.AMQP_USERNAME,
         password: process.env.AMQP_PWD,
         type: process.env.AMQP_TYPE || 'direct',
@@ -23,5 +25,5 @@ module.exports = {
             routingKey: process.env.AMQP_ROUTING_KEY_OUT || 'files.previewResponse'
         }
     },
-    verbose: process.env.VERBOSE || false
+    verbose: envToBool(process.env.VERBOSE, false)
 };

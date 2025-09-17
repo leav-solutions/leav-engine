@@ -1,15 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+const {envToBool, envToNumber} = require('@leav/config-manager');
+
 module.exports = {
     instanceId: process.env.INSTANCE_ID || 'leav_engine',
     coreMode: process.env.CORE_MODE || 'server',
     server: {
         host: process.env.SERVER_HOST || 'localhost',
-        port: process.env.SERVER_PORT || 4001,
+        port: envToNumber(process.env.SERVER_PORT, 4001),
         publicUrl: process.env.SERVER_PUBLIC_URL || 'http://localhost:4001',
         wsUrl: process.env.SERVER_WS_URL || 'ws://localhost:4001',
-        allowIntrospection: process.env.SERVER_ALLOW_INTROSPECTION ?? false,
+        allowIntrospection: envToBool(process.env.SERVER_ALLOW_INTROSPECTION, false),
         /**
          * Controls the maximum request body size. If this is a number,
          * then the value specifies the number of bytes; if it is a string,
@@ -36,8 +38,8 @@ module.exports = {
     dataLoaders: {
         valueRepo: {
             getValues: {
-                enableCache: process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_ENABLE_CACHE ?? false, // keep for test for now, may be remove in future
-                useBatch: process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_USE_BATCH ?? true // for rollback compatibility, keep it true
+                enableCache: envToBool(process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_ENABLE_CACHE, false), // keep for test for now, may be remove in future
+                useBatch: envToBool(process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_USE_BATCH, true) // for rollback compatibility, keep it true
             }
         }
     },
@@ -49,26 +51,26 @@ module.exports = {
         refreshTokenExpiration: process.env.REFRESH_TOKEN_TTL || '2h',
         cookie: {
             sameSite: process.env.AUTH_COOKIE_SAMESITE || 'lax',
-            secure: process.env.AUTH_COOKIE_SECURE || true
+            secure: envToBool(process.env.AUTH_COOKIE_SECURE, true)
         },
         resetPasswordExpiration: process.env.AUTH_RESET_PWD_TTL || '20m',
         oidc: {
-            enable: process.env.OIDC_ENABLE || false,
+            enable: envToBool(process.env.OIDC_ENABLE, false),
             wellKnownEndpoint:
                 process.env.OIDC_WELLKNOWN_ENDPOINT ||
                 'http://keycloak:8080/realms/LEAV/.well-known/openid-configuration',
             clientId: process.env.OIDC_CLIENT_ID || 'leav',
             postLogoutRedirectUri: process.env.OIDC_POST_LOGOUT_REDIRECT_URI || 'http://core.leav.localhost/',
-            skipLogoutConfirmationPage: process.env.OIDC_SKIP_LOGOUT_CONFIRMATION_PAGE || false,
+            skipLogoutConfirmationPage: envToBool(process.env.OIDC_SKIP_LOGOUT_CONFIRMATION_PAGE, false),
             idTokenUserClaim: process.env.ID_TOKEN_USER_CLAIM || 'email',
-            enableAutoProvisioning: process.env.OIDC_ENABLE_AUTO_PROVISIONING ?? false
+            enableAutoProvisioning: envToBool(process.env.OIDC_ENABLE_AUTO_PROVISIONING, false)
         },
         testApiKey: process.env.TEST_API_KEY // /!\ do not use in production /!\
     },
     mailer: {
         host: process.env.MAILER_HOST || 'localhost',
-        port: process.env.MAILER_PORT || 587,
-        secure: process.env.MAILER_SECURE || false, // if true the connection will use TLS when connecting to server.
+        port: envToNumber(process.env.MAILER_PORT, 587),
+        secure: envToBool(process.env.MAILER_SECURE, false), // if true the connection will use TLS when connecting to server.
         // If false (the default) then TLS is used if server supports the STARTTLS extension.
         // In most cases set this value to true if you are connecting to port 465. For port 587 or 25 keep it false
         auth: {
@@ -84,11 +86,11 @@ module.exports = {
         level: process.env.LOG_LEVEL || 'info',
         transport: process.env.LOG_TRANSPORT || 'console,file', // Comma separated list of transport, including : console, file
         destinationFile: process.env.LOG_FILE, // If logging in file
-        useJsonFormat: process.env.LOG_USE_JSON_FORMAT || false // logging using json format
+        useJsonFormat: envToBool(process.env.LOG_USE_JSON_FORMAT, false) // logging using json format
     },
     permissions: {
         default: true,
-        enableCache: process.env.PERMISSIONS_ENABLE_CACHE ?? true
+        enableCache: envToBool(process.env.PERMISSIONS_ENABLE_CACHE, true)
     },
     amqp: {
         connOpt: {
@@ -100,12 +102,12 @@ module.exports = {
         },
         exchange: process.env.AMQP_EXCHANGE || 'leav_core',
         type: process.env.AMQP_TYPE || 'direct',
-        prefetch: process.env.AMQP_PREFETCH || 5
+        prefetch: envToNumber(process.env.AMQP_PREFETCH, 5)
     },
     redis: {
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
-        database: process.env.REDIS_DATABASE ?? 0
+        database: envToNumber(process.env.REDIS_DATABASE, 0)
     },
     filesManager: {
         queues: {
@@ -129,7 +131,7 @@ module.exports = {
     tasksManager: {
         checkingInterval: 3000,
         workerPrefetch: 1,
-        restartWorker: process.env.TM_RESTART_WORKER ?? false,
+        restartWorker: envToBool(process.env.TM_RESTART_WORKER, false),
         queues: {
             execOrders: process.env.TM_EXEC_ORDERS_QUEUE || 'tasks_exec_orders',
             cancelOrders: process.env.TM_CANCEL_ORDERS_QUEUE || 'tasks_cancel_orders'
@@ -153,7 +155,7 @@ module.exports = {
             events: 'indexation_events'
         }
     },
-    debug: process.env.DEBUG || false,
+    debug: envToBool(process.env.DEBUG, false),
     defaultUserId: '2', // Used for DB migration and any other action that is not bound to a real user
     export: {
         directory: process.env.EXPORT_DIR || '/exports',
@@ -162,10 +164,10 @@ module.exports = {
     import: {
         directory: process.env.IMPORT_DIR || '/imports',
         endpoint: process.env.IMPORT_ENDPOINT || 'imports',
-        sizeLimit: process.env.IMPORT_SIZE_LIMIT || 10, // megabytes
-        groupData: process.env.IMPORT_GROUP_DATA || 50, // number of elements processed at the same time,
-        maxStackedElements: process.env.IMPORT_MAX_STACKED_ELEMENTS || 10000, // We clear the parser value stack based on the number of elements present
-        delayTaskExecMs: process.env.IMPORT_DELAY_TASK_EXEC_MS || 0 // Delay to ensure file is written in nfs due to async behavior
+        sizeLimit: envToNumber(process.env.IMPORT_SIZE_LIMIT, 10), // megabytes
+        groupData: envToNumber(process.env.IMPORT_GROUP_DATA, 50), // number of elements processed at the same time,
+        maxStackedElements: envToNumber(process.env.IMPORT_MAX_STACKED_ELEMENTS, 10000), // We clear the parser value stack based on the number of elements present
+        delayTaskExecMs: envToNumber(process.env.IMPORT_DELAY_TASK_EXEC_MS, 0) // Delay to ensure file is written in nfs due to async behavior
     },
     preview: {
         directory: process.env.PREVIEWS_DIRECTORY || '/results'
@@ -178,7 +180,7 @@ module.exports = {
         originalsPathPrefix: process.env.FILES_ORIGINALS_PREFIX || 'originals'
     },
     dbProfiler: {
-        enable: typeof process.env.DB_PROFILER_ENABLE !== 'undefined' ? !!Number(process.env.DB_PROFILER_ENABLE) : false
+        enable: envToBool(process.env.DB_PROFILER_ENABLE, false)
     },
     elasticSearch: {
         indexPrefix: process.env.ELASTICSEARCH_INDEX_PREFIX || 'leav-logs-',
