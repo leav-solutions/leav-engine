@@ -186,7 +186,7 @@
         "created_in_success": {
             "item": "element",
             "message": "{{libName}} created",
-            "description": "Your {{libName}} ”{{itemName}}” has been created"
+            "description": "Your {{libName}} “{{itemName}}” has been created"
         },
         "display_type": "Display",
         "header_table": "Items from {{libName}}",
