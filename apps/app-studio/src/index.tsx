@@ -14,7 +14,7 @@ import {GuardAccess} from './config/application-instance/guard-access/GuardAcces
 import {InitLayout} from './modules/layout/InitLayout';
 import {InitApplicationRouter} from './modules/ApplicationRouting/InitApplicationRouter';
 import {BugsnagErrorBoundary} from './BugsnagErrorBoundary';
-import './main.css';
+import './index.css';
 
 export const Index: FunctionComponent = () => (
     <InitNetwork>
