@@ -8,3 +8,4 @@
  * @return {Promise} Full config
  */
 export declare function loadConfig<T extends {} = {}>(dirPath: string, env: string): Promise<T>;
+export * from './envTo';
