@@ -82,3 +82,5 @@ export async function loadConfig<T extends {} = {}>(dirPath: string, env: string
 
     return merged as T;
 }
+
+export * from './envTo';
