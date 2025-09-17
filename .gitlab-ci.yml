@@ -13,6 +13,9 @@ workflow:
         on_new_commit: none
     - if: $CI_MERGE_REQUEST_TITLE =~ /^Draft:/ || $CI_MERGE_REQUEST_TITLE =~ /^WIP:/
       when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      auto_cancel:
+        on_job_failure: all
     - when: always
 
 .no_tag_rule: &no_tag_rule
