@@ -800,9 +800,7 @@ build-docker-logs-collector:
   - |
     if [ -n "$NPM_TOKEN" ]; then
       echo "Login to public npm registry with NPM_TOKEN"
-      echo "npmRegistries:" >> .yarnrc.yml
-      echo "  //registry.npmjs.org:" >> .yarnrc.yml
-      echo "    npmAuthToken: ${NPM_TOKEN}" >> .yarnrc.yml
+      echo "npmAuthToken: ${NPM_TOKEN}" >> .yarnrc.yml
     else
       echo "NPM_TOKEN not defined, skip npm login"
     fi
