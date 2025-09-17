@@ -25,6 +25,7 @@ interface ISelectTreeNodeContentProps {
     canSelectRoot?: boolean;
     selectableLibraries?: string[]; // all by default
     loadRecursively?: boolean;
+    noPagination?: boolean;
 }
 
 export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProps> = ({
@@ -39,7 +40,8 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     checkStrictly = true,
     canSelectRoot = false,
     selectableLibraries,
-    loadRecursively = false
+    loadRecursively = false,
+    noPagination = false
 }) => {
     const {t} = useSharedTranslation();
 
@@ -76,10 +78,12 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                 variables: {
                     treeId: tree.id,
                     node: parentNodeKey && parentNodeKey !== tree.id ? parentNodeKey : null,
-                    pagination: {
-                        limit: defaultPaginationPageSize,
-                        offset
-                    },
+                    pagination: noPagination
+                        ? undefined
+                        : {
+                              limit: defaultPaginationPageSize,
+                              offset
+                          },
                     childrenAsRecordValuePermissionFilter
                 }
             });
@@ -114,17 +118,16 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                 parentElement.paginationOffset = offset;
             }
 
-            if (totalCount > parentElement.paginationOffset + defaultPaginationPageSize) {
+            if (!noPagination && totalCount > parentElement.paginationOffset + defaultPaginationPageSize) {
                 const showMoreElement: ITreeMapElement = {
-                    id: parentMapKey,
-                    key: showMoreKey,
+                    isShowMore: true,
                     record: null,
                     title: t('tree-node-selection.show_more'),
+                    id: parentMapKey,
+                    key: showMoreKey,
                     isLeaf: false,
-                    paginationOffset: 0,
-                    isShowMore: true,
-                    selectable: false,
-                    children: []
+                    children: [],
+                    paginationOffset: 0
                 };
                 parentElement.children.push(showMoreElement);
             }
@@ -177,6 +180,12 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     };
 
     const _handleSelect: ComponentProps<typeof KitTree>['onSelect'] = (_, e) => {
+        // If user clicked on the text "show more", we load more children instead of selecting the node
+        if ('isShowMore' in e.node && e.node.isShowMore) {
+            _handleLoadData(e.node);
+            return;
+        }
+
         const node = treeMap[e.node.key];
         const isRoot = node.id === tree.id;
 
@@ -242,7 +251,8 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                     <TreeNodeTitle
                         title={dataNode.title}
                         checkable={checkable}
-                        isSelected={selectedNodes?.includes(dataNode.id)}
+                        // We don't want to select the "show more" text
+                        isSelected={selectedNodes?.includes(dataNode.id) && !dataNode.isShowMore}
                         isDisabled={disabledNodes?.includes(dataNode.id)}
                     />
                 );
