@@ -890,6 +890,39 @@ publish-npm-leav-types-next:
         - apps/core/**/*
       when: on_success
 
+publish-npm-leav-types-latest:
+  stage: build
+  script:
+    - apk add --no-cache jq
+    - *login_npm_registry_script
+    - VERSION=$(npm --silent -workspace @aristid/leav-types run get-version)
+    - |
+      echo "Check if version @aristid/leav-types@$VERSION already exists on npm"
+      EXISTS=$(npm --silent view @aristid/leav-types@$VERSION version || echo "")
+      if [ -n "$EXISTS" ]; then
+        echo "Version @aristid/leav-types@$VERSION already exists on npm, skipping publish."
+      else
+        echo "Publishing @aristid/leav-types@$VERSION to npm"
+        echo yarn workspaces focus core
+        yarn workspaces focus core
+        echo yarn workspace @aristid/leav-types generate
+        yarn workspace @aristid/leav-types generate
+        # Do not use 'yarn workspace @aristid/leav-types version xxx' because it needs git !
+        echo yarn workspace @aristid/leav-types set-version -- $VERSION
+        yarn workspace @aristid/leav-types set-version -- $VERSION
+        echo yarn workspace @aristid/leav-types publish-types --tag latest
+        yarn workspace @aristid/leav-types publish-types --tag latest
+      fi
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_publish_npm_rule
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        # libs/types is a projection of apps/core
+        - apps/core/**/*
+      when: on_success
+
 publish-npm-leav-ui-next:
   stage: build
   script:
@@ -947,10 +980,10 @@ publish-npm-leav-ui-latest:
     <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "main"
       changes:
         - libs/ui/**/*
-      when: manual
+      when: on_success
 
 publish-npm-leav-utils-latest:
   stage: build
@@ -977,9 +1010,9 @@ publish-npm-leav-utils-latest:
     <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "main"
       changes:
         - libs/utils/**/*
-      when: manual
+      when: on_success
 ## Publish npm packages
 ##########
