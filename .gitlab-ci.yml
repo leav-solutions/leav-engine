@@ -185,11 +185,44 @@ libs/monitoring-server-unit-tests:
         - *new_lib_installed_changes
         - libs/monitoring-server/**/*
 
-libs/ui-unit-tests:
+# Split libs/ui-unit-tests job to run in parallel for faster execution
+libs/ui-unit-tests/explorer:
   stage: test
   script:
     - yarn workspaces focus @leav/ui
-    - yarn workspace @leav/ui run test:ci
+    - yarn workspace @leav/ui run test:ci --testPathPattern="src/components/Explorer"
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *mr_rule
+      changes:
+        - *new_lib_installed_changes
+        - libs/ui/**/*
+
+libs/ui-unit-tests/record-edition/library-items-list:
+  stage: test
+  script:
+    - yarn workspaces focus @leav/ui
+    - yarn workspace @leav/ui run test:ci --testPathPattern="src/components/RecordEdition|src/components/LibraryItemsList"
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *mr_rule
+      changes:
+        - *new_lib_installed_changes
+        - libs/ui/**/*
+
+libs/ui-unit-tests/rest:
+  stage: test
+  script:
+    - yarn workspaces focus @leav/ui
+    - yarn workspace @leav/ui run test:ci --testPathIgnorePatterns="src/components/RecordEdition|src/components/LibraryItemsList|src/components/Explorer"
   cache:
     <<: *yarn_cache
   rules:
