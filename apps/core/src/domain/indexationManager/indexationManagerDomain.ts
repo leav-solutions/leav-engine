@@ -235,7 +235,8 @@ export default function ({
                 await _indexDatabase({
                     findRecordParams: {
                         library: payload.topic.record.libraryId,
-                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}]
+                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}],
+                        retrieveInactive: true
                     },
                     ctx,
                     forceNoTask: true
@@ -257,7 +258,7 @@ export default function ({
 
                 if (!isEqual(oldSettings?.fullTextAttributes?.sort(), newSettings?.fullTextAttributes?.sort())) {
                     await _indexDatabase({
-                        findRecordParams: {library: payload.topic.library},
+                        findRecordParams: {library: payload.topic.library, retrieveInactive: true},
                         ctx,
                         attributes: {up: attrsToAdd, del: attrsToDel}
                     });
@@ -285,7 +286,8 @@ export default function ({
                             library: payload.topic.library,
                             filters: [
                                 {field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}
-                            ]
+                            ],
+                            retrieveInactive: true
                         },
                         ctx,
                         attributes: isActivated || !isAttrToIndex ? null : {up: [payload.topic.attribute]},
@@ -308,7 +310,8 @@ export default function ({
                 await _indexDatabase({
                     findRecordParams: {
                         library: payload.topic.library,
-                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}]
+                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}],
+                        retrieveInactive: true
                     },
                     ctx,
                     attributes: attrProps.multiple_values
