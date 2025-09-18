@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {cloneElement, ComponentProps, FunctionComponent, Key, memo, ReactElement, ReactNode} from 'react';
+import {cloneElement, type ComponentProps, type FunctionComponent, type Key, memo, type ReactElement, type ReactNode} from 'react';
 import {KitButton, KitDropDown, KitPagination, KitTable} from 'aristid-ds';
-import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
+import  {type KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import {FaEllipsisH} from 'react-icons/fa';
-import {Override} from '@leav/utils';
+import {type Override} from '@leav/utils';
 import styled from 'styled-components';
 import isEqual from 'lodash/isEqual';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IExplorerData, IItemAction, IItemData} from './_types';
+import {type IExplorerData, type IItemAction, type IItemData} from './_types';
 import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
@@ -167,7 +167,6 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                     ) : (
                         <>
                             <KitButton
-                                type="tertiary"
                                 icon={resolveItemActionProp(item, actions[0].icon) as ReactNode}
                                 title={resolveItemActionProp(item, actions[0].label) as string}
                                 onClick={actions[0].callback}
@@ -175,7 +174,6 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                 disabled={resolveItemActionProp(item, actions[0].disabled) as boolean}
                             />
                             <KitButton
-                                type="tertiary"
                                 icon={resolveItemActionProp(item, actions[1].icon) as ReactElement}
                                 onClick={actions[1].callback}
                                 title={resolveItemActionProp(item, actions[1].label) as string}
@@ -199,11 +197,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     }))
                                 }}
                             >
-                                <KitButton
-                                    title={t('explorer.more-actions') ?? undefined}
-                                    type="tertiary"
-                                    icon={<FaEllipsisH />}
-                                />
+                                <KitButton title={t('explorer.more-actions') ?? undefined} icon={<FaEllipsisH />} />
                             </KitDropDown>
                         </>
                     )}

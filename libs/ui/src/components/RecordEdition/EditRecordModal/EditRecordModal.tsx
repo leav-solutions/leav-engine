@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useRef, useState} from 'react';
+import {type FunctionComponent, useEffect, useRef, useState} from 'react';
 import {KitButton, KitModal, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IValueVersion} from '_ui/types';
-import {RecordIdentityFragment, usePurgeRecordMutation} from '_ui/_gqlTypes';
+import {type IValueVersion} from '_ui/types';
+import {type RecordIdentityFragment, usePurgeRecordMutation} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
-import {possibleSubmitButtons, submitButtonsName} from '../_types';
+import {type possibleSubmitButtons, type submitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
@@ -109,6 +109,8 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
         isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition')
     );
     const closeButtonLabel = isCreation ? t('global.cancel') : t('global.close');
+    const modalTitle =
+        currentRecord?.label && currentRecord.label.trim() ? currentRecord.label : t('record_edition.new_record');
 
     useEffect(() => {
         const createEmptyRecordFunction = async () => {
@@ -193,7 +195,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
             title={
                 <KitSpace>
                     <KitTypography.Title level="h2" style={{margin: 0}}>
-                        {currentRecord?.label ?? t('record_edition.new_record')}
+                        {modalTitle}
                     </KitTypography.Title>
                     <div id={EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS} />
                 </KitSpace>

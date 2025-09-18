@@ -8,7 +8,7 @@ import {
     defaultDataIdFromObject,
     InMemoryCache,
     Observable,
-    ServerError,
+    type ServerError,
     split
 } from '@apollo/client';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
@@ -17,11 +17,11 @@ import {onError} from '@apollo/link-error';
 import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {createUploadLink} from 'apollo-upload-client';
 import {createClient} from 'graphql-ws';
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';
 import {useAppDispatch} from 'reduxStore/store';
-import {IInfo, InfoChannel, InfoType} from '_types/types';
+import {type IInfo, InfoChannel, InfoType} from '_types/types';
 import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
 
 const ApolloHandler: FunctionComponent = ({children}) => {
@@ -53,7 +53,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             });
         }
 
-        graphQLErrors.forEach(({message, locations, path}) => {
+        graphQLErrors?.forEach(({message, locations, path}) => {
             console.warn(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
         });
 

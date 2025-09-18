@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createClient} from 'graphql-ws';
 import {gqlPossibleTypes} from '@leav/ui';
-import {ApolloClient, from, HttpLink, InMemoryCache, Observable, ServerError, split} from '@apollo/client';
+import {ApolloClient, from, HttpLink, InMemoryCache, type Observable, type ServerError, split} from '@apollo/client';
 import {onError} from '@apollo/client/link/error';
-import {NextLink, Operation} from '@apollo/client/link/core';
+import {type NextLink, type Operation} from '@apollo/client/link/core';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
@@ -21,7 +21,7 @@ export const useInitApollo = (
             return unauthorizedHandler(forward, operation);
         }
 
-        graphQLErrors.forEach(({message, locations, path}) => {
+        graphQLErrors?.forEach(({message, locations, path}) => {
             console.warn(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
         });
 

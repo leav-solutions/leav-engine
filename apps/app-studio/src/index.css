@@ -1,4 +1,3 @@
-.edit-record-modal .kit-modal-title button:not(#edit-record-side-bar-toggle-button),
-.create-record-modal .kit-modal-title button:not(#edit-record-side-bar-toggle-button) {
+#edit-record-modal-header-container-buttons button:not(#edit-record-side-bar-toggle-button) {
     display: none;
 }
