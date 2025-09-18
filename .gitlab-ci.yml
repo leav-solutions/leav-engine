@@ -26,8 +26,8 @@ workflow:
   if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
   when: never
 
-.main_develop_or_mr_rule: &main_develop_or_mr_rule
-  if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop" || $CI_PIPELINE_SOURCE == "merge_request_event"
+.mr_rule: &mr_rule
+  if: $CI_PIPELINE_SOURCE == "merge_request_event"
   when: on_success
 
 .new_lib_installed_changes: &new_lib_installed_changes yarn.lock
@@ -72,7 +72,7 @@ stages:
     when: never
   - *no_tag_rule
   - *no_duplicate_rule
-  - *main_develop_or_mr_rule
+  - *mr_rule
 
 lint:
   stage: test
@@ -132,7 +132,7 @@ libs/app-root-path-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - libs/app-root-path/**/*
@@ -148,7 +148,7 @@ libs/config-manager-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - libs/config-manager/**/*
@@ -164,7 +164,7 @@ libs/message-broker-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - libs/message-broker/**/*
@@ -180,7 +180,7 @@ libs/monitoring-server-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - libs/monitoring-server/**/*
@@ -196,7 +196,7 @@ libs/ui-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - libs/ui/**/*
@@ -212,7 +212,7 @@ libs/utils-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - libs/utils/**/*
@@ -228,7 +228,7 @@ apps/admin-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/admin/**/*
@@ -244,7 +244,7 @@ apps/app-studio-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/app-studio/**/*
@@ -262,7 +262,7 @@ apps/automate-scan-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/automate-scan/**/*
@@ -282,7 +282,7 @@ apps/core-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/core/**/*
@@ -303,7 +303,7 @@ apps/data-studio-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/data-studio/**/*
@@ -321,7 +321,7 @@ apps/login-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/login/**/*
@@ -338,7 +338,7 @@ apps/logs-collector-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/logs-collector/**/*
@@ -359,7 +359,7 @@ apps/portal-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/portal/**/*
@@ -377,7 +377,7 @@ apps/preview-generator-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/preview-generator/**/*
@@ -397,7 +397,7 @@ apps/sync-scan-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/sync-scan/**/*
@@ -445,7 +445,7 @@ integration-test-core:
     - *disable_e2e_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/core/**/*
@@ -477,7 +477,7 @@ integration-test-automate-scan:
     - *disable_e2e_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/automate-scan/**/*
@@ -516,7 +516,7 @@ e2e-api:
     - *disable_e2e_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/core/**/*
@@ -552,7 +552,7 @@ e2e-indexation-manager:
     - *disable_e2e_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/core/**/*
@@ -583,7 +583,7 @@ e2e-sync-scan:
     - *disable_e2e_rule
     - *no_tag_rule
     - *no_duplicate_rule
-    - <<: *main_develop_or_mr_rule
+    - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
         - apps/sync-scan/**/*
