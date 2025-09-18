@@ -1,6 +1,6 @@
 {
   "name": "@leav/monitoring-server",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Module to create simple http monitoring server for health, metrics ...",
   "scripts": {
     "test": "jest -c jest-config.json",
