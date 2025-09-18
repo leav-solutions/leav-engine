@@ -18121,6 +18121,7 @@ __metadata:
   resolution: "core@workspace:apps/core"
   dependencies:
     "@apollo/server": "npm:4.11.0"
+    "@bugsnag/js": "npm:8.4.0"
     "@elastic/elasticsearch": "npm:8.10.0"
     "@graphql-tools/schema": "npm:10.0.0"
     "@leav/app-root-path": "workspace:libs/app-root-path"

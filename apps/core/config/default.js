@@ -78,6 +78,12 @@ module.exports = {
             password: process.env.MAILER_AUTH_PWD
         }
     },
+    bugsnag: {
+        enable: process.env.BUGSNAG_ENABLE ?? false,
+        apiKey: process.env.BUGSNAG_API_KEY,
+        appVersion: process.env.BUGSNAG_APP_VERSION,
+        appType: process.env.BUGSNAG_APP_TYPE || 'core'
+    },
     lang: {
         available: process.env.LANG_AVAILABLE || ['fr', 'en'],
         default: process.env.LANG_DEFAULT || 'en'

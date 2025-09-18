@@ -202,7 +202,25 @@ export const validateConfig = (conf: IConfig) => {
             indexPrefix: Joi.string().required(),
             url: Joi.string().required()
         }),
-        pluginsPath: Joi.array().items(Joi.string()).required()
+        pluginsPath: Joi.array().items(Joi.string()).required(),
+        bugsnag: Joi.object().keys({
+            enable: Joi.boolean().required(),
+            apiKey: Joi.alternatives().conditional('enable', {
+                is: true,
+                then: Joi.string().required(),
+                otherwise: Joi.string()
+            }),
+            appVersion: Joi.alternatives().conditional('enable', {
+                is: true,
+                then: Joi.string().required(),
+                otherwise: Joi.string()
+            }),
+            appType: Joi.alternatives().conditional('enable', {
+                is: true,
+                then: Joi.string().required(),
+                otherwise: Joi.string()
+            })
+        })
     });
 
     const isValid = configSchema.validate(conf);

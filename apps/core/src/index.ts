@@ -17,6 +17,7 @@ import {initDb} from './infra/db/db';
 import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
 import {initOIDCClient} from './infra/oidc';
+import Bugsnag from '@bugsnag/js';
 
 (async function () {
     let conf: IConfig;
@@ -27,6 +28,14 @@ import {initOIDCClient} from './infra/oidc';
     } catch (e) {
         console.error('config error', e);
         process.exit(1);
+    }
+
+    if (conf.bugsnag.enable) {
+        Bugsnag.start({
+            apiKey: conf.bugsnag.apiKey,
+            appVersion: conf.bugsnag.appVersion,
+            appType: conf.bugsnag.appType
+        });
     }
 
     // Init services

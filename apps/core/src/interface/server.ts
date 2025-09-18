@@ -181,6 +181,7 @@ export default function ({
 
                         logger.error(`[${req.ctx?.queryId ?? 'unknown_query'}] ${err}`);
                         logger.error(err.stack);
+
                         res.status(500).json({error: 'INTERNAL_SERVER_ERROR'});
                     }
                 );

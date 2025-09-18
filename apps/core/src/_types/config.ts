@@ -34,6 +34,7 @@ export interface IConfig {
     instanceId: string;
     elasticSearch: IElasticSearchConfig;
     pluginsPath: string[];
+    bugsnag: IBugsnag;
 }
 
 export enum CoreMode {
@@ -259,4 +260,11 @@ export interface IDbProfilerConfig {
 export interface IElasticSearchConfig {
     indexPrefix: string;
     url: string;
+}
+
+export interface IBugsnag {
+    enable: boolean;
+    apiKey?: string;
+    appVersion?: string;
+    appType?: string;
 }
