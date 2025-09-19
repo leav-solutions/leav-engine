@@ -183,6 +183,7 @@ libs/monitoring-server-unit-tests:
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
+        - libs/logger/**/*
         - libs/monitoring-server/**/*
 
 # Split libs/ui-unit-tests job to run in parallel for faster execution
@@ -301,6 +302,7 @@ apps/automate-scan-unit-tests:
         - apps/automate-scan/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
+        - libs/logger/**/*
         - libs/monitoring-server/**/*
         - libs/utils/**/*
 
@@ -321,6 +323,7 @@ apps/core-unit-tests:
         - apps/core/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
+        - libs/logger/**/*
         - libs/message-broker/**/*
         - libs/monitoring-server/**/*
         - libs/utils/**/*
@@ -377,6 +380,7 @@ apps/logs-collector-unit-tests:
         - apps/logs-collector/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
+        - libs/logger/**/*
         - libs/message-broker/**/*
         - libs/monitoring-server/**/*
         - libs/utils/**/*
@@ -416,6 +420,7 @@ apps/preview-generator-unit-tests:
         - apps/preview-generator/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
+        - libs/logger/**/*
         - libs/monitoring-server/**/*
         - libs/utils/**/*
 
@@ -484,6 +489,7 @@ integration-test-core:
         - apps/core/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
+        - libs/logger/**/*
         - libs/message-broker/**/*
         - libs/monitoring-server/**/*
         - libs/utils/**/*
@@ -516,6 +522,7 @@ integration-test-automate-scan:
         - apps/automate-scan/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
+        - libs/logger/**/*
         - libs/message-broker/**/*
         - libs/monitoring-server/**/*
         - libs/utils/**/*
@@ -555,6 +562,7 @@ e2e-api:
         - apps/core/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
+        - libs/logger/**/*
         - libs/message-broker/**/*
         - libs/monitoring-server/**/*
         - libs/utils/**/*
@@ -591,6 +599,7 @@ e2e-indexation-manager:
         - apps/core/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
+        - libs/logger/**/*
         - libs/message-broker/**/*
         - libs/monitoring-server/**/*
         - libs/utils/**/*
@@ -622,6 +631,7 @@ e2e-sync-scan:
         - apps/sync-scan/**/*
         - libs/app-root-path/**/*
         - libs/config-manager/**/*
+        - libs/logger/**/*
         - libs/message-broker/**/*
         - libs/utils/**/*
 
