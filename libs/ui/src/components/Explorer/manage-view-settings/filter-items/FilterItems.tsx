@@ -1,22 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 import {FaEye, FaEyeSlash, FaSearch} from 'react-icons/fa';
 import {KitFilter, KitInput, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     AttributeFormat,
-    AttributesByLibAttributeFragment,
-    AttributesByLibAttributeLinkAttributeFragment,
-    AttributesByLibAttributeTreeAttributeFragment,
+    type AttributesByLibAttributeFragment,
+    type AttributesByLibAttributeLinkAttributeFragment,
+    type AttributesByLibAttributeTreeAttributeFragment,
     AttributeType
 } from '_ui/_gqlTypes';
 import {
     closestCenter,
     DndContext,
-    DragEndEvent,
+    type DragEndEvent,
     KeyboardSensor,
     PointerSensor,
     useSensor,
@@ -28,7 +28,7 @@ import {CommonFilterItem} from '../_shared/CommonFilterItem';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {FilterListItem} from './FilterListItem';
-import {ExplorerFilter, IExplorerFilterBaseAttribute} from '_ui/components/Explorer/_types';
+import {type ExplorerFilter, type IExplorerFilterBaseAttribute} from '_ui/components/Explorer/_types';
 
 const StyledListContainer = styled.div`
     display: flex;
@@ -120,8 +120,10 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
     };
 
     const activeFilters = filters.filter(({attribute}) => searchFilteredColumnsIds.includes(attribute.id));
-    const inactiveFilters = searchFilteredColumnsIds.filter(attributeId =>
-        filters.every(filterItem => filterItem.attribute.id !== attributeId)
+    const inactiveFilters = searchFilteredColumnsIds.filter(
+        attributeId =>
+            filters.every(filterItem => filterItem.attribute.id !== attributeId) &&
+            !('compute' in attributeDetailsById[attributeId] && attributeDetailsById[attributeId]?.compute)
     );
 
     const canAddFilter = activeFilters.length < maxFilters;
