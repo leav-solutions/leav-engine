@@ -1,9 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {cloneElement, type ComponentProps, type FunctionComponent, type Key, memo, type ReactElement, type ReactNode} from 'react';
+import {
+    cloneElement,
+    type ComponentProps,
+    type FunctionComponent,
+    type Key,
+    memo,
+    type ReactElement,
+    type ReactNode
+} from 'react';
 import {KitButton, KitDropDown, KitPagination, KitTable} from 'aristid-ds';
-import  {type KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
+import {type KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import {FaEllipsisH} from 'react-icons/fa';
 import {type Override} from '@leav/utils';
 import styled from 'styled-components';
@@ -167,6 +175,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                     ) : (
                         <>
                             <KitButton
+                                size="m"
                                 icon={resolveItemActionProp(item, actions[0].icon) as ReactNode}
                                 title={resolveItemActionProp(item, actions[0].label) as string}
                                 onClick={actions[0].callback}
@@ -174,6 +183,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                 disabled={resolveItemActionProp(item, actions[0].disabled) as boolean}
                             />
                             <KitButton
+                                size="m"
                                 icon={resolveItemActionProp(item, actions[1].icon) as ReactElement}
                                 onClick={actions[1].callback}
                                 title={resolveItemActionProp(item, actions[1].label) as string}
@@ -197,7 +207,11 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                                     }))
                                 }}
                             >
-                                <KitButton title={t('explorer.more-actions') ?? undefined} icon={<FaEllipsisH />} />
+                                <KitButton
+                                    size="m"
+                                    title={t('explorer.more-actions') ?? undefined}
+                                    icon={<FaEllipsisH />}
+                                />
                             </KitDropDown>
                         </>
                     )}
