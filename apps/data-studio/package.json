@@ -38,6 +38,7 @@
     "scripts": {
         "start": "vite",
         "build": "vite build",
+        "build:install": "yarn run build --outDir ../core/applications/data-studio --emptyOutDir",
         "test": "jest",
         "test:ci": "jest --maxWorkers=2",
         "test:commit": "jest --onlyChanged --maxWorkers=50%",

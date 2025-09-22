@@ -466,8 +466,15 @@ login/password default authentification mechanism.
 4. Currently, the træfik roots you to dev version of front apps (**portal**, **data-studio**…), 2 solutions:
     - Manually stop docker front containers and build apps to [`/applications`](./apps/core/applications) folder in core.
 
-        For instance for portal:
-        `docker stop docker-portal-1 && yarn workspace portal build && rm -rf apps/core/applications/portal && mv apps/portal/dist apps/core/applications/portal`
+        ```
+        yarn workspace login build:install
+        yarn workspace portal build:install
+        yarn workspace admin build:install
+        yarn workspace data-studio build:install
+        yarn workspace app-studio build:install
+
+        docker stop docker-login-1 docker-portal-1 docker-admin-1 docker-data-studio-1 docker-app-studio-1
+        ```
 
     - Build apps to [`/applications`](./apps/core/applications) and register under new paths
 
