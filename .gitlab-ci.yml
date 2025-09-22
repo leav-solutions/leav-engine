@@ -950,10 +950,7 @@ publish-npm-leav-types-latest:
     <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
-    - if: $CI_COMMIT_BRANCH == "main"
-      changes:
-        # libs/types is a projection of apps/core
-        - apps/core/**/*
+    - if: $CI_COMMIT_TAG
       when: on_success
 
 publish-npm-leav-ui-next:
@@ -1013,9 +1010,7 @@ publish-npm-leav-ui-latest:
     <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
-    - if: $CI_COMMIT_BRANCH == "main"
-      changes:
-        - libs/ui/**/*
+    - if: $CI_COMMIT_TAG
       when: on_success
 
 publish-npm-leav-utils-latest:
@@ -1043,9 +1038,7 @@ publish-npm-leav-utils-latest:
     <<: *yarn_cache
   rules:
     - *disable_publish_npm_rule
-    - if: $CI_COMMIT_BRANCH == "main"
-      changes:
-        - libs/utils/**/*
+    - if: $CI_COMMIT_TAG
       when: on_success
 ## Publish npm packages
 ##########
