@@ -4,7 +4,7 @@
 /** @type {import('vite').UserConfig} */
 
 import {defineConfig} from 'vite';
-import {commonConfig} from '../../vite-config-common';
+import {commonConfig, devIndexHtmlReplaceVarsPlugin} from '../../vite-config-common';
 import {dynamicBase} from 'vite-plugin-dynamic-base';
 
 export default () => {
@@ -13,7 +13,8 @@ export default () => {
         plugins: [
             dynamicBase({
                 transformIndexHtml: true
-            })
+            }),
+            devIndexHtmlReplaceVarsPlugin()
         ],
         base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/portal'
     });

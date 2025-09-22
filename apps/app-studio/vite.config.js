@@ -4,7 +4,7 @@
 /** @type {import('vite').UserConfig} */
 
 import {defineConfig} from 'vite';
-import {commonConfig} from '../../vite-config-common';
+import {commonConfig, devIndexHtmlReplaceVarsPlugin} from '../../vite-config-common';
 import {dynamicBase} from 'vite-plugin-dynamic-base';
 import {browserslistToTargets} from 'lightningcss';
 import browserslist from 'browserslist';
@@ -17,7 +17,8 @@ export default () =>
         plugins: [
             dynamicBase({
                 transformIndexHtml: true
-            })
+            }),
+            devIndexHtmlReplaceVarsPlugin()
         ],
         css: {
             transformer: 'lightningcss',

@@ -16,7 +16,10 @@ License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
     />
     <link rel="manifest" href="/manifest.json" crossorigin="use-credentials"/>
     <title>LEAV Engine - App Studio - REPLACE ME</title>
-    <script>window.__dynamic_base__ = `${window.location.origin}/app/${window.location.pathname.split('/').filter(e => e)[1]}`</script>
+    <script>
+        window.__dynamic_base__ = `{{APPLICATION_BASE_URL}}`;
+        window.__global_base_url__ = `{{GLOBAL_BASE_URL}}`;
+    </script>
     <script>
       if (!window.location.hostname.includes('localhost')) {
           // Code provided by Matomo

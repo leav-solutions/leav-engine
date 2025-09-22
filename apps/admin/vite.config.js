@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import {defineConfig} from 'vite';
 import {dynamicBase} from 'vite-plugin-dynamic-base';
-import {commonConfig} from '../../vite-config-common';
+import {commonConfig, devIndexHtmlReplaceVarsPlugin} from '../../vite-config-common';
 
 export default () => {
     const conf = commonConfig(__dirname);
@@ -27,6 +27,7 @@ export default () => {
             dynamicBase({
                 transformIndexHtml: true
             }),
+            devIndexHtmlReplaceVarsPlugin(),
             reactVirtualized()
         ],
         base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/admin'

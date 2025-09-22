@@ -20,10 +20,28 @@ export const jsonHmr = () => {
     };
 };
 
+export const devIndexHtmlReplaceVarsPlugin = () => {
+    let appName = '';
+    return {
+        name: 'dev-index-html-replace-vars',
+        enforce: 'pre',
+        apply: 'serve', // uniquement en dev
+        configResolved(config) {
+            // Récupère le nom du dossier racine du projet
+            appName = path.basename(config.root);
+        },
+        transformIndexHtml(html) {
+            return html
+                .replace(/{{APPLICATION_BASE_URL}}/g, process.env.APPLICATION_BASE_URL || `/app/${appName}`)
+                .replace(/{{GLOBAL_BASE_URL}}/g, process.env.GLOBAL_BASE_URL || '');
+        }
+    };
+}
+
 export const commonConfig = rootPath => {
     return {
         root: '.',
-        plugins: [svgr(), react(), jsonHmr(), splitVendorChunkPlugin()],
+        plugins: [svgr(), react(), jsonHmr(), splitVendorChunkPlugin(), devIndexHtmlReplaceVarsPlugin()],
         resolve: {
             alias: [
                 {find: '@leav/ui', replacement: path.resolve(__dirname, 'libs/ui/src')},

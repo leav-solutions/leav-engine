@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
+import * as fs from 'fs';
 import {type Override, type PublishedEvent} from '@leav/utils';
 import {type ICommonSubscriptionFilters, type ICoreSubscriptionsHelpersApp} from 'app/core/helpers/subscriptions';
 import {type IGraphqlAppModule, type IGraphqlApp} from 'app/graphql/graphqlApp';
@@ -401,12 +402,28 @@ export default function ({
                 },
                 // Serve application
                 async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
-                    express.static(req.ctx.appFolder, {
-                        extensions: ['html'],
-                        fallthrough: false
-                    })(req, res, next);
+                    try {
+                        if (req.path === '/' || req.path === '/index.html') {
+                            const applicationBaseUrl = `${config.server.basePath}/${utils.getFullApplicationEndpoint(req.params.endpoint)}`;
+                            const indexContent = await fs.promises.readFile(`${req.ctx.appFolder}/index.html`, {
+                                encoding: 'utf-8'
+                            });
+                            const modifiedIndex = indexContent
+                                .replaceAll(/{{APPLICATION_BASE_URL}}/g, applicationBaseUrl)
+                                .replaceAll(/{{GLOBAL_BASE_URL}}/g, config.server.basePath);
+                            res.send(modifiedIndex);
+                            return next(); // needed to update consultation history
+                        }
 
-                    return next();
+                        express.static(req.ctx.appFolder, {
+                            extensions: ['html'],
+                            fallthrough: false
+                        })(req, res, next);
+
+                        return next();
+                    } catch (e) {
+                        return next(e);
+                    }
                 },
                 async (req: IRequestWithContext) => {
                     try {
