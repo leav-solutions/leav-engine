@@ -4,13 +4,14 @@
 import {type ComponentProps, type FunctionComponent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
-import {APP_ENDPOINT, APPS_ENDPOINT, useAuth, useUser} from '@leav/ui';
+import {useAuth, useUser} from '@leav/ui';
 import {KitButton, type KitDropDown, KitHeader} from 'aristid-ds';
 import {type IKitAvatar} from 'aristid-ds/dist/Kit/DataDisplay/Avatar/types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faRightFromBracket, faUser} from '@fortawesome/free-solid-svg-icons';
 import {LanguageSelector} from '../switch-language/LanguageSelector';
 import {header, logo} from './layout.module.css';
+import {APP_BASE_URL, GLOBAL_BASE_URL} from '../../constants';
 
 export const RootHeader: FunctionComponent = () => {
     const {t} = useTranslation();
@@ -51,12 +52,8 @@ export const RootHeader: FunctionComponent = () => {
         <KitHeader
             className={header}
             logo={
-                <Link to="/" className={logo}>
-                    <img
-                        src={`/${APPS_ENDPOINT}/${APP_ENDPOINT}/assets/aristid-header.svg`}
-                        alt="logo-leavengine"
-                        title="app-studio"
-                    />
+                <Link to={GLOBAL_BASE_URL} className={logo}>
+                    <img src={`${APP_BASE_URL}/assets/aristid-header.svg`} alt="logo-leavengine" title="app-studio" />
                 </Link>
             }
             profile={<KitHeader.Profile menu={profileMenuContent} profileCardProps={{avatarProps, title: identity}} />}

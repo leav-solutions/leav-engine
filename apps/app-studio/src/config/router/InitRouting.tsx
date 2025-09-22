@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
 import {BrowserRouter} from 'react-router-dom';
-import {APP_ENDPOINT, APPS_ENDPOINT} from '@leav/ui';
+import {APP_BASE_URL} from '../../constants';
 
 export const InitRouting: FunctionComponent = ({children}) => (
-    <BrowserRouter basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`}>{children}</BrowserRouter>
+    <BrowserRouter basename={APP_BASE_URL}>{children}</BrowserRouter>
 );

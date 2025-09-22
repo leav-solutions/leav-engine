@@ -2,8 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
-import {APP_ENDPOINT, ErrorDisplay, ErrorDisplayTypes} from '@leav/ui';
+import {ErrorDisplay, ErrorDisplayTypes} from '@leav/ui';
 import {useGetApplicationInstanceDataByEndpointQuery} from '../../../__generated__';
+import {APP_ENDPOINT} from '../../../constants';
 
 export const GuardAccess: FunctionComponent = ({children}) => {
     const {data} = useGetApplicationInstanceDataByEndpointQuery({

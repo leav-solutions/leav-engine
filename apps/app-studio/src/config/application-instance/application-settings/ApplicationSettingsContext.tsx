@@ -4,10 +4,11 @@
 import {createContext, type FunctionComponent, useContext, useEffect, useState} from 'react';
 import {type $ZodIssue} from 'zod/v4/core';
 import {useTranslation} from 'react-i18next';
-import {APP_ENDPOINT, ErrorDisplay, Loading} from '@leav/ui';
+import {ErrorDisplay, Loading} from '@leav/ui';
 import {useGetApplicationInstanceDataByEndpointQuery} from '../../../__generated__';
 import {type Application} from '../../../modules/ApplicationRouting/types';
 import {ApplicationSchema} from '../../../modules/ApplicationRouting/schema';
+import {APP_ENDPOINT} from '../../../constants';
 
 const ApplicationSettingsContext = createContext<ReturnType<typeof useState<Application | null>>>(null);
 

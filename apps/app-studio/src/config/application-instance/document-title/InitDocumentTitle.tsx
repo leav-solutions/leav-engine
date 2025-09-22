@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent, useContext, useEffect} from 'react';
 import {localizedTranslation} from '@leav/utils';
-import {APP_ENDPOINT, LangContext} from '@leav/ui';
+import {LangContext} from '@leav/ui';
 import {useGetApplicationInstanceDataByEndpointQuery} from '../../../__generated__';
+import {APP_ENDPOINT} from '../../../constants';
 
 export const InitDocumentTitle: FunctionComponent = ({children}) => {
     const {lang} = useContext(LangContext);
