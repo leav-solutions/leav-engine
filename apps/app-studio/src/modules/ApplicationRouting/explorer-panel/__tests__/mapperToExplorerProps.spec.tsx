@@ -31,11 +31,11 @@ describe('mapperToExplorerProps', () => {
                 creationFormId: 'create-id',
                 editionFormId: 'edit-id',
                 noPagination: true,
-                iconsOnlyItemActions: false
+                iconsOnlyItemActions: false,
+                defaultPrimaryActions: ['create']
             });
 
             expect(mapToLibraryExplorerProps({explorerProps})).toEqual({
-                defaultPrimaryActions: ['create'],
                 defaultActionsForItem: ['activate'],
                 defaultMassActions: ['deactivate']
             });
@@ -66,7 +66,8 @@ describe('mapperToExplorerProps', () => {
                 creationFormId: 'create-id',
                 editionFormId: 'edit-id',
                 noPagination: true,
-                iconsOnlyItemActions: true
+                iconsOnlyItemActions: true,
+                defaultPrimaryActions: ['create']
             });
         });
     });

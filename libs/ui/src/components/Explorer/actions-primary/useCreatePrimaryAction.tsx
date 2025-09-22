@@ -21,19 +21,19 @@ import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 
 /**
- * Hook used to get the action for `<DataView />` component.
+ * Hook used to get the action for the `<DataView />` component.
  *
- * When the creation is done, we refresh all data even if the new record will not be visible due to some filters.
+ * When the creation is done, we refresh all data even if the new record is not visible due to some filters.
  *
- * It returns also two parts : one for the call action button - one for displayed the modal required by the action.
+ * It returns also two parts: one for the call action button - one for displaying the modal required by the action.
  *
  * @param isEnabled - whether the action is present
- * @param isVisible - wether the button should be visible or not
+ * @param isVisible - whether the button should be visible or not
  * @param libraryId - the library's id to add new item
  * @param entrypoint - represent the current entrypoint
  * @param totalCount - used for display purpose only
  * @param onCreate - callback to let outside world known about creating item (and linking)
- * @param refetch - method to call to refresh the list. New item will be visible if it matches filters and sorts
+ * @param refetch - method to call to refresh the list. A new item will be visible if it matches filters and sorts
  */
 export const useCreatePrimaryAction = ({
     isEnabled,
@@ -163,12 +163,11 @@ export const useCreatePrimaryAction = ({
                     onClose={() => {
                         setIsModalCreationVisible(false);
                     }}
-                    onCreate={newRecord => {
-                        refetch();
+                    onCreate={async newRecord => {
                         _notifyNewCreation(newRecord.label);
                         setIsModalCreationVisible(false);
                         if (entrypoint.type === 'link') {
-                            saveValues(
+                            await saveValues(
                                 {
                                     id: entrypoint.parentRecordId,
                                     library: {
@@ -182,12 +181,16 @@ export const useCreatePrimaryAction = ({
                                         value: newRecord.id
                                     }
                                 ]
-                            ).then(saveValuesResult => {
-                                onCreate?.({recordIdCreated: newRecord.id, saveValuesResultOnLink: saveValuesResult});
-                            });
+                            ).then(async saveValuesResult =>
+                                onCreate?.({
+                                    recordIdCreated: newRecord.id,
+                                    saveValuesResultOnLink: saveValuesResult
+                                })
+                            );
                         } else {
-                            onCreate?.({recordIdCreated: newRecord.id});
+                            await Promise.resolve(onCreate?.({recordIdCreated: newRecord.id}));
                         }
+                        refetch();
                     }}
                     submitButtons={['create']}
                 />

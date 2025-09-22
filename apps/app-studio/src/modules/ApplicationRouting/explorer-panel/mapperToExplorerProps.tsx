@@ -16,16 +16,16 @@ type CommonOverridablePropsByUser =
     | 'creationFormId'
     | 'editionFormId'
     | 'noPagination'
-    | 'iconsOnlyItemActions';
+    | 'iconsOnlyItemActions'
+    | 'defaultPrimaryActions';
 
-type LibraryOverridablePropsByUser = 'defaultPrimaryActions' | 'defaultActionsForItem' | 'defaultMassActions';
+type LibraryOverridablePropsByUser = 'defaultActionsForItem' | 'defaultMassActions';
 
 export const mapToLibraryExplorerProps = ({
     explorerProps
 }: {
     explorerProps: LibraryExplorerProps;
 }): Pick<ComponentProps<typeof Explorer>, LibraryOverridablePropsByUser> => ({
-    defaultPrimaryActions: explorerProps.defaultPrimaryActions,
     defaultActionsForItem: explorerProps.defaultActionsForItem,
     defaultMassActions: explorerProps.defaultMassActions
 });
@@ -47,6 +47,7 @@ export const mapToCommonExplorerProps = ({
         creationFormId: explorerProps.creationFormId,
         editionFormId: explorerProps.editionFormId,
         noPagination: explorerProps.noPagination ?? undefined,
-        iconsOnlyItemActions: isBoolean(explorerProps.showActionsLabels) ? !explorerProps.showActionsLabels : true
+        iconsOnlyItemActions: isBoolean(explorerProps.showActionsLabels) ? !explorerProps.showActionsLabels : true,
+        defaultPrimaryActions: explorerProps.defaultPrimaryActions
     };
 };

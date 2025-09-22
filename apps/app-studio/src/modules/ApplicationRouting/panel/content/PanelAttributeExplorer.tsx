@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
-import {useLocation, useNavigate, useParams, useSearchParams} from 'react-router-dom';
-import {Explorer, ThroughConditionFilter, useLang} from '@leav/ui';
+import {useNavigate, useParams, useSearchParams} from 'react-router-dom';
+import {Explorer, ThroughConditionFilter, useExecuteSaveValueBatchMutation, useLang} from '@leav/ui';
 import {mapToCommonExplorerProps} from '../../explorer-panel/mapperToExplorerProps';
 import {mapperToItemActions} from '../../explorer-panel/mapperToItemActions';
 import {type ItemActions, type LibraryExplorerProps} from '../../types';
@@ -32,6 +32,8 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
     const {panelId} = useParams();
     const [searchParams] = useSearchParams();
 
+    const {saveValues} = useExecuteSaveValueBatchMutation();
+
     const linkExplorerProps = explorerProps ? mapToCommonExplorerProps({explorerProps}) : {};
     const itemActions = mapperToItemActions({actions, lang, navigate, panelId, searchParams});
 
@@ -52,7 +54,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                             subField: 'id',
                             attribute: {
                                 id: attributeSource,
-                                type: AttributeType.advanced_link,
+                                type: AttributeType.simple_link, // because it can be only mono-valued
                                 label: 'SHOULD BE HIDDEN'
                             },
                             condition: ThroughConditionFilter.THROUGH,
@@ -63,9 +65,28 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                 }}
                 itemActions={itemActions}
                 {...linkExplorerProps}
-                defaultPrimaryActions={[]}
                 defaultMassActions={[]}
                 defaultActionsForItem={['edit']}
+                defaultCallbacks={{
+                    primary: {
+                        create: ({recordIdCreated}) =>
+                            saveValues(
+                                {
+                                    id: recordIdCreated,
+                                    library: {
+                                        id: libraryId
+                                    }
+                                },
+                                [
+                                    {
+                                        attribute: attributeSource,
+                                        idValue: null,
+                                        value: recordId
+                                    }
+                                ]
+                            )
+                    }
+                }}
             />
         </div>
     );
