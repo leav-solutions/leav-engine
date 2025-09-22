@@ -2,10 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-export const ORIGIN_URL = window.location.origin;
-export const APPS_ENDPOINT = 'app';
-export const APP_ENDPOINT = window.location.pathname.split('/').filter(e => e)[1]; // Get endpoint app current from url /app/:endpoint
+export const GLOBAL_BASE_URL = window.__global_base_url__?.replace(/\/$/, '') || '';
+export const APP_BASE_URL = window.__dynamic_base__?.replace(/\/$/, '') || '/app/login';
 
-export const AUTH_URL = '/auth/authenticate';
-export const RESET_PASSWORD_URL = '/auth/reset-password';
-export const FORGOT_PASSWORD_URL = '/auth/forgot-password';
+export const AUTH_URL = GLOBAL_BASE_URL + '/auth/authenticate';
+export const RESET_PASSWORD_URL = GLOBAL_BASE_URL + '/auth/reset-password';
+export const FORGOT_PASSWORD_URL = GLOBAL_BASE_URL + '/auth/forgot-password';

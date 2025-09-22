@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {BrowserRouter} from 'react-router-dom';
-import {APPS_ENDPOINT, APP_ENDPOINT} from '../../constants';
 import AuthHandler from './AuthHandler';
 import Routes from './Routes';
+import {APP_BASE_URL} from '../../constants';
 
 function App() {
     return (
-        <BrowserRouter basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`}>
+        <BrowserRouter basename={APP_BASE_URL}>
             <AuthHandler>
                 <Routes />
             </AuthHandler>

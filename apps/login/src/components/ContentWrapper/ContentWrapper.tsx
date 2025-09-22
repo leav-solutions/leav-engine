@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Card} from 'antd';
 import {KitApp} from 'aristid-ds';
+import {GLOBAL_BASE_URL} from '../../constants';
 import styled from 'styled-components';
 
 interface IContentWrapperProps {
@@ -37,7 +38,7 @@ export default function ContentWrapper({children}: IContentWrapperProps) {
         <Background>
             <Wrapper>
                 <ContentBlock
-                    title={<img src="/global-icon/small" height="100px" alt="" />}
+                    title={<img src={`${GLOBAL_BASE_URL}/global-icon/small`} height="100px" alt="" />}
                     styles={{header: {textAlign: 'center', padding: '1rem'}}}
                 >
                     <KitApp>{children}</KitApp>

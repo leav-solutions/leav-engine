@@ -1,0 +1,45 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+// Import the type from the constants module
+import type * as ConstantsType from './constants';
+
+describe('constants', () => {
+    let constants: typeof ConstantsType;
+
+    describe('with /campaigns-manager base URL', () => {
+        beforeAll(() => {
+            window.__global_base_url__ = '/campaigns-manager';
+            window.__dynamic_base__ = '/campaigns-manager/app/login';
+
+            jest.resetModules();
+            constants = require('./constants');
+        });
+
+        it('should set GLOBAL_BASE_URL without trailing slash', () => {
+            expect(constants.GLOBAL_BASE_URL).toBe('/campaigns-manager');
+        });
+
+        it('should set APP_BASE_URL without trailing slash', () => {
+            expect(constants.APP_BASE_URL).toBe('/campaigns-manager/app/login');
+        });
+    });
+
+    describe('with empty base URL', () => {
+        beforeAll(() => {
+            window.__global_base_url__ = '';
+            window.__dynamic_base__ = '/app/login';
+
+            jest.resetModules();
+            constants = require('./constants');
+        });
+
+        it('should set GLOBAL_BASE_URL without trailing slash', () => {
+            expect(constants.GLOBAL_BASE_URL).toBe('');
+        });
+
+        it('should set APP_BASE_URL without trailing slash', () => {
+            expect(constants.APP_BASE_URL).toBe('/app/login');
+        });
+    });
+});

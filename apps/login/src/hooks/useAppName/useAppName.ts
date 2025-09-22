@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {GLOBAL_BASE_URL} from '../../constants';
 import {useEffect, useState} from 'react';
 
 export default function useAppName() {
@@ -10,7 +11,7 @@ export default function useAppName() {
 
     const _fetchName = async () => {
         try {
-            const res = await fetch('/global-name', {method: 'GET'});
+            const res = await fetch(`${GLOBAL_BASE_URL}/global-name`, {method: 'GET'});
             const resContent = await res.text();
             setName(resContent);
         } catch (err) {
