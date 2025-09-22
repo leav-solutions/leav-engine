@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {GLOBAL_BASE_URL} from '../../../constants';
 import React from 'react';
 
 type PossibleSizes = 'tiny' | 'small' | 'medium' | 'big' | 'huge';
@@ -19,7 +20,7 @@ function AppIcon({size, style}: IAppIconProps): JSX.Element {
         huge: 1024
     };
 
-    return <img src={`/global-icon/${size}`} height={`${heightBySize[size]}px`} style={style} alt="" />;
+    return <img src={`${GLOBAL_BASE_URL}/global-icon/${size}`} height={`${heightBySize[size]}px`} style={style} alt="" />;
 }
 
 export default AppIcon;

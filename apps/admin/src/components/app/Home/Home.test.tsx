@@ -30,8 +30,7 @@ jest.mock(
 );
 
 jest.mock('../../../constants', () => ({
-    APPS_ENDPOINT: '',
-    APP_ENDPOINT: ''
+    APP_BASE_URL: ''
 }));
 
 describe('Home', () => {

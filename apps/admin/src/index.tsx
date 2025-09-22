@@ -11,7 +11,7 @@ import ReactDOM from 'react-dom';
 import {Provider as ReduxProvider} from 'react-redux';
 import {store} from 'reduxStore/store';
 import {Loader} from 'semantic-ui-react';
-import {APPS_ENDPOINT, APP_ENDPOINT} from './constants';
+import {APP_BASE_URL} from './constants';
 import useAppLang from './hooks/useAppLang';
 import i18n from './i18n';
 import './index.css';
@@ -25,7 +25,7 @@ export function Index() {
 
     useEffect(() => {
         if (!i18nIsInitialized && lang) {
-            i18n.init(`${APPS_ENDPOINT}/${APP_ENDPOINT}`, lang);
+            i18n.init(APP_BASE_URL, lang);
             seti18nIsInitialized(true);
         }
     }, [lang]);

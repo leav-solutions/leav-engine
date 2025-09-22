@@ -5,7 +5,7 @@ import useLocalStorage from 'hooks/useLocalStorage';
 import {BrowserRouter as Router} from 'react-router-dom-v5';
 import styled from 'styled-components';
 import {greyBackground} from 'themingVar';
-import {APPS_ENDPOINT, APP_ENDPOINT} from '../../../constants';
+import {APP_BASE_URL} from '../../../constants';
 import AppMenu from '../AppMenu';
 import Header from '../Header';
 import Routes from '../Routes';
@@ -49,7 +49,7 @@ function Home(): JSX.Element {
     };
 
     return (
-        <Router basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`}>
+        <Router basename={APP_BASE_URL}>
             <HomeWrapper menuWidth={menuWidth}>
                 <HeaderWrapper>
                     <Header />
