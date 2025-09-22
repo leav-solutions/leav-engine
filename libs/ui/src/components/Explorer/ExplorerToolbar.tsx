@@ -27,9 +27,15 @@ const ExplorerToolbarListStyled = styled.ul`
     overflow: auto;
     flex-wrap: nowrap;
     align-items: center;
-    gap: 0;
+    gap: calc(var(--general-spacing-xxs) * 1px);
     white-space: nowrap;
     min-height: 26px; // height of the filter chip
+    width: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-self: center;
 
     &.headless {
         margin-bottom: 0;
@@ -37,7 +43,8 @@ const ExplorerToolbarListStyled = styled.ul`
 `;
 
 const DividerStyled = styled(KitDivider)`
-    height: 2em;
+    height: 26px;
+    margin-inline: calc(var(--general-spacing-xxs) * 1px);
 `;
 
 export const ExplorerToolbar: FunctionComponent<{
@@ -88,7 +95,7 @@ export const ExplorerToolbar: FunctionComponent<{
                 </>
             )}
             {(showFilters || showSorts) && (
-                <KitSpace size="s">
+                <>
                     {visibleFilters.length > 0 &&
                         visibleFilters.map(filter => (
                             <li key={filter.id}>
@@ -117,7 +124,7 @@ export const ExplorerToolbar: FunctionComponent<{
                             />
                         </li>
                     )}
-                </KitSpace>
+                </>
             )}
         </ExplorerToolbarListStyled>
     );

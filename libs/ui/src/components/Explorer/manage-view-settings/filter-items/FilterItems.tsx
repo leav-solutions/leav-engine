@@ -64,7 +64,7 @@ const _isLibraryTreeAttribute = (
 export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId}) => {
     const {t} = useSharedTranslation();
     const {
-        view: {filters, maxFilters},
+        view: {filters},
         dispatch
     } = useViewSettingsContext();
 
@@ -126,8 +126,6 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
             !('compute' in attributeDetailsById[attributeId] && attributeDetailsById[attributeId]?.compute)
     );
 
-    const canAddFilter = activeFilters.length < maxFilters;
-
     if (!Object.keys(attributeDetailsById).length) {
         return <></>;
     }
@@ -181,17 +179,13 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                     <FilterListItem
                         key={attributeId}
                         attributeId={attributeId}
-                        visibilityButtonProps={
-                            canAddFilter
-                                ? {
-                                      icon: <StyledEyeSlash />,
-                                      title: String(t('explorer.show')),
-                                      onClick: addFilter(attributeId)
-                                  }
-                                : undefined
-                        }
+                        visibilityButtonProps={{
+                            icon: <StyledEyeSlash />,
+                            title: String(t('explorer.show')),
+                            onClick: addFilter(attributeId)
+                        }}
                     >
-                        <KitFilter label={attributeDetailsById[attributeId].label} disabled={!canAddFilter} />
+                        <KitFilter label={attributeDetailsById[attributeId].label} />
                     </FilterListItem>
                 ))}
             </StyledList>

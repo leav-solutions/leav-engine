@@ -758,8 +758,7 @@ describe('ViewSettings Reducer', () => {
             ],
             fulltextSearch: 'test',
             attributesIds: ['first'],
-            viewType: 'table' as ViewType,
-            maxFilters: 2
+            viewType: 'table' as ViewType
         };
 
         const state = viewSettingsReducer(viewSettingsInitialState, {

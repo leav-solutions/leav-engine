@@ -69,7 +69,6 @@ export interface IViewSettingsState {
     pageSize: number;
     filtersOperator: 'AND' | 'OR';
     filters: ExplorerFilter[];
-    maxFilters: number;
     initialViewSettings: Pick<IViewSettingsState, 'viewType' | 'attributesIds' | 'sort' | 'pageSize' | 'filters'>;
     defaultViewSettings: DefaultViewSettings;
     massSelection: MassSelection;

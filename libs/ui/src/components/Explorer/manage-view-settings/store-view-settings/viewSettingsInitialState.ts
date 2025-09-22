@@ -5,8 +5,6 @@ import {IViewSettingsState} from './viewSettingsReducer';
 
 export const defaultPageSizeOptions = [20, 50];
 
-export const defaultMaxFilters = 3;
-
 export const DefaultViewId = null;
 
 export const viewSettingsInitialState: IViewSettingsState = {
@@ -26,7 +24,6 @@ export const viewSettingsInitialState: IViewSettingsState = {
     pageSize: defaultPageSizeOptions[0],
     filtersOperator: 'AND',
     filters: [],
-    maxFilters: defaultMaxFilters,
     massSelection: [],
     initialViewSettings: {
         viewType: 'table',
