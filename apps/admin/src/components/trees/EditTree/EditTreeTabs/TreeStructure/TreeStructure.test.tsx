@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedResponse} from '@apollo/client/testing';
+import {type MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 import {saveTreeQuery} from 'queries/trees/saveTreeMutation';
 import React from 'react';
 import {DndProvider} from 'react-dnd';
 import {TestBackend} from 'react-dnd-test-backend';
-import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
+import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockAttrTree} from '__mocks__/attributes';
 import {mockTree} from '__mocks__/trees';

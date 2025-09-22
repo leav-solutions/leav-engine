@@ -9,7 +9,7 @@ import {getCoreVersionQuery} from 'queries/version/getVersionQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {List} from 'semantic-ui-react';
-import {GET_VERSION} from '_gqlTypes/GET_VERSION';
+import {type GET_VERSION} from '_gqlTypes/GET_VERSION';
 
 function GeneralInfosTab(): JSX.Element {
     const {loading, error, data} = useQuery<GET_VERSION>(getCoreVersionQuery);

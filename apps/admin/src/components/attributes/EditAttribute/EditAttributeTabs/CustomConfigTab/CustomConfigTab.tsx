@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {SAVE_ATTRIBUTEVariables, SAVE_ATTRIBUTE} from '_gqlTypes/SAVE_ATTRIBUTE';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type SAVE_ATTRIBUTEVariables, type SAVE_ATTRIBUTE} from '_gqlTypes/SAVE_ATTRIBUTE';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
 import {saveAttributeQuery} from 'queries/attributes/saveAttributeMutation';

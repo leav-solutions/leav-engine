@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import styled from 'styled-components';
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 import {KitInput, KitTypography} from 'aristid-ds';
 import {FaFilter, FaList, FaSortAlphaDown} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -11,7 +11,7 @@ import {SortItems} from '../sort-items/SortItems';
 import {SettingItem} from './SettingItem';
 import {FilterItems} from '../filter-items/FilterItems';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-import {SettingsPanelPages} from '../open-view-settings/EditSettingsContext';
+import {type SettingsPanelPages} from '../open-view-settings/EditSettingsContext';
 import {useOpenViewSettings} from '../open-view-settings/useOpenViewSettings';
 import {SavedViews} from '../../list-saved-views/SavedViews';
 import {ViewActionsButtons} from '../save-view/ViewActionsButtons';

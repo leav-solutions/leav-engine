@@ -6,7 +6,7 @@ import {localizedTranslation} from '@leav/utils';
 import {Button, Space} from 'antd';
 import styled from 'styled-components';
 import {useLang} from '_ui/hooks';
-import {ISelectedAttribute} from '_ui/types/attributes';
+import {type ISelectedAttribute} from '_ui/types/attributes';
 import {AttributesSelectionListActionTypes} from '../../reducer/attributesSelectionListReducer';
 import {useAttributesSelectionListState} from '../../reducer/attributesSelectionListStateContext';
 import {SmallText, TextAttribute} from '../../sharedComponents';

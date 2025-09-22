@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
-import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {type RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {
-    TREE_NODE_CHILDREN_treeNodeChildren_list,
-    TREE_NODE_CHILDREN_treeNodeChildren_list_permissions
+    type TREE_NODE_CHILDREN_treeNodeChildren_list,
+    type TREE_NODE_CHILDREN_treeNodeChildren_list_permissions
 } from '_gqlTypes/TREE_NODE_CHILDREN';
-import {INavigationPath} from '_types/types';
+import {type INavigationPath} from '_types/types';
 import {mockPreviews} from './record';
 
 export const mockTreeRecord: RecordIdentity = {

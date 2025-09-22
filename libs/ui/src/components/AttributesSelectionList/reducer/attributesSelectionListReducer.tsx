@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {ISelectedAttribute} from '_ui/types/attributes';
-import {AttributesByLibAttributeFragment} from '_ui/_gqlTypes';
+import {type ISelectedAttribute} from '_ui/types/attributes';
+import {type AttributesByLibAttributeFragment} from '_ui/_gqlTypes';
 import {reorder} from '_ui/_utils';
 
 export interface IAttributesSelectionListState {

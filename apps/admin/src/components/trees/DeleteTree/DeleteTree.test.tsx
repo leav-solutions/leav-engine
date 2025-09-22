@@ -5,8 +5,8 @@ import {MockedProvider} from '@apollo/client/testing';
 import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
 import DeleteTree from '.';
-import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
-import {Mockify} from '../../../_types//Mockify';
+import {type GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
+import {type Mockify} from '../../../_types//Mockify';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 
 jest.mock('../../../hooks/useLang');

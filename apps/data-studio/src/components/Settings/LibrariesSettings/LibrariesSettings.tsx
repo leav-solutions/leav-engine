@@ -5,10 +5,10 @@ import {
     ErrorDisplay,
     Loading,
     SubmitStateNotifier,
-    SubmitStateNotifierStates,
+    type SubmitStateNotifierStates,
     useSaveApplicationMutation
 } from '@leav/ui';
-import {IApplicationSettings} from '_types/types';
+import {type IApplicationSettings} from '_types/types';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import {useEffect, useState} from 'react';

@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
-import {FeatureHook, IEntrypointLink, IMassActions} from '../_types';
-import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
-import {Dispatch, Key, useMemo} from 'react';
+import {type FeatureHook, type IEntrypointLink, type IMassActions} from '../_types';
+import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
+import {type Dispatch, type Key, useMemo} from 'react';
 import {useExplorerData} from '../_queries/useExplorerData';
 import {FaTrash} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitModal} from 'aristid-ds';
 import {MASS_SELECTION_ALL} from '../_constants';
-import {IValueToSubmit} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {type IValueToSubmit} from '_ui/components/RecordEdition/EditRecordContent/_types';
 
 export const useDeleteLinkValues = ({
     isEnabled,

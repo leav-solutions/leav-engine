@@ -3,16 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
 import LibraryIcon from 'components/shared/LibraryIcon';
-import {Location} from 'history';
+import {type Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {AiOutlineFileSearch} from 'react-icons/ai';
 import {useHistory, useLocation} from 'react-router-dom-v5';
-import {Button, Grid, Header, Tab, TabProps} from 'semantic-ui-react';
+import {Button, Grid, Header, Tab, type TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {indexRecordsMutation} from '../../../../queries/records/indexRecordsMutation';
-import {GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
-import {INDEX_RECORDS, INDEX_RECORDSVariables} from '../../../../_gqlTypes/INDEX_RECORDS';
+import {type GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
+import {type INDEX_RECORDS, type INDEX_RECORDSVariables} from '../../../../_gqlTypes/INDEX_RECORDS';
 import AttributesTab from './AttributesTab';
 import FormsTab from './FormsTab';
 import InfosTab from './InfosTab';

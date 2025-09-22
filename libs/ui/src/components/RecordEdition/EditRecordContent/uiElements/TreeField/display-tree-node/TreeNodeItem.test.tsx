@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import TreeNodeItem from './TreeNodeItem';
-import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
+import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {KitApp} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';
 

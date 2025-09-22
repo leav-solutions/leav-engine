@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SystemTranslation} from '_ui/types/scalars';
-import {AttributeConditionType, TreeConditionFilter} from '_ui/types/search';
+import {type SystemTranslation} from '_ui/types/scalars';
+import {type AttributeConditionType, type TreeConditionFilter} from '_ui/types/search';
 import {
-    AttributeFormat,
-    AttributeType,
-    LibraryBehavior,
-    RecordFilterInput,
-    RecordFilterOperator,
-    SortOrder,
-    ViewSizes,
-    ViewTypes
+    type AttributeFormat,
+    type AttributeType,
+    type LibraryBehavior,
+    type RecordFilterInput,
+    type RecordFilterOperator,
+    type SortOrder,
+    type ViewSizes,
+    type ViewTypes
 } from '_ui/_gqlTypes';
 import {gqlUnchecked} from '_ui/_utils';
 import {getEmbeddedFields} from '../attributes/getAttributeWithEmbeddedFields';

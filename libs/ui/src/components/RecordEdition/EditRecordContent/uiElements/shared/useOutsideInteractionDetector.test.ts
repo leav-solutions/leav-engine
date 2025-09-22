@@ -5,11 +5,11 @@ import {renderHook} from '@testing-library/react';
 import {useOutsideInteractionDetector} from './useOutsideInteractionDetector';
 import {
     EditRecordReducerActionsTypes,
-    IRecordPropertyWithAttribute
+    type IRecordPropertyWithAttribute
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {EDIT_RECORD_SIDEBAR_ID} from '_ui/constants';
 import userEvent from '@testing-library/user-event';
-import {RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
+import {type RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 describe('useOutsideInteractionDetector', () => {

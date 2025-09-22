@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, literal, GeneratedAqlQuery} from 'arangojs/aql';
-import {IAttributeTypesRepo} from 'infra/attributeTypes/attributeTypesRepo';
-import {IRecordFilterOption} from '../../../_types/record';
-import {IFilterTypesHelper} from './filterTypes';
-import {GetClassifyingFiltersVariableQueryPart} from './getClassifyingFiltersVariableQueryPart';
-import {GetSearchVariableName} from './getSearchVariableName';
+import {aql, literal, type GeneratedAqlQuery} from 'arangojs/aql';
+import {type IAttributeTypesRepo} from 'infra/attributeTypes/attributeTypesRepo';
+import {type IRecordFilterOption} from '../../../_types/record';
+import {type IFilterTypesHelper} from './filterTypes';
+import {type GetClassifyingFiltersVariableQueryPart} from './getClassifyingFiltersVariableQueryPart';
+import {type GetSearchVariableName} from './getSearchVariableName';
 
 interface IDeps {
     'core.infra.attributeTypes'?: IAttributeTypesRepo;

@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import axios from 'axios';
-import FormData from 'form-data';
-import jwt, {Algorithm} from 'jsonwebtoken';
-import {ActionsListConfig} from '_types/actionsList';
-import {ITreeElement} from '_types/tree';
+import type FormData from 'form-data';
+import jwt, {type Algorithm} from 'jsonwebtoken';
+import {type ActionsListConfig} from '_types/actionsList';
+import {type ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
 import {adminsGroupId} from '../../../_constants/users';
-import {AttributeFormats, AttributeTypes, IAttributeVersionsConf, IEmbeddedAttribute} from '../../../_types/attribute';
+import {AttributeFormats, type AttributeTypes, type IAttributeVersionsConf, type IEmbeddedAttribute} from '../../../_types/attribute';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
 
 async function _getAuthToken() {

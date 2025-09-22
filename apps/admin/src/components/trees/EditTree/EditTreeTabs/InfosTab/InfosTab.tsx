@@ -6,10 +6,10 @@ import {useHistory} from 'react-router-dom-v5';
 import {getTreesQuery} from '../../../../../queries/trees/getTreesQuery';
 import {saveTreeQuery} from '../../../../../queries/trees/saveTreeMutation';
 import {clearCacheForQuery} from '../../../../../utils';
-import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../../../_gqlTypes/GET_TREES';
-import {GET_TREE_BY_ID_trees_list} from '../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {TreeInput} from '../../../../../_gqlTypes/globalTypes';
-import {SAVE_TREE, SAVE_TREEVariables} from '../../../../../_gqlTypes/SAVE_TREE';
+import {type GET_TREES, type GET_TREESVariables, type GET_TREES_trees_list} from '../../../../../_gqlTypes/GET_TREES';
+import {type GET_TREE_BY_ID_trees_list} from '../../../../../_gqlTypes/GET_TREE_BY_ID';
+import {type TreeInput} from '../../../../../_gqlTypes/globalTypes';
+import {type SAVE_TREE, type SAVE_TREEVariables} from '../../../../../_gqlTypes/SAVE_TREE';
 import TreeInfosForm from './InfosForm';
 
 interface ITreeInfosTabProps {

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql, useApolloClient} from '@apollo/client';
-import {EditApplication, IEditApplicationProps, themeVars, useLang} from '@leav/ui';
+import {EditApplication, type IEditApplicationProps, themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Modal} from 'antd';
 import {useMemo, useState} from 'react';

@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {QueryResult} from '@apollo/client';
+import {type QueryResult} from '@apollo/client';
 import {useEffect, useState} from 'react';
 import {useGetFileDataQuery} from '_ui/_gqlTypes';
-import {IFileDataWithPreviewsStatus, IFilePreviewsStatus} from '../../_queries/records/getFileDataQuery';
+import {type IFileDataWithPreviewsStatus, type IFilePreviewsStatus} from '../../_queries/records/getFileDataQuery';
 
 export interface IUseGetFileDataQueryHook {
     loading: boolean;

@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {FunctionComponent, useEffect, useState} from 'react';
+import {type FunctionComponent, useEffect, useState} from 'react';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
-import {JoinLibraryContextFragment, RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
-import {ILinkFieldState} from '../../reducers/linkFieldReducer/linkFieldReducer';
-import {IFormElementProps} from '../../_types';
+import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
+import {type JoinLibraryContextFragment, type RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
+import {type ILinkFieldState} from '../../reducers/linkFieldReducer/linkFieldReducer';
+import {type IFormElementProps} from '../../_types';
 import {AntForm, KitInputWrapper} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import styled from 'styled-components';
@@ -21,7 +21,7 @@ import {
     EDIT_RECORD_MODAL_CLASSNAME,
     LINK_RECORDS_MODAL_CLASSNAME
 } from '_ui/components/Explorer/_constants';
-import {IFormLinkFieldSettings} from '@leav/utils/src/types/forms';
+import {type IFormLinkFieldSettings} from '@leav/utils/src/types/forms';
 
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 

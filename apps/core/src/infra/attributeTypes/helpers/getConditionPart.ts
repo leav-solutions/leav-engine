@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlLiteral, literal, GeneratedAqlQuery} from 'arangojs/aql';
+import {aql, type AqlLiteral, literal, type GeneratedAqlQuery} from 'arangojs/aql';
 import moment from 'moment';
-import {AttributeFormats, IAttribute} from '../../../_types/attribute';
-import {AttributeCondition, IDateFilterValue} from '../../../_types/record';
+import {AttributeFormats, type IAttribute} from '../../../_types/attribute';
+import {AttributeCondition, type IDateFilterValue} from '../../../_types/record';
 
 export type GetConditionPart = (
     valueIdentifier: string | AqlLiteral,

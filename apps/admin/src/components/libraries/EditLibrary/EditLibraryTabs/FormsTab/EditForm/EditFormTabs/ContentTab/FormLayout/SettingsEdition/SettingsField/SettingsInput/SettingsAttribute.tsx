@@ -4,9 +4,9 @@
 import AttributeSelector from 'components/attributes/AttributeSelector';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {GET_ATTRIBUTESVariables} from '_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTESVariables} from '_gqlTypes/GET_ATTRIBUTES';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {ISettingsFieldCommonProps} from '../../../../_types';
+import {type ISettingsFieldCommonProps} from '../../../../_types';
 
 export interface ISettingsAttributeProps extends ISettingsFieldCommonProps {
     library: string;

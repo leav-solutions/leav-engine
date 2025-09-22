@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined, DownOutlined, ExportOutlined, PictureOutlined} from '@ant-design/icons';
 import {Button, Dropdown} from 'antd';
-import {ReactNode, useState} from 'react';
+import {type ReactNode, useState} from 'react';
 import {DeactivateRecordsModal} from '_ui/components/DeactivateRecordsModal';
 import {ExportModal} from '_ui/components/ExportModal';
 import {TriggerPreviewsGenerationModal} from '_ui/components/TriggerPreviewsGenerationModal';

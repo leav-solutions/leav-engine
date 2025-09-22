@@ -2,46 +2,46 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {i18n} from 'i18next';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type i18n} from 'i18next';
+import {type IPermissionRepo} from 'infra/permission/permissionRepo';
+import {type IConfig} from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {adminUserId, systemUserId} from '../../_constants/users';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
 import {
     AdminPermissionsActions,
     ApplicationPermissionsActions,
     AttributePermissionsActions,
-    ILabeledPermissionsAction,
-    IPermission,
+    type ILabeledPermissionsAction,
+    type IPermission,
     LibraryPermissionsActions,
-    PermissionsActions,
+    type PermissionsActions,
     PermissionTypes,
     RecordAttributePermissionsActions,
     RecordPermissionsActions,
     TreeNodePermissionsActions,
     TreePermissionsActions
 } from '../../_types/permissions';
-import {IAdminPermissionDomain} from './adminPermissionDomain';
-import {IApplicationPermissionDomain} from './applicationPermissionDomain';
-import {IAttributePermissionDomain} from './attributePermissionDomain';
+import {type IAdminPermissionDomain} from './adminPermissionDomain';
+import {type IApplicationPermissionDomain} from './applicationPermissionDomain';
+import {type IAttributePermissionDomain} from './attributePermissionDomain';
 import getPermissionCachePatternKey from './helpers/getPermissionCachePatternKey';
-import {ILibraryPermissionDomain} from './libraryPermissionDomain';
-import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
-import {IRecordPermissionDomain} from './recordPermissionDomain';
-import {ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
-import {ITreeNodePermissionDomain} from './treeNodePermissionDomain';
-import {ITreePermissionDomain} from './treePermissionDomain';
+import {type ILibraryPermissionDomain} from './libraryPermissionDomain';
+import {type IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
+import {type IRecordPermissionDomain} from './recordPermissionDomain';
+import {type ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
+import {type ITreeNodePermissionDomain} from './treeNodePermissionDomain';
+import {type ITreePermissionDomain} from './treePermissionDomain';
 import {
-    IGetActionsByTypeParams,
-    IGetInheritedPermissionsParams,
-    IGetPermissionsByActionsParams,
-    IIsAllowedParams,
-    PermByActionsRes
+    type IGetActionsByTypeParams,
+    type IGetInheritedPermissionsParams,
+    type IGetPermissionsByActionsParams,
+    type IIsAllowedParams,
+    type PermByActionsRes
 } from './_types';
 
 export interface IPermissionDomain {

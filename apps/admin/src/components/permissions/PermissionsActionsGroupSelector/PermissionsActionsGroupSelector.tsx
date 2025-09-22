@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Header, List, ListItemProps} from 'semantic-ui-react';
+import {Header, List, type ListItemProps} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {PermissionTypes} from '_gqlTypes/globalTypes';
-import {IGroupedPermissionsActions} from '_types/permissions';
+import {type PermissionTypes} from '_gqlTypes/globalTypes';
+import {type IGroupedPermissionsActions} from '_types/permissions';
 
 interface IPermissionsActionsGroupSelectorProps {
     actions: IGroupedPermissionsActions;

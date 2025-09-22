@@ -7,8 +7,8 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import SortableTree from 'react-sortable-tree';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
-import {Mockify} from '../../../../../_types/Mockify';
+import {type GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {type Mockify} from '../../../../../_types/Mockify';
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
 import EmbeddedFieldsTab from './EmbeddedFieldsTab';
 

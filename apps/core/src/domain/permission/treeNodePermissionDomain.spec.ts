@@ -1,21 +1,21 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IValueRepo} from 'infra/value/valueRepo';
+import {type IQueryInfos} from '_types/queryInfos';
 import {PermissionsRelations, TreeNodePermissionsActions} from '../../_types/permissions';
-import {ITree, ITreeElement, TreePath} from '../../_types/tree';
+import {type ITree, type ITreeElement, type TreePath} from '../../_types/tree';
 import {mockAttrTree} from '../../__tests__/mocks/attribute';
 import {mockTree} from '../../__tests__/mocks/tree';
-import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
-import {ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
-import treeNodePermissionDomain, {ITreeNodePermissionDomainDeps} from './treeNodePermissionDomain';
-import {ITreePermissionDomain} from './treePermissionDomain';
-import {IGetTreeBasedPermissionParams} from './_types';
-import {ToAny} from 'utils/utils';
-import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
+import {type ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
+import treeNodePermissionDomain, {type ITreeNodePermissionDomainDeps} from './treeNodePermissionDomain';
+import {type ITreePermissionDomain} from './treePermissionDomain';
+import {type IGetTreeBasedPermissionParams} from './_types';
+import {type ToAny} from 'utils/utils';
+import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 
 const depsBase: ToAny<ITreeNodePermissionDomainDeps> = {
     'core.domain.permission.tree': jest.fn(),

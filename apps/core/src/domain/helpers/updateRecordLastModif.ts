@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordRepo} from 'infra/record/recordRepo';
+import {type IRecordRepo} from 'infra/record/recordRepo';
 import moment from 'moment';
-import {IUtils} from 'utils/utils';
-import {IQueryInfos} from '_types/queryInfos';
-import {IRecord} from '_types/record';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {type IUtils} from 'utils/utils';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IRecord} from '_types/record';
+import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 
 interface IDeps {
     'core.infra.record': IRecordRepo;

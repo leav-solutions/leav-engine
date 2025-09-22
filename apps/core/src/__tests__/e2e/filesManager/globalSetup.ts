@@ -5,7 +5,7 @@ import {amqpService} from '@leav/message-broker';
 import {getConfig} from '../../../config';
 import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
-import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
+import {ECacheType, type ICachesService} from '../../../infra/cache/cacheService';
 import {initDb} from '../../../infra/db/db';
 import {initRedis} from '../../../infra/cache/redis';
 import {initMailer} from '../../../infra/mailer';

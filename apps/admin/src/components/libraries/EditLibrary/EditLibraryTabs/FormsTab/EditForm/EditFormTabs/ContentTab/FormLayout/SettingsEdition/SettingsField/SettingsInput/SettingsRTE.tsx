@@ -6,7 +6,7 @@ import {useTranslation} from 'react-i18next';
 import RichTextEditor from 'react-rte';
 import styled from 'styled-components';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {ISettingsFieldCommonProps} from '../../../../_types';
+import {type ISettingsFieldCommonProps} from '../../../../_types';
 
 const EditorWrapper = styled.div`
     .rte-editor-toolbar select {

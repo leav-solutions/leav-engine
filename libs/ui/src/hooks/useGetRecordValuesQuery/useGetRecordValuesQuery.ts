@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {QueryResult, useQuery} from '@apollo/client';
-import {Override} from '@leav/utils';
+import {type QueryResult, useQuery} from '@apollo/client';
+import {type Override} from '@leav/utils';
 import {useState} from 'react';
-import {RecordFilterCondition, RecordFilterInput, RecordFilterOperator} from '_ui/_gqlTypes';
+import {RecordFilterCondition, type RecordFilterInput, RecordFilterOperator} from '_ui/_gqlTypes';
 import {
     getRecordColumnsValues,
-    GetRecordColumnsValuesRecord,
-    IGetRecordColumnsValues,
-    IGetRecordColumnsValuesVariables
+    type GetRecordColumnsValuesRecord,
+    type IGetRecordColumnsValues,
+    type IGetRecordColumnsValuesVariables
 } from '../../_queries/records/getRecordColumnsValues';
 
 export interface IColumnsValuesByRecord {

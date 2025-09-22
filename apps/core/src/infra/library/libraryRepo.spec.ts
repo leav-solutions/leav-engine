@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
 import {AttributeTypes} from '../../_types/attribute';
-import {IAttributeRepo} from '../attribute/attributeRepo';
-import {IDbUtils} from '../db/dbUtils';
+import {type IAttributeRepo} from '../attribute/attributeRepo';
+import {type IDbUtils} from '../db/dbUtils';
 import libraryRepo from './libraryRepo';
 
 describe('LibraryRepo', () => {

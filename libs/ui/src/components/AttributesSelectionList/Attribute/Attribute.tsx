@@ -10,7 +10,7 @@ import {attributeToSelectedAttribute} from '../helpers/attributeToSelectedAttrib
 import {AttributesSelectionListActionTypes} from '../reducer/attributesSelectionListReducer';
 import {useAttributesSelectionListState} from '../reducer/attributesSelectionListStateContext';
 import {SmallText, TextAttribute} from '../sharedComponents';
-import {ICommonAttributeComponentProps} from '../_types';
+import {type ICommonAttributeComponentProps} from '../_types';
 
 const Item = styled.div`
     padding: 0.5em;

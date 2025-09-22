@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* eslint-disable react-refresh/only-export-components */
-import {InMemoryCacheConfig} from '@apollo/client';
-import {MockedResponse} from '@apollo/client/testing';
-import {ILangContext, IUserContext, LangContext, UserContext} from '@leav/ui';
-import {render, RenderOptions, RenderResult} from '@testing-library/react';
+import {type InMemoryCacheConfig} from '@apollo/client';
+import {type MockedResponse} from '@apollo/client/testing';
+import {type ILangContext, type IUserContext, LangContext, UserContext} from '@leav/ui';
+import {render, type RenderOptions, type RenderResult} from '@testing-library/react';
 import ApplicationContext from 'context/ApplicationContext';
-import {IApplicationContext} from 'context/ApplicationContext/_types';
-import {PropsWithChildren, ReactElement} from 'react';
-import {RootState} from 'reduxStore/store';
-import {GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
-import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {type IApplicationContext} from 'context/ApplicationContext/_types';
+import {type PropsWithChildren, type ReactElement} from 'react';
+import {type RootState} from 'reduxStore/store';
+import {type GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {type GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {mockRecord} from '__mocks__/common/record';

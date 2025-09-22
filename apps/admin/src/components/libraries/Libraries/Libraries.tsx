@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
-import {History} from 'history';
+import {type History} from 'history';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {AiOutlineDatabase} from 'react-icons/ai';
@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {addWildcardToFilters, isLibraryInApp} from '../../../utils/utils';
-import {GET_LIBRARIES, GET_LIBRARIESVariables} from '../../../_gqlTypes/GET_LIBRARIES';
+import {type GET_LIBRARIES, type GET_LIBRARIESVariables} from '../../../_gqlTypes/GET_LIBRARIES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import LibrariesList from '../LibrariesList';
 

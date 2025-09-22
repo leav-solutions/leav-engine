@@ -2,33 +2,33 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {IAttributeForRepo, IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {IFormRepo} from 'infra/form/formRepo';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IUtils} from 'utils/utils';
-import {IFormStrict} from '_types/forms';
-import {ILibrary} from '_types/library';
-import {IQueryInfos} from '_types/queryInfos';
-import {IDateRangeValue} from '_types/value';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
+import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
+import {type IAttributeForRepo, type IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {type IFormRepo} from 'infra/form/formRepo';
+import {type ILibraryRepo} from 'infra/library/libraryRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IUtils} from 'utils/utils';
+import {type IFormStrict} from '_types/forms';
+import {type ILibrary} from '_types/library';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IDateRangeValue} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {
     AttributeFormats,
-    IAttribute,
-    IGetCoreAttributesParams,
-    IGetCoreFormAttributesParams,
-    IOAllowedTypes
+    type IAttribute,
+    type IGetCoreAttributesParams,
+    type IGetCoreFormAttributesParams,
+    type IOAllowedTypes
 } from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {IList, SortOrder} from '../../_types/list';
+import {type IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
-import {IActionsListDomain} from '../actionsList/actionsListDomain';
+import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
 import {validateAttributeData} from './helpers/attributeValidationHelper';

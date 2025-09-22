@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {renderHook} from '_ui/_tests/testUtils';
 import {useApplicationMatchingMemo} from '../useApplicationMatchingMemo';
-import {Workspace} from '../types';
-import {Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {type Workspace} from '../types';
+import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 const panelUsers: Panel = {
     id: 'users',

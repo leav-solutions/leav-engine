@@ -1,22 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
 import {withFilter} from 'graphql-subscriptions';
-import {IUtils} from 'utils/utils';
-import winston from 'winston';
-import {IConfig} from '_types/config';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IList, IPaginationParams, ISortParams} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IRecord} from '_types/record';
-import {ITasksManagerDomain} from '../../domain/tasksManager/tasksManagerDomain';
+import {type IUtils} from 'utils/utils';
+import type winston from 'winston';
+import {type IConfig} from '_types/config';
+import {type IAppGraphQLSchema} from '_types/graphql';
+import {type IList, type IPaginationParams, type ISortParams} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IRecord} from '_types/record';
+import {type ITasksManagerDomain} from '../../domain/tasksManager/tasksManagerDomain';
 import {TriggerNames} from '../../_types/eventsManager';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition} from '../../_types/record';
-import {ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
-import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
+import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
 export interface ITasksManagerApp extends IGraphqlAppModule {
     initMaster(): Promise<NodeJS.Timer>;

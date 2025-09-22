@@ -4,8 +4,8 @@
 import React, {useEffect, useMemo, useReducer} from 'react';
 import {Button, Dropdown, Icon, Input, Label, Segment} from 'semantic-ui-react';
 import styles from './FiltersPanel.module.css';
-import {IListProps} from './MainPanel';
-import {ActionTypes, IFilter} from './NavigatorReducer';
+import {type IListProps} from './MainPanel';
+import {ActionTypes, type IFilter} from './NavigatorReducer';
 
 const emptyFilter: IFilter = {
     attribute: '',

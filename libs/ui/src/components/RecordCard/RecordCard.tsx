@@ -4,9 +4,9 @@
 import {localizedTranslation} from '@leav/utils';
 import useLang from '_ui/hooks/useLang';
 import {PreviewSize} from '../../constants';
-import {IRecordIdentityWhoAmI} from '../../types/records';
-import {EntityCard, IEntityData} from '../EntityCard';
-import {IRecordCardProps} from './_types';
+import {type IRecordIdentityWhoAmI} from '../../types/records';
+import {EntityCard, type IEntityData} from '../EntityCard';
+import {type IRecordCardProps} from './_types';
 
 const _getPreviewBySize = (preview?: IRecordIdentityWhoAmI['preview'], size?: PreviewSize) => {
     const fileSizeByPreviewSize: {[size in PreviewSize]: string} = {

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ViewTypes} from '_ui/_gqlTypes';
-import {ViewType} from './manage-view-settings/store-view-settings/viewSettingsReducer';
+import {type ViewType} from './manage-view-settings/store-view-settings/viewSettingsReducer';
 
 //TODO: this mapping is here for backward compatibility. When the old explorer is removed, we should updates types on the backend and remove this mapping
 export const mapViewTypeFromExplorerToLegacy: Record<ViewType, ViewTypes> = {

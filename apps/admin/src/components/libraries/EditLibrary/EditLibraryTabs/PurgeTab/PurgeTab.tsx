@@ -7,16 +7,16 @@ import Loading from 'components/shared/Loading';
 import {purgeRecordsMutation} from 'queries/records/purgeRecords';
 import {
     getRecordsListQuery,
-    IGetRecordsListQuery,
-    IGetRecordsListQueryVariables,
+    type IGetRecordsListQuery,
+    type IGetRecordsListQueryVariables,
     RecordFilterCondition
 } from 'queries/records/recordsListQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Confirm, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
-import {PURGE_RECORDS, PURGE_RECORDSVariables} from '_gqlTypes/PURGE_RECORDS';
+import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
+import {type PURGE_RECORDS, type PURGE_RECORDSVariables} from '_gqlTypes/PURGE_RECORDS';
 
 const Summary = styled.div`
     margin: 1rem 0;

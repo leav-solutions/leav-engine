@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ChildrenAsRecordValuePermissionFilterInput, useTreeDataQueryQuery} from '_ui/_gqlTypes';
+import {type ChildrenAsRecordValuePermissionFilterInput, useTreeDataQueryQuery} from '_ui/_gqlTypes';
 import {ErrorDisplay} from '../..';
 import useLang from '../../hooks/useLang';
-import {ITreeNodeWithRecord} from '../../types/trees';
+import {type ITreeNodeWithRecord} from '../../types/trees';
 import {SelectTreeNodeContent} from './SelectTreeNodeContent';
 import {SelectTreeNodeContentSkeleton} from './SelectTreeNodeContentSkeleton';
 

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {LogAction, useGetRecordHistoryQuery} from '_ui/_gqlTypes';
-import {LogEntry} from '../_types';
+import {type LogEntry} from '../_types';
 import {useCallback, useEffect, useState} from 'react';
 
 export interface IUseFetchRecordHistoryHook {

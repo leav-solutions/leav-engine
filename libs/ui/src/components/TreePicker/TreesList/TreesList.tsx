@@ -3,16 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useApolloClient} from '@apollo/client';
-import {localizedTranslation, Override} from '@leav/utils';
-import {Button, Input, Table, TableColumnsType} from 'antd';
-import {ComponentProps, Key, useState} from 'react';
+import {localizedTranslation, type Override} from '@leav/utils';
+import {Button, Input, Table, type TableColumnsType} from 'antd';
+import {type ComponentProps, type Key, useState} from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
-    GetTreesQuery,
+    type GetTreesQuery,
     PermissionsActions,
     PermissionTypes,
-    TreeLightFragment,
+    type TreeLightFragment,
     useGetTreesQuery,
     useIsAllowedQuery
 } from '_ui/_gqlTypes';
@@ -21,7 +21,7 @@ import {extractPermissionFromQuery} from '_ui/_utils';
 import {PreviewSize} from '../../../constants';
 import {useLang} from '../../../hooks';
 import {EditTreeModal} from '../../EditTreeModal';
-import {EntityCard, IEntityData} from '../../EntityCard';
+import {EntityCard, type IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
 

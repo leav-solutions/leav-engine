@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {ILang} from '_ui/types/misc';
-import {IAttribute, IField, IParentAttributeData} from '_ui/types/search';
-import {ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
+import {type ILang} from '_ui/types/misc';
+import {type IAttribute, type IField, type IParentAttributeData} from '_ui/types/search';
+import {type ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {getAttributeFromKey} from '_ui/_utils';
 
 export default (fieldKey: string, library: ILibraryDetailExtended, attributes: IAttribute[], lang: ILang): IField => {

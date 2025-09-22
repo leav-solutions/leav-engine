@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {isTypeStandard} from '@leav/utils';
-import {IExplorerData} from './_types';
+import {type IExplorerData} from './_types';
 import {useEffect, useRef, useState} from 'react';
 import {AttributeFormat} from '_ui/_gqlTypes';
 

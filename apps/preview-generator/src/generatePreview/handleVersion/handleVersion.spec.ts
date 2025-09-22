@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {join} from 'path';
 import {execute} from './../execute/execute';
-import {handleVersion, IHandleVersion} from './handleVersion';
+import {handleVersion, type IHandleVersion} from './handleVersion';
 
 describe('handleVersion', () => {
     const output = './test.png';

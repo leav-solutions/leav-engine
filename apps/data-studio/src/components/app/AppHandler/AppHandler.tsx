@@ -10,7 +10,7 @@ import {
     ErrorBoundary,
     ErrorDisplay,
     ErrorDisplayTypes,
-    IUserContext,
+    type IUserContext,
     LangContext,
     Loading,
     useAntdLocale,
@@ -34,12 +34,12 @@ import {useTranslation} from 'react-i18next';
 import {useAppDispatch} from 'reduxStore/store';
 import {addTask} from 'reduxStore/tasks';
 import {ThemeProvider} from 'styled-components';
-import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
-import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {GET_LANGS} from '_gqlTypes/GET_LANGS';
+import {type GET_APPLICATION_BY_ENDPOINT, type GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {type GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {type GET_LANGS} from '_gqlTypes/GET_LANGS';
 import {getMe} from '../../../graphQL/queries/userData/me';
 import {initialActiveLibrary, useActiveLibrary} from 'hooks/useActiveLibrary';
-import {ME} from '../../../_gqlTypes/ME';
+import {type ME} from '../../../_gqlTypes/ME';
 import Router from '../../Router';
 import ReactModal from 'react-modal';
 

@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordIdentityWhoAmI, SystemTranslation, IValueVersion} from '_ui/types';
-import {RecordFormAttributeFragment, RecordUpdateSubscription, ValueDetailsFragment} from '_ui/_gqlTypes';
+import {type IRecordIdentityWhoAmI, type SystemTranslation, type IValueVersion} from '_ui/types';
+import {type RecordFormAttributeFragment, type RecordUpdateSubscription, type ValueDetailsFragment} from '_ui/_gqlTypes';
 import {
-    RecordFormElementsValueLinkValue,
-    RecordFormElementsValueStandardValue,
-    RecordFormElementsValueTreeValue
+    type RecordFormElementsValueLinkValue,
+    type RecordFormElementsValueStandardValue,
+    type RecordFormElementsValueTreeValue
 } from '_ui/hooks/useGetRecordForm';
 import {TypeGuards} from '_ui/components/LibraryItemsList/LibraryItemsListTable/Cell/typeGuards';
 

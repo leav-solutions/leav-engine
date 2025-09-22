@@ -4,7 +4,7 @@
 import React from 'react';
 import {Input} from 'semantic-ui-react';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {ISettingsFieldCommonProps} from '../../../../_types';
+import {type ISettingsFieldCommonProps} from '../../../../_types';
 
 function SettingsTextInput({onChange, fieldName, disabled}: ISettingsFieldCommonProps): JSX.Element {
     const {

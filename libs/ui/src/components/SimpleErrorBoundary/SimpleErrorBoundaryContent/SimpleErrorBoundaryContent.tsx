@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FrownOutlined} from '@ant-design/icons';
 import {Result} from 'antd';
-import {ErrorInfo, FunctionComponent} from 'react';
+import {type ErrorInfo, type FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {isDevEnv} from '_ui/_utils/isDevEnv';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';

@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ColorPicker, Form, Input, InputNumber, Modal, Radio, Space} from 'antd';
-import {ComponentProps, useState} from 'react';
+import {type ComponentProps, useState} from 'react';
 import {useLang} from '../../../../../hooks';
 import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
-import {LibraryPreviewsSettingsFragment} from '../../../../../_gqlTypes';
+import {type LibraryPreviewsSettingsFragment} from '../../../../../_gqlTypes';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SizesEditor} from './SizesEditor';
 

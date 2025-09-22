@@ -4,7 +4,7 @@
 import {useMutation, useQuery} from '@apollo/client';
 import {ErrorDisplay, Loading, useLang} from '@leav/ui';
 import {Table} from 'antd';
-import {ColumnsType} from 'antd/lib/table';
+import {type ColumnsType} from 'antd/lib/table';
 import TreeIcon from 'components/shared/TreeIcon';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
@@ -13,9 +13,9 @@ import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import {getTreeLink, localizedTranslation} from 'utils';
-import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {type GET_USER_DATA, type GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {FAVORITE_TREES_KEY} from '../../../constants';
-import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
+import {type SAVE_USER_DATA, type SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
 import FavoriteStar from '../FavoriteStar';
 
 const TreeLink = styled(Link)`

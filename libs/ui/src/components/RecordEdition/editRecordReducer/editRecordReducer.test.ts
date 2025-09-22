@@ -7,7 +7,7 @@ import {mockRecordPropertyWithAttribute} from '_ui/__mocks__/common/value';
 import editRecordReducer, {
     EditRecordReducerActionsTypes,
     EditRecordSidebarContentTypeMap,
-    IEditRecordReducerState,
+    type IEditRecordReducerState,
     initialState
 } from './editRecordReducer';
 

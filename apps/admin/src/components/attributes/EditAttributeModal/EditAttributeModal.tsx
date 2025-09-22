@@ -6,7 +6,7 @@ import {useTranslation} from 'react-i18next';
 import {Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import EditAttribute from '../EditAttribute';
-import {OnAttributePostSaveFunc} from '../EditAttribute/EditAttribute';
+import {type OnAttributePostSaveFunc} from '../EditAttribute/EditAttribute';
 
 const GridContent = styled(Modal.Content)`
     &&& {

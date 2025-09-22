@@ -7,7 +7,7 @@ import {getFlagByLang} from '@leav/utils';
 import {Button, Drawer, Menu} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {styled} from 'styled-components';
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 
 const CustomMenu = styled(Menu)`
     .anticon {

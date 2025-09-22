@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ImportMode, ImportType} from '_ui/_gqlTypes';
-import {ImportSteps, ISheet, SheetSettingsError} from '../_types';
+import {ImportSteps, type ISheet, SheetSettingsError} from '../_types';
 
 export interface IImportReducerState {
     defaultLibrary: string;

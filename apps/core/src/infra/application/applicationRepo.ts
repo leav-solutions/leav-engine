@@ -5,14 +5,14 @@ import {appRootPath} from '@leav/app-root-path';
 import {aql} from 'arangojs';
 import fs, {readdir} from 'fs/promises';
 import path from 'path';
-import winston from 'winston';
-import {IConfig} from '_types/config';
-import {IList} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IApplication, IApplicationModule} from '../../_types/application';
-import {IGetCoreEntitiesParams} from '../../_types/shared';
-import {IDbService} from '../db/dbService';
-import {IDbUtils} from '../db/dbUtils';
+import type winston from 'winston';
+import {type IConfig} from '_types/config';
+import {type IList} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IApplication, type IApplicationModule} from '../../_types/application';
+import {type IGetCoreEntitiesParams} from '../../_types/shared';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
 
 export interface IApplicationRepo {
     getApplications(params: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<IApplication>>;

@@ -5,7 +5,7 @@ import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
-import {History} from 'history';
+import {type History} from 'history';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {RiNodeTree} from 'react-icons/ri';
@@ -15,7 +15,7 @@ import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
 import {addWildcardToFilters, isTreeInApp} from '../../../utils/utils';
-import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
+import {type GET_TREES, type GET_TREESVariables, type GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import TreesList from '../TreesList';
 

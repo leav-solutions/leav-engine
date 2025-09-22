@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
-import {IAmqp, onMessageFunc} from './types/amqp';
+import {type IAmqp, type onMessageFunc} from './types/amqp';
 
 export interface IAmqpService {
     publisher: {connection: amqp.ChannelModel; channel: amqp.ConfirmChannel};

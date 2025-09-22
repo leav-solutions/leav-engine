@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
-import {FunctionComponent,useState} from 'react';
+import {type FunctionComponent,useState} from 'react';
 import {LibraryItemsList} from '_ui/components/LibraryItemsList';
 import {ErrorDisplayTypes} from '_ui/constants';
 import useGetLibraryDetailExtendedQuery from '_ui/hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ISearchSelection} from '_ui/types';
+import {type ISearchSelection} from '_ui/types';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 

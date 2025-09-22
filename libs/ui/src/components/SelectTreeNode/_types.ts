@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, Key} from 'react';
-import {KitTree} from 'aristid-ds';
-import {ITreeNodeWithRecord} from '_ui/types';
+import {type ComponentProps, type Key} from 'react';
+import {type KitTree} from 'aristid-ds';
+import {type ITreeNodeWithRecord} from '_ui/types';
 
 export interface ITreeMapElement extends ITreeNodeWithRecord {
     isLeaf?: boolean;

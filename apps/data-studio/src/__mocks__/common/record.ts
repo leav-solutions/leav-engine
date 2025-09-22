@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FileType} from '@leav/utils';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 
 export const mockPreviews: Preview = {
     tiny: '/fake/url/tiny.jpg',

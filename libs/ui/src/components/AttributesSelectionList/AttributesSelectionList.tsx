@@ -7,7 +7,7 @@ import {useEffect, useReducer, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ISelectedAttribute} from '_ui/types/attributes';
+import {type ISelectedAttribute} from '_ui/types/attributes';
 import {useGetAttributesByLibQuery} from '_ui/_gqlTypes';
 import {ErrorDisplay} from '../ErrorDisplay';
 import Attribute from './Attribute';

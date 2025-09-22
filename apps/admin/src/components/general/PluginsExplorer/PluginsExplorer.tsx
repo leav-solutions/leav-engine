@@ -6,7 +6,7 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {getPluginsQuery} from 'queries/plugins/getPluginsQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {GET_ALL_PLUGINS} from '_gqlTypes/GET_ALL_PLUGINS';
+import {type GET_ALL_PLUGINS} from '_gqlTypes/GET_ALL_PLUGINS';
 import PluginsList from './PluginsList';
 
 const PluginsExplorer = (): JSX.Element => {

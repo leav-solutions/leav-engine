@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createContext} from 'react';
-import {useIFrameMessenger} from '../useIFrameMessenger/useIFrameMessenger';
+import {type useIFrameMessenger} from '../useIFrameMessenger/useIFrameMessenger';
 
 type IframeMessengerContextType = ReturnType<typeof useIFrameMessenger>;
 

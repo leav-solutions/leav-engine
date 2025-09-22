@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ArrowsAltOutlined} from '@ant-design/icons';
-import {Button, ButtonProps} from 'antd';
-import {SyntheticEvent, useState} from 'react';
-import {IRecordIdentityWhoAmI} from '_ui/types/records';
-import {IValueVersion} from '_ui/types/values';
+import {Button, type ButtonProps} from 'antd';
+import {type SyntheticEvent, useState} from 'react';
+import {type IRecordIdentityWhoAmI} from '_ui/types/records';
+import {type IValueVersion} from '_ui/types/values';
 import {EditRecordModal} from '../EditRecordModal';
 
 interface IEditRecordBtnProps extends ButtonProps {

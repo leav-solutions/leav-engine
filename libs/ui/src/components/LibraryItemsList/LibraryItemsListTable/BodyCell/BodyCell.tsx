@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Cell as ReactTableTypeCell} from 'react-table';
+import {type Cell as ReactTableTypeCell} from 'react-table';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
-import {ITableRow} from '_ui/types/search';
+import {type ITableRow} from '_ui/types/search';
 import {infosCol, INFOS_COLUMN_WIDTH, selectionColumn} from '../../constants';
 import useSearchReducer from '../../hooks/useSearchReducer';
 import Cell from '../Cell';

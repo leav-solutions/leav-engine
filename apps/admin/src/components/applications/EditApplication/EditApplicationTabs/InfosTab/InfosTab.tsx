@@ -6,11 +6,11 @@ import {useEditApplicationContext} from 'context/EditApplicationContext';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {saveApplicationMutation} from 'queries/applications/saveApplicationMutation';
 import {useHistory} from 'react-router-v5';
-import {GET_APPLICATION_BY_ID, GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
-import {SAVE_APPLICATION, SAVE_APPLICATIONVariables} from '_gqlTypes/SAVE_APPLICATION';
-import {IFormError} from '_types/errors';
+import {type GET_APPLICATION_BY_ID, type GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {type SAVE_APPLICATION, type SAVE_APPLICATIONVariables} from '_gqlTypes/SAVE_APPLICATION';
+import {type IFormError} from '_types/errors';
 import InfosForm from './InfosForm';
-import {ApplicationInfosFormValues} from './_types';
+import {type ApplicationInfosFormValues} from './_types';
 
 function InfosTab(): JSX.Element {
     const apolloClient = useApolloClient();

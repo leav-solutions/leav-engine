@@ -4,7 +4,7 @@
 import {Input} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
-import {IFilterInputProps} from '../../Filter';
+import {type IFilterInputProps} from '../../Filter';
 
 const StyledInput = styled(Input)`
     // Remove arrows on number input

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitButton, KitSpace} from 'aristid-ds';
-import {IPrimaryAction} from '../_types';
-import {IViewSettingsState} from '../manage-view-settings';
+import {type IPrimaryAction} from '../_types';
+import {type IViewSettingsState} from '../manage-view-settings';
 import {MASS_SELECTION_ALL} from '../_constants';
 
 /**

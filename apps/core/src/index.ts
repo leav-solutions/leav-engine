@@ -4,11 +4,11 @@
 import {amqpService} from '@leav/message-broker';
 import {monitoringServer} from '@leav/monitoring-server';
 import fs from 'fs';
-import {IConfig, CoreMode} from './_types/config';
-import {IFilesManagerInterface} from 'interface/filesManager';
-import {IIndexationManagerInterface} from 'interface/indexationManager';
-import {IServer} from 'interface/server';
-import {ITasksManagerInterface} from 'interface/tasksManager';
+import {type IConfig, CoreMode} from './_types/config';
+import {type IFilesManagerInterface} from 'interface/filesManager';
+import {type IIndexationManagerInterface} from 'interface/indexationManager';
+import {type IServer} from 'interface/server';
+import {type ITasksManagerInterface} from 'interface/tasksManager';
 import {getConfig, validateConfig} from './config';
 import {initDI} from './depsManager';
 import i18nextInit from './i18nextInit';

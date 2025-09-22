@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlUnchecked} from '../../utils';
-import {GET_LIB_BY_ID_libraries_list_attributes} from '../../_gqlTypes/GET_LIB_BY_ID';
+import {type GET_LIB_BY_ID_libraries_list_attributes} from '../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeFormat} from '../../_gqlTypes/globalTypes';
 import {valueDetailsExtendedFragment, valueDetailsFragment} from '../values/valueDetailsFragment';
 import {recordIdentityFragment} from './recordIdentityFragment';

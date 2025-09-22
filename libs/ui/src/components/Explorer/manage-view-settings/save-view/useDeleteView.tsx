@@ -5,14 +5,14 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton, KitModal, KitTypography} from 'aristid-ds';
 import {FaTimes, FaTrash} from 'react-icons/fa';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-import {ComponentProps, useState} from 'react';
+import {type ComponentProps, useState} from 'react';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import useExecuteDeleteViewMutation from '_ui/hooks/useExecuteDeleteViewMutation/useExecuteDeleteViewMutation';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
-import {IUserView, IDataViewOnAction} from '../../_types';
+import {type IUserView, type IDataViewOnAction} from '../../_types';
 import styled from 'styled-components';
-import {Button} from 'antd';
+import {type Button} from 'antd';
 
 const StyledButton = styled.button`
     all: unset;

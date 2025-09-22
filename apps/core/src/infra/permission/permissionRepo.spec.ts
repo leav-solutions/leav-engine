@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {IQueryInfos} from '_types/queryInfos';
-import {IPermission, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
-import {IDbUtils} from '../db/dbUtils';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IPermission, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
+import {type IDbUtils} from '../db/dbUtils';
 import permissionRepo from './permissionRepo';
 
 describe('PermissionRepo', () => {

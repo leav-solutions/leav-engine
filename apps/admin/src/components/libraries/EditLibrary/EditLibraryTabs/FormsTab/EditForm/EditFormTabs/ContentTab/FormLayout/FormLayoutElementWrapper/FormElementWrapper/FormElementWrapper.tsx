@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import React, {useRef, useState} from 'react';
-import {useDrag, useDrop, XYCoord} from 'react-dnd';
+import {useDrag, useDrop, type XYCoord} from 'react-dnd';
 import {Button, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../../../../../../../../hooks/useLang';
 import {getAttributesQuery} from '../../../../../../../../../../../queries/attributes/getAttributesQuery';
 import {localizedLabel} from '../../../../../../../../../../../utils';
-import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTES, type GET_ATTRIBUTESVariables} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../../../../../../../../../shared/Loading';
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
-import {FormBuilderActionTypes, IFormBuilderStateAndDispatch} from '../../../formBuilderReducer/formBuilderReducer';
-import {DraggableElementTypes, IFormBuilderDragObject, IFormElement, IFormElementPos} from '../../../_types';
+import {FormBuilderActionTypes, type IFormBuilderStateAndDispatch} from '../../../formBuilderReducer/formBuilderReducer';
+import {DraggableElementTypes, type IFormBuilderDragObject, type IFormElement, type IFormElementPos} from '../../../_types';
 
 interface IFieldWrapperProps extends IFormBuilderStateAndDispatch {
     element: IFormElement;

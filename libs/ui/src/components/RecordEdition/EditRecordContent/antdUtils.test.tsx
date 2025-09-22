@@ -8,7 +8,7 @@ import {
 } from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
-import {RecordFormElementAttribute, RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
+import {type RecordFormElementAttribute, type RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
 jest.mock('dayjs', () => ({
     unix: jest.fn(t => t)

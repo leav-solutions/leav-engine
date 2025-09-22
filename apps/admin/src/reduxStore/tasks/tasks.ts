@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
+import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
+import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 
 export interface ITasksState {
     tasks: {[taskId: string]: GET_TASKS_tasks_list};

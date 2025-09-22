@@ -5,7 +5,7 @@ import React, {useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Label, Icon, Divider} from 'semantic-ui-react';
 
-import {IListProps} from './MainPanel';
+import {type IListProps} from './MainPanel';
 import {ActionTypes} from './NavigatorReducer';
 
 import styles from './MainPanel.module.css';

@@ -4,7 +4,7 @@
 import Loading from 'components/shared/Loading';
 import hexToRgba from 'hex-rgba';
 import React from 'react';
-import {Input, InputOnChangeData} from 'semantic-ui-react';
+import {Input, type InputOnChangeData} from 'semantic-ui-react';
 
 interface IPermissionSelectorProps {
     value: boolean | null;

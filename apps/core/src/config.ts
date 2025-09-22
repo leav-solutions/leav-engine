@@ -4,7 +4,7 @@
 import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
 import Joi from 'joi';
-import {CoreMode, IConfig} from './_types/config';
+import {CoreMode, type IConfig} from './_types/config';
 import {env as appEnv} from './env';
 
 export const validateConfig = (conf: IConfig) => {

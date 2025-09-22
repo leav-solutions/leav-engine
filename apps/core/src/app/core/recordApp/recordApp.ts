@@ -1,41 +1,41 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IKeyValue, PublishedEvent} from '@leav/utils';
-import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
+import {type IKeyValue, type PublishedEvent} from '@leav/utils';
+import {type ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type IPermissionDomain} from 'domain/permission/permissionDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
 import LeavError from '../../../errors/LeavError';
-import {GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
+import {type GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
-import {IUtils} from 'utils/utils';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {ITree} from '_types/tree';
-import {IPreview} from '../../../_types/preview';
+import {type IUtils} from 'utils/utils';
+import {type IAppGraphQLSchema} from '_types/graphql';
+import {type ICursorPaginationParams, type IListWithCursor, type IPaginationParams} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type ITree} from '_types/tree';
+import {type IPreview} from '../../../_types/preview';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors, ErrorTypes} from '../../../_types/errors';
 import {TriggerNames} from '../../../_types/eventsManager';
-import {AttributePermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
+import {type AttributePermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
 import {
     AttributeCondition,
-    IRecord,
-    IRecordFilterLight,
-    IRecordIdentity,
-    IRecordUpdateEvent,
-    IRecordUpdateEventFilters,
+    type IRecord,
+    type IRecordFilterLight,
+    type IRecordIdentity,
+    type IRecordUpdateEvent,
+    type IRecordUpdateEventFilters,
     TreeCondition
 } from '../../../_types/record';
-import {IGraphqlAppModule, IGraphqlApp} from '../../graphql/graphqlApp';
-import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
-import {IIndexationManagerApp} from '../indexationManagerApp';
-import {ICreateRecordParams, IRecordsQueryVariables} from './_types';
-import {IFindRecordParams} from 'domain/record/_types';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IGraphqlAppModule, type IGraphqlApp} from '../../graphql/graphqlApp';
+import {type ICommonSubscriptionFilters, type ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
+import {type IIndexationManagerApp} from '../indexationManagerApp';
+import {type ICreateRecordParams, type IRecordsQueryVariables} from './_types';
+import {type IFindRecordParams} from 'domain/record/_types';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 
 export type ICoreRecordApp = IGraphqlAppModule;
 

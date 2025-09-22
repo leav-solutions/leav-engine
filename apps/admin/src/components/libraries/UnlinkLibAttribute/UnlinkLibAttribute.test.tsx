@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
 import React from 'react';
-import {GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
-import {Mockify} from '../../../_types//Mockify';
+import {type GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
+import {type Mockify} from '../../../_types//Mockify';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
 import UnlinkLibAttribute from './UnlinkLibAttribute';
 

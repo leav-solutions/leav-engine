@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedResponse} from '@apollo/client/testing';
-import {History} from 'history';
+import {type MockedResponse} from '@apollo/client/testing';
+import {type History} from 'history';
 import {getAttributesQuery} from 'queries/attributes/getAttributesQuery';
 import {BrowserRouter as Router} from 'react-router-dom-v5';
 import {act, render, screen} from '_tests/testUtils';
 import {mockAttrSimple} from '__mocks__/attributes';
-import {Mockify} from '../../../_types/Mockify';
+import {type Mockify} from '../../../_types/Mockify';
 import Attributes from './Attributes';
 
 jest.mock('../AttributesList', () => function AttributesList() {

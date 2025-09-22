@@ -5,7 +5,7 @@ import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {useAttributeInformations} from './useAttributeInformations';
 import {renderHook} from '@testing-library/react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {type RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
 jest.mock('_ui/hooks/useSharedTranslation', () => ({
     useSharedTranslation: jest.fn()

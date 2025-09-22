@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, FunctionComponent, useRef} from 'react';
+import {type ComponentProps, type FunctionComponent, useRef} from 'react';
 import {FaClock, FaTrash} from 'react-icons/fa';
 import styled from 'styled-components';
 import {KitDivider, KitButton} from 'aristid-ds';
-import {ExplorerFilter, IFilterDropDownProps} from '../../../_types';
+import {type ExplorerFilter, type IFilterDropDownProps} from '../../../_types';
 import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';

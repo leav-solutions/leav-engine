@@ -7,7 +7,7 @@ import {Form, Input, InputNumber, Popconfirm, Table} from 'antd';
 import {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';
-import {LibraryPreviewsSettingsFragment} from '../../../../../../_gqlTypes';
+import {type LibraryPreviewsSettingsFragment} from '../../../../../../_gqlTypes';
 import {BasicButton} from '../../../../../BasicButton';
 
 const SizeEditorFormItem = styled(Form.Item)`

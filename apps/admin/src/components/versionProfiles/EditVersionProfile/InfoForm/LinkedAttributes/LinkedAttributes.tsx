@@ -10,17 +10,17 @@ import SimplisticButton from 'components/shared/SimplisticButton';
 import useLang from 'hooks/useLang';
 import {saveAttributeQuery} from 'queries/attributes/saveAttributeMutation';
 import {getVersionProfileByIdQuery} from 'queries/versionProfiles/getVersionProfileByIdQuery';
-import React, {SyntheticEvent, useState} from 'react';
+import React, {type SyntheticEvent, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon, Input, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {borderColorBase, borderRadiusBase, greyBackground} from 'themingVar';
 import {
-    GET_VERSION_PROFILE_BY_ID_versionProfiles_list,
-    GET_VERSION_PROFILE_BY_ID_versionProfiles_list_linkedAttributes
+    type GET_VERSION_PROFILE_BY_ID_versionProfiles_list,
+    type GET_VERSION_PROFILE_BY_ID_versionProfiles_list_linkedAttributes
 } from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
 import {AttributeType} from '_gqlTypes/globalTypes';
-import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '_gqlTypes/SAVE_ATTRIBUTE';
+import {type SAVE_ATTRIBUTE, type SAVE_ATTRIBUTEVariables} from '_gqlTypes/SAVE_ATTRIBUTE';
 
 const Wrapper = styled.div`
     &&& {

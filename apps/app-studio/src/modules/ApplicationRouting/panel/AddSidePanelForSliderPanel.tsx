@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useRef} from 'react';
+import {type FunctionComponent, useEffect, useRef} from 'react';
 import {createPortal} from 'react-dom';
 import {generatePath, useNavigate, useParams, useSearchParams} from 'react-router-dom';
 import {KitSidePanel} from 'aristid-ds';
-import {KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
+import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {SIDE_PANEL_CONTENT_ID} from '../../../constants';
 import {routes, sliderRecordSearchParamsName} from '../routes';
 import {usePanelHeader} from '../navigation-menu/usePanelHeader';

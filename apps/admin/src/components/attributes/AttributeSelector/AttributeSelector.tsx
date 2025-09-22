@@ -4,12 +4,12 @@
 import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import React from 'react';
-import {FormDropdownProps} from 'semantic-ui-react';
+import {type FormDropdownProps} from 'semantic-ui-react';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {
-    GET_ATTRIBUTES,
-    GET_ATTRIBUTESVariables,
-    GET_ATTRIBUTES_attributes_list_LinkAttribute
+    type GET_ATTRIBUTES,
+    type GET_ATTRIBUTESVariables,
+    type GET_ATTRIBUTES_attributes_list_LinkAttribute
 } from '../../../_gqlTypes/GET_ATTRIBUTES';
 import AttributeSelectorField from './AttributeSelectorField';
 

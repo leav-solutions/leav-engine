@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '_ui/constants';
 import {
-    GetUserDataQuery,
-    GetUserDataQueryVariables,
-    SaveUserDataMutationResult,
-    SaveUserDataMutationVariables,
+    type GetUserDataQuery,
+    type GetUserDataQueryVariables,
+    type SaveUserDataMutationResult,
+    type SaveUserDataMutationVariables,
     useSaveUserDataMutation
 } from '_ui/_gqlTypes';
 import {getUserDataQuery} from '_ui/_queries/userData/getUserData';

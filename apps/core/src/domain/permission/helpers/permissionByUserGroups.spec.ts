@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '_types/queryInfos';
 import {AdminPermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import permissionByUserGroupsHelper, {type IPermissionByUserGroupsHelperDeps} from './permissionByUserGroups';
-import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
-import {ISimplePermissionHelper} from './simplePermission';
-import {IDefaultPermissionHelper} from './defaultPermission';
-import {ToAny} from '../../../utils/utils';
-import {ICachesService} from '../../../infra/cache/cacheService';
-import * as Config from '../../../_types/config';
+import {type IReducePermissionsArrayHelper} from './reducePermissionsArray';
+import {type ISimplePermissionHelper} from './simplePermission';
+import {type IDefaultPermissionHelper} from './defaultPermission';
+import {type ToAny} from '../../../utils/utils';
+import {type ICachesService} from '../../../infra/cache/cacheService';
+import type * as Config from '../../../_types/config';
 
 const depsBase: ToAny<IPermissionByUserGroupsHelperDeps> = {
     'core.domain.permission.helpers.simplePermission': jest.fn(),

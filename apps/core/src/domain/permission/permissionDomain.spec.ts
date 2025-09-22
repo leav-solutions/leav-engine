@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {i18n} from 'i18next';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type i18n} from 'i18next';
+import {type IPermissionRepo} from 'infra/permission/permissionRepo';
+import {type IConfig} from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
-import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
+import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';
 import {adminUserId, systemUserId} from '../../_constants/users';
 import {
     AdminPermissionsActions,
@@ -16,13 +16,13 @@ import {
     RecordPermissionsActions
 } from '../../_types/permissions';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import {IAdminPermissionDomain} from './adminPermissionDomain';
-import {IAttributePermissionDomain} from './attributePermissionDomain';
-import {ILibraryPermissionDomain} from './libraryPermissionDomain';
-import permissionDomain, {IPermissionDomainDeps} from './permissionDomain';
-import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
-import {IRecordPermissionDomain} from './recordPermissionDomain';
-import {ToAny} from 'utils/utils';
+import {type IAdminPermissionDomain} from './adminPermissionDomain';
+import {type IAttributePermissionDomain} from './attributePermissionDomain';
+import {type ILibraryPermissionDomain} from './libraryPermissionDomain';
+import permissionDomain, {type IPermissionDomainDeps} from './permissionDomain';
+import {type IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
+import {type IRecordPermissionDomain} from './recordPermissionDomain';
+import {type ToAny} from 'utils/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),

@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExpandAltOutlined, PlusOutlined} from '@ant-design/icons';
 import {getInvertColor, localizedTranslation} from '@leav/utils';
-import {Button, Input, Popconfirm, Space, Table, TableColumnsType, Tag, Tooltip} from 'antd';
+import {Button, Input, Popconfirm, Space, Table, type TableColumnsType, Tag, Tooltip} from 'antd';
 import {useState} from 'react';
 import styled from 'styled-components';
 import {useLang} from '../../../../../hooks';
 import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
-import {LibraryPreviewsSettingsFragment} from '../../../../../_gqlTypes';
+import {type LibraryPreviewsSettingsFragment} from '../../../../../_gqlTypes';
 import {BasicButton} from '../../../../BasicButton';
 import {FloatingMenu} from '../../../../FloatingMenu';
 import {EditPreviewsSettingsModal} from '../EditPreviewsSettingsModal';

@@ -4,7 +4,7 @@
 import userEvent from '@testing-library/user-event';
 import {render, screen} from '_ui/_tests/testUtils';
 import RecordHistory from './RecordHistory';
-import {LogEntry} from './_types';
+import {type LogEntry} from './_types';
 
 const useFetchRecordHistoryMock = jest.fn();
 jest.mock('./hooks/useFetchRecordHistory', () => ({

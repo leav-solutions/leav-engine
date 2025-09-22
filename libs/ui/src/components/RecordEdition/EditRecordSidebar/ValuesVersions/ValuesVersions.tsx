@@ -6,7 +6,7 @@ import {GrUndo} from 'react-icons/gr';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {themeVars} from '../../../../antdTheme';
-import {IValueVersion} from '../../../../types/values';
+import {type IValueVersion} from '../../../../types/values';
 import {BasicButton} from '../../../BasicButton';
 import ValuesVersionConfigurator from '../../../ValuesVersionConfigurator';
 import {EditRecordReducerActionsTypes} from '../../editRecordReducer/editRecordReducer';

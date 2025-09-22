@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import cloneDeep from 'lodash/cloneDeep';
-import {IFormElement} from '../../_types';
-import {ElementsByContainer, IFormBuilderState} from '../formBuilderReducer';
+import {type IFormElement} from '../../_types';
+import {type ElementsByContainer, type IFormBuilderState} from '../formBuilderReducer';
 
 const _cleanContainerChildren = (
     element: Pick<IFormElement, 'id'>,

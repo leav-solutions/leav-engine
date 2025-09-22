@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {create} from 'react-test-renderer';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
 import {mockAttrSimple} from '../../../../__mocks__/attributes';
 import AttributesSelectionList from './AttributesSelectionList';
 

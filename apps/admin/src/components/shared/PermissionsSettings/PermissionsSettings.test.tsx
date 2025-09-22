@@ -4,7 +4,7 @@
 import userEvent from '@testing-library/user-event';
 import {getAttributesQuery} from 'queries/attributes/getAttributesQuery';
 import React from 'react';
-import {GET_LIB_BY_ID_libraries_list_permissions_conf} from '_gqlTypes/GET_LIB_BY_ID';
+import {type GET_LIB_BY_ID_libraries_list_permissions_conf} from '_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, PermissionsRelation} from '_gqlTypes/globalTypes';
 import {act, render, screen, within} from '_tests/testUtils';
 import {mockAttrTree} from '__mocks__/attributes';

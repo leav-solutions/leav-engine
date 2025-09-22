@@ -7,7 +7,7 @@ import {useState} from 'react';
 import styled from 'styled-components';
 import {themeVars} from '../../../../../antdTheme';
 import {ImageLoading} from '../../../../ImageLoading';
-import {IFileViewerProps} from '../_types';
+import {type IFileViewerProps} from '../_types';
 
 const PreviewImage = styled(Image)<{$loaded: boolean}>`
     display: ${p => (p.$loaded ? 'block' : 'none')};

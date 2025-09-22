@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecord} from './record';
-import {IGetCoreEntitiesParams, IKeyValue} from './shared';
-import {ISystemTranslation} from './systemTranslation';
+import {type IRecord} from './record';
+import {type IGetCoreEntitiesParams, type IKeyValue} from './shared';
+import {type ISystemTranslation} from './systemTranslation';
 
 export const APPS_URL_PREFIX = 'app';
 

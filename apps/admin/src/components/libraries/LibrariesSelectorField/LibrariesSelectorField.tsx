@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {DropdownProps, Form} from 'semantic-ui-react';
+import {type DropdownProps, Form} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
+import {type GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 
 interface ILibrariesSelectorFieldProps extends DropdownProps {
     loading?: boolean;

@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getFileType} from '@leav/utils';
-import {ConsumeMessage} from 'amqplib';
+import {type ConsumeMessage} from 'amqplib';
 import {handleCheck} from '../check/handleCheck';
-import {IConfig, IMessageConsume, IResponse, IResult} from '../types/types';
+import {type IConfig, type IMessageConsume, type IResponse, type IResult} from '../types/types';
 import {generatePreview} from './../generatePreview/generatePreview';
 
 export const processPreview = async (msg: ConsumeMessage, config: IConfig): Promise<IResponse> => {

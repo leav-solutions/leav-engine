@@ -6,15 +6,15 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
+import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
 import useLang from '../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../utils';
 import {
-    GET_TREE_BY_ID_trees_list,
-    GET_TREE_BY_ID_trees_list_libraries,
-    GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute
+    type GET_TREE_BY_ID_trees_list,
+    type GET_TREE_BY_ID_trees_list_libraries,
+    type GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute
 } from '../../../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {PermissionTypes,Treepermissions_confInput} from '../../../../../../../_gqlTypes/globalTypes';
+import {PermissionTypes,type Treepermissions_confInput} from '../../../../../../../_gqlTypes/globalTypes';
 import DefinePermByUserGroupView from '../../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../../permissions/DefineTreePermissionsView';
 

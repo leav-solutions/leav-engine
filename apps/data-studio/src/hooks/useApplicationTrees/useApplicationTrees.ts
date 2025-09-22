@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {QueryResult, useQuery} from '@apollo/client';
-import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
+import {type QueryResult, useQuery} from '@apollo/client';
+import {type GET_TREES, type GET_TREESVariables, type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 

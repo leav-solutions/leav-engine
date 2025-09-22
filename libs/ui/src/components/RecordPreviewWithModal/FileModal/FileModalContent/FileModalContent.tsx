@@ -5,7 +5,7 @@ import {getFileType} from '@leav/utils';
 import styled from 'styled-components';
 import {themeVars} from '../../../../antdTheme';
 import {PreviewSize} from '../../../../constants';
-import {IFileDataWithPreviewsStatus} from '../../../../_queries/records/getFileDataQuery';
+import {type IFileDataWithPreviewsStatus} from '../../../../_queries/records/getFileDataQuery';
 import {RecordCard} from '../../../RecordCard';
 import {fileModalSidebarWidth, fileModalWidth} from '../_constants';
 import AudioFile from './AudioFile';

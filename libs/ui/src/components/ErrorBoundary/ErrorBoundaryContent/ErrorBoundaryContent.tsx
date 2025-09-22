@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FrownOutlined} from '@ant-design/icons';
 import {ConfigProvider, Result, Space, theme} from 'antd';
-import {ErrorInfo, FunctionComponent, ReactNode} from 'react';
+import {type ErrorInfo, type FunctionComponent, type ReactNode} from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {AntdThemeToken, customTheme, themeVars} from '../../../antdTheme';
+import {type AntdThemeToken, customTheme, themeVars} from '../../../antdTheme';
 import {isDevEnv} from '_ui/_utils/isDevEnv';
 
 const ErrorResult = styled(Result)<{$themeToken: AntdThemeToken}>`

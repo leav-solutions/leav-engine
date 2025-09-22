@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AqlLiteral, AqlQuery, GeneratedAqlQuery} from 'arangojs/aql';
-import {IQueryInfos} from '_types/queryInfos';
-import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {AttributeCondition, IRecordFilterOption} from '../../_types/record';
-import {ISaveValueByAttributeType, IValueByAttributeType, IValuesOptions} from '../../_types/value';
-import {IAttributeSimpleRepo} from './attributeSimpleRepo';
-import {IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
-import {IAttributeAdvancedRepo} from './attributeAdvancedRepo';
-import {IAttributeAdvancedLinkRepo} from './attributeAdvancedLinkRepo';
-import {IAttributeTreeRepo} from './attributeTreeRepo';
+import {type AqlLiteral, AqlQuery, type GeneratedAqlQuery} from 'arangojs/aql';
+import {type IQueryInfos} from '_types/queryInfos';
+import {AttributeTypes, type IAttribute} from '../../_types/attribute';
+import {AttributeCondition, type IRecordFilterOption} from '../../_types/record';
+import {type ISaveValueByAttributeType, type IValueByAttributeType, type IValuesOptions} from '../../_types/value';
+import {type IAttributeSimpleRepo} from './attributeSimpleRepo';
+import {type IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
+import {type IAttributeAdvancedRepo} from './attributeAdvancedRepo';
+import {type IAttributeAdvancedLinkRepo} from './attributeAdvancedLinkRepo';
+import {type IAttributeTreeRepo} from './attributeTreeRepo';
 
 // To avoid some cyclic dependencies issues, we have to pass repo along attribute props
 export type IAttributeWithRepo = IAttributeWithRevLink & {

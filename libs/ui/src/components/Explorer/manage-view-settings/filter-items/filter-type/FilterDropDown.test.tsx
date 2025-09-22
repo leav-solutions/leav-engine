@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {FilterDropDown} from './FilterDropDown';
-import {ExplorerFilter} from '../../../_types';
-import {FunctionComponent, useReducer} from 'react';
-import {IViewSettingsState, viewSettingsReducer} from '../../store-view-settings/viewSettingsReducer';
+import {type ExplorerFilter} from '../../../_types';
+import {type FunctionComponent, useReducer} from 'react';
+import {type IViewSettingsState, viewSettingsReducer} from '../../store-view-settings/viewSettingsReducer';
 import {ViewSettingsContext} from '../../store-view-settings/ViewSettingsContext';
 import {viewSettingsInitialState} from '../../store-view-settings/viewSettingsInitialState';
 import {AttributeFormat, AttributeType, RecordFilterCondition} from '_ui/_gqlTypes';

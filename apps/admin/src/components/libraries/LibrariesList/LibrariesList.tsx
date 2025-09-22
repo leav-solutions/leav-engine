@@ -8,7 +8,7 @@ import {Checkbox, Input, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
+import {type GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import Loading from '../../shared/Loading';
 import DeleteLibrary from '../DeleteLibrary';
 

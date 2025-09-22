@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PermissionTypes} from '../../_types/permissions';
-import {IGlobalPermissionHelper} from './helpers/globalPermission';
-import {IGetInheritedTreeLibraryPermissionParams, IGetTreeLibraryPermissionParams} from './_types';
+import {type IGlobalPermissionHelper} from './helpers/globalPermission';
+import {type IGetInheritedTreeLibraryPermissionParams, type IGetTreeLibraryPermissionParams} from './_types';
 
 export interface ITreeLibraryPermissionDomain {
     getTreeLibraryPermission(params: IGetTreeLibraryPermissionParams): Promise<boolean>;

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PermissionTypes} from '../../_types/permissions';
-import {IGlobalPermissionHelper} from './helpers/globalPermission';
-import {IGetAttributePermissionParams, IGetInheritedAttributePermissionParams} from './_types';
+import {type IGlobalPermissionHelper} from './helpers/globalPermission';
+import {type IGetAttributePermissionParams, type IGetInheritedAttributePermissionParams} from './_types';
 
 export interface IAttributePermissionDomain {
     getAttributePermission(params: IGetAttributePermissionParams): Promise<boolean>;

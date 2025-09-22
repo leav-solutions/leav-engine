@@ -7,11 +7,11 @@ import {getLibByIdQuery} from '../../../../../queries/libraries/getLibraryById';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
 import {clearCacheForQuery} from '../../../../../utils';
 import {
-    GET_LIB_BY_ID,
-    GET_LIB_BY_IDVariables,
-    GET_LIB_BY_ID_libraries_list
+    type GET_LIB_BY_ID,
+    type GET_LIB_BY_IDVariables,
+    type GET_LIB_BY_ID_libraries_list
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {IFormError} from '../../../../../_types/errors';
+import {type IFormError} from '../../../../../_types/errors';
 import InfosForm from './InfosForm';
 
 interface IInfosTabProps {

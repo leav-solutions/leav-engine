@@ -4,7 +4,7 @@
 import {useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
 import {getFormQuery} from '../../../../../../queries/forms/getFormQuery';
-import {GET_FORM, GET_FORMVariables, GET_FORM_forms_list} from '../../../../../../_gqlTypes/GET_FORM';
+import {type GET_FORM, type GET_FORMVariables, type GET_FORM_forms_list} from '../../../../../../_gqlTypes/GET_FORM';
 import Loading from '../../../../../shared/Loading';
 import EditFormTabs from './EditFormTabs';
 import {EditFormContext} from './hooks/useEditFormContext';

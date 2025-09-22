@@ -7,7 +7,7 @@ import useLang from '../../hooks/useLang';
 import RootSelector from './RootSelector';
 import MainPanel from './MainPanel';
 import reducer, {ActionTypes, initialState} from './NavigatorReducer';
-import {RecordIdentity_whoAmI} from '../../_gqlTypes/RecordIdentity';
+import {type RecordIdentity_whoAmI} from '../../_gqlTypes/RecordIdentity';
 
 export type SelectionChanged = (arr: RecordIdentity_whoAmI[]) => void;
 export type GetSelectionRef = () => RecordIdentity_whoAmI[];

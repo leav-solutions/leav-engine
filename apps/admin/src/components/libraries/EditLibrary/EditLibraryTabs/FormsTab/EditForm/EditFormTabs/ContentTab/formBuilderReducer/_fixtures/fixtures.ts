@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    GET_FORM_forms_list,
-    GET_FORM_forms_list_elements_elements
+    type GET_FORM_forms_list,
+    type GET_FORM_forms_list_elements_elements
 } from '../../../../../../../../../../_gqlTypes/GET_FORM';
 import {FormElementTypes} from '../../../../../../../../../../_gqlTypes/globalTypes';
-import {FieldTypes, IFormElement, UIElementTypes} from '../../_types';
+import {FieldTypes, type IFormElement, UIElementTypes} from '../../_types';
 import {formElements, layoutElements} from '../../uiElements/__mocks__';
-import {IFormBuilderState, defaultContainerId, defaultDepAttribute, defaultDepValue} from '../formBuilderReducer';
+import {type IFormBuilderState, defaultContainerId, defaultDepAttribute, defaultDepValue} from '../formBuilderReducer';
 
 const commonFieldData1 = {
     id: '987654',

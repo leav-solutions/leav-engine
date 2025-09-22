@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createContext, useContext} from 'react';
-import {GET_FORM_forms_list} from '_gqlTypes/GET_FORM';
+import {type GET_FORM_forms_list} from '_gqlTypes/GET_FORM';
 
 export interface IEditFormContext {
     form: GET_FORM_forms_list;

@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
-import * as amqp from 'amqplib';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import indexationManager, {IIndexationManagerDomainDeps} from './indexationManagerDomain';
-import {IIndexationService} from 'infra/indexation/indexationService';
+import {type IAmqpService} from '@leav/message-broker';
+import type * as amqp from 'amqplib';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type IConfig} from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
+import indexationManager, {type IIndexationManagerDomainDeps} from './indexationManagerDomain';
+import {type IIndexationService} from 'infra/indexation/indexationService';
 import {AttributeCondition} from '../../_types/record';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import winston from 'winston';
-import {ToAny} from 'utils/utils';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import type winston from 'winston';
+import {type ToAny} from 'utils/utils';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),

@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IValidateHelper} from 'domain/helpers/validate';
-import {IViewRepo} from 'infra/view/_types';
+import {type IValidateHelper} from 'domain/helpers/validate';
+import {type IViewRepo} from 'infra/view/_types';
 import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockView, mockViewBeforeCreation} from '../../__tests__/mocks/view';
-import viewDomain, {IViewDomainDeps} from './viewDomain';
-import {ToAny} from 'utils/utils';
+import viewDomain, {type IViewDomainDeps} from './viewDomain';
+import {type ToAny} from 'utils/utils';
 
 const depsBase: ToAny<IViewDomainDeps> = {
     'core.domain.helpers.validate': jest.fn(),

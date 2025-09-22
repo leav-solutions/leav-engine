@@ -6,12 +6,12 @@
 
 import {gql, useApolloClient} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
-import {Button, Modal, ModalProps, Popconfirm} from 'antd';
+import {Button, Modal, type ModalProps, Popconfirm} from 'antd';
 import {useState} from 'react';
 import {
     PermissionsActions,
     PermissionTypes,
-    TreeDetailsFragment,
+    type TreeDetailsFragment,
     useDeleteTreeMutation,
     useIsAllowedQuery
 } from '_ui/_gqlTypes';

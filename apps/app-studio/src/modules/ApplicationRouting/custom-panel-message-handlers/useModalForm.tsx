@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
 import {EditRecordModal} from '@leav/ui';
-import {ComponentPropsWithKey, IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type ComponentPropsWithKey, type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
 
 export const useModalForm = () => {
     const [editRecordModalProps, setEditRecordModalProps] = useState<

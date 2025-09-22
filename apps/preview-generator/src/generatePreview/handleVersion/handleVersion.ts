@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FileType} from '@leav/utils';
 import {join} from 'path';
-import {IConfig, IResult, IRootPaths, IVersion} from '../../types/types';
+import {type IConfig, type IResult, type IRootPaths, type IVersion} from '../../types/types';
 import {execute} from './../execute/execute';
 
 export interface IHandleVersion {

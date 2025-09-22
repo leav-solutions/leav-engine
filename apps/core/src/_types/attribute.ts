@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ActionsListEvents, ActionsListIOTypes, ActionsListConfig} from './actionsList';
-import {ITreePermissionsConf} from './permissions';
-import {IQueryInfos} from './queryInfos';
-import {IRecord} from './record';
-import {IGetCoreEntitiesParams, IKeyValue} from './shared';
-import {ISystemTranslation} from './systemTranslation';
-import {ITreeElement} from './tree';
-import {IDateRangeValue} from './value';
+import {type ActionsListEvents, type ActionsListIOTypes, type ActionsListConfig} from './actionsList';
+import {type ITreePermissionsConf} from './permissions';
+import {type IQueryInfos} from './queryInfos';
+import {type IRecord} from './record';
+import {type IGetCoreEntitiesParams, type IKeyValue} from './shared';
+import {type ISystemTranslation} from './systemTranslation';
+import {type ITreeElement} from './tree';
+import {type IDateRangeValue} from './value';
 
 // properties system, readonly, required should nor be optional, as for graphql type
 // but change this types as a lot of side effects for now

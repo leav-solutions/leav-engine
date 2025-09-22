@@ -5,8 +5,8 @@ import {getConfig} from '../../config';
 import i18nextInit from '../../i18nextInit';
 import {initDI} from '../../depsManager';
 import {initDb} from '../../infra/db/db';
-import {RedisClientType} from 'infra/cache/redis';
-import {IDbUtils} from 'infra/db/dbUtils';
+import {type RedisClientType} from 'infra/cache/redis';
+import {type IDbUtils} from 'infra/db/dbUtils';
 
 export async function setup() {
     try {

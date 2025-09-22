@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IQueryInfos} from '../../../_types/queryInfos';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 import {RecordPermissionsActions} from '../../../_types/permissions';
-import {IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
-import {IValidateHelper} from 'domain/helpers/validate';
+import {type IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
+import {type IValidateHelper} from 'domain/helpers/validate';
 import PermissionError from '../../../errors/PermissionError';
 import {EventAction} from '@leav/utils';
-import {IRecordRepo} from 'infra/record/recordRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
-import {IRecord} from '../../../_types/record';
+import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IValueRepo} from 'infra/value/valueRepo';
+import {type IRecord} from '../../../_types/record';
 
 export type DeleteRecordHelper = (library: string, id: string, ctx: IQueryInfos) => Promise<IRecord>;
 

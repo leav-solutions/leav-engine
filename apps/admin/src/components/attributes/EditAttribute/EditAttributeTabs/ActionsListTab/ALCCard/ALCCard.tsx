@@ -7,7 +7,7 @@ import {getEmptyImage} from 'react-dnd-html5-backend';
 import {useTranslation} from 'react-i18next';
 import {Button, Card, Icon} from 'semantic-ui-react';
 import Connector from '../ALCConnectors';
-import {IAction, IColorDic, IParamInput} from '../interfaces/interfaces';
+import {type IAction, type IColorDic, type IParamInput} from '../interfaces/interfaces';
 import itemTypes from '../ItemTypes';
 import {ActionRow} from '../stylesComps';
 import Param from './ActionContent/Param';

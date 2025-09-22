@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IConfig} from '_types/config';
-import {ICacheService, IStoreDataParams} from './cacheService';
-import {RedisClientType} from './redis';
+import {type IConfig} from '_types/config';
+import {type ICacheService, type IStoreDataParams} from './cacheService';
+import {type RedisClientType} from './redis';
 
 interface IDeps {
     config?: IConfig;

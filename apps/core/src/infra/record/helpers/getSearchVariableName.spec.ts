@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeCondition, TreeCondition} from '../../../_types/record';
 import {mockAttrAdv, mockAttrAdvLink, mockAttrSimple} from '../../../__tests__/mocks/attribute';
-import {IFilterTypesHelper} from './filterTypes';
+import {type IFilterTypesHelper} from './filterTypes';
 import getSearchVariableName from './getSearchVariableName';
 
 describe('getSearchVariableName', () => {

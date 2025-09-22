@@ -6,8 +6,8 @@ import {useTranslation} from 'react-i18next';
 import {Tab} from 'semantic-ui-react';
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
-import {GET_TREE_BY_ID_trees_list} from '../../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {PermissionTypes, Treepermissions_confInput} from '../../../../../../_gqlTypes/globalTypes';
+import {type GET_TREE_BY_ID_trees_list} from '../../../../../../_gqlTypes/GET_TREE_BY_ID';
+import {PermissionTypes, type Treepermissions_confInput} from '../../../../../../_gqlTypes/globalTypes';
 import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import NodePermissionTabContent from './NodePermissionTabContent';
 

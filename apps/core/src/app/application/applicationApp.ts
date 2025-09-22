@@ -2,44 +2,44 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
-import {Override, PublishedEvent} from '@leav/utils';
-import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from 'app/core/helpers/subscriptions';
-import {IGraphqlAppModule, IGraphqlApp} from 'app/graphql/graphqlApp';
-import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import express, {Express, NextFunction, Response} from 'express';
+import {type Override, type PublishedEvent} from '@leav/utils';
+import {type ICommonSubscriptionFilters, type ICoreSubscriptionsHelpersApp} from 'app/core/helpers/subscriptions';
+import {type IGraphqlAppModule, type IGraphqlApp} from 'app/graphql/graphqlApp';
+import {type InitQueryContextFunc} from 'app/helpers/initQueryContext';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IPermissionDomain} from 'domain/permission/permissionDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import express, {Express, type NextFunction, type Response} from 'express';
 import glob from 'glob';
-import {GraphQLResolveInfo} from 'graphql';
+import {type GraphQLResolveInfo} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
 import path from 'path';
-import {IUtils} from 'utils/utils';
-import winston from 'winston';
-import {IGetCoreAttributesParams} from '_types/attribute';
-import {IRequestWithContext} from '_types/express';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IList} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IKeyValue} from '_types/shared';
-import {IApplicationDomain} from '../../domain/application/applicationDomain';
+import {type IUtils} from 'utils/utils';
+import type winston from 'winston';
+import {type IGetCoreAttributesParams} from '_types/attribute';
+import {type IRequestWithContext} from '_types/express';
+import {type IAppGraphQLSchema} from '_types/graphql';
+import {type IList} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IKeyValue} from '_types/shared';
+import {type IApplicationDomain} from '../../domain/application/applicationDomain';
 import ApplicationError, {ApplicationErrorType} from '../../errors/ApplicationError';
 import {
     ApplicationEventTypes,
     ApplicationTypes,
     APPS_URL_PREFIX,
-    IApplication,
-    IApplicationEvent,
-    IApplicationEventFilters,
-    IApplicationModule
+    type IApplication,
+    type IApplicationEvent,
+    type IApplicationEventFilters,
+    type IApplicationModule
 } from '../../_types/application';
 import {TriggerNames} from '../../_types/eventsManager';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
-import {AttributeCondition, IRecord} from '../../_types/record';
-import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
-import {IAuthApp} from '../auth/authApp';
-import {IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
-import {IServerRouteAppModule} from 'interface/server';
+import {AttributeCondition, type IRecord} from '../../_types/record';
+import {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
+import {type IAuthApp} from '../auth/authApp';
+import {type IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
+import {type IServerRouteAppModule} from 'interface/server';
 
 export type IApplicationApp = IGraphqlAppModule & IServerRouteAppModule;
 

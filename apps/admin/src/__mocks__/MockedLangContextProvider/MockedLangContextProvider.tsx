@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import LangContext from '../../components/shared/LangContext';
-import {ILangContext} from '../../components/shared/LangContext/LangContext';
+import {type ILangContext} from '../../components/shared/LangContext/LangContext';
 import {AvailableLanguage} from '../../_gqlTypes/globalTypes';
 
 function MockedLangContextProvider({children}) {

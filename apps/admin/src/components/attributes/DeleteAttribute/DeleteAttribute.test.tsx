@@ -4,8 +4,8 @@
 import {MockedProvider} from '@apollo/client/testing';
 import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
-import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
-import {Mockify} from '../../../_types//Mockify';
+import {type GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {type Mockify} from '../../../_types//Mockify';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
 import MockedLangContextProvider from '../../../__mocks__/MockedLangContextProvider';
 import DeleteAttribute from './DeleteAttribute';

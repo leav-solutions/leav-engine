@@ -1,50 +1,50 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PublishedEvent} from '@leav/utils';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
+import {type PublishedEvent} from '@leav/utils';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type IPermissionDomain} from 'domain/permission/permissionDomain';
+import {type GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
 import {omit} from 'lodash';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IList, IPaginationParams} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IKeyValue} from '_types/shared';
-import {ITreeDomain} from '../../../domain/tree/treeDomain';
+import {type IAppGraphQLSchema} from '_types/graphql';
+import {type IList, type IPaginationParams} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IKeyValue} from '_types/shared';
+import {type ITreeDomain} from '../../../domain/tree/treeDomain';
 import {TriggerNames} from '../../../_types/eventsManager';
 import {
     PermissionTypes,
-    RecordPermissionsActions,
+    type RecordPermissionsActions,
     TreeNodePermissionsActions,
     TreePermissionsActions
 } from '../../../_types/permissions';
-import {IQueryField, IRecord} from '../../../_types/record';
+import {type IQueryField, type IRecord} from '../../../_types/record';
 import {
-    ITree,
-    ITreeEvent,
-    ITreeNode,
-    ITreeNodeWithTreeId,
+    type ITree,
+    type ITreeEvent,
+    type ITreeNode,
+    type ITreeNodeWithTreeId,
     TreeBehavior,
     TreeEventTypes,
-    TreePath
+    type TreePath
 } from '../../../_types/tree';
-import {IGraphqlAppModule, IGraphqlApp} from '../../graphql/graphqlApp';
-import {ICoreApp} from '../coreApp';
-import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
+import {type IGraphqlAppModule, type IGraphqlApp} from '../../graphql/graphqlApp';
+import {type ICoreApp} from '../coreApp';
+import {type ICommonSubscriptionFilters, type ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
 import {
-    IAddElementMutationArgs,
-    IDeleteElementMutationArgs,
-    IMoveElementMutationArgs,
-    ISaveTreeMutationArgs,
-    ITreeEventFilters,
-    ITreeLibraryForGraphQL,
-    ITreePermissionsConfForGraphQL,
-    ITreesQueryArgs
+    type IAddElementMutationArgs,
+    type IDeleteElementMutationArgs,
+    type IMoveElementMutationArgs,
+    type ISaveTreeMutationArgs,
+    type ITreeEventFilters,
+    type ITreeLibraryForGraphQL,
+    type ITreePermissionsConfForGraphQL,
+    type ITreesQueryArgs
 } from './_types';
-import {IRecordPermissionDomain} from '../../../domain/permission/recordPermissionDomain';
+import {type IRecordPermissionDomain} from '../../../domain/permission/recordPermissionDomain';
 
 export type ITreeAttributeApp = IGraphqlAppModule;
 

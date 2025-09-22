@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
-import {IGetDefaultElementHelper} from 'domain/tree/helpers/getDefaultElement';
-import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {IRecordRepo} from 'infra/record/recordRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
-import {IUtils, ToAny} from 'utils/utils';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import {ISaveValue, IValue, IValueVersion} from '_types/value';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {type IGetDefaultElementHelper} from 'domain/tree/helpers/getDefaultElement';
+import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
+import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IValueRepo} from 'infra/value/valueRepo';
+import {type IUtils, type ToAny} from 'utils/utils';
+import type * as Config from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type ISaveValue, type IValue, type IValueVersion} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
@@ -28,12 +28,12 @@ import {
 } from '../../__tests__/mocks/attribute';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
-import {IActionsListDomain} from '../actionsList/actionsListDomain';
-import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IValidateHelper} from '../helpers/validate';
-import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
-import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import valueDomain, {IValueDomainDeps} from './valueDomain';
+import {type IActionsListDomain} from '../actionsList/actionsListDomain';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IValidateHelper} from '../helpers/validate';
+import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
+import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
+import valueDomain, {type IValueDomainDeps} from './valueDomain';
 
 const depsBase: ToAny<IValueDomainDeps> = {
     config: {},

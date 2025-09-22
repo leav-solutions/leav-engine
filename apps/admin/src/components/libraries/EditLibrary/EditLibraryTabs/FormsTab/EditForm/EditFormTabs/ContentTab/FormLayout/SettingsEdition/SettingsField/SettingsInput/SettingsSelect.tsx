@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {DropdownItemProps, Select} from 'semantic-ui-react';
+import {type DropdownItemProps, Select} from 'semantic-ui-react';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {ISettingsFieldCommonProps, TabsDirection} from '../../../../_types';
+import {type ISettingsFieldCommonProps, TabsDirection} from '../../../../_types';
 
 export interface ISettingsFieldSelectProps extends ISettingsFieldCommonProps {
     options: string[];

@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* eslint-disable react-refresh/only-export-components */
-import {InMemoryCacheConfig} from '@apollo/client';
-import {MockedResponse} from '@apollo/client/testing';
-import {render, RenderOptions, RenderResult} from '@testing-library/react';
+import {type InMemoryCacheConfig} from '@apollo/client';
+import {type MockedResponse} from '@apollo/client/testing';
+import {render, type RenderOptions, type RenderResult} from '@testing-library/react';
 import ApplicationContext from 'context/CurrentApplicationContext';
-import {ICurrentApplicationContext} from 'context/CurrentApplicationContext/_types';
-import {PropsWithChildren, ReactElement} from 'react';
+import {type ICurrentApplicationContext} from 'context/CurrentApplicationContext/_types';
+import {type PropsWithChildren, type ReactElement} from 'react';
 import {MemoryRouter} from 'react-router-dom-v5';
-import {MemoryRouterProps} from 'react-router-v5';
-import {RootState} from 'reduxStore/store';
-import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {type MemoryRouterProps} from 'react-router-v5';
+import {type RootState} from 'reduxStore/store';
+import {type GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';

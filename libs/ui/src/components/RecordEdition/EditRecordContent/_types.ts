@@ -1,31 +1,31 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 import {
-    AnyPrimitive,
-    FormFieldTypes,
-    FormUIElementTypes,
-    IRequiredFieldsSettings,
-    IKeyValue,
-    Override
+    type AnyPrimitive,
+    type FormFieldTypes,
+    type FormUIElementTypes,
+    type IRequiredFieldsSettings,
+    type IKeyValue,
+    type Override
 } from '@leav/utils';
-import {RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
-import {IRecordIdentity, IRecordIdentityWhoAmI} from '_ui/types/records';
-import {ITreeNodeWithRecord} from '_ui/types/trees';
-import {IValueVersion} from '_ui/types/values';
+import {type RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
+import {type IRecordIdentity, type IRecordIdentityWhoAmI} from '_ui/types/records';
+import {type ITreeNodeWithRecord} from '_ui/types/trees';
+import {type IValueVersion} from '_ui/types/values';
 import {
-    RecordFormAttributeFragment,
-    SaveValueBatchMutation,
-    CreateRecordMutation,
-    RecordFormElementFragment,
-    RecordIdentityFragment,
-    ValueDetailsFragment,
-    ValueInput
+    type RecordFormAttributeFragment,
+    type SaveValueBatchMutation,
+    type CreateRecordMutation,
+    type RecordFormElementFragment,
+    type RecordIdentityFragment,
+    type ValueDetailsFragment,
+    type ValueInput
 } from '_ui/_gqlTypes';
-import {RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
-import {FormInstance} from 'antd/lib/form/Form';
-import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
+import {type RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
+import {type FormInstance} from 'antd/lib/form/Form';
+import {type GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
 
 export interface IValueToSubmit {
     attribute: string;

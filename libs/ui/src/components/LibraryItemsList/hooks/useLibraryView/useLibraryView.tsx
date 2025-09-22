@@ -4,10 +4,10 @@
 import omit from 'lodash/omit';
 import {useState} from 'react';
 import {useUser} from '_ui/hooks/useUser/useUser';
-import {IAttribute} from '_ui/types/search';
-import {IView} from '_ui/types/views';
-import {useGetUserDataQuery, useGetViewLazyQuery, ViewDetailsFragment} from '_ui/_gqlTypes';
-import {ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
+import {type IAttribute} from '_ui/types/search';
+import {type IView} from '_ui/types/views';
+import {useGetUserDataQuery, useGetViewLazyQuery, type ViewDetailsFragment} from '_ui/_gqlTypes';
+import {type ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {prepareView} from '_ui/_utils';
 import {getFiltersFromRequest} from '_ui/_utils/getFiltersFromRequest';
 import {defaultView, getSelectedViewKey} from '../../constants';

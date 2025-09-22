@@ -4,7 +4,7 @@
 import {Button} from 'antd';
 import {render, screen} from '../../_tests/testUtils';
 import {ErrorBoundary} from './ErrorBoundary';
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 
 let isDevEnvMock: boolean;
 jest.mock('_ui/_utils/isDevEnv', () => ({

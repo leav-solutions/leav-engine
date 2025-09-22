@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {TFunction} from 'i18next';
+import {type TFunction} from 'i18next';
 import React, {useState} from 'react';
-import {Confirm, DropdownProps, Form} from 'semantic-ui-react';
+import {Confirm, type DropdownProps, Form} from 'semantic-ui-react';
 import {AttributeFormat} from '../../../../../../../_gqlTypes/globalTypes';
-import {IFormValues} from '../EmbeddedFieldsForm';
+import {type IFormValues} from '../EmbeddedFieldsForm';
 
 interface ISelectFormatProps {
     formValues: IFormValues;

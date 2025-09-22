@@ -4,7 +4,7 @@
 import {render, screen} from '_ui/_tests/testUtils';
 import RecordHistoryLogEntry from './RecordHistoryLogEntry';
 import {AttributeFormat, AttributeType, LogAction} from '_ui/_gqlTypes';
-import {LogEntry, LogEntryAttribute} from './_types';
+import {type LogEntry, type LogEntryAttribute} from './_types';
 
 describe('RecordHistoryLogEntry', () => {
     const buildLogEntry = (attribute?: LogEntryAttribute, before?: string, after?: string): LogEntry => ({

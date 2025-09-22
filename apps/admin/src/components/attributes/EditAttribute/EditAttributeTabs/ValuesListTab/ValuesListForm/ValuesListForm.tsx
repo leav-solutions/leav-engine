@@ -5,17 +5,17 @@ import React, {useCallback, useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Divider, Form} from 'semantic-ui-react';
 import {
-    GET_ATTRIBUTES_VALUES_LIST_attributes_list,
-    GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute,
-    GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute
+    type GET_ATTRIBUTES_VALUES_LIST_attributes_list,
+    type GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute,
+    type GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute
 } from '../../../../../../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
-import {AttributeFormat, AttributeType, ValuesListConfInput} from '../../../../../../_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, type ValuesListConfInput} from '../../../../../../_gqlTypes/globalTypes';
 import {
-    IDateRangeValue,
-    ILinkValuesList,
-    ITreeValuesList,
-    IValuesListConf,
-    ValuesList
+    type IDateRangeValue,
+    type ILinkValuesList,
+    type ITreeValuesList,
+    type IValuesListConf,
+    type ValuesList
 } from '../../../../../../_types/attributes';
 import LinkValuesList from './LinkValuesList';
 import StandardValuesList from './StandardValuesList';

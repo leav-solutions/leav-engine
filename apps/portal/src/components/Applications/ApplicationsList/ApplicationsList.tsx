@@ -11,9 +11,9 @@ import {saveUserData} from 'queries/userData/saveUserData';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
-import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
+import {type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
+import {type GET_USER_DATA, type GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {type SAVE_USER_DATA, type SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {CONSULTED_APPS_KEY, FAVORITES_APPS_KEY} from '../_constants';
 import ApplicationCard from './ApplicationCard';
 

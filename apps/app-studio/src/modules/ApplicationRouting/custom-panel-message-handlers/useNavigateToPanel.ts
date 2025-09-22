@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {generatePath, useLocation, useNavigate, useOutletContext, useParams} from 'react-router-dom';
-import {IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
 import {PanelSchema} from '_ui/hooks/useIFrameMessenger/schema';
 import {routes} from '../routes';
-import {AddPanel, IApplicationMatchingContext} from '../types';
+import {type AddPanel, type IApplicationMatchingContext} from '../types';
 
 export const useNavigateToPanel = (addPanel: AddPanel) => {
     const navigate = useNavigate();

@@ -4,11 +4,11 @@
 import {useQuery} from '@apollo/client';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {NodeData} from 'react-sortable-tree';
+import {type NodeData} from 'react-sortable-tree';
 import {Button, Modal} from 'semantic-ui-react';
-import {ITreeNodeData} from '_types/trees';
+import {type ITreeNodeData} from '_types/trees';
 import {getTreeByIdQuery} from '../../../queries/trees/getTreeById';
-import {GET_TREE_BY_ID, GET_TREE_BY_IDVariables} from '../../../_gqlTypes/GET_TREE_BY_ID';
+import {type GET_TREE_BY_ID, type GET_TREE_BY_IDVariables} from '../../../_gqlTypes/GET_TREE_BY_ID';
 import Loading from '../../shared/Loading';
 import TreeExplorer from '../TreeExplorer';
 

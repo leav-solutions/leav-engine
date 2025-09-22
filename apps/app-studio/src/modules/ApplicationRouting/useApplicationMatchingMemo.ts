@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMemo} from 'react';
-import {Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
 import {getAllPanels} from './utils';
-import {IApplicationMatchingContext, Workspace} from './types';
+import {type IApplicationMatchingContext, type Workspace} from './types';
 
 export const useApplicationMatchingMemo = (
     workspaces: Workspace[],

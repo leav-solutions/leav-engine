@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IRecordRepo} from 'infra/record/recordRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IValueRepo} from 'infra/value/valueRepo';
 import {difference} from 'lodash';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
-import {ErrorFieldDetail, Errors, IExtendedErrorMsg} from '../../../_types/errors';
-import {IQueryInfos} from '../../../_types/queryInfos';
-import {ISaveLinkValue, ISaveTreeValue, ISaveValue, IValueVersion} from '../../../_types/value';
+import {AttributeFormats, AttributeTypes, type IAttribute} from '../../../_types/attribute';
+import {type ErrorFieldDetail, Errors, type IExtendedErrorMsg} from '../../../_types/errors';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type ISaveLinkValue, type ISaveTreeValue, type ISaveValue, type IValueVersion} from '../../../_types/value';
 import doesValueExist from './doesValueExist';
 
 interface ILinkRecordValidationResult {

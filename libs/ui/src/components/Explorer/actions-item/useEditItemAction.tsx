@@ -6,7 +6,7 @@ import {FaEye, FaPen} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
 import {RecordFilterCondition, useExplorerLibraryDataLazyQuery} from '_ui/_gqlTypes';
-import {FeatureHook, IItemAction, IItemData} from '../_types';
+import {type FeatureHook, type IItemAction, type IItemData} from '../_types';
 import {EDIT_RECORD_MODAL_CLASSNAME} from '../_constants';
 
 /**

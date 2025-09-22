@@ -4,7 +4,7 @@
 import {Modal} from 'antd';
 import {useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {TreeLightFragment} from '_ui/_gqlTypes';
+import {type TreeLightFragment} from '_ui/_gqlTypes';
 import {TreesList} from './TreesList';
 
 interface ITreePickerProps {

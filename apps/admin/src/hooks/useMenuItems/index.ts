@@ -3,4 +3,5 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import useMenuItems from './useMenuItems';
+
 export default useMenuItems;

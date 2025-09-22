@@ -2,24 +2,24 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {GeneratedAqlQuery, join} from 'arangojs/aql';
+import {type GeneratedAqlQuery, join} from 'arangojs/aql';
 import {CollectionType} from 'arangojs/collection';
-import {AwilixContainer} from 'awilix';
+import {type AwilixContainer} from 'awilix';
 import {accessSync, constants, readdirSync} from 'fs';
 import * as path from 'path';
-import * as winston from 'winston';
-import {IAttribute} from '_types/attribute';
-import {IConfig} from '_types/config';
-import {ILibrary} from '_types/library';
-import {IList, IPaginationParams, ISortParams} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IKeyValue} from '_types/shared';
-import {ITree} from '_types/tree';
-import {IDbValueVersion, IValueVersion} from '_types/value';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
-import {IDbService} from './dbService';
+import type * as winston from 'winston';
+import {type IAttribute} from '_types/attribute';
+import {type IConfig} from '_types/config';
+import {type ILibrary} from '_types/library';
+import {type IList, type IPaginationParams, type ISortParams} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IKeyValue} from '_types/shared';
+import {type ITree} from '_types/tree';
+import {type IDbValueVersion, type IValueVersion} from '_types/value';
+import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
+import {type IDbService} from './dbService';
 import runMigrationFiles from './helpers/runMigrationFiles';
-import {IExecuteWithCount} from './_types';
+import {type IExecuteWithCount} from './_types';
 import {CORE_INDEX_FIELD} from '../../infra/indexation/indexationService';
 
 export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';

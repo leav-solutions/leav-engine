@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DragObjectWithType} from 'react-dnd';
-import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {FormElementTypes} from '../../../../../../../../_gqlTypes/globalTypes';
-import {IKeyValue} from '../../../../../../../../_types/shared';
+import {type DragObjectWithType} from 'react-dnd';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type FormElementTypes} from '../../../../../../../../_gqlTypes/globalTypes';
+import {type IKeyValue} from '../../../../../../../../_types/shared';
 
 export const PLACEHOLDER_ID = '__placeholder__';
 

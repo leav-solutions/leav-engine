@@ -10,10 +10,10 @@ import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {useTranslation} from 'react-i18next';
 import {resetSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '_gqlTypes/MOVE_TREE_ELEMENT';
-import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {ISharedSelected} from '_types/types';
-import {IMessages, OnMessagesFunc} from '../../_types';
+import {type MOVE_TREE_ELEMENT, type MOVE_TREE_ELEMENTVariables} from '_gqlTypes/MOVE_TREE_ELEMENT';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {type ISharedSelected} from '_types/types';
+import {type IMessages, type OnMessagesFunc} from '../../_types';
 
 interface IMoveSelectionButtonProps {
     allowedLibraries: string[];

@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormat, AttributeType, LibraryBehavior, ViewSizes, ViewTypes} from '_ui/_gqlTypes';
 import {
-    IGetLibraryDetailExtendedQuery,
-    IGetLibraryDetailExtendedVariables,
-    ILibraryDetailExtended,
-    ILibraryDetailExtendedDefaultView
+    type IGetLibraryDetailExtendedQuery,
+    type IGetLibraryDetailExtendedVariables,
+    type ILibraryDetailExtended,
+    type ILibraryDetailExtendedDefaultView
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {mockLabel} from '_ui/__mocks__/common/label';
 

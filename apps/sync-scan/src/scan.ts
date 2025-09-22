@@ -2,18 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {isFileAllowed} from '@leav/utils';
-import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
-import {ApolloClient, ApolloQueryResult} from 'apollo-client';
-import {ApolloLink, DocumentNode} from 'apollo-link';
+import {InMemoryCache, type NormalizedCacheObject} from 'apollo-cache-inmemory';
+import {ApolloClient, type ApolloQueryResult} from 'apollo-client';
+import {type ApolloLink, type DocumentNode} from 'apollo-link';
 import {createHttpLink} from 'apollo-link-http';
 import fs from 'fs';
 import gql from 'graphql-tag';
 import fetch from 'node-fetch';
 import walk from 'walk';
 import * as utils from './utils';
-import {IConfig} from './_types/config';
-import {FilesystemContent, IFileContent} from './_types/filesystem';
-import {IDbScanResult} from './_types/queries';
+import {type IConfig} from './_types/config';
+import {type FilesystemContent, type IFileContent} from './_types/filesystem';
+import {type IDbScanResult} from './_types/queries';
 
 export const getFilePath = (root: string, fsPath: string): string => root.replace(`${fsPath}`, '').slice(1) || '.';
 export const getFileLevel = (path: string): number => (path === '.' ? 0 : path.split('/').length);

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
 import React from 'react';
-import {ILinkValue, ITreeLinkValue} from '../../../../_types/records';
+import {type ILinkValue, type ITreeLinkValue} from '../../../../_types/records';
 import {mockAttrAdvLink, mockAttrTreeMultival} from '../../../../__mocks__/attributes';
 import LinksField from './LinksField';
 

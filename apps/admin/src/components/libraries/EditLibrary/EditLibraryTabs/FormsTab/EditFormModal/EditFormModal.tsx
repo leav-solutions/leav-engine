@@ -5,7 +5,7 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Modal} from 'semantic-ui-react';
 import EditForm from '../EditForm';
-import {EditFormModalButtonsContext, IEditFormModalButtonsContext} from './EditFormModalButtonsContext';
+import {EditFormModalButtonsContext, type IEditFormModalButtonsContext} from './EditFormModalButtonsContext';
 
 interface IEditFormModalProps {
     open: boolean;

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitSelect} from 'aristid-ds';
-import {useContext, type FunctionComponent, ComponentProps} from 'react';
+import {useContext, type FunctionComponent, type ComponentProps} from 'react';
 import {FlagIcon} from 'react-flag-kit';
 import {LangContext} from '@leav/ui';
 import {getLanguageRadical} from '../../config/translation/utils';

@@ -4,8 +4,8 @@
 import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import React from 'react';
-import {GET_FORM_forms_list_dependencyAttributes_TreeAttribute} from '../../../../../../../../../_gqlTypes/GET_FORM';
-import {GET_TREE_BY_ID, GET_TREE_BY_IDVariables} from '../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
+import {type GET_FORM_forms_list_dependencyAttributes_TreeAttribute} from '../../../../../../../../../_gqlTypes/GET_FORM';
+import {type GET_TREE_BY_ID, type GET_TREE_BY_IDVariables} from '../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import {getTreeByIdQuery} from '../../../../../../../../../queries/trees/getTreeById';
 import Loading from '../../../../../../../../shared/Loading';
 import {useFormBuilderReducer} from '../formBuilderReducer/hook/useFormBuilderReducer';

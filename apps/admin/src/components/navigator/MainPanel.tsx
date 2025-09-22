@@ -9,7 +9,7 @@ import Loading from '../shared/Loading';
 import FiltersPanel from './FiltersPanel';
 import ListPanel from './ListPanel';
 import styles from './MainPanel.module.css';
-import {ActionTypes, IReducerAction, IReducerState} from './NavigatorReducer';
+import {ActionTypes, type IReducerAction, type IReducerState} from './NavigatorReducer';
 import TopPanel from './TopPanel';
 
 export interface IListProps {

@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
-import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
-import {IValueDomain} from 'domain/value/valueDomain';
-import {IRecordRepo} from 'infra/record/recordRepo';
+import {type UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
+import {type SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
+import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IRecordRepo} from 'infra/record/recordRepo';
 import {basename, dirname} from 'path';
-import * as Config from '_types/config';
-import {ILibrary} from '_types/library';
-import {IQueryInfos} from '_types/queryInfos';
-import {IFileMetadata, IPreviews, IPreviewsStatus} from '../../../_types/filesManager';
-import {IRecord} from '../../../_types/record';
-import {IHandleFileSystemEventDeps} from './handleFileSystemEvent/_types';
+import type * as Config from '_types/config';
+import {type ILibrary} from '_types/library';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IFileMetadata, type IPreviews, type IPreviewsStatus} from '../../../_types/filesManager';
+import {type IRecord} from '../../../_types/record';
+import {type IHandleFileSystemEventDeps} from './handleFileSystemEvent/_types';
 import winston = require('winston');
 
 export const getRecord = async (

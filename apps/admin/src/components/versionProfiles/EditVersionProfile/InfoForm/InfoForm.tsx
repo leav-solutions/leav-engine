@@ -4,17 +4,17 @@
 import {ErrorTypes} from '@leav/utils';
 import FormFieldWrapper from 'components/shared/FormFieldWrapper';
 import TreesSelector from 'components/trees/TreesSelector';
-import {Formik, FormikProps} from 'formik';
+import {Formik, type FormikProps} from 'formik';
 import useLang from 'hooks/useLang';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Form, FormProps, Icon, Message} from 'semantic-ui-react';
+import {Form, type FormProps, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {formatIDString, getFieldError} from 'utils';
 import * as yup from 'yup';
-import {GET_VERSION_PROFILE_BY_ID_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
-import {VersionProfileInput} from '_gqlTypes/globalTypes';
-import {IFormError} from '_types/errors';
+import {type GET_VERSION_PROFILE_BY_ID_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
+import {type VersionProfileInput} from '_gqlTypes/globalTypes';
+import {type IFormError} from '_types/errors';
 import LinkedAttributes from './LinkedAttributes';
 
 const FormWrapper = styled(({isNewProfile, ...props}: {isNewProfile: boolean} & FormProps) => <Form {...props} />)`

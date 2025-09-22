@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {createContext, FunctionComponent, useContext, useEffect, useState} from 'react';
-import {$ZodIssue} from 'zod/v4/core';
+import {createContext, type FunctionComponent, useContext, useEffect, useState} from 'react';
+import {type $ZodIssue} from 'zod/v4/core';
 import {useTranslation} from 'react-i18next';
 import {APP_ENDPOINT, ErrorDisplay, Loading} from '@leav/ui';
 import {useGetApplicationInstanceDataByEndpointQuery} from '../../../__generated__';
-import {Application} from '../../../modules/ApplicationRouting/types';
+import {type Application} from '../../../modules/ApplicationRouting/types';
 import {ApplicationSchema} from '../../../modules/ApplicationRouting/schema';
 
 const ApplicationSettingsContext = createContext<ReturnType<typeof useState<Application | null>>>(null);

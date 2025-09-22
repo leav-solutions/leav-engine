@@ -5,7 +5,7 @@ import {mount} from 'enzyme';
 import {BrowserRouter as Router} from 'react-router-dom-v5';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import UserContext from '../UserContext';
-import {IUserContext} from '../UserContext/UserContext';
+import {type IUserContext} from '../UserContext/UserContext';
 import ProtectedRoute from './ProtectedRoute';
 
 describe('ProtectedRoute', () => {

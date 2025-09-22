@@ -14,7 +14,7 @@ import {
 import {useMutation} from '@apollo/client';
 import {CreateDirectory, EditRecordModal, TriggerPreviewsGenerationModal, UploadFiles} from '@leav/ui';
 import {Button, Dropdown, message} from 'antd';
-import {ItemType} from 'antd/es/menu/interface';
+import {type ItemType} from 'antd/es/menu/interface';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {useActiveTree} from 'hooks/useActiveTree';
@@ -25,12 +25,12 @@ import {addInfo} from 'reduxStore/infos';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {getFilesLibraryId} from 'utils';
-import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
+import {type GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
-import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
-import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {IInfo, InfoChannel, InfoType} from '_types/types';
-import {OnMessagesFunc} from '../_types';
+import {type REMOVE_TREE_ELEMENT, type REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {type IInfo, InfoChannel, InfoType} from '_types/types';
+import {type OnMessagesFunc} from '../_types';
 import AddByCreationButton from './AddByCreationButton';
 import AddBySearchButton from './AddBySearchButton';
 

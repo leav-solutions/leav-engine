@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {Checkbox} from 'semantic-ui-react';
-import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
+import {type ICommonFieldsSettings, type IFormElementProps} from '../../../_types';
 import useLang from 'hooks/useLang';
 import {localizedLabel} from 'utils';
 

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorPreview} from '../errors/ErrorPreview';
-import {IVersion} from '../types/types';
+import {type IVersion} from '../types/types';
 import {getArgs} from './getArgs';
 import {getImageArgs} from './getImageArgs/getImageArgs';
 import {getVideoArgs} from './getVideoArgs/getVideoArgs';

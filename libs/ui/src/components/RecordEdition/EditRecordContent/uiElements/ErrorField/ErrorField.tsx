@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FrownFilled} from '@ant-design/icons';
-import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
+import {type ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import {theme} from 'antd';
 import styled from 'styled-components';
-import {AntdThemeToken, themeVars} from '_ui/antdTheme';
+import {type AntdThemeToken, themeVars} from '_ui/antdTheme';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IFormElementProps} from '../../_types';
+import {type IFormElementProps} from '../../_types';
 import {useLang} from '_ui/hooks';
 
 const Wrapper = styled.div<{$themeToken: AntdThemeToken}>`

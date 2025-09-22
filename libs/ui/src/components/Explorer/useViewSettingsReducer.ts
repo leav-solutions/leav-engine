@@ -3,23 +3,23 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useEffect, useMemo, useReducer, useState} from 'react';
 import {
-    GetViewsListQuery,
+    type GetViewsListQuery,
     useExplorerAttributesQuery,
     useExplorerLinkAttributeQuery,
     useGetViewsListQuery,
     ViewSizes
 } from '_ui/_gqlTypes';
-import {DefaultViewSettings, Entrypoint, IEntrypointLink} from './_types';
+import {type DefaultViewSettings, type Entrypoint, type IEntrypointLink} from './_types';
 import {mapViewTypeFromLegacyToExplorer} from './_constants';
 import {
-    IViewSettingsState,
+    type IViewSettingsState,
     useEditSettings,
     viewSettingsInitialState,
     viewSettingsReducer
 } from './manage-view-settings';
 import {
     isLinkAttributeDetails,
-    ExplorerAttributesById,
+    type ExplorerAttributesById,
     useTransformFilters
 } from './manage-view-settings/_shared/useTransformFilters';
 

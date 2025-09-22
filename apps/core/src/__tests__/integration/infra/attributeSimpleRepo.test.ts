@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../../_types/attribute';
-import {IQueryInfos} from '_types/queryInfos';
-import {IAttributeSimpleRepo} from 'infra/attributeTypes/attributeSimpleRepo';
-import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
-import {IRecordRepo} from 'infra/record/recordRepo';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {IRecord} from '_types/record';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IAttributeSimpleRepo} from 'infra/attributeTypes/attributeSimpleRepo';
+import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
+import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type ILibraryRepo} from 'infra/library/libraryRepo';
+import {type IRecord} from '_types/record';
 import {getCoreDep, getLibraryRepo, getRecordRepo} from './integrationTestRepoUtils';
-import {IStandardValue} from '_types/value';
+import {type IStandardValue} from '_types/value';
 
 // Very partial tests, to be completed !
 // TODO - createValue

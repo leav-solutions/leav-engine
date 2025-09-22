@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import cacache from 'cacache';
-import {IConfig} from '_types/config';
-import {ICacheService, IStoreDataParams} from './cacheService';
+import {type IConfig} from '_types/config';
+import {type ICacheService, type IStoreDataParams} from './cacheService';
 
 interface IDeps {
     config?: IConfig;

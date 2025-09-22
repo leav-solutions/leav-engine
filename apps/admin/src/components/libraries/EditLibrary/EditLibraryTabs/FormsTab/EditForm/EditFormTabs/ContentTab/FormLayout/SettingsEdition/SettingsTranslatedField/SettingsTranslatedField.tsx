@@ -7,11 +7,11 @@ import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
 import {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, Input} from 'semantic-ui-react';
-import {GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type GET_ATTRIBUTE_BY_ID, type GET_ATTRIBUTE_BY_IDVariables} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {IFormElementSettings, ISettingsFieldCommonProps} from '../../../_types';
+import {type IFormElementSettings, type ISettingsFieldCommonProps} from '../../../_types';
 import useLang from 'hooks/useLang';
 
 interface ISettingsFieldProps {

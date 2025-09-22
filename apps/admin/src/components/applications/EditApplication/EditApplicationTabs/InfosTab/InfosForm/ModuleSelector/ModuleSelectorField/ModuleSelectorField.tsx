@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {Dropdown, DropdownProps, Form, Header} from 'semantic-ui-react';
-import {GET_APPLICATION_COMPONENTS_applicationsComponents} from '_gqlTypes/GET_APPLICATION_COMPONENTS';
+import {Dropdown, type DropdownProps, Form, Header} from 'semantic-ui-react';
+import {type GET_APPLICATION_COMPONENTS_applicationsComponents} from '_gqlTypes/GET_APPLICATION_COMPONENTS';
 
 interface IModuleSelectorFieldProps extends DropdownProps {
     modules: GET_APPLICATION_COMPONENTS_applicationsComponents[];

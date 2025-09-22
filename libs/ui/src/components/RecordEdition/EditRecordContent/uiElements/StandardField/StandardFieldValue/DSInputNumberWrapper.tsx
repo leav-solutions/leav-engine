@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInputNumber} from 'aristid-ds';
-import {ComponentPropsWithRef, FocusEvent, FunctionComponent, useRef, useState} from 'react';
-import {Form, GetRef} from 'antd';
+import {type ComponentPropsWithRef, type FocusEvent, type FunctionComponent, useRef, useState} from 'react';
+import {Form, type GetRef} from 'antd';
 import styled from 'styled-components';
-import {IStandFieldValueContentProps} from './_types';
-import {KitInputNumberProps} from 'aristid-ds/dist/Kit/DataEntry/InputNumber/types';
+import {type IStandFieldValueContentProps} from './_types';
+import {type KitInputNumberProps} from 'aristid-ds/dist/Kit/DataEntry/InputNumber/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 

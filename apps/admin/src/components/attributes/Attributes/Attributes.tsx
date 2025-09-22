@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {History} from 'history';
+import {type History} from 'history';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {BiSpreadsheet} from 'react-icons/bi';
@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {addWildcardToFilters} from '../../../utils/utils';
-import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTES, type GET_ATTRIBUTESVariables} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import AttributesList from '../AttributesList';
 import DeleteAttribute from '../DeleteAttribute';

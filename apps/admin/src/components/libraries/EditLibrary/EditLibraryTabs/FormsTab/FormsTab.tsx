@@ -6,9 +6,9 @@ import React, {useState} from 'react';
 import {deleteFormQuery} from '../../../../../queries/forms/deleteFormMutation';
 import {getFormsQuery} from '../../../../../queries/forms/getFormsQuery';
 import {addWildcardToFilters, clearCacheForQuery} from '../../../../../utils';
-import {DELETE_FORM, DELETE_FORMVariables} from '../../../../../_gqlTypes/DELETE_FORM';
-import {GET_FORMS_LIST, GET_FORMS_LISTVariables} from '../../../../../_gqlTypes/GET_FORMS_LIST';
-import {IFormFilterOptions} from '../../../../../_types/forms';
+import {type DELETE_FORM, type DELETE_FORMVariables} from '../../../../../_gqlTypes/DELETE_FORM';
+import {type GET_FORMS_LIST, type GET_FORMS_LISTVariables} from '../../../../../_gqlTypes/GET_FORMS_LIST';
+import {type IFormFilterOptions} from '../../../../../_types/forms';
 import EditFormModal from './EditFormModal';
 import FormsList from './FormsList';
 

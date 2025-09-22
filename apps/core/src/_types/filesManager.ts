@@ -4,7 +4,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 
-import {IEmbeddedAttribute} from './attribute';
+import {type IEmbeddedAttribute} from './attribute';
 
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export enum FileEvents {

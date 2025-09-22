@@ -2,53 +2,53 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction, extractArgsFromString} from '@leav/utils';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
-import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {AwilixContainer} from 'awilix';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IPermissionDomain} from 'domain/permission/permissionDomain';
+import {type AwilixContainer} from 'awilix';
 import ExcelJS from 'exceljs';
 import fs from 'fs';
-import {i18n} from 'i18next';
+import {type i18n} from 'i18next';
 import JsonParser from 'jsonparse';
 import {validate} from 'jsonschema';
 import {ValidatorResultError} from 'jsonschema/lib/helpers';
 import {nanoid} from 'nanoid';
 import path from 'path';
-import {IUtils} from 'utils/utils';
+import {type IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
-import * as Config from '_types/config';
+import type * as Config from '_types/config';
 import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import ValidationError from '../../errors/ValidationError';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
-import {IDbUtils} from '../../infra/db/dbUtils';
-import {AttributeTypes, IAttribute} from '../../_types/attribute';
+import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
+import {type IDbUtils} from '../../infra/db/dbUtils';
+import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {
     Action,
-    ICacheParams,
-    IData,
-    IElement,
-    IMatch,
+    type ICacheParams,
+    type IData,
+    type IElement,
+    type IMatch,
     ImportMode,
     ImportType,
-    ITree,
-    IValue as IImportValue
+    type ITree,
+    type IValue as IImportValue
 } from '../../_types/import';
-import {IQueryInfos} from '../../_types/queryInfos';
-import {AttributeCondition, IRecordFilterLight, Operator} from '../../_types/record';
-import {ITaskFuncParams, TaskCallbackType, TaskPriority, TaskType} from '../../_types/tasksManager';
-import {ITreeElement} from '../../_types/tree';
-import {ISaveValue, IValue} from '../../_types/value';
-import {IValidateHelper} from '../helpers/validate';
-import {IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
-import winston from 'winston';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {AttributeCondition, type IRecordFilterLight, Operator} from '../../_types/record';
+import {type ITaskFuncParams, TaskCallbackType, TaskPriority, TaskType} from '../../_types/tasksManager';
+import {type ITreeElement} from '../../_types/tree';
+import {ISaveValue, type IValue} from '../../_types/value';
+import {type IValidateHelper} from '../helpers/validate';
+import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
+import type winston from 'winston';
 
 export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
 export const IMPORT_CONFIG_SCHEMA_PATH = path.resolve(__dirname, './import-config-schema.json');

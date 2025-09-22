@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useActiveTree} from 'hooks/useActiveTree';
 import {useAppSelector} from 'reduxStore/store';
-import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {SharedStateSelectionType} from '_types/types';
-import {OnMessagesFunc} from '../_types';
+import {type OnMessagesFunc} from '../_types';
 import AddSelectionButton from './AddSelectionButton';
 import DetachSelectionButton from './DetachSelectionButton';
 import MoveSelectionButton from './MoveSelectionButton';

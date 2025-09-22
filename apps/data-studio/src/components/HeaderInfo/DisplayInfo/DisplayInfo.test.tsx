@@ -5,7 +5,7 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {render, screen, waitFor} from '_tests/testUtils';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
-import {IInfo, InfoType} from '../../../_types/types';
+import {type IInfo, InfoType} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import DisplayInfo from './DisplayInfo';
 

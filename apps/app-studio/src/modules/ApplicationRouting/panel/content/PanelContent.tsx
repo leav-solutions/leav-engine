@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
 import {EditRecordPage} from '@leav/ui';
-import {Panel} from '_ui/hooks/useIFrameMessenger/types';
-import type {AddPanel, Workspace} from '../../types';
+import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
+import  {type AddPanel, type Workspace} from '../../types';
 import {SIDEBAR_CONTENT_ID} from '../../../../constants';
 import {PanelCustom} from './PanelCustom';
 import {PanelLibraryExplorer} from './PanelLibraryExplorer';

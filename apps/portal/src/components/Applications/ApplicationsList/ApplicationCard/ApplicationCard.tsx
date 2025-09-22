@@ -8,10 +8,10 @@ import {useLang} from '@leav/ui';
 import {getInitials, localizedTranslation} from '@leav/utils';
 import {KitAvatar, KitImage, KitRedirectCard} from 'aristid-ds';
 import EditApplicationModal, {
-    IEditApplicationModalProps
+    type IEditApplicationModalProps
 } from 'components/Applications/EditApplicationModal/EditApplicationModal';
-import {ComponentProps, useState} from 'react';
-import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
+import {type ComponentProps, useState} from 'react';
+import {type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {useTranslation} from 'react-i18next';
 
 interface IApplicationCardProps {

@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined, SearchOutlined} from '@ant-design/icons';
-import {localizedTranslation, Override} from '@leav/utils';
-import {Table, TableColumnsType, TablePaginationConfig} from 'antd';
-import {FilterValue, SorterResult} from 'antd/es/table/interface';
+import {localizedTranslation, type Override} from '@leav/utils';
+import {Table, type TableColumnsType, type TablePaginationConfig} from 'antd';
+import {type FilterValue, type SorterResult} from 'antd/es/table/interface';
 import {KitButton, KitInput, KitTag} from 'aristid-ds';
 import {useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
@@ -15,9 +15,9 @@ import {
     AttributeFormat,
     AttributesSortableFields,
     AttributeType,
-    GetAttributesQuery,
-    GetAttributesQueryVariables,
-    LibraryAttributesFragment,
+    type GetAttributesQuery,
+    type GetAttributesQueryVariables,
+    type LibraryAttributesFragment,
     SortOrder,
     useGetAttributesQuery
 } from '../../../../../_gqlTypes';

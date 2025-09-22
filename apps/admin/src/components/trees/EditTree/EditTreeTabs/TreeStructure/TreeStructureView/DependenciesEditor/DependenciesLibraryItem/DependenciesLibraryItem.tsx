@@ -8,8 +8,8 @@ import {useDrag, useDrop} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import {Button, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_TREES_trees_list, GET_TREES_trees_list_libraries} from '_gqlTypes/GET_TREES';
-import {IDndDropResult, IDndLibraryItem, LIBRARY_DND_TYPE} from '../../../_types';
+import {type GET_TREES_trees_list, type GET_TREES_trees_list_libraries} from '_gqlTypes/GET_TREES';
+import {type IDndDropResult, type IDndLibraryItem, LIBRARY_DND_TYPE} from '../../../_types';
 
 const LibraryItemWrapper = styled.div<{isOver: boolean}>`
     border: 1px solid #ddd;

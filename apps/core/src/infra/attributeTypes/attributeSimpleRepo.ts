@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
-import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {IQueryInfos} from '_types/queryInfos';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
-import {ISaveStandardValue, IStandardValue} from '../../_types/value';
+import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
+import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
+import {type IQueryInfos} from '_types/queryInfos';
+import {AttributeFormats, type AttributeTypes, type IAttribute} from '../../_types/attribute';
+import {type ISaveStandardValue, type IStandardValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
-import {IDbService} from '../db/dbService';
+import {type IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
-import {GetConditionPart} from './helpers/getConditionPart';
+import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
+import {type GetConditionPart} from './helpers/getConditionPart';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;

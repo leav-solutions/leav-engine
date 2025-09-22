@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IPreviewScalar} from '@leav/utils';
+import {type IPreviewScalar} from '@leav/utils';
 import {mockApplication} from '_ui/__mocks__/common/application';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {themeVars} from '../../../antdTheme';
-import {GetFileDataDocument, GetFileDataQueryVariables, LibraryBehavior} from '../../../_gqlTypes';
+import {GetFileDataDocument, type GetFileDataQueryVariables, LibraryBehavior} from '../../../_gqlTypes';
 import {act, fireEvent, render, screen, waitFor, within} from '../../../_tests/testUtils';
 import FileModal from './FileModal';
 

@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useRef} from 'react';
-import {useDrop, XYCoord} from 'react-dnd';
+import {useDrop, type XYCoord} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {
     defaultContainerId,
     FormBuilderActionTypes,
-    IFormBuilderStateAndDispatch
+    type IFormBuilderStateAndDispatch
 } from '../../../formBuilderReducer/formBuilderReducer';
 import FormElementWrapper from '../../../FormLayout/FormLayoutElementWrapper/FormElementWrapper';
-import {DraggableElementTypes, IFormBuilderDragObject, IFormElement} from '../../../_types';
+import {DraggableElementTypes, type IFormBuilderDragObject, type IFormElement} from '../../../_types';
 
 interface IContainerProps extends Partial<IFormBuilderStateAndDispatch> {
     elementData?: IFormElement;

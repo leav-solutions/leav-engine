@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
-import {Override} from '@leav/utils';
-import {GetFileDataQuery} from '_ui/_gqlTypes';
+import {type Override} from '@leav/utils';
+import {type GetFileDataQuery} from '_ui/_gqlTypes';
 import {recordIdentityFragment} from '../../gqlFragments';
 
 export interface IFilePreviewsStatusVersion {

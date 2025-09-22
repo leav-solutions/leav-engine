@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import cloneDeep from 'lodash/cloneDeep';
-import {IFormElement} from '../../../_types';
-import {defaultContainerId, IFormBuilderActionSaveSettings, IFormBuilderState} from '../../formBuilderReducer';
+import {type IFormElement} from '../../../_types';
+import {defaultContainerId, type IFormBuilderActionSaveSettings, type IFormBuilderState} from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
-import {IKeyValue} from '@leav/utils';
+import {type IKeyValue} from '@leav/utils';
 
 const _isLabelObject = (obj: any): obj is IKeyValue<string> => typeof obj === 'object' && obj !== null && !obj.length;
 

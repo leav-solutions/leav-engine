@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {QueryResult} from '@apollo/client';
-import {Mockify} from '@leav/utils';
+import {type QueryResult} from '@apollo/client';
+import {type Mockify} from '@leav/utils';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {render, screen} from '../../_tests/testUtils';
 import {useCanEditRecord} from './useCanEditRecord';

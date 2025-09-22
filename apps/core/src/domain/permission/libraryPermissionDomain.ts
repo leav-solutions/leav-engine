@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PermissionTypes} from '../../_types/permissions';
-import {IGlobalPermissionHelper} from './helpers/globalPermission';
-import {IGetInheritedLibraryPermissionParams, IGetLibraryPermissionParams} from './_types';
+import {type IGlobalPermissionHelper} from './helpers/globalPermission';
+import {type IGetInheritedLibraryPermissionParams, type IGetLibraryPermissionParams} from './_types';
 
 export interface ILibraryPermissionDomain {
     getLibraryPermission(params: IGetLibraryPermissionParams): Promise<boolean>;

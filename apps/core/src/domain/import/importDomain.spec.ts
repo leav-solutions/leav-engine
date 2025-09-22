@@ -1,26 +1,26 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
-import {IValidateHelper} from 'domain/helpers/validate';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
+import {type IValidateHelper} from 'domain/helpers/validate';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IValueDomain} from 'domain/value/valueDomain';
 import fs from 'fs';
-import {i18n} from 'i18next';
+import {type i18n} from 'i18next';
 import path from 'path';
-import {IUtils, ToAny} from 'utils/utils';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
+import {type IUtils, type ToAny} from 'utils/utils';
+import type * as Config from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';
 import {Action, ImportMode} from '../../_types/import';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import importDomain, {IImportDomainDeps} from './importDomain';
-import {IPermissionDomain} from 'domain/permission/permissionDomain';
+import importDomain, {type IImportDomainDeps} from './importDomain';
+import {type IPermissionDomain} from 'domain/permission/permissionDomain';
 import mockLogger from '../../__tests__/mockers/logger';
 import PermissionError from '../../errors/PermissionError';
 

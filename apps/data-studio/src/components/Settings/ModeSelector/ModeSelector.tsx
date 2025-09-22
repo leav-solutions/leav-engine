@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckboxOptionType, Popconfirm, Radio} from 'antd';
+import {type CheckboxOptionType, Popconfirm, Radio} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
-import {ComponentProps, useState} from 'react';
+import {type ComponentProps, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 

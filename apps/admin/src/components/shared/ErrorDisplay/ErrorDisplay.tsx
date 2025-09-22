@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ReactNode} from 'react';
+import {type ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-v5';
-import {Button, Icon, Message, MessageSizeProp, SemanticICONS} from 'semantic-ui-react';
+import {Button, Icon, Message, type MessageSizeProp, type SemanticICONS} from 'semantic-ui-react';
 import {ErrorDisplayTypes} from '_types/errors';
 
 interface IErrorDisplayProps {

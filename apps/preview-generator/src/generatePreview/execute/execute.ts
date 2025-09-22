@@ -5,7 +5,7 @@ import {execFile} from 'child_process';
 import {ErrorPreview} from '../../errors/ErrorPreview';
 import {getArgs} from '../../getArgs/getArgs';
 import {handleDocument} from '../../handleDocument/handleDocument';
-import {IConfig, IResult, IRootPaths, ISize, IVersion} from '../../types/types';
+import {type IConfig, type IResult, type IRootPaths, type ISize, type IVersion} from '../../types/types';
 import {handleError} from '../../utils/log';
 
 export interface IExecute {

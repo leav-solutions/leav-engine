@@ -4,11 +4,11 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Table, Progress, Icon} from 'semantic-ui-react';
-import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
+import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import {TaskStatus} from '_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import moment from 'moment';
-import {Column} from '../Tasks/Tasks';
+import {type Column} from '../Tasks/Tasks';
 import useLang from 'hooks/useLang';
 import {localizedTranslation} from '@leav/utils';
 

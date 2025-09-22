@@ -4,7 +4,7 @@
 import {DatePicker} from 'antd';
 import dayjs from 'dayjs';
 import {themeVars} from '_ui/antdTheme';
-import {IFilterInputProps} from '../../Filter';
+import {type IFilterInputProps} from '../../Filter';
 
 const DateFilter = ({filter, updateFilterValue}: IFilterInputProps) => {
     const _handleChange = (value: dayjs.Dayjs | null) => {

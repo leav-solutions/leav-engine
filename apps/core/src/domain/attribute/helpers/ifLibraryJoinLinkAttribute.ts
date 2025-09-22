@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AttributeTypes, IAttribute} from '../../../_types/attribute';
-import {ILibrary, LibraryBehavior} from '../../../_types/library';
-import {IQueryInfos} from '../../../_types/queryInfos';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
+import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
+import {type ILibrary, LibraryBehavior} from '../../../_types/library';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 
 export type IfLibraryJoinLinkAttributeCallback<R> = (joinLibId: string, joinAttributeProps: IAttribute) => Promise<R>;
 export type IfLibraryJoinLinkAttribute = <R = unknown>(

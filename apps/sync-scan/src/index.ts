@@ -5,7 +5,7 @@ import {amqpService} from '@leav/message-broker';
 import automate, {extractChildrenDbElements} from './automate';
 import {getConfig} from './config';
 import * as scan from './scan';
-import {IConfig} from './_types/config';
+import {type IConfig} from './_types/config';
 
 (async function () {
     try {

@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute} from '../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute} from '../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
 import {
-    GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
-    GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
+    type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
+    type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
 } from '../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {AttributeFormat, AttributeType, MultiDisplayOption, ValueVersionMode} from '../_gqlTypes/globalTypes';
 

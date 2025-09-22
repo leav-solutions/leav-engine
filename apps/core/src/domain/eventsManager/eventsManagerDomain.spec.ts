@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
+import {type IAmqpService} from '@leav/message-broker';
 import {EventAction} from '@leav/utils';
-import * as amqp from 'amqplib';
-import {IUtils, ToAny} from 'utils/utils';
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
+import type * as amqp from 'amqplib';
+import {type IUtils, type ToAny} from 'utils/utils';
+import {type IConfig} from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import eventsManager, {IEventsManagerDomainDeps} from './eventsManagerDomain';
+import eventsManager, {type IEventsManagerDomainDeps} from './eventsManagerDomain';
 import winston = require('winston');
 
 const logger: Mockify<winston.Winston> = {

@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IDbService} from '../db/dbService';
-import * as Config from '_types/config';
-import {IRecordRepo} from 'infra/record/recordRepo';
-import {GetSearchQuery} from './helpers/getSearchQuery';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IDbService} from '../db/dbService';
+import type * as Config from '_types/config';
+import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type GetSearchQuery} from './helpers/getSearchQuery';
+import {type IQueryInfos} from '_types/queryInfos';
 
 interface IRecordIndexData {
     [x: string]: string;

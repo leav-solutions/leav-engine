@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {LoadingOutlined} from '@ant-design/icons';
-import {Modal, Result, StepProps, Steps} from 'antd';
+import {Modal, Result, type StepProps, Steps} from 'antd';
 import {useKitNotification} from 'aristid-ds';
 import {useState} from 'react';
 import styled from 'styled-components';
-import {IFilter, ISearchSelection, ISelectedAttribute} from '_ui/types';
+import {type IFilter, type ISearchSelection, type ISelectedAttribute} from '_ui/types';
 import {
     AttributeType,
     RecordFilterCondition,
-    RecordFilterInput,
+    type RecordFilterInput,
     RecordFilterOperator,
     useExportLazyQuery
 } from '_ui/_gqlTypes';

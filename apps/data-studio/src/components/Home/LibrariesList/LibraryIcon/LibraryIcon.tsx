@@ -4,7 +4,7 @@
 import {FileOutlined, FolderOutlined, PictureOutlined, TableOutlined} from '@ant-design/icons';
 import {EntityPreview} from '@leav/ui';
 import styled from 'styled-components';
-import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
+import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {PreviewSize} from '_types/types';
 

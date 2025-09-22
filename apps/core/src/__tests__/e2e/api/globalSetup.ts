@@ -4,19 +4,19 @@
 import {amqpService} from '@leav/message-broker';
 import fsremaned from 'fs';
 import path from 'path';
-import {AwilixContainer} from 'awilix';
+import {type AwilixContainer} from 'awilix';
 import {getConfig} from '../../../config';
 import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
-import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
+import {ECacheType, type ICachesService} from '../../../infra/cache/cacheService';
 import {initRedis} from '../../../infra/cache/redis';
 import {initMailer} from '../../../infra/mailer';
 import {initPlugins} from '../../../pluginsLoader';
-import {IConfig} from '../../../_types/config';
+import {type IConfig} from '../../../_types/config';
 import {initOIDCClient} from '../../../infra/oidc';
 import {initDb} from '../../../infra/db/db';
-import {IDbUtils} from 'infra/db/dbUtils';
-import {IServer} from 'interface/server';
+import {type IDbUtils} from 'infra/db/dbUtils';
+import {type IServer} from 'interface/server';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder

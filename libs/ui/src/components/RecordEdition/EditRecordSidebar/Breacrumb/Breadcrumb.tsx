@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitBreadcrumb} from 'aristid-ds';
-import {IKitBreadcrumbItem} from 'aristid-ds/dist/Kit/Navigation/Breadcrumb/types';
-import {FunctionComponent} from 'react';
+import {type IKitBreadcrumbItem} from 'aristid-ds/dist/Kit/Navigation/Breadcrumb/types';
+import {type FunctionComponent} from 'react';
 import {useEditRecordReducer} from '../../editRecordReducer/useEditRecordReducer';
 import {
     EditRecordReducerActionsTypes,

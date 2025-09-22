@@ -7,18 +7,18 @@ import {TreeNodeList} from './display-tree-node/TreeNodeList';
 import {useManageTreeNodeSelection} from './manage-tree-node-selection/useManageTreeNodeSelection';
 import {AntForm} from 'aristid-ds';
 import {
-    CalculatedFlags,
+    type CalculatedFlags,
     computeCalculatedFlags,
     computeInheritedFlags,
-    InheritedFlags
+    type InheritedFlags
 } from '../shared/calculatedInheritedFlags';
-import {FormInstance} from 'antd';
+import {type FormInstance} from 'antd';
 import {mockFormElementTree} from '_ui/__mocks__/common/form';
 import {RecordEditionContext} from '../../hooks/useRecordEditionContext';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {MockedLangContextProvider} from '_ui/testing';
 import {initialState} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import {RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
+import {type RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import * as _ from 'lodash';
 

@@ -4,17 +4,17 @@
 import {ErrorTypes} from '@leav/utils';
 import FormFieldWrapper from 'components/shared/FormFieldWrapper';
 import RecordSelector from 'components/shared/RecordSelector';
-import {Formik, FormikProps} from 'formik';
+import {Formik, type FormikProps} from 'formik';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getFieldError} from 'utils';
 import * as yup from 'yup';
-import {GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
-import {ApiKeyInput} from '_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {IFormError} from '_types/errors';
+import {type GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
+import {type ApiKeyInput} from '_gqlTypes/globalTypes';
+import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {type IFormError} from '_types/errors';
 import ExpirationSelector from './ExpirationSelector';
 
 const FormWrapper = styled(Form)<{$isNewKey: boolean}>`

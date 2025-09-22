@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {ITableCell} from '_ui/types/search';
+import {type ITableCell} from '_ui/types/search';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';

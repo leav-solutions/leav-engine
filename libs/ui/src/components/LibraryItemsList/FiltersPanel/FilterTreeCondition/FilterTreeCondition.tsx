@@ -5,7 +5,7 @@ import {Dropdown} from 'antd';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IFilterTree, TreeConditionFilter} from '_ui/types/search';
+import {type IFilterTree, TreeConditionFilter} from '_ui/types/search';
 import FilterDropdownButton from '../FilterDropdownButton';
 import {getTreeConditionOptions} from '../FiltersOptions';
 

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import fs from 'fs';
-import {FileUpload} from 'graphql-upload';
-import progress, {Progress} from 'progress-stream';
+import {type FileUpload} from 'graphql-upload';
+import progress, {type Progress} from 'progress-stream';
 
 export type StoreUploadFileFunc = (
     fileData: FileUpload,

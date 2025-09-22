@@ -5,18 +5,18 @@ import {localizedTranslation} from '@leav/utils';
 import {useMemo} from 'react';
 import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
 import {
-    Entrypoint,
-    IEntrypointLink,
-    IExplorerData,
-    ExplorerFilter,
-    DefaultViewSettings,
-    IEntrypointLibrary
+    type Entrypoint,
+    type IEntrypointLink,
+    type IExplorerData,
+    type ExplorerFilter,
+    type DefaultViewSettings,
+    type IEntrypointLibrary
 } from '../_types';
 import {
-    ExplorerLibraryDataQuery,
-    ExplorerLinkDataQuery,
-    LinkPropertyLinkValueFragment,
-    SortOrder,
+    type ExplorerLibraryDataQuery,
+    type ExplorerLinkDataQuery,
+    type LinkPropertyLinkValueFragment,
+    type SortOrder,
     useExplorerLibraryDataQuery,
     useExplorerLinkAttributeQuery,
     useExplorerLinkDataQuery

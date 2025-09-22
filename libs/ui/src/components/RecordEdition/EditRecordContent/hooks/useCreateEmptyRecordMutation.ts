@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useCreateEmptyRecordMutation} from '_ui/_gqlTypes';
-import {APICallStatus, CreateEmptyRecordFunc} from '../_types';
+import {APICallStatus, type CreateEmptyRecordFunc} from '../_types';
 
 export interface ICreateRecordHook {
     createEmptyRecord: CreateEmptyRecordFunc;

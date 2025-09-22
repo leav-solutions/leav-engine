@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Channel, ConsumeMessage, Options} from 'amqplib';
+import {type Channel, type ConsumeMessage, type Options} from 'amqplib';
 import * as fs from 'fs';
 import * as path from 'path';
 import {getChannel} from '../../amqp/getChannel/getChannel';
 import {getConfig} from '../../getConfig/getConfig';
-import {IConfig, IMessageConsume} from '../../types/types';
+import {type IConfig, type IMessageConsume} from '../../types/types';
 
 describe('test preview generation', () => {
     let config;

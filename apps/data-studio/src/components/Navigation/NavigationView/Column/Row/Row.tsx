@@ -12,7 +12,7 @@ import {
 import {
     EditRecordBtn,
     FloatingMenu,
-    FloatingMenuAction,
+    type FloatingMenuAction,
     RecordCard,
     themeVars,
     TriggerPreviewsGenerationModal,
@@ -20,21 +20,21 @@ import {
 } from '@leav/ui';
 import {Badge, message, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
-import {SizeType} from 'antd/lib/config-provider/SizeContext';
+import {type SizeType} from 'antd/lib/config-provider/SizeContext';
 import {useActiveTree} from 'hooks/useActiveTree';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import styled, {CSSObject} from 'styled-components';
+import styled, {type CSSObject} from 'styled-components';
 import {getFilesLibraryId, localizedTranslation} from 'utils';
 import {TreeBehavior} from '_gqlTypes/globalTypes';
-import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {
-    IRecordIdentityWhoAmI,
-    ISharedSelected,
-    ISharedStateSelectionNavigation,
+    type IRecordIdentityWhoAmI,
+    type ISharedSelected,
+    type ISharedStateSelectionNavigation,
     PreviewSize,
     SharedStateSelectionType
 } from '../../../../../_types/types';

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckOutlined, CloseOutlined, FileTextOutlined} from '@ant-design/icons';
-import {getInvertColor, IDateRangeValue} from '@leav/utils';
+import {getInvertColor, type IDateRangeValue} from '@leav/utils';
 import {Switch, Tag, Tooltip, Typography} from 'antd';
 import isEmpty from 'lodash/isEmpty';
 import React from 'react';
@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {AttributeFormat} from '_ui/_gqlTypes';
 import {stringifyDateRangeValue} from '_ui/_utils';
-import {ISimpleCellProps} from '../types';
+import {type ISimpleCellProps} from '../types';
 import {getValuesToDisplayInCell} from '../utils';
 import {AggregationColor} from 'antd/es/color-picker/color';
 

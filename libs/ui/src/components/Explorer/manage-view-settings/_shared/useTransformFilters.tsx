@@ -2,31 +2,31 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    AttributeDetailsLinkAttributeFragment,
-    AttributeDetailsTreeAttributeFragment,
+    type AttributeDetailsLinkAttributeFragment,
+    type AttributeDetailsTreeAttributeFragment,
     AttributeType,
-    ExplorerAttributesQuery,
-    ExplorerLinkAttributeQuery,
-    GetViewsListQuery,
-    LinkAttributeDetailsFragment,
+    type ExplorerAttributesQuery,
+    type ExplorerLinkAttributeQuery,
+    type GetViewsListQuery,
+    type LinkAttributeDetailsFragment,
     RecordFilterCondition,
-    StandardAttributeDetailsFragment,
-    ViewDetailsFilterFragment
+    type StandardAttributeDetailsFragment,
+    type ViewDetailsFilterFragment
 } from '_ui/_gqlTypes';
 import {
-    ExplorerFilter,
-    IExplorerFilterBaseAttribute,
-    IExplorerFilterLink,
-    IExplorerFilterLinkValueList,
-    IExplorerFilterStandard,
-    IExplorerFilterStandardValueList,
-    IExplorerFilterThrough,
-    IExplorerFilterTree,
-    ValidFieldFilter,
-    ValidFieldFilterLinkValuesList,
-    ValidFieldFilterStandardValuesList,
-    ValidFieldFilterThrough,
-    validFilter
+    type ExplorerFilter,
+    type IExplorerFilterBaseAttribute,
+    type IExplorerFilterLink,
+    type IExplorerFilterLinkValueList,
+    type IExplorerFilterStandard,
+    type IExplorerFilterStandardValueList,
+    type IExplorerFilterThrough,
+    type IExplorerFilterTree,
+    type ValidFieldFilter,
+    type ValidFieldFilterLinkValuesList,
+    type ValidFieldFilterStandardValuesList,
+    type ValidFieldFilterThrough,
+    type validFilter
 } from '../../_types';
 import {ThroughConditionFilter} from '_ui/types';
 import {isLinkAttribute, isStandardAttribute, isTreeAttribute} from '_ui/_utils/attributeType';

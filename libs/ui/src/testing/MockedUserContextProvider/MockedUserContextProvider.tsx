@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {UserContext} from '_ui/contexts/UserContext';
-import {IUserContext} from '_ui/contexts/UserContext/types';
+import {type IUserContext} from '_ui/contexts/UserContext/types';
 import {mockLibrarySimple} from '_ui/__mocks__/common/library';
 import {mockRecord} from '_ui/__mocks__/common/record';
 

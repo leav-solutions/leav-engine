@@ -4,10 +4,10 @@
 import {EllipsisOutlined} from '@ant-design/icons';
 import {Dropdown, Tooltip} from 'antd';
 import Button from 'antd/lib/button';
-import {SizeType} from 'antd/lib/config-provider/SizeContext';
-import styled, {CSSObject} from 'styled-components';
+import {type SizeType} from 'antd/lib/config-provider/SizeContext';
+import styled, {type CSSObject} from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {FloatingMenuAction, IFloatingMenuActionWithBtn, IFloatingMenuActionWithIcon} from './_types';
+import {type FloatingMenuAction, type IFloatingMenuActionWithBtn, type IFloatingMenuActionWithIcon} from './_types';
 
 export interface IFloatingMenuProps {
     actions: FloatingMenuAction[];

@@ -9,9 +9,9 @@ import {useTranslation} from 'react-i18next';
 import {MessagesTypes} from 'reduxStore/messages/messages';
 import {Button, Icon, Message, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
-import {ApiKeyInput} from '_gqlTypes/globalTypes';
-import {SAVE_API_KEY, SAVE_API_KEYVariables} from '_gqlTypes/SAVE_API_KEY';
+import {type GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
+import {type ApiKeyInput} from '_gqlTypes/globalTypes';
+import {type SAVE_API_KEY, type SAVE_API_KEYVariables} from '_gqlTypes/SAVE_API_KEY';
 import EditApiKeyForm from './EditApiKeyForm';
 
 interface IEditApiKeyModalProps {

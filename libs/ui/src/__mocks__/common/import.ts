@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {ISheet} from '_ui/components/ImportModal/_types';
+import {type ISheet} from '_ui/components/ImportModal/_types';
 import {ImportMode, ImportType} from '_ui/_gqlTypes';
 import {mockAttributeWithDetails} from './attribute';
 

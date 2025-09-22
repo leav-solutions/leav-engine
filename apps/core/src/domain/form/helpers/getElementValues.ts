@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {IUtils} from 'utils/utils';
-import winston from 'winston';
-import {IQueryInfos} from '_types/queryInfos';
-import {IValue, IValueVersion} from '_types/value';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type IUtils} from 'utils/utils';
+import type winston from 'winston';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IValue, type IValueVersion} from '_types/value';
 import ValidationError from '../../../errors/ValidationError';
-import {FormElementTypes, IFormElement} from '../../../_types/forms';
+import {FormElementTypes, type IFormElement} from '../../../_types/forms';
 
 export const getElementValues = async (params: {
     element: IFormElement;

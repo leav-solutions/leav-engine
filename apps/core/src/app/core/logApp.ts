@@ -1,22 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IApplicationDomain} from 'domain/application/applicationDomain';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {ILogDomain} from 'domain/log/logDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {ILogFilters, ILogPagination, ILogResponse, ILogSort, Log} from '_types/log';
-import {IQueryInfos} from '_types/queryInfos';
-import {IAppModule} from '_types/shared';
+import {type IApplicationDomain} from 'domain/application/applicationDomain';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type ILogDomain} from 'domain/log/logDomain';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
+import {type ILogFilters, type ILogPagination, type ILogResponse, type ILogSort, type Log} from '_types/log';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IAppModule} from '_types/shared';
 import {USERS_LIBRARY} from '../../_types/library';
-import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
-import {IAppGraphQLSchema} from '_types/graphql';
+import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IAppGraphQLSchema} from '_types/graphql';
 import {EventAction} from '@leav/utils';
-import {IDBPayloadData} from '_types/events';
-import {IFormatLogValueHelper} from 'domain/value/helpers/formatLogValue';
+import {type IDBPayloadData} from '_types/events';
+import {type IFormatLogValueHelper} from 'domain/value/helpers/formatLogValue';
 
 export type ICoreLogApp = IAppModule & IGraphqlAppModule;
 

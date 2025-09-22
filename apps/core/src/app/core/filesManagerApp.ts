@@ -2,22 +2,22 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FileType} from '@leav/utils';
-import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import express, {Express, NextFunction, Response} from 'express';
+import {type InitQueryContextFunc} from 'app/helpers/initQueryContext';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import express, {Express, type NextFunction, type Response} from 'express';
 import {withFilter} from 'graphql-subscriptions';
-import {FileUpload} from 'graphql-upload';
-import {IConfig} from '_types/config';
-import {IRequestWithContext} from '_types/express';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IQueryInfos} from '_types/queryInfos';
-import {IRecord, IRecordFilterLight} from '_types/record';
-import {IFilesManagerDomain} from '../../domain/filesManager/filesManagerDomain';
+import {type FileUpload} from 'graphql-upload';
+import {type IConfig} from '_types/config';
+import {type IRequestWithContext} from '_types/express';
+import {type IAppGraphQLSchema} from '_types/graphql';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IRecord, type IRecordFilterLight} from '_types/record';
+import {type IFilesManagerDomain} from '../../domain/filesManager/filesManagerDomain';
 import {TriggerNames} from '../../_types/eventsManager';
 import AuthenticationError from '../../errors/AuthenticationError';
-import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
-import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
-import {IServerRouteAppModule} from 'interface/server';
+import {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
+import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IServerRouteAppModule} from 'interface/server';
 
 export interface IFilesManagerApp extends IGraphqlAppModule, IServerRouteAppModule {
     init(): Promise<void>;

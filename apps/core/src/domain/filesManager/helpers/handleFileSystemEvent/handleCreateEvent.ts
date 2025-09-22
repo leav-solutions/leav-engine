@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IQueryInfos} from '_types/queryInfos';
-import {FilesAttributes, IFileEventData, IFileMetadata} from '../../../../_types/filesManager';
+import {type IQueryInfos} from '_types/queryInfos';
+import {FilesAttributes, type IFileEventData, type IFileMetadata} from '../../../../_types/filesManager';
 import {systemPreviewsSettings} from '../../_constants';
 import {extractFileMetadata} from '../extractFileMetadata';
 import {
@@ -15,7 +15,7 @@ import {
     updateRecordFile
 } from '../handleFileUtilsHelper';
 import {requestPreviewGeneration} from '../handlePreview';
-import {IHandleFileSystemEventDeps, IHandleFileSystemEventResources} from './_types';
+import {type IHandleFileSystemEventDeps, type IHandleFileSystemEventResources} from './_types';
 import {IRecord} from '_types/record';
 
 export const handleCreateEvent = async (

@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, FunctionComponent, useState} from 'react';
+import {type ComponentProps, type FunctionComponent, useState} from 'react';
 import {FaCheck} from 'react-icons/fa';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitModal} from 'aristid-ds';
-import {ChildrenAsRecordValuePermissionFilterInput, RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
+import {type ChildrenAsRecordValuePermissionFilterInput, type RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
 import {SelectTreeNode} from '_ui/components/SelectTreeNode';
-import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
+import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ITreeNodeWithRecord} from '_ui/types';
+import {type ITreeNodeWithRecord} from '_ui/types';
 
 const SELECT_TREE_NODE_MODAL_HEIGHT = '563px';
 const SELECT_TREE_NODE_MODAL_WIDTH = '656px';

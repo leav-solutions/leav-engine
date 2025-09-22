@@ -1,25 +1,25 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloQueryResult, useQuery} from '@apollo/client';
-import {FunctionComponent, useEffect, useMemo, useReducer} from 'react';
-import styled, {CSSObject} from 'styled-components';
+import {type ApolloQueryResult, useQuery} from '@apollo/client';
+import {type FunctionComponent, useEffect, useMemo, useReducer} from 'react';
+import styled, {type CSSObject} from 'styled-components';
 import {Loading} from '_ui/components';
 import {SearchContext} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchContext';
 import searchReducer, {
     initialSearchState,
     SearchActionTypes
 } from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
-import {ISearchRecord} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/_types';
+import {type ISearchRecord} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/_types';
 import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
-import {IField, IFilter, ISearchSelection, SearchMode} from '_ui/types/search';
-import {IView} from '_ui/types/views';
+import {type IField, type IFilter, type ISearchSelection, SearchMode} from '_ui/types/search';
+import {type IView} from '_ui/types/views';
 import {useSaveUserDataMutation} from '_ui/_gqlTypes';
-import {ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
+import {type ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {
     getRecordsFromLibraryQuery,
-    IGetRecordsFromLibraryQuery,
-    IGetRecordsFromLibraryQueryVariables
+    type IGetRecordsFromLibraryQuery,
+    type IGetRecordsFromLibraryQueryVariables
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {objectValueVersionToArray} from '_ui/_utils';
 import {getRequestFromFilters} from '_ui/_utils/getRequestFromFilter';

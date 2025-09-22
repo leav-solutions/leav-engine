@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {generateMsgRabbitMQ, sendToRabbitMQ} from '../rabbitmq/rabbitmq';
 import {deleteData, updateData} from '../redis/redis';
-import {IParams} from '../types';
+import {type IParams} from '../types';
 
 export const handleCreate = async (
     path: string,

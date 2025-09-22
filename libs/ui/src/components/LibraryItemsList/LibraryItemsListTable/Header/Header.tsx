@@ -9,7 +9,7 @@ import {themeVars} from '_ui/antdTheme';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {AttributeType, SortOrder} from '_ui/_gqlTypes';
+import {type AttributeType, SortOrder} from '_ui/_gqlTypes';
 import {infosCol} from '../../constants';
 import {getSortFieldByAttributeType} from '../../helpers/getSortFieldByAttributeType';
 import ChooseTableColumns from '../ChooseTableColumns';

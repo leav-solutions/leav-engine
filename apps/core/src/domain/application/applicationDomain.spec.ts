@@ -2,18 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CONSULTED_APPS_KEY} from '@leav/utils';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {IUserDomain} from 'domain/user/userDomain';
-import {IApplicationRepo} from 'infra/application/applicationRepo';
-import {IUtils, ToAny} from 'utils/utils';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {type IUserDomain} from 'domain/user/userDomain';
+import {type IApplicationRepo} from 'infra/application/applicationRepo';
+import {type IUtils, type ToAny} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockApplication, mockApplicationExternal} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import applicationDomain, {IApplicationDomainDeps, MAX_CONSULTATION_HISTORY_SIZE} from './applicationDomain';
+import applicationDomain, {type IApplicationDomainDeps, MAX_CONSULTATION_HISTORY_SIZE} from './applicationDomain';
 
 const depsBase: ToAny<IApplicationDomainDeps> = {
     config: {},

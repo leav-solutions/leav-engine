@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {TypeGuards} from './typeGuards';
-import {LinkCellValues, SimpleCellValues, TreeCellValues} from './types';
+import {type LinkCellValues, type SimpleCellValues, type TreeCellValues} from './types';
 
 const _getInheritedValues = (values: SimpleCellValues | LinkCellValues | TreeCellValues) => {
     if (TypeGuards.isSimpleCellValues(values)) {

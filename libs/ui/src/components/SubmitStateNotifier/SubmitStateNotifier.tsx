@@ -4,7 +4,7 @@
 import {CheckOutlined, CloseCircleOutlined, LoadingOutlined} from '@ant-design/icons';
 import {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {SubmitStateNotifierStates} from './_types';
+import {type SubmitStateNotifierStates} from './_types';
 
 interface ISubmitStateNotifierProps {
     state: SubmitStateNotifierStates;

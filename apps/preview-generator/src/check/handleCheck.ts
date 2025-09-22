@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {initialCheck} from './initialCheck/initialCheck';
 import {join} from 'path';
-import {IMessageConsume, IConfig} from '../types/types';
+import {type IMessageConsume, type IConfig} from '../types/types';
 import {checkInput} from './checkInput/checkInput';
 import {checkOutput} from './checkOutput/checkOutput';
 

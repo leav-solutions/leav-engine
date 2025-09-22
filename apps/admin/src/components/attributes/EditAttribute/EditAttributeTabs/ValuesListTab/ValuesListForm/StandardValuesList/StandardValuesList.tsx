@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import dayjs from 'dayjs';
-import React, {ChangeEvent, useState} from 'react';
+import React, {type ChangeEvent, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Input, List} from 'semantic-ui-react';
-import {GET_ATTRIBUTES_VALUES_LIST_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
+import {type GET_ATTRIBUTES_VALUES_LIST_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
-import {IDateRangeValue, StandardValuesListType, ValuesList} from '../../../../../../../_types/attributes';
+import {type IDateRangeValue, type StandardValuesListType, type ValuesList} from '../../../../../../../_types/attributes';
 import DateRangeValue from './DateRangeValue';
 
 interface IStandardValuesListProps {

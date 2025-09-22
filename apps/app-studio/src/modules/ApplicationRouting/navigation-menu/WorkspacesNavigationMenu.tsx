@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitSideMenu} from 'aristid-ds';
-import {useMemo, type FunctionComponent, ComponentProps, useContext} from 'react';
+import {useMemo, type FunctionComponent, type ComponentProps, useContext} from 'react';
 import {useNavigate, generatePath, useParams, Outlet} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {IconProp} from '@fortawesome/fontawesome-svg-core';
+import {type IconProp} from '@fortawesome/fontawesome-svg-core';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
-import {Application} from '../types';
+import {type Application} from '../types';
 import {routes} from '../routes';
 import {useApplicationMatchingMemo} from '../useApplicationMatchingMemo';
 import {useWorkspacesNavigationMenu} from './useWorkspacesNavigationMenu';

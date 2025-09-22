@@ -2,23 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import {ISearchSelection, SearchModal, useLang} from '@leav/ui';
+import {type ISearchSelection, SearchModal, useLang} from '@leav/ui';
 import {Button, Dropdown, Tooltip} from 'antd';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/useActiveTree';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
-import {CSSProperties, useState} from 'react';
+import {type CSSProperties, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {GrSearchAdvanced} from 'react-icons/gr';
 import {addInfo} from 'reduxStore/infos';
 import {useAppDispatch} from 'reduxStore/store';
 import {localizedTranslation} from 'utils';
-import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
-import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
-import {TreeElementInput} from '_gqlTypes/globalTypes';
-import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {type ADD_TREE_ELEMENT, type ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
+import {type GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
+import {type TreeElementInput} from '_gqlTypes/globalTypes';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {InfoChannel, InfoType} from '_types/types';
-import {IMessages} from '../../_types';
+import {type IMessages} from '../../_types';
 
 interface IAddBySearchButtonProps {
     availableLibraries: GET_TREE_LIBRARIES_trees_list_libraries[];

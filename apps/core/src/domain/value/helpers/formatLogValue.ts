@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {EventAction} from '@leav/utils';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
-import {IDBPayloadData} from '_types/events';
-import {Log} from '_types/log';
-import {ILinkValue, IStandardValue, ITreeValue, IValue} from '_types/value';
-import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {i18n} from 'i18next';
-import winston from 'winston';
-import {IQueryInfos} from '../../../_types/queryInfos';
-import {AttributeCondition, IRecord} from '../../../_types/record';
+import {type EventAction} from '@leav/utils';
+import {AttributeFormats, AttributeTypes, type IAttribute} from '../../../_types/attribute';
+import {type IDBPayloadData} from '_types/events';
+import {type Log} from '_types/log';
+import {type ILinkValue, type IStandardValue, type ITreeValue, type IValue} from '_types/value';
+import {type IActionsListDomain} from 'domain/actionsList/actionsListDomain';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type i18n} from 'i18next';
+import type winston from 'winston';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {AttributeCondition, type IRecord} from '../../../_types/record';
 
 export interface IFormatLogValueHelper {
     formatAsString(

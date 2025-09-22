@@ -5,7 +5,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import styled from 'styled-components';
-import {IFormElementProps} from '../../../_types';
+import {type IFormElementProps} from '../../../_types';
 
 interface ITextBlockSettings {
     content?: string;

@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {endpointFormatRegex, getFlagByLang, idFormatRegex, slugifyString} from '@leav/utils';
-import {ColorPicker, Form, FormInstance} from 'antd';
-import {Color} from 'antd/es/color-picker';
+import {ColorPicker, Form, type FormInstance} from 'antd';
+import {type Color} from 'antd/es/color-picker';
 import {KitInput, KitSelect} from 'aristid-ds';
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {useLang} from '../../../../hooks';
 import {useSharedTranslation} from '../../../../hooks/useSharedTranslation';
-import {ApplicationType, GetApplicationByIdQuery} from '../../../../_gqlTypes';
+import {ApplicationType, type GetApplicationByIdQuery} from '../../../../_gqlTypes';
 import {SubmitStateNotifier} from '../../../SubmitStateNotifier';
 import ModuleSelector from './ModuleSelector';
 

@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
-import {Mockify} from '@leav/utils';
+import {type Mockify} from '@leav/utils';
 import {mockAttributeLink, mockAttributeSimple} from '_ui/__mocks__/common/attribute';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {EditSettingsContextProvider} from './open-view-settings/EditSettingsContextProvider';
@@ -13,8 +13,8 @@ import {useOpenViewSettings} from './open-view-settings/useOpenViewSettings';
 import {ViewSettingsContext} from './store-view-settings/ViewSettingsContext';
 import {act, waitFor} from '@testing-library/react';
 import {useViewSettingsReducer} from '../useViewSettingsReducer';
-import {DefaultViewSettings} from '../_types';
-import {IViewSettingsState} from './store-view-settings/viewSettingsReducer';
+import {type DefaultViewSettings} from '../_types';
+import {type IViewSettingsState} from './store-view-settings/viewSettingsReducer';
 
 const MockOpenEditSettings: FunctionComponent = () => {
     const {viewSettingsButton, viewListButton} = useOpenViewSettings({view: {}, isEnabled: true} as {

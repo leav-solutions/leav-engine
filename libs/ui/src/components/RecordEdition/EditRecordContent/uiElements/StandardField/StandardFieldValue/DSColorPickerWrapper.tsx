@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitColorPicker} from 'aristid-ds';
-import {FunctionComponent, useState} from 'react';
+import {type FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
-import {KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
-import {IStandFieldValueContentProps} from './_types';
+import {type KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
+import {type IStandFieldValueContentProps} from './_types';
 import {AggregationColor} from 'antd/es/color-picker/color';
 import {EMPTY_INITIAL_VALUE_UNDEFINED} from '../../../antdUtils';
-import {ColorValueType} from 'antd/es/color-picker/interface';
+import {type ColorValueType} from 'antd/es/color-picker/interface';
 import {Form} from 'antd';
 
 const KitColorPickerStyled = styled(KitColorPicker)`

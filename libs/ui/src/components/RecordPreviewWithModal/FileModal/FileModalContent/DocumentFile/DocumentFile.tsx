@@ -5,7 +5,7 @@ import {ExpandOutlined} from '@ant-design/icons';
 import {Button} from 'antd';
 import {useRef} from 'react';
 import styled from 'styled-components';
-import {IFileViewerProps} from '../_types';
+import {type IFileViewerProps} from '../_types';
 
 const FullscreenBtn = styled(Button)`
     && {

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
 import {useState} from 'react';
-import {GetAttributesQueryVariables} from '_ui/_gqlTypes';
+import {type GetAttributesQueryVariables} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '../../hooks/useSharedTranslation';
 import {ErrorBoundary} from '../ErrorBoundary';
 import {AttributesList} from './AttributesList';

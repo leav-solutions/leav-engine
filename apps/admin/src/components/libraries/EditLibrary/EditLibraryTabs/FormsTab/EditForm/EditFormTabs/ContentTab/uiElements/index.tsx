@@ -2,18 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    GET_ATTRIBUTE_BY_ID_attributes_list,
-    GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute
+    type GET_ATTRIBUTE_BY_ID_attributes_list,
+    type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {AttributeType} from '_gqlTypes/globalTypes';
-import {ISettingsAttributeProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsAttribute';
-import {ISettingsFieldSelectProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsSelect';
+import {type ISettingsAttributeProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsAttribute';
+import {type ISettingsFieldSelectProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsSelect';
 import {
     FieldTypes,
     FormElementSettingsInputTypes,
-    IFormElementSettings,
-    IUIElement,
-    SettingsFieldSpecificProps,
+    type IFormElementSettings,
+    type IUIElement,
+    type SettingsFieldSpecificProps,
     TabsDirection,
     UIElementTypes
 } from '../_types';

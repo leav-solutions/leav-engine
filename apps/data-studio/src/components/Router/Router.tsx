@@ -5,7 +5,7 @@ import {APPS_ENDPOINT, APP_ENDPOINT, Explorer, themeVars} from '@leav/ui';
 import {Layout} from 'antd';
 import Sidebar from 'components/Sidebar';
 import TopBar from 'components/TopBar';
-import {FunctionComponent, useRef, useState} from 'react';
+import {type FunctionComponent, useRef, useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import NotifsPanel from '../NotifsPanel';
 import UserPanel from '../UserPanel';

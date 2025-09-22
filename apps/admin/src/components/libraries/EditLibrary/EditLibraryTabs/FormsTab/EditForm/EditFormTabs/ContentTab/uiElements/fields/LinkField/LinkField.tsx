@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Table} from 'semantic-ui-react';
-import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
+import {type ICommonFieldsSettings, type IFormElementProps} from '../../../_types';
 import styled from 'styled-components';
 import useLang from 'hooks/useLang';
 import {localizedLabel} from 'utils';

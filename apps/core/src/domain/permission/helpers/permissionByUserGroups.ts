@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
-import {ISimplePermissionHelper} from './simplePermission';
-import {IDefaultPermissionHelper} from './defaultPermission';
-import {TreePath} from '../../../_types/tree';
-import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
-import {IQueryInfos} from '../../../_types/queryInfos';
+import {type IReducePermissionsArrayHelper} from './reducePermissionsArray';
+import {type ISimplePermissionHelper} from './simplePermission';
+import {type IDefaultPermissionHelper} from './defaultPermission';
+import {type TreePath} from '../../../_types/tree';
+import {type PermissionsActions, type PermissionTypes} from '../../../_types/permissions';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 import getPermissionCacheKey from './getPermissionCacheKey';
-import {ICachesService} from '../../../infra/cache/cacheService';
-import {IConfig} from '_types/config';
+import {type ICachesService} from '../../../infra/cache/cacheService';
+import {type IConfig} from '_types/config';
 
 export interface IPermissionByUserGroupsHelperDeps {
     'core.domain.permission.helpers.simplePermission': ISimplePermissionHelper;

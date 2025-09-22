@@ -6,7 +6,7 @@ import {useTranslation} from 'react-i18next';
 import {Checkbox, Dropdown, Input, Table} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 

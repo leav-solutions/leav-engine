@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {AttributeConditionFilter, AttributeConditionType} from '_ui/types/search';
+import {AttributeConditionFilter, type AttributeConditionType} from '_ui/types/search';
 
 export default (condition: AttributeConditionType): boolean => {
     const noValueConditions: AttributeConditionType[] = [

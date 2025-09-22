@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getLogsIndexName, IDbEvent} from '@leav/utils';
-import {IConfig} from '_types/config';
-import * as amqp from 'amqplib';
-import {IElasticsearchService} from '../elasticsearchService';
+import {getLogsIndexName, type IDbEvent} from '@leav/utils';
+import {type IConfig} from '_types/config';
+import type * as amqp from 'amqplib';
+import {type IElasticsearchService} from '../elasticsearchService';
 
 export const handleMessage = async (
     msg: amqp.ConsumeMessage,

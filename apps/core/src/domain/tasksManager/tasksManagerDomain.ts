@@ -1,34 +1,34 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
+import {type IAmqpService} from '@leav/message-broker';
 import {EventAction} from '@leav/utils';
-import * as amqp from 'amqplib';
-import {AwilixContainer} from 'awilix';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import type * as amqp from 'amqplib';
+import {type AwilixContainer} from 'awilix';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import Joi from 'joi';
 import {nanoid} from 'nanoid';
 import process from 'process';
-import {IUtils} from 'utils/utils';
+import {type IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
-import winston from 'winston';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import {IGetCoreEntitiesParams} from '_types/shared';
-import {ISystemTranslation} from '_types/systemTranslation';
-import {ITaskRepo} from '../../infra/task/taskRepo';
+import type winston from 'winston';
+import type * as Config from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IGetCoreEntitiesParams} from '_types/shared';
+import {type ISystemTranslation} from '_types/systemTranslation';
+import {type ITaskRepo} from '../../infra/task/taskRepo';
 import {TriggerNames} from '../../_types/eventsManager';
-import {IList, SortOrder} from '../../_types/list';
+import {type IList, SortOrder} from '../../_types/list';
 import {
-    ITask,
-    ITaskCallback,
-    ITaskCancelPayload,
-    ITaskCreatePayload,
-    ITaskDeletePayload,
-    ITaskFuncParams,
-    ITaskOrder,
+    type ITask,
+    type ITaskCallback,
+    type ITaskCancelPayload,
+    type ITaskCreatePayload,
+    type ITaskDeletePayload,
+    type ITaskFuncParams,
+    type ITaskOrder,
     OrderType,
-    Payload,
+    type Payload,
     TaskCallbackStatus,
     TaskCallbackType,
     TaskPriority,

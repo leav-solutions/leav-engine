@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getInitials, getInvertColor, stringToColor} from '@leav/utils';
 import {useState} from 'react';
-import styled, {CSSObject} from 'styled-components';
+import styled, {type CSSObject} from 'styled-components';
 import {themeVars} from '../../../antdTheme';
 import {ImageLoading} from '../../ImageLoading';
 import {ImageMissing} from '../../ImageMissing';
-import {IEntityPreviewProps, IGeneratedPreviewProps} from '../_types';
+import {type IEntityPreviewProps, type IGeneratedPreviewProps} from '../_types';
 
 interface IImagePreviewTileProps {
     style?: CSSObject;

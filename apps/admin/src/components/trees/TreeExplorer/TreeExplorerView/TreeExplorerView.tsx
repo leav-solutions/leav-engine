@@ -8,24 +8,24 @@ import useLang from 'hooks/useLang';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
-    NodeData,
-    OnDragPreviousAndNextLocation,
+    type NodeData,
+    type OnDragPreviousAndNextLocation,
     SortableTreeWithoutDndContext as SortableTree
 } from 'react-sortable-tree';
 import {Button, Confirm, Dropdown, Icon, Label, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {activeItemColor} from 'themingVar';
 import {getTreeNodeKey, localizedLabel, stringToColor} from 'utils';
-import {GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {fakeRootId, IExtendedTreeNodeData, ITreeNode, ITreeNodeData} from '_types/trees';
+import {type GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
+import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {fakeRootId, type IExtendedTreeNodeData, type ITreeNode, type ITreeNodeData} from '_types/trees';
 import {
-    AddTreeElementHandler,
-    ClickNodeHandler,
-    DeleteNodeHandler,
-    MoveNodeHandler,
-    NodeVisibilityToggleHandler,
-    TreeChangeHandler
+    type AddTreeElementHandler,
+    type ClickNodeHandler,
+    type DeleteNodeHandler,
+    type MoveNodeHandler,
+    type NodeVisibilityToggleHandler,
+    type TreeChangeHandler
 } from '../_types';
 
 const Wrapper = styled.div<{compact: boolean}>`

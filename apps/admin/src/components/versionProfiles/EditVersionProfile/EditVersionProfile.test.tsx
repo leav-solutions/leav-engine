@@ -7,15 +7,15 @@ import {saveAttributeQuery} from 'queries/attributes/saveAttributeMutation';
 import {getVersionProfileByIdQuery} from 'queries/versionProfiles/getVersionProfileByIdQuery';
 import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
 import {saveVersionProfileMutation} from 'queries/versionProfiles/saveVersionProfileMutation';
-import {match} from 'react-router-dom-v5';
+import {type match} from 'react-router-dom-v5';
 import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
-import {Mockify} from '_types/Mockify';
+import {type Mockify} from '_types/Mockify';
 import {mockAttrAdv} from '__mocks__/attributes';
 import {mockRecord} from '__mocks__/common/records';
 import {mockVersionProfile} from '__mocks__/common/versionProfiles';
 import * as useUserData from '../../../hooks/useUserData';
 import CustomConfig from '../../attributes/EditAttribute/EditAttributeTabs/CustomConfigTab';
-import EditVersionProfile, {IEditVersionProfileMatchParams} from './EditVersionProfile';
+import EditVersionProfile, {type IEditVersionProfileMatchParams} from './EditVersionProfile';
 
 jest.mock(
     'components/attributes/AttributesSelectionModal',

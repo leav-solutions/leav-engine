@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ICalculationVariable} from 'domain/helpers/calculationVariable';
+import {type ICalculationVariable} from 'domain/helpers/calculationVariable';
 import {Parser} from 'hot-formula-parser';
-import {IUtils} from 'utils/utils';
-import {IValue} from '_types/value';
+import {type IUtils} from 'utils/utils';
+import {type IValue} from '_types/value';
 import {
     ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
-    IActionsListFunction
+    type ActionsListValueType,
+    type IActionsListContext,
+    type IActionsListFunction
 } from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
 

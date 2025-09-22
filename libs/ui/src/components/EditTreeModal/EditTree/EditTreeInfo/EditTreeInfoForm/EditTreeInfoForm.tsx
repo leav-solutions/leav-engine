@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {idFormatRegex, slugifyString} from '@leav/utils';
-import {Form, FormInstance, Input, Select} from 'antd';
+import {Form, type FormInstance, Input, Select} from 'antd';
 import React, {useState} from 'react';
 import {useLang} from '../../../../../hooks';
 import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
-import {TreeBehavior, TreeDetailsFragment} from '../../../../../_gqlTypes';
+import {TreeBehavior, type TreeDetailsFragment} from '../../../../../_gqlTypes';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
 import {TreeLibrariesForm} from './TreeLibrariesForm';

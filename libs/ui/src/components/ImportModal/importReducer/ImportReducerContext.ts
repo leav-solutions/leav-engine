@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createContext, useContext} from 'react';
-import {IImportReducerState, ImportReducerAction, initialState} from './importReducer';
+import {type IImportReducerState, type ImportReducerAction, initialState} from './importReducer';
 
 const ImportReducerContext = createContext<{
     state: IImportReducerState;

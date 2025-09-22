@@ -3,18 +3,18 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import AttributeSelector from 'components/attributes/AttributeSelector';
 import VersionProfilesSelector from 'components/versionProfiles/VersionProfilesSelector';
-import {Formik, FormikProps} from 'formik';
+import {Formik, type FormikProps} from 'formik';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
-import {GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
 import {
-    GET_ATTRIBUTE_BY_ID_attributes_list,
-    GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
-    GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute,
-    GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
+    type GET_ATTRIBUTE_BY_ID_attributes_list,
+    type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
+    type GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute,
+    type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
@@ -24,11 +24,11 @@ import {
     ValueVersionMode,
     MultiDisplayOption
 } from '../../../../../../_gqlTypes/globalTypes';
-import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
+import {ErrorTypes, type IFormError} from '../../../../../../_types/errors';
 import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import TreesSelector from '../../../../../trees/TreesSelector';
-import {AttributeInfosFormValues} from '../_types';
+import {type AttributeInfosFormValues} from '../_types';
 import AttributeLibraries from './AttributeLibraries';
 
 interface IInfosFormProps {

@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useMemo, useRef} from 'react';
-import {MetadataSubmitValueFunc} from '../EditRecordContent/_types';
+import {type FunctionComponent, useEffect, useMemo, useRef} from 'react';
+import {type MetadataSubmitValueFunc} from '../EditRecordContent/_types';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import RecordSummary from './RecordSummary';
 import ValuesVersions from './ValuesVersions';
 import {createPortal} from 'react-dom';
-import {EditRecordSidebarContentTypeMap, IEditRecordReducerState} from '../editRecordReducer/editRecordReducer';
+import {EditRecordSidebarContentTypeMap, type IEditRecordReducerState} from '../editRecordReducer/editRecordReducer';
 import {KitSidePanel} from 'aristid-ds';
-import {KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
+import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EDIT_RECORD_SIDEBAR_ID} from '_ui/constants';
 import Breadcrumb from './Breacrumb';

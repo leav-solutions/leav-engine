@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FetchResult} from '@apollo/client';
-import {WithTypename} from '@leav/utils';
-import {DeleteViewMutation, useDeleteViewMutation} from '_ui/_gqlTypes';
+import {type FetchResult} from '@apollo/client';
+import {type WithTypename} from '@leav/utils';
+import {type DeleteViewMutation, useDeleteViewMutation} from '_ui/_gqlTypes';
 
 export interface IUseExecuteDeleteViewMutationHook {
     deleteView: (viewId: string) => Promise<FetchResult<DeleteViewMutation>>;

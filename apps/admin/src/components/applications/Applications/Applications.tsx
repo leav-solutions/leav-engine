@@ -8,10 +8,10 @@ import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link, useHistory} from 'react-router-dom-v5';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
-import {GET_APPLICATIONS, GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
+import {type GET_APPLICATIONS, type GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
 import useUserData from '../../../hooks/useUserData';
 import {addWildcardToFilters} from '../../../utils/utils';
-import {ApplicationsFiltersInput, PermissionsActions} from '../../../_gqlTypes/globalTypes';
+import {type ApplicationsFiltersInput, PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import ApplicationsList from './ApplicationsList';
 import DeleteApplication from './ApplicationsList/DeleteApplication';
 

@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery} from '@apollo/client';
 import {objectToNameValueArray} from '@leav/utils';
-import {IValueVersion} from '_ui/types/values';
+import {type IValueVersion} from '_ui/types/values';
 import {
     getRecordPropertiesQuery,
-    IGetRecordProperties,
-    IGetRecordPropertiesVariables,
-    RecordProperty
+    type IGetRecordProperties,
+    type IGetRecordPropertiesVariables,
+    type RecordProperty
 } from '_ui/_queries/records/getRecordPropertiesQuery';
 import {arrayValueVersionToObject} from '_ui/_utils';
 import {hasTypename} from '_ui/_utils/typeguards';

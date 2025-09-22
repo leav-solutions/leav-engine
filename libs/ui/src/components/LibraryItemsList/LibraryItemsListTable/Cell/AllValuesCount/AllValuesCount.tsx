@@ -2,17 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal, Tooltip} from 'antd';
-import React, {FunctionComponent} from 'react';
+import React, {type FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {RecordCard} from '_ui/components';
 import List from '_ui/components/List';
 import {PreviewSize} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {AttributeType} from '_ui/_gqlTypes';
+import {type AttributeType} from '_ui/_gqlTypes';
 import {stopEvent} from '_ui/_utils';
 import {TypeGuards} from '../typeGuards';
-import {IRecordIdentityWhoAmI} from '_ui/types';
+import {type IRecordIdentityWhoAmI} from '_ui/types';
 
 interface IAllValuesCountProps {
     values: any[];

@@ -4,7 +4,7 @@
 import {shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {IValue} from '../../../../../../../_types/records';
+import {type IValue} from '../../../../../../../_types/records';
 import {mockAttrSimple} from '../../../../../../../__mocks__/attributes';
 import EditRecordInput from './EditRecordInput';
 

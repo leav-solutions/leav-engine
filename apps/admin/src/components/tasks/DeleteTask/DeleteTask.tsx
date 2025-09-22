@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
+import {type GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import useUserData from '../../../hooks/useUserData';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import DeleteButton from '../../shared/DeleteButton';

@@ -6,9 +6,9 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
 import {saveGlobalSettingsQuery} from 'queries/globalSettings/saveGlobalSettingsMutation';
-import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {GlobalSettingsInput} from '_gqlTypes/globalTypes';
-import {SAVE_GLOBAL_SETTINGS, SAVE_GLOBAL_SETTINGSVariables} from '_gqlTypes/SAVE_GLOBAL_SETTINGS';
+import {type GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {type GlobalSettingsInput} from '_gqlTypes/globalTypes';
+import {type SAVE_GLOBAL_SETTINGS, type SAVE_GLOBAL_SETTINGSVariables} from '_gqlTypes/SAVE_GLOBAL_SETTINGS';
 import CustomizationForm from './CustomizationForm';
 
 function GeneralCustomizationTab(): JSX.Element {

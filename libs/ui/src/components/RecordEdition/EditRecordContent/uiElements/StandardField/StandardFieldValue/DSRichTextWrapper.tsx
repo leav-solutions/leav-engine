@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useState} from 'react';
+import {type FunctionComponent, useState} from 'react';
 import {Form} from 'antd';
 import {KitRichText} from 'aristid-ds';
-import {IStandFieldValueContentProps} from './_types';
-import {KitRichTextProps} from 'aristid-ds/dist/Kit/DataEntry/RichText/types';
+import {type IStandFieldValueContentProps} from './_types';
+import {type KitRichTextProps} from 'aristid-ds/dist/Kit/DataEntry/RichText/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 

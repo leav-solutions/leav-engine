@@ -4,13 +4,13 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory, useLocation} from 'react-router-dom-v5';
-import {Header, Tab, TabProps} from 'semantic-ui-react';
+import {Header, Tab, type TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils/utils';
 import {AttributeType} from '../../../../_gqlTypes/globalTypes';
-import {OnAttributePostSaveFunc} from '../EditAttribute';
+import {type OnAttributePostSaveFunc} from '../EditAttribute';
 import ActionsListTab from './ActionsListTab';
 import EmbeddedFieldsTab from './EmbeddedFieldsTab';
 import InfosTab from './InfosTab';

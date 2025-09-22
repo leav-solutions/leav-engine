@@ -5,8 +5,8 @@ import {Form} from 'antd';
 import {useEffect} from 'react';
 import {useLang} from '../../../../hooks';
 import {
-    TreeDetailsFragment,
-    TreeInput,
+    type TreeDetailsFragment,
+    type TreeInput,
     useCheckTreeExistenceLazyQuery,
     useSaveTreeMutation
 } from '../../../../_gqlTypes';

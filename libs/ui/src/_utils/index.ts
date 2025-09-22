@@ -2,23 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
-import {IDateRangeValue, isTypeLink, objectToNameValueArray, omit, WithTypename} from '@leav/utils';
-import {TFunction} from 'i18next';
-import {SyntheticEvent} from 'react';
+import {type IDateRangeValue, isTypeLink, objectToNameValueArray, omit, type WithTypename} from '@leav/utils';
+import {type TFunction} from 'i18next';
+import {type SyntheticEvent} from 'react';
 import {defaultLinkAttributeFilterFormat} from '_ui/components/LibraryItemsList/constants';
 import {PreviewSize} from '_ui/constants';
-import {IAttribute} from '_ui/types/search';
-import {IValueVersion} from '_ui/types/values';
-import {IView} from '_ui/types/views';
+import {type IAttribute} from '_ui/types/search';
+import {type IValueVersion} from '_ui/types/values';
+import {type IView} from '_ui/types/views';
 import {
     AttributeType,
-    PermissionsActions,
-    RecordFilterInput,
-    RecordIdentityFragment,
-    useIsAllowedQuery,
-    ValueDetailsFragment,
-    ValueVersionInput,
-    ViewDetailsFragment
+    type PermissionsActions,
+    type RecordFilterInput,
+    type RecordIdentityFragment,
+    type useIsAllowedQuery,
+    type ValueDetailsFragment,
+    type ValueVersionInput,
+    type ViewDetailsFragment
 } from '_ui/_gqlTypes';
 import {getFiltersFromRequest} from './getFiltersFromRequest';
 import dayjs from 'dayjs';

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mockStandardValue} from '../../__tests__/mocks/value';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import dateRangeToNumberAction from './dateRangeToNumberAction';
 
 describe('dateRangeToNumberAction', () => {

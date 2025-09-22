@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GraphQLErrors} from '@apollo/client/errors';
+import {type GraphQLErrors} from '@apollo/client/errors';
 import getFieldsFromView from '_ui/components/LibraryItemsList/helpers/getFieldsFromView';
-import {IAttribute, IField, IFilter, ISelectedRecord, SearchMode, SidebarContentType} from '_ui/types/search';
-import {IValueVersion} from '_ui/types/values';
-import {IView, IViewDisplay} from '_ui/types/views';
+import {type IAttribute, type IField, type IFilter, type ISelectedRecord, SearchMode, SidebarContentType} from '_ui/types/search';
+import {type IValueVersion} from '_ui/types/values';
+import {type IView, type IViewDisplay} from '_ui/types/views';
 import {ViewSizes, ViewTypes} from '_ui/_gqlTypes';
 import {defaultView} from '../../constants';
-import {ISearchRecord, ISearchSort, ISearchState} from './_types';
+import {type ISearchRecord, type ISearchSort, type ISearchState} from './_types';
 
 export enum SearchActionTypes {
     UPDATE_RESULT = 'UPDATE_RESULT',

@@ -4,9 +4,9 @@
 import {
     AttributeConditionFilter,
     FilterType,
-    IFilterAttribute,
-    IFilterTree,
-    IQueryFilter,
+    type IFilterAttribute,
+    type IFilterTree,
+    type IQueryFilter,
     TreeConditionFilter
 } from '_ui/types/search';
 import {RecordFilterCondition, RecordFilterOperator} from '_ui/_gqlTypes';

@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {TreeItem} from 'react-sortable-tree';
+import {type TreeItem} from 'react-sortable-tree';
 import {Button, Icon, List} from 'semantic-ui-react';
-import {RecordIdentity_whoAmI} from '../../../../../../../_gqlTypes/RecordIdentity';
-import {ITreeValuesList} from '../../../../../../../_types/attributes';
-import {ITreeLinkElement} from '../../../../../../../_types/records';
+import {type RecordIdentity_whoAmI} from '../../../../../../../_gqlTypes/RecordIdentity';
+import {type ITreeValuesList} from '../../../../../../../_types/attributes';
+import {type ITreeLinkElement} from '../../../../../../../_types/records';
 import EditRecordModal from '../../../../../../records/EditRecordModal';
 import TreeNodeBreadcrumb from '../../../../../../shared/TreeNodeBreadcrumb';
 import SelectTreeNodeModal from '../../../../../../trees/SelectTreeNodeModal';

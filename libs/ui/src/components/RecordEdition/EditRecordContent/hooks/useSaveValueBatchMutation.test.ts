@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as apolloClient from '@apollo/client';
-import {ErrorTypes, Mockify} from '@leav/utils';
-import {SaveValueBatchMutation, ValueDetailsValueFragment} from '_ui/_gqlTypes';
+import {ErrorTypes, type Mockify} from '@leav/utils';
+import {type SaveValueBatchMutation, type ValueDetailsValueFragment} from '_ui/_gqlTypes';
 import {mockAttributeSimple} from '_ui/__mocks__/common/attribute';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {APICallStatus} from '../_types';

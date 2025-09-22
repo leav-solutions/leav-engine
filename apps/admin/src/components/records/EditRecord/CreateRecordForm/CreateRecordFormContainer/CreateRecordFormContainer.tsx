@@ -8,22 +8,22 @@ import {createRecordQuery} from '../../../../../queries/records/createRecordMuta
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
 import {isValueNull, versionObjToGraphql} from '../../../../../utils';
-import {CREATE_RECORD, CREATE_RECORDVariables} from '../../../../../_gqlTypes/CREATE_RECORD';
+import {type CREATE_RECORD, type CREATE_RECORDVariables} from '../../../../../_gqlTypes/CREATE_RECORD';
 import {
-    GET_LIB_BY_ID_libraries_list,
-    GET_LIB_BY_ID_libraries_list_attributes
+    type GET_LIB_BY_ID_libraries_list,
+    type GET_LIB_BY_ID_libraries_list_attributes
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType, ValueBatchInput} from '../../../../../_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
-import {SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
+import {AttributeType, type ValueBatchInput} from '../../../../../_gqlTypes/globalTypes';
+import {type RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
+import {type SAVE_VALUE_BATCH, type SAVE_VALUE_BATCHVariables} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
 import {
-    IGenericValue,
-    IGetRecordData,
-    ILinkValue,
-    ITreeLinkValue,
-    IValue,
-    RecordData,
-    RecordEdition
+    type IGenericValue,
+    type IGetRecordData,
+    type ILinkValue,
+    type ITreeLinkValue,
+    type IValue,
+    type RecordData,
+    type RecordEdition
 } from '../../../../../_types/records';
 import Loading from '../../../../shared/Loading';
 import CreateRecordForm from '../CreateRecordForm';

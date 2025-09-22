@@ -2,19 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import validateRequestTokenHelper from './validateRequestToken';
-import createAuthApp, {IAuthApp, IAuthAppDeps} from '../auth/authApp';
+import createAuthApp, {type IAuthApp, type IAuthAppDeps} from '../auth/authApp';
 import initQueryContext from './initQueryContext';
-import {Mockify} from '@leav/utils';
-import {IConfig} from '../../_types/config';
-import {DeepPartial} from '../../_types/utils';
-import {IRequestWithContext} from '../../_types/express';
-import {Response} from 'express';
+import {type Mockify} from '@leav/utils';
+import {type IConfig} from '../../_types/config';
+import {type DeepPartial} from '../../_types/utils';
+import {type IRequestWithContext} from '../../_types/express';
+import {type Response} from 'express';
 import {API_KEY_PARAM_NAME} from '../../_types/auth';
 import jwt from 'jsonwebtoken';
-import {IRecordDomain} from '../../domain/record/recordDomain';
-import {IValueDomain} from '../../domain/value/valueDomain';
-import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
-import {ToAny} from 'utils/utils';
+import {type IRecordDomain} from '../../domain/record/recordDomain';
+import {type IValueDomain} from '../../domain/value/valueDomain';
+import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';
+import {type ToAny} from 'utils/utils';
 
 describe('validateRequestToken', () => {
     const invalidAccessToken = 'invalid_access_token';

@@ -5,8 +5,8 @@ import {useMutation} from '@apollo/client';
 import {useHistory, useLocation} from 'react-router-dom-v5';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
 import {clearCacheForQuery} from '../../../../../../../../utils';
-import {FormInput} from '../../../../../../../../_gqlTypes/globalTypes';
-import {SAVE_FORM, SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
+import {type FormInput} from '../../../../../../../../_gqlTypes/globalTypes';
+import {type SAVE_FORM, type SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
 import {useEditFormContext} from '../../hooks/useEditFormContext';
 import InfosForm from './InfosForm';
 

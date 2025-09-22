@@ -4,7 +4,7 @@
 import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
 import {env} from '../env';
-import {IConfig} from '../types/types';
+import {type IConfig} from '../types/types';
 
 let initialized = false;
 let config: IConfig;

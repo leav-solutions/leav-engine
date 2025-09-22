@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import UserContext from 'context/UserContext';
 import {useContext} from 'react';
-import {ME_me} from '_gqlTypes/ME';
+import {type ME_me} from '_gqlTypes/ME';
 
 function useUserData(): ME_me {
     const userData = useContext(UserContext);

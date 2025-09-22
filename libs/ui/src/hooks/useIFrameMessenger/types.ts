@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type RefObject, type ComponentProps, type Key, type JSXElementConstructor} from 'react';
-import * as z from 'zod/v4';
+import type * as z from 'zod/v4';
 import {type KitNotification} from 'aristid-ds';
 import {type IKitConfirmDialog} from 'aristid-ds/dist/Kit/Feedback/Modal/types';
 import {type ToastedAlertProps} from 'aristid-ds/dist/Kit/Feedback/Alert/types';
 import {type EditRecordModal} from '_ui/components';
-import {ItemActionsSchema, type PanelIdSchema, PanelSchema} from '_ui/hooks/useIFrameMessenger/schema';
+import {type ItemActionsSchema, type PanelIdSchema, type PanelSchema} from '_ui/hooks/useIFrameMessenger/schema';
 
 export const packetId = '__fromIframeMessenger';
 

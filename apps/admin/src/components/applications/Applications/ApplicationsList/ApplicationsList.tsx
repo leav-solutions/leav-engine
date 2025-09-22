@@ -7,7 +7,7 @@ import useLang from 'hooks/useLang';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Dropdown, Input, Table} from 'semantic-ui-react';
-import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
+import {type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {ApplicationType} from '_gqlTypes/globalTypes';
 
 interface IApplicationsListProps {

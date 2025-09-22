@@ -13,7 +13,7 @@ import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import React from 'react';
 import {Icon, List, Sidebar} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
+import {type GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
 
 const AppSidebar = styled(Sidebar)`
     background: #ffffff;

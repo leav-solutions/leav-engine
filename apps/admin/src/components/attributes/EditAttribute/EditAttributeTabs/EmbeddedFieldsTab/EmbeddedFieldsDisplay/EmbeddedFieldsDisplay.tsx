@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {Container, Header} from 'semantic-ui-react';
-import {IEmbeddedFields} from '../../../../../../_types/embeddedFields';
+import {type IEmbeddedFields} from '../../../../../../_types/embeddedFields';
 
 interface IEmbeddedFieldsDisplayProps {
     attribute: IEmbeddedFields;

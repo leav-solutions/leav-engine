@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
-import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
+import {type LibraryBehavior, type TreeBehavior} from '_gqlTypes/globalTypes';
 
 export interface IActiveTree {
     id: string;

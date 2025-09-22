@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitAlert} from 'aristid-ds';
-import {IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
 
 export const useOpenAlert = () => {
     const openAlert: IUseIFrameMessengerOptions['handlers']['onAlert'] = data => {

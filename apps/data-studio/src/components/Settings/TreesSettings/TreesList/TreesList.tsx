@@ -4,11 +4,11 @@
 import {ClearOutlined, PlusOutlined} from '@ant-design/icons';
 import {TreePicker, useLang, EditTreeModal} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
+import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {Button, Empty, Input, Popconfirm, Space, Tooltip} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
-import {ComponentProps, SyntheticEvent, useState} from 'react';
-import {DragDropContext, Draggable, DraggableProvided, DropResult, Droppable} from 'react-beautiful-dnd';
+import {type ComponentProps, type SyntheticEvent, useState} from 'react';
+import {DragDropContext, Draggable, type DraggableProvided, type DropResult, Droppable} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import TreeBlock from './TreeBlock';

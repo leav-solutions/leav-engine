@@ -5,7 +5,7 @@ import {type IDbService} from '../dbService';
 import {type IMigration} from '../../../_types/migration';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {aql} from 'arangojs';
-import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {AttributeFormats} from '../../../_types/attribute';
 
 interface IDeps {

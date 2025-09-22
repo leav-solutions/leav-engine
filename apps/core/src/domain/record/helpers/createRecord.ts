@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {IRecordRepo} from 'infra/record/recordRepo';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
+import {type IRecordRepo} from 'infra/record/recordRepo';
 import moment from 'moment';
 import {LibraryPermissionsActions} from '../../../_types/permissions';
-import {IQueryInfos} from '../../../_types/queryInfos';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 import {IRecord} from '../../../_types/record';
 import PermissionError from '../../../errors/PermissionError';
-import {ICreateRecordResult, ICreateRecordValueError} from '../_types';
+import {type ICreateRecordResult, type ICreateRecordValueError} from '../_types';
 
 export type IPreCreateRecordCallback = () => Promise<ICreateRecordValueError[]>;
 

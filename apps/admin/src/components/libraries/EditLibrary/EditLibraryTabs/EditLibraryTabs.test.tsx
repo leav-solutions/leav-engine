@@ -7,10 +7,10 @@ import {mockAttrSimple} from '__mocks__/attributes';
 import {mockLibrary} from '__mocks__/libraries';
 import EditLibraryTabs from '.';
 import {
-    GET_LIB_BY_ID_libraries_list,
-    GET_LIB_BY_ID_libraries_list_attributes
+    type GET_LIB_BY_ID_libraries_list,
+    type GET_LIB_BY_ID_libraries_list_attributes
 } from '../../../../_gqlTypes/GET_LIB_BY_ID';
-import {Mockify} from '../../../../_types/Mockify';
+import {type Mockify} from '../../../../_types/Mockify';
 
 jest.mock('../../../../hooks/useUserData', () => ({
     __esModule: true,

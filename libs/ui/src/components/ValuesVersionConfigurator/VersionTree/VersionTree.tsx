@@ -6,14 +6,14 @@ import {faFolderTree} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Space, theme} from 'antd';
-import {GlobalToken} from 'antd/lib/theme/interface';
-import React, {SyntheticEvent} from 'react';
+import {type GlobalToken} from 'antd/lib/theme/interface';
+import React, {type SyntheticEvent} from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {themeVars} from '../../../antdTheme';
 import useLang from '../../../hooks/useLang';
-import {ITreeNode} from '../../../types/trees';
-import {GetVersionableAttributesByLibraryQuery} from '../../../_gqlTypes';
+import {type ITreeNode} from '../../../types/trees';
+import {type GetVersionableAttributesByLibraryQuery} from '../../../_gqlTypes';
 import {SelectTreeNodeModalOld} from '../../SelectTreeNodeModalOld';
 
 const Wrapper = styled.div`

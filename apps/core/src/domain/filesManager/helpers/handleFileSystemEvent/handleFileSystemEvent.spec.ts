@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
-import {IRecordRepo} from 'infra/record/recordRepo';
-import {IUtils, ToAny} from 'utils/utils';
-import {Winston} from 'winston';
-import {IConfig} from '_types/config';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
+import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type IUtils, type ToAny} from 'utils/utils';
+import {type Winston} from 'winston';
+import {type IConfig} from '_types/config';
 import {FileEvents} from '../../../../_types/filesManager';
 import {mockFileMetadata} from '../../../../__tests__/mocks/file';
 import {mockLibraryFiles} from '../../../../__tests__/mocks/library';
@@ -17,7 +17,7 @@ import {mockCtx} from '../../../../__tests__/mocks/shared';
 import * as extractFileMetadata from '../extractFileMetadata';
 import * as fileUtilsHelpers from '../handleFileUtilsHelper';
 import * as handlePreview from '../handlePreview';
-import handleFileSystemEvent, {IFileSystemEventDeps} from './handleFileSystemEvent';
+import handleFileSystemEvent, {type IFileSystemEventDeps} from './handleFileSystemEvent';
 
 jest.mock('../getRootPathByKey', () => ({getRootPathByKey: jest.fn().mockReturnValue('/path/to/root')}));
 

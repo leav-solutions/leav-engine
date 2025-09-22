@@ -1,21 +1,21 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IKeyValue, objectToNameValueArray, Override} from '@leav/utils';
-import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
+import {type IKeyValue, objectToNameValueArray, Override} from '@leav/utils';
+import {type ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type IValueDomain} from 'domain/value/valueDomain';
 import isEmptyValue from '../../domain/value/helpers/isEmptyValue';
-import {IUtils} from 'utils/utils';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IQueryInfos} from '_types/queryInfos';
-import {IRecord} from '_types/record';
-import {IStandardValue, ITreeValue, IValue, IValueFromGql, IValueVersion, IValueVersionFromGql} from '_types/value';
-import {AttributeTypes, IAttribute} from '../../_types/attribute';
+import {type IUtils} from 'utils/utils';
+import {type IAppGraphQLSchema} from '_types/graphql';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IRecord} from '_types/record';
+import {type IStandardValue, type ITreeValue, type IValue, type IValueFromGql, type IValueVersion, type IValueVersionFromGql} from '_types/value';
+import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
-import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
 export type ICoreValueApp = IGraphqlAppModule;
 

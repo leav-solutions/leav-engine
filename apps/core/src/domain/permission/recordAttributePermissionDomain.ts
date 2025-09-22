@@ -1,22 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
+import {type IValueRepo} from 'infra/value/valueRepo';
+import {type IQueryInfos} from '_types/queryInfos';
 import {
     AttributePermissionsActions,
     PermissionTypes,
-    RecordAttributePermissionsActions
+    type RecordAttributePermissionsActions
 } from '../../_types/permissions';
-import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IAttributePermissionDomain} from './attributePermissionDomain';
-import {IDefaultPermissionHelper} from './helpers/defaultPermission';
-import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
-import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IAttributePermissionDomain} from './attributePermissionDomain';
+import {type IDefaultPermissionHelper} from './helpers/defaultPermission';
+import {type IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
+import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {
-    IGetDefaultPermissionParams,
-    IGetRecordAttributeHeritedPermissionsParams as IGetRecordAttributeInheritedPermissionsParams
+    type IGetDefaultPermissionParams,
+    type IGetRecordAttributeHeritedPermissionsParams as IGetRecordAttributeInheritedPermissionsParams
 } from './_types';
 
 export interface IRecordAttributePermissionDomain {

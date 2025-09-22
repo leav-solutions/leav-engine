@@ -5,16 +5,16 @@ import getActiveFieldValues from '_ui/components/RecordEdition/EditRecordContent
 import isCurrentVersion from '_ui/components/RecordEdition/EditRecordContent/helpers/isCurrentVersion';
 import {
     VersionFieldScope,
-    FormElement,
-    ICommonFieldsReducerState
+    type FormElement,
+    type ICommonFieldsReducerState
 } from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {
-    RecordFormElementsValueLinkValue,
-    RecordFormElementsValueTreeValue
+    type RecordFormElementsValueLinkValue,
+    type RecordFormElementsValueTreeValue
 } from '_ui/hooks/useGetRecordForm/useGetRecordForm';
-import {IRecordIdentityWhoAmI} from '_ui/types/records';
-import {IValueVersion} from '_ui/types/values';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {type IRecordIdentityWhoAmI} from '_ui/types/records';
+import {type IValueVersion} from '_ui/types/values';
+import {type RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
 type AllowedValuesType = RecordFormElementsValueLinkValue | RecordFormElementsValueTreeValue;
 

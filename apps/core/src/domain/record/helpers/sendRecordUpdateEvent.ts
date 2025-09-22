@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IQueryInfos} from '_types/queryInfos';
-import {IRecord, IRecordUpdateEvent} from '_types/record';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IRecord, type IRecordUpdateEvent} from '_types/record';
 import {TriggerNames} from '../../../_types/eventsManager';
 
 type RequiredOnField<T, F extends keyof T> = Required<Pick<T, F>> & Omit<T, F>;

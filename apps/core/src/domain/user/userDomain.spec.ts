@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
-import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {i18n} from 'i18next';
-import {IMailerService} from 'infra/mailer/mailerService';
-import {IUserDataRepo} from 'infra/userData/userDataRepo';
-import {IUtils, ToAny} from 'utils/utils';
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
+import {type IPermissionDomain} from 'domain/permission/permissionDomain';
+import {type i18n} from 'i18next';
+import {type IMailerService} from 'infra/mailer/mailerService';
+import {type IUserDataRepo} from 'infra/userData/userDataRepo';
+import {type IUtils, type ToAny} from 'utils/utils';
+import {type IConfig} from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import userDataDomain, {IUserDomainDeps, UserCoreDataKeys} from './userDomain';
+import userDataDomain, {type IUserDomainDeps, UserCoreDataKeys} from './userDomain';
 
 const depsBase: ToAny<IUserDomainDeps> = {
     config: {},

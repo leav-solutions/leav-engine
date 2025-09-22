@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import {localizedTranslation, WithTypename} from '@leav/utils';
+import {localizedTranslation, type WithTypename} from '@leav/utils';
 import ConfirmedButton from 'components/shared/ConfirmedButton';
 import DeleteButton from 'components/shared/DeleteButton';
 import useLang from 'hooks/useLang';
@@ -12,11 +12,11 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {deleteFromCache} from 'utils';
 import {
-    DELETE_VERSION_PROFILE,
-    DELETE_VERSION_PROFILEVariables,
-    DELETE_VERSION_PROFILE_deleteVersionProfile
+    type DELETE_VERSION_PROFILE,
+    type DELETE_VERSION_PROFILEVariables,
+    type DELETE_VERSION_PROFILE_deleteVersionProfile
 } from '_gqlTypes/DELETE_VERSION_PROFILE';
-import {GET_VERSION_PROFILES_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILES';
+import {type GET_VERSION_PROFILES_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILES';
 import {PermissionsActions} from '_gqlTypes/globalTypes';
 
 interface IDeleteProfileProps {

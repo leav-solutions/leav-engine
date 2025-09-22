@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PreviewPriority} from '@leav/utils';
-import {Options} from 'amqplib';
-import {IConfig} from '../types/types';
+import {type Options} from 'amqplib';
+import {type IConfig} from '../types/types';
 import {consume} from './consume/consume';
 import {getChannel} from './getChannel/getChannel';
 import {initAmqp} from './init/init';

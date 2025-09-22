@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
-import {ButtonProps} from 'antd';
+import {type ButtonProps} from 'antd';
 import {themeVars} from '_ui/antdTheme';
 import {BasicButton} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';

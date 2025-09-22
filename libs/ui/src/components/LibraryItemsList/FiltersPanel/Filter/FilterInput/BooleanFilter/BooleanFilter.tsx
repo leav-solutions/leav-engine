@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Switch} from 'antd';
 import React from 'react';
-import {IFilterInputProps} from '../../Filter';
+import {type IFilterInputProps} from '../../Filter';
 
 function BooleanFilter({filter, updateFilterValue}: IFilterInputProps): JSX.Element {
     const _handleChange = (value: boolean) => {

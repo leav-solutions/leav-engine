@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
-import * as amqp from 'amqplib';
-import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
-import {IRecordRepo} from 'infra/record/recordRepo';
-import {IUtils} from 'utils/utils';
+import {type IAmqpService} from '@leav/message-broker';
+import type * as amqp from 'amqplib';
+import {type UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import {IFileMetadata, IPreviewResponse, IPreviews, IPreviewsStatus} from '../../../_types/filesManager';
+import type * as Config from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IFileMetadata, type IPreviewResponse, type IPreviews, type IPreviewsStatus} from '../../../_types/filesManager';
 import {updateRecordFile} from './handleFileUtilsHelper';
 import winston = require('winston');
 

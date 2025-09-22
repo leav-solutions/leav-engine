@@ -4,7 +4,7 @@
 import React from 'react';
 import {Modal, Breadcrumb, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
+import {type RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
 import RecordCard from '../../RecordCard';
 import * as Crypto from 'crypto';
 

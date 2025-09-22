@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorDisplay, Loading, useAppLang} from '@leav/ui';
-import {FunctionComponent, useEffect, useState} from 'react';
+import {type FunctionComponent, useEffect, useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from 'components/app';
 import {AntApp} from 'aristid-ds';

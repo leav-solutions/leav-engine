@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMemo} from 'react';
 import {Image} from 'semantic-ui-react';
-import styled, {CSSObject} from 'styled-components';
+import styled, {type CSSObject} from 'styled-components';
 import {getInvertColor, stringToColor} from '../../../utils/utils';
 import {getInitials} from '@leav/utils';
 

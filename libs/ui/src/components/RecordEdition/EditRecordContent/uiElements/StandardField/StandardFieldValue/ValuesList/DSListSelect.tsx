@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useMemo, useState} from 'react';
+import {type FunctionComponent, useMemo, useState} from 'react';
 import {KitSelect, KitTypography} from 'aristid-ds';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
 import {AttributeFormat, useSaveAttributeMutation} from '_ui/_gqlTypes';
 import {Form} from 'antd';
 import {stringifyDateRangeValue} from '_ui/_utils';
-import {IDateRangeValuesListConf, IStringValuesListConf} from './_types';
+import {type IDateRangeValuesListConf, type IStringValuesListConf} from './_types';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {IStandFieldValueContentProps} from '../_types';
-import {IKitSelect} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
+import {type IStandFieldValueContentProps} from '../_types';
+import {type IKitSelect} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 import {EMPTY_INITIAL_VALUE_STRING} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 import dayjs from 'dayjs';
 

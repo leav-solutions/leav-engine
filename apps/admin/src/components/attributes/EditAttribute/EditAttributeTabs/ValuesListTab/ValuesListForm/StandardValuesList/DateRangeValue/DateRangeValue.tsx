@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import dayjs from 'dayjs';
-import React, {ChangeEvent, useState} from 'react';
+import React, {type ChangeEvent, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Input} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {IDateRangeValue} from '_types/attributes';
+import {type IDateRangeValue} from '_types/attributes';
 
 interface IDateRangeValueProps {
     value: IDateRangeValue;

@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {App, Button, Input, Modal, StepProps, Steps, theme} from 'antd';
+import {App, Button, Input, Modal, type StepProps, Steps, theme} from 'antd';
 import {useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ITreeNodeWithRecord} from '_ui/types/trees';
+import {type ITreeNodeWithRecord} from '_ui/types/trees';
 import {
-    CreateDirectoryMutation,
+    type CreateDirectoryMutation,
     TreeBehavior,
     useCreateDirectoryMutation,
     useDoesFileExistAsChildLazyQuery,

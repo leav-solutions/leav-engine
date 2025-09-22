@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {IDbService} from 'infra/db/dbService';
-import {IDbUtils} from 'infra/db/dbUtils';
-import {IApiKey, IGetCoreApiKeysParams} from '_types/apiKey';
-import {IList} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IDbService} from 'infra/db/dbService';
+import {type IDbUtils} from 'infra/db/dbUtils';
+import {type IApiKey, type IGetCoreApiKeysParams} from '_types/apiKey';
+import {type IList} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
 
 export const API_KEY_COLLECTION_NAME = 'core_api_keys';
 

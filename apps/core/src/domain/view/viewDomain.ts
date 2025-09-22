@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IValidateHelper} from 'domain/helpers/validate';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {IViewRepo} from 'infra/view/_types';
+import {type IValidateHelper} from 'domain/helpers/validate';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IViewRepo} from 'infra/view/_types';
 import moment from 'moment';
-import {IUtils} from 'utils/utils';
-import {IList} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IUtils} from 'utils/utils';
+import {type IList} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {IView, IViewFilterOptions} from '_types/views';
+import {type IView, type IViewFilterOptions} from '_types/views';
 
 export interface IViewDomain {
     saveView(view: IView, ctx: IQueryInfos): Promise<IView>;

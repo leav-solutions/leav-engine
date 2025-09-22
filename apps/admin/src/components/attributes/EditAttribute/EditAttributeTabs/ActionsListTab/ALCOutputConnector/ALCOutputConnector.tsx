@@ -4,7 +4,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ConnectorRect from '../ALCCard/ConnectorRect';
-import {IColorDic} from '../interfaces/interfaces';
+import {type IColorDic} from '../interfaces/interfaces';
 
 interface IALCOutputConnectorProps {
     connectionState: string | undefined;

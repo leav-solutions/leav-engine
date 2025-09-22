@@ -4,11 +4,11 @@
 import {useQuery} from '@apollo/client';
 import React from 'react';
 import {getAvailableActionsQuery} from '../../../../../queries/attributes/getAvailableActionsQuery';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
-import {GET_AVAILABLE_ACTIONS} from '../../../../../_gqlTypes/GET_AVAILABLE_ACTIONS';
+import {type GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {type GET_AVAILABLE_ACTIONS} from '../../../../../_gqlTypes/GET_AVAILABLE_ACTIONS';
 import Loading from '../../../../shared/Loading';
 import ALCContainer from './ALCContainer';
-import {IReserveAction} from './interfaces/interfaces';
+import {type IReserveAction} from './interfaces/interfaces';
 import {generateReserveActionFrom} from './utils/generatingFunction';
 
 interface IActionListConfigurerProps {

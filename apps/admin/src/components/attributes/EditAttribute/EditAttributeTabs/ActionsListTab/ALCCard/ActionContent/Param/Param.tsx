@@ -4,7 +4,7 @@
 import React, {useState} from 'react';
 import {Form, Input, Label, TextArea} from 'semantic-ui-react';
 import {useTranslation} from 'react-i18next';
-import {IParam, IParamInput} from '../../../interfaces/interfaces';
+import {type IParam, type IParamInput} from '../../../interfaces/interfaces';
 
 //////////////////// INTERFACES
 

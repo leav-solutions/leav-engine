@@ -4,7 +4,7 @@
 import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
 import Joi from 'joi';
-import {IConfig} from '_types/config';
+import {type IConfig} from '_types/config';
 
 export const validateConfig = (conf: IConfig) => {
     const configSchema = Joi.object().keys({

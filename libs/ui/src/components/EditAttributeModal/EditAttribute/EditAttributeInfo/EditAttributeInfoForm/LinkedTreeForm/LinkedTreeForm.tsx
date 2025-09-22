@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
 import {Button, Form, Space} from 'antd';
-import {ReactNode, useState} from 'react';
-import {TreeLightFragment} from '../../../../../../_gqlTypes';
+import {type ReactNode, useState} from 'react';
+import {type TreeLightFragment} from '../../../../../../_gqlTypes';
 import {PreviewSize} from '../../../../../../constants';
 import {useLang} from '../../../../../../hooks';
 import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';
-import {EntityCard, IEntityData} from '../../../../../EntityCard';
+import {EntityCard, type IEntityData} from '../../../../../EntityCard';
 import {TreePicker} from '../../../../../TreePicker';
 
 interface ILinkedTreeFormProps {

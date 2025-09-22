@@ -4,7 +4,7 @@
 import {execFile} from 'child_process';
 import {unlink} from 'fs';
 import {getConfig} from '../getConfig/getConfig';
-import {IVersion} from '../types/types';
+import {type IVersion} from '../types/types';
 import {getImageArgs} from './../getArgs/getImageArgs/getImageArgs';
 import {handleDocument} from './handleDocument';
 

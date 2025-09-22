@@ -4,16 +4,16 @@
 import {
     FormFieldTypes,
     FormUIElementTypes,
-    ICommonFieldsSettings,
-    IFormDividerSettings,
-    IFormTabsSettings,
+    type ICommonFieldsSettings,
+    type IFormDividerSettings,
+    type IFormTabsSettings,
     TabsDirection
 } from '@leav/utils';
-import {IRecordForm, RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
+import {type IRecordForm, type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {AttributeFormat, AttributeType, FormElementTypes, LibraryBehavior} from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {FormElement, IFormElementProps} from '../../components/RecordEdition/EditRecordContent/_types';
-import {IRecordPropertyTree} from '../../_queries/records/getRecordPropertiesQuery';
+import {type FormElement, type IFormElementProps} from '../../components/RecordEdition/EditRecordContent/_types';
+import {type IRecordPropertyTree} from '../../_queries/records/getRecordPropertiesQuery';
 import {mockAttributeSimple, mockFormAttribute} from './attribute';
 import {mockModifier} from './value';
 import {mockVersionProfile} from './versionProfile';

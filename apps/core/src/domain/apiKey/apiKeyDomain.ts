@@ -3,21 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
 import * as bcrypt from 'bcryptjs';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {i18n} from 'i18next';
-import {IApiKeyRepo} from 'infra/apiKey/apiKeyRepo';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {type i18n} from 'i18next';
+import {type IApiKeyRepo} from 'infra/apiKey/apiKeyRepo';
 import moment from 'moment';
-import {IUtils} from 'utils/utils';
+import {type IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
-import {IApiKey, IGetCoreApiKeysParams} from '_types/apiKey';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IApiKey, type IGetCoreApiKeysParams} from '_types/apiKey';
+import {type IQueryInfos} from '_types/queryInfos';
 import AuthenticationError from '../../errors/AuthenticationError';
 import PermissionError from '../../errors/PermissionError';
 import {Errors} from '../../_types/errors';
-import {IList, SortOrder} from '../../_types/list';
+import {type IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
-import {IConfig} from '../../_types/config';
+import {type IConfig} from '../../_types/config';
 
 export interface IApiKeyDomain {
     getApiKeys(params: {params?: IGetCoreApiKeysParams; ctx: IQueryInfos}): Promise<IList<IApiKey>>;

@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import {isCompletedTask, isExceptionTask, localizedTranslation} from 'utils';
 import {TaskStatus} from '_gqlTypes/globalTypes';
 import {getFileUrl} from '../../../utils';
-import {INotif} from '../NotifsPanel';
+import {type INotif} from '../NotifsPanel';
 
 const WrapperProgress = styled.div<{$isCanceled: boolean}>`
     & .ant-progress-text {

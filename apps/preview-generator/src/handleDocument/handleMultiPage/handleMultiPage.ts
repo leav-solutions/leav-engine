@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {execFile, ExecFileException} from 'child_process';
+import {execFile, type ExecFileException} from 'child_process';
 import {access} from 'fs';
 import {join} from 'path';
 import {createDirectoryRecursively} from '../../check/checkOutput/checkOutput';
 import {ErrorPreview} from '../../errors/ErrorPreview';
-import {IResult, IRootPaths} from '../../types/types';
+import {type IResult, type IRootPaths} from '../../types/types';
 import {handleError} from './../../utils/log';
 
 interface IExecResult {

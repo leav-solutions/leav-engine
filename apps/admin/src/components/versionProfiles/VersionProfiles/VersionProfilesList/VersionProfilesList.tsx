@@ -7,7 +7,7 @@ import useLang from 'hooks/useLang';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Input, Table} from 'semantic-ui-react';
-import {GET_VERSION_PROFILES_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILES';
+import {type GET_VERSION_PROFILES_versionProfiles_list} from '_gqlTypes/GET_VERSION_PROFILES';
 
 interface IVersionProfilesListProps {
     profiles: GET_VERSION_PROFILES_versionProfiles_list[] | null;

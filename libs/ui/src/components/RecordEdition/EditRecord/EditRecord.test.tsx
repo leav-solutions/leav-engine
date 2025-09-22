@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {UserEvent} from '@testing-library/user-event/dist/types/setup/setup';
+import {type UserEvent} from '@testing-library/user-event/dist/types/setup/setup';
 import {useRef} from 'react';
 import {getRecordColumnsValues} from '_ui/_queries/records/getRecordColumnsValues';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {IUseCanEditRecordHook} from '../../../hooks/useCanEditRecord/useCanEditRecord';
+import {type IUseCanEditRecordHook} from '../../../hooks/useCanEditRecord/useCanEditRecord';
 import {render, screen} from '../../../_tests/testUtils';
 import {EditRecord} from './EditRecord';
 import {Form} from 'antd';

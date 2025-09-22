@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FaCheck} from 'react-icons/fa';
-import {ComponentProps, FunctionComponent, KeyboardEvent, useMemo, useState} from 'react';
+import {type ComponentProps, type FunctionComponent, type KeyboardEvent, useMemo, useState} from 'react';
 import {KitInput, KitSelect} from 'aristid-ds';
 import styled from 'styled-components';
 import {
-    ExplorerFilter,
-    IExplorerFilterValueList,
+    type ExplorerFilter,
+    type IExplorerFilterValueList,
     isExplorerFilterLinkWithValueList,
     isExplorerFilterStandardWithValueList
 } from '_ui/components/Explorer/_types';

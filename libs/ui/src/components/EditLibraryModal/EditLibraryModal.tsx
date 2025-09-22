@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql, useApolloClient} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
-import {Button, Modal, ModalProps, Popconfirm} from 'antd';
+import {Button, Modal, type ModalProps, Popconfirm} from 'antd';
 import {useState} from 'react';
 import {
     PermissionsActions,
     PermissionTypes,
-    SaveLibraryMutation,
+    type SaveLibraryMutation,
     useDeleteLibraryMutation,
     useIsAllowedQuery
 } from '_ui/_gqlTypes';

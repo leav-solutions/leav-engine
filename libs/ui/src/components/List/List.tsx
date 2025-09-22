@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {List as AntdList, ListProps} from 'antd';
-import Checkbox, {CheckboxChangeEvent} from 'antd/lib/checkbox/Checkbox';
+import {List as AntdList, type ListProps} from 'antd';
+import Checkbox, {type CheckboxChangeEvent} from 'antd/lib/checkbox/Checkbox';
 import isEqual from 'lodash/isEqual';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';

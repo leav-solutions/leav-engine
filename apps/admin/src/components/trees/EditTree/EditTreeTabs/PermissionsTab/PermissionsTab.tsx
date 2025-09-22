@@ -5,9 +5,9 @@ import {useMutation} from '@apollo/client';
 import uniqBy from 'lodash/uniqBy';
 import React from 'react';
 import {saveTreeQuery} from '../../../../../queries/trees/saveTreeMutation';
-import {GET_TREE_BY_ID_trees_list} from '../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {TreeNodePermissionsConfInput, Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
-import {SAVE_TREE, SAVE_TREEVariables} from '../../../../../_gqlTypes/SAVE_TREE';
+import {type GET_TREE_BY_ID_trees_list} from '../../../../../_gqlTypes/GET_TREE_BY_ID';
+import {type TreeNodePermissionsConfInput, type Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
+import {type SAVE_TREE, type SAVE_TREEVariables} from '../../../../../_gqlTypes/SAVE_TREE';
 import PermissionsContent from './PermissionsContent';
 
 interface IPermissionsTabProps {

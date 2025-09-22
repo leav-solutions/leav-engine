@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IQueryInfos} from '_types/queryInfos';
-import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
-import {IDefaultPermissionHelper} from './defaultPermission';
-import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
-import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type PermissionsActions, type PermissionTypes} from '../../../_types/permissions';
+import {type IDefaultPermissionHelper} from './defaultPermission';
+import {type IPermissionByUserGroupsHelper} from './permissionByUserGroups';
+import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 
 interface IGetGlobalPermissionParams {
     type: PermissionTypes;

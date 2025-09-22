@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordIdentity} from '_ui/types/records';
-import {INavigationPath} from '_ui/types/trees';
-import {TreeNodeChildFragment} from '_ui/_gqlTypes';
+import {type IRecordIdentity} from '_ui/types/records';
+import {type INavigationPath} from '_ui/types/trees';
+import {type TreeNodeChildFragment} from '_ui/_gqlTypes';
 import {mockPreviews} from './record';
 
 export const mockTreeRecord: IRecordIdentity = {

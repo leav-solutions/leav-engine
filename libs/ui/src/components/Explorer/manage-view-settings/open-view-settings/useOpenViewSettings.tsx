@@ -6,13 +6,13 @@ import {FaBars, FaSlidersH} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SettingsPanel} from '../router-menu/SettingsPanel';
 import {useEditSettings} from './useEditSettings';
-import {SettingsPanelPages} from './EditSettingsContext';
+import {type SettingsPanelPages} from './EditSettingsContext';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
-import {ReactElement, useEffect, useState} from 'react';
-import {IViewSettingsState} from '../store-view-settings/viewSettingsReducer';
+import {type ReactElement, useEffect, useState} from 'react';
+import {type IViewSettingsState} from '../store-view-settings/viewSettingsReducer';
 import styled from 'styled-components';
-import {FeatureHook} from '../../_types';
+import {type FeatureHook} from '../../_types';
 import {MASS_SELECTION_ALL} from '../../_constants';
 
 const ModifiedStyledKitTag = styled(KitTag)`

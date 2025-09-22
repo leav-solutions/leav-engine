@@ -5,7 +5,7 @@ import {mount} from 'enzyme';
 import {wait} from 'utils/testUtils';
 import {act, render, screen} from '_tests/testUtils';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
-import {SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
+import {type SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
 import {mockFormFull} from '../../../../../../../../__mocks__/forms';
 import MockedProviderWithFragments from '../../../../../../../../__mocks__/MockedProviderWithFragments';
 import {EditFormContext} from '../../hooks/useEditFormContext';

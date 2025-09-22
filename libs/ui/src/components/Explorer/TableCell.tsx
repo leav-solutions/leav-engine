@@ -1,22 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, ReactNode, useCallback} from 'react';
+import {type FunctionComponent, type ReactNode, useCallback} from 'react';
 import {
     AttributeFormat,
-    AttributePropertiesFragment,
+    type AttributePropertiesFragment,
     AttributeType,
-    PropertyValueFragment,
-    PropertyValueLinkValueFragment,
-    PropertyValueTreeValueFragment,
-    PropertyValueValueFragment,
+    type PropertyValueFragment,
+    type PropertyValueLinkValueFragment,
+    type PropertyValueTreeValueFragment,
+    type PropertyValueValueFragment,
     MultiDisplayOption
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FaArrowRight, FaCalendar, FaListAlt} from 'react-icons/fa';
 import DOMPurify from 'dompurify';
 import {KitAvatar, KitBadge, KitSpace, KitTag, KitTypography} from 'aristid-ds';
-import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
+import {type IKitTag, type IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
 import {multiColorTagAvatarClassName, TableTagGroup} from './TableTagGroup';

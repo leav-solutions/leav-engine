@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {QueryResult} from '@apollo/client';
+import {type QueryResult} from '@apollo/client';
 import {renderHook} from '@testing-library/react';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {RECORD_HISTORY_LOGS_FIRST_PAGE, RECORD_HISTORY_LOGS_PAGE, useFetchRecordHistory} from './useFetchRecordHistory';

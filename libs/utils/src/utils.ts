@@ -11,7 +11,7 @@ import minimatch from 'minimatch';
 import * as extensions from './MIMEByExtension.json';
 import {AttributeType} from './types/attributes';
 import {FileType} from './types/files';
-import {IKeyValue} from './types/helpers';
+import {type IKeyValue} from './types/helpers';
 
 export const getGraphqlTypeFromLibraryName = (library: string): string =>
     flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);

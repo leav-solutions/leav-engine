@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    RecordFormElementsValueLinkValue,
-    RecordFormElementsValueStandardValue,
-    RecordFormElementsValueTreeValue
+    type RecordFormElementsValueLinkValue,
+    type RecordFormElementsValueStandardValue,
+    type RecordFormElementsValueTreeValue
 } from '_ui/hooks/useGetRecordForm';
-import {LinkCellValue, LinkCellValues, SimpleCellValue, SimpleCellValues, TreeCellValue, TreeCellValues} from './types';
+import {type LinkCellValue, type LinkCellValues, type SimpleCellValue, type SimpleCellValues, type TreeCellValue, type TreeCellValues} from './types';
 
 export const TypeGuards = {
     isSimpleCellValues: (values: SimpleCellValues | LinkCellValues | TreeCellValues): values is SimpleCellValues =>

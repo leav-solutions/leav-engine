@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Form, InputOnChangeData} from 'semantic-ui-react';
+import {Form, type InputOnChangeData} from 'semantic-ui-react';
 import {AttributeFormat} from '../../../../../../_gqlTypes/globalTypes';
-import {IEmbeddedFields, ILabel} from '../../../../../../_types/embeddedFields';
-import {IFormValue} from '../EmbeddedFieldsTab';
+import {type IEmbeddedFields, type ILabel} from '../../../../../../_types/embeddedFields';
+import {type IFormValue} from '../EmbeddedFieldsTab';
 import LabelFields from './LabelFields';
 import SelectFormat from './SelectFormat';
 

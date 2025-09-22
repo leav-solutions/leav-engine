@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
 import React from 'react';
-import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
-import {Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
-import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
+import {type Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
+import {type SAVE_ATTRIBUTE, type SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import PermissionsContent from './PermissionsContent';
 
 interface IPermissionsTabProps {

@@ -1,22 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Dispatch, useMemo} from 'react';
+import {type Dispatch, useMemo} from 'react';
 import {FaTrash, FaTrashRestore} from 'react-icons/fa';
 import {KitModal} from 'aristid-ds';
 import {
-    ActivateRecordsMutation,
-    DeactivateRecordsMutation,
+    type ActivateRecordsMutation,
+    type DeactivateRecordsMutation,
     useActivateRecordsMutation,
     useDeactivateRecordsMutation,
     useDeleteValueMutation
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
-import {FeatureHook, Entrypoint, IEntrypointLink, IItemAction, IItemData} from '../_types';
-import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
+import {type FeatureHook, type Entrypoint, type IEntrypointLink, type IItemAction, type IItemData} from '../_types';
+import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {MASS_SELECTION_ALL} from '../_constants';
-import {FetchResult} from '@apollo/client';
+import {type FetchResult} from '@apollo/client';
 
 /**
  * Hook used to get the action for `<DataView />` component.

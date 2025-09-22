@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ChangeEvent, useMemo, useState} from 'react';
+import {type ChangeEvent, useMemo, useState} from 'react';
 import {useDebouncedValue} from '_ui/hooks/useDebouncedValue';
 import {
     useGetAttributesByLibWithPermissionsQuery,
-    GetAttributesByLibWithPermissionsQuery,
-    AttributeDetailsFragment
+    type GetAttributesByLibWithPermissionsQuery,
+    type AttributeDetailsFragment
 } from '_ui/_gqlTypes';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';

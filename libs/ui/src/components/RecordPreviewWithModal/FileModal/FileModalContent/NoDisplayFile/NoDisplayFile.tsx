@@ -4,10 +4,10 @@
 import {ClockCircleOutlined, FolderOutlined, FrownOutlined} from '@ant-design/icons';
 import {getInvertColor, stringToColor} from '@leav/utils';
 import {Space, theme} from 'antd';
-import {GlobalToken} from 'antd/es/theme/interface';
+import {type GlobalToken} from 'antd/es/theme/interface';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IFileViewerProps} from '../_types';
+import {type IFileViewerProps} from '../_types';
 
 interface INoDisplayFileProps extends IFileViewerProps {
     noPreviewMessage?: boolean;

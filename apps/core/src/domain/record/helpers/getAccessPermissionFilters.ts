@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {IAttribute} from '_types/attribute';
-import {ILibrary} from '_types/library';
+import {type IAttribute} from '_types/attribute';
+import {type ILibrary} from '_types/library';
 import {PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
-import {IQueryInfos} from '_types/queryInfos';
-import {ITreeNode} from '_types/tree';
-import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {IPermissionRepo} from 'infra/permission/permissionRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type ITreeNode} from '_types/tree';
+import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
+import {type IPermissionRepo} from 'infra/permission/permissionRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
 
 interface IAccessPermissionFilterDeps {
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;

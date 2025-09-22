@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, FunctionComponent} from 'react';
+import {type ComponentProps, type FunctionComponent} from 'react';
 import {KitDivider, KitFilter, KitSpace} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -10,7 +10,7 @@ import {useViewSettingsContext} from './manage-view-settings/store-view-settings
 import {CommonFilterItem} from './manage-view-settings/_shared/CommonFilterItem';
 import {useAttributeDetailsData} from './manage-view-settings/_shared/useAttributeDetailsData';
 import {useOpenViewSettings} from './manage-view-settings';
-import {ExplorerFilter} from './_types';
+import {type ExplorerFilter} from './_types';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;

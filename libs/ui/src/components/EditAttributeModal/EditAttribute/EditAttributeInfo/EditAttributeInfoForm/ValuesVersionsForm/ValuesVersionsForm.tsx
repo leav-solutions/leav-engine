@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
 import {Form, Select, Space, Switch} from 'antd';
-import {ReactNode} from 'react';
+import {type ReactNode} from 'react';
 import {ValueVersionMode, useGetVersionProfilesQuery} from '../../../../../../_gqlTypes';
 import {useLang} from '../../../../../../hooks';
 import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';

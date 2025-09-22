@@ -4,7 +4,7 @@
 import {initialCheck} from './initialCheck/initialCheck';
 import {handleCheck} from './handleCheck';
 import {checkInput} from './checkInput/checkInput';
-import {IMessageConsume, IConfig} from '../types/types';
+import {type IMessageConsume, type IConfig} from '../types/types';
 import {checkOutput} from './checkOutput/checkOutput';
 
 describe('handleCheck', () => {

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useContext} from 'react';
-import {ILangContext, LangContext} from '../../contexts/LangContext';
+import {type ILangContext, LangContext} from '../../contexts/LangContext';
 
 const useLang = (): ILangContext => {
     const lang = useContext(LangContext);

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import fs from 'fs';
-import {i18n} from 'i18next';
+import {type i18n} from 'i18next';
 import camelCase from 'lodash/camelCase';
 import flow from 'lodash/flow';
 import isEqual from 'lodash/isEqual';
@@ -12,16 +12,16 @@ import trimEnd from 'lodash/trimEnd';
 import upperFirst from 'lodash/upperFirst';
 import moment from 'moment';
 import os from 'os';
-import {ActionsListConfig} from '_types/actionsList';
-import {IConfig} from '_types/config';
-import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '../_types/errors';
-import {ILibrary, ILibraryPreviewsSettings, LibraryBehavior} from '_types/library';
-import {ISystemTranslation} from '_types/systemTranslation';
-import {IValue} from '_types/value';
+import {type ActionsListConfig} from '_types/actionsList';
+import {type IConfig} from '_types/config';
+import {type ErrorFieldDetail, type ErrorFieldDetailMessage, Errors, type IExtendedErrorMsg} from '../_types/errors';
+import {type ILibrary, type ILibraryPreviewsSettings, type LibraryBehavior} from '_types/library';
+import {type ISystemTranslation} from '_types/systemTranslation';
+import {type IValue} from '_types/value';
 import ValidationError from '../errors/ValidationError';
 import {APPS_URL_PREFIX} from '../_types/application';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../_types/attribute';
-import {IPreviewAttributesSettings, IPreviewVersion, IPreviewVersionSize} from '../_types/filesManager';
+import {AttributeFormats, AttributeTypes, type IAttribute} from '../_types/attribute';
+import {type IPreviewAttributesSettings, type IPreviewVersion, type IPreviewVersionSize} from '../_types/filesManager';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
 import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './helpers/getPreviewsAttributes';

@@ -4,8 +4,8 @@
 import styled from 'styled-components';
 import {themeVars} from '../../antdTheme';
 import useLibraryVersionTrees from '../../hooks/useLibraryVersionTrees';
-import {ITreeNode} from '../../types/trees';
-import {IValueVersion} from '../../types/values';
+import {type ITreeNode} from '../../types/trees';
+import {type IValueVersion} from '../../types/values';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import VersionTree from './VersionTree';

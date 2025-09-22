@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FormFieldTypes, FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
-import {FormElementTypes, IFormElement, IFormStrict} from '../../_types/forms';
+import {FormElementTypes, type IFormElement, type IFormStrict} from '../../_types/forms';
 
 export const formField: IFormElement = {
     id: '123456',

@@ -7,10 +7,10 @@ import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
 import {isLinkAttribute, isValueNull, localizedLabel} from '../../../../utils';
-import {GET_LIB_BY_ID_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIB_BY_ID';
+import {type GET_LIB_BY_ID_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType} from '../../../../_gqlTypes/globalTypes';
-import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../_gqlTypes/SAVE_VALUE_BATCH';
-import {IGenericValue, ILinkValue, ITreeLinkValue, IValue, RecordData, RecordEdition} from '../../../../_types/records';
+import {type SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../_gqlTypes/SAVE_VALUE_BATCH';
+import {type IGenericValue, type ILinkValue, type ITreeLinkValue, type IValue, type RecordData, type RecordEdition} from '../../../../_types/records';
 import FormFieldWrapper from '../../../shared/FormFieldWrapper';
 import LinksField from '../../FormFields/LinksField';
 

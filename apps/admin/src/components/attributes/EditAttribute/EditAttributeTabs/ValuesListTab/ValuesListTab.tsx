@@ -7,11 +7,11 @@ import React from 'react';
 import {getAttributeValuesListQuery} from '../../../../../queries/attributes/getAttributeValuesListQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {
-    GET_ATTRIBUTES_VALUES_LIST,
-    GET_ATTRIBUTES_VALUES_LISTVariables
+    type GET_ATTRIBUTES_VALUES_LIST,
+    type GET_ATTRIBUTES_VALUES_LISTVariables
 } from '../../../../../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
-import {ValuesListConfInput} from '../../../../../_gqlTypes/globalTypes';
-import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
+import {type ValuesListConfInput} from '../../../../../_gqlTypes/globalTypes';
+import {type SAVE_ATTRIBUTE, type SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import Loading from '../../../../shared/Loading';
 import ValuesListForm from './ValuesListForm';
 

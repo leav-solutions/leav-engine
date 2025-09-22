@@ -4,10 +4,10 @@
 import {getInitials, getInvertColor, stringToColor} from '@leav/utils';
 import {Skeleton} from 'antd';
 import {useState} from 'react';
-import styled, {CSSObject} from 'styled-components';
+import styled, {type CSSObject} from 'styled-components';
 import {getPreviewSize} from '_ui/_utils';
-import {PreviewSize} from '../../../constants';
-import {IEntityPreviewProps, IGeneratedPreviewProps} from '../_types';
+import {type PreviewSize} from '../../../constants';
+import {type IEntityPreviewProps, type IGeneratedPreviewProps} from '../_types';
 import SimplisticEntityPreview from './SimplisticEntityPreview';
 
 interface IImagePreviewProps {

@@ -5,7 +5,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header} from 'semantic-ui-react';
 import ALCCard from '../ALCReserveCard';
-import {IAction, IColorDic, IReserveAction} from '../interfaces/interfaces';
+import {type IAction, type IColorDic, type IReserveAction} from '../interfaces/interfaces';
 import {AvailableActionsContainer} from '../stylesComps';
 
 //////////////////// INTERFACES

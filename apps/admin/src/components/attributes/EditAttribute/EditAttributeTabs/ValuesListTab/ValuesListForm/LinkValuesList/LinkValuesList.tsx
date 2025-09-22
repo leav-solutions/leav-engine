@@ -4,8 +4,8 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, List} from 'semantic-ui-react';
-import {RecordIdentity_whoAmI} from '../../../../../../../_gqlTypes/RecordIdentity';
-import {ILinkValuesList} from '../../../../../../../_types/attributes';
+import {type RecordIdentity_whoAmI} from '../../../../../../../_gqlTypes/RecordIdentity';
+import {type ILinkValuesList} from '../../../../../../../_types/attributes';
 import EditRecordModal from '../../../../../../records/EditRecordModal';
 import SelectRecordModal from '../../../../../../records/SelectRecordModal';
 import RecordCard from '../../../../../../shared/RecordCard';

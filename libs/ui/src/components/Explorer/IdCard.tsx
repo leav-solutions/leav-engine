@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitIdCard} from 'aristid-ds';
-import {IKitAvatar} from 'aristid-ds/dist/Kit/DataDisplay/Avatar/types';
-import {FunctionComponent} from 'react';
-import {RecordIdentityFragment} from '_ui/_gqlTypes';
+import {type IKitAvatar} from 'aristid-ds/dist/Kit/DataDisplay/Avatar/types';
+import {type FunctionComponent} from 'react';
+import {type RecordIdentityFragment} from '_ui/_gqlTypes';
 
 interface IIdCardProps {
     item: RecordIdentityFragment['whoAmI'];

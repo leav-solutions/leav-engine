@@ -4,7 +4,7 @@
 import DefinePermByUserGroupView from 'components/permissions/DefinePermByUserGroupView';
 import React from 'react';
 import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
-import {IGroupedPermissionsActions} from '_types/permissions';
+import {type IGroupedPermissionsActions} from '_types/permissions';
 
 function GeneralAdminPermissionsTab(): JSX.Element {
     const groupedPermissionsActions: IGroupedPermissionsActions = {

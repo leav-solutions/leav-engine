@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import useLang from 'hooks/useLang';
 import React from 'react';
-import {Form, FormDropdownProps} from 'semantic-ui-react';
+import {Form, type FormDropdownProps} from 'semantic-ui-react';
 import {localizedLabel} from 'utils';
-import {GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list} from '_gqlTypes/GET_LIBRARIES_WITH_ATTRIBUTES';
+import {type GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list} from '_gqlTypes/GET_LIBRARIES_WITH_ATTRIBUTES';
 
 interface IAttributeLibrariesFieldProps extends FormDropdownProps {
     libraries: GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list[];

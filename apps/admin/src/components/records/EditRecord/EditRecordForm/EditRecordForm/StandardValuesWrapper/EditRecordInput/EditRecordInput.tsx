@@ -5,8 +5,8 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Input} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_LIB_BY_ID_libraries_list_attributes} from '../../../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {IGenericValue, IValue} from '../../../../../../../_types/records';
+import {type GET_LIB_BY_ID_libraries_list_attributes} from '../../../../../../../_gqlTypes/GET_LIB_BY_ID';
+import {type IGenericValue, type IValue} from '../../../../../../../_types/records';
 
 interface IEditRecordInputProps {
     attribute: GET_LIB_BY_ID_libraries_list_attributes;

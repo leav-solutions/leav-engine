@@ -4,10 +4,10 @@
 import {useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {FeatureHook, IPrimaryAction} from '../_types';
+import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {type FeatureHook, type IPrimaryAction} from '../_types';
 import {LinkModal} from '../link-item/LinkModal';
-import {JoinLibraryContextFragment} from '_ui/_gqlTypes';
+import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
 
 /**
  * Hook used to get the action for `<DataView />` component.

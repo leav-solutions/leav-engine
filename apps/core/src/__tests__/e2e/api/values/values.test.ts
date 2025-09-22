@@ -4,7 +4,7 @@
 import {AttributeCondition} from '../../../../_types/record';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {gqlAddElemToTree, gqlCreateRecord, gqlSaveAttribute, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
-import {ILinkValue} from '_types/value';
+import {type ILinkValue} from '_types/value';
 
 describe('Values', () => {
     const testLibName = 'values_library_test';

@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {idFormatRegex, Override, slugifyString} from '@leav/utils';
-import {Form, FormInstance, Input, InputNumber, Select, Switch} from 'antd';
+import {idFormatRegex, type Override, slugifyString} from '@leav/utils';
+import {Form, type FormInstance, Input, InputNumber, Select, Switch} from 'antd';
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {useLang} from '../../../../../hooks';
 import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import {
-    AttributeDetailsFragment,
-    AttributeDetailsLinkAttributeFragment,
-    AttributeDetailsStandardAttributeFragment,
-    AttributeDetailsTreeAttributeFragment,
+    type AttributeDetailsFragment,
+    type AttributeDetailsLinkAttributeFragment,
+    type AttributeDetailsStandardAttributeFragment,
+    type AttributeDetailsTreeAttributeFragment,
     AttributeFormat,
     AttributeType,
     ValueVersionMode

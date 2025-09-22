@@ -16,6 +16,7 @@ import useAppLang from './hooks/useAppLang';
 import i18n from './i18n';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
+
 // import {AntApp} from 'aristid-ds';
 
 export function Index() {

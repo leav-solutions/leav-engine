@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {IGlobalSettingsRepo} from 'infra/globalSettings/globalSettingsRepo';
-import {IGlobalSettings} from '_types/globalSettings';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {type IGlobalSettingsRepo} from 'infra/globalSettings/globalSettingsRepo';
+import {type IGlobalSettings} from '_types/globalSettings';
+import {type IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {DEFAULT_APPLICATION} from '../../_constants/globalSettings';
-import {IUtils} from '../../utils/utils';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {type IUtils} from '../../utils/utils';
+import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 
 export interface IGlobalSettingsDomain {
     saveSettings({settings, ctx}: {settings: IGlobalSettings; ctx: IQueryInfos}): Promise<IGlobalSettings>;

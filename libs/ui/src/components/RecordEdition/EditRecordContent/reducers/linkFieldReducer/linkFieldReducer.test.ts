@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import getActiveFieldValues from '_ui/components/RecordEdition/EditRecordContent/helpers/getActiveFieldValues';
 import {VersionFieldScope} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
+import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
 import {mockFormElementLinkVersionable, mockLinkValue} from '_ui/__mocks__/common/form';
-import linkFieldReducer, {ILinkFieldState, LinkFieldReducerActionsType, virginState} from './linkFieldReducer';
+import linkFieldReducer, {type ILinkFieldState, LinkFieldReducerActionsType, virginState} from './linkFieldReducer';
 
 describe('linkFieldReducer', () => {
     const initialLinkFieldState = virginState as ILinkFieldState<RecordFormElementsValueLinkValue>;

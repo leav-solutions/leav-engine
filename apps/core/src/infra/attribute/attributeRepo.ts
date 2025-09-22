@@ -3,16 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import {join} from 'arangojs/aql';
-import {IUtils} from 'utils/utils';
-import {ILibrary} from '_types/library';
-import {IList} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IAttribute, IGetCoreAttributesParams} from '../../_types/attribute';
-import {IGetCoreEntitiesParams} from '../../_types/shared';
-import {IDbService} from '../db/dbService';
-import {CustomFilterConditionsFunc, IDbUtils} from '../db/dbUtils';
+import {type IUtils} from 'utils/utils';
+import {type ILibrary} from '_types/library';
+import {type IList} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IAttribute, type IGetCoreAttributesParams} from '../../_types/attribute';
+import {type IGetCoreEntitiesParams} from '../../_types/shared';
+import {type IDbService} from '../db/dbService';
+import {type CustomFilterConditionsFunc, type IDbUtils} from '../db/dbUtils';
 import {LIB_ATTRIB_COLLECTION_NAME, LIB_COLLECTION_NAME} from '../library/libraryRepo';
-import {IValueRepo} from '../value/valueRepo';
+import {type IValueRepo} from '../value/valueRepo';
 
 export interface IAttributeRepo {
     getAttributes({params, ctx}: {params?: IGetCoreAttributesParams; ctx: IQueryInfos}): Promise<IList<IAttribute>>;

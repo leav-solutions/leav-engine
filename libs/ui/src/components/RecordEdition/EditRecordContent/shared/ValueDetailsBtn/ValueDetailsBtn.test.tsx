@@ -7,8 +7,8 @@ import {
     initialState
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
-import {IRecordPropertyStandard} from '_ui/_queries/records/getRecordPropertiesQuery';
+import {type RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
+import {type IRecordPropertyStandard} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import ValueDetailsBtn from './ValueDetailsBtn';

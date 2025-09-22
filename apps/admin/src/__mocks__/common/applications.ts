@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {WithTypename} from '@leav/utils';
-import {IEditApplicationContextData} from 'context/EditApplicationContext/EditApplicationContext';
-import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
-import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
-import {GET_APPLICATION_MODULES_applicationsModules} from '_gqlTypes/GET_APPLICATION_MODULES';
+import {type WithTypename} from '@leav/utils';
+import {type IEditApplicationContextData} from 'context/EditApplicationContext/EditApplicationContext';
+import {type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
+import {type GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {type GET_APPLICATION_MODULES_applicationsModules} from '_gqlTypes/GET_APPLICATION_MODULES';
 import {ApplicationType} from '_gqlTypes/globalTypes';
 
 export const mockApplication: GET_APPLICATIONS_applications_list = {

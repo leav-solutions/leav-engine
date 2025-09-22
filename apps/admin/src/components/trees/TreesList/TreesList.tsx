@@ -6,7 +6,7 @@ import {useTranslation} from 'react-i18next';
 import {Checkbox, Input, Table} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
-import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
+import {type GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import Loading from '../../shared/Loading';
 import DeleteTree from '../DeleteTree';
 

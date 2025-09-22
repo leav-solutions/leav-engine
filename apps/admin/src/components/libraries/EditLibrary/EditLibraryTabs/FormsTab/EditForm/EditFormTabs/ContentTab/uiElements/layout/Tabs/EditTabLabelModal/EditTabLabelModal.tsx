@@ -6,8 +6,8 @@ import {Input, Modal} from 'semantic-ui-react';
 import useLang from '../../../../../../../../../../../../hooks/useLang';
 import {FormBuilderActionTypes} from '../../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {IFormElement} from '../../../../_types';
-import {ITabSettings} from '../Tabs';
+import {type IFormElement} from '../../../../_types';
+import {type ITabSettings} from '../Tabs';
 
 interface IEditTabLabelModalProps {
     open: boolean;

@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {closeKitSnackBar, KitCheckbox, KitDropDown, KitSpace, openKitSnackBar} from 'aristid-ds';
-import {Dispatch, useCallback, useEffect, useRef} from 'react';
+import {type Dispatch, useCallback, useEffect, useRef} from 'react';
 import {FaChevronDown} from 'react-icons/fa';
 import {RecordFilterCondition, RecordFilterOperator} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
-import {IMassActions, MassSelection} from '../_types';
+import {type IMassActions, type MassSelection} from '../_types';
 import {MASS_SELECTION_ALL} from '../_constants';
-import {IViewSettingsAction, IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
+import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {prepareFiltersForRequest} from '../_queries/prepareFiltersForRequest';
 
 export const SNACKBAR_MASS_ID = 'SNACKBAR_MASS_ID';

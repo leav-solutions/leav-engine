@@ -8,13 +8,13 @@ import * as gqlTypes from '_ui/_gqlTypes';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {AntForm} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';
-import {RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
+import {type RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
 import {act} from '@testing-library/react';
 import {
     EditRecordReducerActionsTypes,
-    IEditRecordReducerState
+    type IEditRecordReducerState
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import {CalculatedFlags, InheritedFlags} from '../../../shared/calculatedInheritedFlags';
+import {type CalculatedFlags, type InheritedFlags} from '../../../shared/calculatedInheritedFlags';
 
 const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValue: false,

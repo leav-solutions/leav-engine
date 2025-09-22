@@ -3,48 +3,48 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {EventAction} from '@leav/utils';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
-import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
+import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {type ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
+import {type ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
+import {type ILibraryRepo} from 'infra/library/libraryRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
 import {omit} from 'lodash';
-import {IUtils} from 'utils/utils';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IUtils} from 'utils/utils';
+import {type IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
 import {TriggerNames} from '../../_types/eventsManager';
-import {IList, IPaginationParams, SortOrder} from '../../_types/list';
+import {type IList, type IPaginationParams, SortOrder} from '../../_types/list';
 import {
     AdminPermissionsActions,
     PermissionTypes,
     TreeNodePermissionsActions,
     TreePermissionsActions
 } from '../../_types/permissions';
-import {AttributeCondition, IRecord} from '../../_types/record';
+import {AttributeCondition, type IRecord} from '../../_types/record';
 import {
-    IGetCoreTreesParams,
-    ITree,
-    ITreeElement,
-    ITreeNode,
-    ITreeNodeLight,
+    type IGetCoreTreesParams,
+    type ITree,
+    type ITreeElement,
+    type ITreeNode,
+    type ITreeNodeLight,
     TreeBehavior,
     TreeEventTypes,
-    TreePath
+    type TreePath
 } from '../../_types/tree';
-import {IAttributeDomain} from '../attribute/attributeDomain';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {PERMISSIONS_CACHE_HEADER} from '../permission/_types';
-import {IRecordDomain} from '../record/recordDomain';
-import {IElementAncestorsHelper} from './helpers/elementAncestors';
-import {IGetDefaultElementHelper} from './helpers/getDefaultElement';
-import {HandleRemovedLibrariesFunc} from './helpers/handleRemovedLibraries';
-import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
+import {type IRecordDomain} from '../record/recordDomain';
+import {type IElementAncestorsHelper} from './helpers/elementAncestors';
+import {type IGetDefaultElementHelper} from './helpers/getDefaultElement';
+import {type HandleRemovedLibrariesFunc} from './helpers/handleRemovedLibraries';
+import {type ITreeDataValidationHelper} from './helpers/treeDataValidation';
 
 export interface ITreeDomain {
     isNodePresent(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<boolean>;

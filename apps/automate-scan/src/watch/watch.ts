@@ -4,11 +4,11 @@
 import {isFileAllowed} from '@leav/utils';
 import * as chokidar from 'chokidar';
 import {createHash} from 'crypto';
-import {createReadStream, Stats} from 'fs';
+import {createReadStream, type Stats} from 'fs';
 import {join} from 'path';
 import {getConfig} from '../config';
 import {getInode, setData} from '../redis/redis';
-import {IAmqpParams, IParams, IParamsExtends, IWatcherParams} from '../types';
+import {type IAmqpParams, type IParams, type IParamsExtends, type IWatcherParams} from '../types';
 import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
 
 const inodesTmp: {[i: number]: string} = {};

@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
+import {type ActionsListValueType, type IActionsListContext} from '_types/actionsList';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
-import {IVariableFunctions} from '../calculationsVariableFunctions';
-import {ITreeNode} from '../../../_types/tree';
+import {type IVariableFunctions} from '../calculationsVariableFunctions';
+import {type ITreeNode} from '../../../_types/tree';
 
 interface IDeps {
     'core.domain.helpers.calculationsVariableFunctions': IVariableFunctions;

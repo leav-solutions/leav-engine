@@ -4,8 +4,8 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button} from 'semantic-ui-react';
-import {AttributeDetails} from '../../../_gqlTypes/AttributeDetails';
-import {GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
+import {type AttributeDetails} from '../../../_gqlTypes/AttributeDetails';
+import {type GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 
 interface IUnlinkLibAttributeProps {

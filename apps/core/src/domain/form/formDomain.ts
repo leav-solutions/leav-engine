@@ -2,38 +2,38 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IValidateHelper} from 'domain/helpers/validate';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
-import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {i18n} from 'i18next';
-import {IFormRepo} from 'infra/form/formRepo';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IValidateHelper} from 'domain/helpers/validate';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
+import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
+import {type IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type i18n} from 'i18next';
+import {type IFormRepo} from 'infra/form/formRepo';
 import {difference} from 'lodash';
 import omit from 'lodash/omit';
-import {IUtils} from 'utils/utils';
-import winston from 'winston';
-import {IQueryInfos} from '_types/queryInfos';
-import {IGetCoreEntitiesParams} from '_types/shared';
-import {IValueVersion} from '_types/value';
+import {type IUtils} from 'utils/utils';
+import type winston from 'winston';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IGetCoreEntitiesParams} from '_types/shared';
+import {type IValueVersion} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {
     FormElementTypes,
-    IForm,
-    IFormElement,
-    IFormElementWithValues,
-    IFormElementWithValuesAndChildren,
-    IFormFilterOptions,
-    IFormStrict,
-    IRecordForm
+    type IForm,
+    type IFormElement,
+    type IFormElementWithValues,
+    type IFormElementWithValuesAndChildren,
+    type IFormFilterOptions,
+    type IFormStrict,
+    type IRecordForm
 } from '../../_types/forms';
-import {IList, SortOrder} from '../../_types/list';
+import {type IList, SortOrder} from '../../_types/list';
 import {
     AttributePermissionsActions,
     LibraryPermissionsActions,

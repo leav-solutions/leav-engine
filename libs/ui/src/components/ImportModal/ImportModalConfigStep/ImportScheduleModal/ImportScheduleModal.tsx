@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DatePicker, Modal} from 'antd';
-import dayjs from 'dayjs';
+import type dayjs from 'dayjs';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 interface IImportScheduleModalProps {

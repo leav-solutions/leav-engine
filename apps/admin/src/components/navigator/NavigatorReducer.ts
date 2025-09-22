@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GET_LIB_BY_ID_libraries_list, GET_LIB_BY_ID_libraries_list_attributes} from '../../_gqlTypes/GET_LIB_BY_ID';
-import {RecordIdentity_whoAmI} from '../../_gqlTypes/RecordIdentity';
-import {IGenericValue} from '../../_types/records';
-import {EditRecordClick, SelectionChanged} from './Navigator';
+import {type GET_LIB_BY_ID_libraries_list, type GET_LIB_BY_ID_libraries_list_attributes} from '../../_gqlTypes/GET_LIB_BY_ID';
+import {type RecordIdentity_whoAmI} from '../../_gqlTypes/RecordIdentity';
+import {type IGenericValue} from '../../_types/records';
+import {type EditRecordClick, type SelectionChanged} from './Navigator';
 
 type RecordData = {
     [attributeName: string]: IGenericValue | IGenericValue[];

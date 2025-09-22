@@ -6,7 +6,7 @@ import {setInfoStack} from 'reduxStore/infos';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {defaultInfosTime} from '../../constants/constants';
 import {sortInfoByPriority} from '../../utils';
-import {IInfo, InfoChannel} from '../../_types/types';
+import {type IInfo, InfoChannel} from '../../_types/types';
 import DisplayInfo from './DisplayInfo';
 
 function HeaderInfo(): JSX.Element {

@@ -9,6 +9,7 @@ import {DndProvider} from 'react-dnd';
 import {TestBackend} from 'react-dnd-test-backend';
 import {act} from 'react-dom/test-utils';
 import {mockAttrSimple} from '../../../../../../__mocks__/attributes';
+
 // import {getActionListQuery} from '../../../../queries/attributes/getActionListQuery';
 import {AVAILABLE_ACTIONS_MOCK} from '../mocks/ALCMocks';
 import ALCContainer from './ALCContainer';

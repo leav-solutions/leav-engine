@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Tabs, TabsProps, Spin} from 'antd';
+import {Tabs, type TabsProps, Spin} from 'antd';
 import styled from 'styled-components';
 import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
-import {LibraryBehavior, SaveLibraryMutation, useGetLibraryByIdQuery} from '../../../_gqlTypes';
+import {LibraryBehavior, type SaveLibraryMutation, useGetLibraryByIdQuery} from '../../../_gqlTypes';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
 import {EditLibraryAttributes} from './EditLibraryAttributes';

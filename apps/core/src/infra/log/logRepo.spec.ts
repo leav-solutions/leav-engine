@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {IElasticSearchService} from 'infra/elasticSearch/elasticSearchService';
-import {IConfig} from '_types/config';
+import {type IElasticSearchService} from 'infra/elasticSearch/elasticSearchService';
+import {type IConfig} from '_types/config';
 import {mockLog} from '../../__tests__/mocks/log';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import logRepo from './logRepo';

@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IQueryInfos} from '_types/queryInfos';
-import {IAttribute} from './attribute';
-import {ISystemTranslation} from './systemTranslation';
-import {IValue} from './value';
-import {Errors} from './errors';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IAttribute} from './attribute';
+import {type ISystemTranslation} from './systemTranslation';
+import {type IValue} from './value';
+import {type Errors} from './errors';
 
 export enum ActionsListEvents {
     SAVE_VALUE = 'saveValue',

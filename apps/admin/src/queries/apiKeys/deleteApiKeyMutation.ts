@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {gql} from '@apollo/client';
+
 export const deleteApiKeyMutation = gql`
     mutation DELETE_API_KEY($id: String!) {
         deleteApiKey(id: $id) {

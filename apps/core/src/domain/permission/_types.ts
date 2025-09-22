@@ -2,21 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    AdminPermissionsActions,
-    ApplicationPermissionsActions,
-    AttributePermissionsActions,
-    IPermissionsTreeTarget,
-    ITreePermissionsConf,
-    LibraryPermissionsActions,
-    PermissionsActions,
-    PermissionTypes,
-    RecordAttributePermissionsActions,
-    RecordPermissionsActions,
-    TreeNodePermissionsActions,
-    TreePermissionsActions
+    type AdminPermissionsActions,
+    type ApplicationPermissionsActions,
+    type AttributePermissionsActions,
+    type IPermissionsTreeTarget,
+    type ITreePermissionsConf,
+    type LibraryPermissionsActions,
+    type PermissionsActions,
+    type PermissionTypes,
+    type RecordAttributePermissionsActions,
+    type RecordPermissionsActions,
+    type TreeNodePermissionsActions,
+    type TreePermissionsActions
 } from '_types/permissions';
-import {IQueryInfos} from '_types/queryInfos';
-import {TreePath} from '_types/tree';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type TreePath} from '_types/tree';
 
 export const PERMISSIONS_CACHE_HEADER = 'permissions';
 export const PERMISSIONS_NULL_PLACEHOLDER = '__null__';

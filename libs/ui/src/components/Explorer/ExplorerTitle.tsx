@@ -5,8 +5,8 @@ import {localizedTranslation} from '@leav/utils';
 import {useExplorerLibraryDetailsQuery, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 import useLang from '_ui/hooks/useLang';
 import {AntSkeleton} from 'aristid-ds';
-import {FunctionComponent} from 'react';
-import {Entrypoint, IEntrypointLink} from './_types';
+import {type FunctionComponent} from 'react';
+import {type Entrypoint, type IEntrypointLink} from './_types';
 
 interface IExplorerTitleProps {
     title?: string;

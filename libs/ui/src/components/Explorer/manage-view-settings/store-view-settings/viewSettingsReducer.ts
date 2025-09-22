@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {v4 as uuid} from 'uuid';
-import {AttributeFormat, RecordFilterCondition, SortOrder} from '_ui/_gqlTypes';
+import {AttributeFormat, type RecordFilterCondition, type SortOrder} from '_ui/_gqlTypes';
 import {
-    DefaultViewSettings,
-    Entrypoint,
-    ExplorerFilter,
-    IExplorerFilterStandard,
-    IExplorerFilterTree,
+    type DefaultViewSettings,
+    type Entrypoint,
+    type ExplorerFilter,
+    type IExplorerFilterStandard,
+    type IExplorerFilterTree,
     isExplorerFilterLink,
     isExplorerFilterStandard,
     isExplorerFilterThrough,
     isExplorerFilterTree,
     isExplorerFilterValueList,
-    IUserView,
-    MassSelection
+    type IUserView,
+    type MassSelection
 } from '../../_types';
 import {hasOnlyNoValueConditions, nullValueConditions} from '../../conditionsHelper';
 import {conditionsByFormat, getFirstConditionByFilterType} from '../filter-items/filter-type/useConditionOptionsByType';

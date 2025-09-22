@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import ValuesSummary from './ValuesSummary';
-import {IRecordIdentityWhoAmI} from '_ui/types';
+import {type IRecordIdentityWhoAmI} from '_ui/types';
 
 const multipleValue1 = 'multipleValue1';
 const multipleValue2 = 'multipleValue2';

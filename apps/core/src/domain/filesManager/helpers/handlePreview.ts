@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
+import {type IAmqpService} from '@leav/message-broker';
 import {PreviewPriority} from '@leav/utils';
-import winston from 'winston';
-import * as Config from '_types/config';
-import {IPreviewMessage, IPreviewResponseContext, IPreviewVersion} from '../../../_types/filesManager';
+import type winston from 'winston';
+import type * as Config from '_types/config';
+import {type IPreviewMessage, type IPreviewResponseContext, type IPreviewVersion} from '../../../_types/filesManager';
 
 export const sendPreviewMessage = async (
     previewMessage: IPreviewMessage,

@@ -6,7 +6,7 @@ import {fireEvent, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute} from '_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
+import {type GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute} from '_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {mockAttrSimple} from '__mocks__/attributes';
 import StandardValuesList from '.';

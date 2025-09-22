@@ -1,18 +1,18 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloError} from '@apollo/client';
-import {objectToNameValueArray, Override} from '@leav/utils';
+import {type ApolloError} from '@apollo/client';
+import {objectToNameValueArray, type Override} from '@leav/utils';
 import {useState} from 'react';
-import {IValueVersion} from '_ui/types/values';
+import {type IValueVersion} from '_ui/types/values';
 import {
-    RecordFormElementFragment,
-    RecordFormQuery,
-    RecordFormQueryResult,
+    type RecordFormElementFragment,
+    type RecordFormQuery,
+    type RecordFormQueryResult,
     useRecordFormQuery,
-    ValueDetailsLinkValueFragment,
-    ValueDetailsTreeValueFragment,
-    ValueDetailsValueFragment
+    type ValueDetailsLinkValueFragment,
+    type ValueDetailsTreeValueFragment,
+    type ValueDetailsValueFragment
 } from '_ui/_gqlTypes';
 import {arrayValueVersionToObject} from '_ui/_utils';
 

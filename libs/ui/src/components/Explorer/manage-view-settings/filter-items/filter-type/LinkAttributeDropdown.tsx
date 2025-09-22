@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
+import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
 import {KitInput, KitSelect} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ExplorerFilter, IExplorerFilterThrough, isExplorerFilterThrough} from '../../../_types';
+import {type ExplorerFilter, type IExplorerFilterThrough, isExplorerFilterThrough} from '../../../_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 import {AttributeConditionFilter, ThroughConditionFilter} from '_ui/types';
 import styled from 'styled-components';
@@ -12,7 +12,7 @@ import {useGetLibraryAttributesLazyQuery} from '_ui/_gqlTypes';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {FilterDropdownContent} from './FilterDropdownContent';
-import {IFilterChildrenLinkDropDownProps} from './_types';
+import {type IFilterChildrenLinkDropDownProps} from './_types';
 
 const InputStyled = styled(KitInput)`
     width: 100%;

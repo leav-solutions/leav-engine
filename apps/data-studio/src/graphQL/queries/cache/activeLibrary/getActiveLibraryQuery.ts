@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
 import {
-    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes,
-    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees,
-    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_permissions
+    type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes,
+    type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees,
+    type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_permissions
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {type LibraryBehavior} from '_gqlTypes/globalTypes';
 
 export interface IActiveLibrary {
     id: string;

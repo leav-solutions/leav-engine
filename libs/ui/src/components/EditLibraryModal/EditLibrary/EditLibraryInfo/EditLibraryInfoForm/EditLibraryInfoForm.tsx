@@ -3,16 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
 import {idFormatRegex, localizedTranslation, slugifyString} from '@leav/utils';
-import {Form, FormInstance, Input, Select} from 'antd';
+import {Form, type FormInstance, Input, Select} from 'antd';
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {useLang} from '../../../../../hooks';
 import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import {
     AttributeType,
-    GetLibraryByIdQuery,
+    type GetLibraryByIdQuery,
     LibraryBehavior,
-    LibraryLinkAttributeDetailsFragment
+    type LibraryLinkAttributeDetailsFragment
 } from '../../../../../_gqlTypes';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';

@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
-import {IQueryInfos} from '_types/queryInfos';
-import * as Config from '_types/config';
-import {i18n} from 'i18next';
+import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {type IQueryInfos} from '_types/queryInfos';
+import type * as Config from '_types/config';
+import {type i18n} from 'i18next';
 
 interface IDeps {
     'core.domain.tasksManager': ITasksManagerDomain;

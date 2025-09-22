@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {OidcClient} from './oidcClient';
-import {EndSessionParameters, generators, TokenSet} from 'openid-client';
-import {ECacheType, ICachesService} from '../cache/cacheService';
+import {type OidcClient} from './oidcClient';
+import {type EndSessionParameters, generators, TokenSet} from 'openid-client';
+import {ECacheType, type ICachesService} from '../cache/cacheService';
 import LeavError from '../../errors/LeavError';
 import {ErrorTypes} from '../../_types/errors';
 import AuthenticationError from '../../errors/AuthenticationError';
-import {IConfig} from '../../_types/config';
+import {type IConfig} from '../../_types/config';
 import ms from 'ms';
 
 const AUTH_VERIFICATION_KEYS_HEADER = 'oidc_verificationKeys';

@@ -5,8 +5,8 @@
 import {useQuery} from '@apollo/client';
 import {
     getLibraryDetailExtendedQuery,
-    IGetLibraryDetailExtendedQuery,
-    IGetLibraryDetailExtendedVariables
+    type IGetLibraryDetailExtendedQuery,
+    type IGetLibraryDetailExtendedVariables
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 
 export interface IUseGetLibraryDetailExtendedQueryHookParams {

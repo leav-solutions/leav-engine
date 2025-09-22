@@ -4,9 +4,9 @@
 import React, {useState} from 'react';
 import {Dropdown, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
+import {type RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
 import RecordCard from '../../RecordCard';
-import {ITreeBreadcrumbMenuItem} from '../TreeNodeBreadcrumb';
+import {type ITreeBreadcrumbMenuItem} from '../TreeNodeBreadcrumb';
 import {useTranslation} from 'react-i18next';
 import AltPaths from '../AltPaths';
 

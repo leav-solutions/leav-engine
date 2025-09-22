@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mockSelectedAttributeA, mockSelectedAttributeB, mockSelectedAttributeC} from '_ui/__mocks__/common/attribute';
 import attributeSelectionListReducer, {
-    AttributesSelectionListAction,
+    type AttributesSelectionListAction,
     AttributesSelectionListActionTypes,
-    IAttributesSelectionListState,
+    type IAttributesSelectionListState,
     initialState
 } from './attributesSelectionListReducer';
 

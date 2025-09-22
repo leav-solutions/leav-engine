@@ -3,16 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery, useMutation} from '@apollo/client';
 import {useHistory} from 'react-router-dom-v5';
-import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
-import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeType} from '../../../../../_gqlTypes/globalTypes';
-import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
-import {IFormError} from '../../../../../_types/errors';
-import {OnAttributePostSaveFunc} from '../../EditAttribute';
+import {type GET_ATTRIBUTES, type GET_ATTRIBUTESVariables} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {type AttributeType} from '../../../../../_gqlTypes/globalTypes';
+import {type SAVE_ATTRIBUTE, type SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
+import {type IFormError} from '../../../../../_types/errors';
+import {type OnAttributePostSaveFunc} from '../../EditAttribute';
 import InfosForm from './InfosForm';
-import {AttributeInfosFormValues} from './_types';
+import {type AttributeInfosFormValues} from './_types';
 
 interface IInfosTabProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;

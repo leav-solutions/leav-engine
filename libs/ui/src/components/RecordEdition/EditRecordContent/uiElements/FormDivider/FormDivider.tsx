@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IFormDividerSettings} from '@leav/utils';
+import {type IFormDividerSettings} from '@leav/utils';
 import {Divider} from 'antd';
-import {IFormElementProps} from '../../_types';
+import {type IFormElementProps} from '../../_types';
 
 function FormDivider({element}: IFormElementProps<IFormDividerSettings>): JSX.Element {
     const label = element.settings.title ?? null;

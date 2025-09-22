@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
-import {ILibrary} from './library';
-import {IPreview} from './preview';
-import {IValue} from './value';
+import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
+import {type ILibrary} from './library';
+import {type IPreview} from './preview';
+import {type IValue} from './value';
 
 export interface IRecord {
     id?: string;

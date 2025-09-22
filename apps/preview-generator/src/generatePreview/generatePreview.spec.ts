@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {execFile} from 'child_process';
-import {IConfig, IMessageConsume} from '../types/types';
+import {type IConfig, type IMessageConsume} from '../types/types';
 import {getArgs} from './../getArgs/getArgs';
 import {getConfig} from './../getConfig/getConfig';
 import {handleDocument} from './../handleDocument/handleDocument';

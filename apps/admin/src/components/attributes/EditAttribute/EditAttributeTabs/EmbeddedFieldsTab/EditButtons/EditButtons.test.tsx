@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render} from 'enzyme';
 import React from 'react';
-import {Mockify} from '../../../../../../_types/Mockify';
-import {IFlatItem} from '../EmbeddedFieldsTab';
+import {type Mockify} from '../../../../../../_types/Mockify';
+import {type IFlatItem} from '../EmbeddedFieldsTab';
 import EditButtons from './EditButtons';
 
 describe('EmbeddedFieldsWrapper', () => {

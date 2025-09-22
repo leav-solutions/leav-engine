@@ -7,7 +7,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Confirm, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 
 interface IRecordSelectorProps {
     onChange: (selectedFile: RecordIdentity_whoAmI) => void;

@@ -1,29 +1,29 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
-import {EventAction, IDbEvent} from '@leav/utils';
-import * as amqp from 'amqplib';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {IFindRecordParams} from 'domain/record/_types';
-import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
-import {i18n} from 'i18next';
+import {type IAmqpService} from '@leav/message-broker';
+import {EventAction, type IDbEvent} from '@leav/utils';
+import type * as amqp from 'amqplib';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type IFindRecordParams} from 'domain/record/_types';
+import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {type i18n} from 'i18next';
 import Joi from 'joi';
 import {difference, intersectionBy, isEqual} from 'lodash';
 import {v4 as uuidv4} from 'uuid';
-import winston from 'winston';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import {IValue} from '_types/value';
-import {IIndexationService} from '../../infra/indexation/indexationService';
-import {AttributeTypes, IAttribute} from '../../_types/attribute';
+import type winston from 'winston';
+import type * as Config from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IValue} from '_types/value';
+import {type IIndexationService} from '../../infra/indexation/indexationService';
+import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {TriggerNames} from '../../_types/eventsManager';
-import {AttributeCondition, IRecord} from '../../_types/record';
-import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
-import {GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
+import {AttributeCondition, type IRecord} from '../../_types/record';
+import {type ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
+import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 
 interface IIndexDatabaseParams {
     findRecordParams: IFindRecordParams | IFindRecordParams[];

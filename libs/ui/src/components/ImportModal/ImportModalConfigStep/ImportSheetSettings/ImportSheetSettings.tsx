@@ -8,12 +8,12 @@ import styled from 'styled-components';
 import useLang from '_ui/hooks/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
-    AttributesByLibAttributeFragment,
-    AttributesByLibAttributeTreeAttributeFragment,
+    type AttributesByLibAttributeFragment,
+    type AttributesByLibAttributeTreeAttributeFragment,
     AttributeType,
     ImportMode,
     ImportType,
-    LibraryLightFragment
+    type LibraryLightFragment
 } from '_ui/_gqlTypes';
 import {useImportReducerContext} from '../../importReducer/ImportReducerContext';
 

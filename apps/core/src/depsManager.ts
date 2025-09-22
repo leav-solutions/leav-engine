@@ -4,11 +4,11 @@
 import {
     asFunction,
     asValue,
-    AwilixContainer,
+    type AwilixContainer,
     createContainer,
     InjectionMode,
     listModules,
-    ModuleDescriptor
+    type ModuleDescriptor
 } from 'awilix';
 import {getConfig} from './config';
 import path from 'path';

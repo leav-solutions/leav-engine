@@ -4,10 +4,10 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Table} from 'semantic-ui-react';
-import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
-import {ITreeLinkValue} from '../../../../../_types/records';
+import {type RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
+import {type ITreeLinkValue} from '../../../../../_types/records';
 import TreeNodeBreadcrumb from '../../../../shared/TreeNodeBreadcrumb';
-import {ITreeBreadcrumbMenuItem} from '../../../../shared/TreeNodeBreadcrumb/TreeNodeBreadcrumb';
+import {type ITreeBreadcrumbMenuItem} from '../../../../shared/TreeNodeBreadcrumb/TreeNodeBreadcrumb';
 import EditRecordModal from '../../../EditRecordModal';
 
 interface ILinksFieldTreeElementProps {

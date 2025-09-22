@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {amqpService} from '@leav/message-broker';
-import {IConfig} from '_types/config';
+import {type IConfig} from '_types/config';
 import {handleMessage} from './messageHandler';
-import {IElasticsearchService} from 'elasticsearchService';
+import {type IElasticsearchService} from 'elasticsearchService';
 
 export const initConsumer = async (config: IConfig, esService: IElasticsearchService) => {
     const service = await amqpService({

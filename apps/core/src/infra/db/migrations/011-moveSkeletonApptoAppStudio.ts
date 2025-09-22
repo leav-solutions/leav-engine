@@ -5,7 +5,7 @@ import {aql} from 'arangojs';
 import {type IDbService} from '../dbService';
 import {type IMigration} from '../../../_types/migration';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {ApplicationTypes, IApplication} from '../../../_types/application';
+import {ApplicationTypes, type IApplication} from '../../../_types/application';
 
 type MigrationApplicationToCreate = IApplication & {
     _key: string;

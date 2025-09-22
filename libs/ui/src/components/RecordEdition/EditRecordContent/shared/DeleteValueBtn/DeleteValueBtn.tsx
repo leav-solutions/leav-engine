@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined} from '@ant-design/icons';
-import {Button, ButtonProps, Popconfirm} from 'antd';
+import {Button, type ButtonProps, Popconfirm} from 'antd';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 interface IDeleteValueBtnProps extends ButtonProps {

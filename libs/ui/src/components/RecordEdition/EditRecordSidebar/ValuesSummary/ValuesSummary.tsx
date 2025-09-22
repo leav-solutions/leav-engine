@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
-import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
+import {type FunctionComponent} from 'react';
+import {type RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 import {KitBadge, KitTabs, KitTree} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FaLayerGroup, FaSquareRootAlt} from 'react-icons/fa';
 import styled from 'styled-components';
-import {IRecordIdentityWhoAmI} from '_ui/types';
+import {type IRecordIdentityWhoAmI} from '_ui/types';
 import {RecordHistory} from '../../../RecordHistory/RecordHistory';
 
 const InformationsWrapper = styled.div`

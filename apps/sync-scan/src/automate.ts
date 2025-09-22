@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
+import {type IAmqpService} from '@leav/message-broker';
 import {groupDbFilesByDatas, groupFsFilesByDatas, _logMem} from './utils';
 import * as events from './events';
-import {FilesystemContent, IFileContent, IFilesystemDatas} from './_types/filesystem';
-import {FullTreeContent, IDbFilesDatas, IDbLibrariesSettings, IRecord} from './_types/queries';
+import {type FilesystemContent, type IFileContent, type IFilesystemDatas} from './_types/filesystem';
+import {type FullTreeContent, type IDbFilesDatas, type IDbLibrariesSettings, type IRecord} from './_types/queries';
 
 enum EMatches {
     EXACT = 'exact',

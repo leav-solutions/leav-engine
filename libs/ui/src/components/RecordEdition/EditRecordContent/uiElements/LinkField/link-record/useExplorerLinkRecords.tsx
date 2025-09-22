@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {RecordFilterInput, RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
-import {APICallStatus, DeleteMultipleValuesFunc, ISubmitMultipleResult} from '../../../_types';
-import {Dispatch, SetStateAction} from 'react';
-import {IItemData, MassSelection} from '_ui/components/Explorer/_types';
+import {type RecordFilterInput, type RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
+import {APICallStatus, type DeleteMultipleValuesFunc, type ISubmitMultipleResult} from '../../../_types';
+import {type Dispatch, type SetStateAction} from 'react';
+import {type IItemData, type MassSelection} from '_ui/components/Explorer/_types';
 import {AntForm} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
+import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {ErrorTypes} from '@leav/utils';
 
 interface IUseExplorerLinkRecordsProps {

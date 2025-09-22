@@ -3,16 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitInput} from 'aristid-ds';
-import {ComponentProps, Dispatch, DOMAttributes, useState} from 'react';
+import {type ComponentProps, type Dispatch, type DOMAttributes, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
 import {
-    IViewSettingsAction,
-    IViewSettingsState,
+    type IViewSettingsAction,
+    type IViewSettingsState,
     ViewSettingsActionTypes
 } from './manage-view-settings/store-view-settings/viewSettingsReducer';
 import {MASS_SELECTION_ALL} from './_constants';
-import {SetNewPage} from './_types';
+import {type SetNewPage} from './_types';
 
 /**
  * Hook used to handle a full search text in a library

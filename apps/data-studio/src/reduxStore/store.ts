@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {configureStore} from '@reduxjs/toolkit';
-import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
+import {type TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import activePanelReducer from './activePanel';
 import infosReducer from './infos';
 import navigationReducer from './navigation';

@@ -6,7 +6,7 @@ import {RecordCard} from '_ui/components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {PreviewSize} from '_ui/constants';
 import {useLang} from '_ui/hooks';
-import {ITableCell} from '_ui/types/search';
+import {type ITableCell} from '_ui/types/search';
 import {AttributeType} from '_ui/_gqlTypes';
 import {infosCol} from '../../constants';
 import {displayTypeToPreviewSize} from '../../helpers/displayTypeToPreviewSize';
@@ -15,8 +15,8 @@ import CellInfos from './CellInfos';
 import StandardCell from './StandardCell';
 import {getValuesToDisplayInCell} from './utils';
 import {TypeGuards} from './typeGuards';
-import {FunctionComponent} from 'react';
-import {IRecordIdentityWhoAmI} from '_ui/types';
+import {type FunctionComponent} from 'react';
+import {type IRecordIdentityWhoAmI} from '_ui/types';
 
 const RecordCardCellWrapper = styled.div`
     display: flex;

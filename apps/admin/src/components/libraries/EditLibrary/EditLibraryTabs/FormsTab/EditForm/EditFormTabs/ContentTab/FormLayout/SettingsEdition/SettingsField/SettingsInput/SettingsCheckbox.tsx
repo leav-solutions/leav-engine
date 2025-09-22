@@ -4,7 +4,7 @@
 import React from 'react';
 import {Checkbox} from 'semantic-ui-react';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {ISettingsFieldCommonProps} from '../../../../_types';
+import {type ISettingsFieldCommonProps} from '../../../../_types';
 
 function SettingsCheckbox({onChange, fieldName, disabled}: ISettingsFieldCommonProps): JSX.Element {
     const {

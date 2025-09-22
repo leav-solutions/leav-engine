@@ -6,18 +6,18 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {IGroupedPermissionsActions} from '_types/permissions';
+import {type IGroupedPermissionsActions} from '_types/permissions';
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
 import {
-    GET_LIB_BY_ID_libraries_list,
-    GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute
+    type GET_LIB_BY_ID_libraries_list,
+    type GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute
 } from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {
     PermissionsActions,
     PermissionsRelation,
     PermissionTypes,
-    Treepermissions_confInput
+    type Treepermissions_confInput
 } from '../../../../../../_gqlTypes/globalTypes';
 import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';

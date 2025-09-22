@@ -1,20 +1,20 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ReactElement, useState} from 'react';
+import {type ReactElement, useState} from 'react';
 import {FaPlus} from 'react-icons/fa';
 import {KitAlert} from 'aristid-ds';
 import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
-import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {
     AttributeType,
-    JoinLibraryContextFragment,
+    type JoinLibraryContextFragment,
     LibraryBehavior,
     useExplorerLibraryDetailsQuery
 } from '_ui/_gqlTypes';
-import {FeatureHook, Entrypoint, IPrimaryAction} from '../_types';
+import {type FeatureHook, type Entrypoint, type IPrimaryAction} from '../_types';
 import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
 import {SUCCESS_ALERT_DURATION} from '_ui/constants';
 import {localizedTranslation} from '@leav/utils';

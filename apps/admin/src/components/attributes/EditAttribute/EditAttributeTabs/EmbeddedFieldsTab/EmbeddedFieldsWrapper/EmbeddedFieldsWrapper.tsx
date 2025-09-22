@@ -4,7 +4,7 @@
 import React from 'react';
 import EmbeddedFieldsDisplay from '../EmbeddedFieldsDisplay';
 import EmbeddedFieldsForm from '../EmbeddedFieldsForm';
-import {IFormValue} from '../EmbeddedFieldsTab';
+import {type IFormValue} from '../EmbeddedFieldsTab';
 
 interface IEmbeddedFieldsWrapperProps {
     attribute: any;

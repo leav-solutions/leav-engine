@@ -4,8 +4,8 @@
 import {render, screen} from '_ui/_tests/testUtils';
 import * as ReactRouter from 'react-router-dom';
 import {RedirectToFirstFullpagePanelOnInvalidFullpagePanel} from '../RedirectToFirstFullpagePanelOnInvalidFullpagePanel';
-import {Application} from '../../types';
-import {Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {type Application} from '../../types';
+import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),

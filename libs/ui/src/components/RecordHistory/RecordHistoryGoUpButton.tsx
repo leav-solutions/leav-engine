@@ -5,7 +5,7 @@ import {faAngleUp} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {useIntersectionObserver} from '@uidotdev/usehooks';
 import {KitButton} from 'aristid-ds';
-import {ReactNode, useRef} from 'react';
+import {type ReactNode, useRef} from 'react';
 import styled from 'styled-components';
 
 const StyledKitButtonGoUp = styled(KitButton)`

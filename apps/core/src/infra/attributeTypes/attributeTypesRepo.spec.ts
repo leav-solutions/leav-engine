@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../_types/attribute';
-import {IAttributeAdvancedLinkRepo} from './attributeAdvancedLinkRepo';
-import {IAttributeAdvancedRepo} from './attributeAdvancedRepo';
-import {IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
-import {IAttributeSimpleRepo} from './attributeSimpleRepo';
-import {IAttributeTreeRepo} from './attributeTreeRepo';
-import attributeTypesRepo, {IAttributeTypeRepo} from './attributeTypesRepo';
+import {type IAttributeAdvancedLinkRepo} from './attributeAdvancedLinkRepo';
+import {type IAttributeAdvancedRepo} from './attributeAdvancedRepo';
+import {type IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
+import {type IAttributeSimpleRepo} from './attributeSimpleRepo';
+import {type IAttributeTreeRepo} from './attributeTreeRepo';
+import attributeTypesRepo, {type IAttributeTypeRepo} from './attributeTypesRepo';
 
 describe('AttributeTypesRepo', () => {
     const mockAttrTypeRepo: Mockify<IAttributeTypeRepo> = {};

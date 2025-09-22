@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MutableRefObject} from 'react';
-import {RecordIdentity_whoAmI} from '../_gqlTypes/RecordIdentity';
+import {type MutableRefObject} from 'react';
+import {type RecordIdentity_whoAmI} from '../_gqlTypes/RecordIdentity';
 
 // Using type intersection to be able to define properties ID and whoAmI and allow dynamic keys
 // with type IValue

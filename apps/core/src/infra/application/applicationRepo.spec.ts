@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {Stats} from 'fs';
+import {type Stats} from 'fs';
 import fs from 'fs/promises';
-import {IDbUtils} from 'infra/db/dbUtils';
+import {type IDbUtils} from 'infra/db/dbUtils';
 import path from 'path';
-import winston from 'winston';
-import {IConfig} from '_types/config';
+import type winston from 'winston';
+import {type IConfig} from '_types/config';
 import {mockApplication} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import applicationRepo from './applicationRepo';

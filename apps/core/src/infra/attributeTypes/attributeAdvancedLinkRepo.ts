@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
-import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {IUtils} from 'utils/utils';
-import {ILinkValue, IValueEdge} from '_types/value';
+import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
+import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
+import {type IUtils} from 'utils/utils';
+import {type ILinkValue, type IValueEdge} from '_types/value';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
-import {IRecord} from '../../_types/record';
-import {IDbService} from '../db/dbService';
-import {IDbUtils} from '../db/dbUtils';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
-import {GetConditionPart} from './helpers/getConditionPart';
-import {IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
-import {IDbDocument} from 'infra/db/_types';
+import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
+import {type IRecord} from '../../_types/record';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
+import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
+import {type GetConditionPart} from './helpers/getConditionPart';
+import {type IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
+import {type IDbDocument} from 'infra/db/_types';
 
 interface ISavedValueResult {
     edge: IValueEdge;

@@ -3,18 +3,18 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import _ from 'lodash';
 import {getCallStack} from '@leav/utils';
-import {Database} from 'arangojs';
-import {Analyzer, CreateAnalyzerOptions} from 'arangojs/analyzer';
+import {type Database} from 'arangojs';
+import {type Analyzer, type CreateAnalyzerOptions} from 'arangojs/analyzer';
 import {isAqlQuery} from 'arangojs/aql';
 import {CollectionType} from 'arangojs/collection';
-import {CursorStats} from 'arangojs/cursor';
-import {CreateViewOptions, View} from 'arangojs/view';
+import {type CursorStats} from 'arangojs/cursor';
+import {type CreateViewOptions, type View} from 'arangojs/view';
 import {createHash} from 'crypto';
-import {IUtils} from 'utils/utils';
-import {IConfig} from '_types/config';
-import {IDbProfiler} from '_types/dbProfiler';
+import {type IUtils} from 'utils/utils';
+import {type IConfig} from '_types/config';
+import {type IDbProfiler} from '_types/dbProfiler';
 import {ARANGODB_HTTP_CONFLICT_CODE, ARANGODB_WRITEWRITE_CONFLICT_CODE} from './_constants';
-import {IDbDocument, IExecute, IExecuteWithCount} from './_types';
+import {type IDbDocument, type IExecute, type IExecuteWithCount} from './_types';
 
 const MAX_ATTEMPTS = 10;
 

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitTag} from 'aristid-ds';
-import {IKitTag} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
-import {FunctionComponent} from 'react';
+import {type IKitTag} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
+import {type FunctionComponent} from 'react';
 import styled from 'styled-components';
 
 export const multiColorTagAvatarClassName = 'multi-color-tag-avatar';

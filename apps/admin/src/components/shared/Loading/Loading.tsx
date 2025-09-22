@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Dimmer, Loader, SemanticSIZES} from 'semantic-ui-react';
+import {Dimmer, Loader, type SemanticSIZES} from 'semantic-ui-react';
 
 interface ILoadingProps {
     withDimmer?: boolean;

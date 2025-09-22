@@ -6,8 +6,8 @@ import {useCallback, useMemo} from 'react';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {
     getActiveLibrary,
-    IActiveLibrary,
-    IGetActiveLibrary
+    type IActiveLibrary,
+    type IGetActiveLibrary
 } from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 
 export const initialActiveLibrary: IActiveLibrary = {

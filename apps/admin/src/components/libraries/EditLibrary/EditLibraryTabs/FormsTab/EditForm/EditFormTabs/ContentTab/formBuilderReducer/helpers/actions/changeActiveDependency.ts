@@ -5,8 +5,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import {
     defaultDepAttribute,
     defaultDepValue,
-    IFormBuilderActionChangeActiveDependency,
-    IFormBuilderState
+    type IFormBuilderActionChangeActiveDependency,
+    type IFormBuilderState
 } from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import mergeConcat from '../mergeConcat';

@@ -1,23 +1,23 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
-import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
-import {IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
-import {IRecordRepo} from 'infra/record/recordRepo';
-import {IUtils} from 'utils/utils';
-import {IConfig} from '_types/config';
+import {type IAmqpService} from '@leav/message-broker';
+import {type UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IValueDomain} from 'domain/value/valueDomain';
+import {type IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
+import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type IUtils} from 'utils/utils';
+import {type IConfig} from '_types/config';
 import {FileEvents} from '../../../../_types/filesManager';
 import {handleCreateEvent} from './handleCreateEvent';
 import {handleMoveEvent} from './handleMoveEvent';
 import {handleRemoveEvent} from './handleRemoveEvent';
 import {handleUpdateEvent} from './handleUpdateEvent';
-import {HandleFileSystemEventFunc, IHandleFileSystemEventDeps} from './_types';
+import {type HandleFileSystemEventFunc, type IHandleFileSystemEventDeps} from './_types';
 import winston = require('winston');
 
 export interface IFileSystemEventDeps {

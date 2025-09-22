@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Formik, FormikProps} from 'formik';
+import {Formik, type FormikProps} from 'formik';
 import omit from 'lodash/omit';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -11,12 +11,12 @@ import * as yup from 'yup';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
 import {
-    GET_TREE_BY_ID_trees_list,
-    GET_TREE_BY_ID_trees_list_libraries_settings
+    type GET_TREE_BY_ID_trees_list,
+    type GET_TREE_BY_ID_trees_list_libraries_settings
 } from '../../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {TreeBehavior, TreeInput, TreeLibraryInput} from '../../../../../../_gqlTypes/globalTypes';
-import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
-import {Override} from '../../../../../../_types/Override';
+import {TreeBehavior, type TreeInput, type TreeLibraryInput} from '../../../../../../_gqlTypes/globalTypes';
+import {ErrorTypes, type IFormError} from '../../../../../../_types/errors';
+import {type Override} from '../../../../../../_types/Override';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import TreeLibraries from './TreeLibraries';
 

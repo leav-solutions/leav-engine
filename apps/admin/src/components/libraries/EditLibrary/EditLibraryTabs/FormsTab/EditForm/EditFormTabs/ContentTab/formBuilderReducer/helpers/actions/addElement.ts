@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {cloneDeep} from 'lodash';
-import {IFormElement} from '../../../_types';
+import {type IFormElement} from '../../../_types';
 import {
     defaultContainerId,
     defaultDepAttribute,
     defaultDepValue,
-    IFormBuilderActionAddElement,
-    IFormBuilderState
+    type IFormBuilderActionAddElement,
+    type IFormBuilderState
 } from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import mergeConcat from '../mergeConcat';

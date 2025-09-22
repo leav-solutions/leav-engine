@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import dayjs from 'dayjs';
-import {AttributeFormat, RecordFilterCondition, RecordFilterInput, RecordFilterOperator} from '_ui/_gqlTypes';
+import {AttributeFormat, RecordFilterCondition, type RecordFilterInput, RecordFilterOperator} from '_ui/_gqlTypes';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
 import {AttributeConditionFilter} from '_ui/types';
 import {
-    DefaultViewSettings,
-    ExplorerFilter,
-    IExplorerFilterStandard,
-    IExplorerFilterTree,
+    type DefaultViewSettings,
+    type ExplorerFilter,
+    type IExplorerFilterStandard,
+    type IExplorerFilterTree,
     isExplorerFilterStandard,
     isExplorerFilterThrough,
     isExplorerFilterLink,
     isExplorerFilterTree,
     isExplorerFilterValueList,
-    IExplorerFilterValueList
+    type IExplorerFilterValueList
 } from '../_types';
 import {nullValueConditions} from '../conditionsHelper';
 

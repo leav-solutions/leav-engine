@@ -11,7 +11,7 @@ import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReduce
 import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
 import {prepareViewForRequest} from './prepareViewForRequest';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
-import {IViewDisplay} from '_ui/types';
+import {type IViewDisplay} from '_ui/types';
 import {useTransformFilters} from '../_shared/useTransformFilters';
 
 export const useCreateNewView = () => {

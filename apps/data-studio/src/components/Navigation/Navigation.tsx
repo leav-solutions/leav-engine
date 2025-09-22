@@ -9,10 +9,10 @@ import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {GET_TREES, GET_TREESVariables} from '_gqlTypes/GET_TREES';
+import {type GET_TREES, type GET_TREESVariables} from '_gqlTypes/GET_TREES';
 import {useActiveTree} from 'hooks/useActiveTree';
 import {isTreeInApp, localizedTranslation} from '../../utils';
-import {IBaseInfo, InfoType, WorkspacePanels} from '../../_types/types';
+import {type IBaseInfo, InfoType, WorkspacePanels} from '../../_types/types';
 import NavigationView from './NavigationView';
 
 interface INavigationProps {

@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useImportReducerContext} from '../../importReducer/ImportReducerContext';
-import {ISheet, SheetSettingsError} from '../../_types';
+import {type ISheet, SheetSettingsError} from '../../_types';
 
 interface IImportMappingRowTitleProps {
     sheet: ISheet;

@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloudUploadOutlined, DatabaseOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
-import {ErrorDisplay, FloatingMenu, FloatingMenuAction, ImportModal, Loading, useLang} from '@leav/ui';
+import {ErrorDisplay, FloatingMenu, type FloatingMenuAction, ImportModal, Loading, useLang} from '@leav/ui';
 import {Table} from 'antd';
-import {ColumnsType} from 'antd/lib/table';
+import {type ColumnsType} from 'antd/lib/table';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
@@ -14,10 +14,10 @@ import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import {getLibraryLink, localizedTranslation} from 'utils';
-import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
-import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
+import {type GET_USER_DATA, type GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {FAVORITE_LIBRARIES_KEY} from '../../../constants';
-import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
+import {type SAVE_USER_DATA, type SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
 import FavoriteStar from '../FavoriteStar';
 import LibraryIcon from './LibraryIcon';
 

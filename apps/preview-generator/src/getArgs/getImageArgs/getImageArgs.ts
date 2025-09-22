@@ -4,7 +4,7 @@
 import {join} from 'path';
 import {ErrorPreview} from '../../errors/ErrorPreview';
 import {Colorspaces} from '../../types/constants';
-import {IExec, IVersion} from '../../types/types';
+import {type IExec, type IVersion} from '../../types/types';
 import {handleError} from '../../utils/log';
 import {getConfig} from './../../getConfig/getConfig';
 import {getSvgCommand} from './../getSvgCommand/getSvgCommand';

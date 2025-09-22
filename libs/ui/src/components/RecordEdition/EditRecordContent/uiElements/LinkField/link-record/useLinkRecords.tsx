@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Explorer} from '_ui/components/Explorer';
-import {IExplorerRef} from '_ui/components/Explorer/Explorer';
-import {ComponentProps, Dispatch, SetStateAction, useEffect, useState} from 'react';
+import {type IExplorerRef} from '_ui/components/Explorer/Explorer';
+import {type ComponentProps, type Dispatch, type SetStateAction, useEffect, useState} from 'react';
 import {ExplorerWrapper} from '../shared/ExplorerWrapper';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
-import {DeleteMultipleValuesFunc} from '../../../_types';
-import {JoinLibraryContextFragment, RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
-import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
+import {type DeleteMultipleValuesFunc} from '../../../_types';
+import {type JoinLibraryContextFragment, type RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
+import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {AntForm, KitSpace} from 'aristid-ds';
 import {useExplorerLinkRecords} from './useExplorerLinkRecords';
 import {FaList} from 'react-icons/fa';

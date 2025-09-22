@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
-import {RecordUpdateFilterInput, useRecordUpdateSubscription} from '_ui/_gqlTypes';
+import {type RecordUpdateFilterInput, useRecordUpdateSubscription} from '_ui/_gqlTypes';
 
 export const useGetRecordUpdatesSubscription = (filters: RecordUpdateFilterInput, skip?: boolean) => {
     const updateValuesCache = useValuesCacheUpdate();

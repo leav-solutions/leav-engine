@@ -5,7 +5,7 @@ import {useQuery} from '@apollo/client';
 import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
 import {useTranslation} from 'react-i18next';
 import {List} from 'semantic-ui-react';
-import {GET_LIBRARIES, GET_LIBRARIESVariables} from '_gqlTypes/GET_LIBRARIES';
+import {type GET_LIBRARIES, type GET_LIBRARIESVariables} from '_gqlTypes/GET_LIBRARIES';
 import Loading from '../shared/Loading';
 
 export interface IRootSelectorContainerProps {

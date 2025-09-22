@@ -2,25 +2,25 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IValidateHelper} from 'domain/helpers/validate';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {IFormRepo} from 'infra/form/formRepo';
-import {IUtils, ToAny} from 'utils/utils';
-import {FormElementTypes, IForm, IFormElement, IFormElementWithValues} from '../../_types/forms';
-import {Winston} from 'winston';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IValidateHelper} from 'domain/helpers/validate';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
+import {type IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IFormRepo} from 'infra/form/formRepo';
+import {type IUtils, type ToAny} from 'utils/utils';
+import {FormElementTypes, type IForm, IFormElement, type IFormElementWithValues} from '../../_types/forms';
+import {type Winston} from 'winston';
+import {type IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {formField, formLayoutElement, mockForm} from '../../__tests__/mocks/forms';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {mockStandardValue} from '../../__tests__/mocks/value';
-import formDomain, {IFormDomainDeps} from './formDomain';
+import formDomain, {type IFormDomainDeps} from './formDomain';
 import {AttributeTypes} from '../../_types/attribute';
 
 const depsBase: ToAny<IFormDomainDeps> = {

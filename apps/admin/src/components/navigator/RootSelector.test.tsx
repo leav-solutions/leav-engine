@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
-import {mount, ReactWrapper} from 'enzyme';
+import {mount, type ReactWrapper} from 'enzyme';
 import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
 import {act} from 'react-dom/test-utils';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';

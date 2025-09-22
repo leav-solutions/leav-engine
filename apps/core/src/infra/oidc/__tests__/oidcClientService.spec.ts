@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import createOIDCClientService from '../oidcClientService';
-import {OidcClient} from '../oidcClient';
-import {ICacheService, ICachesService, IStoreDataParams} from '../../cache/cacheService';
-import {BaseClient, TokenSet} from 'openid-client';
-import {IConfig} from '../../../_types/config';
+import {type OidcClient} from '../oidcClient';
+import {type ICacheService, type ICachesService, IStoreDataParams} from '../../cache/cacheService';
+import {type BaseClient, TokenSet} from 'openid-client';
+import {type IConfig} from '../../../_types/config';
 
 describe('OIDCClientService', () => {
     it('Should return oidcClient instance', () => {

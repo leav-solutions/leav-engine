@@ -4,7 +4,7 @@
 import {useRecordInformations} from './useRecordInformations';
 import {renderHook} from '@testing-library/react';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
+import {type GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 jest.mock('_ui/hooks/useSharedTranslation', () => ({

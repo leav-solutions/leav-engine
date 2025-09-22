@@ -2,21 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import isEqual from 'lodash/isEqual';
-import {FunctionComponent, useEffect, useReducer} from 'react';
-import styled, {CSSObject} from 'styled-components';
+import {type FunctionComponent, useEffect, useReducer} from 'react';
+import styled, {type CSSObject} from 'styled-components';
 import {ErrorDisplayTypes} from '../../../constants';
 import {useCanEditRecord} from '../../../hooks/useCanEditRecord';
-import {IValueVersion} from '../../../types/values';
+import {type IValueVersion} from '../../../types/values';
 import {
     AttributeType,
-    RecordFormAttributeStandardAttributeFragment,
-    RecordIdentityFragment,
+    type RecordFormAttributeStandardAttributeFragment,
+    type RecordIdentityFragment,
     useActivateNewRecordMutation
 } from '../../../_gqlTypes';
 import {
-    IRecordPropertyLink,
-    IRecordPropertyStandard,
-    IRecordPropertyTree
+    type IRecordPropertyLink,
+    type IRecordPropertyStandard,
+    type IRecordPropertyTree
 } from '../../../_queries/records/getRecordPropertiesQuery';
 import {ErrorBoundary} from '../../ErrorBoundary';
 import {ErrorDisplay} from '../../ErrorDisplay';
@@ -24,17 +24,17 @@ import EditRecordContent from '../EditRecordContent';
 import useExecuteDeleteValueMutation from '../EditRecordContent/hooks/useExecuteDeleteValueMutation';
 import useSaveValueBatchMutation from '../EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {
-    DeleteMultipleValuesFunc,
-    ISubmittedValueLink,
-    ISubmittedValueStandard,
-    ISubmittedValueTree,
-    IValueToSubmit,
-    MetadataSubmitValueFunc,
-    SubmitValueFunc
+    type DeleteMultipleValuesFunc,
+    type ISubmittedValueLink,
+    type ISubmittedValueStandard,
+    type ISubmittedValueTree,
+    type IValueToSubmit,
+    type MetadataSubmitValueFunc,
+    type SubmitValueFunc
 } from '../EditRecordContent/_types';
 import editRecordReducer, {EditRecordReducerActionsTypes, initialState} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
-import {FormInstance} from 'antd/lib/form/Form';
+import {type FormInstance} from 'antd/lib/form/Form';
 import EditRecordSidebar from '../EditRecordSidebar';
 import EditRecordSkeleton from '../EditRecordSkeleton';
 import {useQuery} from '@apollo/client';

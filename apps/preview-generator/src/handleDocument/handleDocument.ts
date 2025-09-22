@@ -6,7 +6,7 @@ import fs from 'fs/promises';
 import {extname, join} from 'path';
 import {ErrorPreview} from '../errors/ErrorPreview';
 import {getImageArgs} from '../getArgs/getImageArgs/getImageArgs';
-import {IResult, IRootPaths, IVersion} from '../types/types';
+import {type IResult, type IRootPaths, type IVersion} from '../types/types';
 import {handleError} from './../utils/log';
 
 interface IHandleDocument {

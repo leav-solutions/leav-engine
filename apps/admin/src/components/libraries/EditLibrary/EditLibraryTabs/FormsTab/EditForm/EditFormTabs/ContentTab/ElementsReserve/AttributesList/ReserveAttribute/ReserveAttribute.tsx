@@ -7,13 +7,13 @@ import styled from 'styled-components';
 import {v4 as uuidv4} from 'uuid';
 import useLang from '../../../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../../../utils';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTES_attributes_list} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType, FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {defaultContainerId, FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {formElements} from '../../../uiElements';
-import {DraggableElementTypes, FieldTypes, IFormBuilderDragObject, IFormElement, IUIElement} from '../../../_types';
+import {DraggableElementTypes, FieldTypes, type IFormBuilderDragObject, type IFormElement, type IUIElement} from '../../../_types';
 
 interface IReserveAttributeProps {
     attribute: GET_ATTRIBUTES_attributes_list;

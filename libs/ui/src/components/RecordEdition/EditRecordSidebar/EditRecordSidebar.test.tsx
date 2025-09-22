@@ -5,9 +5,9 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockRecordPropertyWithAttribute} from '_ui/__mocks__/common/value';
 import {render, screen} from '../../../_tests/testUtils';
 import {EditRecordSidebarContentTypeMap, initialState} from '../editRecordReducer/editRecordReducer';
-import {EditRecordReducerContext, IEditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
+import {EditRecordReducerContext, type IEditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
 import EditRecordSidebar from './EditRecordSidebar';
-import {IUseGetRecordColumnsValuesQueryHook} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
+import {type IUseGetRecordColumnsValuesQueryHook} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 
 jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary/RecordInformations/RecordInformations', () => ({
     RecordInformations: () => <div>Informations</div>

@@ -9,8 +9,8 @@ import {getAttributesQuery} from 'queries/attributes/getAttributesQuery';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon} from 'semantic-ui-react';
-import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables, GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
-import {GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
+import {type GET_ATTRIBUTES, type GET_ATTRIBUTESVariables, type GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
+import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType} from '_gqlTypes/globalTypes';
 import PermissionsAttributeSelectorList from './PermissionsAttributeSelectorList';
 

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {GET_FORMS_LIST_forms_list} from '../../../../../../_gqlTypes/GET_FORMS_LIST';
+import {type GET_FORMS_LIST_forms_list} from '../../../../../../_gqlTypes/GET_FORMS_LIST';
 import {mockFormLight} from '../../../../../../__mocks__/forms';
 import FormsList from './FormsList';
 

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
 import styled from 'styled-components';
-import {IFileViewerProps} from '../_types';
+import {type IFileViewerProps} from '../_types';
 
 const VideoPlayer = styled.video`
     max-height: 100%;

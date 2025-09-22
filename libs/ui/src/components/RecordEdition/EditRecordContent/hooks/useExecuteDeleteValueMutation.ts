@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloError} from '@apollo/client';
+import {type ApolloError} from '@apollo/client';
 import {ErrorTypes} from '@leav/utils';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
-import {IRecordIdentityWhoAmI} from '_ui/types/records';
+import {type IRecordIdentityWhoAmI} from '_ui/types/records';
 import {useDeleteValueMutation} from '_ui/_gqlTypes';
-import {APICallStatus, DeleteValueFunc} from '../_types';
+import {APICallStatus, type DeleteValueFunc} from '../_types';
 
 export interface IDeleteValueHook {
     deleteValue: DeleteValueFunc;

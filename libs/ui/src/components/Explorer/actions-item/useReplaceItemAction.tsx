@@ -4,9 +4,9 @@
 import {useMemo, useState} from 'react';
 import {FaExchangeAlt} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {FeatureHook, IItemAction} from '../_types';
+import {type FeatureHook, type IItemAction} from '../_types';
 import {LinkModal} from '../link-item/LinkModal';
-import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 
 /**
  * Hook used to get the action for `<DataView />` component.

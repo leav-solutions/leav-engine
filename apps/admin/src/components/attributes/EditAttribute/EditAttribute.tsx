@@ -5,17 +5,17 @@ import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
 import {useMemo} from 'react';
-import {match} from 'react-router-dom-v5';
+import {type match} from 'react-router-dom-v5';
 import styled from 'styled-components';
 import {
-    GET_ATTRIBUTE_BY_ID,
-    GET_ATTRIBUTE_BY_IDVariables,
-    GET_ATTRIBUTE_BY_ID_attributes_list
+    type GET_ATTRIBUTE_BY_ID,
+    type GET_ATTRIBUTE_BY_IDVariables,
+    type GET_ATTRIBUTE_BY_ID_attributes_list
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {AttributeType} from '../../../_gqlTypes/globalTypes';
+import {type AttributeType} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeTabs from './EditAttributeTabs';
-import {AttributeInfosFormValues} from './EditAttributeTabs/InfosTab/_types';
+import {type AttributeInfosFormValues} from './EditAttributeTabs/InfosTab/_types';
 
 export interface IEditAttributeMatchParams {
     id: string;

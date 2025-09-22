@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined} from '@ant-design/icons';
-import {App, Button, ButtonProps} from 'antd';
-import {SyntheticEvent} from 'react';
+import {App, Button, type ButtonProps} from 'antd';
+import {type SyntheticEvent} from 'react';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer/';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IRecordIdentityWhoAmI} from '_ui/types/records';
+import {type IRecordIdentityWhoAmI} from '_ui/types/records';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {stopEvent} from '_ui/_utils';
 

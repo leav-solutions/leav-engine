@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, WarningOutlined} from '@ant-design/icons';
-import {AntdThemeToken} from '@leav/ui';
+import {type AntdThemeToken} from '@leav/ui';
 import {Badge, message as antMessage, Space, theme} from 'antd';
 import React, {useEffect} from 'react';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
-import {IInfo, InfoType} from '../../../_types/types';
+import {type IInfo, InfoType} from '../../../_types/types';
 
 interface IMessageProps {
     $themeToken: AntdThemeToken;

@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
-import {match} from 'react-router-dom-v5';
+import {type match} from 'react-router-dom-v5';
 import {render, screen} from '_tests/testUtils';
-import {Mockify} from '_types/Mockify';
+import {type Mockify} from '_types/Mockify';
 import {mockApplicationDetails} from '__mocks__/common/applications';
-import EditApplication, {IEditApplicationMatchParams} from './EditApplication';
+import EditApplication, {type IEditApplicationMatchParams} from './EditApplication';
 
 jest.mock('./EditApplicationTabs/InfosTab', () => function InfosTab() {
         return <div>InfosTab</div>;

@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    ArgumentNode,
-    FieldNode,
-    FragmentDefinitionNode,
-    FragmentSpreadNode,
-    GraphQLResolveInfo,
-    InlineFragmentNode,
+    type ArgumentNode,
+    type FieldNode,
+    type FragmentDefinitionNode,
+    type FragmentSpreadNode,
+    type GraphQLResolveInfo,
+    type InlineFragmentNode,
     Kind,
-    NameNode,
-    SelectionSetNode,
-    StringValueNode
+    type NameNode,
+    type SelectionSetNode,
+    type StringValueNode
 } from 'graphql';
 import graphqlApp from './graphqlApp';
 

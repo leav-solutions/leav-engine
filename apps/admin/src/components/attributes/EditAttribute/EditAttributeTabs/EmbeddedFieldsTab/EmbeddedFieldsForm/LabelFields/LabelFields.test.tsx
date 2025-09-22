@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
-import {TFunction} from 'i18next';
+import {type TFunction} from 'i18next';
 import React from 'react';
-import {Mockify} from '../../../../../../../_types/Mockify';
-import {IFormValues} from '../EmbeddedFieldsForm';
+import {type Mockify} from '../../../../../../../_types/Mockify';
+import {type IFormValues} from '../EmbeddedFieldsForm';
 import LabelFields from './LabelFields';
 
 describe('LabelFields', () => {

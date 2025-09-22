@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {IRecordIdentityWhoAmI, useLang, EditRecordModal} from '@leav/ui';
+import {type IRecordIdentityWhoAmI, useLang, EditRecordModal} from '@leav/ui';
 import {Button, Dropdown, Tooltip} from 'antd';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/useActiveTree';
@@ -11,11 +11,11 @@ import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {localizedTranslation} from 'utils';
-import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
-import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
-import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {IInfo, InfoChannel, InfoType} from '_types/types';
-import {IMessages, OnMessagesFunc} from '../../_types';
+import {type ADD_TREE_ELEMENT, type ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
+import {type GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {type IInfo, InfoChannel, InfoType} from '_types/types';
+import {type IMessages, type OnMessagesFunc} from '../../_types';
 
 interface IAddByCreationButtonProps {
     availableLibraries: GET_TREE_LIBRARIES_trees_list_libraries[];

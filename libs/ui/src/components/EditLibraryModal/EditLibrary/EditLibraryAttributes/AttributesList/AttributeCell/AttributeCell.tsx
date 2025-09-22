@@ -7,9 +7,9 @@ import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {PreviewSize} from '../../../../../../constants';
 import {EditAttributeModal} from '../../../../../EditAttributeModal';
-import {EntityCard, IEntityData} from '../../../../../EntityCard';
+import {EntityCard, type IEntityData} from '../../../../../EntityCard';
 import {FloatingMenu} from '../../../../../FloatingMenu';
-import {AttributeListType} from '../AttributesList';
+import {type AttributeListType} from '../AttributesList';
 
 const Wrapper = styled.div`
     .floating-menu {

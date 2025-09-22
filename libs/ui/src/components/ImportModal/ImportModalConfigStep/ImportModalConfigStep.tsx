@@ -4,24 +4,24 @@
 import {KeyOutlined, LinkOutlined, WarningOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
 import {Space, Table, Typography} from 'antd';
-import {ColumnsType} from 'antd/lib/table';
+import {type ColumnsType} from 'antd/lib/table';
 import {KitSelect, KitTabs, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
-    AttributesByLibAttributeFragment,
-    AttributesByLibAttributeLinkAttributeFragment,
-    AttributesByLibAttributeTreeAttributeFragment,
+    type AttributesByLibAttributeFragment,
+    type AttributesByLibAttributeLinkAttributeFragment,
+    type AttributesByLibAttributeTreeAttributeFragment,
     AttributeType,
-    ImportMode,
+    type ImportMode,
     ImportType,
-    LibraryLightFragment
+    type LibraryLightFragment
 } from '_ui/_gqlTypes';
 import {ImportReducerActionTypes} from '../importReducer/importReducer';
 import {useImportReducerContext} from '../importReducer/ImportReducerContext';
-import {ISheet} from '../_types';
+import {type ISheet} from '../_types';
 import ImportKeysSelector from './ImportKeysSelector';
 import ImportMappingRowTitle from './ImportMappingRowTitle';
 import ImportSheetSettings from './ImportSheetSettings';

@@ -6,7 +6,7 @@ import {useLocation, useNavigate, useParams, useSearchParams} from 'react-router
 import {Explorer, ThroughConditionFilter, useLang} from '@leav/ui';
 import {mapToCommonExplorerProps} from '../../explorer-panel/mapperToExplorerProps';
 import {mapperToItemActions} from '../../explorer-panel/mapperToItemActions';
-import {ItemActions, LibraryExplorerProps} from '../../types';
+import {type ItemActions, type LibraryExplorerProps} from '../../types';
 import {AttributeType, RecordFilterCondition} from '../../../../__generated__';
 import {explorerContainer} from './PanelContent.module.css';
 

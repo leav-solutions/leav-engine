@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState, useEffect} from 'react';
-import {IRecordForm, RecordFormElement} from '_ui/hooks/useGetRecordForm';
+import {IRecordForm, type RecordFormElement} from '_ui/hooks/useGetRecordForm';
 
 /**
  * Hook to manage tab visibility and tab click events in the EditRecordContent component

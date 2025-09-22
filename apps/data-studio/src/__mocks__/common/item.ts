@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
-import {IItem} from '_types/types';
+import {type IItem} from '_types/types';
 
 export const itemMock: IItem = {
     fields: {},

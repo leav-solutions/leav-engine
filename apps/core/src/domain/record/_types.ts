@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ErrorTypes} from '@leav/utils';
-import {Errors} from '_types/errors';
-import {ICursorPaginationParams, IPaginationParams} from '_types/list';
-import {IRecord, IRecordFilterLight, IRecordSortLight} from '_types/record';
-import {IValue, IValuesOptions, IValueVersion} from '_types/value';
+import {type ErrorTypes} from '@leav/utils';
+import {type Errors} from '_types/errors';
+import {type ICursorPaginationParams, type IPaginationParams} from '_types/list';
+import {type IRecord, type IRecordFilterLight, type IRecordSortLight} from '_types/record';
+import {type IValue, type IValuesOptions, type IValueVersion} from '_types/value';
 
 export interface IFindRecordParams {
     library: string;

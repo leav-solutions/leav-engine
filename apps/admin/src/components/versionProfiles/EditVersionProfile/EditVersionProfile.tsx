@@ -12,14 +12,14 @@ import {getVersionProfileByIdQuery} from 'queries/versionProfiles/getVersionProf
 import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
 import {saveVersionProfileMutation} from 'queries/versionProfiles/saveVersionProfileMutation';
 import {useTranslation} from 'react-i18next';
-import {match, useHistory} from 'react-router-v5';
+import {type match, useHistory} from 'react-router-v5';
 import {Divider, Header} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_VERSION_PROFILES, GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
-import {GET_VERSION_PROFILE_BY_ID, GET_VERSION_PROFILE_BY_IDVariables} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
-import {PermissionsActions, VersionProfileInput} from '_gqlTypes/globalTypes';
-import {SAVE_VERSION_PROFILE, SAVE_VERSION_PROFILEVariables} from '_gqlTypes/SAVE_VERSION_PROFILE';
-import {IFormError} from '_types/errors';
+import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
+import {type GET_VERSION_PROFILE_BY_ID, type GET_VERSION_PROFILE_BY_IDVariables} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
+import {PermissionsActions, type VersionProfileInput} from '_gqlTypes/globalTypes';
+import {type SAVE_VERSION_PROFILE, type SAVE_VERSION_PROFILEVariables} from '_gqlTypes/SAVE_VERSION_PROFILE';
+import {type IFormError} from '_types/errors';
 import InfoForm from './InfoForm';
 
 export interface IEditVersionProfileMatchParams {

@@ -2,21 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import fs from 'fs';
-import {AwilixContainer} from 'awilix';
-import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
-import {IImportDomain} from 'domain/import/importDomain';
-import {FileUpload, GraphQLUpload} from 'graphql-upload';
-import {IDbUtils} from 'infra/db/dbUtils';
+import {type AwilixContainer} from 'awilix';
+import {type StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
+import {type IImportDomain} from 'domain/import/importDomain';
+import {type FileUpload, GraphQLUpload} from 'graphql-upload';
+import {type IDbUtils} from 'infra/db/dbUtils';
 import {nanoid} from 'nanoid';
-import {IUtils} from 'utils/utils';
-import * as Config from '_types/config';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IUtils} from 'utils/utils';
+import type * as Config from '_types/config';
+import {type IAppGraphQLSchema} from '_types/graphql';
+import {type IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {ImportMode, ImportType} from '../../_types/import';
 import {TaskCallbackType} from '../../_types/tasksManager';
-import {IGraphqlAppModule, IGraphqlApp} from '../graphql/graphqlApp';
+import {type IGraphqlAppModule, type IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreImportApp extends IGraphqlAppModule {
     importConfig(filepath: string, clear: boolean): Promise<void>;

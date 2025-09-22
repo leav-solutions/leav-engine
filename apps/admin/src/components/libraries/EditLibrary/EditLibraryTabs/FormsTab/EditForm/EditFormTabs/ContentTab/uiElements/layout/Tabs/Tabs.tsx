@@ -10,10 +10,10 @@ import {layoutElements} from '../..';
 import useLang from '../../../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../../../utils';
 import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
-import {IKeyValue} from '../../../../../../../../../../../_types/shared';
+import {type IKeyValue} from '../../../../../../../../../../../_types/shared';
 import {FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {IFormElement, IFormElementProps, TabsDirection, UIElementTypes} from '../../../_types';
+import {type IFormElement, type IFormElementProps, TabsDirection, UIElementTypes} from '../../../_types';
 import EditTabLabelModal from './EditTabLabelModal';
 
 export const CompactMenuItem = styled(Menu.Item)`

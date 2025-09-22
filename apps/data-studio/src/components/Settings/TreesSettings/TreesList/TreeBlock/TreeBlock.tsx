@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExpandAltOutlined, HolderOutlined} from '@ant-design/icons';
-import {EditTreeModal, EntityCard, FloatingMenu, FloatingMenuAction, IEntityData, PreviewSize, useLang} from '@leav/ui';
+import {EditTreeModal, EntityCard, FloatingMenu, type FloatingMenuAction, type IEntityData, PreviewSize, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {useState} from 'react';
-import {DraggableProvided} from 'react-beautiful-dnd';
+import {type DraggableProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
+import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 
 const Wrapper = styled.div`
     position: relative;

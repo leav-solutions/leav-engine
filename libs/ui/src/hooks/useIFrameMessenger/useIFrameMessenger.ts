@@ -5,8 +5,8 @@ import {useCallback, useContext, useEffect, useRef} from 'react';
 import {v4 as uuid} from 'uuid';
 import {LangContext} from '_ui/contexts';
 import {
-    AddMessageToPanelMessageHandler,
-    MessageToPanelMessageHandler,
+    type AddMessageToPanelMessageHandler,
+    type MessageToPanelMessageHandler,
     type Callbacks,
     type CallCbFunction,
     type IUseIFrameMessengerOptions,

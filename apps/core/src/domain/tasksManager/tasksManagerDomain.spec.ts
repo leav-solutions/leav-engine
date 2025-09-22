@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
-import * as amqp from 'amqplib';
-import {IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
-import {ITaskRepo} from '../../infra/task/taskRepo';
-import {IUtils, ToAny} from '../../utils/utils';
-import {IConfig} from '../../_types/config';
+import {type IAmqpService} from '@leav/message-broker';
+import type * as amqp from 'amqplib';
+import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
+import {type ITaskRepo} from '../../infra/task/taskRepo';
+import {type IUtils, type ToAny} from '../../utils/utils';
+import {type IConfig} from '../../_types/config';
 import {TaskCallbackStatus, TaskStatus} from '../../_types/tasksManager';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTask} from '../../__tests__/mocks/task';
-import tasksManager, {ITasksManagerDomainDeps} from './tasksManagerDomain';
-import {Mockify} from '@leav/utils';
+import tasksManager, {type ITasksManagerDomainDeps} from './tasksManagerDomain';
+import {type Mockify} from '@leav/utils';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),

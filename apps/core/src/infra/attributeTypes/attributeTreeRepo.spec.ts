@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
-import {IDbUtils} from 'infra/db/dbUtils';
-import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {IUtils} from 'utils/utils';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IDbUtils} from 'infra/db/dbUtils';
+import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
+import {type IUtils} from 'utils/utils';
+import {type IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
-import {IValue} from '../../_types/value';
+import {type IValue} from '../../_types/value';
 import {mockAttrTreeVersionableSimple} from '../../__tests__/mocks/attribute';
 import attributeTreeRepo from './attributeTreeRepo';
-import {IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
+import {type IAttributeTypeRepo, type IAttributeWithRevLink} from './attributeTypesRepo';
 
 describe('AttributeTreeRepo', () => {
     const mockAttribute: IAttributeWithRevLink = {

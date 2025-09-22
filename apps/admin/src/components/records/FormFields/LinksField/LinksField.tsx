@@ -3,15 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {TreeItem} from 'react-sortable-tree';
+import {type TreeItem} from 'react-sortable-tree';
 import {Button, Dropdown, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../hooks/useLang';
 import {isLinkAttribute, isLinkValue, isTreeAttribute, isTreeValue, localizedLabel} from '../../../../utils';
-import {GET_LIB_BY_ID_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIB_BY_ID';
+import {type GET_LIB_BY_ID_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType} from '../../../../_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
-import {FormLinksAllowedValues, ILinkValue, ITreeLinkValue} from '../../../../_types/records';
+import {type RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
+import {type FormLinksAllowedValues, type ILinkValue, type ITreeLinkValue} from '../../../../_types/records';
 import SelectTreeNodeModal from '../../../trees/SelectTreeNodeModal';
 import EditRecordModal from '../../EditRecordModal';
 import SelectRecordModal from '../../SelectRecordModal';

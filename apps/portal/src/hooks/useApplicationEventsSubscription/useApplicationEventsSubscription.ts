@@ -4,8 +4,8 @@
 import {useSubscription} from '@apollo/client';
 import {getApplicationsEventsSubscription} from 'queries/applications/getApplicationsEventsSubscription';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
-import {APPLICATION_EVENTS, APPLICATION_EVENTSVariables} from '_gqlTypes/APPLICATION_EVENTS';
-import {GET_APPLICATIONS, GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
+import {type APPLICATION_EVENTS, type APPLICATION_EVENTSVariables} from '_gqlTypes/APPLICATION_EVENTS';
+import {type GET_APPLICATIONS, type GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {ApplicationEventTypes} from '_gqlTypes/globalTypes';
 
 const useApplicationEventsSubscription = () =>

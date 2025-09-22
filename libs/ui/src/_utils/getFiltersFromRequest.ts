@@ -7,14 +7,14 @@ import {defaultLinkAttributeFilterFormat} from '_ui/components/LibraryItemsList/
 import {
     AttributeConditionFilter,
     FilterType,
-    IAttribute,
-    IFilter,
-    IFilterAttribute,
-    IFilterLibrary,
-    IFilterTree,
+    type IAttribute,
+    type IFilter,
+    type IFilterAttribute,
+    type IFilterLibrary,
+    type IFilterTree,
     TreeConditionFilter
 } from '_ui/types/search';
-import {AttributeType, RecordFilterCondition, RecordFilterInput} from '_ui/_gqlTypes';
+import {AttributeType, RecordFilterCondition, type RecordFilterInput} from '_ui/_gqlTypes';
 
 const _isConditionWithNoValue = (condition: RecordFilterCondition): boolean =>
     condition === RecordFilterCondition.IS_EMPTY ||

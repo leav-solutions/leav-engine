@@ -12,8 +12,8 @@ import {Link, useHistory} from 'react-router-dom-v5';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {addWildcardToFilters} from 'utils';
-import {GET_VERSION_PROFILES, GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
-import {PermissionsActions, VersionProfilesFiltersInput} from '_gqlTypes/globalTypes';
+import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
+import {PermissionsActions, type VersionProfilesFiltersInput} from '_gqlTypes/globalTypes';
 import VersionProfilesList from './VersionProfilesList';
 import DeleteProfileButton from './VersionProfilesList/DeleteProfileButton';
 

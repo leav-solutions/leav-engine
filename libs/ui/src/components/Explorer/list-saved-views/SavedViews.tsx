@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
+import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {KitRadio, KitSpace, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -10,11 +10,11 @@ import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {ViewActionsButtons} from '../manage-view-settings/save-view/ViewActionsButtons';
 import {useLoadView} from '../useLoadView';
-import {Radio} from 'antd';
+import {type Radio} from 'antd';
 import {useMeQuery} from '_ui/_gqlTypes';
 import {useDeleteView} from '../manage-view-settings/save-view/useDeleteView';
 import {useEditLabelView} from '../manage-view-settings/save-view/useEditLabelView';
-import {IDataViewOnAction, IUserView} from '../_types';
+import {IDataViewOnAction, type IUserView} from '../_types';
 import classNames from 'classnames';
 import {DefaultViewId} from '../manage-view-settings/store-view-settings/viewSettingsInitialState';
 

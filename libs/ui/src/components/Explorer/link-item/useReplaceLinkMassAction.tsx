@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ExplorerSelectionIdsQuery} from '_ui/_gqlTypes';
+import {type ExplorerSelectionIdsQuery} from '_ui/_gqlTypes';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
-import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {IEntrypointLink} from '../_types';
-import {IViewSettingsState} from '../manage-view-settings';
+import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {type IEntrypointLink} from '../_types';
+import {type IViewSettingsState} from '../manage-view-settings';
 
 /**
  * Hook used to replace link

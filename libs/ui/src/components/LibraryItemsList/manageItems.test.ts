@@ -4,9 +4,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 
-import {IField} from '_ui/types/search';
+import {type IField} from '_ui/types/search';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
-import {IGetRecordsFromLibraryQueryElement} from '_ui/_queries/records/getRecordsFromLibraryQuery';
+import {type IGetRecordsFromLibraryQueryElement} from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {mockPreviews, mockRecord} from '_ui/__mocks__/common/record';
 import {manageItems} from './manageItems';
 

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import styled from 'styled-components';
-import {IColorDic} from '../../interfaces/interfaces';
+import {type IColorDic} from '../../interfaces/interfaces';
 
 interface IConnectorRectProps {
     size: number;

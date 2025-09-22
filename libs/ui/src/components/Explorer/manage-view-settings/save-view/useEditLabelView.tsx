@@ -5,7 +5,7 @@ import {FaEdit} from 'react-icons/fa';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {useState} from 'react';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
-import {IDataViewOnAction, IUserView} from '../../_types';
+import {type IDataViewOnAction, type IUserView} from '../../_types';
 import useExecuteUpdateViewMutation from '../../_queries/useExecuteUpdateViewMutation';
 import {LabelViewFormModal} from './LabelViewFormModal';
 import styled from 'styled-components';

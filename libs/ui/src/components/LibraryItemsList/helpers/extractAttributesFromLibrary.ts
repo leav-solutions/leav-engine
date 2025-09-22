@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {isTypeLink} from '@leav/utils';
-import {IAttribute} from '_ui/types/search';
+import {type IAttribute} from '_ui/types/search';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {
-    ILibraryDetailExtended,
-    ILibraryDetailExtendedAttributeLink,
-    ILibraryDetailExtendedAttributeStandard,
-    ILibraryDetailExtendedAttributeTree
+    type ILibraryDetailExtended,
+    type ILibraryDetailExtendedAttributeLink,
+    type ILibraryDetailExtendedAttributeStandard,
+    type ILibraryDetailExtendedAttributeTree
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 
 export default (library: ILibraryDetailExtended): IAttribute[] =>

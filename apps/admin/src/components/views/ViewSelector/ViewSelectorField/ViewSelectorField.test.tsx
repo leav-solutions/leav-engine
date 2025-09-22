@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
 import React from 'react';
-import {GET_VIEWS_views_list} from '../../../../_gqlTypes/GET_VIEWS';
+import {type GET_VIEWS_views_list} from '../../../../_gqlTypes/GET_VIEWS';
 import ViewSelectorField from './ViewSelectorField';
 
 jest.mock('../../../../utils/utils', () => ({

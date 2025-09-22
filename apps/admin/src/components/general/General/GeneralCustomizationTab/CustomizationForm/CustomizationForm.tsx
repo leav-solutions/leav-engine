@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import FileSelector from 'components/shared/FileSelector';
-import React, {ComponentProps, useEffect, useState} from 'react';
+import React, {type ComponentProps, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
-import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {GlobalSettingsInput} from '_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {SAVE_GLOBAL_SETTINGS_saveGlobalSettings} from '_gqlTypes/SAVE_GLOBAL_SETTINGS';
+import {type GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {type GlobalSettingsInput} from '_gqlTypes/globalTypes';
+import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {type SAVE_GLOBAL_SETTINGS_saveGlobalSettings} from '_gqlTypes/SAVE_GLOBAL_SETTINGS';
 import {useQuery} from '@apollo/client';
 import {getApplicationsQuery} from '../../../../../queries/applications/getApplicationsQuery';
-import {GET_APPLICATIONS} from '../../../../../_gqlTypes/GET_APPLICATIONS';
+import {type GET_APPLICATIONS} from '../../../../../_gqlTypes/GET_APPLICATIONS';
 
 interface ICustomizationFormProps {
     settings: GET_GLOBAL_SETTINGS_globalSettings;

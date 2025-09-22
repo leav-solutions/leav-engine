@@ -9,8 +9,8 @@ import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchRed
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
 import useLang from '_ui/hooks/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ISelectedAttribute} from '_ui/types/attributes';
-import {IAttribute, IField} from '_ui/types/search';
+import {type ISelectedAttribute} from '_ui/types/attributes';
+import {type IAttribute, type IField} from '_ui/types/search';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {getFieldsKeyFromAttribute} from '../../helpers/getFieldsKeyFromAttribute';
 

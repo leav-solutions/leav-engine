@@ -4,7 +4,7 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Checkbox, Table} from 'semantic-ui-react';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
 
 interface IAttributesSelectionListProps {
     attributes: GET_ATTRIBUTES_attributes_list[];

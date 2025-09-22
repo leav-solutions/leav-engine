@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {TFunction} from 'i18next';
+import {type TFunction} from 'i18next';
 import React from 'react';
-import {Form, InputOnChangeData} from 'semantic-ui-react';
+import {Form, type InputOnChangeData} from 'semantic-ui-react';
 import {AvailableLanguage} from '../../../../../../../_gqlTypes/globalTypes';
-import {ILabel} from '../../../../../../../_types/embeddedFields';
-import {IFormValues} from '../EmbeddedFieldsForm';
+import {type ILabel} from '../../../../../../../_types/embeddedFields';
+import {type IFormValues} from '../EmbeddedFieldsForm';
 
 interface ILabelFieldsProps {
     formValues: IFormValues;

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormat} from '_ui/_gqlTypes';
-import {FunctionComponent, RefObject} from 'react';
+import {type FunctionComponent, type RefObject} from 'react';
 import {BooleanAttributeDropDown} from './BooleanAttributeDropdown';
 import {ColorAttributeDropDown} from './ColorAttributeDropDown';
 import {DateAttributeDropDown} from './DateAttributeDropDown';
@@ -15,7 +15,7 @@ import {TextAttributeDropDown} from './TextAttributeDropDown';
 import {TreeAttributeDropDown} from './TreeAttributeDropDown';
 import {FilterValueListDropDown} from './FilterValueListDropDown';
 import {
-    ExplorerFilter,
+    type ExplorerFilter,
     isExplorerFilterLink,
     isExplorerFilterStandard,
     isExplorerFilterThrough,

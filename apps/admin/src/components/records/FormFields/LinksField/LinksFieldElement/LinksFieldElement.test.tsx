@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
 import React from 'react';
-import {ILinkValue} from '../../../../../_types/records';
+import {type ILinkValue} from '../../../../../_types/records';
 import LinksFieldElement from './LinksFieldElement';
 
 jest.mock(

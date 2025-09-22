@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as fs from 'fs';
 import {ErrorPreview} from '../../errors/ErrorPreview';
-import {IConfig} from './../../types/types';
+import {type IConfig} from './../../types/types';
 import {handleError} from './../../utils/log';
 
 export const initialCheck = async (config: IConfig): Promise<void> => {

@@ -1,28 +1,28 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {IFormRepo} from 'infra/form/formRepo';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IUtils, ToAny} from 'utils/utils';
-import {ILibrary} from '_types/library';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
+import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {type IFormRepo} from 'infra/form/formRepo';
+import {type ILibraryRepo} from 'infra/library/libraryRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IUtils, type ToAny} from 'utils/utils';
+import {type ILibrary} from '_types/library';
+import {type IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
+import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';
 import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {mockForm} from '../../__tests__/mocks/forms';
 import {mockLibrary} from '../../__tests__/mocks/library';
-import {IActionsListDomain} from '../actionsList/actionsListDomain';
-import attributeDomain, {IAttributeDomainDeps} from './attributeDomain';
-import {Mockify} from '@leav/utils';
+import {type IActionsListDomain} from '../actionsList/actionsListDomain';
+import attributeDomain, {type IAttributeDomainDeps} from './attributeDomain';
+import {type Mockify} from '@leav/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),

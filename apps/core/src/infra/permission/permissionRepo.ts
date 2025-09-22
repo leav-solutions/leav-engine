@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {IDbDocument} from 'infra/db/_types';
-import {IQueryInfos} from '_types/queryInfos';
-import {IPermission, IPermissionsTreeTarget, PermissionsActions, PermissionTypes} from '../../_types/permissions';
-import {IDbService} from '../db/dbService';
-import {IDbUtils} from '../db/dbUtils';
+import {type IDbDocument} from 'infra/db/_types';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IPermission, type IPermissionsTreeTarget, type PermissionsActions, type PermissionTypes} from '../../_types/permissions';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
 
 export interface IPermissionRepo {
     savePermission({permData, ctx}: {permData: IPermission; ctx: IQueryInfos}): Promise<IPermission>;

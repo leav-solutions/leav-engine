@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Client} from '@elastic/elasticsearch';
-import {MappingProperty} from '@elastic/elasticsearch/lib/api/types';
-import {Log} from '@leav/utils';
-import {IConfig} from '_types/config';
-import {WritableMessage} from '_types/message';
+import {type MappingProperty} from '@elastic/elasticsearch/lib/api/types';
+import {type Log} from '@leav/utils';
+import {type IConfig} from '_types/config';
+import {type WritableMessage} from '_types/message';
 
 export interface IElasticsearchService {
     writeData: (indexName: string, data: WritableMessage) => Promise<void>;

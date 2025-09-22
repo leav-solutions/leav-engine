@@ -1,28 +1,28 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IFormDomain} from 'domain/form/formDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IUtils} from 'utils/utils';
-import {AttributeTypes, IAttribute} from '../../../_types/attribute';
-import {IForm, IFormDependentElements, IFormElement, IFormElementJoinLibraryContext, IRecordForm} from '_types/forms';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {ILibrary, LibraryBehavior} from '../../../_types/library';
-import {IList} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
+import {type ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IFormDomain} from 'domain/form/formDomain';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type IUtils} from 'utils/utils';
+import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
+import {type IForm, type IFormDependentElements, type IFormElement, type IFormElementJoinLibraryContext, type IRecordForm} from '_types/forms';
+import {type IAppGraphQLSchema} from '_types/graphql';
+import {type ILibrary, LibraryBehavior} from '../../../_types/library';
+import {type IList} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
 import {
-    IDeleteFormArgs,
-    IFormDependentElementsForGraphQL,
-    IFormElementForGraphQL,
-    IFormForGraphql,
-    IGetFormArgs,
-    IGetRecordFormArgs,
-    ISaveFormArgs
+    type IDeleteFormArgs,
+    type IFormDependentElementsForGraphQL,
+    type IFormElementForGraphQL,
+    type IFormForGraphql,
+    type IGetFormArgs,
+    type IGetRecordFormArgs,
+    type ISaveFormArgs
 } from './_types';
-import {IfLibraryJoinLinkAttribute} from 'domain/attribute/helpers/ifLibraryJoinLinkAttribute';
-import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IfLibraryJoinLinkAttribute} from 'domain/attribute/helpers/ifLibraryJoinLinkAttribute';
+import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
 export type ICoreFormApp = IGraphqlAppModule;
 

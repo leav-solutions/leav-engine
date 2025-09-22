@@ -2,26 +2,26 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import ExcelJS from 'exceljs';
-import {i18n} from 'i18next';
+import {type i18n} from 'i18next';
 import {pick, set} from 'lodash';
 import path from 'path';
-import {IUtils} from 'utils/utils';
+import {type IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
-import * as Config from '../../_types/config';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import type * as Config from '../../_types/config';
+import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {ErrorTypes, Errors} from '../../_types/errors';
-import {IQueryInfos} from '../../_types/queryInfos';
-import {IRecord, IRecordFilterLight} from '../../_types/record';
-import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
-import {IValue} from '../../_types/value';
-import {IValidateHelper} from '../helpers/validate';
+import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IRecord, type IRecordFilterLight} from '../../_types/record';
+import {type ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
+import {type IValue} from '../../_types/value';
+import {type IValidateHelper} from '../helpers/validate';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import LeavError from '../../errors/LeavError';
 

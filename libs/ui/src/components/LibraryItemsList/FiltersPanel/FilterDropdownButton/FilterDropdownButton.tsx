@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
-import {Button, ButtonProps, Typography} from 'antd';
-import React, {ReactNode} from 'react';
+import {Button, type ButtonProps, Typography} from 'antd';
+import React, {type ReactNode} from 'react';
 
 interface IFilterDropdownButtonProps extends ButtonProps {
     children?: ReactNode;

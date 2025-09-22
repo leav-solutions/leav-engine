@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {IDbService} from 'infra/db/dbService';
-import {IGlobalSettings} from '_types/globalSettings';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IDbService} from 'infra/db/dbService';
+import {type IGlobalSettings} from '_types/globalSettings';
+import {type IQueryInfos} from '_types/queryInfos';
 
 export interface IGlobalSettingsRepo {
     saveSettings({settings, ctx}: {settings: IGlobalSettings; ctx: IQueryInfos}): Promise<IGlobalSettings>;

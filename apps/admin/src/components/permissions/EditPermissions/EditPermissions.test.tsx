@@ -6,7 +6,7 @@ import React from 'react';
 import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
 import {getPermissionsActionsQuery} from '../../../queries/permissions/getPermissionsActionsQuery';
 import {getPermissionsQuery} from '../../../queries/permissions/getPermissionsQuery';
-import {GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
+import {type GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
 import {PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import EditPermissions from './EditPermissions';
 

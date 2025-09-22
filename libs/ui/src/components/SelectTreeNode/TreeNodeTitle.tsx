@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitTypography} from 'aristid-ds';
-import {FunctionComponent, ReactNode} from 'react';
+import {type FunctionComponent, type ReactNode} from 'react';
 import {FaCheck} from 'react-icons/fa';
 
 interface ITreeNodeTitleProps {

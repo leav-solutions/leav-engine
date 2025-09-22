@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import createApplicationApp, {IApplicationAppDeps} from '../applicationApp';
+import createApplicationApp, {type IApplicationAppDeps} from '../applicationApp';
 import {APPS_URL_PREFIX} from '../../../_types/application';
 import initQueryContext from '../../helpers/initQueryContext';
-import {ValidateRequestTokenFunc} from '../../helpers/validateRequestToken';
-import {IAuthApp} from '../../auth/authApp';
-import {IApplicationDomain} from '../../../domain/application/applicationDomain';
-import {IUtils, ToAny} from '../../../utils/utils';
-import {IGlobalSettingsDomain} from '../../../domain/globalSettings/globalSettingsDomain';
+import {type ValidateRequestTokenFunc} from '../../helpers/validateRequestToken';
+import {type IAuthApp} from '../../auth/authApp';
+import {type IApplicationDomain} from '../../../domain/application/applicationDomain';
+import {type IUtils, type ToAny} from '../../../utils/utils';
+import {type IGlobalSettingsDomain} from '../../../domain/globalSettings/globalSettingsDomain';
 
 const depsBase: ToAny<IApplicationAppDeps> = {
     config: {},

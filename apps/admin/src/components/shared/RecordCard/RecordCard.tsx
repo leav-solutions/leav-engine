@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import styled, {CSSObject} from 'styled-components';
+import styled, {type CSSObject} from 'styled-components';
 import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
-import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
+import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import RecordPreview from '../RecordPreview';
 
 interface IRecordCardProps {

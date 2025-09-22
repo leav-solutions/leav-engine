@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
-import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
+import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {type GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
 import {cloneDeep, omit} from 'lodash';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {AttributeTypes} from '../../_types/attribute';
-import {AttributeCondition, IRecordFilterOption, Operator} from '../../_types/record';
-import {IAttributeTypeRepo, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
-import {IDbUtils} from '../db/dbUtils';
-import {IFilterTypesHelper} from './helpers/filterTypes';
-import recordRepo, {IRecordRepoDeps} from './recordRepo';
-import {ToAny} from 'utils/utils';
+import {AttributeCondition, type IRecordFilterOption, Operator} from '../../_types/record';
+import {type IAttributeTypeRepo, type IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
+import {type IDbUtils} from '../db/dbUtils';
+import {type IFilterTypesHelper} from './helpers/filterTypes';
+import recordRepo, {type IRecordRepoDeps} from './recordRepo';
+import {type ToAny} from 'utils/utils';
 import {SortOrder} from '../../_types/list';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '_types/queryInfos';
 
 const depsBase: ToAny<IRecordRepoDeps> = {
     'core.infra.db.dbService': jest.fn(),

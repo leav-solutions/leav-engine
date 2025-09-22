@@ -4,7 +4,7 @@
 import {CloseOutlined} from '@ant-design/icons';
 import {App, Button, Popconfirm} from 'antd';
 import {useState} from 'react';
-import {LibraryAttributesFragment} from '../../../../../../_gqlTypes';
+import {type LibraryAttributesFragment} from '../../../../../../_gqlTypes';
 import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';
 
 interface IDeleteButtonProps {

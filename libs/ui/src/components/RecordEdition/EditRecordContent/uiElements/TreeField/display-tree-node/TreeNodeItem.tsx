@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
+import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitAvatar, KitBreadcrumb, KitIdCard, KitItemList, KitSpace} from 'aristid-ds';
 import {FaTrash} from 'react-icons/fa';

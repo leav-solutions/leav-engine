@@ -5,7 +5,7 @@ import {KitSwitch} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ImportMode, ImportType} from '_ui/_gqlTypes';
-import {ISheet} from '../../_types';
+import {type ISheet} from '../../_types';
 
 interface IImportKeysSelectorProps {
     sheet: ISheet;

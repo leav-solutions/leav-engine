@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useState} from 'react';
+import {type FunctionComponent, useEffect, useState} from 'react';
 import {LangContext, Loading, useAppLang as useGetDefaultLang} from '@leav/ui';
 import {initI18n, i18n} from './initI18n';
 import {useGetLanguagesQuery} from '../../__generated__';

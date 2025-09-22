@@ -4,9 +4,9 @@
 import {
     AttributeFormat,
     AttributeType,
-    GetLibraryByIdQuery,
+    type GetLibraryByIdQuery,
     LibraryBehavior,
-    LibraryLightFragment
+    type LibraryLightFragment
 } from '_ui/_gqlTypes';
 
 export const mockLibrarySimple: LibraryLightFragment = {

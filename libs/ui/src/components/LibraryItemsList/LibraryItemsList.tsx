@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
-import {CSSObject} from 'styled-components';
+import {type FunctionComponent} from 'react';
+import {type CSSObject} from 'styled-components';
 import {ErrorDisplay, Loading} from '_ui/components';
 import {ErrorDisplayTypes} from '_ui/constants';
-import {IFilter, ISearchSelection, SearchMode} from '_ui/types/search';
-import {ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
+import {type IFilter, type ISearchSelection, type SearchMode} from '_ui/types/search';
+import {type ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import useLibraryView from './hooks/useLibraryView/useLibraryView';
 import LibraryItemsListContent from './LibraryItemsListContent';
 

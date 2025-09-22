@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {IQueryInfos} from '_types/queryInfos';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {IRecordRepo} from 'infra/record/recordRepo';
+import {type ILibraryRepo} from 'infra/library/libraryRepo';
+import {type IRecordRepo} from 'infra/record/recordRepo';
 import {AttributeTypes} from '../../../_types/attribute';
-import {AttributeCondition, IRecord} from '../../../_types/record';
+import {AttributeCondition, type IRecord} from '../../../_types/record';
 import {getLibraryRepo, getRecordRepo} from './integrationTestRepoUtils';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IQueryInfos} from '_types/queryInfos';
 
 // Partial tests, to be completed !
 // TODO - find, many cases with all kind of filters on attributes

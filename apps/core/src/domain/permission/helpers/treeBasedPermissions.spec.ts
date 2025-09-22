@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {IQueryInfos} from '_types/queryInfos';
-import {ICacheService, ICachesService} from '../../../infra/cache/cacheService';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type ICacheService, type ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsRelations, PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
-import {IGetTreeBasedPermissionParams} from '../_types';
-import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
-import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
-import treeBasedPermissions, {ITreeBasedPermissionsDeps} from './treeBasedPermissions';
-import {ToAny} from '../../../utils/utils';
+import {type IGetTreeBasedPermissionParams} from '../_types';
+import {type IPermissionByUserGroupsHelper} from './permissionByUserGroups';
+import {type IReducePermissionsArrayHelper} from './reducePermissionsArray';
+import treeBasedPermissions, {type ITreeBasedPermissionsDeps} from './treeBasedPermissions';
+import {type ToAny} from '../../../utils/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),

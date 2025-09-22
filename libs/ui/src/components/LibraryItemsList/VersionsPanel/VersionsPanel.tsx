@@ -10,7 +10,7 @@ import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchRed
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
 import ValuesVersionConfigurator from '_ui/components/ValuesVersionConfigurator';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IValueVersion} from '_ui/types/values';
+import {type IValueVersion} from '_ui/types/values';
 
 const Wrapper = styled.div`
     width: 100%;

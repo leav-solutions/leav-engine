@@ -5,7 +5,7 @@ import {Loading} from '@leav/ui';
 import RouteNotFound from 'components/Router/RouteNotFound';
 import {useActiveLibrary} from 'hooks/useActiveLibrary';
 import {useActiveTree} from 'hooks/useActiveTree';
-import {FunctionComponent, lazy, Suspense, useEffect} from 'react';
+import {type FunctionComponent, lazy, Suspense, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
 import {setActivePanel} from 'reduxStore/activePanel';
 import {useAppDispatch} from 'reduxStore/store';

@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitRadio, KitSpace, KitTag} from 'aristid-ds';
-import {RadioGroupProps} from 'aristid-ds/dist/Kit/DataEntry/Radio';
-import {FunctionComponent} from 'react';
+import {type RadioGroupProps} from 'aristid-ds/dist/Kit/DataEntry/Radio';
+import {type FunctionComponent} from 'react';
 
 interface ISelectViewTypeProps {
     value: string;

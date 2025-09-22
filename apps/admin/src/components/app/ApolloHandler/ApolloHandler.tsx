@@ -9,8 +9,8 @@ import {
     HttpLink,
     InMemoryCache,
     Observable,
-    PossibleTypesMap,
-    ServerError,
+    type PossibleTypesMap,
+    type ServerError,
     split
 } from '@apollo/client';
 import {onError} from '@apollo/client/link/error';
@@ -19,7 +19,7 @@ import {getMainDefinition} from '@apollo/client/utilities';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
 import useRedirectToLogin from 'hooks/useRedirectToLogin';
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
 import {endMutation, startMutation} from 'reduxStore/mutationsWatcher/mutationsWatcher';

@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
-import {ICalculationVariable, IVariableValue} from 'domain/helpers/calculationVariable';
-import {IUtils} from 'utils/utils';
+import {type ActionsListValueType, type IActionsListContext} from '_types/actionsList';
+import {type ICalculationVariable, type IVariableValue} from 'domain/helpers/calculationVariable';
+import {type IUtils} from 'utils/utils';
 import excelCalculationAction from './excelCalculationAction';
-import {IValue} from '_types/value';
+import {type IValue} from '_types/value';
 import {Errors} from '../../_types/errors';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 

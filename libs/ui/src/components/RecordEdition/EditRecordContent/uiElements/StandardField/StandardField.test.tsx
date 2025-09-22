@@ -2,23 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {AttributeFormat, AttributeType, ValueDetailsValueFragment} from '_ui/_gqlTypes';
-import {IRecordPropertyAttribute} from '_ui/_queries/records/getRecordPropertiesQuery';
+import {AttributeFormat, AttributeType, type ValueDetailsValueFragment} from '_ui/_gqlTypes';
+import {type IRecordPropertyAttribute} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {render, screen} from '_ui/_tests/testUtils';
 import {mockFormElementInput, mockFormElementMultipleInput} from '_ui/__mocks__/common/form';
 import {mockModifier} from '_ui/__mocks__/common/value';
 import {
     APICallStatus,
-    DeleteMultipleValuesFunc,
-    DeleteValueFunc,
-    ISubmitMultipleResult,
-    SubmitValueFunc
+    type DeleteMultipleValuesFunc,
+    type DeleteValueFunc,
+    type ISubmitMultipleResult,
+    type SubmitValueFunc
 } from '../../_types';
 import StandardField from './StandardField';
 import {AntForm} from 'aristid-ds';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {initialState} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
+import {type RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
 describe('StandardField', () => {
     const mockAttribute: IRecordPropertyAttribute = {

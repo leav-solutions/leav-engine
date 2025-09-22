@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
-import {DocumentCollection} from 'arangojs/collection';
-import {asFunction, AwilixContainer} from 'awilix';
+import {type DocumentCollection} from 'arangojs/collection';
+import {asFunction, type AwilixContainer} from 'awilix';
 import {resolve} from 'dns';
 import {readdirSync} from 'fs';
-import {ICachesService} from 'infra/cache/cacheService';
-import {Winston} from 'winston';
-import {IAttributeFilterOptions} from '_types/attribute';
-import {IConfig} from '_types/config';
-import {ITree} from '_types/tree';
+import {type ICachesService} from 'infra/cache/cacheService';
+import {type Winston} from 'winston';
+import {type IAttributeFilterOptions} from '_types/attribute';
+import {type IConfig} from '_types/config';
+import {type ITree} from '_types/tree';
 import {SortOrder} from '../../_types/list';
 import {ATTRIB_COLLECTION_NAME} from '../attributeTypes/attributeTypesRepo';
 import {TREES_COLLECTION_NAME} from '../tree/treeRepo';
-import {IDbService} from './dbService';
-import dbUtils, {IDbUtils} from './dbUtils';
+import {type IDbService} from './dbService';
+import dbUtils, {type IDbUtils} from './dbUtils';
 import loadMigrationFile from './helpers/loadMigrationFile';
 
 describe('dbUtils', () => {

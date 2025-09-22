@@ -9,7 +9,7 @@ import {useOpenAlert} from '../../custom-panel-message-handlers/useOpenAlert';
 import {useOpenConfirmModal} from '../../custom-panel-message-handlers/useOpenConfirmModal';
 import {useSidePanelForm} from '../../custom-panel-message-handlers/useSidePanelForm';
 import {useModalForm} from '../../custom-panel-message-handlers/useModalForm';
-import {AddPanel} from '../../types';
+import {type AddPanel} from '../../types';
 
 import {iframe} from './PanelCustom.module.css';
 

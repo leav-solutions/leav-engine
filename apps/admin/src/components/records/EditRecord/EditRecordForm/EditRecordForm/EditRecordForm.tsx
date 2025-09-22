@@ -3,29 +3,29 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery, NetworkStatus} from '@apollo/client';
 import React, {useCallback, useEffect} from 'react';
-import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../hooks/useLang';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {deleteValueQuery} from '../../../../../queries/values/deleteValueMutation';
 import {saveValueQuery} from '../../../../../queries/values/saveValueMutation';
 import {isLinkAttribute, versionObjToGraphql} from '../../../../../utils';
 import {isLinkValue, isTreeValue} from '../../../../../utils/utils';
-import {DELETE_VALUE, DELETE_VALUEVariables} from '../../../../../_gqlTypes/DELETE_VALUE';
+import {type DELETE_VALUE, type DELETE_VALUEVariables} from '../../../../../_gqlTypes/DELETE_VALUE';
 import {
-    GET_LIB_BY_ID_libraries_list,
-    GET_LIB_BY_ID_libraries_list_attributes
+    type GET_LIB_BY_ID_libraries_list,
+    type GET_LIB_BY_ID_libraries_list_attributes
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {ValueInput} from '../../../../../_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
-import {SAVE_VALUE, SAVE_VALUEVariables} from '../../../../../_gqlTypes/SAVE_VALUE';
-import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
+import {type ValueInput} from '../../../../../_gqlTypes/globalTypes';
+import {type RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
+import {type SAVE_VALUE, type SAVE_VALUEVariables} from '../../../../../_gqlTypes/SAVE_VALUE';
+import {type SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
 import {
-    IGetRecordData,
-    IGetRecordDataVariables,
-    ILinkValue,
-    ITreeLinkValue,
-    IValue,
-    RecordData
+    type IGetRecordData,
+    type IGetRecordDataVariables,
+    type ILinkValue,
+    type ITreeLinkValue,
+    type IValue,
+    type RecordData
 } from '../../../../../_types/records';
 import Loading from '../../../../shared/Loading';
 import LinksField from '../../../FormFields/LinksField';

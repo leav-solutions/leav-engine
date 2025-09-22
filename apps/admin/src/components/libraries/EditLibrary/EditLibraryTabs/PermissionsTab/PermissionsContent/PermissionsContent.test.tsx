@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
 import React from 'react';
-import {GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
+import {type GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {PermissionsRelation} from '../../../../../../_gqlTypes/globalTypes';
 import {mockAttrTree} from '../../../../../../__mocks__/attributes';
 import {mockLibrary} from '../../../../../../__mocks__/libraries';

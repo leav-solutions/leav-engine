@@ -1,26 +1,26 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
-import {ILibrary} from '_types/library';
+import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
+import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
+import {type IValueRepo} from 'infra/value/valueRepo';
+import {type ILibrary} from '_types/library';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {LibraryPermissionsActions, PermissionsRelations, PermissionTypes} from '../../_types/permissions';
-import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IDefaultPermissionHelper} from './helpers/defaultPermission';
-import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
-import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
-import {ILibraryPermissionDomain} from './libraryPermissionDomain';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IDefaultPermissionHelper} from './helpers/defaultPermission';
+import {type IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
+import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
+import {type ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {
-    IGetDefaultPermissionParams,
-    IGetInheritedRecordPermissionParams,
-    IGetRecordPermissionParams,
-    IGetTreeBasedPermissionParams,
-    IEstimateTreeValueRecordPermissionParams
+    type IGetDefaultPermissionParams,
+    type IGetInheritedRecordPermissionParams,
+    type IGetRecordPermissionParams,
+    type IGetTreeBasedPermissionParams,
+    type IEstimateTreeValueRecordPermissionParams
 } from './_types';
-import {ITreeRepo} from '../../infra/tree/treeRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
 
 export interface IRecordPermissionDomain {
     getRecordPermission(params: IGetRecordPermissionParams): Promise<boolean>;

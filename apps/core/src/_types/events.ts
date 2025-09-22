@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {EventAction, IDbPayload} from '@leav/utils';
-import {IApiKey} from './apiKey';
-import {IApplication} from './application';
-import {IAttribute} from './attribute';
-import {IGlobalSettings} from './globalSettings';
-import {ILibraryDbEvent} from './library';
-import {IRecord} from './record';
-import {IValue} from './value';
-import {IVersionProfile} from './versionProfile';
-import {IPermission} from './permissions';
-import {ITree} from './tree';
+import {type EventAction, type IDbPayload} from '@leav/utils';
+import {type IApiKey} from './apiKey';
+import {type IApplication} from './application';
+import {type IAttribute} from './attribute';
+import {type IGlobalSettings} from './globalSettings';
+import {type ILibraryDbEvent} from './library';
+import {type IRecord} from './record';
+import {type IValue} from './value';
+import {type IVersionProfile} from './versionProfile';
+import {type IPermission} from './permissions';
+import {type ITree} from './tree';
 
 /**
  * Maybe move all DBPayloadData types in @leav/utils type to allow event consumers outside core to use them

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseCircleFilled, FrownOutlined, MinusCircleFilled} from '@ant-design/icons';
 import {Button, Result} from 'antd';
-import {ReactNode} from 'react';
+import {type ReactNode} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ErrorDisplayTypes} from '../../constants';

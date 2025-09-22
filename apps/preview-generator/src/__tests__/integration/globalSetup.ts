@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {startConsume} from 'amqp/startConsume';
-import {Channel, Options} from 'amqplib';
+import {type Channel, type Options} from 'amqplib';
 import {getConfig} from '../../getConfig/getConfig';
 import {getChannel} from './../../amqp/getChannel/getChannel';
 

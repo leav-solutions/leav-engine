@@ -1,32 +1,32 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IValidateHelper} from 'domain/helpers/validate';
-import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {i18n} from 'i18next';
-import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IUtils, ToAny} from 'utils/utils';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IValidateHelper} from 'domain/helpers/validate';
+import {type IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type i18n} from 'i18next';
+import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {type ILibraryRepo} from 'infra/library/libraryRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IUtils, type ToAny} from 'utils/utils';
+import type * as Config from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
 import {systemPreviewsSettings} from '../../domain/filesManager/_constants';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
+import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';
 import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
 import {AttributeTypes} from '../../_types/attribute';
-import {ILibrary, LibraryBehavior} from '../../_types/library';
+import {type ILibrary, LibraryBehavior} from '../../_types/library';
 import {AdminPermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {mockLibrary} from '../../__tests__/mocks/library';
-import {IAttributeDomain} from '../attribute/attributeDomain';
-import libraryDomain, {ILibraryDomainDeps} from './libraryDomain';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import libraryDomain, {type ILibraryDomainDeps} from './libraryDomain';
 import {deleteAssociatedValues} from './helpers';
-import {IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
-import {IUpdateAssociatedFormsHelper} from './helpers/updateAssociatedForms';
+import {type IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
+import {type IUpdateAssociatedFormsHelper} from './helpers/updateAssociatedForms';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}

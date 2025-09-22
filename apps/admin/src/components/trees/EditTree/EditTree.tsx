@@ -5,7 +5,7 @@ import {useQuery} from '@apollo/client';
 import React from 'react';
 import useUserData from '../../../hooks/useUserData';
 import {getTreeByIdQuery} from '../../../queries/trees/getTreeById';
-import {GET_TREE_BY_ID, GET_TREE_BY_IDVariables} from '../../../_gqlTypes/GET_TREE_BY_ID';
+import {type GET_TREE_BY_ID, type GET_TREE_BY_IDVariables} from '../../../_gqlTypes/GET_TREE_BY_ID';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditTreeTabs from './EditTreeTabs';

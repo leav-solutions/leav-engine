@@ -7,8 +7,8 @@ import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {mockLinkValue} from '_ui/__mocks__/common/form';
 import {mockModifier} from '_ui/__mocks__/common/value';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {APICallStatus, ISubmitMultipleResult} from '../../../_types';
-import {ValueDetailsLinkValueFragment} from '_ui/_gqlTypes';
+import {APICallStatus, type ISubmitMultipleResult} from '../../../_types';
+import {type ValueDetailsLinkValueFragment} from '_ui/_gqlTypes';
 import {ErrorTypes} from '@leav/utils';
 
 const mockOnDeleteMultipleValues = jest.fn();

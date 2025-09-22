@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {WorkspacesNavigationMenu} from '../WorkspacesNavigationMenu';
-import {Application} from '../../types';
+import {type Application} from '../../types';
 import {InitTheme} from '../../../../config/theme/InitTheme';
 
 describe('WorkspacesNavigationMenu component', () => {

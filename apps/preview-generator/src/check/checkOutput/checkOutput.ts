@@ -4,7 +4,7 @@
 import {access, mkdir} from 'fs';
 import {dirname, extname, join} from 'path';
 import {ErrorPreview} from '../../errors/ErrorPreview';
-import {IConfig} from '../../types/types';
+import {type IConfig} from '../../types/types';
 import {handleError} from '../../utils/log';
 
 export const checkOutput = async (output: string, size: number, name: string, config: IConfig) => {

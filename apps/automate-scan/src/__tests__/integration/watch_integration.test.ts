@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Channel} from 'amqplib';
+import {type Channel} from 'amqplib';
 import * as amqp from 'amqplib/callback_api';
 import * as fs from 'fs';
 import {startWatch} from '../../setupWatcher/setupWatcher';

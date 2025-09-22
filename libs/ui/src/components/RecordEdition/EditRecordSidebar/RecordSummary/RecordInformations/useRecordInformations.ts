@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
-    GetRecordColumnsValuesRecord,
-    IRecordColumnValueLink,
-    IRecordColumnValueStandard
+    type GetRecordColumnsValuesRecord,
+    type IRecordColumnValueLink,
+    type IRecordColumnValueStandard
 } from '_ui/_queries/records/getRecordColumnsValues';
-import {IRecordIdentityWhoAmI} from '_ui/types';
+import {type IRecordIdentityWhoAmI} from '_ui/types';
 
 export const useRecordInformations = (record: IRecordIdentityWhoAmI, recordData: GetRecordColumnsValuesRecord) => {
     const {t} = useSharedTranslation();

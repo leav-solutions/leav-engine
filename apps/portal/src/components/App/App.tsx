@@ -20,10 +20,10 @@ import {getMe} from 'queries/me/me';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {ThemeProvider} from 'styled-components';
-import {GET_APPLICATIONS, GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
-import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {GET_LANGS} from '_gqlTypes/GET_LANGS';
-import {ME} from '_gqlTypes/ME';
+import {type GET_APPLICATIONS, type GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
+import {type GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {type GET_LANGS} from '_gqlTypes/GET_LANGS';
+import {type ME} from '_gqlTypes/ME';
 import {APP_ENDPOINT} from '../../constants';
 
 const Header = styled(Layout.Header)`

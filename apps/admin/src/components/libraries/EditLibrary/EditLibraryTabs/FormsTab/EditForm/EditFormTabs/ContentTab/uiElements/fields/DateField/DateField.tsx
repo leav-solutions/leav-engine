@@ -4,7 +4,7 @@
 import React from 'react';
 import {Input} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
+import {type ICommonFieldsSettings, type IFormElementProps} from '../../../_types';
 import useLang from 'hooks/useLang';
 import {localizedLabel} from 'utils';
 

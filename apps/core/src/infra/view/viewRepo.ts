@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {IList} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IGetCoreEntitiesParams} from '_types/shared';
-import {IViewRepo, IViewRepoDeps, VIEWS_COLLECTION_NAME} from './_types';
-import {IView} from '_types/views';
+import {type IList} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IGetCoreEntitiesParams} from '_types/shared';
+import {type IViewRepo, type IViewRepoDeps, VIEWS_COLLECTION_NAME} from './_types';
+import {type IView} from '_types/views';
 
 export default function ({
     'core.infra.db.dbService': dbService = null,

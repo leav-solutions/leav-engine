@@ -4,7 +4,7 @@
 import {Modal} from 'antd';
 import {useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {LibraryLightFragment} from '_ui/_gqlTypes';
+import {type LibraryLightFragment} from '_ui/_gqlTypes';
 import {LibrariesList} from './LibrariesList';
 
 interface ILibraryPickerProps {

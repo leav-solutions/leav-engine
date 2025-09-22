@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import moment from 'moment';
-import {IDateRangeValue} from '_types/value';
-import {ActionsListIOTypes, IActionsListFunction, IActionsListFunctionResult} from '../../_types/actionsList';
+import {type IDateRangeValue} from '_types/value';
+import {ActionsListIOTypes, type IActionsListFunction, type IActionsListFunctionResult} from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
 import cloneDeep from 'lodash/cloneDeep';
 import {TypeGuards} from '../../utils/typeGuards';

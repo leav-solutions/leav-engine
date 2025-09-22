@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {RecordFilterInput} from '_ui/_gqlTypes';
+import {type RecordFilterInput} from '_ui/_gqlTypes';
 import {gqlUnchecked} from '_ui/_utils';
 import {recordIdentityFragment} from '../../gqlFragments';
-import {IRecordIdentityWhoAmI} from '../../types/records';
+import {type IRecordIdentityWhoAmI} from '../../types/records';
 
 export interface IRecordColumnLinkValue {
     id: string;

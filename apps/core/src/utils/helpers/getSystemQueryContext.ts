@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {v4 as uuidv4} from 'uuid';
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IConfig} from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
 import {adminsGroupId, filesAdminsGroupId, systemUserId} from '../../_constants/users';
 
 interface IDeps {

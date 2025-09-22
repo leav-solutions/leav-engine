@@ -6,10 +6,10 @@
 
 import {gql, useApolloClient} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
-import {Button, Modal, ModalProps, Popconfirm} from 'antd';
+import {Button, Modal, type ModalProps, Popconfirm} from 'antd';
 import {useState} from 'react';
 import {
-    AttributeDetailsFragment,
+    type AttributeDetailsFragment,
     PermissionsActions,
     PermissionTypes,
     useDeleteAttributeMutation,

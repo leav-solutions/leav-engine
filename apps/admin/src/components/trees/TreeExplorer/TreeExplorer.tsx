@@ -3,24 +3,24 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useApolloClient} from '@apollo/client';
 import {
-    TREE_NODE_CHILDREN,
-    TREE_NODE_CHILDRENVariables,
-    TREE_NODE_CHILDREN_treeNodeChildren_list
+    type TREE_NODE_CHILDREN,
+    type TREE_NODE_CHILDRENVariables,
+    type TREE_NODE_CHILDREN_treeNodeChildren_list
 } from '_gqlTypes/TREE_NODE_CHILDREN';
-import {WithOptional} from '_types/WithOptional';
-import {ITreeNode, ITreeNodeData, fakeRootId} from '_types/trees';
-import {FetchResult} from 'apollo-link';
-import {ITreeItem} from 'components/attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
+import {type WithOptional} from '_types/WithOptional';
+import {type ITreeNode, type ITreeNodeData, fakeRootId} from '_types/trees';
+import {type FetchResult} from 'apollo-link';
+import {type ITreeItem} from 'components/attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
 import {getTreeNodeChildrenQuery} from 'queries/trees/treeNodeChildrenQuery';
 import React, {useState} from 'react';
 import {addNodeUnderParent, changeNodeAtPath, find, getNodeAtPath, removeNodeAtPath} from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
 import {Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '../../../_gqlTypes/ADD_TREE_ELEMENT';
-import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from '../../../_gqlTypes/DELETE_TREE_ELEMENT';
-import {GET_TREE_BY_ID_trees_list} from '../../../_gqlTypes/GET_TREE_BY_ID';
-import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '../../../_gqlTypes/MOVE_TREE_ELEMENT';
+import {type ADD_TREE_ELEMENT, type ADD_TREE_ELEMENTVariables} from '../../../_gqlTypes/ADD_TREE_ELEMENT';
+import {type DELETE_TREE_ELEMENT, type DELETE_TREE_ELEMENTVariables} from '../../../_gqlTypes/DELETE_TREE_ELEMENT';
+import {type GET_TREE_BY_ID_trees_list} from '../../../_gqlTypes/GET_TREE_BY_ID';
+import {type MOVE_TREE_ELEMENT, type MOVE_TREE_ELEMENTVariables} from '../../../_gqlTypes/MOVE_TREE_ELEMENT';
 import {addTreeElementQuery} from '../../../queries/trees/treeAddElementMutation';
 import {deleteTreeElementQuery} from '../../../queries/trees/treeDeleteElementMutation';
 import {moveTreeElementQuery} from '../../../queries/trees/treeMoveElementMutation';
@@ -28,11 +28,11 @@ import {getTreeNodeKey} from '../../../utils/utils';
 import RecordCard from '../../shared/RecordCard';
 import TreeExplorerView from './TreeExplorerView';
 import {
-    AddTreeElementHandler,
-    ClickNodeHandler,
-    DeleteNodeHandler,
-    MoveNodeHandler,
-    NodeVisibilityToggleHandler
+    type AddTreeElementHandler,
+    type ClickNodeHandler,
+    type DeleteNodeHandler,
+    type MoveNodeHandler,
+    type NodeVisibilityToggleHandler
 } from './_types';
 
 interface ITreeExplorerProps {

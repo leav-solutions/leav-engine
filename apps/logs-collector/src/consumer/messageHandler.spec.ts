@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as amqp from 'amqplib';
-import {IConfig} from '_types/config';
+import type * as amqp from 'amqplib';
+import {type IConfig} from '_types/config';
 import {mockMessage} from '__tests__/mocks/message';
 import {handleMessage} from './messageHandler';
-import {IElasticsearchService} from 'elasticsearchService';
+import {type IElasticsearchService} from 'elasticsearchService';
 
 describe('handleMessage', () => {
     test('Should create index if it does not exist', async () => {

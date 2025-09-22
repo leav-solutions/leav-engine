@@ -4,7 +4,7 @@
 import {mount, shallow} from 'enzyme';
 import 'jest-styled-components';
 import React from 'react';
-import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
+import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import RecordCard from './RecordCard';
 
 jest.mock('../../../hooks/useLang');

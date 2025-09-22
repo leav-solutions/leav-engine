@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* eslint-disable react-refresh/only-export-components */
-import {FunctionComponent, PropsWithChildren, ReactElement} from 'react';
-import {render, RenderOptions, RenderResult} from '@testing-library/react';
-import {ILangContext, LangContext} from '@leav/ui';
-import {InMemoryCache, InMemoryCacheConfig} from '@apollo/client';
-import {MockedProvider, MockedProviderProps, MockedResponse} from '@apollo/client/testing';
+import {type FunctionComponent, type PropsWithChildren, type ReactElement} from 'react';
+import {render, type RenderOptions, type RenderResult} from '@testing-library/react';
+import {type ILangContext, LangContext} from '@leav/ui';
+import {InMemoryCache, type InMemoryCacheConfig} from '@apollo/client';
+import {MockedProvider, type MockedProviderProps, type MockedResponse} from '@apollo/client/testing';
 
 export interface ICustomRenderOptions extends RenderOptions {
     apolloMocks?: readonly MockedResponse[];

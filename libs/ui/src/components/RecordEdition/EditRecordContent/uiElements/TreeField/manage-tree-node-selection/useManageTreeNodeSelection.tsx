@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, Dispatch, SetStateAction, useEffect, useState} from 'react';
+import {type ComponentProps, type Dispatch, type SetStateAction, useEffect, useState} from 'react';
 import {AntForm} from 'aristid-ds';
-import {ChildrenAsRecordValuePermissionFilterInput, RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
-import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
+import {type ChildrenAsRecordValuePermissionFilterInput, type RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
+import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {arrayValueVersionToObject} from '_ui/_utils';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {APICallStatus, DeleteMultipleValuesFunc, DeleteValueFunc, SubmitValueFunc} from '../../../_types';
+import {APICallStatus, type DeleteMultipleValuesFunc, type DeleteValueFunc, type SubmitValueFunc} from '../../../_types';
 import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {SelectTreeNodeModal} from './SelectTreeNodeModal';
 

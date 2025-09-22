@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi from 'joi';
+import type Joi from 'joi';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import actionListDomain, {IActionsListDomainDeps} from './actionsListDomain';
+import actionListDomain, {type IActionsListDomainDeps} from './actionsListDomain';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import {i18n} from 'i18next';
-import {ToAny} from 'utils/utils';
+import {type i18n} from 'i18next';
+import {type ToAny} from 'utils/utils';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 
 const depsBase: ToAny<IActionsListDomainDeps> = {

@@ -4,8 +4,8 @@
 import {useQuery} from '@apollo/client';
 import {getApplicationModulesQuery} from 'queries/applications/getApplicationsModulesQuery';
 import React from 'react';
-import {FormDropdownProps} from 'semantic-ui-react';
-import {GET_APPLICATION_MODULES} from '_gqlTypes/GET_APPLICATION_MODULES';
+import {type FormDropdownProps} from 'semantic-ui-react';
+import {type GET_APPLICATION_MODULES} from '_gqlTypes/GET_APPLICATION_MODULES';
 import ModuleSelectorField from './ModuleSelectorField';
 
 function ModuleSelector(fieldProps: FormDropdownProps): JSX.Element {

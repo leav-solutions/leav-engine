@@ -4,11 +4,11 @@
 import {useQuery} from '@apollo/client';
 import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
 import {
-    GET_TREE_LIBRARIES,
-    GET_TREE_LIBRARIESVariables,
-    GET_TREE_LIBRARIES_trees_list_libraries
+    type GET_TREE_LIBRARIES,
+    type GET_TREE_LIBRARIESVariables,
+    type GET_TREE_LIBRARIES_trees_list_libraries
 } from '_gqlTypes/GET_TREE_LIBRARIES';
-import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 
 export interface IUseTreeLibraryAllowedAsChild {
     loading: boolean;

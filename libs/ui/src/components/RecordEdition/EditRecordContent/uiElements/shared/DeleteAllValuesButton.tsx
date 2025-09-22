@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton, KitModal} from 'aristid-ds';
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 
 interface IDeleteAllValuesButtonProps {
     handleDelete: () => void;

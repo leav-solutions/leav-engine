@@ -3,14 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import {difference} from 'lodash';
-import {IQueryInfos} from '_types/queryInfos';
-import {IGetCoreEntitiesParams} from '_types/shared';
-import {IAttributeFilterOptions} from '../../_types/attribute';
-import {ILibrary} from '../../_types/library';
-import {IList} from '../../_types/list';
-import {IAttributeRepo} from '../attribute/attributeRepo';
-import {IDbService} from '../db/dbService';
-import {IDbUtils} from '../db/dbUtils';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IGetCoreEntitiesParams} from '_types/shared';
+import {type IAttributeFilterOptions} from '../../_types/attribute';
+import {type ILibrary} from '../../_types/library';
+import {type IList} from '../../_types/list';
+import {type IAttributeRepo} from '../attribute/attributeRepo';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
 
 export const LIB_COLLECTION_NAME = 'core_libraries';
 export const LIB_ATTRIB_COLLECTION_NAME = 'core_edge_libraries_attributes';

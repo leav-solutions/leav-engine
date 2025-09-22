@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    GET_LIBRARY_DETAIL_EXTENDED,
-    GET_LIBRARY_DETAIL_EXTENDEDVariables,
-    GET_LIBRARY_DETAIL_EXTENDED_libraries_list,
-    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView
+    type GET_LIBRARY_DETAIL_EXTENDED,
+    type GET_LIBRARY_DETAIL_EXTENDEDVariables,
+    type GET_LIBRARY_DETAIL_EXTENDED_libraries_list,
+    type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {AttributeFormat, AttributeType, LibraryBehavior, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {mockLabel} from '__mocks__/common/label';

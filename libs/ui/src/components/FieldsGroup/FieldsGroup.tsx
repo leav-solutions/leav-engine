@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {theme} from 'antd';
 import React from 'react';
-import styled, {CSSObject} from 'styled-components';
-import {AntdThemeToken} from '../../antdTheme';
+import styled, {type CSSObject} from 'styled-components';
+import {type AntdThemeToken} from '../../antdTheme';
 
 interface IFieldsGroupProps {
     label?: string | React.ReactNode;

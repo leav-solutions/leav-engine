@@ -7,9 +7,9 @@ import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {
-    GET_ATTRIBUTES,
-    GET_ATTRIBUTESVariables,
-    GET_ATTRIBUTES_attributes_list
+    type GET_ATTRIBUTES,
+    type GET_ATTRIBUTESVariables,
+    type GET_ATTRIBUTES_attributes_list
 } from '../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../shared/Loading';
 import AttributesSelectionList from './AttributesSelectionList';

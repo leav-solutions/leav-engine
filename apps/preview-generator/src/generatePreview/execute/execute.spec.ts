@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getArgs} from './../../getArgs/getArgs';
-import {execute, IExecute} from './execute';
+import {execute, type IExecute} from './execute';
 
 describe('execute', () => {
     const output = '/data/test.png';

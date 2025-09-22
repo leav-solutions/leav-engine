@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import React from 'react';
-import {FormDropdownProps} from 'semantic-ui-react';
+import {type FormDropdownProps} from 'semantic-ui-react';
 import {getViewsQuery} from '../../../queries/views/getViewsQuery';
-import {GET_VIEWS, GET_VIEWSVariables} from '../../../_gqlTypes/GET_VIEWS';
+import {type GET_VIEWS, type GET_VIEWSVariables} from '../../../_gqlTypes/GET_VIEWS';
 import Loading from '../../shared/Loading';
 import ViewSelectorField from './ViewSelectorField';
 

@@ -4,7 +4,7 @@
 import dayjs from 'dayjs';
 import React, {useRef} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, DropdownProps, Form, Icon, Message, Ref} from 'semantic-ui-react';
+import {Button, type DropdownProps, Form, Icon, Message, Ref} from 'semantic-ui-react';
 import {CUSTOM_EXPIRATION_DATE, NEVER_EXPIRATION_DATE} from '../../../../../../../constants';
 
 function ExpirationSelector({onChange, label, value, ...dropdownProps}: DropdownProps): JSX.Element {

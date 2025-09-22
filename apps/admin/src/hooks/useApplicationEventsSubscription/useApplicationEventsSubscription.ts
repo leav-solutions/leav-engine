@@ -4,7 +4,7 @@
 import {useSubscription} from '@apollo/client';
 import {applicationDetailsFragment} from 'queries/applications/applicationDetailsFragment';
 import {getApplicationsEventsSubscription} from 'queries/applications/getApplicationsEventsSubscription';
-import {APPLICATION_EVENTS, APPLICATION_EVENTSVariables} from '_gqlTypes/APPLICATION_EVENTS';
+import {type APPLICATION_EVENTS, type APPLICATION_EVENTSVariables} from '_gqlTypes/APPLICATION_EVENTS';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {ApplicationEventTypes} from '_gqlTypes/globalTypes';
 import {WithTypename} from '../../../../../libs/utils/src/types/helpers';

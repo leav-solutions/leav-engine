@@ -6,24 +6,24 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import SortableTree, {
     addNodeUnderParent,
-    ExtendedNodeData,
-    OnDragStateChangedData,
-    OnVisibilityToggleData,
+    type ExtendedNodeData,
+    type OnDragStateChangedData,
+    type OnVisibilityToggleData,
     removeNodeAtPath,
-    TreeIndex,
-    TreeItem,
-    TreeNode
+    type TreeIndex,
+    type TreeItem,
+    type TreeNode
 } from 'react-sortable-tree';
 import {Button} from 'semantic-ui-react';
 import {getAttributesEmbeddedFieldsQuery} from '../../../../../queries/attributes/getAttributesEmbeddedFieldsQuery';
 import {saveAttributesEmbeddedFieldsQuery} from '../../../../../queries/attributes/saveAttributesEmbeddedFieldsQuery';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat} from '../../../../../_gqlTypes/globalTypes';
 import {
-    IEmbeddedFields,
-    IGetEmbeddedFieldsQuery as IQuery,
-    IGetEmbeddedFieldsQueryVariables as IQueryVariables,
-    ILabel
+    type IEmbeddedFields,
+    type IGetEmbeddedFieldsQuery as IQuery,
+    type IGetEmbeddedFieldsQueryVariables as IQueryVariables,
+    type ILabel
 } from '../../../../../_types/embeddedFields';
 import EditButtons from './EditButtons';
 import EmbeddedFieldsWrapper from './EmbeddedFieldsWrapper/EmbeddedFieldsWrapper';

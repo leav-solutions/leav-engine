@@ -1,21 +1,21 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AwilixContainer} from 'awilix';
-import Joi from 'joi';
+import {type AwilixContainer} from 'awilix';
+import type Joi from 'joi';
 import isEmpty from 'lodash/isEmpty';
 import ValidationError from '../../errors/ValidationError';
 import {
-    IActionsListFunction,
-    ActionsListParams,
-    IActionsListSavedAction,
-    IRunActionsListCtx
+    type IActionsListFunction,
+    type ActionsListParams,
+    type IActionsListSavedAction,
+    type IRunActionsListCtx
 } from '../../_types/actionsList';
-import {IAttribute} from '../../_types/attribute';
-import {ErrorFieldDetail, Errors} from '../../_types/errors';
-import {IRecord} from '../../_types/record';
-import {IValue} from '../../_types/value';
-import {i18n} from 'i18next';
+import {type IAttribute} from '../../_types/attribute';
+import {type ErrorFieldDetail, Errors} from '../../_types/errors';
+import {type IRecord} from '../../_types/record';
+import {type IValue} from '../../_types/value';
+import {type i18n} from 'i18next';
 import isEmptyValue from '../value/helpers/isEmptyValue';
 import partition from 'lodash/partition';
 

@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    AttributesByLibAttributeFragment,
-    AttributesByLibAttributeLinkAttributeFragment,
-    AttributesByLibAttributeTreeAttributeFragment,
-    ImportMode,
-    ImportType
+    type AttributesByLibAttributeFragment,
+    type AttributesByLibAttributeLinkAttributeFragment,
+    type AttributesByLibAttributeTreeAttributeFragment,
+    type ImportMode,
+    type ImportType
 } from '_ui/_gqlTypes';
 
 export interface ISheet {

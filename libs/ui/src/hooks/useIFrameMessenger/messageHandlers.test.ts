@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {decodeMessage, encodeMessage, getExposedMethods} from './messageHandlers';
-import {Message, type NavigateToPanelMessage} from './types';
+import {type Message, type NavigateToPanelMessage} from './types';
 
 describe('MessageHandlers', () => {
     describe('getExposedMethods', () => {

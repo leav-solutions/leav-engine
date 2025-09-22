@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
-import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
-import {Mockify} from '../../../_types//Mockify';
+import {type GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
+import {type Mockify} from '../../../_types//Mockify';
 import DeleteLibrary from './DeleteLibrary';
 
 jest.mock('../../../hooks/useLang');

@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {IDbUtils} from 'infra/db/dbUtils';
-import {IFormFilterOptions} from '_types/forms';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IDbUtils} from 'infra/db/dbUtils';
+import {type IFormFilterOptions} from '_types/forms';
+import {type IQueryInfos} from '_types/queryInfos';
 import {mockForm} from '../../__tests__/mocks/forms';
 import formRepo from './formRepo';
 

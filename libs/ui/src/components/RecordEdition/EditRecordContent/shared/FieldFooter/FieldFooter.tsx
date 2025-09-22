@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {theme} from 'antd';
-import {GlobalToken} from 'antd/lib/theme/interface';
+import {type GlobalToken} from 'antd/lib/theme/interface';
 import React from 'react';
-import styled, {CSSObject} from 'styled-components';
+import styled, {type CSSObject} from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 
 interface IFieldFooterProps {

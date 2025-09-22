@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getAllPanels, addChildPanelToApplication} from '../utils';
-import {Application, Workspace} from '../types';
-import {Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {type Application, type Workspace} from '../types';
+import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
 
 const userEditionPanel: Panel = {
     id: 'edition',

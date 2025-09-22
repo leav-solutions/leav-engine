@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Request} from 'express';
+import {type Request} from 'express';
 import {v4 as uuidv4} from 'uuid';
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IConfig} from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
 
 interface IDeps {
     config?: IConfig;

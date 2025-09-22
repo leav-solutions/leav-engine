@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitTabs} from 'aristid-ds';
-import {ComponentProps} from 'react';
-import styled, {CSSObject} from 'styled-components';
+import {type ComponentProps} from 'react';
+import styled, {type CSSObject} from 'styled-components';
 import {useGetApplicationByIdQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '../../hooks/useSharedTranslation';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import {EditApplicationInfo} from './EditApplicationInfo';
-import {IEditApplicationProps} from './_types';
+import {type IEditApplicationProps} from './_types';
 
 const TabContentWrapper = styled.div<{$style?: CSSObject}>`
     ${props => props.$style}

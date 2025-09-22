@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Override} from '@leav/utils';
-import {ILang} from '_ui/types/misc';
-import {IRecordIdentityWhoAmI} from '_ui/types/records';
-import {IAttribute, IField, IFilter, ISearchSelection, SearchMode, SidebarContentType} from '_ui/types/search';
-import {IValueVersion} from '_ui/types/values';
-import {IView, IViewDisplay} from '_ui/types/views';
-import {PermissionsActions, SortOrder} from '_ui/_gqlTypes';
-import {GraphQLError, GraphQLErrorExtensions} from 'graphql';
+import {type Override} from '@leav/utils';
+import {type ILang} from '_ui/types/misc';
+import {type IRecordIdentityWhoAmI} from '_ui/types/records';
+import {type IAttribute, type IField, type IFilter, type ISearchSelection, type SearchMode, type SidebarContentType} from '_ui/types/search';
+import {type IValueVersion} from '_ui/types/values';
+import {type IView, type IViewDisplay} from '_ui/types/views';
+import {type PermissionsActions, type SortOrder} from '_ui/_gqlTypes';
+import {type GraphQLError, type GraphQLErrorExtensions} from 'graphql';
 import {
-    ILibraryDetailExtended,
-    ILibraryDetailExtendedLinkedTree
+    type ILibraryDetailExtended,
+    type ILibraryDetailExtendedLinkedTree
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 
 export type IRecordPreview = {

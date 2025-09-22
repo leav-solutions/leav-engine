@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getInvertColor, stringToColor} from '@leav/utils';
 import React from 'react';
-import styled, {CSSObject} from 'styled-components';
+import styled, {type CSSObject} from 'styled-components';
 
 interface IRecordPreviewProps {
     label: string;

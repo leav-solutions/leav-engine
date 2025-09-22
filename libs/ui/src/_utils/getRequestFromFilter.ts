@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {AttributeConditionFilter, IFilter, IFilterTree, ThroughConditionFilter} from '_ui/types/search';
-import {RecordFilterCondition, RecordFilterInput, RecordFilterOperator} from '_ui/_gqlTypes';
+import {AttributeConditionFilter, type IFilter, type IFilterTree, ThroughConditionFilter} from '_ui/types/search';
+import {RecordFilterCondition, type RecordFilterInput, RecordFilterOperator} from '_ui/_gqlTypes';
 
 export const getRequestFromFilters = (filters: IFilter[]): RecordFilterInput[] => {
     const queryFilters = filters

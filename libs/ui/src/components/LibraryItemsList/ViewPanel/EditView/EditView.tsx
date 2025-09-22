@@ -7,9 +7,9 @@ import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchRed
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
 import useLang from '_ui/hooks/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {SystemTranslation} from '_ui/types/scalars';
-import {IView} from '_ui/types/views';
-import {useSaveViewMutation, ViewInput, ViewTypes} from '_ui/_gqlTypes';
+import {type SystemTranslation} from '_ui/types/scalars';
+import {type IView} from '_ui/types/views';
+import {useSaveViewMutation, type ViewInput, ViewTypes} from '_ui/_gqlTypes';
 import {getRequestFromFilters} from '_ui/_utils/getRequestFromFilter';
 import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '../../../../constants';
 import useUpdateViewsOrderMutation from '../../hooks/useUpdateViewsOrderMutation';

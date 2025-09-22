@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import isArray from 'lodash/isArray';
 import objectPath from 'object-path';
-import {IField, IItem} from '_ui/types/search';
+import {type IField, type IItem} from '_ui/types/search';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
-import {IGetRecordsFromLibraryQueryElement} from '_ui/_queries/records/getRecordsFromLibraryQuery';
+import {type IGetRecordsFromLibraryQueryElement} from '_ui/_queries/records/getRecordsFromLibraryQuery';
 
 const _extractValueFromParent = (field: IField, linkValue: any) => {
     const linkedElement = field.parentAttributeData.type === AttributeType.tree ? linkValue.record : linkValue;

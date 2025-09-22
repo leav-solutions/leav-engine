@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {forwardRef, ReactNode, useImperativeHandle} from 'react';
+import {forwardRef, type ReactNode, useImperativeHandle} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {Loading} from '_ui/components/Loading';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {DefaultViewSettings, Entrypoint, IItemAction, IMassActions, IPrimaryAction} from './_types';
+import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {type DefaultViewSettings, type Entrypoint, type IItemAction, type IMassActions, type IPrimaryAction} from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
 import {ExplorerTitle} from './ExplorerTitle';
@@ -33,7 +33,7 @@ import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {MASS_SELECTION_ALL} from './_constants';
 import {useDeleteLinkValues} from './actions-mass/useDeleteLinkValues';
 import {useReplaceItemAction} from './actions-item/useReplaceItemAction';
-import {JoinLibraryContextFragment} from '_ui/_gqlTypes';
+import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 

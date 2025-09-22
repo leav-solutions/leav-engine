@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RedoOutlined} from '@ant-design/icons';
 import {Button, Space} from 'antd';
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 import styled from 'styled-components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SearchMode} from '_ui/types/search';
-import {ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
+import {type ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import DisplayOptions from '../DisplayOptions';
 import MenuSelection from '../MenuSelection';
 import MenuView from '../MenuView';

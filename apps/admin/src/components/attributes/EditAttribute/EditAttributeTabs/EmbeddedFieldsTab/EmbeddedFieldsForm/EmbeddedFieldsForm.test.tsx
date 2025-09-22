@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
 import React from 'react';
-import {IEmbeddedFields} from '../../../../../../_types/embeddedFields';
-import {Mockify} from '../../../../../../_types/Mockify';
+import {type IEmbeddedFields} from '../../../../../../_types/embeddedFields';
+import {type Mockify} from '../../../../../../_types/Mockify';
 import EmbeddedFieldsForm from './EmbeddedFieldsForm';
 import LabelFields from './LabelFields';
 import SelectFormat from './SelectFormat';

@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {IAttributeTypeRepo, IAttributeTypesRepo} from 'infra/attributeTypes/attributeTypesRepo';
-import {AttributeCondition, IRecordFilterOption, Operator, TreeCondition} from '../../../_types/record';
+import {type IAttributeTypeRepo, type IAttributeTypesRepo} from 'infra/attributeTypes/attributeTypesRepo';
+import {AttributeCondition, type IRecordFilterOption, Operator, TreeCondition} from '../../../_types/record';
 import {mockAttrAdv, mockAttrAdvLink, mockAttrSimple} from '../../../__tests__/mocks/attribute';
-import {IFilterTypesHelper} from './filterTypes';
+import {type IFilterTypesHelper} from './filterTypes';
 import getSearchVariablesQueryPart from './getSearchVariablesQueryPart';
 
 describe('getSearchVariablesQueryPart', () => {

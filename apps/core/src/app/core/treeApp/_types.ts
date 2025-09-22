@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ILibrary} from '_types/library';
-import {IPaginationParams, ISortParams} from '_types/list';
-import {ITreePermissionsConf} from '_types/permissions';
-import {ITree, ITreeElement, ITreeFilterOptions, ITreeLibrarySettings, TreeEventTypes} from '_types/tree';
+import {type ILibrary} from '_types/library';
+import {type IPaginationParams, type ISortParams} from '_types/list';
+import {type ITreePermissionsConf} from '_types/permissions';
+import {type ITree, type ITreeElement, type ITreeFilterOptions, type ITreeLibrarySettings, type TreeEventTypes} from '_types/tree';
 
 export interface ITreeLibraryForGraphQL {
     library: ILibrary;

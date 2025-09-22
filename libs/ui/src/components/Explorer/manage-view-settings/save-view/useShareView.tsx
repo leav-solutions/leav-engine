@@ -9,7 +9,7 @@ import {useEffect, useState} from 'react';
 import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {prepareViewForRequest} from './prepareViewForRequest';
-import {IViewDisplay} from '_ui/types';
+import {type IViewDisplay} from '_ui/types';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
 import {useTransformFilters} from '../_shared/useTransformFilters';
 import {useMeQuery} from '_ui/_gqlTypes';

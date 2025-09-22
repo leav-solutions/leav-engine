@@ -8,7 +8,7 @@ import {List, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {activeItemColor} from 'themingVar';
 import {localizedLabel} from 'utils';
-import {GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
 
 const AttributeItem = styled(List.Item)`
     &&&& {

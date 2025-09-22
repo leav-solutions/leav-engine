@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useGetRecordValuesQuery} from '../../../../hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
-import {IRecordIdentityWhoAmI} from '../../../../types/records';
+import {type IRecordIdentityWhoAmI} from '../../../../types/records';
 import {KitAlert, KitButton, KitEmpty, KitError, KitSkeleton, KitTabs} from 'aristid-ds';
 import {RecordInformations} from './RecordInformations/RecordInformations';
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faRotateRight} from '@fortawesome/free-solid-svg-icons';

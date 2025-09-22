@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {i18n} from 'i18next';
-import {IAttributeForRepo, IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IUtils} from 'utils/utils';
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
+import {type i18n} from 'i18next';
+import {type IAttributeForRepo, type IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {type ILibraryRepo} from 'infra/library/libraryRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IUtils} from 'utils/utils';
+import {type IConfig} from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
 import getLibraryDefaultAttributes from '../../../utils/helpers/getLibraryDefaultAttributes';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {FilesAttributes} from '../../../_types/filesManager';
-import {ILibrary, LibraryBehavior} from '../../../_types/library';
+import {type ILibrary, LibraryBehavior} from '../../../_types/library';
 import {TreeBehavior} from '../../../_types/tree';
 
 interface IDeps {

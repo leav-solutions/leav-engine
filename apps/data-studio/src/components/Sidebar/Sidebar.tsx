@@ -12,7 +12,7 @@ import {
 import {useMutation, useQuery} from '@apollo/client';
 import {ErrorDisplay, themeVars, useLang} from '@leav/ui';
 import {Menu, Spin} from 'antd';
-import {ItemType} from 'antd/es/menu/interface';
+import {type ItemType} from 'antd/es/menu/interface';
 import LibraryIcon from 'components/Home/LibrariesList/LibraryIcon';
 import AppIcon from 'components/shared/AppIcon';
 import TreeIcon from 'components/shared/TreeIcon';
@@ -34,12 +34,12 @@ import {
     getTreeLink,
     localizedTranslation
 } from 'utils';
-import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
-import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
-import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
+import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
+import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
+import {type GET_USER_DATA, type GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {type SAVE_USER_DATA, type SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY} from '../../constants';
-import {FunctionComponent, MouseEventHandler} from 'react';
+import {type FunctionComponent, type MouseEventHandler} from 'react';
 
 interface IGroupedElements<EntityType> {
     related: EntityType[];

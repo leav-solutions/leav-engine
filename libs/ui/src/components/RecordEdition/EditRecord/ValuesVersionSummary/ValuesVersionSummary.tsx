@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useLang} from '../../../../hooks';
 import useLibraryVersionTrees from '../../../../hooks/useLibraryVersionTrees';
-import {IValueVersion} from '../../../../types/values';
+import {type IValueVersion} from '../../../../types/values';
 import {ErrorDisplay} from '../../../ErrorDisplay';
 import {Loading} from '../../../Loading';
 

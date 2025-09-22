@@ -11,8 +11,8 @@ import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {resetSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
-import {IMessages, OnMessagesFunc} from '../../_types';
+import {type REMOVE_TREE_ELEMENT, type REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
+import {type IMessages, type OnMessagesFunc} from '../../_types';
 
 interface IDetachSelectionButtonProps {
     onMessages?: OnMessagesFunc;

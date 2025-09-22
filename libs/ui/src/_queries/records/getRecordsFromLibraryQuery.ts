@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {recordIdentityFragment} from '_ui/gqlFragments/recordIdentityFragment';
-import {IField, IQueryFilter} from '_ui/types/search';
-import {AttributeType, RecordIdentityFragment, RecordSortInput, ValueVersionInput} from '_ui/_gqlTypes';
+import {type IField, type IQueryFilter} from '_ui/types/search';
+import {AttributeType, type RecordIdentityFragment, type RecordSortInput, type ValueVersionInput} from '_ui/_gqlTypes';
 import {gqlUnchecked} from '_ui/_utils';
 
 export interface IGetRecordsFromLibraryQueryElement extends RecordIdentityFragment {

@@ -4,14 +4,14 @@
 import {ClearOutlined, PlusOutlined} from '@ant-design/icons';
 import {EditLibraryModal, LibraryPicker, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
+import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {Button, Empty, Input, Popconfirm, Space, Tooltip} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
-import {SyntheticEvent, useState} from 'react';
-import {DragDropContext, Draggable, DraggableProvided, DropResult, Droppable} from 'react-beautiful-dnd';
+import {type SyntheticEvent, useState} from 'react';
+import {DragDropContext, Draggable, type DraggableProvided, type DropResult, Droppable} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {LibraryLightFragment} from '../../../../../../../libs/ui/src/_gqlTypes';
+import {type LibraryLightFragment} from '../../../../../../../libs/ui/src/_gqlTypes';
 import LibraryBlock from './LibraryBlock';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 

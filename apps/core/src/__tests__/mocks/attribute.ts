@@ -6,7 +6,7 @@ import {
     AttributeFormats,
     AttributeTypes,
     MultiDisplayOption,
-    IAttribute,
+    type IAttribute,
     ValueVersionMode
 } from '../../_types/attribute';
 import {mockActionValidateFormat} from './actionsList';

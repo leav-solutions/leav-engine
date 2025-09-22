@@ -10,7 +10,7 @@ import {
     EditRecordSidebarContentTypeMap,
     initialState
 } from '../../editRecordReducer/editRecordReducer';
-import {EditRecordReducerContext, IEditRecordReducerContext} from '../../editRecordReducer/editRecordReducerContext';
+import {EditRecordReducerContext, type IEditRecordReducerContext} from '../../editRecordReducer/editRecordReducerContext';
 import {render, screen} from '../../../../_tests/testUtils';
 
 describe('Breadcrumb', () => {

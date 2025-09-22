@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import RecordCardSkeleton from 'components/shared/RecordCardSkeleton';
 import React from 'react';
-import {Breadcrumb, BreadcrumbSectionProps, Table} from 'semantic-ui-react';
+import {Breadcrumb, type BreadcrumbSectionProps, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
+import {type ICommonFieldsSettings, type IFormElementProps} from '../../../_types';
 import useLang from 'hooks/useLang';
 import {localizedLabel} from 'utils';
 

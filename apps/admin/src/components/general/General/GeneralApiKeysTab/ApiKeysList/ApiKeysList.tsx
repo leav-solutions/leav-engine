@@ -6,8 +6,8 @@ import RecordCard from 'components/shared/RecordCard';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon, Input, Popup, Table} from 'semantic-ui-react';
-import {GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
-import {ApiKeysFiltersInput, SortApiKeysInput} from '_gqlTypes/globalTypes';
+import {type GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
+import {type ApiKeysFiltersInput, type SortApiKeysInput} from '_gqlTypes/globalTypes';
 
 interface IApiKeysListProps {
     apiKeys: GET_API_KEYS_apiKeys_list[];

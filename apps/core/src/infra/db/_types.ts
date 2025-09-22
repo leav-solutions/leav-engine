@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {AqlQuery} from 'arangojs/aql';
-import {IQueryInfos} from '_types/queryInfos';
+import {type AqlQuery} from 'arangojs/aql';
+import {type IQueryInfos} from '_types/queryInfos';
 
 export interface IDbDocument {
     _id: string;

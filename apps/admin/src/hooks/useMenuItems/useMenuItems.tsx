@@ -9,7 +9,7 @@ import {BiSpreadsheet} from 'react-icons/bi';
 import {RiNodeTree} from 'react-icons/ri';
 import {VscLayers} from 'react-icons/vsc';
 import {Icon} from 'semantic-ui-react';
-import {SemanticICONS} from 'semantic-ui-react/dist/commonjs/generic';
+import {type SemanticICONS} from 'semantic-ui-react/dist/commonjs/generic';
 
 export interface IMenuItem {
     id: string;

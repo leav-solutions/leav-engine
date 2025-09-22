@@ -3,19 +3,19 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getGraphqlTypeFromLibraryName} from '@leav/utils';
 import {
-    AttributeFormat,
-    AttributeType,
+    type AttributeFormat,
+    type AttributeType,
     RecordFilterCondition,
-    RecordFormAttributeLinkAttributeFragment,
-    ValueDetailsFragment,
-    ValueVersionInput
+    type RecordFormAttributeLinkAttributeFragment,
+    type ValueDetailsFragment,
+    type ValueVersionInput
 } from '_ui/_gqlTypes';
 import {gqlUnchecked} from '_ui/_utils';
 import {recordIdentityFragment} from '../../gqlFragments';
-import {IRecordIdentityWhoAmI} from '../../types/records';
-import {SystemTranslation} from '../../types/scalars';
+import {type IRecordIdentityWhoAmI} from '../../types/records';
+import {type SystemTranslation} from '../../types/scalars';
 import {valuesVersionDetailsFragment} from '../values/valuesVersionFragment';
-import {IValueVersion} from '_ui/types';
+import {type IValueVersion} from '_ui/types';
 
 export interface IRecordPropertyAttribute {
     id: string;

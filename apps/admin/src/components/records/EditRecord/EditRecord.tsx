@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
-import {GET_LIB_BY_ID, GET_LIB_BY_IDVariables} from '../../../_gqlTypes/GET_LIB_BY_ID';
-import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
-import {RecordEdition} from '../../../_types/records';
+import {type GET_LIB_BY_ID, type GET_LIB_BY_IDVariables} from '../../../_gqlTypes/GET_LIB_BY_ID';
+import {type TreeElementInput} from '../../../_gqlTypes/globalTypes';
+import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
+import {type RecordEdition} from '../../../_types/records';
 import Loading from '../../shared/Loading';
 import CreateRecordFormContainer from './CreateRecordForm/CreateRecordFormContainer';
 import RecordEditionForm from './EditRecordForm';

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitModal, KitSpace, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+
 export type UseCreateCancelConfirmHook = (onConfirm: () => void) => () => void;
 
 export const useCreateCancelConfirm: UseCreateCancelConfirmHook = onConfirm => {

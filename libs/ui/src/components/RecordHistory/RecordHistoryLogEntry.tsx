@@ -7,8 +7,8 @@ import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitSpace, KitTypography} from 'aristid-ds';
 import dayjs from 'dayjs';
-import {FunctionComponent} from 'react';
-import {LogEntry, LogEntryAttribute, LogEntryData, LogEntryValue} from './_types';
+import {type FunctionComponent} from 'react';
+import {type LogEntry, type LogEntryAttribute, type LogEntryData, type LogEntryValue} from './_types';
 
 interface IRecordHistoryLogEntryProps {
     index: number;

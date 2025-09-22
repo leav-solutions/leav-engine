@@ -7,24 +7,24 @@ import React, {useEffect, useState} from 'react';
 import {getActionListQuery} from '../../../../../../queries/attributes/getActionListQuery';
 import {saveAttributeActionsListMutation} from '../../../../../../queries/attributes/saveAttributeActionsListMutation';
 import {
-    GET_ACTIONS_LIST_QUERY,
-    GET_ACTIONS_LIST_QUERY_attributes_list_input_types,
-    GET_ACTIONS_LIST_QUERY_attributes_list_output_types
+    type GET_ACTIONS_LIST_QUERY,
+    type GET_ACTIONS_LIST_QUERY_attributes_list_input_types,
+    type GET_ACTIONS_LIST_QUERY_attributes_list_output_types
 } from '../../../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
 import Loading from '../../../../../shared/Loading';
 import ALCList from '../ALCList';
 import ALCReserve from '../ALCReserve';
 import BinDragLayer from '../DragDrop/BinDragLayer';
 import {
-    IAction,
-    IActionConfig,
-    IAllActionLists,
-    IColorDic,
-    ICurrActionListOrder,
-    IParam,
-    IParamConfig,
-    IParamInput,
-    IReserveAction
+    type IAction,
+    type IActionConfig,
+    type IAllActionLists,
+    type IColorDic,
+    type ICurrActionListOrder,
+    type IParam,
+    type IParamConfig,
+    type IParamInput,
+    type IReserveAction
 } from '../interfaces/interfaces';
 import {ExternalContainer, ListsContainer, ReserveContainer} from '../stylesComps';
 import {actionListNames, getColorDictionnary, getCurrentList, getCurrentListOrder} from '../utils/actionsManipulations';

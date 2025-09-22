@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloudUploadOutlined} from '@ant-design/icons';
 import {Button, Col, Empty, Row} from 'antd';
-import {FunctionComponent, useState} from 'react';
+import {type FunctionComponent, useState} from 'react';
 import {ImportModal} from '_ui/components/ImportModal';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';

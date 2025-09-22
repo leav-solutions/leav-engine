@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getLibraryDetailExtendedQuery} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
-import {RootState} from 'reduxStore/store';
+import {type RootState} from 'reduxStore/store';
 import {InfoType, WorkspacePanels} from '_types/types';
 import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
 import {

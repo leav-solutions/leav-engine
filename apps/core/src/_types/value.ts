@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AnyPrimitive, Override} from '@leav/utils';
-import {IDbEdge} from 'infra/db/_types';
-import {IRecord} from './record';
-import {ITreeNode, TreePath} from './tree';
-import {EMPTY_VALUE} from 'infra/value/valueRepo';
-import {AttributeTypes} from './attribute';
+import {type AnyPrimitive, type Override} from '@leav/utils';
+import {type IDbEdge} from 'infra/db/_types';
+import {type IRecord} from './record';
+import {type ITreeNode, type TreePath} from './tree';
+import {type EMPTY_VALUE} from 'infra/value/valueRepo';
+import {type AttributeTypes} from './attribute';
 
 export type IValueFromGql = Override<
     Omit<IValue, 'version'>,

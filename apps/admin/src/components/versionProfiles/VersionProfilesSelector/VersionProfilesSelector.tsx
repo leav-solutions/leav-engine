@@ -5,8 +5,8 @@ import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
 import React from 'react';
-import {FormDropdownProps} from 'semantic-ui-react';
-import {GET_VERSION_PROFILES, GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
+import {type FormDropdownProps} from 'semantic-ui-react';
+import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
 import VersionProfilesSelectorField from './VersionProfilesSelectorField';
 
 function VersionProfilesSelector(fieldProps: FormDropdownProps): JSX.Element {

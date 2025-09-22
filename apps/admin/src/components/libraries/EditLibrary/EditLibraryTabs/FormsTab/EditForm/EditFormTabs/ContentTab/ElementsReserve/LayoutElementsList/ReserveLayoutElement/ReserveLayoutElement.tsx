@@ -10,7 +10,7 @@ import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globa
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {defaultContainerId, FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {DraggableElementTypes, IFormBuilderDragObject, IFormElement, IUIElement} from '../../../_types';
+import {DraggableElementTypes, type IFormBuilderDragObject, type IFormElement, type IUIElement} from '../../../_types';
 
 interface IReserveLayoutElementProps {
     element: IUIElement;

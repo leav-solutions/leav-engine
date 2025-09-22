@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useRef, useState} from 'react';
+import {type FunctionComponent, useRef, useState} from 'react';
 import {PlusOutlined} from '@ant-design/icons';
 import {Button} from 'antd';
 import {LibraryBehavior} from '_ui/_gqlTypes';
 import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
-import {IValueVersion} from '_ui/types';
-import {possibleSubmitButtons} from '_ui/components/RecordEdition/_types';
+import {type IValueVersion} from '_ui/types';
+import {type possibleSubmitButtons} from '_ui/components/RecordEdition/_types';
 
 interface ICreateNewRecordButtonProps {
     label: string;

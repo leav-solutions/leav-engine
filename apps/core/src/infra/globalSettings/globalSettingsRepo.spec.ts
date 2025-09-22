@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {IDbService} from 'infra/db/dbService';
+import {type IDbService} from 'infra/db/dbService';
 import {mockGlobalSettings} from '../../__tests__/mocks/globalSettings';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import globalSettingsRepo from './globalSettingsRepo';

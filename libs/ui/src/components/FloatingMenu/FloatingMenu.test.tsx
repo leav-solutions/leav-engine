@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import {act} from '_ui/_tests/testUtils';
 import {render, screen} from '../../_tests/testUtils';
 import FloatingMenu from './FloatingMenu';
-import {FloatingMenuAction, IFloatingMenuActionWithIcon} from './_types';
+import {type FloatingMenuAction, type IFloatingMenuActionWithIcon} from './_types';
 
 describe('FloatingMenu', () => {
     test('Display actions with button', async () => {

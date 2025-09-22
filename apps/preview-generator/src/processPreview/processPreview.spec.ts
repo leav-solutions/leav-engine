@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ConsumeMessage} from 'amqplib';
+import {type ConsumeMessage} from 'amqplib';
 import {generatePreview} from '../generatePreview/generatePreview';
-import {IConfig} from '../types/types';
+import {type IConfig} from '../types/types';
 import {handleCheck} from './../check/handleCheck';
 import {processPreview} from './processPreview';
 

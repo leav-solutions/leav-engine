@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useGetUserIdentityQuery} from '../../__generated__';
-import {IUserContext, UserContext} from '@leav/ui';
+import {type IUserContext, UserContext} from '@leav/ui';
 import {type FunctionComponent, useMemo} from 'react';
 
 export const InitUser: FunctionComponent = ({children}) => {

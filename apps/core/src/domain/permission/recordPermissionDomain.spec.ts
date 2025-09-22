@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IValueRepo} from 'infra/value/valueRepo';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IValueRepo} from 'infra/value/valueRepo';
+import {type IQueryInfos} from '_types/queryInfos';
 import {RecordPermissionsActions} from '../../_types/permissions';
-import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
-import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
-import {ILibraryPermissionDomain} from './libraryPermissionDomain';
-import recordPermissionDomain, {IRecordPermissionDomainDeps} from './recordPermissionDomain';
-import {ToAny} from 'utils/utils';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
+import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
+import {type ILibraryPermissionDomain} from './libraryPermissionDomain';
+import recordPermissionDomain, {type IRecordPermissionDomainDeps} from './recordPermissionDomain';
+import {type ToAny} from 'utils/utils';
 
 const depsBase: ToAny<IRecordPermissionDomainDeps> = {
     'core.domain.permission.library': jest.fn(),

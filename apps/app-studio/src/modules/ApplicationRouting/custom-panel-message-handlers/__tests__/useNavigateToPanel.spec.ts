@@ -4,7 +4,7 @@
 import {renderHook} from '_ui/_tests/testUtils';
 import * as ReactRouter from 'react-router-dom';
 import {useNavigateToPanel} from '../useNavigateToPanel';
-import {INestedPanel} from '_ui/hooks/useIFrameMessenger/types';
+import {type INestedPanel} from '_ui/hooks/useIFrameMessenger/types';
 import {useLocation} from 'react-router-dom';
 
 jest.mock('react-router-dom', () => ({

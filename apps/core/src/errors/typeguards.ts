@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorTypes} from '../_types/errors';
 import LeavError from './LeavError';
-import PermissionError from './PermissionError';
-import ValidationError from './ValidationError';
+import type PermissionError from './PermissionError';
+import type ValidationError from './ValidationError';
 
 export const isLeavError = (err: Error): err is LeavError<unknown> => err instanceof LeavError;
 export const isPermissionError = (err: Error): err is PermissionError<unknown> =>

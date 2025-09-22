@@ -1,38 +1,38 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloServer, ApolloServerPlugin} from '@apollo/server';
+import {ApolloServer, type ApolloServerPlugin} from '@apollo/server';
 import {expressMiddleware} from '@apollo/server/express4';
 import {ApolloServerPluginCacheControlDisabled} from '@apollo/server/plugin/disabled';
-import {IApplicationApp} from 'app/application/applicationApp';
-import {IAuthApp} from 'app/auth/authApp';
-import {ICoreApp} from 'app/core/coreApp';
-import {IGraphqlApp} from 'app/graphql/graphqlApp';
-import {AwilixContainer} from 'awilix';
+import {type IApplicationApp} from 'app/application/applicationApp';
+import {type IAuthApp} from 'app/auth/authApp';
+import {type ICoreApp} from 'app/core/coreApp';
+import {type IGraphqlApp} from 'app/graphql/graphqlApp';
+import {type AwilixContainer} from 'awilix';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, {NextFunction, Response, Express} from 'express';
+import express, {type NextFunction, type Response, type Express} from 'express';
 import fs from 'fs';
 import {GraphQLError} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
-import {ServerOptions} from 'graphql-ws';
+import {type ServerOptions} from 'graphql-ws';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
 import {createServer} from 'http';
-import {IUtils} from 'utils/utils';
-import * as winston from 'winston';
+import {type IUtils} from 'utils/utils';
+import type * as winston from 'winston';
 import {WebSocketServer} from 'ws';
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IConfig} from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
 import AuthenticationError from '../errors/AuthenticationError';
 import {ACCESS_TOKEN_COOKIE_NAME, API_KEY_PARAM_NAME} from '../_types/auth';
-import {IRequestWithContext} from '../_types/express';
+import {type IRequestWithContext} from '../_types/express';
 import PermissionError from '../errors/PermissionError';
 import ValidationError from '../errors/ValidationError';
-import type {ValidateRequestTokenFunc} from '../app/helpers/validateRequestToken';
-import {HandleGraphqlErrorFunc} from './helpers/handleGraphqlError';
-import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
-import {IAppModule} from '_types/shared';
+import  {type ValidateRequestTokenFunc} from '../app/helpers/validateRequestToken';
+import {type HandleGraphqlErrorFunc} from './helpers/handleGraphqlError';
+import {type InitQueryContextFunc} from 'app/helpers/initQueryContext';
+import {type IAppModule} from '_types/shared';
 
 export interface IServer {
     init(): Promise<void>;

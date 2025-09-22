@@ -9,7 +9,7 @@ import {themeVars} from '_ui/antdTheme';
 import {BasicButton} from '_ui/components/BasicButton';
 import {TriggerPreviewsGenerationModal} from '_ui/components/TriggerPreviewsGenerationModal';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IFileDataWithPreviewsStatus} from '_ui/_queries/records/getFileDataQuery';
+import {type IFileDataWithPreviewsStatus} from '_ui/_queries/records/getFileDataQuery';
 
 interface IFileModalSidebarProps {
     fileData: IFileDataWithPreviewsStatus;

@@ -2,16 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* eslint-disable react-refresh/only-export-components */
-import {InMemoryCache, InMemoryCacheConfig} from '@apollo/client';
-import {MockedProvider, MockedResponse} from '@apollo/client/testing';
-import {Queries, render, renderHook, RenderHookOptions, RenderOptions, RenderResult} from '@testing-library/react';
+import {InMemoryCache, type InMemoryCacheConfig} from '@apollo/client';
+import {MockedProvider, type MockedResponse} from '@apollo/client/testing';
+import {type Queries, render, renderHook, type RenderHookOptions, type RenderOptions, type RenderResult} from '@testing-library/react';
 import {AntApp, KitApp} from 'aristid-ds';
-import {PropsWithChildren, ReactElement} from 'react';
-import {MemoryRouter, MemoryRouterProps} from 'react-router-dom';
+import {type PropsWithChildren, type ReactElement} from 'react';
+import {MemoryRouter, type MemoryRouterProps} from 'react-router-dom';
 import {gqlPossibleTypes} from '_ui/gqlPossibleTypes';
 import MockedUserContextProvider from '_ui/testing/MockedUserContextProvider';
 import MockedLangContextProvider from '../testing/MockedLangContextProvider';
-import {queries} from '@testing-library/dom';
+import {type queries} from '@testing-library/dom';
 
 export interface ICustomRenderOptions extends RenderOptions {
     mocks?: readonly MockedResponse[];

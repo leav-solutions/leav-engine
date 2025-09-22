@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
-import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {ISystemTranslation} from '../../../_types/types';
+import {type AttributeFormat, type AttributeType} from '_gqlTypes/globalTypes';
+import {type ISystemTranslation} from '../../../_types/types';
 
 export interface IGetTreeAttributesQueryAttribute {
     type: AttributeType;

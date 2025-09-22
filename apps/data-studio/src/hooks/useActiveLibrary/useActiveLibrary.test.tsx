@@ -5,7 +5,7 @@ import {act} from 'react-dom/test-utils';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {render} from '_tests/testUtils';
 import {mockLibraryPermissions} from '__mocks__/common/library';
-import {IActiveLibrary} from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
+import {type IActiveLibrary} from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import {initialActiveLibrary, useActiveLibrary} from './useActiveLibrary';
 
 describe('useActiveLibrary', () => {

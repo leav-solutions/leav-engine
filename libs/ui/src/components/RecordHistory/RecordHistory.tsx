@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IRecordIdentityWhoAmI} from '_ui/types';
+import {type IRecordIdentityWhoAmI} from '_ui/types';
 import {KitButton, KitSpace, KitTypography} from 'aristid-ds';
-import {FunctionComponent, useState} from 'react';
+import {type FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';

@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {amqpService, IAmqpService} from '@leav/message-broker';
+import {amqpService, type IAmqpService} from '@leav/message-broker';
 import fs from 'fs';
 import automate, {extractChildrenDbElements} from '../../automate';
 import {getConfig} from '../../config';
 import * as scan from '../../scan';
-import {IConfig} from '../../_types/config';
-import {FilesystemContent} from '../../_types/filesystem';
-import {IDbScanResult} from '../../_types/queries';
+import {type IConfig} from '../../_types/config';
+import {type FilesystemContent} from '../../_types/filesystem';
+import {type IDbScanResult} from '../../_types/queries';
 import test3Db from './database/test3';
 import test4Db from './database/test4';
 

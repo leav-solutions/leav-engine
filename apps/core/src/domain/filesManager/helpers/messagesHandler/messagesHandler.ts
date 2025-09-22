@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import winston from 'winston';
-import {IConfig} from '_types/config';
-import {IFileEventData} from '_types/filesManager';
-import {IQueryInfos} from '_types/queryInfos';
-import {HandleFileSystemEventFunc} from '../handleFileSystemEvent/_types';
+import type winston from 'winston';
+import {type IConfig} from '_types/config';
+import {type IFileEventData} from '_types/filesManager';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type HandleFileSystemEventFunc} from '../handleFileSystemEvent/_types';
 
 export interface IMessagesHandlerHelper {
     handleMessage(message: IFileEventData, ctx: IQueryInfos);

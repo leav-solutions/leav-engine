@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import {GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
-import {SAVE_LIBRARYVariables, SAVE_LIBRARY} from '_gqlTypes/SAVE_LIBRARY';
+import {type GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
+import {type SAVE_LIBRARYVariables, type SAVE_LIBRARY} from '_gqlTypes/SAVE_LIBRARY';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
 import {saveLibQuery} from 'queries/libraries/saveLibMutation';

@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDatePicker} from 'aristid-ds';
-import {FunctionComponent, useEffect, useRef, useState} from 'react';
+import {type FunctionComponent, useEffect, useRef, useState} from 'react';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import {StandardValueTypes} from '../../../_types';
+import {type StandardValueTypes} from '../../../_types';
 import {setDateToUTCNoon} from '_ui/_utils';
-import {IStandFieldValueContentProps} from './_types';
-import {IKitRangePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
+import {type IStandFieldValueContentProps} from './_types';
+import {type IKitRangePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EMPTY_INITIAL_VALUE_UNDEFINED} from '../../../antdUtils';
 

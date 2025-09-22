@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IUtils} from 'utils/utils';
-import {ActionsListEvents, ActionsListIOTypes, ActionsListConfig} from '../../../_types/actionsList';
-import {AttributeFormats, IAttribute, IOAllowedTypes} from '../../../_types/attribute';
+import {type IUtils} from 'utils/utils';
+import {ActionsListEvents, ActionsListIOTypes, type ActionsListConfig} from '../../../_types/actionsList';
+import {AttributeFormats, type IAttribute, type IOAllowedTypes} from '../../../_types/attribute';
 
 export const getAllowedInputTypes = (attribute: IAttribute): IOAllowedTypes => {
     let inputTypes;

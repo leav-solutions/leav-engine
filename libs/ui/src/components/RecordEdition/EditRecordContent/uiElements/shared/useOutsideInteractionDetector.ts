@@ -1,20 +1,20 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {RecordFormElementFragment} from '_ui/_gqlTypes';
+import {type RecordFormElementFragment} from '_ui/_gqlTypes';
 import {
     EditRecordReducerActionsTypes,
-    IEditRecordReducerActions,
-    IRecordPropertyWithAttribute
+    type IEditRecordReducerActions,
+    type IRecordPropertyWithAttribute
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {
     EDIT_RECORD_SIDEBAR_ID,
-    LINK_FIELD_ID_PREFIX,
-    STANDARD_FIELD_ID_PREFIX,
-    TREE_FIELD_ID_PREFIX
+    type LINK_FIELD_ID_PREFIX,
+    type STANDARD_FIELD_ID_PREFIX,
+    type TREE_FIELD_ID_PREFIX
 } from '_ui/constants';
-import {RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
-import {Dispatch, useEffect, useRef} from 'react';
+import {type RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
+import {type Dispatch, useEffect, useRef} from 'react';
 
 interface IUseOutsideInteractionDetectorProps {
     attribute: RecordFormElementFragment['attribute'];

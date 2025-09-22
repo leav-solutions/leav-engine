@@ -4,9 +4,9 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Modal} from 'semantic-ui-react';
-import {AttributeType} from '../../../_gqlTypes/globalTypes';
+import {type AttributeType} from '../../../_gqlTypes/globalTypes';
 import EditAttribute from '../EditAttribute';
-import {OnAttributePostSaveFunc} from '../EditAttribute/EditAttribute';
+import {type OnAttributePostSaveFunc} from '../EditAttribute/EditAttribute';
 
 interface IAttributeCreationModalProps {
     open: boolean;

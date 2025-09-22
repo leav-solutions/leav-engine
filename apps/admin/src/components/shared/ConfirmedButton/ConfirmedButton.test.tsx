@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {Mockify} from '../../../_types//Mockify';
+import {type Mockify} from '../../../_types//Mockify';
 import ConfirmedButton from './ConfirmedButton';
 
 describe('ConfirmedButton', () => {

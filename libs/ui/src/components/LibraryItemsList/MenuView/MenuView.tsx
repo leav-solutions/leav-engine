@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreFilled, FilterOutlined, MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
 import {localizedTranslation, objectToNameValueArray} from '@leav/utils';
-import {Badge, Button, Dropdown, MenuProps, Space, Tooltip} from 'antd';
+import {Badge, Button, Dropdown, type MenuProps, Space, Tooltip} from 'antd';
 import {GrUndo} from 'react-icons/gr';
 import {VscLayers} from 'react-icons/vsc';
 import styled from 'styled-components';
@@ -13,8 +13,8 @@ import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation/use
 import useLang from '_ui/hooks/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SidebarContentType} from '_ui/types/search';
-import {ViewInput, ViewTypes} from '_ui/_gqlTypes';
-import {ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
+import {type ViewInput, ViewTypes} from '_ui/_gqlTypes';
+import {type ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {prepareView} from '_ui/_utils';
 import {getRequestFromFilters} from '_ui/_utils/getRequestFromFilter';
 import {PREFIX_USER_VIEWS_ORDER_KEY} from '../../../constants';

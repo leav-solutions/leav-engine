@@ -4,7 +4,7 @@
 import {TreeNodeList} from './TreeNodeList';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {render, screen} from '@testing-library/react';
-import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
+import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 
 jest.mock('./TreeNodeItem', () => ({
     __esModule: true,

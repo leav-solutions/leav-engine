@@ -7,14 +7,14 @@ import FormFieldWrapper from 'components/shared/FormFieldWrapper';
 import difference from 'lodash/difference';
 import {getLibrariesWithAttributesQuery} from 'queries/libraries/getLibrariesWithAttributesQuery';
 import {saveLibAttributesMutation} from 'queries/libraries/saveLibAttributesMutation';
-import React, {SyntheticEvent, useMemo} from 'react';
-import {DropdownProps, FormDropdownProps} from 'semantic-ui-react';
-import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import React, {type SyntheticEvent, useMemo} from 'react';
+import {type DropdownProps, type FormDropdownProps} from 'semantic-ui-react';
+import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {
-    GET_LIBRARIES_WITH_ATTRIBUTES,
-    GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list
+    type GET_LIBRARIES_WITH_ATTRIBUTES,
+    type GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list
 } from '_gqlTypes/GET_LIBRARIES_WITH_ATTRIBUTES';
-import {SAVE_LIBRARY_ATTRIBUTES, SAVE_LIBRARY_ATTRIBUTESVariables} from '_gqlTypes/SAVE_LIBRARY_ATTRIBUTES';
+import {type SAVE_LIBRARY_ATTRIBUTES, type SAVE_LIBRARY_ATTRIBUTESVariables} from '_gqlTypes/SAVE_LIBRARY_ATTRIBUTES';
 import AttributeLibrariesField from './AttributeLibrariesField';
 
 export type AttributeLibrariesOnChange = (

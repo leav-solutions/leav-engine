@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ComponentProps, FunctionComponent, useContext} from 'react';
+import {type ComponentProps, type FunctionComponent, useContext} from 'react';
 import {generatePath, Navigate, Outlet, useLocation, useNavigate, useOutletContext} from 'react-router-dom';
 import {KitTabs} from 'aristid-ds';
 import clx from 'classnames';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
-import {ApplicationMatchingContextWithoutFullpageParentTuple, IApplicationMatchingContext, PanelLevel} from '../types';
+import {type ApplicationMatchingContextWithoutFullpageParentTuple, type IApplicationMatchingContext, type PanelLevel} from '../types';
 import {routes} from '../routes';
 import {SidePanelContent} from '../../layout/SidePanelContent';
 import {usePanelHeader} from './usePanelHeader';

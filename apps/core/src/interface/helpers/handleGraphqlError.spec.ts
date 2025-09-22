@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import LeavError from '../../errors/LeavError';
+import type LeavError from '../../errors/LeavError';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {GraphQLError, GraphQLErrorExtensions} from 'graphql';
-import {IUtils} from 'utils/utils';
-import {IConfig} from '_types/config';
+import {type GraphQLError, type GraphQLErrorExtensions} from 'graphql';
+import {type IUtils} from 'utils/utils';
+import {type IConfig} from '_types/config';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {ErrorTypes, GRAPHQL_ERROR_CODES} from '../../_types/errors';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import handleGraphqlError from './handleGraphqlError';
-import winston from 'winston';
+import type winston from 'winston';
 
 describe('handleGraphqlError', () => {
     const mockConfig = {

@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen, within} from '_ui/_tests/testUtils';
-import {ExplorerFilter, IExplorerFilterStandardValueList, IExplorerFilterValueList} from '../../_types';
+import {type ExplorerFilter, type IExplorerFilterStandardValueList, type IExplorerFilterValueList} from '../../_types';
 import {CommonFilterItem} from './CommonFilterItem';
 import * as gqlTypes from '_ui/_gqlTypes';
-import {AttributeType, RecordFilterCondition, TreeDataQueryQueryHookResult} from '_ui/_gqlTypes';
+import {AttributeType, RecordFilterCondition, type TreeDataQueryQueryHookResult} from '_ui/_gqlTypes';
 import {AttributeConditionFilter} from '_ui/types';
-import {FunctionComponent, useReducer} from 'react';
-import {IViewSettingsState, viewSettingsReducer} from '../store-view-settings/viewSettingsReducer';
+import {type FunctionComponent, useReducer} from 'react';
+import {type IViewSettingsState, viewSettingsReducer} from '../store-view-settings/viewSettingsReducer';
 import {ViewSettingsContext} from '../store-view-settings/ViewSettingsContext';
 import {viewSettingsInitialState} from '../store-view-settings/viewSettingsInitialState';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import dayjs from 'dayjs';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
 import userEvent from '@testing-library/user-event';
-import {Mockify} from '@leav/utils';
+import {type Mockify} from '@leav/utils';
 
 const getAllConditionOptions = (base: ReturnType<typeof render>['baseElement']) =>
     base.getElementsByClassName('rc-virtual-list')[0].getElementsByClassName('kit-select-option');

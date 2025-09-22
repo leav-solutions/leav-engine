@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {SharedStateSelection, SharedStateSelectionType} from '_types/types';
-import {ISelectionState} from './stateType';
+import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
+import {type SharedStateSelection, SharedStateSelectionType} from '_types/types';
+import {type ISelectionState} from './stateType';
 
 export const selectionInitialState: ISelectionState = {
     selection: {

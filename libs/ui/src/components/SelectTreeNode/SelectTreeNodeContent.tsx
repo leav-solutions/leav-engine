@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, FunctionComponent, useEffect, useRef, useState} from 'react';
+import {type ComponentProps, type FunctionComponent, useEffect, useRef, useState} from 'react';
 import {KitTree} from 'aristid-ds';
 import {Spin} from 'antd';
-import {EventDataNode} from 'antd/lib/tree';
-import {ITreeNodeWithRecord} from '_ui/types';
-import {ChildrenAsRecordValuePermissionFilterInput, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
+import {type EventDataNode} from 'antd/lib/tree';
+import {type ITreeNodeWithRecord} from '_ui/types';
+import {type ChildrenAsRecordValuePermissionFilterInput, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
 import {defaultPaginationPageSize, ErrorDisplay} from '../..';
 import {TreeNodeTitle} from './TreeNodeTitle';
-import {_isObjectSelection, ITreeMap, ITreeMapElement} from './_types';
+import {_isObjectSelection, type ITreeMap, type ITreeMapElement} from './_types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 interface ISelectTreeNodeContentProps {

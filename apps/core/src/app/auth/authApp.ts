@@ -2,34 +2,34 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as bcrypt from 'bcryptjs';
-import {IApiKeyDomain} from 'domain/apiKey/apiKeyDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {IUserDomain} from 'domain/user/userDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
-import {CookieOptions, NextFunction, Request, Response} from 'express';
+import {type IApiKeyDomain} from 'domain/apiKey/apiKeyDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type IUserDomain} from 'domain/user/userDomain';
+import {type IValueDomain} from 'domain/value/valueDomain';
+import {type CookieOptions, type NextFunction, type Request, type Response} from 'express';
 import useragent from 'express-useragent';
-import jwt, {Algorithm} from 'jsonwebtoken';
+import jwt, {type Algorithm} from 'jsonwebtoken';
 import ms from 'ms';
 import {v4 as uuidv4} from 'uuid';
-import {IConfig} from '_types/config';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IQueryInfos} from '_types/queryInfos';
-import {IStandardValue, ITreeValue} from '_types/value';
+import {type IConfig} from '_types/config';
+import {type IAppGraphQLSchema} from '_types/graphql';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IStandardValue, type ITreeValue} from '_types/value';
 import AuthenticationError from '../../errors/AuthenticationError';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
-import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData, REFRESH_TOKEN_COOKIE_NAME} from '../../_types/auth';
+import {ACCESS_TOKEN_COOKIE_NAME, type ITokenUserData, REFRESH_TOKEN_COOKIE_NAME} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
-import {AttributeCondition, IRecord} from '../../_types/record';
-import {IRequestWithContext} from '../../_types/express';
-import winston from 'winston';
-import {IOIDCClientService} from '../../infra/oidc/oidcClientService';
-import {InitQueryContextFunc} from '../helpers/initQueryContext';
-import {IConvertOIDCIdentifier} from '../helpers/convertOIDCIdentifier';
-import {IncomingHttpHeaders} from 'http';
-import {IRecordRepo} from '../../infra/record/recordRepo';
-import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
-import {IServerRouteAppModule} from 'interface/server';
+import {AttributeCondition, type IRecord} from '../../_types/record';
+import {type IRequestWithContext} from '../../_types/express';
+import type winston from 'winston';
+import {type IOIDCClientService} from '../../infra/oidc/oidcClientService';
+import {type InitQueryContextFunc} from '../helpers/initQueryContext';
+import {type IConvertOIDCIdentifier} from '../helpers/convertOIDCIdentifier';
+import {type IncomingHttpHeaders} from 'http';
+import {type IRecordRepo} from '../../infra/record/recordRepo';
+import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {type IServerRouteAppModule} from 'interface/server';
 import {adminsGroupId} from '../../_constants/users';
 
 export interface IAuthApp extends IGraphqlAppModule, IServerRouteAppModule {

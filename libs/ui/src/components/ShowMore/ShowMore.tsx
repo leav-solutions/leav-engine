@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useIntersectionObserver} from '@uidotdev/usehooks';
-import {FunctionComponent, useEffect} from 'react';
+import {type FunctionComponent, useEffect} from 'react';
 import {Loading} from '../Loading';
 
 interface IShowMoreProps {

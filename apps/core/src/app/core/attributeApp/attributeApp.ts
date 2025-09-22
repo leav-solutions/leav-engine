@@ -1,35 +1,35 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
-import {GraphQLResolveInfo} from 'graphql';
-import {IUtils} from 'utils/utils';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IList} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IKeyValue} from '_types/shared';
+import {type IActionsListDomain} from 'domain/actionsList/actionsListDomain';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type IPermissionDomain} from 'domain/permission/permissionDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
+import {type GraphQLResolveInfo} from 'graphql';
+import {type IUtils} from 'utils/utils';
+import {type IAppGraphQLSchema} from '_types/graphql';
+import {type IList} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IKeyValue} from '_types/shared';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {
     AttributeFormats,
     AttributeTypes,
     MultiDisplayOption,
-    IAttribute,
-    IAttributeFilterOptions,
-    IAttributeVersionsConf,
-    IGetCoreAttributesParams,
-    IValuesListConf
+    type IAttribute,
+    type IAttributeFilterOptions,
+    type IAttributeVersionsConf,
+    type IGetCoreAttributesParams,
+    type IValuesListConf
 } from '../../../_types/attribute';
 import {AttributePermissionsActions, PermissionTypes} from '../../../_types/permissions';
-import {AttributeCondition, IRecord} from '../../../_types/record';
-import {IGraphqlAppModule, IGraphqlApp} from '../../graphql/graphqlApp';
-import {ICoreApp} from '../coreApp';
-import {Override} from '@leav/utils';
+import {AttributeCondition, type IRecord} from '../../../_types/record';
+import {type IGraphqlAppModule, type IGraphqlApp} from '../../graphql/graphqlApp';
+import {type ICoreApp} from '../coreApp';
+import {type Override} from '@leav/utils';
 
 export type ICoreAttributeApp = IGraphqlAppModule;
 

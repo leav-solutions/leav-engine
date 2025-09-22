@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {themeVars} from '_ui/antdTheme';
-import {IItem} from '_ui/types/search';
+import {type IItem} from '_ui/types/search';
 import {render, screen} from '_ui/_tests/testUtils';
 import MockSearchContextProvider from '_ui/__mocks__/common/mockSearchContextProvider';
 import {mockRecord} from '_ui/__mocks__/common/record';

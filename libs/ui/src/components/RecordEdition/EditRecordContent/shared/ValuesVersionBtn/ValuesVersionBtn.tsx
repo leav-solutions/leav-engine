@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, ButtonProps, Dropdown, Space} from 'antd';
-import {ItemType} from 'antd/es/menu/interface';
-import {MenuItemType} from 'rc-menu/lib/interface';
+import {Button, type ButtonProps, Dropdown, Space} from 'antd';
+import {type ItemType} from 'antd/es/menu/interface';
+import {type MenuItemType} from 'rc-menu/lib/interface';
 import {VscLayers, VscLayersActive} from 'react-icons/vsc';
 import {themeVars} from '_ui/antdTheme';
 import {BasicButton} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IValueVersion} from '_ui/types/values';
+import {type IValueVersion} from '_ui/types/values';
 import {getValueVersionLabel} from '_ui/_utils';
 import {VersionFieldScope} from '../../_types';
 

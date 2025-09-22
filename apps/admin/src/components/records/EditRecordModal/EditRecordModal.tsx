@@ -4,10 +4,10 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Modal} from 'semantic-ui-react';
-import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
-import {RecordEdition} from '../../../_types/records';
+import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
+import {type RecordEdition} from '../../../_types/records';
 import RecordCard from '../../shared/RecordCard';
-import EditRecord, {IEditRecordProps} from '../EditRecord/EditRecord';
+import EditRecord, {type IEditRecordProps} from '../EditRecord/EditRecord';
 
 interface IEditRecordModalProps extends IEditRecordProps {
     open: boolean;

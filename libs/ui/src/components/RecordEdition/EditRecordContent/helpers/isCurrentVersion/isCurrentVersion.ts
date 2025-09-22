@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IValueVersion} from '_ui/types/values';
+import {type IValueVersion} from '_ui/types/values';
 
 /**
  * Check if given version matches the reference version. As reference version might contains

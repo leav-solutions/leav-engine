@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {IDbService} from 'infra/db/dbService';
-import {IDbUtils} from 'infra/db/dbUtils';
-import {IAttribute} from '_types/attribute';
-import {IList} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IGetCoreEntitiesParams} from '_types/shared';
-import {IGetCoreVersionProfileParams, IVersionProfile} from '_types/versionProfile';
+import {type IDbService} from 'infra/db/dbService';
+import {type IDbUtils} from 'infra/db/dbUtils';
+import {type IAttribute} from '_types/attribute';
+import {type IList} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IGetCoreEntitiesParams} from '_types/shared';
+import {type IGetCoreVersionProfileParams, type IVersionProfile} from '_types/versionProfile';
 import {ATTRIB_COLLECTION_NAME} from '../../infra/attribute/attributeRepo';
 
 export const VERSION_PROFILE_COLLECTION_NAME = 'core_version_profiles';

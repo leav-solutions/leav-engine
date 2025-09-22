@@ -3,28 +3,28 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorTypes} from '@leav/utils';
 import {Errors} from '../../_types/errors';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IValidateHelper} from 'domain/helpers/validate';
-import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
-import {i18n} from 'i18next';
-import {ICachesService} from 'infra/cache/cacheService';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {IRecordRepo} from 'infra/record/recordRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
-import {IUtils, ToAny} from 'utils/utils';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import {IStandardValue, IValue} from '_types/value';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type IValidateHelper} from 'domain/helpers/validate';
+import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
+import {type IValueDomain} from 'domain/value/valueDomain';
+import {type i18n} from 'i18next';
+import {type ICachesService} from 'infra/cache/cacheService';
+import {type ILibraryRepo} from 'infra/library/libraryRepo';
+import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IValueRepo} from 'infra/value/valueRepo';
+import {type IUtils, type ToAny} from 'utils/utils';
+import type * as Config from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IStandardValue, type IValue} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {LibraryBehavior} from '../../_types/library';
-import {AttributeCondition, IRecord, Operator} from '../../_types/record';
+import {AttributeCondition, type IRecord, Operator} from '../../_types/record';
 import {
     dateRangeAttributeMock,
     mockAttrAdvLink,
@@ -39,14 +39,14 @@ import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTranslatorWithOptions} from '../../__tests__/mocks/translator';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {mockStandardValue} from '../../__tests__/mocks/value';
-import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import recordDomain, {IRecordDomainDeps} from './recordDomain';
-import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
-import {IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
+import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
+import recordDomain, {type IRecordDomainDeps} from './recordDomain';
+import {type IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
+import {type IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
 import * as ValidateValue from '../value/helpers/validateValue';
-import {ICreateRecordValueError} from './_types';
+import {type ICreateRecordValueError} from './_types';
 import {createRecord as createRecordHelper, deleteRecord as deleteRecordHelper} from './helpers';
-import {IFormRepo} from 'infra/form/formRepo';
+import {type IFormRepo} from 'infra/form/formRepo';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}

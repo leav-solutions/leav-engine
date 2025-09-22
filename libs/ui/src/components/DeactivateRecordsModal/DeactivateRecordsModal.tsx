@@ -4,7 +4,7 @@
 
 import {Modal} from 'antd';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IFilter, ISearchSelection} from '_ui/types';
+import {type IFilter, type ISearchSelection} from '_ui/types';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {getRequestFromFilters} from '_ui/_utils/getRequestFromFilter';
 import {ErrorDisplay} from '../ErrorDisplay';

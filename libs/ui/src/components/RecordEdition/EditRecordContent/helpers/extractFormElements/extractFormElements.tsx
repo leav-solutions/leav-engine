@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordForm} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
+import {type IRecordForm} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
 import {formComponents} from '../../uiElements';
 import ErrorField from '../../uiElements/ErrorField';
-import {IFormElementsByContainer} from '../../_types';
-import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
-import {QueryResult} from '@apollo/client';
+import {type IFormElementsByContainer} from '../../_types';
+import {type GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
+import {type QueryResult} from '@apollo/client';
 
 const isComputeValueInError = (computeErrors: QueryResult['error'], attributeId: string): boolean =>
     computeErrors?.graphQLErrors[0]?.extensions?.fields?.[attributeId];

@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as fs from 'fs';
 import * as path from 'path';
-import {ConsumeMessage} from 'amqplib';
+import {type ConsumeMessage} from 'amqplib';
 import {processPreview} from '../processPreview/processPreview';
-import {IConfig} from '../types/types';
+import {type IConfig} from '../types/types';
 
 export const startBench = async (jsonFile: string, dest: string, config: IConfig) => {
     const data: string = fs.readFileSync(jsonFile, 'utf8');

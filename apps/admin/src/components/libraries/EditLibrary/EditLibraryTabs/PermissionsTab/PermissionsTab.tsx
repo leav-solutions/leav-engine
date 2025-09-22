@@ -4,9 +4,9 @@
 import {useMutation} from '@apollo/client';
 import React from 'react';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
-import {GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
-import {SAVE_LIBRARY, SAVE_LIBRARYVariables} from '../../../../../_gqlTypes/SAVE_LIBRARY';
+import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
+import {type Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
+import {type SAVE_LIBRARY, type SAVE_LIBRARYVariables} from '../../../../../_gqlTypes/SAVE_LIBRARY';
 import PermissionsContent from './PermissionsContent';
 
 interface IPermissionsTabProps {

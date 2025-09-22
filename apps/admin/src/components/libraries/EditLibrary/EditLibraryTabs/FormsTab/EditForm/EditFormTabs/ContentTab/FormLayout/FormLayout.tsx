@@ -7,7 +7,7 @@ import {FormElementTypes} from '../../../../../../../../../_gqlTypes/globalTypes
 import {defaultContainerId} from '../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../formBuilderReducer/hook/useFormBuilderReducer';
 import {layoutElements} from '../uiElements';
-import {IFormElement, UIElementTypes} from '../_types';
+import {type IFormElement, UIElementTypes} from '../_types';
 import SettingsEdition from './SettingsEdition';
 
 function FormLayout(): JSX.Element {

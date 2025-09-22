@@ -3,19 +3,19 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
 import {aql} from 'arangojs/aql';
-import {DocumentCollection} from 'arangojs/collection';
-import {IDbService} from 'infra/db/dbService';
-import {IDbUtils} from 'infra/db/dbUtils';
-import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {IQueryInfos} from '_types/queryInfos';
+import {type DocumentCollection} from 'arangojs/collection';
+import {type IDbService} from 'infra/db/dbService';
+import {type IDbUtils} from 'infra/db/dbUtils';
+import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
+import {type IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {mockAttrSimpleLink} from '../../__tests__/mocks/attribute';
 import {mockRecord} from '../../__tests__/mocks/record';
 import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
-import {IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
-import {IAttributeSimpleRepo} from './attributeSimpleRepo';
-import {ISaveLinkValue} from '_types/value';
+import {type IAttributeTypeRepo, type IAttributeWithRevLink} from './attributeTypesRepo';
+import {type IAttributeSimpleRepo} from './attributeSimpleRepo';
+import {type ISaveLinkValue} from '_types/value';
 
 describe('AttributeSimpleLinkRepo', () => {
     const mockAttribute: IAttributeWithRevLink = {

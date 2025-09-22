@@ -7,7 +7,7 @@ import MockSearchContextProvider from '_ui/__mocks__/common/mockSearchContextPro
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockGetLibraryDetailExtendedElement} from '_ui/__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import {initialSearchState} from '../../hooks/useSearchReducer/searchReducer';
-import {ISearchState, SearchStateError} from '../../hooks/useSearchReducer/_types';
+import {type ISearchState, type SearchStateError} from '../../hooks/useSearchReducer/_types';
 import BodyCell from './BodyCell';
 
 jest.mock(

@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {map, TreeItem} from 'react-sortable-tree';
+import {map, type TreeItem} from 'react-sortable-tree';
 import {Button, ButtonGroup} from 'semantic-ui-react';
-import {IFlatItem} from '../EmbeddedFieldsTab';
+import {type IFlatItem} from '../EmbeddedFieldsTab';
 
 interface IExpandButtonProps {
     flatItems: TreeItem[];

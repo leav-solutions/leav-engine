@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    RecordFormAttributeStandardAttributeFragment,
-    StandardValuesListFragmentStandardDateRangeValuesListConfFragment,
-    StandardValuesListFragmentStandardStringValuesListConfFragment
+    type RecordFormAttributeStandardAttributeFragment,
+    type StandardValuesListFragmentStandardDateRangeValuesListConfFragment,
+    type StandardValuesListFragmentStandardStringValuesListConfFragment
 } from '_ui/_gqlTypes';
-import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {SelectProps} from 'antd';
+import {type IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {type SelectProps} from 'antd';
 
 export interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps> {
     presentationValue: string;

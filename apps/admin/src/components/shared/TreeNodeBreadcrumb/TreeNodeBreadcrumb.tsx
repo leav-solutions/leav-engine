@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {Breadcrumb, BreadcrumbSectionProps} from 'semantic-ui-react';
-import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
-import {ITreeLinkElement} from '../../../_types/records';
+import {Breadcrumb, type BreadcrumbSectionProps} from 'semantic-ui-react';
+import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
+import {type ITreeLinkElement} from '../../../_types/records';
 import PathPart from './PathPart';
 
 export interface ITreeBreadcrumbMenuItem {

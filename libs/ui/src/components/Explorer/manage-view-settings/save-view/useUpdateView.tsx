@@ -8,12 +8,12 @@ import {useViewSettingsContext} from '../store-view-settings/useViewSettingsCont
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import useExecuteUpdateViewMutation from '../../_queries/useExecuteUpdateViewMutation';
 import {prepareViewForRequest} from './prepareViewForRequest';
-import {IViewDisplay} from '_ui/types';
+import {type IViewDisplay} from '_ui/types';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
 import {useTransformFilters} from '../_shared/useTransformFilters';
 import {useEffect, useRef, useState} from 'react';
 import {useMeQuery} from '_ui/_gqlTypes';
-import {IUserView} from '../../_types';
+import {type IUserView} from '../../_types';
 
 export const useUpdateView = () => {
     const {t} = useSharedTranslation();

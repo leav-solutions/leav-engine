@@ -7,9 +7,9 @@ import Loading from 'components/shared/Loading';
 import EditApplicationContext from 'context/EditApplicationContext';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {useTranslation} from 'react-i18next';
-import {match} from 'react-router-dom-v5';
+import {type match} from 'react-router-dom-v5';
 import styled from 'styled-components';
-import {GET_APPLICATION_BY_ID, GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {type GET_APPLICATION_BY_ID, type GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import EditApplicationTabs from './EditApplicationTabs';
 
 export interface IEditApplicationMatchParams {

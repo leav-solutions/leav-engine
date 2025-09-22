@@ -1,20 +1,20 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
-import {IDbDocument} from 'infra/db/_types';
-import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {IUtils} from 'utils/utils';
+import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
+import {type IDbDocument} from 'infra/db/_types';
+import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
+import {type IUtils} from 'utils/utils';
 import {getEdgesCollectionName, getFullNodeId} from '../../infra/tree/helpers/utils';
 import {NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from '../../infra/tree/_types';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
-import {IRecord} from '../../_types/record';
-import {ITreeValue, IValueEdge} from '../../_types/value';
-import {IDbService} from '../db/dbService';
-import {IDbUtils} from '../db/dbUtils';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
-import {GetConditionPart} from './helpers/getConditionPart';
+import {AttributeFormats, type AttributeTypes, type IAttribute} from '../../_types/attribute';
+import {type IRecord} from '../../_types/record';
+import {type ITreeValue, type IValueEdge} from '../../_types/value';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
+import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
+import {type GetConditionPart} from './helpers/getConditionPart';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;

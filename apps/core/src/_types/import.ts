@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ReadStream} from 'fs-capacitor';
-import {IValueMetadata, IValueVersion} from './value';
+import {type IValueMetadata, IValueVersion} from './value';
 
 export enum ImportType {
     IGNORE = 'IGNORE',

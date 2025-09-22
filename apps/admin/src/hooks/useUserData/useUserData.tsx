@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useContext} from 'react';
 import UserContext from '../../components/shared/UserContext';
-import {IUserContext} from '../../components/shared/UserContext/UserContext';
+import {type IUserContext} from '../../components/shared/UserContext/UserContext';
 
 function useUserData(): IUserContext {
     const userData = useContext(UserContext);

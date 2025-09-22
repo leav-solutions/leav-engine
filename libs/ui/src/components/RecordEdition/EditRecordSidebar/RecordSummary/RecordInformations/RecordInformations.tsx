@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useState} from 'react';
-import {IRecordIdentityWhoAmI} from '_ui/types';
+import {type FunctionComponent, useState} from 'react';
+import {type IRecordIdentityWhoAmI} from '_ui/types';
 import styled from 'styled-components';
 import {KitButton, KitTooltip} from 'aristid-ds';
 import {FaExpand} from 'react-icons/fa';
 import PropertiesList from '../../PropertiesList';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
+import {type GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
 import {useRecordInformations} from './useRecordInformations';
 import FileModal from '_ui/components/RecordPreviewWithModal/FileModal';
 import {EntityPreview} from '_ui/components/EntityPreview';

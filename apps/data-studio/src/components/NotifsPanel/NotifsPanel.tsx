@@ -11,8 +11,8 @@ import {setIsPanelOpen} from 'reduxStore/notifications';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {deleteTasks} from 'reduxStore/tasks';
 import {isCompletedTask, isInProgressTask} from 'utils';
-import {CANCEL_TASK, CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
-import {DELETE_TASKS, DELETE_TASKSVariables} from '_gqlTypes/DELETE_TASKS';
+import {type CANCEL_TASK, type CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
+import {type DELETE_TASKS, type DELETE_TASKSVariables} from '_gqlTypes/DELETE_TASKS';
 import {NotifTypes} from '_types/types';
 import TaskItem from './TaskItem';
 

@@ -1,24 +1,24 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Override} from '@leav/utils';
+import {type Override} from '@leav/utils';
 import {
-    AttributeFormat,
-    AttributePropertiesFragment,
+    type AttributeFormat,
+    type AttributePropertiesFragment,
     AttributeType,
-    LinkAttributeDetailsFragment,
-    PropertyValueFragment,
-    RecordFilterCondition,
-    RecordFilterInput,
-    RecordIdentityFragment,
-    StandardAttributeDetailsFragment,
-    ViewDetailsFilterFragment
+    type LinkAttributeDetailsFragment,
+    type PropertyValueFragment,
+    type RecordFilterCondition,
+    type RecordFilterInput,
+    type RecordIdentityFragment,
+    type StandardAttributeDetailsFragment,
+    type ViewDetailsFilterFragment
 } from '_ui/_gqlTypes';
-import {Key, ReactElement} from 'react';
-import {IViewSettingsState} from './manage-view-settings';
+import {type Key, type ReactElement} from 'react';
+import {type IViewSettingsState} from './manage-view-settings';
 import {ThroughConditionFilter} from '_ui/types/search';
-import {IView} from '_ui/types';
-import {MASS_SELECTION_ALL} from './_constants';
+import {type IView} from '_ui/types';
+import {type MASS_SELECTION_ALL} from './_constants';
 
 export type MassSelection = Key[] | typeof MASS_SELECTION_ALL;
 

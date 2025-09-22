@@ -5,8 +5,8 @@ import {
     ErrorDisplay,
     ErrorDisplayTypes,
     Explorer,
-    IFilter,
-    ISearchSelection,
+    type IFilter,
+    type ISearchSelection,
     LibraryItemsList,
     Loading,
     useLang
@@ -14,13 +14,13 @@ import {
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useActiveLibrary} from 'hooks/useActiveLibrary';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery';
-import {FunctionComponent, useEffect, useRef} from 'react';
+import {type FunctionComponent, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {explorerLinkQueryParamName, explorerLibraryQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
-import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
+import {type IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useSearchParams} from 'react-router-dom';
 import {FaBeer} from 'react-icons/all';
 import styled from 'styled-components';

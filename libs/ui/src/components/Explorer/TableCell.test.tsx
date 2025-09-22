@@ -5,11 +5,11 @@ import ResizeObserver from 'resize-observer-polyfill';
 import {render, screen} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {
-    AttributePropertiesFragment,
+    type AttributePropertiesFragment,
     AttributeType,
     MultiDisplayOption,
-    PropertyValueLinkValueFragment,
-    PropertyValueTreeValueFragment
+    type PropertyValueLinkValueFragment,
+    type PropertyValueTreeValueFragment
 } from '_ui/_gqlTypes';
 import {TableCell} from './TableCell';
 

@@ -7,20 +7,20 @@ import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
-import {GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {type GET_ATTRIBUTE_BY_ID, type GET_ATTRIBUTE_BY_IDVariables} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {
     FormElementSettingsInputTypes,
-    IFormElementSettings,
-    ISettingsFieldCommonProps,
-    SettingsOnChangeFunc
+    type IFormElementSettings,
+    type ISettingsFieldCommonProps,
+    type SettingsOnChangeFunc
 } from '../../../_types';
-import SettingsAttribute, {ISettingsAttributeProps} from './SettingsInput/SettingsAttribute';
+import SettingsAttribute, {type ISettingsAttributeProps} from './SettingsInput/SettingsAttribute';
 import SettingsCheckbox from './SettingsInput/SettingsCheckbox';
 import SettingsRTE from './SettingsInput/SettingsRTE';
-import SettingsSelect, {ISettingsFieldSelectProps} from './SettingsInput/SettingsSelect';
+import SettingsSelect, {type ISettingsFieldSelectProps} from './SettingsInput/SettingsSelect';
 import SettingsTextInput from './SettingsInput/SettingsTextInput';
 
 interface ISettingsFieldProps {

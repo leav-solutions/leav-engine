@@ -7,10 +7,10 @@ import {useTreeLibraryAllowedAsChild} from 'hooks/useTreeLibraryAllowedAsChild';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {IInfo, InfoChannel, InfoType} from '_types/types';
+import {type IInfo, InfoChannel, InfoType} from '_types/types';
 import DefaultActions from './DefaultActions';
 import SelectionActions from './SelectionActions';
-import {OnMessagesFunc} from './_types';
+import {type OnMessagesFunc} from './_types';
 
 interface IActiveHeaderCellNavigationProps {
     depth: number;

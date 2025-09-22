@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {v1 as uuidv1} from 'uuid';
-import {ErrorFieldDetail, ErrorTypes} from '../_types/errors';
+import {type ErrorFieldDetail, type ErrorTypes} from '../_types/errors';
 
 interface ILeavErrorRecord {
     id: string;

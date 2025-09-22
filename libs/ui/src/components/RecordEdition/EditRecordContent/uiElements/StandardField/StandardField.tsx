@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AnyPrimitive, ErrorTypes, IRequiredFieldsSettings, localizedTranslation} from '@leav/utils';
-import {FunctionComponent, useEffect, useRef, useState} from 'react';
+import {type AnyPrimitive, ErrorTypes, type IRequiredFieldsSettings, localizedTranslation} from '@leav/utils';
+import {type FunctionComponent, useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
-import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
-import {AttributeFormat, ValueDetailsFragment} from '_ui/_gqlTypes';
-import {APICallStatus, IFormElementProps, ISubmitMultipleResult} from '../../_types';
+import {type RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
+import {AttributeFormat, type ValueDetailsFragment} from '_ui/_gqlTypes';
+import {APICallStatus, type IFormElementProps, type ISubmitMultipleResult} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
-import {Form, FormInstance, FormListOperation} from 'antd';
+import {Form, type FormInstance, type FormListOperation} from 'antd';
 import {KitButton, KitInputWrapper, KitTooltip} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {FaPlus, FaTrash} from 'react-icons/fa';
@@ -18,7 +18,7 @@ import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculate
 import {useGetPresentationValues} from './useGetPresentationValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {getAntdDisplayedValue, getEmptyInitialValue} from '../../antdUtils';
-import {GetRecordColumnsValuesRecord, IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
+import {type GetRecordColumnsValuesRecord, type IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {STANDARD_FIELD_ID_PREFIX} from '_ui/constants';
 import {ComputeIndicator} from '../shared/ComputeIndicator';

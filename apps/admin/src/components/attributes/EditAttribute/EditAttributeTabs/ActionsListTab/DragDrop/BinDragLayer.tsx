@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import PropTypes from 'prop-types';
-import {Component, CSSProperties} from 'react';
+import {Component, type CSSProperties} from 'react';
 import {DragLayer} from 'react-dnd';
 import ALCCard from '../ALCCard';
 

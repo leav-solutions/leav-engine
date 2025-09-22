@@ -1,35 +1,35 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
+import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import DataLoader from 'dataloader';
-import {GetConditionPart} from 'infra/attributeTypes/helpers/getConditionPart';
-import {IDbDocument, IExecuteWithCount} from 'infra/db/_types';
-import {GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
-import {IQueryInfos} from '_types/queryInfos';
+import {type GetConditionPart} from 'infra/attributeTypes/helpers/getConditionPart';
+import {type IDbDocument, type IExecuteWithCount} from 'infra/db/_types';
+import {type GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
+import {type IQueryInfos} from '_types/queryInfos';
 import {
     CursorDirection,
-    ICursorPaginationParams,
-    IListWithCursor,
-    IPaginationCursors,
-    IPaginationParams
+    type ICursorPaginationParams,
+    type IListWithCursor,
+    type IPaginationCursors,
+    type IPaginationParams
 } from '../../_types/list';
 import {
     AttributeCondition,
-    IRecord,
-    IRecordFilterOption,
-    IRecordSort,
+    type IRecord,
+    type IRecordFilterOption,
+    type IRecordSort,
     Operator,
     TreeCondition
 } from '../../_types/record';
-import {IAttributeRepo} from '../attribute/attributeRepo';
-import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
-import {IDbService} from '../db/dbService';
-import {IDbUtils} from '../db/dbUtils';
-import {IFilterTypesHelper} from './helpers/filterTypes';
-import {GetSearchVariableName} from './helpers/getSearchVariableName';
-import {GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
-import {IGetAccessPermissionsValue} from 'domain/record/helpers/getAccessPermissionFilters';
+import {type IAttributeRepo} from '../attribute/attributeRepo';
+import {type IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
+import {type IFilterTypesHelper} from './helpers/filterTypes';
+import {type GetSearchVariableName} from './helpers/getSearchVariableName';
+import {type GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
+import {type IGetAccessPermissionsValue} from 'domain/record/helpers/getAccessPermissionFilters';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 

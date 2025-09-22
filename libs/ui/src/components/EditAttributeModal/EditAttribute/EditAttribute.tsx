@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Tabs, TabsProps} from 'antd';
+import {Tabs, type TabsProps} from 'antd';
 import styled from 'styled-components';
-import {AttributeDetailsFragment, useGetAttributeByIdQuery} from '../../../_gqlTypes';
+import {type AttributeDetailsFragment, useGetAttributeByIdQuery} from '../../../_gqlTypes';
 import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';

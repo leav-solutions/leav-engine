@@ -4,13 +4,13 @@
 import {CloseOutlined, PlusOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Collapse, Form, List, Select, Space, Switch} from 'antd';
-import {ComponentProps, ReactNode, useState} from 'react';
-import styled, {CSSObject} from 'styled-components';
-import {LibraryLightFragment, TreeDetailsFragment} from '../../../../../../_gqlTypes';
+import {type ComponentProps, type ReactNode, useState} from 'react';
+import styled, {type CSSObject} from 'styled-components';
+import {type LibraryLightFragment, type TreeDetailsFragment} from '../../../../../../_gqlTypes';
 import {PreviewSize} from '../../../../../../constants';
 import useLang from '../../../../../../hooks/useLang';
 import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';
-import {EntityCard, IEntityData} from '../../../../../EntityCard';
+import {EntityCard, type IEntityData} from '../../../../../EntityCard';
 import FieldsGroup from '../../../../../FieldsGroup';
 import {LibraryPicker} from '../../../../../LibraryPicker';
 

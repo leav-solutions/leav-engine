@@ -1,20 +1,20 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useState} from 'react';
+import {type FunctionComponent, useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
+import {type ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import {AntForm, KitButton, KitInputWrapper} from 'aristid-ds';
 import {FaList} from 'react-icons/fa';
 import {useLang} from '_ui/hooks';
-import {IFormElementProps} from '../../_types';
+import {type IFormElementProps} from '../../_types';
 import {
-    ChildrenAsRecordValuePermissionFilterInput,
-    RecordFormAttributeTreeAttributeFragment,
+    type ChildrenAsRecordValuePermissionFilterInput,
+    type RecordFormAttributeTreeAttributeFragment,
     RecordPermissionsActions
 } from '_ui/_gqlTypes';
 import {TREE_FIELD_ID_PREFIX} from '_ui/constants';
-import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
+import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {TreeNodeList} from './display-tree-node/TreeNodeList';
 import {useManageTreeNodeSelection} from './manage-tree-node-selection/useManageTreeNodeSelection';
 import {useOutsideInteractionDetector} from '../shared/useOutsideInteractionDetector';

@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ICorePluginsApp} from 'app/core/pluginsApp';
-import {asValue, AwilixContainer} from 'awilix';
+import {type ICorePluginsApp} from 'app/core/pluginsApp';
+import {asValue, type AwilixContainer} from 'awilix';
 import * as fs from 'fs';
-import {IExtensionPoints} from '_types/extensionPoints';
-import {IAppModule} from '_types/shared';
+import {type IExtensionPoints} from '_types/extensionPoints';
+import {type IAppModule} from '_types/shared';
 import {getConfig} from './config';
 import path from 'path';
 

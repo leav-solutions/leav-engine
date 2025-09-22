@@ -5,13 +5,13 @@ import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import useMenuItems from 'hooks/useMenuItems';
-import {IMenuItem} from 'hooks/useMenuItems/useMenuItems';
+import {type IMenuItem} from 'hooks/useMenuItems/useMenuItems';
 import {getStatsQuery} from 'queries/stats/getStatsQuery';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom-v5';
 import {Statistic} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_STATS} from '_gqlTypes/GET_STATS';
+import {type GET_STATS} from '_gqlTypes/GET_STATS';
 
 const StatsGroup = styled(Statistic.Group)`
     && {

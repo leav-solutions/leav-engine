@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
-import {GET_LIBRARIES_libraries_list} from '../../../../../_gqlTypes/GET_LIBRARIES';
+import {type GET_LIBRARIES_libraries_list} from '../../../../../_gqlTypes/GET_LIBRARIES';
 import Navigator from '../../../../navigator/Navigator';
 import EditRecordModal from '../../../../records/EditRecordModal';
 

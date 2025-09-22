@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttribute} from './attribute';
-import {IPreviewVersion} from './filesManager';
-import {ITreePermissionsConf} from './permissions';
-import {IRecordIdentityConf} from './record';
-import {ISystemTranslation} from './systemTranslation';
-import {IKeyValue} from './shared';
+import {type IAttribute} from './attribute';
+import {type IPreviewVersion} from './filesManager';
+import {type ITreePermissionsConf} from './permissions';
+import {type IRecordIdentityConf} from './record';
+import {type ISystemTranslation} from './systemTranslation';
+import {type IKeyValue} from './shared';
 
 export interface ILibrary extends ICoreEntity {
     system?: boolean;

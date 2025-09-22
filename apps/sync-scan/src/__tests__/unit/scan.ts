@@ -2,8 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {FilesystemContent} from '_types/filesystem';
-import {IDbScanResult} from '_types/queries';
+import {type FilesystemContent} from '_types/filesystem';
+import {type IDbScanResult} from '_types/queries';
+
 export const mockDbSettings = {
     filesLibraryId: 'files',
     directoriesLibraryId: 'directories'

@@ -7,7 +7,7 @@ import {act} from 'react-dom/test-utils';
 import {createRecordQuery} from '../../../../../queries/records/createRecordMutation';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {saveValueBatchQuery} from '../../../../../queries/values/saveValueBatchMutation';
-import {IValue, RecordData} from '../../../../../_types/records';
+import {type IValue, type RecordData} from '../../../../../_types/records';
 import {mockAttrSimple} from '../../../../../__mocks__/attributes';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import CreateRecordFormContainer from './CreateRecordFormContainer';

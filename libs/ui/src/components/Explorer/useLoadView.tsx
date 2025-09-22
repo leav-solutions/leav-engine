@@ -4,11 +4,11 @@
 import {useExplorerAttributesLazyQuery, useMeQuery} from '_ui/_gqlTypes';
 import {useRef} from 'react';
 import {useViewSettingsContext} from './manage-view-settings/store-view-settings/useViewSettingsContext';
-import {IUserView, validFilter} from './_types';
+import {type IUserView, type validFilter} from './_types';
 import {useEditSettings, ViewSettingsActionTypes} from './manage-view-settings';
-import {useTransformFilters, ValidFiltersArgument} from './manage-view-settings/_shared/useTransformFilters';
+import {useTransformFilters, type ValidFiltersArgument} from './manage-view-settings/_shared/useTransformFilters';
 import {mapViewTypeFromExplorerToLegacy, mapViewTypeFromLegacyToExplorer} from './_constants';
-import {IViewSettingsActionLoadViewPayload} from './manage-view-settings/store-view-settings/viewSettingsReducer';
+import {type IViewSettingsActionLoadViewPayload} from './manage-view-settings/store-view-settings/viewSettingsReducer';
 
 export const useLoadView = () => {
     const {view, dispatch} = useViewSettingsContext();

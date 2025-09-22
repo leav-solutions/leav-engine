@@ -8,7 +8,7 @@ import {Button, Header} from 'semantic-ui-react';
 import ALCCard from '../ALCCard';
 import Connector from '../ALCConnectors';
 import ALCListSelector from '../ALCListSelector';
-import {IAllActionLists, IColorDic, IDragObject, IParamInput} from '../interfaces/interfaces';
+import {type IAllActionLists, type IColorDic, type IDragObject, type IParamInput} from '../interfaces/interfaces';
 import ItemTypes from '../ItemTypes';
 import {ALCPlaceholder, HiddenDiv, ListContainer, ListContent} from '../stylesComps';
 import {doArrayIntersect} from '../utils/doArrayIntersect';

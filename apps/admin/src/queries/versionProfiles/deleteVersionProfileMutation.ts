@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {gql} from '@apollo/client';
+
 export const deleteVersionProfileMutation = gql`
     mutation DELETE_VERSION_PROFILE($id: String!) {
         deleteVersionProfile(id: $id) {

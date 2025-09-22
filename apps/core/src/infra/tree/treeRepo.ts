@@ -3,15 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, literal, join} from 'arangojs/aql';
 import {CollectionType} from 'arangojs/collection';
-import {IList, IPaginationParams} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IRecord} from '_types/record';
-import {IGetCoreEntitiesParams} from '_types/shared';
-import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, ITreeNodeLight, TreePath} from '_types/tree';
-import {IDbDocument, IDbEdge, IExecuteWithCount, isExecuteWithCount} from '../db/_types';
+import {type IList, type IPaginationParams} from '_types/list';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IRecord} from '_types/record';
+import {type IGetCoreEntitiesParams} from '_types/shared';
+import {type IGetCoreTreesParams, type ITree, type ITreeElement, type ITreeNode, type ITreeNodeLight, type TreePath} from '_types/tree';
+import {type IDbDocument, type IDbEdge, type IExecuteWithCount, isExecuteWithCount} from '../db/_types';
 import {VALUES_LINKS_COLLECTION} from '../value/valueRepo';
-import {IDbService} from '../db/dbService';
-import {IDbUtils} from '../db/dbUtils';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
 import {
     getEdgesCollectionName,
     getFullNodeId,
@@ -19,7 +19,7 @@ import {
     getNodesCollectionName,
     getRootId
 } from './helpers/utils';
-import {IChildrenResultNode, NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from './_types';
+import {type IChildrenResultNode, NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from './_types';
 import DataLoader from 'dataloader';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 

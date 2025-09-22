@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
+import {type IQueryInfos} from '_types/queryInfos';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import attributeSimpleRepo from './attributeSimpleRepo';
-import {IAttributeWithRevLink} from './attributeTypesRepo';
+import {type IAttributeWithRevLink} from './attributeTypesRepo';
 
 describe('AttributeSimpleRepo', () => {
     const mockAttribute: IAttributeWithRevLink = {

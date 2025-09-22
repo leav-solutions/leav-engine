@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
-import {FormUIElementTypes, IFormTabsSettings, localizedTranslation, TabsDirection} from '@leav/utils';
+import {type FunctionComponent} from 'react';
+import {FormUIElementTypes, type IFormTabsSettings, localizedTranslation, TabsDirection} from '@leav/utils';
 import {Tabs} from 'antd';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {useLang} from '_ui/hooks';
 import {FormElementTypes} from '_ui/_gqlTypes';
 import {formComponents} from '..';
-import {FormElement, IFormElementProps} from '../../_types';
+import {type FormElement, type IFormElementProps} from '../../_types';
 
 const StyledTabs = styled(Tabs)`
     && {

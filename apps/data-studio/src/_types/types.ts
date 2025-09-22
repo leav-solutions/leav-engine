@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {AttributeFormat, AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {type GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
+import {type AttributeFormat, type AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {type RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
-    ILibraryDetailExtendedAttributeParentLinkedLibrary,
-    ILibraryDetailExtendedAttributeParentLinkedTree
+    type ILibraryDetailExtendedAttributeParentLinkedLibrary,
+    type ILibraryDetailExtendedAttributeParentLinkedTree
 } from '../graphQL/queries/libraries/getLibraryDetailExtendQuery';
 
 export interface ISystemTranslation {

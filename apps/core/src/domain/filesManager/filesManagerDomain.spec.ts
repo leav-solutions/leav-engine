@@ -1,28 +1,28 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
+import {type IAmqpService} from '@leav/message-broker';
 import {PreviewPriority} from '@leav/utils';
-import * as amqp from 'amqplib';
-import {CreateDirectoryFunc} from 'domain/helpers/createDirectory';
-import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {i18n} from 'i18next';
-import {IRecordRepo} from 'infra/record/recordRepo';
-import {IUtils, ToAny} from 'utils/utils';
-import * as Config from '_types/config';
+import type * as amqp from 'amqplib';
+import {type CreateDirectoryFunc} from 'domain/helpers/createDirectory';
+import {type StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
+import {type ILibraryDomain} from 'domain/library/libraryDomain';
+import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
+import {type IRecordDomain} from 'domain/record/recordDomain';
+import {type ITreeDomain} from 'domain/tree/treeDomain';
+import {type i18n} from 'i18next';
+import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type IUtils, type ToAny} from 'utils/utils';
+import type * as Config from '_types/config';
 import ValidationError from '../../errors/ValidationError';
 import {LibraryBehavior} from '../../_types/library';
-import {IQueryInfos} from '../../_types/queryInfos';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, Operator} from '../../_types/record';
 import {mockLibrary, mockLibraryDirectories, mockLibraryFiles} from '../../__tests__/mocks/library';
 import {mockFileRecord, mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
-import filesManager, {IFilesManagerDomainDeps, IStoreFilesParams} from './filesManagerDomain';
+import filesManager, {type IFilesManagerDomainDeps, type IStoreFilesParams} from './filesManagerDomain';
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import {systemPreviewsSettings} from './_constants';
 import winston = require('winston');

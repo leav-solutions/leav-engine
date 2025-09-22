@@ -1,69 +1,69 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ErrorTypes, EventAction, localizedTranslation} from '@leav/utils';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
-import {IValidateHelper} from 'domain/helpers/validate';
-import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {ISaveBatchValueError, IValueDomain} from 'domain/value/valueDomain';
-import type {i18n} from 'i18next';
-import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {IRecordRepo} from 'infra/record/recordRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
+import {type ErrorTypes, EventAction, localizedTranslation} from '@leav/utils';
+import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
+import {type IValidateHelper} from 'domain/helpers/validate';
+import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
+import {type ISaveBatchValueError, type IValueDomain} from 'domain/value/valueDomain';
+import  {type i18n} from 'i18next';
+import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
+import {type ILibraryRepo} from 'infra/library/libraryRepo';
+import {type IRecordRepo} from 'infra/record/recordRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IValueRepo} from 'infra/value/valueRepo';
 import {join} from 'path';
-import {IUtils} from 'utils/utils';
-import * as Config from '_types/config';
-import {IListWithCursor} from '_types/list';
-import {IPreview} from '_types/preview';
-import {ISaveTreeValue, ISaveValue, IStandardValue, ITreeValue, IValue, IValuesOptions} from '_types/value';
+import {type IUtils} from 'utils/utils';
+import type * as Config from '_types/config';
+import {type IListWithCursor} from '_types/list';
+import {type IPreview} from '_types/preview';
+import {type ISaveTreeValue, type ISaveValue, type IStandardValue, type ITreeValue, type IValue, type IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {TypeGuards} from '../../utils';
 import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {ILibrary, LibraryBehavior} from '../../_types/library';
+import {type ILibrary, LibraryBehavior} from '../../_types/library';
 import {
     AttributePermissionsActions,
     LibraryPermissionsActions,
     RecordAttributePermissionsActions,
     RecordPermissionsActions
 } from '../../_types/permissions';
-import {IQueryInfos} from '../../_types/queryInfos';
+import {type IQueryInfos} from '../../_types/queryInfos';
 import {
     AttributeCondition,
-    IRecord,
-    IRecordFilterLight,
-    IRecordFilterOption,
-    IRecordIdentity,
-    IRecordIdentityConf,
-    IRecordSort,
+    type IRecord,
+    type IRecordFilterLight,
+    type IRecordFilterOption,
+    type IRecordIdentity,
+    type IRecordIdentityConf,
+    type IRecordSort,
     Operator,
     TreeCondition
 } from '../../_types/record';
-import {TreePath} from '../../_types/tree';
-import {IAttributeDomain} from '../attribute/attributeDomain';
-import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
+import {type TreePath} from '../../_types/tree';
+import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
-import {isRecordWithId, SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
-import {ICreateRecordResult, ICreateRecordValueError, IFindRecordParams} from './_types';
-import {IFormRepo} from 'infra/form/formRepo';
-import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
+import {isRecordWithId, type SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
+import {type ICreateRecordResult, type ICreateRecordValueError, type IFindRecordParams} from './_types';
+import {type IFormRepo} from 'infra/form/formRepo';
+import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import validateValue from '../value/helpers/validateValue';
-import {IAttributePermissionDomain} from '../permission/attributePermissionDomain';
+import {type IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 import getAccessPermissionFilters from './helpers/getAccessPermissionFilters';
-import {IPermissionRepo, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
-import {IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
-import {DeleteRecordHelper} from './helpers/deleteRecord';
-import {CreateRecordHelper} from './helpers/createRecord';
-import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
-import winston from 'winston';
+import {type IPermissionRepo, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
+import {type IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
+import {type DeleteRecordHelper} from './helpers/deleteRecord';
+import {type CreateRecordHelper} from './helpers/createRecord';
+import {type IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import type winston from 'winston';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.

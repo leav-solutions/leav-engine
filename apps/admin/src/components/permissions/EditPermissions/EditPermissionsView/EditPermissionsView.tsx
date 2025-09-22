@@ -10,10 +10,10 @@ import {Header, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils';
-import {GET_PERMISSIONS_inheritPerm, GET_PERMISSIONS_perm} from '../../../../_gqlTypes/GET_PERMISSIONS';
-import {GET_PERMISSIONS_ACTIONS_permissionsActionsByType} from '../../../../_gqlTypes/GET_PERMISSIONS_ACTIONS';
-import {SAVE_PERMISSION_savePermission_actions} from '../../../../_gqlTypes/SAVE_PERMISSION';
-import {IKeyValue} from '../../../../_types/shared';
+import {type GET_PERMISSIONS_inheritPerm, type GET_PERMISSIONS_perm} from '../../../../_gqlTypes/GET_PERMISSIONS';
+import {type GET_PERMISSIONS_ACTIONS_permissionsActionsByType} from '../../../../_gqlTypes/GET_PERMISSIONS_ACTIONS';
+import {type SAVE_PERMISSION_savePermission_actions} from '../../../../_gqlTypes/SAVE_PERMISSION';
+import {type IKeyValue} from '../../../../_types/shared';
 import PermissionSelector from './PermissionSelector';
 
 interface IEditPermissionsViewProps {

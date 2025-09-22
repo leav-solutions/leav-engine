@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import validateEmailAction from './validateEmailAction';
-import {IActionsListFunctionResult} from '_types/actionsList';
+import {type IActionsListFunctionResult} from '_types/actionsList';
 
 describe('validateEmailFormatAction', () => {
     const action = validateEmailAction().action;

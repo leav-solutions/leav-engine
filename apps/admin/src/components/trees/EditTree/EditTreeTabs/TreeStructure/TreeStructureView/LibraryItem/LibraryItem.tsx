@@ -8,8 +8,8 @@ import {useDrag} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_TREES_trees_list_libraries} from '_gqlTypes/GET_TREES';
-import {IDndDropResult, IDndLibraryItem, ROOT_ID} from '../../_types';
+import {type GET_TREES_trees_list_libraries} from '_gqlTypes/GET_TREES';
+import {type IDndDropResult, type IDndLibraryItem, ROOT_ID} from '../../_types';
 
 interface ILibraryItemProps {
     treeLibrary: GET_TREES_trees_list_libraries;

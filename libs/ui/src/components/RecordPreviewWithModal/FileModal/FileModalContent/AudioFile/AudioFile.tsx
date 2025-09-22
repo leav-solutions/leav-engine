@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
-import {IFileViewerProps} from '../_types';
+import {type IFileViewerProps} from '../_types';
 
 function AudioFile({fileData, fallback}: IFileViewerProps): JSX.Element {
     const [hasFailed, setHasFailed] = useState(false);

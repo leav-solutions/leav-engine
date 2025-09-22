@@ -5,7 +5,7 @@ import {Input} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
-import {IFilterInputProps} from '../../Filter';
+import {type IFilterInputProps} from '../../Filter';
 
 const Text = styled(Input.TextArea)`
     background: ${themeVars.defaultBg} 0% 0% no-repeat padding-box;

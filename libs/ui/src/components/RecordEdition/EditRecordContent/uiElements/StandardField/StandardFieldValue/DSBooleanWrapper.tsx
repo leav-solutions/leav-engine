@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitSwitch, KitTypography} from 'aristid-ds';
-import {FunctionComponent, KeyboardEvent, MouseEvent} from 'react';
+import {type FunctionComponent, type KeyboardEvent, type MouseEvent} from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IKitSwitch} from 'aristid-ds/dist/Kit/DataEntry/Switch/types';
+import {type IKitSwitch} from 'aristid-ds/dist/Kit/DataEntry/Switch/types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleXmark} from '@fortawesome/free-solid-svg-icons';
-import {IStandFieldValueContentProps} from './_types';
+import {type IStandFieldValueContentProps} from './_types';
 
 const KitTypographyTextStyled = styled(KitTypography.Text)`
     vertical-align: middle;

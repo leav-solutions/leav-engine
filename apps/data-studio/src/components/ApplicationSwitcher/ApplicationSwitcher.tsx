@@ -6,13 +6,13 @@ import {useQuery} from '@apollo/client';
 import {EntityPreview, ErrorDisplay, themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
-import {ItemType} from 'antd/es/menu/interface';
+import {type ItemType} from 'antd/es/menu/interface';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getApplicationsQuery} from 'graphQL/queries/applications/getApplicationsQuery';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
+import {type GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
 import AppLink from './AppLink';
 
 const AppsButton = styled(Button)`

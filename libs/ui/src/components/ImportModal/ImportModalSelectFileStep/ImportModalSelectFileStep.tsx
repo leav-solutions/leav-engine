@@ -4,20 +4,20 @@
 import {extractArgsFromString} from '@leav/utils';
 import {message, Space, Spin} from 'antd';
 import {KitAlert, KitUpload, useKitNotification} from 'aristid-ds';
-import {IKitDragger} from 'aristid-ds/dist/Kit/DataEntry/Upload/types';
+import {type IKitDragger} from 'aristid-ds/dist/Kit/DataEntry/Upload/types';
 import {useState} from 'react';
 import {read as xlsxRead, utils as xlsxUtils} from 'xlsx';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
-    AttributesByLibAttributeFragment,
-    AttributesByLibAttributeLinkAttributeFragment,
+    type AttributesByLibAttributeFragment,
+    type AttributesByLibAttributeLinkAttributeFragment,
     AttributeType,
     ImportMode,
     ImportType
 } from '_ui/_gqlTypes';
 import {ImportReducerActionTypes} from '../importReducer/importReducer';
 import {useImportReducerContext} from '../importReducer/ImportReducerContext';
-import {ISheet} from '../_types';
+import {type ISheet} from '../_types';
 
 interface IImportModalSelectFileStepsProps {
     onGetAttributes: (library: string) => Promise<AttributesByLibAttributeFragment[]>;

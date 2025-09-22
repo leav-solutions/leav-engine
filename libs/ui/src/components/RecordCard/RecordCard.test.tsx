@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import 'jest-styled-components';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {PreviewSize} from '../../constants';
-import {IRecordIdentityWhoAmI} from '../../types/records';
+import {type IRecordIdentityWhoAmI} from '../../types/records';
 import {act, render, screen} from '../../_tests/testUtils';
 import RecordCard from './RecordCard';
 

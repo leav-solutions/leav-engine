@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {type ILibraryRepo} from 'infra/library/libraryRepo';
+import {type ITreeRepo} from 'infra/tree/treeRepo';
+import {type IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
+import {AttributeFormats, AttributeTypes, type IAttribute} from '../../../_types/attribute';
 import {Errors} from '../../../_types/errors';
-import {AttributeCondition, IRecordFilterLight} from '../../../_types/record';
+import {AttributeCondition, type IRecordFilterLight} from '../../../_types/record';
 
 interface IDeps {
     'core.domain.attribute': IAttributeDomain;

@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps} from 'react';
-import {Explorer} from '@leav/ui';
+import {type ComponentProps} from 'react';
+import {type Explorer} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {generatePath} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {IconProp} from '@fortawesome/fontawesome-svg-core';
+import {type IconProp} from '@fortawesome/fontawesome-svg-core';
 import {
     fullpageRecordSearchParamsName,
     popupRecordSearchParamsName,
     routes,
     sliderRecordSearchParamsName
 } from '../routes';
-import {ItemActions} from '../types';
+import {type ItemActions} from '../types';
 
 export const mapperToItemActions = ({
     actions,

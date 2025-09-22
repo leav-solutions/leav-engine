@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AttributeFormat, ValueDetailsValueFragment} from '_ui/_gqlTypes';
-import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
+import {AttributeFormat, type ValueDetailsValueFragment} from '_ui/_gqlTypes';
+import {type RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const _isDateRangeValue = (value: any): value is {from: string; to: string} =>

@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import React from 'react';
-import {FormDropdownProps} from 'semantic-ui-react';
+import {type FormDropdownProps} from 'semantic-ui-react';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
-import {GET_ATTRIBUTESVariables} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {type GET_ATTRIBUTESVariables} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import TreesSelectorField from '../TreesSelectorField';
 
 interface IAttributesSelectorProps extends FormDropdownProps {

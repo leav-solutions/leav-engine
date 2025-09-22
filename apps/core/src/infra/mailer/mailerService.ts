@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
-import nodemailer from 'nodemailer';
-import {Attachment} from 'nodemailer/lib/mailer';
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
+import {type IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
+import type nodemailer from 'nodemailer';
+import {type Attachment} from 'nodemailer/lib/mailer';
+import {type IConfig} from '_types/config';
+import {type IQueryInfos} from '_types/queryInfos';
 
 export interface IMailerService {
     mailer?: nodemailer.Transporter;

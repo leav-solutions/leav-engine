@@ -3,26 +3,26 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useApolloClient} from '@apollo/client';
-import {localizedTranslation, Override} from '@leav/utils';
-import {Button, Input, Table, TableColumnsType} from 'antd';
-import {Key, useState} from 'react';
+import {localizedTranslation, type Override} from '@leav/utils';
+import {Button, Input, Table, type TableColumnsType} from 'antd';
+import {type Key, useState} from 'react';
 import styled from 'styled-components';
 import {PreviewSize} from '../../../constants';
 import {useLang} from '../../../hooks';
 import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {
-    GetLibrariesQuery,
-    LibraryLightFragment,
+    type GetLibrariesQuery,
+    type LibraryLightFragment,
     PermissionsActions,
     PermissionTypes,
-    SaveLibraryMutation,
+    type SaveLibraryMutation,
     useGetLibrariesQuery,
     useIsAllowedQuery
 } from '../../../_gqlTypes';
 import {getLibrariesQuery} from '../../../_queries/libraries/getLibrariesQuery';
 import {extractPermissionFromQuery} from '../../../_utils';
 import {EditLibraryModal} from '../../EditLibraryModal';
-import {EntityCard, IEntityData} from '../../EntityCard';
+import {EntityCard, type IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
 

@@ -8,7 +8,7 @@ import {
     HttpLink,
     InMemoryCache,
     Observable,
-    ServerError,
+    type ServerError,
     split
 } from '@apollo/client';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
@@ -18,7 +18,7 @@ import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {message} from 'antd';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
-import {FunctionComponent, useMemo} from 'react';
+import {type FunctionComponent, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 

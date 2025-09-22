@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 import styled from 'styled-components';
-import {RadioGroupProps} from 'aristid-ds/dist/Kit/DataEntry/Radio';
+import {type RadioGroupProps} from 'aristid-ds/dist/Kit/DataEntry/Radio';
 import {ViewSettingsActionTypes} from './../store-view-settings/viewSettingsReducer';
 import {useViewSettingsContext} from './../store-view-settings/useViewSettingsContext';
 import {SelectVisibleAttributes} from './attributes/SelectVisibleAttributes';

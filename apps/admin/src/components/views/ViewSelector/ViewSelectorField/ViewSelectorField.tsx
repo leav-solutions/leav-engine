@@ -5,7 +5,7 @@ import React from 'react';
 import {Form} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils';
-import {GET_VIEWS_views_list} from '../../../../_gqlTypes/GET_VIEWS';
+import {type GET_VIEWS_views_list} from '../../../../_gqlTypes/GET_VIEWS';
 
 interface IViewSelectorFieldProps {
     views: GET_VIEWS_views_list[];

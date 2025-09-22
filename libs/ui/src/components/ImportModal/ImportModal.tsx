@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined, FieldTimeOutlined, RightOutlined} from '@ant-design/icons';
-import {ServerError} from '@apollo/client';
+import {type ServerError} from '@apollo/client';
 import {Button, Dropdown, message, Modal, Space} from 'antd';
 import {KitSteps} from 'aristid-ds';
-import {IKitStep} from 'aristid-ds/dist/Kit/Navigation/Steps/types';
-import dayjs from 'dayjs';
-import {lazy, ReactNode, Suspense, useReducer, useState} from 'react';
+import {type IKitStep} from 'aristid-ds/dist/Kit/Navigation/Steps/types';
+import type dayjs from 'dayjs';
+import {lazy, type ReactNode, Suspense, useReducer, useState} from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {LibraryLightFragment, useGetAttributesByLibLazyQuery, useImportExcelMutation} from '_ui/_gqlTypes';
+import {type LibraryLightFragment, useGetAttributesByLibLazyQuery, useImportExcelMutation} from '_ui/_gqlTypes';
 import {Loading} from '../Loading';
 import ImportScheduleModal from './ImportModalConfigStep/ImportScheduleModal';
 import importReducer from './importReducer';

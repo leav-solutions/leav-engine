@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import DataLoader from 'dataloader';
-import {IDbService} from 'infra/db/dbService';
-import {IConfig} from '_types/config';
-import {IAttribute} from '_types/attribute';
-import {IQueryInfos} from '_types/queryInfos';
-import {ISaveValue, IValue} from '_types/value';
-import {IAttributeTypesRepo, IAttributeWithRevLink, IGetValuesOptions} from '../attributeTypes/attributeTypesRepo';
+import {type IDbService} from 'infra/db/dbService';
+import {type IConfig} from '_types/config';
+import {type IAttribute} from '_types/attribute';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type ISaveValue, type IValue} from '_types/value';
+import {type IAttributeTypesRepo, type IAttributeWithRevLink, type IGetValuesOptions} from '../attributeTypes/attributeTypesRepo';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';

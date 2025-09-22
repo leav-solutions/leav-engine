@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import createAuthApp, {IAuthAppDeps} from '../authApp';
-import {IOIDCClientService} from '../../../infra/oidc/oidcClientService';
-import {Express} from 'express';
+import createAuthApp, {type IAuthAppDeps} from '../authApp';
+import {type IOIDCClientService} from '../../../infra/oidc/oidcClientService';
+import {type Express} from 'express';
 import {identity} from 'lodash';
 import {convertOIDCIdentifier} from '../../helpers';
 import initQueryContext from '../../helpers/initQueryContext';
@@ -12,13 +12,13 @@ jest.mock('jsonwebtoken');
 
 import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import {IRecordDomain} from '../../../domain/record/recordDomain';
-import {ICacheService, ICachesService} from '../../../infra/cache/cacheService';
-import {IValueDomain} from '../../../domain/value/valueDomain';
-import {IConfig} from '../../../_types/config';
-import {DeepPartial} from '../../../_types/utils';
-import {Mockify} from '@leav/utils';
-import {ToAny} from '../../../utils/utils';
+import {type IRecordDomain} from '../../../domain/record/recordDomain';
+import {type ICacheService, type ICachesService} from '../../../infra/cache/cacheService';
+import {type IValueDomain} from '../../../domain/value/valueDomain';
+import {type IConfig} from '../../../_types/config';
+import {type DeepPartial} from '../../../_types/utils';
+import {type Mockify} from '@leav/utils';
+import {type ToAny} from '../../../utils/utils';
 import {adminsGroupId} from '../../../_constants/users';
 
 const depsBase: ToAny<IAuthAppDeps> = {

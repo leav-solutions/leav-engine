@@ -8,7 +8,7 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {render, screen} from '../../../_tests/testUtils';
 import EditRecordContent from './EditRecordContent';
 import {Form} from 'antd';
-import {ComponentProps, FunctionComponent} from 'react';
+import {type ComponentProps, type FunctionComponent} from 'react';
 
 jest.mock('./uiElements/StandardField', () => () => <div>StandardField</div>);
 

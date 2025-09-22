@@ -4,15 +4,15 @@
 import {useQuery} from '@apollo/client';
 import {
     getRecordsListQuery,
-    IGetRecordsListQuery,
-    IGetRecordsListQueryVariables
+    type IGetRecordsListQuery,
+    type IGetRecordsListQueryVariables
 } from 'queries/records/recordsListQuery';
 import {useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Checkbox, Pagination, Select, Table} from 'semantic-ui-react';
 import Loading from '../shared/Loading';
 import RecordCard from '../shared/RecordCard';
-import {IListProps} from './MainPanel';
+import {type IListProps} from './MainPanel';
 import styles from './MainPanel.module.css';
 import {ActionTypes} from './NavigatorReducer';
 

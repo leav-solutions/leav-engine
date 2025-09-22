@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitInput, KitTypography} from 'aristid-ds';
-import {FunctionComponent} from 'react';
+import {type FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {
     closestCenter,
     DndContext,
-    DragEndEvent,
+    type DragEndEvent,
     KeyboardSensor,
     PointerSensor,
     useSensor,

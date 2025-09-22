@@ -5,15 +5,15 @@ import {amqpService} from '@leav/message-broker';
 import {getConfig} from '../../../config';
 import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
-import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
+import {ECacheType, type ICachesService} from '../../../infra/cache/cacheService';
 import {initRedis} from '../../../infra/cache/redis';
 import {initDb} from '../../../infra/db/db';
 import {initMailer} from '../../../infra/mailer';
 import {initOIDCClient} from '../../../infra/oidc';
-import {IDbUtils} from 'infra/db/dbUtils';
-import {IServer} from 'interface/server';
-import {ITasksManagerInterface} from 'interface/tasksManager';
-import {IIndexationManagerInterface} from 'interface/indexationManager';
+import {type IDbUtils} from 'infra/db/dbUtils';
+import {type IServer} from 'interface/server';
+import {type ITasksManagerInterface} from 'interface/tasksManager';
+import {type IIndexationManagerInterface} from 'interface/indexationManager';
 
 export async function setup() {
     try {

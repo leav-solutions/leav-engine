@@ -5,7 +5,7 @@ import {CloseOutlined} from '@ant-design/icons';
 import {RecordPreviewWithModal, themeVars} from '@leav/ui';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {getFileUrl} from '../../../../../utils';
 
 const Detail = styled.div`

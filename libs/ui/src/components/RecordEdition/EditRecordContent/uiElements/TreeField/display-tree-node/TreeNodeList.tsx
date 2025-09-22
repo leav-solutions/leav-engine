@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent} from 'react';
-import {RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
-import {RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
+import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
+import {type RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
 import TreeNodeItem from './TreeNodeItem';
 import {TreeFieldWrapper} from './TreeFieldWrapper';
 

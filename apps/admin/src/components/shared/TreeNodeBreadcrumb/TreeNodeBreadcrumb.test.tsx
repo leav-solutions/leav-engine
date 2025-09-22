@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
 import React from 'react';
-import {ITreeLinkElement} from '../../../_types/records';
+import {type ITreeLinkElement} from '../../../_types/records';
 import TreeNodeBreadcrumb from './TreeNodeBreadcrumb';
 
 jest.mock('./PathPart', () => function PathPart({record}) {

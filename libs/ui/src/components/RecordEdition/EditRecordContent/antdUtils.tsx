@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    IRecordForm,
-    RecordFormElementAttribute,
-    RecordFormElementsValue,
-    RecordFormElementsValueLinkValue,
-    RecordFormElementsValueStandardValue
+    type IRecordForm,
+    type RecordFormElementAttribute,
+    type RecordFormElementsValue,
+    type RecordFormElementsValueLinkValue,
+    type RecordFormElementsValueStandardValue
 } from '_ui/hooks/useGetRecordForm';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
-import {IDateRangeValue} from '@leav/utils';
-import {Store} from 'antd/lib/form/interface';
+import {type IDateRangeValue} from '@leav/utils';
+import {type Store} from 'antd/lib/form/interface';
 import dayjs from 'dayjs';
 
 const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue =>

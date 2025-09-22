@@ -6,7 +6,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {localizedTranslation} from '@leav/utils';
 import {Badge, Button, Input} from 'antd';
 import {useState} from 'react';
-import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
+import {DragDropContext, Draggable, Droppable, type DropResult, type ResponderProvided} from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {ErrorDisplay} from '_ui/components/ErrorDisplay';
@@ -17,7 +17,7 @@ import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '_ui/co
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useUser} from '_ui/hooks/useUser/useUser';
-import {IView} from '_ui/types/views';
+import {type IView} from '_ui/types/views';
 import {useGetUserDataQuery, useGetViewsListQuery} from '_ui/_gqlTypes';
 import {prepareView} from '_ui/_utils';
 import useUpdateViewsOrderMutation from '../hooks/useUpdateViewsOrderMutation';

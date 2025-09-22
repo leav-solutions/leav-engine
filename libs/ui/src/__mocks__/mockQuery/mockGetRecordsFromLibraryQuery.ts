@@ -4,11 +4,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 
-import {IField} from '_ui/types/search';
+import {type IField} from '_ui/types/search';
 import {
-    IGetRecordsFromLibraryQuery,
-    IGetRecordsFromLibraryQueryElement,
-    IGetRecordsFromLibraryQueryVariables
+    type IGetRecordsFromLibraryQuery,
+    type IGetRecordsFromLibraryQueryElement,
+    type IGetRecordsFromLibraryQueryVariables
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {mockLibrarySimple} from '../common/library';
 import {mockPreviews} from '../common/record';

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import camelCase from 'lodash/camelCase';
-import {IRecordFilterOption} from '../../../_types/record';
-import {IFilterTypesHelper} from './filterTypes';
+import {type IRecordFilterOption} from '../../../_types/record';
+import {type IFilterTypesHelper} from './filterTypes';
 
 interface IDeps {
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;

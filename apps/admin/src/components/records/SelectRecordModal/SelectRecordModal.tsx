@@ -5,7 +5,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
+import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import Navigator from '../../navigator';
 
 const NavigatorModal = styled(Modal)`

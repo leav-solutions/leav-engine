@@ -5,7 +5,7 @@ import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {wait} from 'utils/testUtils';
-import {IFormBuilderState} from '../formBuilderReducer/formBuilderReducer';
+import {type IFormBuilderState} from '../formBuilderReducer/formBuilderReducer';
 import * as useFormBuilderReducer from '../formBuilderReducer/hook/useFormBuilderReducer';
 import {mockInitialState} from '../formBuilderReducer/_fixtures/fixtures';
 import DependencySettings from './DependencySettings';

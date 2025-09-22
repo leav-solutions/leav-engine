@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useContext} from 'react';
-import {Row} from 'react-table';
+import {type Row} from 'react-table';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
-import {IItem} from '_ui/types/search';
+import {type IItem} from '_ui/types/search';
 import {SearchActionTypes} from '../../hooks/useSearchReducer/searchReducer';
 import BodyCell from '../BodyCell';
 import {useEditRecordModalContext} from '_ui/contexts/EditRecordModalContext';

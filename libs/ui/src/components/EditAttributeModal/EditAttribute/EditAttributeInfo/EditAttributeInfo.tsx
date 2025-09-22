@@ -4,7 +4,7 @@
 import {Form} from 'antd';
 import {useEffect} from 'react';
 import {
-    AttributeDetailsFragment,
+    type AttributeDetailsFragment,
     AttributeType,
     useCheckAttributeExistenceLazyQuery,
     useSaveAttributeMutation

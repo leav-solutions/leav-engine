@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
-import {TFunction} from 'i18next';
+import {type TFunction} from 'i18next';
 import React from 'react';
 import {Select} from 'semantic-ui-react';
-import {Mockify} from '../../../../../../../_types/Mockify';
-import {IFormValue} from '../../EmbeddedFieldsTab';
+import {type Mockify} from '../../../../../../../_types/Mockify';
+import {type IFormValue} from '../../EmbeddedFieldsTab';
 import SelectFormat from './SelectFormat';
 
 describe('SelectFormat', () => {

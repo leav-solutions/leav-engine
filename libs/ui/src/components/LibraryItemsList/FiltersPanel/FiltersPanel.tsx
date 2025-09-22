@@ -5,7 +5,7 @@ import {DownOutlined} from '@ant-design/icons';
 import {faAngleLeft} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Button, Dropdown, Space} from 'antd';
-import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
+import {DragDropContext, Draggable, Droppable, type DropResult, type ResponderProvided} from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';

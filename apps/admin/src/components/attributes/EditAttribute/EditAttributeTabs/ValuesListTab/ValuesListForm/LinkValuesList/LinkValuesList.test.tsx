@@ -5,7 +5,7 @@ import {shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {wait} from 'utils/testUtils';
-import {ILinkValuesList} from '../../../../../../../_types/attributes';
+import {type ILinkValuesList} from '../../../../../../../_types/attributes';
 import LinkValuesList from './LinkValuesList';
 
 jest.mock(

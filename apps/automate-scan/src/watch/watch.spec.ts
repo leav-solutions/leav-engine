@@ -4,7 +4,7 @@
 import {getConfig} from '../config';
 import {sendToRabbitMQ} from '../rabbitmq/rabbitmq';
 import {setData} from '../redis/redis';
-import {IParamsExtends} from './../types';
+import {type IParamsExtends} from './../types';
 import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
 import {checkEvent} from './watch';
 

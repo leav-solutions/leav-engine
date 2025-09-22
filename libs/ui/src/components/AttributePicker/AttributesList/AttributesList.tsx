@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useApolloClient} from '@apollo/client';
-import {localizedTranslation, Override} from '@leav/utils';
-import {Table, TableColumnsType, TablePaginationConfig} from 'antd';
-import {FilterValue, SorterResult} from 'antd/lib/table/interface';
+import {localizedTranslation, type Override} from '@leav/utils';
+import {Table, type TableColumnsType, type TablePaginationConfig} from 'antd';
+import {type FilterValue, type SorterResult} from 'antd/lib/table/interface';
 import {KitButton, KitInput, KitTag} from 'aristid-ds';
-import {Key, useEffect, useRef, useState} from 'react';
+import {type Key, useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {
     defaultPaginationPageSize,
@@ -18,12 +18,12 @@ import {
 import {useLang} from '../../../hooks';
 import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {
-    AttributeDetailsFragment,
+    type AttributeDetailsFragment,
     AttributeFormat,
     AttributesSortableFields,
     AttributeType,
-    GetAttributesQuery,
-    GetAttributesQueryVariables,
+    type GetAttributesQuery,
+    type GetAttributesQueryVariables,
     PermissionsActions,
     PermissionTypes,
     SortOrder,
@@ -33,7 +33,7 @@ import {
 import {getAttributesQuery} from '../../../_queries/attributes/getAttributesQuery';
 import {extractPermissionFromQuery} from '../../../_utils';
 import {EditAttributeModal} from '../../EditAttributeModal';
-import {EntityCard, IEntityData} from '../../EntityCard';
+import {EntityCard, type IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';
 
 const HeaderWrapper = styled.div`

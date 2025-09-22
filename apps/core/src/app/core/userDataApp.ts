@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {UserCoreDataKeys, IUserDomain} from '../../domain/user/userDomain';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IQueryInfos} from '_types/queryInfos';
-import {IUserData} from '_types/userData';
-import {IGraphqlAppModule} from 'app/graphql/graphqlApp';
+import {UserCoreDataKeys, type IUserDomain} from '../../domain/user/userDomain';
+import {type IAppGraphQLSchema} from '_types/graphql';
+import {type IQueryInfos} from '_types/queryInfos';
+import {type IUserData} from '_types/userData';
+import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
 export type ICoreImportApp = IGraphqlAppModule;
 

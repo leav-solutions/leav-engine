@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EyeOutlined} from '@ant-design/icons';
-import {IPreviewScalar} from '@leav/utils';
-import {FunctionComponent, useState} from 'react';
+import {type IPreviewScalar} from '@leav/utils';
+import {type FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
 import {themeVars} from '../../antdTheme';
-import {EntityPreview, IEntityPreviewProps} from '../EntityPreview';
+import {EntityPreview, type IEntityPreviewProps} from '../EntityPreview';
 import FileModal from './FileModal';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
