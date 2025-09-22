@@ -4,7 +4,7 @@
 import {type ComponentProps, type FunctionComponent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
-import {useAuth, useUser} from '@leav/ui';
+import {APP_ENDPOINT, APPS_ENDPOINT, useAuth, useUser} from '@leav/ui';
 import {KitButton, type KitDropDown, KitHeader} from 'aristid-ds';
 import {type IKitAvatar} from 'aristid-ds/dist/Kit/DataDisplay/Avatar/types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -52,7 +52,11 @@ export const RootHeader: FunctionComponent = () => {
             className={header}
             logo={
                 <Link to="/" className={logo}>
-                    <img src="/global-icon/small" alt="logo-leavengine" title="app-studio" />
+                    <img
+                        src={`/${APPS_ENDPOINT}/${APP_ENDPOINT}/assets/aristid-header.svg`}
+                        alt="logo-leavengine"
+                        title="app-studio"
+                    />
                 </Link>
             }
             profile={<KitHeader.Profile menu={profileMenuContent} profileCardProps={{avatarProps, title: identity}} />}
