@@ -33,7 +33,7 @@
     border-radius: calc(var(--general-border-radius-s) * 1px);
     overflow: hidden;
 
-    &:not(.sidePanel), &:not(.popupPanel) {
+    &:not(.sidePanel):not(.popupPanel) {
         box-shadow: var(--general-utilities-shadow-light);
     }
 }
