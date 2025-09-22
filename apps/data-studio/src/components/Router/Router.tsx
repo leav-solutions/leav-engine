@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {APPS_ENDPOINT, APP_ENDPOINT, Explorer, themeVars} from '@leav/ui';
+import {Explorer, themeVars} from '@leav/ui';
 import {Layout} from 'antd';
 import Sidebar from 'components/Sidebar';
 import TopBar from 'components/TopBar';
@@ -10,6 +10,7 @@ import {BrowserRouter} from 'react-router-dom';
 import NotifsPanel from '../NotifsPanel';
 import UserPanel from '../UserPanel';
 import Routes from './Routes';
+import {APP_BASE_URL} from '../../constants';
 
 const {Header, Content, Sider} = Layout;
 
@@ -25,7 +26,7 @@ const Router: FunctionComponent = () => {
     const _setNbNotifs = (count: number) => setNbNotifs(count);
 
     return (
-        <BrowserRouter basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`}>
+        <BrowserRouter basename={APP_BASE_URL}>
             <Layout style={{height: '100vh'}}>
                 <Sider
                     theme="light"

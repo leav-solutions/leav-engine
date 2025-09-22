@@ -3,6 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // Copyright LEAV Solutions 2017
 
+import {GLOBAL_BASE_URL} from '../../../constants';
+
 type PossibleSizes = 'tiny' | 'small' | 'medium' | 'big' | 'huge';
 
 interface IAppIconProps {
@@ -19,7 +21,9 @@ function AppIcon({style, size}: IAppIconProps): JSX.Element {
         huge: 1024
     };
 
-    return <img src={`/global-icon/${size}`} height={`${heightBySize[size]}px`} style={style} alt="" />;
+    return (
+        <img src={`${GLOBAL_BASE_URL}/global-icon/${size}`} height={`${heightBySize[size]}px`} style={style} alt="" />
+    );
 }
 
 export default AppIcon;

@@ -4,8 +4,6 @@
 import {HomeOutlined, ReloadOutlined} from '@ant-design/icons';
 import {useQuery, useSubscription} from '@apollo/client';
 import {
-    APPS_ENDPOINT,
-    APP_ENDPOINT,
     customTheme,
     ErrorBoundary,
     ErrorDisplay,
@@ -45,12 +43,13 @@ import {initialActiveLibrary, useActiveLibrary} from 'hooks/useActiveLibrary';
 import {type ME} from '../../../_gqlTypes/ME';
 import Router from '../../Router';
 import ReactModal from 'react-modal';
+import {APP_BASE_URL, APP_ENDPOINT} from '../../../constants';
 
 function AppHandler(): JSX.Element {
     const {t, i18n} = useTranslation();
     const dispatch = useAppDispatch();
     const {token: themeToken} = theme.useToken();
-    const homeUrl = `/${APPS_ENDPOINT}/${APP_ENDPOINT}`;
+    const homeUrl = APP_BASE_URL;
 
     ReactModal.setAppElement(document.getElementsByTagName('body')[0]);
 

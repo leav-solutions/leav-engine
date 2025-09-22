@@ -46,10 +46,8 @@ jest.mock(
 
 jest.mock('reduxStore/notifications', () => jest.fn());
 
-jest.mock('@leav/ui', () => ({
-    ...jest.requireActual('@leav/ui'),
-    APPS_ENDPOINT: '',
-    APP_ENDPOINT: ''
+jest.mock('../../constants', () => ({
+    APP_BASE_URL: ''
 }));
 
 describe('Router', () => {
