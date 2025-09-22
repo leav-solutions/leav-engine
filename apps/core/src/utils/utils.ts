@@ -12,6 +12,7 @@ import trimEnd from 'lodash/trimEnd';
 import upperFirst from 'lodash/upperFirst';
 import moment from 'moment';
 import os from 'os';
+import pathLib from 'path';
 import {type ActionsListConfig} from '_types/actionsList';
 import {type IConfig} from '_types/config';
 import {type ErrorFieldDetail, type ErrorFieldDetailMessage, Errors, type IExtendedErrorMsg} from '../_types/errors';
@@ -136,6 +137,7 @@ export interface IUtils {
 
     getProcessIdentifier(): string;
 
+    getPreviewUrl(relativeUrl: string): string;
     getPreviewsAttributeName(libraryId: string): string;
     getPreviewsStatusAttributeName(libraryId: string): string;
     getPreviewAttributesSettings(library: ILibrary): IPreviewAttributesSettings;
@@ -325,6 +327,9 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         },
         getProcessIdentifier() {
             return `${os.hostname()}-${process.pid}`;
+        },
+        getPreviewUrl(relativeUrl: string): string {
+            return pathLib.join(config.server.basePath, 'previews', relativeUrl);
         },
         getPreviewsAttributeName(libraryId) {
             return getPreviewsAttributeName(libraryId);

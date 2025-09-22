@@ -43,7 +43,7 @@ export interface IServerRouteAppModule {
     /**
      * @param app Express instance, can be used to extend the app
      */
-    registerRoute(app: Express): void;
+    registerRoute(app: express.Router): void;
 }
 
 function isServerRouteAppModule(app: IAppModule | IServerRouteAppModule): app is IServerRouteAppModule {
@@ -98,10 +98,12 @@ export default function ({
     return {
         async init(): Promise<void> {
             const app = express();
+            const baseRouter = express.Router();
+            app.use(config.server.basePath, baseRouter);
             const httpServer = createServer(app);
             const wsServer = new WebSocketServer({
                 server: httpServer,
-                path: '/graphql'
+                path: `${config.server.basePath}/graphql`
             });
 
             try {
@@ -109,18 +111,18 @@ export default function ({
                 app.disable('x-powered-by');
                 app.set('port', config.server.port);
                 app.set('host', config.server.host);
-                app.use(express.json({limit: config.server.uploadLimit}));
-                app.use(express.urlencoded({extended: true, limit: config.server.uploadLimit}));
-                app.use(graphqlUploadExpress());
-                app.use(cookieParser());
-                app.use(
+                baseRouter.use(express.json({limit: config.server.uploadLimit}));
+                baseRouter.use(express.urlencoded({extended: true, limit: config.server.uploadLimit}));
+                baseRouter.use(graphqlUploadExpress());
+                baseRouter.use(cookieParser());
+                baseRouter.use(
                     compression({
                         threshold: 50 * 1024 // Files under 50kb won't be compressed
                     })
                 );
 
                 // CORS - see https://expressjs.com/en/resources/middleware/cors.html#configuring-cors-w-dynamic-origin
-                app.use(
+                baseRouter.use(
                     cors<cors.CorsRequest>({
                         origin: true, // Allows the request origin in Access-Control-Allow-Origin
                         credentials: true, // Allows client to send cookies in cross-origin request
@@ -135,11 +137,11 @@ export default function ({
                     const appModule = depsManager.cradle[modName];
 
                     if (isServerRouteAppModule(appModule)) {
-                        await appModule.registerRoute(app);
+                        await appModule.registerRoute(baseRouter);
                     }
                 }
 
-                app.use('/previews', [
+                baseRouter.use('/previews', [
                     _checkAuth,
                     express.static(config.preview.directory, {fallthrough: false}),
                     async (err, req, res, next) => {
@@ -147,11 +149,11 @@ export default function ({
                         res.status(404).type('html').send(htmlContent);
                     }
                 ]);
-                app.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);
-                app.use(`/${config.import.endpoint}`, [_checkAuth, express.static(config.import.directory)]);
+                baseRouter.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);
+                baseRouter.use(`/${config.import.endpoint}`, [_checkAuth, express.static(config.import.directory)]);
 
                 // Handling errors
-                app.use(
+                baseRouter.use(
                     (
                         err:
                             | undefined
@@ -331,7 +333,7 @@ export default function ({
 
                 await server.start();
 
-                app.use(
+                baseRouter.use(
                     '/graphql',
                     express.json(),
                     expressMiddleware(server, {
@@ -358,7 +360,7 @@ export default function ({
                     })
                 );
 
-                applicationApp.registerRoute(app);
+                applicationApp.registerRoute(baseRouter);
 
                 await new Promise<void>(resolve => httpServer.listen(config.server.port, resolve));
                 logger.info(`🚀 Server ready at http://localhost:${config.server.port}/graphql`);

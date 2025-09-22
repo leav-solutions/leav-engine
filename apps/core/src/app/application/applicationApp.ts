@@ -9,7 +9,7 @@ import {type InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {type IPermissionDomain} from 'domain/permission/permissionDomain';
 import {type IRecordDomain} from 'domain/record/recordDomain';
-import express, {Express, type NextFunction, type Response} from 'express';
+import express, {type NextFunction, type Response} from 'express';
 import glob from 'glob';
 import {type GraphQLResolveInfo} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
@@ -40,6 +40,7 @@ import {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 import {type IAuthApp} from '../auth/authApp';
 import {type IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
 import {type IServerRouteAppModule} from 'interface/server';
+import {type IConfig} from '_types/config';
 
 export type IApplicationApp = IGraphqlAppModule & IServerRouteAppModule;
 
@@ -56,7 +57,7 @@ export interface IApplicationAppDeps {
     'core.domain.globalSettings': IGlobalSettingsDomain;
     'core.utils.logger': winston.Winston;
     'core.utils': IUtils;
-    config: any;
+    config: IConfig;
 }
 
 export default function ({
@@ -320,8 +321,8 @@ export default function ({
                     req.ctx = initQueryContext(req);
 
                     if (endpoint === 'login' && config.auth.oidc.enable) {
-                        const {defaultApp} = await globalSettings.getSettings({userId: config.userId});
-                        return res.redirect(`/${APPS_URL_PREFIX}/${defaultApp}/`);
+                        const {defaultApp} = await globalSettings.getSettings({userId: config.defaultUserId});
+                        return res.redirect(`${config.server.basePath}/${APPS_URL_PREFIX}/${defaultApp}/`);
                     }
 
                     const application = {id: '', module: ''};
@@ -393,7 +394,7 @@ export default function ({
                             return authApp.authenticateWithOIDCService(req, res);
                         } else {
                             return res.redirect(
-                                `/${APPS_URL_PREFIX}/login/?dest=${encodeURIComponent(req.originalUrl)}`
+                                `${config.server.basePath}/${APPS_URL_PREFIX}/login/?dest=${encodeURIComponent(req.originalUrl)}`
                             );
                         }
                     }
@@ -423,10 +424,12 @@ export default function ({
                     res: Response<unknown>,
                     next: NextFunction
                 ) => {
-                    const {defaultApp} = await globalSettings.getSettings({userId: config.userId});
+                    const {defaultApp} = await globalSettings.getSettings({userId: config.defaultUserId});
 
                     if (err instanceof ApplicationError && err.appEndpoint !== defaultApp) {
-                        res.redirect(`/${APPS_URL_PREFIX}/${defaultApp}/?err=${err.type}&app=${err.appEndpoint}`);
+                        res.redirect(
+                            `${config.server.basePath}/${APPS_URL_PREFIX}/${defaultApp}/?err=${err.type}&app=${err.appEndpoint}`
+                        );
                     } else {
                         return next(err);
                     }
@@ -434,8 +437,8 @@ export default function ({
             );
 
             app.get('/', async (req, res) => {
-                const {defaultApp} = await globalSettings.getSettings({userId: config.userId});
-                res.redirect(`/${APPS_URL_PREFIX}/${defaultApp}/`);
+                const {defaultApp} = await globalSettings.getSettings({userId: config.defaultUserId});
+                res.redirect(`${config.server.basePath}/${APPS_URL_PREFIX}/${defaultApp}/`);
             });
         }
     };

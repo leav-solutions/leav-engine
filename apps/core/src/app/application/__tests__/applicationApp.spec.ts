@@ -9,6 +9,7 @@ import {type IAuthApp} from '../../auth/authApp';
 import {type IApplicationDomain} from '../../../domain/application/applicationDomain';
 import {type IUtils, type ToAny} from '../../../utils/utils';
 import {type IGlobalSettingsDomain} from '../../../domain/globalSettings/globalSettingsDomain';
+import {IAuth, IConfig, type IServer} from '_types/config';
 
 const depsBase: ToAny<IApplicationAppDeps> = {
     config: {},
@@ -55,7 +56,13 @@ describe('ApplicationApp', () => {
                 'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
                 'core.utils': utilsMock as IUtils,
-                config: {auth: {oidc: {enable: true}}, applications: {rootFolder: 'applications/rootFolder'}}
+                config: {
+                    auth: {oidc: {enable: true}},
+                    applications: {rootFolder: 'applications/rootFolder'},
+                    server: {
+                        basePath: ''
+                    }
+                } as IConfig
             });
             validateRequestTokenHelper.mockRejectedValueOnce('unused error');
 
@@ -85,7 +92,7 @@ describe('ApplicationApp', () => {
             expect(authAppMock.authenticateWithOIDCService).toHaveBeenCalledWith(req, res);
         });
 
-        it('Should redirect to login app', async () => {
+        it('Should redirect to login app with eventual server base path', async () => {
             const validateRequestTokenHelper = jest.fn();
             const applicationDomainMock: Mockify<IApplicationDomain> = {
                 getApplications: jest.fn().mockResolvedValueOnce({
@@ -104,7 +111,13 @@ describe('ApplicationApp', () => {
                 'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
                 'core.utils': utilsMock as IUtils,
-                config: {auth: {oidc: {enable: false}}, applications: {rootFolder: 'applications/rootFolder'}}
+                config: {
+                    auth: {oidc: {enable: false}},
+                    applications: {rootFolder: 'applications/rootFolder'},
+                    server: {
+                        basePath: '/server-base'
+                    }
+                } as IConfig
             });
             validateRequestTokenHelper.mockRejectedValueOnce('unused error');
 
@@ -132,7 +145,7 @@ describe('ApplicationApp', () => {
             expect(next).not.toHaveBeenCalled();
             expect(res.redirect).toHaveBeenCalled();
             expect(res.redirect).toHaveBeenCalledWith(
-                '/app/login/?dest=test%3A%2F%2Fmock.domain.application%2Ffake%2Fpath%3Fquery%3D1%26requestId%3D1'
+                '/server-base/app/login/?dest=test%3A%2F%2Fmock.domain.application%2Ffake%2Fpath%3Fquery%3D1%26requestId%3D1'
             );
         });
     });
@@ -150,7 +163,13 @@ describe('ApplicationApp', () => {
                 ...depsBase,
                 'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.domain.globalSettings': globalSettingsMock as IGlobalSettingsDomain,
-                config: {applications: {rootFolder: 'applications/rootFolder'}, auth: {oidc: {enable: true}}}
+                config: {
+                    applications: {rootFolder: 'applications/rootFolder'},
+                    auth: {oidc: {enable: true}},
+                    server: {
+                        basePath: ''
+                    }
+                } as IConfig
             });
 
             const expressInstance: any = {
@@ -185,7 +204,13 @@ describe('ApplicationApp', () => {
                 'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
                 'core.utils': utilsMock as IUtils,
-                config: {applications: {rootFolder: 'applications/rootFolder'}, auth: {oidc: {enable: false}}}
+                config: {
+                    applications: {rootFolder: 'applications/rootFolder'},
+                    auth: {oidc: {enable: false}},
+                    server: {
+                        basePath: ''
+                    }
+                } as IConfig
             });
             const expressInstance: any = {
                 get: jest.fn()

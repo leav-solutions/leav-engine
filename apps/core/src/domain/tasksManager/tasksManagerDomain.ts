@@ -303,12 +303,21 @@ export default function ({
         await _updateTask(taskId, {workerId: null}, ctx);
     };
 
+    const _taskWithPublicLinkUrl = (task: ITask): ITask => ({
+        ...task,
+        link: task.link ? {...task.link, url: `${config.server.basePath}${task.link.url}`} : undefined
+    });
+
     const _getTasks = async ({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>> => {
         if (typeof params.sort === 'undefined') {
             params.sort = {field: 'id', order: SortOrder.ASC};
         }
 
-        return taskRepo.getTasks({params, ctx});
+        const tasks = await taskRepo.getTasks({params, ctx});
+        return {
+            totalCount: tasks.totalCount,
+            list: tasks.list.map(_taskWithPublicLinkUrl)
+        };
     };
 
     const _getDepsManagerFunc = ({

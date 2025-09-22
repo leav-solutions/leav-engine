@@ -20,7 +20,6 @@ import {type IQueryInfos} from '_types/queryInfos';
 import {type IStandardValue, type IValue} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {getPreviewUrl} from '../../utils/preview/preview';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {LibraryBehavior} from '../../_types/library';
@@ -127,6 +126,7 @@ describe('RecordDomain', () => {
         getRecordsCacheKey: jest.fn().mockReturnValue('cache_key'),
         getCoreEntityCacheKey: jest.fn().mockReturnValue('cache_key'),
         getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+        getPreviewUrl: jest.fn().mockImplementation((url) => `/preview/${url}` ),
         isLinkAttribute: jest.fn().mockReturnValue(false),
         isTreeAttribute: jest.fn().mockReturnValue(false)
     };
@@ -1399,9 +1399,9 @@ describe('RecordDomain', () => {
             expect(await res.getLabel()).toBe('Label Value');
             expect(await res.getColor()).toBe('#123456');
             expect(await res.getPreview()).toEqual({
-                big: getPreviewUrl() + 'big_fake-image',
-                small: getPreviewUrl() + 'small_fake-image',
-                medium: getPreviewUrl() + 'medium_fake-image',
+                big: '/preview/big_fake-image',
+                small: '/preview/small_fake-image',
+                medium: '/preview/medium_fake-image',
                 original: '/originals/my_lib/123456',
                 file: {
                     active: true,

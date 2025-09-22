@@ -13,7 +13,6 @@ import {type ILibraryRepo} from 'infra/library/libraryRepo';
 import {type IRecordRepo} from 'infra/record/recordRepo';
 import {type ITreeRepo} from 'infra/tree/treeRepo';
 import {type IValueRepo} from 'infra/value/valueRepo';
-import {join} from 'path';
 import {type IUtils} from 'utils/utils';
 import type * as Config from '_types/config';
 import {type IListWithCursor} from '_types/list';
@@ -30,7 +29,6 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
-import {getPreviewUrl} from '../../utils/preview/preview';
 import {TypeGuards} from '../../utils';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
@@ -420,7 +418,6 @@ export default function ({
         visitedLibraries?: string[];
         ctx: IQueryInfos;
     }) => {
-        const previewBaseUrl = getPreviewUrl();
         visitedLibraries.push(lib.id);
 
         let previewRecord: IRecord;
@@ -510,7 +507,7 @@ export default function ({
                 }
 
                 // add host url to preview
-                const absoluteUrl = join(previewBaseUrl, url.toString());
+                const absoluteUrl = utils.getPreviewUrl(url.toString());
 
                 return {[key]: absoluteUrl};
             })

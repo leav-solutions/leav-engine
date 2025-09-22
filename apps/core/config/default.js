@@ -11,6 +11,7 @@ module.exports = {
         port: envToNumber(process.env.SERVER_PORT, 4001),
         publicUrl: process.env.SERVER_PUBLIC_URL || 'http://localhost:4001',
         wsUrl: process.env.SERVER_WS_URL || 'ws://localhost:4001',
+        basePath: process.env.SERVER_BASE_PATH || '',
         allowIntrospection: envToBool(process.env.SERVER_ALLOW_INTROSPECTION, false),
         /**
          * Controls the maximum request body size. If this is a number,

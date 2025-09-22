@@ -6,7 +6,7 @@ import type * as amqp from 'amqplib';
 import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
 import {type ITaskRepo} from '../../infra/task/taskRepo';
 import {type IUtils, type ToAny} from '../../utils/utils';
-import {type IConfig} from '../../_types/config';
+import {type IServer, type IConfig} from '../../_types/config';
 import {TaskCallbackStatus, TaskStatus} from '../../_types/tasksManager';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTask} from '../../__tests__/mocks/task';
@@ -69,7 +69,8 @@ describe('Tasks Manager', () => {
                 port: 1234
             },
             type: 'direct'
-        }
+        },
+        server: {basePath: '/server-base'} as IServer
     } satisfies Mockify<IConfig>;
 
     const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -170,6 +171,30 @@ describe('Tasks Manager', () => {
         await tm.getTasks({params: {}, ctx: mockCtx});
 
         expect(mockTaskRepo.getTasks).toHaveBeenCalledTimes(1);
+    });
+
+    test('Get tasks should add server base url to eventual link url', async () => {
+        const mockTaskRepo: Mockify<ITaskRepo> = {
+            getTasks: global.__mockPromise({
+                totalCount: 1,
+                list: [
+                    {
+                        ...mockTask,
+                        link: {name: 'name', url: '/some/path'}
+                    }
+                ]
+            })
+        };
+
+        const tm = tasksManager({
+            ...depsBase,
+            config: conf as IConfig,
+            'core.infra.task': mockTaskRepo as ITaskRepo
+        });
+
+        const tasks = await tm.getTasks({params: {}, ctx: mockCtx});
+
+        expect(tasks.list[0].link.url).toBe('/server-base/some/path');
     });
 
     test('Init Master / Task to execute', async () => {

@@ -51,6 +51,7 @@ export interface IServer {
     host: string;
     port: number;
     publicUrl: string;
+    basePath: string;
     allowIntrospection: boolean;
     wsUrl: string;
     uploadLimit: number | string;
