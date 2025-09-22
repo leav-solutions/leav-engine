@@ -39,10 +39,16 @@ export enum ErrorDisplayTypes {
     PAGE_NOT_FOUND = 'page_not_found_error'
 }
 
+declare global {
+    interface Window {
+        __dynamic_base__?: string;
+        __global_base_url__?: string;
+    }
+}
+
 export const defaultPaginationPageSize = 20;
 
-export const APPS_ENDPOINT = 'app';
-export const APP_ENDPOINT = window.location.pathname.split('/').filter(e => e)[1]; // Get endpoint app current from url /APPS_ENDPOINT/:endpoint
+export const GLOBAL_BASE_URL = window.__global_base_url__ || '';
 
 export const PREFIX_USER_VIEWS_ORDER_KEY = 'user_views_order_';
 export const PREFIX_SHARED_VIEWS_ORDER_KEY = 'shared_views_order_';

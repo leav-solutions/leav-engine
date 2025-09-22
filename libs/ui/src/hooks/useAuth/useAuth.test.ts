@@ -11,6 +11,10 @@ const mockedLocation = {...window.location, reload: jest.fn(), assign: jest.fn()
 delete window.location;
 window.location = mockedLocation;
 
+jest.mock('_ui/constants', () => ({
+    GLOBAL_BASE_URL: '/global-base'
+}));
+
 describe('useAuth', () => {
     beforeEach(() => {
         fetchMock.mockClear();
@@ -27,7 +31,7 @@ describe('useAuth', () => {
         await result.current.logout();
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith('/auth/logout', {method: 'POST'});
+        expect(fetchMock).toHaveBeenCalledWith('/global-base/auth/logout', {method: 'POST'});
         expect(mockedLocation.assign).not.toHaveBeenCalled();
         expect(mockedLocation.reload).toHaveBeenCalledTimes(1);
         expect(mockedLocation.reload).toHaveBeenCalledWith();
@@ -44,7 +48,7 @@ describe('useAuth', () => {
         await result.current.logout();
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith('/auth/logout', {method: 'POST'});
+        expect(fetchMock).toHaveBeenCalledWith('/global-base/auth/logout', {method: 'POST'});
         expect(mockedLocation.assign).toHaveBeenCalledTimes(1);
         expect(mockedLocation.assign).toHaveBeenCalledWith('redirectUrl');
         expect(mockedLocation.reload).not.toHaveBeenCalled();

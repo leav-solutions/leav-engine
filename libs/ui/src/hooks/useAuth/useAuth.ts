@@ -2,6 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+import {GLOBAL_BASE_URL} from '_ui/constants';
+
 interface IAuthHook {
     logout: () => Promise<void>;
 }
@@ -9,7 +11,7 @@ interface IAuthHook {
 function useAuth(): IAuthHook {
     return {
         logout: async () => {
-            const response = await fetch('/auth/logout', {method: 'POST'});
+            const response = await fetch(`${GLOBAL_BASE_URL}/auth/logout`, {method: 'POST'});
             const data = (await response.json()) as any;
             if (data?.redirectUrl) {
                 window.location.assign(data.redirectUrl);

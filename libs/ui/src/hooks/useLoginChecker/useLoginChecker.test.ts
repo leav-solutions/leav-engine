@@ -7,6 +7,10 @@ import useLoginChecker from './useLoginChecker';
 const fetchMock = jest.fn();
 global.fetch = fetchMock;
 
+jest.mock('_ui/constants', () => ({
+    GLOBAL_BASE_URL: '/global-base'
+}));
+
 describe('useLoginChecker', () => {
     describe('loginChecker', () => {
         it('Should propagate error from login-checker call', async () => {
@@ -22,7 +26,7 @@ describe('useLoginChecker', () => {
             );
 
             expect(fetchMock).toHaveBeenCalledTimes(1);
-            expect(fetchMock).toHaveBeenCalledWith('/auth/login-checker', {
+            expect(fetchMock).toHaveBeenCalledWith('/global-base/auth/login-checker', {
                 headers: {'Content-Type': 'application/json'},
                 method: 'POST'
             });
