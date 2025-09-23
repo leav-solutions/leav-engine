@@ -8,7 +8,7 @@
         "isolatedModules": false,
         "declarationMap": false,
         "declaration": false,
-        "sourceMap": false,
+        "sourceMap": true,
         "composite": false,
         "resolveJsonModule": true,
         "noImplicitReturns": true
