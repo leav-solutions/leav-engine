@@ -172,18 +172,14 @@ const TreeExplorerView = ({
         _handleCloseSelectRecordModal();
     };
 
-    const _openEditRecordModal = (params?: {
-        parent: string;
-        library: string;
-        recordId?: string;
-        path: string[];
-    }) => () => {
-        setOpenAddElementModal(false);
-        setEditRecordModalOpen(true);
-        if (!!params) {
-            setEditionState(params);
-        }
-    };
+    const _openEditRecordModal =
+        (params?: {parent: string; library: string; recordId?: string; path: string[]}) => () => {
+            setOpenAddElementModal(false);
+            setEditRecordModalOpen(true);
+            if (!!params) {
+                setEditionState(params);
+            }
+        };
 
     const _handleEditRecordPostSave = (record: RecordIdentity_whoAmI | undefined) => {
         setEditRecordModalOpen(false);

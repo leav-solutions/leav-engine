@@ -8,17 +8,29 @@ import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
 import {render, screen} from '_tests/testUtils';
 import Settings from './Settings';
 
-jest.mock('./ApplicationSettings', () => function ApplicationSettings() {
-        return <div>ApplicationSettings</div>;
-    });
+jest.mock(
+    './ApplicationSettings',
+    () =>
+        function ApplicationSettings() {
+            return <div>ApplicationSettings</div>;
+        }
+);
 
-jest.mock('./LibrariesSettings', () => function LibrariesSettings() {
-        return <div>LibrariesSettings</div>;
-    });
+jest.mock(
+    './LibrariesSettings',
+    () =>
+        function LibrariesSettings() {
+            return <div>LibrariesSettings</div>;
+        }
+);
 
-jest.mock('./TreesSettings', () => function TreesSettings() {
-        return <div>TreesSettings</div>;
-    });
+jest.mock(
+    './TreesSettings',
+    () =>
+        function TreesSettings() {
+            return <div>TreesSettings</div>;
+        }
+);
 
 describe('Settings', () => {
     const mocks = [

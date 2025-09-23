@@ -7,7 +7,11 @@ import {useTranslation} from 'react-i18next';
 import {Button, Icon, Input, List} from 'semantic-ui-react';
 import {type GET_ATTRIBUTES_VALUES_LIST_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
-import {type IDateRangeValue, type StandardValuesListType, type ValuesList} from '../../../../../../../_types/attributes';
+import {
+    type IDateRangeValue,
+    type StandardValuesListType,
+    type ValuesList
+} from '../../../../../../../_types/attributes';
 import DateRangeValue from './DateRangeValue';
 
 interface IStandardValuesListProps {

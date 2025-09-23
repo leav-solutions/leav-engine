@@ -2,7 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent, useCallback, useMemo, useState} from 'react';
-import {EditRecordModal, type IEditRecordModalProps} from '_ui/components/RecordEdition/EditRecordModal/EditRecordModal';
+import {
+    EditRecordModal,
+    type IEditRecordModalProps
+} from '_ui/components/RecordEdition/EditRecordModal/EditRecordModal';
 import {type IEditRecordContextType, EditRecordModalContext} from './EditRecordModalContext';
 
 export const EditRecordModalProvider: FunctionComponent = ({children}) => {

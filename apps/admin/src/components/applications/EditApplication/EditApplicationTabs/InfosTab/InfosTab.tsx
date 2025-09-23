@@ -89,7 +89,7 @@ function InfosTab(): JSX.Element {
             onSubmitInfos={_handleSubmit}
             onCheckIdIsUnique={_handleCheckIdIsUnique}
             loading={loading}
-            errors={(formErrors as unknown) as IFormError}
+            errors={formErrors as unknown as IFormError}
         />
     );
 }

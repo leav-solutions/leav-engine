@@ -16,7 +16,10 @@ import {type match, useHistory} from 'react-router-v5';
 import {Divider, Header} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
-import {type GET_VERSION_PROFILE_BY_ID, type GET_VERSION_PROFILE_BY_IDVariables} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
+import {
+    type GET_VERSION_PROFILE_BY_ID,
+    type GET_VERSION_PROFILE_BY_IDVariables
+} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
 import {PermissionsActions, type VersionProfileInput} from '_gqlTypes/globalTypes';
 import {type SAVE_VERSION_PROFILE, type SAVE_VERSION_PROFILEVariables} from '_gqlTypes/SAVE_VERSION_PROFILE';
 import {type IFormError} from '_types/errors';
@@ -136,7 +139,7 @@ function EditVersionProfile({match: routerMatch}: IEditVersionProfileProps): JSX
                 profile={profile}
                 readonly={isReadOnly}
                 loading={saveLoading}
-                errors={(formErrors as unknown) as IFormError}
+                errors={formErrors as unknown as IFormError}
                 onCheckIdUniqueness={_handleCheckIdIsUnique}
                 onSubmit={_handleSubmit}
             />

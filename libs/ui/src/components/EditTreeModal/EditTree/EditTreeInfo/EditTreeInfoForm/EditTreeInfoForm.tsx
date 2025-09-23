@@ -96,14 +96,14 @@ function EditTreeInfoForm({
             // If shift is pressed, don't submit
             if (e.shiftKey || !isEditing) {
                 return;
-        }
+            }
 
-        if (e.key === 'Enter') {
-            e.preventDefault();
+            if (e.key === 'Enter') {
+                e.preventDefault();
 
-            _handleFieldSubmit(field, e.currentTarget.value);
-        }
-    };
+                _handleFieldSubmit(field, e.currentTarget.value);
+            }
+        };
 
     const {label: treeLabel, ...treeSettings} = tree ?? {};
     const label = treeLabel

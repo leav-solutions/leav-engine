@@ -10,13 +10,21 @@ import EditFormTabs from './EditFormTabs';
 
 jest.mock('../../../../../../../hooks/useLang');
 
-jest.mock('./InfosTab', () => function InfosTab() {
-        return <div>InfosTab</div>;
-    });
+jest.mock(
+    './InfosTab',
+    () =>
+        function InfosTab() {
+            return <div>InfosTab</div>;
+        }
+);
 
-jest.mock('./ContentTab', () => function ContentTab() {
-        return <div>ContentTab</div>;
-    });
+jest.mock(
+    './ContentTab',
+    () =>
+        function ContentTab() {
+            return <div>ContentTab</div>;
+        }
+);
 
 describe('EditFormTabs', () => {
     const mockForm = {...mockFormFull};

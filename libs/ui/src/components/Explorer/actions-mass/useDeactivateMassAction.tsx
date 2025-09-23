@@ -9,7 +9,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type FeatureHook, type IMassActions} from '../_types';
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {MASS_SELECTION_ALL} from '../_constants';
-import  {type useExplorerData} from '../_queries/useExplorerData';
+import {type useExplorerData} from '../_queries/useExplorerData';
 import {SUCCESS_ALERT_DURATION} from '_ui/constants';
 
 /**

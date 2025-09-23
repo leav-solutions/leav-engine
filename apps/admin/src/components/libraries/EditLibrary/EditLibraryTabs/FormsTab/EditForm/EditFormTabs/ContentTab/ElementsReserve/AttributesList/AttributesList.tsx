@@ -4,7 +4,10 @@
 import {useQuery} from '@apollo/client';
 import React from 'react';
 import {getAttributesQuery} from '../../../../../../../../../../queries/attributes/getAttributesQuery';
-import {type GET_ATTRIBUTES, type GET_ATTRIBUTESVariables} from '../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {
+    type GET_ATTRIBUTES,
+    type GET_ATTRIBUTESVariables
+} from '../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../../../../../../../../shared/Loading';
 import {useFormBuilderReducer} from '../../formBuilderReducer/hook/useFormBuilderReducer';
 import ReserveAttribute from './ReserveAttribute';

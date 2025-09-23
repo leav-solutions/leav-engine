@@ -6,9 +6,13 @@ import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
 import GeneralInfosTab from './GeneralInfosTab';
 
-jest.mock('components/general/PluginsExplorer', () => function PluginsExplorer() {
-        return <div>PluginsExplorer</div>;
-    });
+jest.mock(
+    'components/general/PluginsExplorer',
+    () =>
+        function PluginsExplorer() {
+            return <div>PluginsExplorer</div>;
+        }
+);
 
 describe('GeneralInfosTab', () => {
     test('Render test', async () => {

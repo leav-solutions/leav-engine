@@ -10,7 +10,14 @@ import {isLinkAttribute, isValueNull, localizedLabel} from '../../../../utils';
 import {type GET_LIB_BY_ID_libraries_list_attributes} from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType} from '../../../../_gqlTypes/globalTypes';
 import {type SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../_gqlTypes/SAVE_VALUE_BATCH';
-import {type IGenericValue, type ILinkValue, type ITreeLinkValue, type IValue, type RecordData, type RecordEdition} from '../../../../_types/records';
+import {
+    type IGenericValue,
+    type ILinkValue,
+    type ITreeLinkValue,
+    type IValue,
+    type RecordData,
+    type RecordEdition
+} from '../../../../_types/records';
 import FormFieldWrapper from '../../../shared/FormFieldWrapper';
 import LinksField from '../../FormFields/LinksField';
 
@@ -145,15 +152,15 @@ const CreateRecordForm = ({
                         </Button>
                     )}
                     {fieldValues.map((v, i) => (
-                            <Form.Input
-                                key={attr.id + '_' + i}
-                                name={attr.id}
-                                value={(v as IValue)?.value || ''}
-                                data-index={i}
-                                onChange={_handleChange}
-                                disabled={readonly}
-                            />
-                        ))}
+                        <Form.Input
+                            key={attr.id + '_' + i}
+                            name={attr.id}
+                            value={(v as IValue)?.value || ''}
+                            data-index={i}
+                            onChange={_handleChange}
+                            disabled={readonly}
+                        />
+                    ))}
                 </>
             );
         };

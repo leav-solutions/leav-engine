@@ -10,8 +10,8 @@ import {act, render, screen} from '../../_tests/testUtils';
 import RecordCard from './RecordCard';
 
 jest.mock('../EntityPreview', () => ({
-        EntityPreview: () => <div>EntityPreview</div>
-    }));
+    EntityPreview: () => <div>EntityPreview</div>
+}));
 
 describe('RecordCard', () => {
     const mock: IRecordIdentityWhoAmI = {

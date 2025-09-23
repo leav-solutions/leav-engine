@@ -6,7 +6,11 @@ import {Checkbox, Divider, Modal, Tree} from 'antd';
 import {useKitNotification} from 'aristid-ds';
 import {useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {type RecordFilterInput, useForcePreviewsGenerationMutation, useGetLibraryPreviewsSettingsQuery} from '_ui/_gqlTypes';
+import {
+    type RecordFilterInput,
+    useForcePreviewsGenerationMutation,
+    useGetLibraryPreviewsSettingsQuery
+} from '_ui/_gqlTypes';
 import useLang from '../../hooks/useLang';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';

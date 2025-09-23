@@ -40,19 +40,19 @@ export default (library: ILibraryDetailExtended): IAttribute[] =>
                 (attribute as ILibraryDetailExtendedAttributeLink).linked_library
             ) {
                 const linkedLibraryId = (attribute as ILibraryDetailExtendedAttributeLink).linked_library.id;
-                const newLinkedAttributes: IAttribute[] = (attribute as ILibraryDetailExtendedAttributeLink).linked_library.attributes.map(
-                    linkedAttribute => ({
-                        id: linkedAttribute.id,
-                        type: linkedAttribute.type,
-                        format: linkedAttribute.format,
-                        label: linkedAttribute.label,
-                        isLink: isTypeLink(linkedAttribute.type),
-                        isMultiple: linkedAttribute.multiple_values,
-                        linkedLibrary: (attribute as ILibraryDetailExtendedAttributeLink).linked_library,
-                        linkedTree: (attribute as ILibraryDetailExtendedAttributeTree).linked_tree,
-                        library: linkedLibraryId
-                    })
-                );
+                const newLinkedAttributes: IAttribute[] = (
+                    attribute as ILibraryDetailExtendedAttributeLink
+                ).linked_library.attributes.map(linkedAttribute => ({
+                    id: linkedAttribute.id,
+                    type: linkedAttribute.type,
+                    format: linkedAttribute.format,
+                    label: linkedAttribute.label,
+                    isLink: isTypeLink(linkedAttribute.type),
+                    isMultiple: linkedAttribute.multiple_values,
+                    linkedLibrary: (attribute as ILibraryDetailExtendedAttributeLink).linked_library,
+                    linkedTree: (attribute as ILibraryDetailExtendedAttributeTree).linked_tree,
+                    library: linkedLibraryId
+                }));
 
                 newAttributes.push(...newLinkedAttributes);
             }
@@ -61,7 +61,9 @@ export default (library: ILibraryDetailExtended): IAttribute[] =>
                 attribute.type === AttributeType.tree &&
                 (attribute as ILibraryDetailExtendedAttributeTree).linked_tree
             ) {
-                const newLinkedAttributes: IAttribute[] = (attribute as ILibraryDetailExtendedAttributeTree).linked_tree.libraries
+                const newLinkedAttributes: IAttribute[] = (
+                    attribute as ILibraryDetailExtendedAttributeTree
+                ).linked_tree.libraries
                     .map(linkedTreeLibrary => {
                         const linkedLibraryId = linkedTreeLibrary.library.id;
                         return linkedTreeLibrary.library.attributes.map(linkedAttribute => ({

@@ -8,7 +8,10 @@ import {Button, Icon, Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {localizedLabel} from 'utils';
 import {type GET_ATTRIBUTESVariables} from '_gqlTypes/GET_ATTRIBUTES';
-import {type GET_LIB_BY_ID_libraries_list, type GET_LIB_BY_ID_libraries_list_permissions_conf} from '_gqlTypes/GET_LIB_BY_ID';
+import {
+    type GET_LIB_BY_ID_libraries_list,
+    type GET_LIB_BY_ID_libraries_list_permissions_conf
+} from '_gqlTypes/GET_LIB_BY_ID';
 import {AttributeType, PermissionsRelation, type Treepermissions_confInput} from '_gqlTypes/globalTypes';
 import SimplisticButton from '../SimplisticButton';
 import PermissionsAttributeSelector from './PermissionsAttributeSelector';

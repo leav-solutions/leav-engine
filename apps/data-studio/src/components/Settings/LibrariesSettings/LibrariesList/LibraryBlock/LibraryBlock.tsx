@@ -104,11 +104,12 @@ function LibraryBlock({
         task.status === TaskStatus.RUNNING;
 
     useEffect(() => {
-        const task = Object.values(tasks).filter(e => (
+        const task = Object.values(tasks).filter(
+            e =>
                 e.role?.type === TaskType.INDEXATION &&
                 e.role?.detail.split(',').includes(library.id) &&
                 isTaskInProgress(e)
-            ))[0];
+        )[0];
 
         setIndexationTask(task?.id);
     }, [tasks, useAppSelector]);

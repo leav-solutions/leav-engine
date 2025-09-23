@@ -66,11 +66,15 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
         }
     }, [state.filters, state.showFilters]);
 
-    const attributesDropDownOptions = useMemo(() => state.selectedRootAttributes.map(attribute => ({
+    const attributesDropDownOptions = useMemo(
+        () =>
+            state.selectedRootAttributes.map(attribute => ({
                 key: attribute.id,
                 text: attribute.label?.fr,
                 value: attribute.id
-            })), [state.selectedRootAttributes]);
+            })),
+        [state.selectedRootAttributes]
+    );
 
     const applyFilters = () => {
         const goodFilters = localState.filter(f => f.attribute !== '' && f.operator !== '' && f.value !== '');
@@ -86,7 +90,8 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
             data: null
         });
     };
-    const memoizedFunctions = useMemo(() => ({
+    const memoizedFunctions = useMemo(
+        () => ({
             removeFilter: (i: number) => {
                 localDispatch({
                     type: LocalActionTypes.REMOVE_FILTER,
@@ -111,9 +116,12 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
                     }
                 });
             }
-        }), [localDispatch]);
+        }),
+        [localDispatch]
+    );
 
-    const renderFilter = useMemo(() => (filterData, index) => {
+    const renderFilter = useMemo(
+        () => (filterData, index) => {
             const onRemove = () => {
                 memoizedFunctions.removeFilter(index);
             };
@@ -154,7 +162,9 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
                     </Button>
                 </Input>
             );
-        }, [attributesDropDownOptions, memoizedFunctions]);
+        },
+        [attributesDropDownOptions, memoizedFunctions]
+    );
     const onSubmit = e => {
         e.preventDefault();
         applyFilters();

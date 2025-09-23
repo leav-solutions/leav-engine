@@ -18,7 +18,10 @@ import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculate
 import {useGetPresentationValues} from './useGetPresentationValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {getAntdDisplayedValue, getEmptyInitialValue} from '../../antdUtils';
-import {type GetRecordColumnsValuesRecord, type IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
+import {
+    type GetRecordColumnsValuesRecord,
+    type IRecordColumnValueStandard
+} from '_ui/_queries/records/getRecordColumnsValues';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {STANDARD_FIELD_ID_PREFIX} from '_ui/constants';
 import {ComputeIndicator} from '../shared/ComputeIndicator';

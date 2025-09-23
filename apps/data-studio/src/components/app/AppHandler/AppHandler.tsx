@@ -34,7 +34,10 @@ import {useTranslation} from 'react-i18next';
 import {useAppDispatch} from 'reduxStore/store';
 import {addTask} from 'reduxStore/tasks';
 import {ThemeProvider} from 'styled-components';
-import {type GET_APPLICATION_BY_ENDPOINT, type GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {
+    type GET_APPLICATION_BY_ENDPOINT,
+    type GET_APPLICATION_BY_ENDPOINTVariables
+} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 import {type GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {type GET_LANGS} from '_gqlTypes/GET_LANGS';
 import {getMe} from '../../../graphQL/queries/userData/me';

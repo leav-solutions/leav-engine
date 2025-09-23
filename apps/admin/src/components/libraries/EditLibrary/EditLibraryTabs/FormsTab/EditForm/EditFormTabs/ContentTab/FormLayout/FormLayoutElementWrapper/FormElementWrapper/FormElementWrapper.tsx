@@ -9,11 +9,22 @@ import styled from 'styled-components';
 import useLang from '../../../../../../../../../../../hooks/useLang';
 import {getAttributesQuery} from '../../../../../../../../../../../queries/attributes/getAttributesQuery';
 import {localizedLabel} from '../../../../../../../../../../../utils';
-import {type GET_ATTRIBUTES, type GET_ATTRIBUTESVariables} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {
+    type GET_ATTRIBUTES,
+    type GET_ATTRIBUTESVariables
+} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../../../../../../../../../shared/Loading';
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
-import {FormBuilderActionTypes, type IFormBuilderStateAndDispatch} from '../../../formBuilderReducer/formBuilderReducer';
-import {DraggableElementTypes, type IFormBuilderDragObject, type IFormElement, type IFormElementPos} from '../../../_types';
+import {
+    FormBuilderActionTypes,
+    type IFormBuilderStateAndDispatch
+} from '../../../formBuilderReducer/formBuilderReducer';
+import {
+    DraggableElementTypes,
+    type IFormBuilderDragObject,
+    type IFormElement,
+    type IFormElementPos
+} from '../../../_types';
 
 interface IFieldWrapperProps extends IFormBuilderStateAndDispatch {
     element: IFormElement;

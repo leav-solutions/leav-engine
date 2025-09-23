@@ -7,7 +7,13 @@ import {type IFormDomain} from 'domain/form/formDomain';
 import {type ILibraryDomain} from 'domain/library/libraryDomain';
 import {type IUtils} from 'utils/utils';
 import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
-import {type IForm, type IFormDependentElements, type IFormElement, type IFormElementJoinLibraryContext, type IRecordForm} from '_types/forms';
+import {
+    type IForm,
+    type IFormDependentElements,
+    type IFormElement,
+    type IFormElementJoinLibraryContext,
+    type IRecordForm
+} from '_types/forms';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type ILibrary, LibraryBehavior} from '../../../_types/library';
 import {type IList} from '_types/list';

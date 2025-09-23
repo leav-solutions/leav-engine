@@ -8,17 +8,26 @@ import {mockLibrary} from '../../../../../__mocks__/libraries';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import NavigatorTab from './NavigatorTab';
 
-const wait = () => new Promise((res, rej) => {
+const wait = () =>
+    new Promise((res, rej) => {
         setTimeout(res, 0);
     });
 
-jest.mock('../../../../navigator/Navigator', () => function Navigator(props) {
-        return <div>MOCK Navigator</div>;
-    });
+jest.mock(
+    '../../../../navigator/Navigator',
+    () =>
+        function Navigator(props) {
+            return <div>MOCK Navigator</div>;
+        }
+);
 
-jest.mock('../../../../records/EditRecordModal', () => function EditRecordModal(props) {
-        return <div>MOCK EditRecordModal</div>;
-    });
+jest.mock(
+    '../../../../records/EditRecordModal',
+    () =>
+        function EditRecordModal(props) {
+            return <div>MOCK EditRecordModal</div>;
+        }
+);
 
 const mockRecord = {
     color: null,

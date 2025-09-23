@@ -29,7 +29,8 @@ function DependencySettings(): JSX.Element {
         value: attr.id
     }));
 
-    const _handleChange = (_, data) => dispatch({
+    const _handleChange = (_, data) =>
+        dispatch({
             type: FormBuilderActionTypes.CHANGE_ACTIVE_DEPENDENCY,
             activeDependency: {
                 attribute: data.value,

@@ -59,9 +59,9 @@ function EditApplicationInfo({library, onSetSubmitFunction, readOnly}: IEditAppl
             // Display errors in form
             form.setFields(
                 Object.keys(e.graphQLErrors?.[0]?.extensions?.fields ?? {}).map(fieldName => ({
-                        name: fieldName,
-                        errors: [e.graphQLErrors[0].extensions.fields[fieldName]]
-                    }))
+                    name: fieldName,
+                    errors: [e.graphQLErrors[0].extensions.fields[fieldName]]
+                }))
             );
 
             throw e;

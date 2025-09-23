@@ -33,15 +33,22 @@ function List({state, dispatch}: IListProps) {
     const {t} = useTranslation();
     const isSelectable = state.selectable;
 
-    const getHandleSelectionChanged = useMemo(() => entity => (event, data) => {
+    const getHandleSelectionChanged = useMemo(
+        () => entity => (event, data) => {
             const actionType = data.checked ? ActionTypes.SELECTION_ADD : ActionTypes.SELECTION_REMOVE;
             dispatch({
                 type: actionType,
                 data: entity.whoAmI
             });
-        }, [dispatch]);
+        },
+        [dispatch]
+    );
 
-    const isSelected = useMemo(() => idToSearch => state.selection.find(elementInSelection => elementInSelection.id === idToSearch) !== undefined, [state.selection]);
+    const isSelected = useMemo(
+        () => idToSearch =>
+            state.selection.find(elementInSelection => elementInSelection.id === idToSearch) !== undefined,
+        [state.selection]
+    );
 
     const onEdit = useMemo(() => {
         const callback = state.onEditRecordClick ? state.onEditRecordClick : () => undefined;

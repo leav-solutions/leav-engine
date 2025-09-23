@@ -8,21 +8,37 @@ import {EditFormContext} from '../../hooks/useEditFormContext';
 import ContentTab from './ContentTab';
 import {formData} from './formBuilderReducer/_fixtures/fixtures';
 
-jest.mock('./BreadcrumbNavigator', () => function BreadcrumbNavigator() {
-        return <div>BreadcrumbNavigator</div>;
-    });
+jest.mock(
+    './BreadcrumbNavigator',
+    () =>
+        function BreadcrumbNavigator() {
+            return <div>BreadcrumbNavigator</div>;
+        }
+);
 
-jest.mock('./DependencySettings', () => function DependencySettings() {
-        return <div>DependencySettings</div>;
-    });
+jest.mock(
+    './DependencySettings',
+    () =>
+        function DependencySettings() {
+            return <div>DependencySettings</div>;
+        }
+);
 
-jest.mock('./ElementsReserve', () => function ElementsReserve() {
-        return <div>ElementsReserve</div>;
-    });
+jest.mock(
+    './ElementsReserve',
+    () =>
+        function ElementsReserve() {
+            return <div>ElementsReserve</div>;
+        }
+);
 
-jest.mock('./FormLayout', () => function FormLayout() {
-        return <div>FormLayout</div>;
-    });
+jest.mock(
+    './FormLayout',
+    () =>
+        function FormLayout() {
+            return <div>FormLayout</div>;
+        }
+);
 
 describe('ContentTab', () => {
     test('Render form content editor', async () => {

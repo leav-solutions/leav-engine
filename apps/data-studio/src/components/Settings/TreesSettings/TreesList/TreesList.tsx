@@ -66,16 +66,16 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
 
     const _handlePostCreate = async (newTree: any) => {
         updateQuery(data => ({
-                trees: {
-                    list: [
-                        ...(data?.trees?.list || []),
-                        {
-                            ...newTree,
-                            permissions: {access_tree: true, edit_children: true}
-                        }
-                    ]
-                }
-            }));
+            trees: {
+                list: [
+                    ...(data?.trees?.list || []),
+                    {
+                        ...newTree,
+                        permissions: {access_tree: true, edit_children: true}
+                    }
+                ]
+            }
+        }));
     };
 
     const _handleRemoveTree = (treeId: string) => () => {

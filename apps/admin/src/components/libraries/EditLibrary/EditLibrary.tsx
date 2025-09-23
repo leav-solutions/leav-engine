@@ -9,7 +9,11 @@ import {type match} from 'react-router-dom-v5';
 import {PermissionsActions} from '_gqlTypes/globalTypes';
 import {ErrorDisplayTypes} from '_types/errors';
 import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
-import {type GET_LIB_BY_ID, type GET_LIB_BY_IDVariables, type GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
+import {
+    type GET_LIB_BY_ID,
+    type GET_LIB_BY_IDVariables,
+    type GET_LIB_BY_ID_libraries_list
+} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import Loading from '../../shared/Loading';
 import EditLibraryTabs from './EditLibraryTabs';
 
@@ -39,7 +43,9 @@ const EditLibrary = ({match: routeMatch}: IEditLibraryProps): JSX.Element => {
         return <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} />;
     }
 
-    const _getEditLibraryTabs = (libToEdit: GET_LIB_BY_ID_libraries_list | null) => <EditLibraryTabs library={libToEdit} readOnly={readOnly} />;
+    const _getEditLibraryTabs = (libToEdit: GET_LIB_BY_ID_libraries_list | null) => (
+        <EditLibraryTabs library={libToEdit} readOnly={readOnly} />
+    );
 
     if (loading) {
         return <Loading />;

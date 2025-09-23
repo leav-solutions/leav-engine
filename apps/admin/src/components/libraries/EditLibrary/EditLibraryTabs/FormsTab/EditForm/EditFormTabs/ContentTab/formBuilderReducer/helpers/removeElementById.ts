@@ -33,9 +33,8 @@ const removeElementById = (
     const _filterElem = el => el.id !== elemId;
 
     // Remove elements linked to tab
-    newElemsByDeps[depAttribute][depValue][containerId] = newElemsByDeps[depAttribute][depValue][containerId].filter(
-        _filterElem
-    );
+    newElemsByDeps[depAttribute][depValue][containerId] =
+        newElemsByDeps[depAttribute][depValue][containerId].filter(_filterElem);
     newElemsByDeps[depAttribute][depValue] = _cleanContainerChildren(
         {
             id: elemId

@@ -10,9 +10,13 @@ import {mockLibrary} from '__mocks__/libraries';
 import {type Mockify} from '../../../_types//Mockify';
 import Libraries from './Libraries';
 
-jest.mock('../LibrariesList', () => function LibrariesList() {
-        return <div>LibrariesList</div>;
-    });
+jest.mock(
+    '../LibrariesList',
+    () =>
+        function LibrariesList() {
+            return <div>LibrariesList</div>;
+        }
+);
 describe('Libraries', () => {
     test('Snapshot test', async () => {
         const mockHistory: Mockify<History> = {};

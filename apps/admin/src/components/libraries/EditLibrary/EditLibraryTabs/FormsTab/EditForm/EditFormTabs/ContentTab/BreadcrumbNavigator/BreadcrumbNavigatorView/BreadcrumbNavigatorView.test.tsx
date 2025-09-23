@@ -6,9 +6,13 @@ import React from 'react';
 import {mockTree} from '../../../../../../../../../../__mocks__/trees';
 import BreadcrumbNavigatorView from './BreadcrumbNavigatorView';
 
-jest.mock('./BreadcrumbSection', () => function BreadcrumbSection() {
-        return <div>BreadcrumbSection</div>;
-    });
+jest.mock(
+    './BreadcrumbSection',
+    () =>
+        function BreadcrumbSection() {
+            return <div>BreadcrumbSection</div>;
+        }
+);
 
 describe('BreadcrumbNavigatorView', () => {
     test('Snapshot test', async () => {

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useRedirectToLogin} from '@leav/ui';
 import {Observable} from '@apollo/client';
-import  {type NextLink, type Operation} from '@apollo/client/link/core';
+import {type NextLink, type Operation} from '@apollo/client/link/core';
 
 export const useInitAuth = () => {
     const {redirectToLogin} = useRedirectToLogin();

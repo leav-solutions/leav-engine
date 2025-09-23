@@ -11,7 +11,7 @@ const CustomImg = styled.img`
 `;
 
 export const IconEllipsisVertical = () => (
-        <div>
-            <CustomImg src={IconSvg} alt="icon ellipsis vertical" />
-        </div>
-    );
+    <div>
+        <CustomImg src={IconSvg} alt="icon ellipsis vertical" />
+    </div>
+);

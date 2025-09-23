@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 const mockUseLang = () => ({
-        lang: ['fr', 'en'],
-        availableLangs: ['fr', 'en'],
-        defaultLang: 'fr'
-    });
+    lang: ['fr', 'en'],
+    availableLangs: ['fr', 'en'],
+    defaultLang: 'fr'
+});
 
 export default mockUseLang;

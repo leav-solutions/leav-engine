@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import  {type Express, type RequestHandler} from 'express';
-import  {type IAppModule} from '../../_types/shared';
-import  {type ExpressAppMethod, type PluginRegisterRoute} from '../../_types/endpoint';
-import  {type IRequestWithContext} from '../../_types/express';
-import  {type InitQueryContextFunc} from '../helpers/initQueryContext';
-import  {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
+import {type Express, type RequestHandler} from 'express';
+import {type IAppModule} from '../../_types/shared';
+import {type ExpressAppMethod, type PluginRegisterRoute} from '../../_types/endpoint';
+import {type IRequestWithContext} from '../../_types/express';
+import {type InitQueryContextFunc} from '../helpers/initQueryContext';
+import {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 import {type IConfig} from '_types/config';
 import {type IValueDomain} from 'domain/value/valueDomain';
 import {USERS_LIBRARY} from '../../_types/library';

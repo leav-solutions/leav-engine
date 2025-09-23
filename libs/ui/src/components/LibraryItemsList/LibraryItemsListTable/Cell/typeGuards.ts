@@ -6,7 +6,14 @@ import {
     type RecordFormElementsValueStandardValue,
     type RecordFormElementsValueTreeValue
 } from '_ui/hooks/useGetRecordForm';
-import {type LinkCellValue, type LinkCellValues, type SimpleCellValue, type SimpleCellValues, type TreeCellValue, type TreeCellValues} from './types';
+import {
+    type LinkCellValue,
+    type LinkCellValues,
+    type SimpleCellValue,
+    type SimpleCellValues,
+    type TreeCellValue,
+    type TreeCellValues
+} from './types';
 
 export const TypeGuards = {
     isSimpleCellValues: (values: SimpleCellValues | LinkCellValues | TreeCellValues): values is SimpleCellValues =>

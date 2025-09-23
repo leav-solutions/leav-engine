@@ -57,12 +57,12 @@ function EditRecordInput({
     let blurTimeoutRef;
 
     useEffect(() => () => {
-            // Clear timeout created on blur to avoid warnings about updating state on unmounted components
-            if (blurTimeoutRef) {
-                setEditing(false); // Force editing to false in case to make sure we don't stay with editing = true
-                clearTimeout(blurTimeoutRef);
-            }
-        });
+        // Clear timeout created on blur to avoid warnings about updating state on unmounted components
+        if (blurTimeoutRef) {
+            setEditing(false); // Force editing to false in case to make sure we don't stay with editing = true
+            clearTimeout(blurTimeoutRef);
+        }
+    });
 
     const _handleFocus = () => setEditing(true);
 

@@ -23,7 +23,7 @@ const DeleteAttribute = (props: IDeleteAttributeProps): JSX.Element => {
     const {lang} = useLang();
     const [deleteAttr] = useMutation<DELETE_ATTRIBUTE, DELETE_ATTRIBUTEVariables>(deleteAttrQuery, {
         update: (cache, {data: {deleteAttribute}}) => {
-            deleteFromCache(cache, (deleteAttribute as unknown) as StoreObject);
+            deleteFromCache(cache, deleteAttribute as unknown as StoreObject);
         }
     });
 

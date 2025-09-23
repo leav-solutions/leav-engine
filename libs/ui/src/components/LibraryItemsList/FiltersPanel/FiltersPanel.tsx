@@ -88,14 +88,14 @@ function FiltersPanel(): JSX.Element {
 
         const newFilter = searchState.filters
             .map(filter => ({
-                    ...filter,
-                    index:
-                        result.source.index === filter.index
-                            ? result.destination.index
-                            : result.destination.index === filter.index
-                            ? result.source.index
-                            : filter.index
-                }))
+                ...filter,
+                index:
+                    result.source.index === filter.index
+                        ? result.destination.index
+                        : result.destination.index === filter.index
+                          ? result.source.index
+                          : filter.index
+            }))
             .sort((a, b) => a.index - b.index);
 
         searchDispatch({

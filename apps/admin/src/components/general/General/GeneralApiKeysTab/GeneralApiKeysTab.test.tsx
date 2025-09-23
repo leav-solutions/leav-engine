@@ -11,9 +11,13 @@ import GeneralApiKeysTab from './GeneralApiKeysTab';
 
 jest.mock('../../../../hooks/useLang');
 
-jest.mock('./EditApiKeyModal', () => function EditApiKeyModal() {
-        return <div>EditApiKeyModal</div>;
-    });
+jest.mock(
+    './EditApiKeyModal',
+    () =>
+        function EditApiKeyModal() {
+            return <div>EditApiKeyModal</div>;
+        }
+);
 
 describe('ApiKeys', () => {
     const mocks = [

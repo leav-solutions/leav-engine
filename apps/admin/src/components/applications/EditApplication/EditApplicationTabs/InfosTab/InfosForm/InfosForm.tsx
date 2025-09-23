@@ -279,9 +279,9 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                             aria-label="type"
                             onChange={_handleChangeWithSubmit}
                             options={Object.keys(ApplicationType).map(appType => ({
-                                    text: t('applications.types.' + appType),
-                                    value: appType
-                                }))}
+                                text: t('applications.types.' + appType),
+                                value: appType
+                            }))}
                             value={values.type}
                         />
                     </FormFieldWrapper>

@@ -15,7 +15,9 @@ const delay = 3000;
 const animationDuration = 350;
 
 const SuccessIcon = styled(CheckOutlined)`
-    animation: appear 500ms, ${animationDuration}ms disappear ${delay - animationDuration}ms;
+    animation:
+        appear 500ms,
+        ${animationDuration}ms disappear ${delay - animationDuration}ms;
     color: ${props => props.theme?.antd?.colorSuccess ?? 'inherit'};
 
     @keyframes disappear {

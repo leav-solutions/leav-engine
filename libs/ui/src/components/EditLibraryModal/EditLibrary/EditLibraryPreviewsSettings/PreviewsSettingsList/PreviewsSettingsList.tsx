@@ -114,14 +114,14 @@ function PreviewsSettingsList({
             dataIndex: ['versions', 'sizes'],
             key: 'sizes',
             render: (value: LibraryPreviewsSettingsFragment['versions']['sizes']) => (
-                    <Space wrap size="small">
-                        {value.map(({name, size}) => (
-                            <Tooltip key={name} title={name}>
-                                <Tag key={name}>{size}</Tag>
-                            </Tooltip>
-                        ))}
-                    </Space>
-                )
+                <Space wrap size="small">
+                    {value.map(({name, size}) => (
+                        <Tooltip key={name} title={name}>
+                            <Tag key={name}>{size}</Tag>
+                        </Tooltip>
+                    ))}
+                </Space>
+            )
         }
     ];
 

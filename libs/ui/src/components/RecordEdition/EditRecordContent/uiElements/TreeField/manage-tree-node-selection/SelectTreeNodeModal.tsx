@@ -6,7 +6,10 @@ import {FaCheck} from 'react-icons/fa';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitModal} from 'aristid-ds';
-import {type ChildrenAsRecordValuePermissionFilterInput, type RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
+import {
+    type ChildrenAsRecordValuePermissionFilterInput,
+    type RecordFormAttributeTreeAttributeFragment
+} from '_ui/_gqlTypes';
 import {SelectTreeNode} from '_ui/components/SelectTreeNode';
 import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';

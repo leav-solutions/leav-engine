@@ -7,9 +7,13 @@ import {TreeBehavior} from '../../../../../../../../../_gqlTypes/globalTypes';
 import {mockInitialState} from '../formBuilderReducer/_fixtures/fixtures';
 import BreadcrumbNavigator from './BreadcrumbNavigator';
 
-jest.mock('./BreadcrumbNavigatorView', () => function BreadcrumbNavigatorView() {
-        return <div>BreadcrumbNavigatorView</div>;
-    });
+jest.mock(
+    './BreadcrumbNavigatorView',
+    () =>
+        function BreadcrumbNavigatorView() {
+            return <div>BreadcrumbNavigatorView</div>;
+        }
+);
 
 jest.mock('../formBuilderReducer/hook/useFormBuilderReducer', () => ({
     useFormBuilderReducer: () => ({

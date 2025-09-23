@@ -10,9 +10,11 @@ import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '_gq
 import VersionProfilesSelectorField from './VersionProfilesSelectorField';
 
 function VersionProfilesSelector(fieldProps: FormDropdownProps): JSX.Element {
-    const {loading, error: queryError, data} = useQuery<GET_VERSION_PROFILES, GET_VERSION_PROFILESVariables>(
-        getVersionProfilesQuery
-    );
+    const {
+        loading,
+        error: queryError,
+        data
+    } = useQuery<GET_VERSION_PROFILES, GET_VERSION_PROFILESVariables>(getVersionProfilesQuery);
 
     if (queryError) {
         return <ErrorDisplay message={queryError.message} />;

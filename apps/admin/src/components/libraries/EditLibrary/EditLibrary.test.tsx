@@ -8,9 +8,13 @@ import {getLibByIdQuery} from 'queries/libraries/getLibraryById';
 import React from 'react';
 import EditLibrary from './EditLibrary';
 
-jest.mock('./EditLibraryTabs', () => function EditLibraryTabs() {
-        return <div>EditLibraryTabs</div>;
-    });
+jest.mock(
+    './EditLibraryTabs',
+    () =>
+        function EditLibraryTabs() {
+            return <div>EditLibraryTabs</div>;
+        }
+);
 
 describe('EditLibrary', () => {
     test('Render tabs when editing library', async () => {

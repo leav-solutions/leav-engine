@@ -6,12 +6,20 @@ import React from 'react';
 import Navigator from '.';
 import MockedLangContextProvider from '../../__mocks__/MockedLangContextProvider';
 
-jest.mock('./MainPanel', () => function MainPanel() {
-        return <>MainPanel MOCKED</>;
-    });
-jest.mock('./RootSelector', () => function RootSelector() {
-        return <>ROOT SELECTOR MOCKED</>;
-    });
+jest.mock(
+    './MainPanel',
+    () =>
+        function MainPanel() {
+            return <>MainPanel MOCKED</>;
+        }
+);
+jest.mock(
+    './RootSelector',
+    () =>
+        function RootSelector() {
+            return <>ROOT SELECTOR MOCKED</>;
+        }
+);
 
 describe('Navigator', () => {
     test('it mounts', () => {

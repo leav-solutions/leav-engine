@@ -36,9 +36,13 @@ jest.mock(
         }
 );
 
-jest.mock('./Routes', () => function Routes() {
-        return <div>Routes</div>;
-    });
+jest.mock(
+    './Routes',
+    () =>
+        function Routes() {
+            return <div>Routes</div>;
+        }
+);
 
 jest.mock('reduxStore/notifications', () => jest.fn());
 

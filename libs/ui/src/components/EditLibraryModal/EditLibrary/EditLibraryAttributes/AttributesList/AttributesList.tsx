@@ -150,10 +150,14 @@ function AttributesList({library, readOnly, onDeleteAttribute, onAddAttributes}:
             width: '150px',
             render: (type: AttributeType) => (
                 <KitTag
-                    style={{borderColor: tagColorByAttributeType[type][0], backgroundColor:tagColorByAttributeType[type][1]}}
+                    style={{
+                        borderColor: tagColorByAttributeType[type][0],
+                        backgroundColor: tagColorByAttributeType[type][1]
+                    }}
                     idCardProps={{
-                    description: t(`attributes.type_${type}`)
-                }} />
+                        description: t(`attributes.type_${type}`)
+                    }}
+                />
             ),
             filters: Object.values(AttributeType).map(type => ({
                 text: t(`attributes.type_${type}`),
@@ -175,10 +179,14 @@ function AttributesList({library, readOnly, onDeleteAttribute, onAddAttributes}:
             render: (format: AttributeFormat) =>
                 format ? (
                     <KitTag
-                        style={{borderColor: tagColorByAttributeFormat[format][0], backgroundColor:tagColorByAttributeFormat[format][1]}}
+                        style={{
+                            borderColor: tagColorByAttributeFormat[format][0],
+                            backgroundColor: tagColorByAttributeFormat[format][1]
+                        }}
                         idCardProps={{
                             description: t(`attributes.format_${format}`)
-                        }} />
+                        }}
+                    />
                 ) : null,
             filters: Object.values(AttributeFormat).map(format => ({
                 text: t(`attributes.format_${format}`),

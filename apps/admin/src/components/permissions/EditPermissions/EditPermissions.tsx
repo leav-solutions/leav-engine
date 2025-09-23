@@ -7,8 +7,15 @@ import {getPermissionsActionsQuery} from '../../../queries/permissions/getPermis
 import {getPermissionsQuery} from '../../../queries/permissions/getPermissionsQuery';
 import {savePermissionsQuery} from '../../../queries/permissions/savePermissionMutation';
 import {type GET_PERMISSIONS, type GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
-import {type GET_PERMISSIONS_ACTIONS, type GET_PERMISSIONS_ACTIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS_ACTIONS';
-import {type PermissionsActions, type PermissionsTreeTargetInput, type PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {
+    type GET_PERMISSIONS_ACTIONS,
+    type GET_PERMISSIONS_ACTIONSVariables
+} from '../../../_gqlTypes/GET_PERMISSIONS_ACTIONS';
+import {
+    type PermissionsActions,
+    type PermissionsTreeTargetInput,
+    type PermissionTypes
+} from '../../../_gqlTypes/globalTypes';
 import {
     type SAVE_PERMISSION,
     type SAVE_PERMISSIONVariables,
@@ -31,10 +38,11 @@ interface IEditPermissionsProps {
 }
 
 const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps): JSX.Element => {
-    const {loading: loadingActions, error: errorActions, data: dataActions} = useQuery<
-        GET_PERMISSIONS_ACTIONS,
-        GET_PERMISSIONS_ACTIONSVariables
-    >(getPermissionsActionsQuery, {
+    const {
+        loading: loadingActions,
+        error: errorActions,
+        data: dataActions
+    } = useQuery<GET_PERMISSIONS_ACTIONS, GET_PERMISSIONS_ACTIONSVariables>(getPermissionsActionsQuery, {
         variables: {type: permParams.type, applyOn: permParams.applyTo},
         fetchPolicy: 'network-only',
         notifyOnNetworkStatusChange: true

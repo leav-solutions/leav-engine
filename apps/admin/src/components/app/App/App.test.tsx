@@ -16,13 +16,21 @@ import {enableFetchMocks} from 'jest-fetch-mock';
 
 enableFetchMocks();
 
-jest.mock('../Home', () => function Home() {
-        return <div>Home</div>;
-    });
+jest.mock(
+    '../Home',
+    () =>
+        function Home() {
+            return <div>Home</div>;
+        }
+);
 
-jest.mock('../MessagesDisplay', () => function MessagesDisplay() {
-        return <div>MessagesDisplay</div>;
-    });
+jest.mock(
+    '../MessagesDisplay',
+    () =>
+        function MessagesDisplay() {
+            return <div>MessagesDisplay</div>;
+        }
+);
 
 jest.mock('../../../constants', () => ({
     APP_ENDPOINT: 'admin'

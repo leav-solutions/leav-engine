@@ -12,11 +12,11 @@ import useSaveValueBatchMutation from './useExecuteSaveValueBatchMutation';
 describe('useSaveValueBatchMutation', () => {
     const mockApolloCache: Mockify<apolloClient.ApolloCache<any>> = {modify: jest.fn(), identify: jest.fn()};
     const mockApolloClient: Mockify<apolloClient.ApolloClient<any>> = {
-        cache: (mockApolloCache as unknown) as apolloClient.ApolloCache<any>
+        cache: mockApolloCache as unknown as apolloClient.ApolloCache<any>
     };
 
     jest.spyOn(apolloClient, 'useApolloClient').mockImplementation(
-        () => (mockApolloClient as unknown) as apolloClient.ApolloClient<any>
+        () => mockApolloClient as unknown as apolloClient.ApolloClient<any>
     );
 
     const mockValue: ValueDetailsValueFragment = {
@@ -26,10 +26,10 @@ describe('useSaveValueBatchMutation', () => {
         created_at: null,
         created_by: null,
         version: null,
-        attribute: ({
+        attribute: {
             ...mockAttributeSimple,
             system: false
-        } as unknown) as ValueDetailsValueFragment['attribute'],
+        } as unknown as ValueDetailsValueFragment['attribute'],
         value: null,
         raw_value: null,
         metadata: null

@@ -3,12 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {AttributeCondition} from '../../../../_types/record';
-import {
-    gqlCreateRecord,
-    gqlSaveAttribute,
-    gqlSaveLibrary,
-    makeGraphQlCall
-} from '../e2eUtils';
+import {gqlCreateRecord, gqlSaveAttribute, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
 
 describe('GetConditionPart', () => {
     const testLibName = 'get_condition_part_test_lib';

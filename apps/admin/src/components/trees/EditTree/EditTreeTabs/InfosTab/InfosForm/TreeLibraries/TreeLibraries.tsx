@@ -92,51 +92,51 @@ function TreeLibraries({onChange, libraries, readonly}: ITreeLibrariesProps): JS
                 )}
             </Grid>
             {libraries.map((treeLib, index) => (
-                    <Segment key={index}>
-                        <Grid columns={3} stackable>
-                            <Grid.Row verticalAlign="middle">
-                                <Grid.Column width={4}>
-                                    <LibrariesSelector
-                                        data-test-id="lib-selector"
-                                        disabled={readonly}
-                                        multiple={false}
-                                        fluid
-                                        selection
-                                        name="libraries"
-                                        onChange={_handleLibChange(index)}
-                                        value={treeLib.library}
+                <Segment key={index}>
+                    <Grid columns={3} stackable>
+                        <Grid.Row verticalAlign="middle">
+                            <Grid.Column width={4}>
+                                <LibrariesSelector
+                                    data-test-id="lib-selector"
+                                    disabled={readonly}
+                                    multiple={false}
+                                    fluid
+                                    selection
+                                    name="libraries"
+                                    onChange={_handleLibChange(index)}
+                                    value={treeLib.library}
+                                />
+                            </Grid.Column>
+                            <Grid.Column width={11} textAlign="right">
+                                <Grid columns={1} stackable>
+                                    <Grid.Row verticalAlign="middle">
+                                        <Grid.Column textAlign="left">
+                                            <Checkbox
+                                                data-test-id={`settings-allowMultiplePositions-${treeLib.library}`}
+                                                toggle
+                                                name="allowMultiplePositions"
+                                                checked={treeLib.settings.allowMultiplePositions}
+                                                label={t('trees.allow_multiple_positions')}
+                                                onChange={_handleSettingsChange(index)}
+                                                disabled={readonly}
+                                            />
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                </Grid>
+                            </Grid.Column>
+                            {!readonly && (
+                                <Grid.Column width={1} textAlign="right">
+                                    <DeleteIcon
+                                        data-test-id="delete-button"
+                                        name="cancel"
+                                        onClick={_handleDeleteLibrary(index)}
                                     />
                                 </Grid.Column>
-                                <Grid.Column width={11} textAlign="right">
-                                    <Grid columns={1} stackable>
-                                        <Grid.Row verticalAlign="middle">
-                                            <Grid.Column textAlign="left">
-                                                <Checkbox
-                                                    data-test-id={`settings-allowMultiplePositions-${treeLib.library}`}
-                                                    toggle
-                                                    name="allowMultiplePositions"
-                                                    checked={treeLib.settings.allowMultiplePositions}
-                                                    label={t('trees.allow_multiple_positions')}
-                                                    onChange={_handleSettingsChange(index)}
-                                                    disabled={readonly}
-                                                />
-                                            </Grid.Column>
-                                        </Grid.Row>
-                                    </Grid>
-                                </Grid.Column>
-                                {!readonly && (
-                                    <Grid.Column width={1} textAlign="right">
-                                        <DeleteIcon
-                                            data-test-id="delete-button"
-                                            name="cancel"
-                                            onClick={_handleDeleteLibrary(index)}
-                                        />
-                                    </Grid.Column>
-                                )}
-                            </Grid.Row>
-                        </Grid>
-                    </Segment>
-                ))}
+                            )}
+                        </Grid.Row>
+                    </Grid>
+                </Segment>
+            ))}
         </>
     );
 }

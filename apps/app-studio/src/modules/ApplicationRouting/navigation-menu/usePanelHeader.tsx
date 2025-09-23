@@ -6,7 +6,7 @@ import {LangContext} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {useLocation, useOutletContext} from 'react-router-dom';
 import {fullpageRecordSearchParamsName, popupRecordSearchParamsName, sliderRecordSearchParamsName} from '../routes';
-import  {type IApplicationMatchingContext, type PanelLevel} from '../types';
+import {type IApplicationMatchingContext, type PanelLevel} from '../types';
 import {LibraryIdCard} from './LibraryIdCard';
 import {RecordIdCard} from './RecordIdCard';
 

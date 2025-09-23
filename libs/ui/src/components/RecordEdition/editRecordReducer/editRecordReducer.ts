@@ -2,7 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IRecordIdentityWhoAmI, type SystemTranslation, type IValueVersion} from '_ui/types';
-import {type RecordFormAttributeFragment, type RecordUpdateSubscription, type ValueDetailsFragment} from '_ui/_gqlTypes';
+import {
+    type RecordFormAttributeFragment,
+    type RecordUpdateSubscription,
+    type ValueDetailsFragment
+} from '_ui/_gqlTypes';
 import {
     type RecordFormElementsValueLinkValue,
     type RecordFormElementsValueStandardValue,

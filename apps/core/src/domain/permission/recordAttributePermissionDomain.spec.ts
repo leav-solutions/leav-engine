@@ -8,7 +8,9 @@ import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IAttributePermissionDomain} from './attributePermissionDomain';
 import * as getDefaultPermission from './helpers/defaultPermission';
 import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
-import recordAttributePermissionDomain, {type IRecordAttributePermissionDomainDeps} from './recordAttributePermissionDomain';
+import recordAttributePermissionDomain, {
+    type IRecordAttributePermissionDomainDeps
+} from './recordAttributePermissionDomain';
 import {type ToAny} from 'utils/utils';
 
 const depsBase: ToAny<IRecordAttributePermissionDomainDeps> = {

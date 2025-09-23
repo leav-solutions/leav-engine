@@ -3,7 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import cloneDeep from 'lodash/cloneDeep';
 import {type IFormElement} from '../../../_types';
-import {defaultContainerId, type IFormBuilderActionSaveSettings, type IFormBuilderState} from '../../formBuilderReducer';
+import {
+    defaultContainerId,
+    type IFormBuilderActionSaveSettings,
+    type IFormBuilderState
+} from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import {type IKeyValue} from '@leav/utils';
 

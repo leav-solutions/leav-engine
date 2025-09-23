@@ -136,7 +136,7 @@ function TreesSettings(): JSX.Element {
         });
     };
 
-    const currentMode = Array.isArray(currentApp.settings?.trees) ? 'custom' : currentApp.settings?.trees ?? 'all';
+    const currentMode = Array.isArray(currentApp.settings?.trees) ? 'custom' : (currentApp.settings?.trees ?? 'all');
 
     return (
         <TabContentWrapper>

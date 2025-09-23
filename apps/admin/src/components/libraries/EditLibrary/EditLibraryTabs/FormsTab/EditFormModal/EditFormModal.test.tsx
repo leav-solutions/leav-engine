@@ -5,9 +5,13 @@ import {shallow} from 'enzyme';
 import React from 'react';
 import EditFormModal from './EditFormModal';
 
-jest.mock('../EditForm', () => function EditForm() {
-        return <div>EditForm</div>;
-    });
+jest.mock(
+    '../EditForm',
+    () =>
+        function EditForm() {
+            return <div>EditForm</div>;
+        }
+);
 
 describe('EditFormModal', () => {
     const onClose = jest.fn();

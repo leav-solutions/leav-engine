@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ApolloCache,type StoreObject} from '@apollo/client';
-import {type FormikErrors,type FormikTouched} from 'formik';
+import {type ApolloCache, type StoreObject} from '@apollo/client';
+import {type FormikErrors, type FormikTouched} from 'formik';
 import gql from 'graphql-tag';
 import {type i18n} from 'i18next';
 import get from 'lodash/get';
@@ -14,10 +14,10 @@ import {
     type GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
     type GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
 } from '../_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {AttributeType,type AvailableLanguage} from '../_gqlTypes/globalTypes';
+import {AttributeType, type AvailableLanguage} from '../_gqlTypes/globalTypes';
 import {type IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {type IErrorByField} from '../_types/errors';
-import {type IGenericValue,type ILinkValue,type ITreeLinkValue,type IValue} from '../_types/records';
+import {type IGenericValue, type ILinkValue, type ITreeLinkValue, type IValue} from '../_types/records';
 import {type IKeyValue} from '../_types/shared';
 
 export const localizedLabel = (labels: SystemTranslation | null, availableLanguages: AvailableLanguage[]): string => {
@@ -38,18 +38,18 @@ export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage
 };
 
 export const formatIDString = (s: string): string =>
-     removeAccents(s)
+    removeAccents(s)
         .toLowerCase()
         .replace(/\W/g, ' ') // Convert any non-word character to space (anything not a letter, a _ or a number)
         .trim() // Trim spaces
         .replace(/ /g, '_') // Convert spaces to _
-        .replace(/(_){2,}/g, '_') // Remove any __, ___, ....
-;
+        .replace(/(_){2,}/g, '_'); // Remove any __, ___, ....
 
 /**
  * Add wildcards (%) around filter values. By default process only label and id
  */
-export const addWildcardToFilters = (filters, keysToProcess = ['label', 'id']) => Object.keys(filters).reduce((allFilters, k) => {
+export const addWildcardToFilters = (filters, keysToProcess = ['label', 'id']) =>
+    Object.keys(filters).reduce((allFilters, k) => {
         const val = keysToProcess.indexOf(k) !== -1 ? '%' + filters[k] + '%' : filters[k];
 
         allFilters[k] = val;
@@ -146,7 +146,8 @@ export const getInvertColor = (color: string): string => {
 
 export const getTreeNodeKey = (nodeData: TreeNode | null): string => String(nodeData?.node?.id ?? '');
 
-export const permsArrayToObject = (perms: IS_ALLOWED_isAllowed[]): {[name: string]: boolean} => perms.reduce((allPerms, perm) => {
+export const permsArrayToObject = (perms: IS_ALLOWED_isAllowed[]): {[name: string]: boolean} =>
+    perms.reduce((allPerms, perm) => {
         allPerms[perm.name] = perm.allowed;
 
         return allPerms;
@@ -219,17 +220,19 @@ export function getRecordIdentityCacheKey(libId: string, recordId: string): stri
 }
 
 /*** Values type guards ***/
-export const isStandardValue = (value: IGenericValue): value is IValue => typeof (value as IValue).value !== 'undefined';
+export const isStandardValue = (value: IGenericValue): value is IValue =>
+    typeof (value as IValue).value !== 'undefined';
 
-export const isLinkValue = (value: IGenericValue): value is ILinkValue => typeof (value as ILinkValue).linkValue !== 'undefined';
+export const isLinkValue = (value: IGenericValue): value is ILinkValue =>
+    typeof (value as ILinkValue).linkValue !== 'undefined';
 
-export const isTreeValue = (value: IGenericValue): value is ITreeLinkValue => typeof (value as ITreeLinkValue).treeValue !== 'undefined';
+export const isTreeValue = (value: IGenericValue): value is ITreeLinkValue =>
+    typeof (value as ITreeLinkValue).treeValue !== 'undefined';
 
-export const isValueNull = (val: IGenericValue): boolean => (
-        (isStandardValue(val) && val.value === null) ||
-        (isLinkValue(val) && val.linkValue === null) ||
-        (isTreeValue(val) && val.treeValue === null)
-    );
+export const isValueNull = (val: IGenericValue): boolean =>
+    (isStandardValue(val) && val.value === null) ||
+    (isLinkValue(val) && val.linkValue === null) ||
+    (isTreeValue(val) && val.treeValue === null);
 /*************/
 
 /** Convert an array to an object, using given field as key **/

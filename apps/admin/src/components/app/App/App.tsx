@@ -17,7 +17,10 @@ import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useTranslation} from 'react-i18next';
 import {Message} from 'semantic-ui-react';
 import * as yup from 'yup';
-import {type GET_APPLICATION_BY_ENDPOINT, type GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {
+    type GET_APPLICATION_BY_ENDPOINT,
+    type GET_APPLICATION_BY_ENDPOINTVariables
+} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 import {type GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {type GET_LANGS} from '_gqlTypes/GET_LANGS';
 import {type IS_ALLOWED, type IS_ALLOWEDVariables} from '_gqlTypes/IS_ALLOWED';
@@ -39,10 +42,11 @@ const App = (): JSX.Element => {
     const {lang: appLang, loading: appLangLoading, error: appLangErr} = useAppLang();
     const {data: meData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
 
-    const {loading: isAllowedLoading, error: isAllowedError, data: isAllowedData} = useQuery<
-        IS_ALLOWED,
-        IS_ALLOWEDVariables
-    >(isAllowedQuery, {
+    const {
+        loading: isAllowedLoading,
+        error: isAllowedError,
+        data: isAllowedData
+    } = useQuery<IS_ALLOWED, IS_ALLOWEDVariables>(isAllowedQuery, {
         variables: {
             type: PermissionTypes.admin,
             actions: Object.values(PermissionsActions).filter(a => !!a.match(/^admin_/))
@@ -51,10 +55,13 @@ const App = (): JSX.Element => {
 
     const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
 
-    const {data: applicationData, loading: applicationLoading, error: applicationError} = useQuery<
-        GET_APPLICATION_BY_ENDPOINT,
-        GET_APPLICATION_BY_ENDPOINTVariables
-    >(getApplicationByEndpointQuery, {variables: {endpoint: APP_ENDPOINT}});
+    const {
+        data: applicationData,
+        loading: applicationLoading,
+        error: applicationError
+    } = useQuery<GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables>(getApplicationByEndpointQuery, {
+        variables: {endpoint: APP_ENDPOINT}
+    });
 
     const {
         data: globalSettingsData,

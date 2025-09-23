@@ -7,9 +7,13 @@ import {act, render, screen} from '_tests/testUtils';
 import {mockApiKey} from '__mocks__/common/apiKeys';
 import EditApiKeyModal from './EditApiKeyModal';
 
-jest.mock('components/shared/RecordSelector', () => function RecordSelector() {
-        return <div>RecordSelector</div>;
-    });
+jest.mock(
+    'components/shared/RecordSelector',
+    () =>
+        function RecordSelector() {
+            return <div>RecordSelector</div>;
+        }
+);
 
 describe('EditApiKeyModal', () => {
     test('Render form', async () => {

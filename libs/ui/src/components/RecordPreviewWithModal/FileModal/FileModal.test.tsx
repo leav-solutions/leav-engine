@@ -29,8 +29,7 @@ describe('FileModal', () => {
         file_name: [{__typename: 'Value', value: 'my_file.jpg'}],
         previews_status: [
             {
-                value:
-                    '{"big":{"message":"preview create","status":0},"huge":{"message":"preview create","status":0},"medium":{"message":"preview create","status":0},"small":{"message":"preview create","status":0},"tiny":{"message":"preview create","status":0}}',
+                value: '{"big":{"message":"preview create","status":0},"huge":{"message":"preview create","status":0},"medium":{"message":"preview create","status":0},"small":{"message":"preview create","status":0},"tiny":{"message":"preview create","status":0}}',
                 __typename: 'Value'
             }
         ],

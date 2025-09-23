@@ -2,7 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExpandAltOutlined, HolderOutlined} from '@ant-design/icons';
-import {EditTreeModal, EntityCard, FloatingMenu, type FloatingMenuAction, type IEntityData, PreviewSize, useLang} from '@leav/ui';
+import {
+    EditTreeModal,
+    EntityCard,
+    FloatingMenu,
+    type FloatingMenuAction,
+    type IEntityData,
+    PreviewSize,
+    useLang
+} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {useState} from 'react';
 import {type DraggableProvided} from 'react-beautiful-dnd';

@@ -4,15 +4,15 @@
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 
 const mockUseUserData = () => ({
-        id: 1,
-        name: 'Test',
-        permissions: Object.values(PermissionsActions)
-            .filter(a => !!a.match(/^admin_/))
-            .reduce((perms, p) => {
-                perms[p] = true;
+    id: 1,
+    name: 'Test',
+    permissions: Object.values(PermissionsActions)
+        .filter(a => !!a.match(/^admin_/))
+        .reduce((perms, p) => {
+            perms[p] = true;
 
-                return perms;
-            }, {})
-    });
+            return perms;
+        }, {})
+});
 
 export default mockUseUserData;

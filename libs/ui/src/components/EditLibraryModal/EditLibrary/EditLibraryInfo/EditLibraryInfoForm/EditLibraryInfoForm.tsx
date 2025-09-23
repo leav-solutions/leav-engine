@@ -99,20 +99,19 @@ function EditLibraryInfoForm({
         }
     };
 
-    const _handleSubmitOnEnter = (field: string) => (
-        e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        // If shift is pressed, don't submit
-        if (e.shiftKey || !isEditing) {
-            return;
-        }
+    const _handleSubmitOnEnter =
+        (field: string) => (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            // If shift is pressed, don't submit
+            if (e.shiftKey || !isEditing) {
+                return;
+            }
 
-        if (e.key === 'Enter') {
-            e.preventDefault();
+            if (e.key === 'Enter') {
+                e.preventDefault();
 
-            _handleFieldSubmit(field, e.currentTarget.value);
-        }
-    };
+                _handleFieldSubmit(field, e.currentTarget.value);
+            }
+        };
 
     const {label: libLabel, recordIdentityConf: libRecordIdentityConf, ...librarySettings} = library ?? {};
     const label = libLabel

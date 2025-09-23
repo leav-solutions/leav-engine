@@ -8,7 +8,12 @@ import {type ActionsListConfig} from '_types/actionsList';
 import {type ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
 import {adminsGroupId} from '../../../_constants/users';
-import {AttributeFormats, type AttributeTypes, type IAttributeVersionsConf, type IEmbeddedAttribute} from '../../../_types/attribute';
+import {
+    AttributeFormats,
+    type AttributeTypes,
+    type IAttributeVersionsConf,
+    type IEmbeddedAttribute
+} from '../../../_types/attribute';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
 
 async function _getAuthToken() {

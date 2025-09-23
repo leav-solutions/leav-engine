@@ -10,9 +10,13 @@ import {mockTree} from '__mocks__/trees';
 import {type Mockify} from '../../../_types//Mockify';
 import Trees from './Trees';
 
-jest.mock('../TreesList', () => function TreesList() {
-        return <div>TreesList</div>;
-    });
+jest.mock(
+    '../TreesList',
+    () =>
+        function TreesList() {
+            return <div>TreesList</div>;
+        }
+);
 
 describe('Trees', () => {
     test('Snapshot test', async () => {

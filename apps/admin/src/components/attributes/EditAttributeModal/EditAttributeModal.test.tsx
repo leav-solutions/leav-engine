@@ -5,9 +5,13 @@ import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
 import EditAttributeModal from './EditAttributeModal';
 
-jest.mock('../EditAttribute', () => function EditAttribute() {
-        return <div>EditAttribute</div>;
-    });
+jest.mock(
+    '../EditAttribute',
+    () =>
+        function EditAttribute() {
+            return <div>EditAttribute</div>;
+        }
+);
 
 describe('EditAttributeModal', () => {
     test('Render test', async () => {

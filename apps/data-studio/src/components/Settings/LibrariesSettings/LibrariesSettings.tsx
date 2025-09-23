@@ -135,7 +135,7 @@ function LibrariesSettings(): JSX.Element {
 
     const currentMode = Array.isArray(currentApp.settings?.libraries)
         ? 'custom'
-        : currentApp.settings?.libraries ?? 'all';
+        : (currentApp.settings?.libraries ?? 'all');
 
     return (
         <TabContentWrapper>

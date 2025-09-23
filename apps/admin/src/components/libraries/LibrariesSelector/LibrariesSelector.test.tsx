@@ -8,9 +8,13 @@ import LibrariesSelector from './LibrariesSelector';
 
 jest.mock('../../../hooks/useLang');
 
-jest.mock('../LibrariesSelectorField', () => function LibrariesSelectorField() {
-        return <div>LibrariesSelectorField</div>;
-    });
+jest.mock(
+    '../LibrariesSelectorField',
+    () =>
+        function LibrariesSelectorField() {
+            return <div>LibrariesSelectorField</div>;
+        }
+);
 
 describe('LibrariesSelector', () => {
     test('Snapshot test', async () => {

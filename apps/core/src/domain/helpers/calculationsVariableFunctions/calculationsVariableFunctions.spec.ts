@@ -28,7 +28,11 @@ describe('calculationsVariableFunctions', () => {
             mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: {id: 'linkedRecordId'}}]);
             mockAttributeDomain.getAttributeProperties.mockResolvedValue({linked_library: 'libraryId'});
 
-            const res = await calculationFunctions.getValue.run(ctx, [{library: 'library', recordId: 'recordId'}], 'attributeId');
+            const res = await calculationFunctions.getValue.run(
+                ctx,
+                [{library: 'library', recordId: 'recordId'}],
+                'attributeId'
+            );
 
             expect(res).toHaveLength(1);
             expect(res[0].library).toBe('libraryId');
@@ -38,10 +42,16 @@ describe('calculationsVariableFunctions', () => {
         });
 
         it('Should return tree node on tree attribute', async () => {
-            mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: {id: 'nodeId', record: {library: 'treeLibraryId', id: 'treeRecordId'}}}]);
+            mockRecordDomain.getRecordFieldValue.mockResolvedValue([
+                {payload: {id: 'nodeId', record: {library: 'treeLibraryId', id: 'treeRecordId'}}}
+            ]);
             mockAttributeDomain.getAttributeProperties.mockResolvedValue({linked_tree: 'treeId'});
 
-            const res = await calculationFunctions.getValue.run(ctx,[{library: 'library', recordId: 'recordId'}], 'attributeId');
+            const res = await calculationFunctions.getValue.run(
+                ctx,
+                [{library: 'library', recordId: 'recordId'}],
+                'attributeId'
+            );
 
             expect(res).toHaveLength(1);
             expect(res[0].library).toBe('library');
@@ -56,7 +66,17 @@ describe('calculationsVariableFunctions', () => {
 
             jest.spyOn(TypeGuards, 'isIStandardValue').mockReturnValue(true);
 
-            const res = await calculationFunctions.getValue.run(ctx,[{library: 'libraryId', recordId: 'recordId', payload: {id: 'nodeId', record: {id: 'nodeRecordId', library: 'nodeRecordLibraryId'}}}], 'nodeRecordAttributeId');
+            const res = await calculationFunctions.getValue.run(
+                ctx,
+                [
+                    {
+                        library: 'libraryId',
+                        recordId: 'recordId',
+                        payload: {id: 'nodeId', record: {id: 'nodeRecordId', library: 'nodeRecordLibraryId'}}
+                    }
+                ],
+                'nodeRecordAttributeId'
+            );
 
             expect(res).toHaveLength(1);
             expect(res[0].library).toBe('nodeRecordLibraryId');
@@ -71,7 +91,11 @@ describe('calculationsVariableFunctions', () => {
 
             jest.spyOn(TypeGuards, 'isIStandardValue').mockReturnValue(true);
 
-            const res = await calculationFunctions.getValue.run(ctx, [{library: 'library', recordId: 'recordId'}], ['toto']);
+            const res = await calculationFunctions.getValue.run(
+                ctx,
+                [{library: 'library', recordId: 'recordId'}],
+                ['toto']
+            );
 
             expect(res).toHaveLength(1);
             expect(res[0].library).toBe('library');

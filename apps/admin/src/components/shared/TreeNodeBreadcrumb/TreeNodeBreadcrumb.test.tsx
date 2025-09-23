@@ -6,9 +6,13 @@ import React from 'react';
 import {type ITreeLinkElement} from '../../../_types/records';
 import TreeNodeBreadcrumb from './TreeNodeBreadcrumb';
 
-jest.mock('./PathPart', () => function PathPart({record}) {
-        return <div data-test-id="tree-breadcrumb-part" />;
-    });
+jest.mock(
+    './PathPart',
+    () =>
+        function PathPart({record}) {
+            return <div data-test-id="tree-breadcrumb-part" />;
+        }
+);
 
 describe('TreeNodeBreadcrumb', () => {
     const baseWhoAmI = {

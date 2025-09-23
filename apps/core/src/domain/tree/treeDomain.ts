@@ -356,7 +356,7 @@ export default function ({
             ctx
         );
 
-        await eventsManagerDomain.sendDatabaseEvent<typeof treeEventActionByEventType[typeof type]>(
+        await eventsManagerDomain.sendDatabaseEvent<(typeof treeEventActionByEventType)[typeof type]>(
             {
                 action: treeEventActionByEventType[type],
                 topic: {

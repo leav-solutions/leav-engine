@@ -1,7 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type LibraryDetailsFragment, type LibraryPreviewsSettingsFragment, useSaveLibraryMutation} from '../../../../_gqlTypes';
+import {
+    type LibraryDetailsFragment,
+    type LibraryPreviewsSettingsFragment,
+    useSaveLibraryMutation
+} from '../../../../_gqlTypes';
 import {PreviewsSettingsList} from './PreviewsSettingsList';
 
 interface IEditLibraryPreviewsSettingsProps {
@@ -12,7 +16,8 @@ interface IEditLibraryPreviewsSettingsProps {
 function EditLibraryPreviewsSettings({library, readOnly}: IEditLibraryPreviewsSettingsProps): JSX.Element {
     const [saveLibrary] = useSaveLibraryMutation();
 
-    const _cleanPreviewsSettings = (previewsSettings: LibraryPreviewsSettingsFragment[]) => previewsSettings
+    const _cleanPreviewsSettings = (previewsSettings: LibraryPreviewsSettingsFragment[]) =>
+        previewsSettings
             .filter(settings => !settings.system) // Don't save system settings
             .map(previewSetting => ({
                 label: previewSetting.label,

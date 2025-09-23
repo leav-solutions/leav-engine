@@ -13,7 +13,12 @@ import {type IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
-import {type IFileMetadata, type IPreviewResponse, type IPreviews, type IPreviewsStatus} from '../../../_types/filesManager';
+import {
+    type IFileMetadata,
+    type IPreviewResponse,
+    type IPreviews,
+    type IPreviewsStatus
+} from '../../../_types/filesManager';
 import {updateRecordFile} from './handleFileUtilsHelper';
 import winston = require('winston');
 

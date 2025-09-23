@@ -24,7 +24,7 @@ const DeleteLibrary = ({library, filters}: IDeleteLibraryProps): JSX.Element | n
 
     const [deleteLib] = useMutation<DELETE_LIBRARY, DELETE_LIBRARYVariables>(deleteLibQuery, {
         update: (cache, {data: {deleteLibrary}}) => {
-            deleteFromCache(cache, (deleteLibrary as unknown) as StoreObject);
+            deleteFromCache(cache, deleteLibrary as unknown as StoreObject);
         }
     });
 

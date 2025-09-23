@@ -27,13 +27,13 @@ describe('DisplayInfo', () => {
 
         await act(async () => {
             render(
-                        <DisplayInfo
-                            message={mockMessage}
-                            activeTimeouts={mockActiveTimeouts}
-                            cancelInfo={jest.fn()}
-                            triggerInfos={mockTriggerInfo}
-                            setTriggerInfos={mockSetTriggerInfo}
-                        />
+                <DisplayInfo
+                    message={mockMessage}
+                    activeTimeouts={mockActiveTimeouts}
+                    cancelInfo={jest.fn()}
+                    triggerInfos={mockTriggerInfo}
+                    setTriggerInfos={mockSetTriggerInfo}
+                />
             );
         });
 

@@ -8,7 +8,11 @@ import {type IConfig} from '_types/config';
 import {type IAttribute} from '_types/attribute';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type ISaveValue, type IValue} from '_types/value';
-import {type IAttributeTypesRepo, type IAttributeWithRevLink, type IGetValuesOptions} from '../attributeTypes/attributeTypesRepo';
+import {
+    type IAttributeTypesRepo,
+    type IAttributeWithRevLink,
+    type IGetValuesOptions
+} from '../attributeTypes/attributeTypesRepo';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';

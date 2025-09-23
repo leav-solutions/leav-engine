@@ -63,8 +63,7 @@ export default function ({
     const avg = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
             ...inputValue[0],
-            payload:
-                inputValue.reduce((acc, v) => acc + parseFloat(String(v.payload)), 0) / inputValue.length
+            payload: inputValue.reduce((acc, v) => acc + parseFloat(String(v.payload)), 0) / inputValue.length
         }
     ];
 
@@ -88,7 +87,7 @@ export default function ({
     };
 
     const _isTreeNodePayload = (payload: IVariableValue['payload']): payload is ITreeNode =>
-         typeof payload === 'object' && 'id' in payload && 'record' in payload;
+        typeof payload === 'object' && 'id' in payload && 'record' in payload;
 
     const getValue = async (
         context: IActionsListContext,

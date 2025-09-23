@@ -10,7 +10,11 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {FaExchangeAlt, FaPlus} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {type ExplorerSelectionIdsQuery, type JoinLibraryContextFragment, useExplorerSelectionIdsLazyQuery} from '_ui/_gqlTypes';
+import {
+    type ExplorerSelectionIdsQuery,
+    type JoinLibraryContextFragment,
+    useExplorerSelectionIdsLazyQuery
+} from '_ui/_gqlTypes';
 import {Explorer} from '_ui/components/Explorer';
 
 const modalMaxWidth = 1_200;

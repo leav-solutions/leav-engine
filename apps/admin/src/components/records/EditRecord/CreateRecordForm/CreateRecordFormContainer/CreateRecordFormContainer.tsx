@@ -90,7 +90,13 @@ function CreateRecordFormContainer({
     const [savePending, setSavePending] = useState<boolean>(false);
 
     const query = getRecordDataQuery(attributes);
-    const {loading, error, data, refetch: refetchData, networkStatus} = useQuery<IGetRecordData>(query, {
+    const {
+        loading,
+        error,
+        data,
+        refetch: refetchData,
+        networkStatus
+    } = useQuery<IGetRecordData>(query, {
         variables: {library: library.id, id: recordId, version: versionObjToGraphql(valueVersion || null), lang},
         skip: !recordId || savePending,
         fetchPolicy: 'no-cache'
@@ -102,9 +108,13 @@ function CreateRecordFormContainer({
 
     const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordQuery);
 
-    const _extractRecordIdentity = useCallback((dataQueryRes: IGetRecordData): RecordIdentity_whoAmI => dataQueryRes && dataQueryRes.record.list[0].whoAmI
-            ? dataQueryRes.record.list[0].whoAmI
-            : {id: '', library: {id: '', label: null}, label: null, color: null, preview: null}, []);
+    const _extractRecordIdentity = useCallback(
+        (dataQueryRes: IGetRecordData): RecordIdentity_whoAmI =>
+            dataQueryRes && dataQueryRes.record.list[0].whoAmI
+                ? dataQueryRes.record.list[0].whoAmI
+                : {id: '', library: {id: '', label: null}, label: null, color: null, preview: null},
+        []
+    );
 
     useEffect(() => {
         if (onIdentityUpdate && data && data.record && data.record.list.length) {
@@ -136,7 +146,8 @@ function CreateRecordFormContainer({
                 return allValues;
             }, []);
 
-        const _executeSaveValue = (idRecord: string) => saveValueBatch({
+        const _executeSaveValue = (idRecord: string) =>
+            saveValueBatch({
                 variables: {
                     library: library.id,
                     recordId: idRecord,

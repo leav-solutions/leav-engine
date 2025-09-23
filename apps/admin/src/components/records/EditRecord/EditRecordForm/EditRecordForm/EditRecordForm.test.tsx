@@ -157,13 +157,21 @@ const requestAndResult = {
 
 const mocks = [requestAndResult];
 
-jest.mock('../../../FormFields/LinksField', () => function LinksField() {
-        return <div>LinksField</div>;
-    });
+jest.mock(
+    '../../../FormFields/LinksField',
+    () =>
+        function LinksField() {
+            return <div>LinksField</div>;
+        }
+);
 
-jest.mock('./StandardValuesWrapper', () => function StandardValuesWrapper() {
-        return <div>StandardValuesWrapper</div>;
-    });
+jest.mock(
+    './StandardValuesWrapper',
+    () =>
+        function StandardValuesWrapper() {
+            return <div>StandardValuesWrapper</div>;
+        }
+);
 
 describe('EditRecordForm', () => {
     test('Renders without error', async () => {

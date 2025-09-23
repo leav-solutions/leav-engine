@@ -5,9 +5,13 @@ import {shallow} from 'enzyme';
 import React from 'react';
 import PathPart from './PathPart';
 
-jest.mock('../../RecordCard', () => function RecordCard({record}) {
-        return <div data-test-id={`record_card_${record.id}`} />;
-    });
+jest.mock(
+    '../../RecordCard',
+    () =>
+        function RecordCard({record}) {
+            return <div data-test-id={`record_card_${record.id}`} />;
+        }
+);
 
 describe('PathPart', () => {
     const record = {

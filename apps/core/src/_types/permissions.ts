@@ -91,7 +91,7 @@ export enum AdminPermissionsActions {
     EDIT_GLOBAL_SETTINGS = 'admin_edit_global_settings',
     // Only backend for now, not configurable from the admin UI
     ACCESS_LOGS = 'admin_access_logs',
-    IMPORT_CONFIG_CLEAR_DATABASE = 'admin_import_config_clear_database',
+    IMPORT_CONFIG_CLEAR_DATABASE = 'admin_import_config_clear_database'
 }
 
 export type PermissionsActions =

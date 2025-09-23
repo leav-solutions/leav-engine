@@ -20,7 +20,10 @@ interface IElasticsearchServiceSearchParams {
 
 export interface IElasticSearchService {
     client: Client;
-    search: <T>(params: IElasticsearchServiceSearchParams, ctx: IQueryInfos) => Promise<IElasticsearchServiceSearchResponse<T>>;
+    search: <T>(
+        params: IElasticsearchServiceSearchParams,
+        ctx: IQueryInfos
+    ) => Promise<IElasticsearchServiceSearchResponse<T>>;
 }
 
 interface IDeps {

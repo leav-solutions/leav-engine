@@ -23,7 +23,11 @@ function AttributeSelector({
     excludeReverseLinks = false,
     ...fieldProps
 }: IAttributeSelectorProps): JSX.Element {
-    const {loading, error: queryError, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
+    const {
+        loading,
+        error: queryError,
+        data
+    } = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
         variables: filters
     });
 

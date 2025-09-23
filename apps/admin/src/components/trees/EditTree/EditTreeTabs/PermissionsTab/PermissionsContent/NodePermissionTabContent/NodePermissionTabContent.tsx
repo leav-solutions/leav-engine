@@ -14,7 +14,7 @@ import {
     type GET_TREE_BY_ID_trees_list_libraries,
     type GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute
 } from '../../../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {PermissionTypes,type Treepermissions_confInput} from '../../../../../../../_gqlTypes/globalTypes';
+import {PermissionTypes, type Treepermissions_confInput} from '../../../../../../../_gqlTypes/globalTypes';
 import DefinePermByUserGroupView from '../../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../../permissions/DefineTreePermissionsView';
 
@@ -51,14 +51,14 @@ function NodePermissionTabContent({
               render: () => (
                   <Tab.Pane key="treePermissions" className="grow flex-col height100">
                       <DefineTreePermissionsView
-                              key={a.id}
-                              treeAttribute={
-                                  a as GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute
-                              }
-                              permissionType={PermissionTypes.tree_node}
-                              applyTo={`${tree.id}/${treeLibraries.library.id}`}
-                              readOnly={readonly}
-                          />
+                          key={a.id}
+                          treeAttribute={
+                              a as GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute
+                          }
+                          permissionType={PermissionTypes.tree_node}
+                          applyTo={`${tree.id}/${treeLibraries.library.id}`}
+                          readOnly={readonly}
+                      />
                   </Tab.Pane>
               )
           }))
@@ -70,11 +70,11 @@ function NodePermissionTabContent({
         render: () => (
             <Tab.Pane key="libPermissions" className="grow flex-col height100">
                 <DefinePermByUserGroupView
-                        type={PermissionTypes.tree_library}
-                        key="libPermissions"
-                        applyTo={`${tree.id}/${treeLibraries.library.id}`}
-                        readOnly={readonly}
-                    />
+                    type={PermissionTypes.tree_library}
+                    key="libPermissions"
+                    applyTo={`${tree.id}/${treeLibraries.library.id}`}
+                    readOnly={readonly}
+                />
             </Tab.Pane>
         )
     });

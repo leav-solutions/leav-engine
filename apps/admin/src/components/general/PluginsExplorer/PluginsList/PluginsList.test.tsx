@@ -6,7 +6,8 @@ import {mount} from 'enzyme';
 import {act} from 'react-dom/test-utils';
 import PluginsList from './PluginsList';
 
-const wait = () => new Promise((res, rej) => {
+const wait = () =>
+    new Promise((res, rej) => {
         setTimeout(res, 0);
     });
 

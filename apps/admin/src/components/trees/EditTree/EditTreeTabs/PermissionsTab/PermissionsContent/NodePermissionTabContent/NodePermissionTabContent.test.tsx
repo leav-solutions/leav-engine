@@ -6,13 +6,21 @@ import React from 'react';
 import {mockTreeWithPermConf} from '../../../../../../../__mocks__/trees';
 import NodePermissionTabContent from './NodePermissionTabContent';
 
-jest.mock('../../../../../../permissions/DefineTreePermissionsView', () => function DefineTreePermissionsView() {
-        return <div>DefineTreePermissionsView</div>;
-    });
+jest.mock(
+    '../../../../../../permissions/DefineTreePermissionsView',
+    () =>
+        function DefineTreePermissionsView() {
+            return <div>DefineTreePermissionsView</div>;
+        }
+);
 
-jest.mock('../../../../../../permissions/DefinePermByUserGroupView', () => function DefinePermByUserGroupView() {
-        return <div>DefinePermByUserGroupView</div>;
-    });
+jest.mock(
+    '../../../../../../permissions/DefinePermByUserGroupView',
+    () =>
+        function DefinePermByUserGroupView() {
+            return <div>DefinePermByUserGroupView</div>;
+        }
+);
 
 jest.mock('../../../../../../../hooks/useLang');
 

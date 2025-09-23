@@ -57,14 +57,7 @@ function VersionProfiles(): JSX.Element {
                 </Grid.Column>
                 {userData.permissions[PermissionsActions.admin_create_version_profile] && (
                     <Grid.Column floated="right" width={6} textAlign="right" verticalAlign="middle">
-                        <Button
-                            primary
-                            icon
-                            labelPosition="left"
-                            size="medium"
-                            as={Link}
-                            to="/version_profiles/edit/"
-                        >
+                        <Button primary icon labelPosition="left" size="medium" as={Link} to="/version_profiles/edit/">
                             <Icon name="plus" />
                             {t('version_profiles.new')}
                         </Button>

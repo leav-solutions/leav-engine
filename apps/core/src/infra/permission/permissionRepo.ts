@@ -4,7 +4,12 @@
 import {aql} from 'arangojs';
 import {type IDbDocument} from 'infra/db/_types';
 import {type IQueryInfos} from '_types/queryInfos';
-import {type IPermission, type IPermissionsTreeTarget, type PermissionsActions, type PermissionTypes} from '../../_types/permissions';
+import {
+    type IPermission,
+    type IPermissionsTreeTarget,
+    type PermissionsActions,
+    type PermissionTypes
+} from '../../_types/permissions';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 

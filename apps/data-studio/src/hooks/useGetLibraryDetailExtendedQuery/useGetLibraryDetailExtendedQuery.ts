@@ -4,7 +4,10 @@
 
 import {type QueryResult, useQuery} from '@apollo/client';
 import {getLibraryDetailExtendedQuery} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
-import {type GET_LIBRARY_DETAIL_EXTENDED, type GET_LIBRARY_DETAIL_EXTENDEDVariables} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
+import {
+    type GET_LIBRARY_DETAIL_EXTENDED,
+    type GET_LIBRARY_DETAIL_EXTENDEDVariables
+} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 
 export interface IUseGetLibraryDetailExtendedQueryHookParams {
     library: string;

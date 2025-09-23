@@ -49,7 +49,8 @@ const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | 
         setShowAddExistingAttrModal(false);
     };
 
-    const saveAttributes = async (attributesToSave: string[]) => saveLibAttr({
+    const saveAttributes = async (attributesToSave: string[]) =>
+        saveLibAttr({
             variables: {libId: library.id, attributes: attributesToSave},
             refetchQueries: [{query: getLibByIdQuery, variables: {id: library.id}}]
         });

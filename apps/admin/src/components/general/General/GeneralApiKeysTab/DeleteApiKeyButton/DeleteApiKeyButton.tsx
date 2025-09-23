@@ -10,7 +10,11 @@ import {deleteApiKeyMutation} from 'queries/apiKeys/deleteApiKeyMutation';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {deleteFromCache} from 'utils';
-import {type DELETE_API_KEY, type DELETE_API_KEYVariables, type DELETE_API_KEY_deleteApiKey} from '_gqlTypes/DELETE_API_KEY';
+import {
+    type DELETE_API_KEY,
+    type DELETE_API_KEYVariables,
+    type DELETE_API_KEY_deleteApiKey
+} from '_gqlTypes/DELETE_API_KEY';
 import {type GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';
 import {PermissionsActions} from '_gqlTypes/globalTypes';
 

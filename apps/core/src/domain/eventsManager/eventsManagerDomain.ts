@@ -14,7 +14,10 @@ import {Errors} from '../../_types/errors';
 import {type IDbPayloadInternal} from '_types/events';
 
 export interface IEventsManagerDomain {
-    sendDatabaseEvent<DBPayloadAction extends EventAction>(payload: IDbPayloadInternal<DBPayloadAction>, ctx: IQueryInfos): Promise<void>;
+    sendDatabaseEvent<DBPayloadAction extends EventAction>(
+        payload: IDbPayloadInternal<DBPayloadAction>,
+        ctx: IQueryInfos
+    ): Promise<void>;
     sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void>;
     subscribe(triggersName: string[]): AsyncIterator<any>;
     initPubSubEventsConsumer(): Promise<void>;

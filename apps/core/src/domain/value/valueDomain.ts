@@ -23,7 +23,13 @@ import {AttributeFormats, AttributeTypes, type IAttribute, ValueVersionMode} fro
 import {type ErrorFieldDetail, Errors, ErrorTypes} from '../../_types/errors';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {type IFindValueTree, type ISaveValue, type IStandardValue, type IValue, type IValuesOptions} from '../../_types/value';
+import {
+    type IFindValueTree,
+    type ISaveValue,
+    type IStandardValue,
+    type IValue,
+    type IValuesOptions
+} from '../../_types/value';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IValidateHelper} from '../helpers/validate';

@@ -8,9 +8,13 @@ import InfosTab from './InfosTab';
 
 jest.mock('../../../../../hooks/useLang');
 
-jest.mock('./InfosForm', () => function TreeInfosForm() {
-        return <div>TreeInfosForm</div>;
-    });
+jest.mock(
+    './InfosForm',
+    () =>
+        function TreeInfosForm() {
+            return <div>TreeInfosForm</div>;
+        }
+);
 
 describe('InfosTab', () => {
     test('Snapshot test', async () => {

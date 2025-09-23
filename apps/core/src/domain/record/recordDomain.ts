@@ -7,7 +7,7 @@ import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {type IValidateHelper} from 'domain/helpers/validate';
 import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {type ISaveBatchValueError, type IValueDomain} from 'domain/value/valueDomain';
-import  {type i18n} from 'i18next';
+import {type i18n} from 'i18next';
 import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {type ILibraryRepo} from 'infra/library/libraryRepo';
 import {type IRecordRepo} from 'infra/record/recordRepo';
@@ -18,7 +18,14 @@ import {type IUtils} from 'utils/utils';
 import type * as Config from '_types/config';
 import {type IListWithCursor} from '_types/list';
 import {type IPreview} from '_types/preview';
-import {type ISaveTreeValue, type ISaveValue, type IStandardValue, type ITreeValue, type IValue, type IValuesOptions} from '_types/value';
+import {
+    type ISaveTreeValue,
+    type ISaveValue,
+    type IStandardValue,
+    type ITreeValue,
+    type IValue,
+    type IValuesOptions
+} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';

@@ -5,17 +5,29 @@ import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
 import Home from './Home';
 
-jest.mock('../Routes', () => function Routes() {
-        return <div>Routes</div>;
-    });
+jest.mock(
+    '../Routes',
+    () =>
+        function Routes() {
+            return <div>Routes</div>;
+        }
+);
 
-jest.mock('../Header', () => function Header() {
-        return <div>Header</div>;
-    });
+jest.mock(
+    '../Header',
+    () =>
+        function Header() {
+            return <div>Header</div>;
+        }
+);
 
-jest.mock('../AppMenu', () => function AppMenu() {
-        return <div>AppMenu</div>;
-    });
+jest.mock(
+    '../AppMenu',
+    () =>
+        function AppMenu() {
+            return <div>AppMenu</div>;
+        }
+);
 
 jest.mock('../../../constants', () => ({
     APPS_ENDPOINT: '',

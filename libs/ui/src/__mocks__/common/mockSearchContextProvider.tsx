@@ -8,14 +8,14 @@ import {type ISearchState} from '_ui/components/LibraryItemsList/hooks/useSearch
 import {mockGetLibraryDetailExtendedElement} from '../mockQuery/mockGetLibraryDetailExtendedQuery';
 
 const MockSearchContextProvider = ({state, children}: PropsWithChildren<{state?: Partial<ISearchState>}>) => (
-        <SearchContext.Provider
-            value={{
-                state: {...initialSearchState, library: mockGetLibraryDetailExtendedElement, ...state},
-                dispatch: jest.fn()
-            }}
-        >
-            {children}
-        </SearchContext.Provider>
-    );
+    <SearchContext.Provider
+        value={{
+            state: {...initialSearchState, library: mockGetLibraryDetailExtendedElement, ...state},
+            dispatch: jest.fn()
+        }}
+    >
+        {children}
+    </SearchContext.Provider>
+);
 
 export default MockSearchContextProvider;

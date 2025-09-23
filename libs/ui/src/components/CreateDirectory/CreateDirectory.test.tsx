@@ -12,8 +12,8 @@ import {mockTreeSimple} from '_ui/__mocks__/common/tree';
 import CreateDirectory from './CreateDirectory';
 
 jest.mock('uuid', () => ({
-        v4: jest.fn(() => 'uid')
-    }));
+    v4: jest.fn(() => 'uid')
+}));
 
 jest.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNode: () => <div>SelectTreeNode</div>

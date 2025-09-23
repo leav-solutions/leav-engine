@@ -10,7 +10,11 @@ import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
 import {type GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {PermissionsRelation, PermissionTypes, type Treepermissions_confInput} from '../../../../../../_gqlTypes/globalTypes';
+import {
+    PermissionsRelation,
+    PermissionTypes,
+    type Treepermissions_confInput
+} from '../../../../../../_gqlTypes/globalTypes';
 import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';
 
@@ -41,7 +45,7 @@ function PermissionsContent({attribute, onSubmitSettings, readonly}: IPermission
         menuItem: localizedLabel(a.label, lang),
         render: () => (
             <Tab.Pane key={a.id} className="grow">
-                {((a as unknown) as GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute)
+                {(a as unknown as GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute)
                     .linked_tree ? (
                     <DefineTreePermissionsView
                         key={a.id}
@@ -63,11 +67,11 @@ function PermissionsContent({attribute, onSubmitSettings, readonly}: IPermission
         render: () => (
             <Tab.Pane key="libPermissions" className="grow">
                 <DefinePermByUserGroupView
-                        type={PermissionTypes.attribute}
-                        key="attrPermissions"
-                        applyTo={attribute.id}
-                        readOnly={readonly}
-                    />
+                    type={PermissionTypes.attribute}
+                    key="attrPermissions"
+                    applyTo={attribute.id}
+                    readOnly={readonly}
+                />
             </Tab.Pane>
         )
     });

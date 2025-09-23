@@ -120,7 +120,7 @@ export default function ({
             ctx
         );
 
-        await eventsManagerDomain.sendDatabaseEvent<typeof applicationEventActionByEventType[typeof type]>(
+        await eventsManagerDomain.sendDatabaseEvent<(typeof applicationEventActionByEventType)[typeof type]>(
             {
                 action: applicationEventActionByEventType[type],
                 topic: {

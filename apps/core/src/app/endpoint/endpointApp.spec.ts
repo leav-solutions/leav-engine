@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import initQueryContext from '../helpers/initQueryContext';
-import  {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
-import  {type Express} from 'express';
+import {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
+import {type Express} from 'express';
 import createEndpointApp, {type IPluginRoute} from './endpointApp';
 import {type IValueDomain} from 'domain/value/valueDomain';
 import {type IConfig} from '_types/config';

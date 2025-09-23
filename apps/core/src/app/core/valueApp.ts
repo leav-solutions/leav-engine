@@ -11,7 +11,14 @@ import {type IUtils} from 'utils/utils';
 import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IRecord} from '_types/record';
-import {type IStandardValue, type ITreeValue, type IValue, type IValueFromGql, type IValueVersion, type IValueVersionFromGql} from '_types/value';
+import {
+    type IStandardValue,
+    type ITreeValue,
+    type IValue,
+    type IValueFromGql,
+    type IValueVersion,
+    type IValueVersionFromGql
+} from '_types/value';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';

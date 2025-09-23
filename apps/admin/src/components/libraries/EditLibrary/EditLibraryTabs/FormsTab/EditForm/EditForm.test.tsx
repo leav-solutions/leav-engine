@@ -11,9 +11,13 @@ import MockedProviderWithFragments from '../../../../../../__mocks__/MockedProvi
 import EditForm from './EditForm';
 import {formDataWithTypename} from './EditFormTabs/ContentTab/formBuilderReducer/_fixtures/fixtures';
 
-jest.mock('./EditFormTabs', () => function EditFormTabs() {
-        return <div>EditFormTabs</div>;
-    });
+jest.mock(
+    './EditFormTabs',
+    () =>
+        function EditFormTabs() {
+            return <div>EditFormTabs</div>;
+        }
+);
 
 describe('EditForm', () => {
     test('Loading and success', async () => {

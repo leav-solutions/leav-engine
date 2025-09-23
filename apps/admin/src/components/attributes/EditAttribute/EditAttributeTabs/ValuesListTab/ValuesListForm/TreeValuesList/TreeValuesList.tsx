@@ -90,15 +90,15 @@ function TreeValuesList({values, onValuesUpdate, linkedTree}: ITreeValuesListPro
             </Button>
             <List data-test-id="values-list-wrapper" style={{width: '100%'}} divided>
                 {values.map((val, i) => (
-                        <List.Item data-test-id="values-list-value" key={`values_${i}`}>
-                            <List.Content floated="left">
-                                <TreeNodeBreadcrumb element={val as ITreeLinkElement} actions={breadcrumbActions} />
-                            </List.Content>
-                            <List.Content floated="right">
-                                <Button data-test-id="link-value-delete-btn" icon="trash" onClick={_deleteValue(i)} />
-                            </List.Content>
-                        </List.Item>
-                    ))}
+                    <List.Item data-test-id="values-list-value" key={`values_${i}`}>
+                        <List.Content floated="left">
+                            <TreeNodeBreadcrumb element={val as ITreeLinkElement} actions={breadcrumbActions} />
+                        </List.Content>
+                        <List.Content floated="right">
+                            <Button data-test-id="link-value-delete-btn" icon="trash" onClick={_deleteValue(i)} />
+                        </List.Content>
+                    </List.Item>
+                ))}
             </List>
             <SelectTreeNodeModal
                 open={isOpenSelectTreeNodeModal}

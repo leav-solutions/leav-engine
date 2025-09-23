@@ -16,13 +16,13 @@ function BreadcrumbNavigatorView({treeData}: IBreadcrumbNavigatorViewProps): JSX
     const {state} = useFormBuilderReducer();
 
     const _getSection = (element?: ActiveDependencyNode, ancestors?: ActiveDependencyNode[]) => (
-            <BreadcrumbSection
-                key={element?.id ?? defaultDepValue}
-                treeData={treeData}
-                element={element}
-                ancestors={ancestors}
-            />
-        );
+        <BreadcrumbSection
+            key={element?.id ?? defaultDepValue}
+            treeData={treeData}
+            element={element}
+            ancestors={ancestors}
+        />
+    );
 
     let breadcrumbSections: BreadcrumbSectionProps[] = [
         {

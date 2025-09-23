@@ -10,9 +10,13 @@ import {mockAttrSimple} from '../../../../../../../../../../__mocks__/attributes
 import MockedProviderWithFragments from '../../../../../../../../../../__mocks__/MockedProviderWithFragments';
 import AttributesList from './AttributesList';
 
-jest.mock('./ReserveAttribute', () => function ReserveAttribute() {
-        return <div>ReserveAttribute</div>;
-    });
+jest.mock(
+    './ReserveAttribute',
+    () =>
+        function ReserveAttribute() {
+            return <div>ReserveAttribute</div>;
+        }
+);
 
 jest.mock('../../formBuilderReducer/hook/useFormBuilderReducer');
 

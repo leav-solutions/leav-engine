@@ -5,9 +5,13 @@ import {render, screen} from '_ui/_tests/testUtils';
 import MockSearchContextProvider from '_ui/__mocks__/common/mockSearchContextProvider';
 import VersionsPanel from './VersionsPanel';
 
-jest.mock('_ui/components/ValuesVersionConfigurator', () => function ValuesVersionConfigurator() {
-        return <div>ValuesVersionConfigurator</div>;
-    });
+jest.mock(
+    '_ui/components/ValuesVersionConfigurator',
+    () =>
+        function ValuesVersionConfigurator() {
+            return <div>ValuesVersionConfigurator</div>;
+        }
+);
 
 describe('VersionsPanel', () => {
     test('Render test', async () => {

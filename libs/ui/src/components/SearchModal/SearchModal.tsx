@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
-import {type FunctionComponent,useState} from 'react';
+import {type FunctionComponent, useState} from 'react';
 import {LibraryItemsList} from '_ui/components/LibraryItemsList';
 import {ErrorDisplayTypes} from '_ui/constants';
 import useGetLibraryDetailExtendedQuery from '_ui/hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';

@@ -7,7 +7,11 @@ import {KitTabs} from 'aristid-ds';
 import clx from 'classnames';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
-import {type ApplicationMatchingContextWithoutFullpageParentTuple, type IApplicationMatchingContext, type PanelLevel} from '../types';
+import {
+    type ApplicationMatchingContextWithoutFullpageParentTuple,
+    type IApplicationMatchingContext,
+    type PanelLevel
+} from '../types';
 import {routes} from '../routes';
 import {SidePanelContent} from '../../layout/SidePanelContent';
 import {usePanelHeader} from './usePanelHeader';
@@ -82,12 +86,12 @@ export const PanelsNavigationMenu: FunctionComponent<IPanelsNavigationMenuProps>
                     <div className={scrollable}>
                         {/* TODO: Remove this scrollable div when KitTabs will be responsive */}
                         <KitTabs
-                                items={tabItems}
-                                variant="pill"
-                                size="small"
-                                onChange={onChangeTab}
-                                activeKey={panel.id}
-                            />
+                            items={tabItems}
+                            variant="pill"
+                            size="small"
+                            onChange={onChangeTab}
+                            activeKey={panel.id}
+                        />
                     </div>
                 )}
             </div>

@@ -4,7 +4,8 @@
 import {type ApolloError} from '@apollo/client';
 import {type GetVersionableAttributesByLibraryQuery, useGetVersionableAttributesByLibraryQuery} from '_ui/_gqlTypes';
 
-type ProfileTree = GetVersionableAttributesByLibraryQuery['attributes']['list'][0]['versions_conf']['profile']['trees'][0];
+type ProfileTree =
+    GetVersionableAttributesByLibraryQuery['attributes']['list'][0]['versions_conf']['profile']['trees'][0];
 
 export interface IUseLibraryVersionProfilesHook {
     loading: boolean;

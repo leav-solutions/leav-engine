@@ -29,7 +29,7 @@ import {ACCESS_TOKEN_COOKIE_NAME, API_KEY_PARAM_NAME} from '../_types/auth';
 import {type IRequestWithContext} from '../_types/express';
 import PermissionError from '../errors/PermissionError';
 import ValidationError from '../errors/ValidationError';
-import  {type ValidateRequestTokenFunc} from '../app/helpers/validateRequestToken';
+import {type ValidateRequestTokenFunc} from '../app/helpers/validateRequestToken';
 import {type HandleGraphqlErrorFunc} from './helpers/handleGraphqlError';
 import {type InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {type IAppModule} from '_types/shared';

@@ -4,7 +4,14 @@
 /* eslint-disable react-refresh/only-export-components */
 import {InMemoryCache, type InMemoryCacheConfig} from '@apollo/client';
 import {MockedProvider, type MockedResponse} from '@apollo/client/testing';
-import {type Queries, render, renderHook, type RenderHookOptions, type RenderOptions, type RenderResult} from '@testing-library/react';
+import {
+    type Queries,
+    render,
+    renderHook,
+    type RenderHookOptions,
+    type RenderOptions,
+    type RenderResult
+} from '@testing-library/react';
 import {AntApp, KitApp} from 'aristid-ds';
 import {type PropsWithChildren, type ReactElement} from 'react';
 import {MemoryRouter, type MemoryRouterProps} from 'react-router-dom';

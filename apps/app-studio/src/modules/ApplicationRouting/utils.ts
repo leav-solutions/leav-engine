@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
-import  {type Application, type Workspace} from './types';
+import {type Application, type Workspace} from './types';
 
 export const getAllPanels = (workspace: Workspace): Panel[] => {
     const getPanelsIntoPanel = (panel: Panel): Panel[] => {

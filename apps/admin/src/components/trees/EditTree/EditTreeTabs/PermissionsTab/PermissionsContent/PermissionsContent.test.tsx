@@ -8,13 +8,21 @@ import PermissionsContent from './PermissionsContent';
 
 jest.mock('../../../../../../hooks/useLang');
 
-jest.mock('../../../../../permissions/DefinePermByUserGroupView', () => function DefinePermByUserGroupView() {
-        return <div>DefinePermByUserGroupView</div>;
-    });
+jest.mock(
+    '../../../../../permissions/DefinePermByUserGroupView',
+    () =>
+        function DefinePermByUserGroupView() {
+            return <div>DefinePermByUserGroupView</div>;
+        }
+);
 
-jest.mock('../../../../../permissions/DefineTreePermissionsView', () => function DefineTreePermissionsView() {
-        return <div>DefineTreePermissionsView</div>;
-    });
+jest.mock(
+    '../../../../../permissions/DefineTreePermissionsView',
+    () =>
+        function DefineTreePermissionsView() {
+            return <div>DefineTreePermissionsView</div>;
+        }
+);
 
 describe('PermissionsContent', () => {
     const onSubmit = jest.fn();

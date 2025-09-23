@@ -90,10 +90,10 @@ function EditLibrary({
             children: (
                 <TabContentWrapper>
                     <EditLibraryIndexation
-                            library={libraryData}
-                            indexationTask={indexationTask}
-                            readOnly={isReadOnly}
-                        />
+                        library={libraryData}
+                        indexationTask={indexationTask}
+                        readOnly={isReadOnly}
+                    />
                 </TabContentWrapper>
             )
         }

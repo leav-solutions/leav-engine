@@ -27,7 +27,7 @@ const DeleteTree = ({tree, filters}: IDeleteTreeProps): JSX.Element | null => {
     const [deleteTree] = useMutation<DELETE_TREE, DELETE_TREEVariables>(deleteTreeQuery, {
         refetchQueries: [getTreesQueryName],
         update: (cache, {data}) => {
-            deleteFromCache(cache, (data.deleteTree as unknown) as StoreObject);
+            deleteFromCache(cache, data.deleteTree as unknown as StoreObject);
         }
     });
 

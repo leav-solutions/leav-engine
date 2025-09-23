@@ -3,7 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type GraphQLErrors} from '@apollo/client/errors';
 import getFieldsFromView from '_ui/components/LibraryItemsList/helpers/getFieldsFromView';
-import {type IAttribute, type IField, type IFilter, type ISelectedRecord, SearchMode, SidebarContentType} from '_ui/types/search';
+import {
+    type IAttribute,
+    type IField,
+    type IFilter,
+    type ISelectedRecord,
+    SearchMode,
+    SidebarContentType
+} from '_ui/types/search';
 import {type IValueVersion} from '_ui/types/values';
 import {type IView, type IViewDisplay} from '_ui/types/views';
 import {ViewSizes, ViewTypes} from '_ui/_gqlTypes';

@@ -47,26 +47,25 @@ interface ITreeExplorerProps {
 }
 
 type ConvertTreeRecordNode = WithOptional<TREE_NODE_CHILDREN_treeNodeChildren_list, 'order' | 'ancestors'>;
-const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): ITreeItem[] => nodes.map(
-        (n: ConvertTreeRecordNode): ITreeItem => {
-            const nodeTitle =
-                n.id !== fakeRootId && !compact ? (
-                    <RecordCard record={n.record.whoAmI} style={{height: '100%'}} />
-                ) : (
-                    <RootElem>{n.record.whoAmI.label ?? n.record.whoAmI.id}</RootElem>
-                );
+const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): ITreeItem[] =>
+    nodes.map((n: ConvertTreeRecordNode): ITreeItem => {
+        const nodeTitle =
+            n.id !== fakeRootId && !compact ? (
+                <RecordCard record={n.record.whoAmI} style={{height: '100%'}} />
+            ) : (
+                <RootElem>{n.record.whoAmI.label ?? n.record.whoAmI.id}</RootElem>
+            );
 
-            return {
-                ...n,
-                title: nodeTitle,
-                expanded: false,
-                // Actual children loading will be handle by the _loadChildren function.
-                // Assigning an empty function here just displays the "+" button if we have children
-                children: n.childrenCount ? () => null : null,
-                path: []
-            };
-        }
-    );
+        return {
+            ...n,
+            title: nodeTitle,
+            expanded: false,
+            // Actual children loading will be handle by the _loadChildren function.
+            // Assigning an empty function here just displays the "+" button if we have children
+            children: n.childrenCount ? () => null : null,
+            path: []
+        };
+    });
 
 const RootElem = styled.div`
     height: 100%;
@@ -204,7 +203,8 @@ const TreeExplorer = ({
             if (siblings?.length) {
                 await Promise.all(
                     (siblings as ITreeItem[]).map(
-                        (s, i): Promise<void | FetchResult<MOVE_TREE_ELEMENT>> => getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
+                        (s, i): Promise<void | FetchResult<MOVE_TREE_ELEMENT>> =>
+                            getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
                                 ? apolloClient.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
                                       mutation: moveTreeElementQuery,
                                       variables: {
@@ -245,7 +245,8 @@ const TreeExplorer = ({
         setError('');
     };
 
-    const _mergeNode = (nodeData: ITreeNode, path: Array<string | number>): ITreeNode[] => changeNodeAtPath({treeData, path, newNode: nodeData, getNodeKey: getTreeNodeKey}) as ITreeNode[];
+    const _mergeNode = (nodeData: ITreeNode, path: Array<string | number>): ITreeNode[] =>
+        changeNodeAtPath({treeData, path, newNode: nodeData, getNodeKey: getTreeNodeKey}) as ITreeNode[];
 
     const _handleClickNode: ClickNodeHandler = nodeData => {
         // Add all parents details on selected node
