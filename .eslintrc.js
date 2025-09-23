@@ -174,7 +174,8 @@ module.exports = {
         {
             files: ['**/*.test.ts', '**/*.spec.ts', '**/*.test.tsx', '**/*.spec.tsx'],
             rules: {
-                'no-only-tests/no-only-tests': 'error'
+                'no-only-tests/no-only-tests': 'error',
+                '@typescript-eslint/consistent-type-assertions': 'off',
             }
         }
     ]
