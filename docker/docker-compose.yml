@@ -33,6 +33,7 @@ x-volume-app_root_path-modules: &volume-app_root_path-modules node_modules_app-r
 x-volume-utils-modules: &volume-utils-modules node_modules_utils:/app/libs/utils/node_modules
 x-volume-ui-modules: &volume-ui-modules node_modules_utils:/app/libs/ui/node_modules
 x-volume-message_broker-modules: &volume-message_broker-modules node_modules_message-broker:/app/libs/message-broker/node_modules
+x-volume-monitoring_server-modules: &volume-monitoring_server-modules node_modules_monitoring-server:/app/libs/monitoring-server/node_modules
 
 # Host path is relative to the docker folder
 x-mount_point-repo: &mount_point-repo ../:/app:delegated
@@ -176,11 +177,12 @@ services:
       - *volume-preview_generator-modules
       - *volume-automate_scan-modules
       - *volume-sync_scan-modules
-      - *volume-config_manager-modules
       - *volume-app_root_path-modules
-      - *volume-utils-modules
-      - *volume-ui-modules
+      - *volume-config_manager-modules
       - *volume-message_broker-modules
+      - *volume-monitoring_server-modules
+      - *volume-ui-modules
+      - *volume-utils-modules
     ports:
       - "9229:9229"
       - "4001:4001"
@@ -205,6 +207,11 @@ services:
       - *volume-yarn-cache
       - *volume-shared-modules
       - *volume-core-modules
+      - *volume-app_root_path-modules
+      - *volume-config_manager-modules
+      - *volume-message_broker-modules
+      - *volume-monitoring_server-modules
+      - *volume-utils-modules
     ports:
       - "9231:9231"
     working_dir: *dir-core
@@ -228,6 +235,11 @@ services:
       - *volume-yarn-cache
       - *volume-shared-modules
       - *volume-core-modules
+      - *volume-app_root_path-modules
+      - *volume-config_manager-modules
+      - *volume-message_broker-modules
+      - *volume-monitoring_server-modules
+      - *volume-utils-modules
     ports:
       - "9232:9232"
     working_dir: *dir-core
@@ -251,6 +263,11 @@ services:
       - *volume-yarn-cache
       - *volume-shared-modules
       - *volume-core-modules
+      - *volume-app_root_path-modules
+      - *volume-config_manager-modules
+      - *volume-message_broker-modules
+      - *volume-monitoring_server-modules
+      - *volume-utils-modules
     working_dir: *dir-core
     healthcheck: *healthcheck-localhost-44444
     ports:
@@ -399,7 +416,10 @@ services:
       - *volume-yarn-cache
       - *volume-shared-modules
       - *volume-automate_scan-modules
+      - *volume-app_root_path-modules
       - *volume-config_manager-modules
+      - *volume-monitoring_server-modules
+      - *volume-utils-modules
     working_dir: *dir-automate_scan
     healthcheck: *healthcheck-localhost-44444
     depends_on:
@@ -421,6 +441,11 @@ services:
       - *mount_point-scripts
       - *volume-shared-modules
       - *volume-core-modules
+      - *volume-app_root_path-modules
+      - *volume-config_manager-modules
+      - *volume-message_broker-modules
+      - *volume-monitoring_server-modules
+      - *volume-utils-modules
     ports:
       - "9230:9230"
     working_dir: *dir-core
@@ -446,7 +471,11 @@ services:
       - *volume-yarn-cache
       - *volume-shared-modules
       - *volume-preview_generator-modules
+      - *volume-app_root_path-modules
       - *volume-config_manager-modules
+      - *volume-message_broker-modules
+      - *volume-monitoring_server-modules
+      - *volume-utils-modules
     working_dir: *dir-preview_generator
     healthcheck: *healthcheck-localhost-44444
     depends_on:
@@ -494,8 +523,11 @@ services:
       - *volume-yarn-cache
       - *volume-shared-modules
       - *volume-logs_collector-modules
+      - *volume-app_root_path-modules
       - *volume-config_manager-modules
       - *volume-message_broker-modules
+      - *volume-monitoring_server-modules
+      - *volume-utils-modules
     working_dir: *dir-logs_collector
     healthcheck: *healthcheck-localhost-44444
     depends_on:
@@ -672,6 +704,8 @@ volumes:
   node_modules_ui:
     driver: local
   node_modules_message-broker:
+    driver: local
+  node_modules_monitoring-server:
     driver: local
   message-broker_data:
     driver: local
