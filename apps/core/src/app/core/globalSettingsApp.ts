@@ -222,7 +222,12 @@ export default function ({
                         }
 
                         const previewsAttribute = utils.getPreviewsAttributeName(settings.icon.library);
-                        let previewPath = fileRecord[previewsAttribute][req.params.size];
+                        let previewPath = fileRecord[previewsAttribute]?.[req.params.size];
+                        if (!previewPath) {
+                            _serveDefaultFavicon(req, res, next);
+                            return;
+                        }
+
                         // Remove leading slash of previewPath
                         if (previewPath.startsWith('/')) {
                             previewPath = previewPath.slice(1);
@@ -274,7 +279,12 @@ export default function ({
                         }
 
                         const previewsAttribute = utils.getPreviewsAttributeName(settings.favicon.library);
-                        let previewPath = fileRecord[previewsAttribute].tiny;
+                        let previewPath = fileRecord[previewsAttribute]?.tiny;
+                        if (!previewPath) {
+                            _serveDefaultFavicon(req, res, next);
+                            return;
+                        }
+
                         // Remove leading slash of previewPath
                         if (previewPath.startsWith('/')) {
                             previewPath = previewPath.slice(1);
