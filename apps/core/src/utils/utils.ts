@@ -128,6 +128,7 @@ export interface IUtils {
     ): ValidationError<T>;
 
     deleteFile(path: string): Promise<void>;
+    fileExists(path: string): Promise<boolean>;
 
     getUnixTime(): number;
 
@@ -149,6 +150,15 @@ export interface IUtilsDeps {
 
 export default function ({config = null, translator = null}: IUtilsDeps = {}): IUtils {
     return {
+        fileExists: async (path: string): Promise<boolean> => {
+            try {
+                await fs.promises.access(path, fs.constants.F_OK);
+            } catch (e) {
+                return false;
+            }
+
+            return true;
+        },
         getFileExtension(filename) {
             if (filename.lastIndexOf('.') === -1) {
                 return null;
@@ -157,7 +167,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
             return filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
         },
         getUnixTime: () => Math.floor(Date.now() / 1000),
-        deleteFile: async path => fs.promises.unlink(path),
+        deleteFile: path => fs.promises.unlink(path),
         libNameToQueryName(name) {
             return flow([camelCase, trimEnd])(name);
         },

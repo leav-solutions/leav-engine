@@ -16,7 +16,7 @@ import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {ImportMode, ImportType} from '../../_types/import';
 import {TaskCallbackType} from '../../_types/tasksManager';
-import {type IGraphqlAppModule, type IGraphqlApp} from '../graphql/graphqlApp';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 
 export interface ICoreImportApp extends IGraphqlAppModule {
     importConfig(filepath: string, clear: boolean): Promise<void>;
@@ -26,10 +26,7 @@ export interface ICoreImportApp extends IGraphqlAppModule {
 interface IDeps {
     'core.domain.import': IImportDomain;
     'core.domain.helpers.storeUploadFile': StoreUploadFileFunc;
-    'core.infra.db.dbUtils': IDbUtils;
     'core.utils': IUtils;
-    'core.depsManager': AwilixContainer;
-    'core.app.graphql': IGraphqlApp;
     config: Config.IConfig;
 }
 
@@ -61,9 +58,6 @@ export default function ({
     'core.domain.import': importDomain,
     'core.domain.helpers.storeUploadFile': storeUploadFile,
     'core.utils': utils,
-    'core.depsManager': depsManager,
-    'core.app.graphql': graphqlApp,
-    'core.infra.db.dbUtils': dbUtils,
     config
 }: IDeps): ICoreImportApp {
     const _validateFileFormat = (filename: string, allowed: string[]) => {
@@ -126,8 +120,8 @@ export default function ({
             let filename = filepath
                 .split('/')
                 .pop() as string; /* split give at least one element retrieve by pop method */
-            // check if filepath is a valid file
-            if (!fs.existsSync(filepath)) {
+
+            if (!(await utils.fileExists(filepath))) {
                 throw new Error('File not found');
             }
 
@@ -140,7 +134,7 @@ export default function ({
             await fs.promises.copyFile(filepath, `${config.import.directory}/${filename}`);
 
             // delete original filepath
-            fs.unlinkSync(filepath);
+            await fs.promises.unlink(filepath);
 
             await importDomain.importData({filename, ctx: {userId: config.defaultUserId, queryId: 'ImportData'}});
         },

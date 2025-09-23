@@ -81,7 +81,7 @@ describe('importDomain', () => {
     });
 
     afterEach(async () => {
-        for (const file of fs.readdirSync(mockImportDirectory)) {
+        for (const file of await fs.promises.readdir(mockImportDirectory)) {
             await fs.promises.unlink(path.join(mockImportDirectory, file));
         }
     });
@@ -141,7 +141,7 @@ describe('importDomain', () => {
             await expect(imprtDomain.importConfig({filepath, ctx, forceNoTask: true})).rejects.toThrow();
 
             // check if report file exist
-            const importDirFiles = fs.readdirSync(mockImportDirectory);
+            const importDirFiles = await fs.promises.readdir(mockImportDirectory);
             expect(importDirFiles.filter(f => f.endsWith('.config.report.txt')).length).toBeGreaterThan(0);
         });
 
@@ -1012,7 +1012,7 @@ describe('importDomain', () => {
             expect(mockValueDomain.saveValue).toBeCalledTimes(1);
 
             // check if report file exist
-            const importDirFiles = fs.readdirSync(mockImportDirectory);
+            const importDirFiles = await fs.promises.readdir(mockImportDirectory);
             expect(importDirFiles.filter(f => f.endsWith('.data.report.txt')).length).toBeGreaterThan(0);
         });
     });

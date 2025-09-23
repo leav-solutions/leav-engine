@@ -18,13 +18,13 @@ interface IKeyValue<T> {
 const _getConfigByEnv = async function <T extends object>(dirPath: string, env: string): Promise<T | {}> {
     const envFile = path.join(dirPath, `${env}.js`);
 
-    if (env && (await fs.existsSync(envFile))) {
-        const envConf = await import(envFile);
-
-        return envConf.default;
+    try {
+        await fs.promises.access(envFile, fs.constants.F_OK);
+    } catch (err) {
+        return {};
     }
 
-    return {};
+    return (await import(envFile)).default;
 };
 
 const _isObject = (item: any): item is {} => item && typeof item === 'object' && !Array.isArray(item);

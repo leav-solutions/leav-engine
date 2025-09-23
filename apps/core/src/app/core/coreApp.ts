@@ -4,7 +4,7 @@
 import {type ISystemTranslationGenerator} from 'app/graphql/customScalars/systemTranslation/systemTranslation';
 import {type ICoreDomain} from 'domain/core/coreDomain';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {constants, promises as fs} from 'fs';
+import * as fs from 'fs';
 import {type GraphQLScalarType, Kind} from 'graphql';
 import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
 import {GraphQLUpload} from 'graphql-upload';
@@ -13,7 +13,7 @@ import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IAppModule} from '_types/shared';
 import {type ISystemTranslation} from '_types/systemTranslation';
-import {type IGraphqlAppModule, type IGraphqlApp} from '../graphql/graphqlApp';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 
 export interface ICoreApp extends IAppModule, IGraphqlAppModule {
     filterSysTranslationField(fieldData: ISystemTranslation, requestedLangs: string[]): ISystemTranslation | null;
@@ -23,7 +23,6 @@ export interface ICoreApp extends IAppModule, IGraphqlAppModule {
 export interface ICoreAppDeps {
     'core.domain.core': ICoreDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
-    'core.app.graphql': IGraphqlApp;
     'core.app.graphql.customScalars.systemTranslation': ISystemTranslationGenerator;
     'core.app.graphql.customScalars.dateTime': GraphQLScalarType;
     'core.app.graphql.customScalars.any': GraphQLScalarType;
@@ -56,7 +55,6 @@ const _parseLiteralAny = ast => {
 export default function ({
     'core.domain.core': coreDomain,
     'core.domain.eventsManager': eventsManagerDomain,
-    'core.app.graphql': graphqlApp,
     'core.app.graphql.customScalars.systemTranslation': systemTranslation,
     'core.app.graphql.customScalars.dateTime': DateTime,
     'core.app.graphql.customScalars.any': Any,
@@ -109,9 +107,7 @@ export default function ({
                 }
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
-            return fullSchema;
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         },
         filterSysTranslationField(fieldData: ISystemTranslation, requestedLangs: string[] = []) {
             if (!fieldData) {
@@ -146,20 +142,20 @@ export default function ({
              */
             registerTranslations: async (path: string) => {
                 try {
-                    await fs.access(path, constants.R_OK);
+                    await fs.promises.access(path, fs.constants.R_OK);
                 } catch (e) {
                     throw new Error('Translations folder unknown or not readable: ' + path);
                 }
 
-                const lngFolders = await fs.readdir(path);
+                const lngFolders = await fs.promises.readdir(path);
 
                 for (const lngFolder of lngFolders) {
-                    const nsFiles = await fs.readdir(path + '/' + lngFolder);
+                    const nsFiles = await fs.promises.readdir(path + '/' + lngFolder);
 
                     for (const nsFile of nsFiles) {
                         const fileContent = await import(path + '/' + lngFolder + '/' + nsFile);
                         const ns = nsFile.substring(0, nsFile.indexOf('.json'));
-                        await translator.addResourceBundle(lngFolder, ns, fileContent, true);
+                        translator.addResourceBundle(lngFolder, ns, fileContent, true);
                     }
                 }
             }

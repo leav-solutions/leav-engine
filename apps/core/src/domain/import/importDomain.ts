@@ -45,7 +45,7 @@ import {type IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, type IRecordFilterLight, Operator} from '../../_types/record';
 import {type ITaskFuncParams, TaskCallbackType, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {type ITreeElement} from '../../_types/tree';
-import {ISaveValue, type IValue} from '../../_types/value';
+import {type IValue} from '../../_types/value';
 import {type IValidateHelper} from '../helpers/validate';
 import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
 import type winston from 'winston';
@@ -362,7 +362,7 @@ export default function ({
         // delete last AND operator
         filters.pop();
 
-        const filtersLight = filters.map((m: IMatch & {operator: Operator}) => {
+        return filters.map((m: IMatch & {operator: Operator}) => {
             if (!!m.operator) {
                 return {operator: m.operator};
             }
@@ -373,8 +373,6 @@ export default function ({
                 value: m.value
             };
         });
-
-        return filtersLight;
     };
 
     const _getMatchRecords = async (library: string, matches: IMatch[], ctx: IQueryInfos): Promise<string[]> => {
@@ -561,7 +559,7 @@ export default function ({
     const _getFileDataBuffer = async (filepath: string, ctx: IQueryInfos): Promise<Buffer> => {
         const fileStream = fs.createReadStream(filepath);
 
-        const data = await ((): Promise<Buffer> =>
+        return ((): Promise<Buffer> =>
             new Promise((resolve, reject) => {
                 const chunks = [];
 
@@ -579,8 +577,6 @@ export default function ({
                 });
                 fileStream.on('end', () => resolve(Buffer.concat(chunks)));
             }))();
-
-        return data;
     };
 
     const _jsonSchemaValidation = async (schemaPath: string, filepath: string, ctx: IQueryInfos): Promise<void> => {
@@ -598,7 +594,12 @@ export default function ({
         validate(data, JSON.parse(schema.toString()), {throwAll: true});
     };
 
-    const _writeReport = (fd: number, pos: string, err: ValidationError<any> | PermissionError<any>, lang: string) => {
+    const _writeReport = async (
+        reportFilePath: string,
+        pos: string,
+        err: ValidationError<any> | PermissionError<any>,
+        lang: string
+    ): Promise<void> => {
         const errors = err.fields
             ? Object.values(err.fields)
                   .map(v => utils.translateError(v as string, lang))
@@ -607,55 +608,65 @@ export default function ({
 
         const message = err.message || '';
 
-        fs.writeSync(fd, `${pos}: ${errors}${errors && message ? ' | ' : ''}${message}\n`);
+        await fs.promises.writeFile(reportFilePath, `${pos}: ${errors}${errors && message ? ' | ' : ''}${message}\n`, {
+            flag: 'a'
+        });
     };
 
-    const _writeStats = (fd: number, stats: Stat, lang: string) => {
-        fs.writeSync(fd, `\n### ${translator.t('import.stats_title', {lng: lang}).toUpperCase()} ###\n`);
+    const _writeStats = async (reportFilePath: string, stats: Stat, lang: string) => {
+        await fs.promises.writeFile(
+            reportFilePath,
+            `\n### ${translator.t('import.stats_title', {lng: lang}).toUpperCase()} ###\n`,
+            {flag: 'a'}
+        );
 
         if (_isExcelMapped(stats)) {
             for (const sheetIndex of Object.keys(stats)) {
                 if (stats[sheetIndex].elements) {
-                    fs.writeSync(
-                        fd,
+                    await fs.promises.writeFile(
+                        reportFilePath,
                         `${translator.t('import.stats_sheet_elements', {
                             lng: lang,
                             sheet: Number(sheetIndex) + 1,
                             created: stats[sheetIndex].elements[ImportAction.CREATED] || 0,
                             updated: stats[sheetIndex].elements[ImportAction.UPDATED] || 0,
                             ignored: stats[sheetIndex].elements[ImportAction.IGNORED] || 0
-                        })}\n`
+                        })}\n`,
+                        {flag: 'a'}
                     );
                 }
 
                 if (stats[sheetIndex].links) {
-                    fs.writeSync(
-                        fd,
+                    await fs.promises.writeFile(
+                        reportFilePath,
                         `${translator.t('import.stats_sheet_links', {
                             lng: lang,
                             sheet: Number(sheetIndex) + 1,
                             links: stats[sheetIndex].links
-                        })}\n`
+                        })}\n`,
+                        {flag: 'a'}
                     );
                 }
             }
         } else {
-            fs.writeSync(
-                fd,
+            await fs.promises.writeFile(
+                reportFilePath,
                 `${translator.t('import.stats_elements', {
                     lng: lang,
                     created: (stats as IStat).elements[ImportAction.CREATED],
                     updated: (stats as IStat).elements[ImportAction.UPDATED],
                     ignored: (stats as IStat).elements[ImportAction.IGNORED]
-                })}\n`
+                })}\n`,
+                {flag: 'a'}
             );
 
-            fs.writeSync(
-                fd,
+            await fs.promises.writeFile(
+                reportFilePath,
                 `${translator.t('import.stats_trees', {
                     lng: lang,
                     trees: (stats as IStat).trees
-                })}\n`
+                })}\n`,
+                {flag: 'a'}
             );
         }
     };
@@ -763,11 +774,7 @@ export default function ({
                     throw err;
                 }
 
-                const fd: number = fs.openSync(reportFilePath, 'as');
-
-                for (const e of err.errors) {
-                    _writeReport(fd, e.path.join(' '), e, lang);
-                }
+                await Promise.all(err.errors.map(e => _writeReport(reportFilePath, e.path.join(' '), e, lang)));
 
                 if (!forceNoTask) {
                     // We link report file to task
@@ -802,8 +809,8 @@ export default function ({
 
             console.info('Processing version profiles...');
             if ('version_profiles' in elements) {
-                for (const version_profile of elements.version_profiles) {
-                    await versionProfileDomain.saveVersionProfile({versionProfile: version_profile, ctx});
+                for (const versionProfile of elements.version_profiles) {
+                    await versionProfileDomain.saveVersionProfile({versionProfile, ctx});
                 }
             }
 
@@ -884,7 +891,6 @@ export default function ({
             const reportFileName = nanoid() + '.data.report.txt';
             const reportFilePath = `${config.import.directory}/${reportFileName}`;
             const lang = ctx.lang || config.lang.default;
-            const fd: number = fs.openSync(reportFilePath, 'as');
 
             const _getExcelPos = (elementIndex: number): string => {
                 if (excelMapping) {
@@ -903,9 +909,7 @@ export default function ({
                     throw err;
                 }
 
-                for (const e of err.errors) {
-                    _writeReport(fd, e.path.join(' '), e, lang);
-                }
+                await Promise.all(err.errors.map(e => _writeReport(reportFilePath, e.path.join(' '), e, lang)));
 
                 await tasksManagerDomain.setLink(
                     task.id,
@@ -1018,7 +1022,7 @@ export default function ({
                             ? _getExcelPos(index)
                             : translator.t('import.element_pos', {lng: lang, index});
 
-                        _writeReport(fd, pos, e, lang);
+                        await _writeReport(reportFilePath, pos, e, lang);
                     }
                 },
                 // Treat trees
@@ -1032,9 +1036,9 @@ export default function ({
                         if (typeof tree.parent !== 'undefined') {
                             const parentIds = await _getMatchRecords(tree.parent.library, tree.parent.matches, ctx);
 
-                            parent = parentIds.length
-                                ? {id: parentIds[0], library: (tree as ITree).parent.library}
-                                : parent;
+                            if (parentIds.length) {
+                                parent = {id: parentIds[0], library: (tree as ITree).parent.library};
+                            }
                         }
 
                         if (typeof parent === 'undefined' && !recordIds.length) {
@@ -1061,7 +1065,7 @@ export default function ({
                         // Trees import is impossible with Excel file, so we don't need to check if excelMapping is defined
                         const pos = translator.t('import.tree_pos', {lng: lang, index});
 
-                        _writeReport(fd, pos, e, lang);
+                        await _writeReport(reportFilePath, pos, e, lang);
                     }
                 },
                 ctx
@@ -1099,7 +1103,7 @@ export default function ({
                             ? _getExcelPos(cacheKey)
                             : translator.t('import.element_pos', {lng: lang, index: cacheKey});
 
-                        _writeReport(fd, pos, e, lang);
+                        await _writeReport(reportFilePath, pos, e, lang);
                     } finally {
                         await _updateTaskProgress(
                             progress,
@@ -1117,7 +1121,7 @@ export default function ({
             // Delete cache.
             await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);
 
-            _writeStats(fd, stats, lang);
+            await _writeStats(reportFilePath, stats, lang);
 
             // We link report file to task
             await tasksManagerDomain.setLink(

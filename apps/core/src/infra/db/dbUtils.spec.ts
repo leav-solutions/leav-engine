@@ -5,7 +5,7 @@ import {aql, Database} from 'arangojs';
 import {type DocumentCollection} from 'arangojs/collection';
 import {asFunction, type AwilixContainer} from 'awilix';
 import {resolve} from 'dns';
-import {readdirSync} from 'fs';
+import * as fs from 'fs';
 import {type ICachesService} from 'infra/cache/cacheService';
 import {type Winston} from 'winston';
 import {type IAttributeFilterOptions} from '_types/attribute';
@@ -330,7 +330,7 @@ describe('dbUtils', () => {
             (loadMigrationFile as jest.FunctionLike) = global.__mockPromiseMultiple([file1, file2]);
 
             // Mock migration files reading
-            (readdirSync as jest.FunctionLike) = jest.fn().mockReturnValue(['000.ts', '001.ts']);
+            (fs.promises.readdir as jest.FunctionLike) = jest.fn().mockReturnValue(['000.ts', '001.ts']);
             (resolve as jest.FunctionLike) = jest
                 .fn()
                 .mockReturnValueOnce('/fakeDir/migrations')

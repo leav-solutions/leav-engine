@@ -8,6 +8,7 @@ import {type IExtensionPoints} from '_types/extensionPoints';
 import {type IAppModule} from '_types/shared';
 import {getConfig} from './config';
 import path from 'path';
+import {type IUtils} from './utils/utils';
 
 export const initPlugins = async (pluginsPath: string[], depsManager: AwilixContainer) => {
     if (!pluginsPath.length) {
@@ -33,6 +34,8 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
         {}
     );
 
+    const utils: IUtils = depsManager.cradle['core.utils'];
+
     // Init plugins
     for (const pluginPath of pluginsPath) {
         // Ignore files (like .gitignore or any other files)
@@ -40,8 +43,9 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
         const pluginName = path.basename(pluginPath);
 
         if (
-            !fs.existsSync(pluginFullPath) ||
-            (!fs.lstatSync(pluginFullPath).isDirectory() && !fs.lstatSync(pluginFullPath).isSymbolicLink())
+            !(await utils.fileExists(pluginFullPath)) ||
+            (!(await fs.promises.lstat(pluginFullPath)).isDirectory() &&
+                !(await fs.promises.lstat(pluginFullPath)).isSymbolicLink())
         ) {
             continue;
         }

@@ -5,7 +5,7 @@ import {aql} from 'arangojs';
 import {type GeneratedAqlQuery, join} from 'arangojs/aql';
 import {CollectionType} from 'arangojs/collection';
 import {type AwilixContainer} from 'awilix';
-import {accessSync, constants, readdirSync} from 'fs';
+import * as fs from 'fs';
 import * as path from 'path';
 import type * as winston from 'winston';
 import {type IAttribute} from '_types/attribute';
@@ -16,11 +16,11 @@ import {type IQueryInfos} from '_types/queryInfos';
 import {type IKeyValue} from '_types/shared';
 import {type ITree} from '_types/tree';
 import {type IDbValueVersion, type IValueVersion} from '_types/value';
-import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
+import {ECacheType, type ICachesService} from '../cache/cacheService';
 import {type IDbService} from './dbService';
 import runMigrationFiles from './helpers/runMigrationFiles';
 import {type IExecuteWithCount} from './_types';
-import {CORE_INDEX_FIELD} from '../../infra/indexation/indexationService';
+import {CORE_INDEX_FIELD} from '../indexation/indexationService';
 
 export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 
@@ -159,7 +159,9 @@ export default function ({
             /*** Core migrations ***/
             // Load migrations files
             const migrationsDir = path.resolve(__dirname, 'migrations');
-            const migrationFiles = readdirSync(migrationsDir).filter(file => file.indexOf('.map') === -1);
+            const migrationFiles = (await fs.promises.readdir(migrationsDir)).filter(
+                file => file.indexOf('.map') === -1
+            );
 
             await _runMigrationFiles(migrationFiles, migrationsDir);
 
@@ -169,12 +171,12 @@ export default function ({
                 const pluginName = path.basename(pluginPath);
 
                 try {
-                    accessSync(pluginMigrationFolderPath, constants.R_OK);
+                    await fs.promises.access(pluginMigrationFolderPath, fs.constants.R_OK);
                 } catch (e) {
                     continue;
                 }
 
-                const pluginMigrationFiles = readdirSync(pluginMigrationFolderPath).filter(
+                const pluginMigrationFiles = (await fs.promises.readdir(pluginMigrationFolderPath)).filter(
                     file => file.indexOf('.map') === -1
                 );
 
@@ -182,9 +184,7 @@ export default function ({
             }
 
             /** Clear cache */
-            for (const cacheType of Object.values(ECacheType)) {
-                cacheService.getCache(cacheType).deleteAll();
-            }
+            await Promise.all(Object.values(ECacheType).map(cacheType => cacheService.getCache(cacheType).deleteAll()));
         },
 
         /**

@@ -18,6 +18,7 @@ import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
 import {initOIDCClient} from './infra/oidc';
 import Bugsnag from '@bugsnag/js';
+import {type IUtils} from './utils/utils';
 
 (async function () {
     let conf: IConfig;
@@ -69,21 +70,22 @@ import Bugsnag from '@bugsnag/js';
     const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
+    const utils: IUtils = coreContainer.cradle['core.utils'];
 
     const _createRequiredDirectories = async () => {
-        if (!fs.existsSync('/files')) {
+        if (!(await utils.fileExists('/files'))) {
             await fs.promises.mkdir('/files');
         }
-        if (!fs.existsSync(conf.preview.directory)) {
+        if (!(await utils.fileExists(conf.preview.directory))) {
             await fs.promises.mkdir(conf.preview.directory);
         }
-        if (!fs.existsSync(conf.export.directory)) {
+        if (!(await utils.fileExists(conf.export.directory))) {
             await fs.promises.mkdir(conf.export.directory);
         }
-        if (!fs.existsSync(conf.import.directory)) {
+        if (!(await utils.fileExists(conf.import.directory))) {
             await fs.promises.mkdir(conf.import.directory);
         }
-        if (!fs.existsSync(conf.diskCache.directory)) {
+        if (!(await utils.fileExists(conf.diskCache.directory))) {
             await fs.promises.mkdir(conf.diskCache.directory);
         }
     };

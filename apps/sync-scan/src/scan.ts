@@ -18,13 +18,15 @@ import {type IDbScanResult} from './_types/queries';
 export const getFilePath = (root: string, fsPath: string): string => root.replace(`${fsPath}`, '').slice(1) || '.';
 export const getFileLevel = (path: string): number => (path === '.' ? 0 : path.split('/').length);
 
-export const filesystem = ({filesystem: fsys, allowFilesList, ignoreFilesList}: IConfig): Promise<FilesystemContent> =>
-    new Promise((resolve, reject) => {
-        let data = [];
+export const filesystem = async ({
+    filesystem: fsys,
+    allowFilesList,
+    ignoreFilesList
+}: IConfig): Promise<FilesystemContent> => {
+    await fs.promises.access(fsys.absolutePath, fs.constants.F_OK);
 
-        if (!fs.existsSync(fsys.absolutePath)) {
-            return reject('Wrong filesystem absolute path');
-        }
+    return new Promise(resolve => {
+        let data = [];
 
         const SEPARATOR_CHARACTERS = ', ';
         const allowList = allowFilesList.split(SEPARATOR_CHARACTERS).filter(p => p);
@@ -65,6 +67,7 @@ export const filesystem = ({filesystem: fsys, allowFilesList, ignoreFilesList}: 
             resolve(data);
         });
     });
+};
 
 export const database = async ({graphql}: IConfig): Promise<IDbScanResult> => {
     const url = `${graphql.uri}?key=${graphql.apiKey}`;

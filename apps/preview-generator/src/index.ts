@@ -17,8 +17,10 @@ import {getConfig} from './getConfig/getConfig';
         }
 
         // Create the output directory if it doesn't exist
-        if (!fs.existsSync(config.outputRootPath)) {
-            fs.mkdirSync(config.outputRootPath);
+        try {
+            await fs.promises.access(config.outputRootPath, fs.constants.F_OK);
+        } catch (e) {
+            await fs.promises.mkdir(config.outputRootPath);
         }
 
         await startConsume(config);

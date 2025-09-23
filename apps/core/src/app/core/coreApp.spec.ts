@@ -7,7 +7,6 @@ import coreApp, {type ICoreAppDeps} from './coreApp';
 const depsBase: ToAny<ICoreAppDeps> = {
     'core.domain.core': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
-    'core.app.graphql': jest.fn(),
     'core.app.graphql.customScalars.systemTranslation': jest.fn(),
     'core.app.graphql.customScalars.dateTime': jest.fn(),
     'core.app.graphql.customScalars.any': jest.fn(),
