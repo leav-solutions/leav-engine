@@ -81,7 +81,7 @@ export default function ({
         if (attribute.type === AttributeTypes.TREE) {
             values = values.map(v => ({
                 ...v,
-                value: v.payload?.record
+                payload: v.payload?.record
             }));
         }
 
