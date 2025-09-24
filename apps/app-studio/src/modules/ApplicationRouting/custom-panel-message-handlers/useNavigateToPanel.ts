@@ -4,7 +4,7 @@
 import {generatePath, useLocation, useNavigate, useOutletContext, useParams} from 'react-router-dom';
 import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
 import {PanelSchema} from '_ui/hooks/useIFrameMessenger/schema';
-import {routes} from '../routes';
+import {fullpageRecordSearchParamsName, routes} from '../routes';
 import {type AddPanel, type IApplicationMatchingContext} from '../types';
 
 export const useNavigateToPanel = (addPanel: AddPanel) => {
@@ -31,7 +31,7 @@ export const useNavigateToPanel = (addPanel: AddPanel) => {
             routeParamsMap.fullpage = {route: routes.panel, params: {panelId: panelTargetId}};
             addPanel(data.what, {workspaceId: currentWorkspace.id, panelId});
             if (data.where === 'fullpage' && data.recordId !== undefined) {
-                recordIdSearch = `?${new URLSearchParams({recordId: data.recordId}).toString()}`;
+                recordIdSearch = `?${new URLSearchParams({[fullpageRecordSearchParamsName]: data.recordId}).toString()}`;
             }
         } else {
             routeParamsMap.fullpage = {route: routes.panel, params: {panelId: data.panelId}};

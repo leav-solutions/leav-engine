@@ -69,7 +69,7 @@ describe('useNavigateToPanel', () => {
                 workspaceId: 'workspaceId',
                 panelId: 'currentPanelId'
             });
-            expect(navigateMock).toHaveBeenCalledWith('/panelIdChild?recordId=1234567890');
+            expect(navigateMock).toHaveBeenCalledWith('/panelIdChild?fullpageRecordId=1234567890');
         });
 
         it('should call addPanel and navigate to the panel when where is popup', () => {
