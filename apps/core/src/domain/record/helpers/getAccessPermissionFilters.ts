@@ -68,6 +68,10 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (groupsIds, lib
         }, result);
         return result;
     };
+
+    // if user does not belong to any group, then we should pass at least one time in for loop in _getNodesIdByPermission to get default permissions
+    const groupsIdsWithAncestorsId: string[][] = groupsIds.length ? groupsIds : [[]];
+
     const _getNodesIdByPermission = async (treeId: string): Promise<any> => {
         const treeContent = await treeRepo.getTreeContent({treeId, ctx});
 
@@ -75,7 +79,7 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (groupsIds, lib
             true: [],
             false: []
         };
-        for (const groupWithAncestor of groupsIds) {
+        for (const groupWithAncestor of groupsIdsWithAncestorsId) {
             // we calc permissions group by group.
             // groupWithAncestor contains [definedGroupId, parentId, grandParentId, ...]
             const permissions = await permissionRepo.getAllPermissionsForTree({
