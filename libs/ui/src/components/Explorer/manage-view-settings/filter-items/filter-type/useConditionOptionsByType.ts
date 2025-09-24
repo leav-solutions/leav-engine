@@ -84,7 +84,9 @@ interface IExplorerFilterConditionOption<T> {
     textByFormat?: {[key in AttributeFormat]?: string};
 }
 
-const _getAttributeConditionOptions = (t: TFunction): Array<IExplorerFilterConditionOption<AttributeConditionType>> => [
+export const getAttributeConditionOptions = (
+    t: TFunction
+): Array<IExplorerFilterConditionOption<AttributeConditionType>> => [
     {label: t('filters.contains'), value: AttributeConditionFilter.CONTAINS},
     {label: t('filters.not-contains'), value: AttributeConditionFilter.NOT_CONTAINS},
     {label: t('filters.equal'), value: AttributeConditionFilter.EQUAL},
@@ -146,7 +148,7 @@ export const useConditionsOptionsByType = (filter: ExplorerFilter) => {
     const {t} = useSharedTranslation();
 
     return {
-        conditionOptionsByType: _getAttributeConditionOptions(t)
+        conditionOptionsByType: getAttributeConditionOptions(t)
             .filter(({value}) => {
                 // Use special condition set for text fields with closed list values
                 if (isExplorerFilterValueList(filter)) {

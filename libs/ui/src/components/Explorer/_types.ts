@@ -117,6 +117,7 @@ interface IExplorerBaseFilter {
      */
     field: string;
     value: string | null;
+    formattedValue?: string | null;
     hidden?: boolean | undefined;
 }
 
@@ -137,14 +138,15 @@ export interface IExplorerFilterThrough extends IExplorerBaseFilter {
     subField: string | null;
 }
 
-export interface IExplorerFilterTree extends Omit<IExplorerBaseFilter, 'value' | 'field'> {
+export interface IExplorerFilterTree extends Omit<IExplorerBaseFilter, 'value' | 'formattedValue' | 'field'> {
     attribute: IExplorerFilterTreeAttribute;
     condition: RecordFilterCondition | null;
     value: string[] | null;
+    formattedValue?: string[] | null;
     field: string[];
 }
 
-export interface IExplorerFilterValueList extends Omit<IExplorerBaseFilter, 'value'> {
+export interface IExplorerFilterValueList extends Omit<IExplorerBaseFilter, 'value' | 'formattedValue'> {
     attribute: (IExplorerFilterStandardAttribute | IExplorerFilterLinkAttribute) & {
         valuesList:
             | NonNullable<StandardAttributeDetailsFragment['valuesList']>

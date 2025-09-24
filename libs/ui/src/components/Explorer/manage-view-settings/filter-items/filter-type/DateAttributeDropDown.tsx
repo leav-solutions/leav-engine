@@ -53,12 +53,14 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
     const _onDateChanged: ComponentProps<typeof KitDatePicker>['onChange'] = date => {
         onFilterChange({
             ...filter,
-            value: date ? String(date.unix()) : null
+            value: date ? String(date.unix()) : null,
+            formattedValue: date ? date.format('YYYY-MM-DD') : null //TODO: Date format should come from the backend (will be adress in a later ticket)
         });
     };
 
     const _onDateRangeChanged: ComponentProps<typeof KitDatePicker.RangePicker>['onChange'] = dates => {
         let value: string | null = null;
+        let formattedValue: string | null = null;
 
         if (dates && dates.length === 2) {
             let [dateFrom, dateTo] = dates;
@@ -68,10 +70,11 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
                 dateTo = dateTo.endOf('day');
 
                 value = dateFrom.unix() + dateValuesSeparator + dateTo.unix();
+                formattedValue = dateFrom.format('YYYY-MM-DD') + ' -> ' + dateTo.format('YYYY-MM-DD'); //TODO: Date format should come from the backend (will be adress in a later ticket)
             }
         }
 
-        onFilterChange({...filter, value});
+        onFilterChange({...filter, value, formattedValue});
     };
 
     const showDatePicker = filter.condition && !nullValueConditions.includes(filter.condition);

@@ -16,6 +16,7 @@ export const DateRangeAttributeDropDown: FunctionComponent<IFilterChildrenDropDo
 
     const {conditionOptionsByType} = useConditionsOptionsByType(filter);
 
+    // TODO: When fully implemented, we will need to handle the formatted value (Like in DateAttributeDropDown)
     const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition =>
         onFilterChange({...filter, condition});
 
