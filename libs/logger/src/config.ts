@@ -18,6 +18,8 @@ export interface ILoggerConfig {
      * Default: false (plain text)
      */
     useJsonFormat?: boolean;
+
+    onErrorLog?: (message: string, meta: any) => void;
 }
 
 // duplicate of libs/config-manager/src/envTo.ts
@@ -33,7 +35,7 @@ export function envToBool(value: string, defaultValue = false) {
     return defaultValue;
 }
 
-export const loggerConfig: ILoggerConfig = {
+export const defaultLoggerConfig: ILoggerConfig = {
     level: process.env.LOG_LEVEL || 'info',
     destinationFile: process.env.LOG_FILE,
     useJsonFormat: envToBool(process.env.LOG_USE_JSON_FORMAT, false)

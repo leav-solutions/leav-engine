@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loggerConfig = void 0;
+exports.defaultLoggerConfig = void 0;
 exports.envToBool = envToBool;
 // duplicate of libs/config-manager/src/envTo.ts
 // to avoid adding this dependency here for now
@@ -14,7 +14,7 @@ function envToBool(value, defaultValue = false) {
     }
     return defaultValue;
 }
-exports.loggerConfig = {
+exports.defaultLoggerConfig = {
     level: process.env.LOG_LEVEL || 'info',
     destinationFile: process.env.LOG_FILE,
     useJsonFormat: envToBool(process.env.LOG_USE_JSON_FORMAT, false)

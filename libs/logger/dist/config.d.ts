@@ -13,6 +13,7 @@ export interface ILoggerConfig {
      * Default: false (plain text)
      */
     useJsonFormat?: boolean;
+    onErrorLog?: (message: string, meta: any) => void;
 }
 export declare function envToBool(value: string, defaultValue?: boolean): boolean;
-export declare const loggerConfig: ILoggerConfig;
+export declare const defaultLoggerConfig: ILoggerConfig;

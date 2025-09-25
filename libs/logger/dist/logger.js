@@ -31,28 +31,43 @@ exports.configureLogger = configureLogger;
 const winston = __importStar(require("winston"));
 const config_1 = require("./config");
 function configureLogger(config) {
+    const level = config.level || config_1.defaultLoggerConfig.level || 'info';
+    const useJsonFormat = config.useJsonFormat ?? config_1.defaultLoggerConfig.useJsonFormat ?? false;
+    const destinationFile = config.destinationFile ?? config_1.defaultLoggerConfig.destinationFile;
+    const onErrorLog = config.onErrorLog;
     const transports = [
         new winston.transports.Console({
-            format: config.useJsonFormat
+            format: useJsonFormat
                 ? winston.format.json()
                 : winston.format.combine(winston.format.colorize(), winston.format.simple())
         })
     ];
-    if (config.destinationFile) {
+    if (destinationFile) {
         transports.push(new winston.transports.File({
-            filename: config.destinationFile,
-            format: config.useJsonFormat ? winston.format.json() : winston.format.simple()
+            filename: destinationFile,
+            format: useJsonFormat ? winston.format.json() : winston.format.simple()
         }));
     }
+    let catchErrorLog = null;
+    if (typeof onErrorLog === 'function') {
+        catchErrorLog = winston.format(info => {
+            if (info.level === 'error') {
+                const meta = { ...info, level: undefined, message: undefined, splat: undefined };
+                onErrorLog(info.message, meta);
+            }
+            return info;
+        });
+    }
     winston.configure({
-        level: config.level,
+        level,
         handleExceptions: true,
-        transports
+        transports,
+        format: catchErrorLog?.()
     });
     winston.info(`Logger configured with level=${config.level}`);
 }
 // Default logger configuration, for testing and to avoid errors if not configured
-configureLogger(config_1.loggerConfig);
+configureLogger(config_1.defaultLoggerConfig);
 // Avoid to much dependency from winston if not necessary for now
 exports.logger = winston;
 //# sourceMappingURL=logger.js.map
