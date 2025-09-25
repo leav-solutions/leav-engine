@@ -7,6 +7,7 @@ import {KitSidePanel} from 'aristid-ds';
 import {SIDE_PANEL_CONTENT_ID} from '../../../constants';
 import {EditRecordPage} from '@leav/ui';
 import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {RecordIdCard} from '../navigation-menu/RecordIdCard';
 
 const closedSidePanel = {key: 'closed'} as const;
 
@@ -53,6 +54,12 @@ export const useSidePanelForm = () => {
                           closable
                           size="l"
                           onClose={() => closeSidePanelForm(editRecordPageInSidePanelProps.onClose)}
+                          headerExtra={
+                              <RecordIdCard
+                                  currentRecordId={editRecordPageInSidePanelProps.record.id}
+                                  libraryId={editRecordPageInSidePanelProps.record.library.id}
+                              />
+                          }
                           closeOnEsc
                       >
                           <div style={{height: '100%'}}>
@@ -61,6 +68,10 @@ export const useSidePanelForm = () => {
                                   library={null}
                                   {...editRecordPageInSidePanelProps}
                                   showRefreshButton={false}
+                                  showHeader={false}
+                                  enableSidebar={false}
+                                  showSidebar={false}
+                                  sidebarContainer={undefined}
                                   onClose={() => closeSidePanelForm(editRecordPageInSidePanelProps.onClose)}
                               />
                           </div>

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type FunctionComponent} from 'react';
+import {type ComponentProps, type FunctionComponent} from 'react';
 import {useGetRecordIdCardQuery} from '../../../__generated__';
 import {KitIdCard} from 'aristid-ds';
 import {PanelIdCardSkeleton} from './PanelIdCardSkeleton';
@@ -18,6 +18,15 @@ export const RecordIdCard: FunctionComponent<{currentRecordId?: string; libraryI
         skip: !currentRecordId || !libraryId
     });
 
+    const avatarProps: ComponentProps<typeof KitIdCard>['avatarProps'] =
+        data?.records?.list?.[0]?.whoAmI?.preview?.small || data?.records?.list?.[0]?.whoAmI?.label
+            ? {
+                  shape: 'square',
+                  src: data?.records?.list?.[0]?.whoAmI?.preview?.small,
+                  label: data?.records?.list?.[0]?.whoAmI?.label
+              }
+            : undefined;
+
     return loading ? (
         <PanelIdCardSkeleton />
     ) : (
@@ -25,6 +34,7 @@ export const RecordIdCard: FunctionComponent<{currentRecordId?: string; libraryI
             size="s"
             title={data?.records?.list?.[0]?.whoAmI?.label}
             description={data?.records?.list?.[0]?.whoAmI?.subLabel}
+            avatarProps={avatarProps}
         />
     );
 };

@@ -23,6 +23,8 @@ export const LibraryIdCard: FunctionComponent<ILibraryIdCardProps> = ({title, li
         skip: libraryId === null
     });
 
+    const libraryLabel = localizedTranslation(data?.libraries?.list?.[0]?.label, lang);
+
     if (title) {
         return <KitIdCard size="s" title={title} />;
     }
@@ -31,8 +33,19 @@ export const LibraryIdCard: FunctionComponent<ILibraryIdCardProps> = ({title, li
         // PanelCustom case
         return null;
     }
+
     if (loading) {
         return <PanelIdCardSkeleton />;
     }
-    return <KitIdCard size="s" title={localizedTranslation(data?.libraries?.list?.[0]?.label, lang)} />;
+
+    return (
+        <KitIdCard
+            size="s"
+            title={libraryLabel}
+            avatarProps={{
+                shape: 'square',
+                label: libraryLabel
+            }}
+        />
+    );
 };
