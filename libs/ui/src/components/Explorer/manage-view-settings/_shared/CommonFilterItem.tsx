@@ -10,7 +10,7 @@ import {nullValueConditions} from '../../conditionsHelper';
 import {AttributeFormat} from '_ui/_gqlTypes';
 import {useTranslation} from 'react-i18next';
 import {getAttributeConditionOptions} from '../filter-items/filter-type/useConditionOptionsByType';
-import {TFunction} from 'i18next';
+import {type TFunction} from 'i18next';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
@@ -26,7 +26,10 @@ const getFilterValues = (filter: ExplorerFilter, t: TFunction) => {
         return filter.formattedValue ?? [];
     }
 
-    if (isExplorerFilterStandard(filter) && filter.attribute.format === AttributeFormat.date) {
+    if (
+        isExplorerFilterStandard(filter) &&
+        [AttributeFormat.date, AttributeFormat.boolean].includes(filter.attribute.format)
+    ) {
         return filter.formattedValue ? [filter.formattedValue] : [];
     }
 
