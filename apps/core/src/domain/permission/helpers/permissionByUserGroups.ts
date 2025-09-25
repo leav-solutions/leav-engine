@@ -54,7 +54,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
         }: IGetPermissionByUserGroupsParams): Promise<boolean> {
             // we reverse to have this group paths order: from current user groups to the added root group
             const reversedGroupsPath = userGroupsPaths.length
-                ? userGroupsPaths.map(path => [...path.reverse(), {id: null}])
+                ? userGroupsPaths.map(path => [...path].reverse().concat({id: null}))
                 : [[{id: null}]];
 
             // we reverse the tree target path to have it from the current target
