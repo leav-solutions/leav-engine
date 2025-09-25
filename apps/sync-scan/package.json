@@ -34,6 +34,7 @@
     "dependencies": {
         "@leav/app-root-path": "workspace:libs/app-root-path",
         "@leav/config-manager": "workspace:libs/config-manager",
+        "@leav/logger": "workspace:libs/logger",
         "@leav/message-broker": "workspace:libs/message-broker",
         "@leav/utils": "workspace:*",
         "amqplib": "0.10.9",
@@ -49,7 +50,6 @@
         "moment": "2.29.4",
         "node-fetch": "2.6.7",
         "walk": "2.3.15",
-        "winston": "3.8.2",
         "xxhashjs": "0.2.2"
     },
     "stableVersion": "1.0.0"

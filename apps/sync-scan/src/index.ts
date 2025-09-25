@@ -6,14 +6,15 @@ import automate, {extractChildrenDbElements} from './automate';
 import {getConfig} from './config';
 import * as scan from './scan';
 import {type IConfig} from './_types/config';
+import {logger} from '@leav/logger';
 
 (async function () {
     try {
         const cfg: IConfig = await getConfig();
-        console.info('Scanning filesystem...');
+        logger.info('Scanning filesystem...');
         const fsScan = await scan.filesystem(cfg);
 
-        console.info('Scanning database...');
+        logger.info('Scanning database...');
         const dbElements = await scan.database(cfg);
 
         const dbSettings = {
@@ -22,23 +23,23 @@ import {type IConfig} from './_types/config';
         };
         const dbScan = extractChildrenDbElements(dbSettings, dbElements.treeContent);
 
-        console.info('RabbitMQ connection initialization...');
+        logger.info('RabbitMQ connection initialization...');
         const amqp = await amqpService({config: cfg.amqp});
 
-        console.time('Synchronization time');
-        console.info('Synchronization...');
+        const begin = Date.now();
+        logger.info('Synchronization...');
         await automate(fsScan, dbScan, dbSettings, amqp);
 
-        console.info('Closing RabbitMQ connection...');
+        logger.info('Closing RabbitMQ connection...');
 
         await amqp.close();
-        console.timeEnd('Synchronization time');
+        logger.info(`Synchronization time ${Date.now() - begin} ms`);
     } catch (e) {
-        console.error(e);
+        logger.error(`Fatal error during init because ${e.stack || e}`);
         process.exit(1);
     }
 })();
 
-process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+process.on('unhandledRejection', (reason: Error | any) => {
+    logger.error(`Unhandled Rejection at: ${reason.stack}`, {reason});
 });

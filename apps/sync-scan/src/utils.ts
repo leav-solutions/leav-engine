@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import {type FilesystemContent, type IFilesystemDatas} from '_types/filesystem';
 import {type IDbFilesDatas, type IRecord} from '_types/queries';
+import {logger} from '@leav/logger';
 
 export const createHashFromFile = (filePath: string): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -17,7 +18,7 @@ export const createHashFromFile = (filePath: string): Promise<string> =>
 
 export const _logMem = text => {
     const used = process.memoryUsage().heapUsed / 1024 / 1024;
-    console.info(`${text} ${Math.round(used * 100) / 100} MB`);
+    logger.info(`${text} ${Math.round(used * 100) / 100} MB`);
 };
 
 export const groupFsFilesByDatas = (fsScan: FilesystemContent): IFilesystemDatas =>

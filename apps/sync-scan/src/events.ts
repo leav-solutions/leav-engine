@@ -4,9 +4,12 @@
 import {type IAmqpService} from '@leav/message-broker';
 import {getConfig} from './config';
 import {EventTypes, type IEventMsg} from './_types/events';
+import {logger} from '@leav/logger';
 
 const _logEvent = (params: {eventType: EventTypes; pathBefore?: string; pathAfter?: string}) => {
-    console.info('Event detected', params);
+    logger.info(
+        `Event detected event=${params.eventType} pathBefore=${params.pathBefore} pathAfter=${params.pathAfter}`
+    );
 };
 
 const _getEventMsg = (
