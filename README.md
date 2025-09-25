@@ -467,11 +467,7 @@ login/password default authentification mechanism.
     - Manually stop docker front containers and build apps to [`/applications`](./apps/core/applications) folder in core.
 
         ```
-        yarn workspace login build:install
-        yarn workspace portal build:install
-        yarn workspace admin build:install
-        yarn workspace data-studio build:install
-        yarn workspace app-studio build:install
+        yarn run fronts:build:install
 
         docker stop docker-login-1 docker-portal-1 docker-admin-1 docker-data-studio-1 docker-app-studio-1
         ```

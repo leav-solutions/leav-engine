@@ -10,6 +10,7 @@
     ]
   },
   "scripts": {
+    "fronts:build:install": "yarn workspaces foreach -v -A --include 'apps/*' run build:install",
     "test": "CI=true node ./scripts/testChangedProjects.js",
     "test:ci": "",
     "lint": "eslint --ext=ts,tsx --fix apps/ libs/",

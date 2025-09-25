@@ -13,12 +13,11 @@ COPY apps/ ./apps
 COPY libs/ ./libs
 COPY assets/ ./assets
 COPY apps/core/package.json ./apps/core/
-COPY scripts/apps_install.sh ./scripts/apps_install.sh
 
-# Install dev modules, needed for build and build project
-RUN yarn workspaces focus core && yarn workspace core build
-# Install apps
-RUN ./scripts/apps_install.sh
+# Install dev modules, build project core and frontend apps
+RUN yarn install && \
+    yarn workspace core build && \
+    yarn run fronts:build:install
 
 ### PROD DEPENDENCIES INSTALL ###
 FROM node:18-alpine3.18 AS prod-dep-install
