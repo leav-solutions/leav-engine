@@ -1,8 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-/* eslint-disable no-restricted-syntax */
-// tslint:disable:no-console
+/* eslint-disable no-console */
 // In production, we register a service worker to serve assets from local cache.
 
 import {API_ENDPOINT, ORIGIN_URL} from './constants';

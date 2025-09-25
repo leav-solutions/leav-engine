@@ -113,14 +113,7 @@ module.exports = {
         'no-bitwise': 'error',
         'no-caller': 'error',
         'no-cond-assign': 'error',
-        'no-console': 'off',
-        'no-restricted-syntax': [
-            'error',
-            {
-                selector: "CallExpression[callee.object.name='console'][callee.property.name='log']",
-                message: 'Console.log is forbidden'
-            }
-        ],
+        'no-console': 'error',
         'no-debugger': 'error',
         'no-duplicate-case': 'error',
         'no-duplicate-imports': 'error',
@@ -172,10 +165,17 @@ module.exports = {
     },
     overrides: [
         {
-            files: ['**/*.test.ts', '**/*.spec.ts', '**/*.test.tsx', '**/*.spec.tsx'],
+            files: ['**/*.test.ts', '**/*.spec.ts', '**/*.test.tsx', '**/*.spec.tsx', '**/__tests__/**'],
             rules: {
                 'no-only-tests/no-only-tests': 'error',
+                'no-console': 'off',
                 '@typescript-eslint/consistent-type-assertions': 'off',
+            }
+        },
+        {
+            files: ['libs/ui/**', 'apps/admin/**', 'apps/app-studio/**', 'apps/data-studio/**', 'apps/login/**', 'apps/portal/**'],
+            rules: {
+                'no-console': ['error', {allow: ['warn', 'error', 'info']}],
             }
         }
     ]
