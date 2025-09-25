@@ -31,12 +31,13 @@ exports.configureLogger = configureLogger;
 const winston = __importStar(require("winston"));
 const config_1 = require("./config");
 function configureLogger(config) {
-    const level = config.level || config_1.defaultLoggerConfig.level || 'info';
-    const useJsonFormat = config.useJsonFormat ?? config_1.defaultLoggerConfig.useJsonFormat ?? false;
+    const level = config.level ?? config_1.defaultLoggerConfig.level;
+    const useJsonFormat = config.useJsonFormat ?? config_1.defaultLoggerConfig.useJsonFormat;
     const destinationFile = config.destinationFile ?? config_1.defaultLoggerConfig.destinationFile;
     const onErrorLog = config.onErrorLog;
     const transports = [
         new winston.transports.Console({
+            silent: config.silent,
             format: useJsonFormat
                 ? winston.format.json()
                 : winston.format.combine(winston.format.colorize(), winston.format.simple())

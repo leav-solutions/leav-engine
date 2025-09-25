@@ -14,6 +14,7 @@ export function configureLogger(config: ILoggerConfig): void {
 
     const transports: winston.transport[] = [
         new winston.transports.Console({
+            silent: config.silent,
             format: useJsonFormat
                 ? winston.format.json()
                 : winston.format.combine(winston.format.colorize(), winston.format.simple())

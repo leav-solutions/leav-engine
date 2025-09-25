@@ -9,6 +9,12 @@ export interface ILoggerConfig {
     level: string;
 
     /**
+     * If true, disable all logging
+     * Default: true if TS_JEST=1 (tests), false otherwise
+     */
+    silent?: boolean;
+
+    /**
      * If transport is file, destination file path
      */
     destinationFile?: string;
@@ -37,6 +43,7 @@ export function envToBool(value: string, defaultValue = false) {
 
 export const defaultLoggerConfig: ILoggerConfig = {
     level: process.env.LOG_LEVEL || 'info',
+    silent: envToBool(process.env.LOG_SILENT, process.env.TS_JEST === '1'),
     destinationFile: process.env.LOG_FILE,
     useJsonFormat: envToBool(process.env.LOG_USE_JSON_FORMAT, false)
 };

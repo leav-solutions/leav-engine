@@ -5,6 +5,11 @@ export interface ILoggerConfig {
      */
     level: string;
     /**
+     * If true, disable all logging
+     * Default: true if TS_JEST=1 (tests), false otherwise
+     */
+    silent?: boolean;
+    /**
      * If transport is file, destination file path
      */
     destinationFile?: string;

@@ -16,6 +16,7 @@ function envToBool(value, defaultValue = false) {
 }
 exports.defaultLoggerConfig = {
     level: process.env.LOG_LEVEL || 'info',
+    silent: envToBool(process.env.LOG_SILENT, process.env.TS_JEST === '1'),
     destinationFile: process.env.LOG_FILE,
     useJsonFormat: envToBool(process.env.LOG_USE_JSON_FORMAT, false)
 };
