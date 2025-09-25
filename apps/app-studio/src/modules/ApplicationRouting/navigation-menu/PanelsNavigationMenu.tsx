@@ -88,7 +88,7 @@ export const PanelsNavigationMenu: FunctionComponent<IPanelsNavigationMenuProps>
                         <KitTabs
                             items={tabItems}
                             variant="pill"
-                            size="small"
+                            size="xsmall"
                             onChange={onChangeTab}
                             activeKey={panel.id}
                         />
