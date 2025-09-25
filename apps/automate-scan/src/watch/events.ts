@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {logger} from '@leav/logger';
 import {generateMsgRabbitMQ, sendToRabbitMQ} from '../rabbitmq/rabbitmq';
 import {deleteData, updateData} from '../redis/redis';
 import {type IParams} from '../types';
@@ -18,7 +19,7 @@ export const handleCreate = async (
         params.amqp
     );
     if (params.verbose) {
-        console.info('CREATE', path);
+        logger.info(`CREATE ${path}`);
     }
     return true;
 };
@@ -27,7 +28,7 @@ export const handleDelete = async (path: string, inode: number, params: IParams,
     await deleteData(path);
     sendToRabbitMQ(generateMsgRabbitMQ('REMOVE', path, null, inode, isDirectory, params.rootKey), params.amqp);
     if (params.verbose) {
-        console.info('REMOVE', path);
+        logger.info(`REMOVE ${path}`);
     }
     return true;
 };
@@ -45,7 +46,7 @@ export const handleUpdate = async (
         params.amqp
     );
     if (params.verbose) {
-        console.info('UPDATE', path);
+        logger.info(`UPDATE ${path}`);
     }
     return true;
 };
@@ -61,7 +62,7 @@ export const handleMove = async (
     sendToRabbitMQ(generateMsgRabbitMQ('MOVE', pathBefore, pathAfter, inode, isDirectory, params.rootKey), params.amqp);
 
     if (params.verbose) {
-        console.info('MOVE', pathBefore, pathAfter);
+        logger.info(`MOVE ${pathBefore} ${pathAfter}`);
     }
 
     return true;

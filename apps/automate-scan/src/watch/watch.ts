@@ -10,6 +10,7 @@ import {getConfig} from '../config';
 import {getInode, setData} from '../redis/redis';
 import {type IAmqpParams, type IParams, type IParamsExtends, type IWatcherParams} from '../types';
 import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
+import {logger} from '@leav/logger';
 
 const inodesTmp: {[i: number]: string} = {};
 const timeoutRefs: {[i: number]: any} = {};
@@ -59,7 +60,7 @@ export const start = async (
     );
 
     watcher.on('ready', () => {
-        console.info(`Initialized ${initsCount} files. Waiting for events...`);
+        logger.info(`Initialized ${initsCount} files. Waiting for events...`);
         ready = true;
     });
 
@@ -224,7 +225,7 @@ export const handleEvent = async (
 
             break;
         default:
-            console.error('event not managed : ' + event);
+            logger.error(`event not managed : ${event}`);
             break;
     }
 
@@ -253,7 +254,7 @@ const _manageRedisInit = async (verbose: IWatcherParams['verbose']) => {
                 await setData(init.path, init.inode); // set data in redis and wait until finish
 
                 if (verbose === 'very') {
-                    console.info('init', init.path);
+                    logger.info(`init ${init.path}`);
                 }
             }
         }
@@ -283,7 +284,7 @@ const _createHashFromFile = async (filePath: string): Promise<string> => {
                 .on('end', () => resolve(hash.digest('hex')))
         );
     } catch (e) {
-        console.error(`Can't get hash from file ${filePath}`, e);
+        logger.error(`Can't get hash from file ${filePath} because ${e.stack}`);
         return '';
     }
 };

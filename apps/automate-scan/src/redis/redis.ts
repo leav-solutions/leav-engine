@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {logger} from '@leav/logger';
 import {Tedis} from 'redis-typescript';
 
 let client: Tedis;
@@ -29,7 +30,7 @@ export const createClient = (host: string, port: number) => {
     client.on('connect', () => undefined);
 
     client.on('error', err => {
-        console.error('201 - Error with redis', err);
+        logger.error(`201 - Error with redis because ${err.stack}`);
         process.exit(201);
     });
 
@@ -53,7 +54,7 @@ export const getInode = async (path: string) => {
     if (value) {
         return parseInt(value.toString(), 10);
     } else {
-        console.error(_getRedisKey(path) + ' not found in redis');
+        logger.error(`${_getRedisKey(path)} not found in redis`);
         return 0;
     }
 };

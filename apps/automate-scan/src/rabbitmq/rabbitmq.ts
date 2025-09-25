@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {logger} from '@leav/logger';
 import {type IAmqpParams, type IMessageSend} from './../types';
 
 export const sendToRabbitMQ = (msg: string, amqp?: IAmqpParams) => {
@@ -13,12 +14,12 @@ export const sendToRabbitMQ = (msg: string, amqp?: IAmqpParams) => {
                 persistent: true
             });
         } catch (e) {
-            console.error("105 - Can't publish to rabbitMQ");
+            logger.error("105 - Can't publish to rabbitMQ");
             process.exit(105);
         }
     } else {
         // else just display the infos
-        console.info(msg);
+        logger.info(msg);
     }
 };
 

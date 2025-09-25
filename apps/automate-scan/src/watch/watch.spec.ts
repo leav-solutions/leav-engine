@@ -58,9 +58,6 @@ jest.mock('./events', () => ({
 }));
 
 describe('test checkEvent', () => {
-    // disable console info in tests
-    console.info = jest.fn();
-
     afterAll(() => jest.resetAllMocks());
 
     test('Init - add a file', async () => {

@@ -64,7 +64,6 @@ describe('test redis functions', () => {
 
     test('getInode', async () => {
         const spyGet = jest.spyOn(Tedis.prototype, 'get');
-        console.error = jest.fn(); // Cancel console.error
 
         await getInode(path); // Will trigger an console.error
 

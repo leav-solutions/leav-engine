@@ -29,8 +29,6 @@ jest.mock('fs', () => ({
 }));
 
 describe('test init', () => {
-    console.info = jest.fn();
-
     test('startWatch', async () => {
         await startWatch();
 

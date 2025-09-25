@@ -15564,6 +15564,7 @@ __metadata:
   dependencies:
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
+    "@leav/logger": "workspace:libs/logger"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.7"

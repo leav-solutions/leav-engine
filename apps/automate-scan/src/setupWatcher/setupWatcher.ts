@@ -8,13 +8,14 @@ import * as fs from 'fs';
 import {getConfig} from '../config';
 import {createClient} from '../redis/redis';
 import {start} from '../watch/watch';
+import {logger} from '@leav/logger';
 
 export const startWatch = async () => {
     const config = await getConfig();
 
     // Check if rootPath exist
     if (!fs.existsSync(config.rootPath)) {
-        console.error('2 - rootPath folder not found', config.rootPath);
+        logger.error(`2 - rootPath folder not found ${config.rootPath}`);
         process.exit(2);
     }
 
@@ -67,7 +68,7 @@ export const getChannel = async (
     new Promise<Channel>(resolve =>
         amqp.connect(amqpConfig, async (error0: any, connection: Connection | any) => {
             if (error0) {
-                console.error("101 - Can't connect to rabbitMQ");
+                logger.error("101 - Can't connect to rabbitMQ");
                 process.exit(101);
             }
 
@@ -76,21 +77,21 @@ export const getChannel = async (
             try {
                 await ch.assertExchange(exchange, type, {durable: true});
             } catch (e) {
-                console.error('102 - Error when assert exchange', (e as Error).message);
+                logger.error(`102 - Error when assert exchange ${(e as Error).message}`);
                 process.exit(102);
             }
 
             try {
                 await ch.assertQueue(queue, {durable: true});
             } catch (e) {
-                console.error('103 - Error when assert queue', (e as Error).message);
+                logger.error(`103 - Error when assert queue ${(e as Error).message}`);
                 process.exit(103);
             }
 
             try {
                 await ch.bindQueue(queue, exchange, routingKey);
             } catch (e) {
-                console.error('104 - Error when bind queue', (e as Error).message);
+                logger.error(`104 - Error when bind queue ${(e as Error).message}`);
                 process.exit(104);
             }
 
