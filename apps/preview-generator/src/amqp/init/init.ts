@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {logger} from '@leav/logger';
 import {type Channel} from 'amqplib';
 
 export const initAmqp = async (
@@ -22,7 +23,7 @@ export const assertExchange = async (channel: Channel, type: string, exchange: s
     try {
         await channel.assertExchange(exchange, type, {durable: true});
     } catch (e) {
-        console.error('102 - Error when assert exchange', e.message);
+        logger.error(`102 - Error when assert exchange because ${e.message}`);
         process.exit(102);
     }
 };
@@ -31,7 +32,7 @@ export const assertQueue = async (channel: Channel, queue: string, maxPriority?:
     try {
         await channel.assertQueue(queue, {durable: true, maxPriority});
     } catch (e) {
-        console.error('103 - Error when assert queue', e.message);
+        logger.error(`103 - Error when assert queue because ${e.message}`);
         process.exit(103);
     }
 };
@@ -40,7 +41,7 @@ export const bindQueue = async (channel: Channel, queue: string, exchange: strin
     try {
         await channel.bindQueue(queue, exchange, routingKey);
     } catch (e) {
-        console.error('104 - Error when bind queue', e.message);
+        logger.error(`104 - Error when bind queue because ${e.message}`);
         process.exit(104);
     }
 };

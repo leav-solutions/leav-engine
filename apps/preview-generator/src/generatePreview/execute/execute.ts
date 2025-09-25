@@ -7,6 +7,7 @@ import {getArgs} from '../../getArgs/getArgs';
 import {handleDocument} from '../../handleDocument/handleDocument';
 import {type IConfig, type IResult, type IRootPaths, type ISize, type IVersion} from '../../types/types';
 import {handleError} from '../../utils/log';
+import {logger} from '@leav/logger';
 
 export interface IExecute {
     type: string;
@@ -85,7 +86,7 @@ export const execute = async ({
     });
 
     if (config.verbose) {
-        console.info('output', size.output);
+        logger.info(`output: ${size.output}`);
     }
 
     // After generating the first execution we generate a png reuse for other sizes, so the type is an image

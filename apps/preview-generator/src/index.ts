@@ -5,6 +5,7 @@ import {monitoringServer} from '@leav/monitoring-server';
 import fs from 'fs';
 import {startConsume} from './amqp/startConsume';
 import {getConfig} from './getConfig/getConfig';
+import {logger} from '@leav/logger';
 
 (async function () {
     try {
@@ -26,11 +27,11 @@ import {getConfig} from './getConfig/getConfig';
         await startConsume(config);
         await monitoringServerInstance.init();
     } catch (e) {
-        console.error(e);
+        logger.error(`1 - Error during init because ${e.stack}`);
         process.exit(1);
     }
-})().catch(e => console.error(e));
+})().catch(e => logger.error(`2 - Fatal error during init because ${e.stack}`));
 
-process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+process.on('unhandledRejection', (reason: Error | any) => {
+    logger.error(`Unhandled Rejection at: ${reason.stack}`, {reason});
 });

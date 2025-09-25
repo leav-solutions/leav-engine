@@ -6,6 +6,7 @@ import * as path from 'path';
 import {type ConsumeMessage} from 'amqplib';
 import {processPreview} from '../processPreview/processPreview';
 import {type IConfig} from '../types/types';
+import {logger} from '@leav/logger';
 
 export const startBench = async (jsonFile: string, dest: string, config: IConfig) => {
     const data: string = fs.readFileSync(jsonFile, 'utf8');
@@ -38,5 +39,5 @@ export const startBench = async (jsonFile: string, dest: string, config: IConfig
         await processPreview(msg as ConsumeMessage, config);
     }
 
-    console.info((Date.now() - begin) / 1000);
+    logger.info((Date.now() - begin) / 1000);
 };

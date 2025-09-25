@@ -32,7 +32,6 @@ describe('execute', () => {
             }
         ];
         (getArgs as jest.FunctionLike) = jest.fn(() => commands);
-        (console.error as jest.FunctionLike) = jest.fn();
 
         execute(params as IExecute).catch(e => {
             expect(e.error).toBe(501);

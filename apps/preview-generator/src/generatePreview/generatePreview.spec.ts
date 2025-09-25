@@ -11,7 +11,6 @@ import {generatePreview} from './generatePreview';
 describe('generatePreview', () => {
     const mockconf = {inputRootPath: 'input_path', outputRootPath: 'output_path', amqp: {hostname: 'localhost'}};
 
-    console.info = jest.fn();
     (execFile as jest.FunctionLike) = jest.fn(() => '');
     (getArgs as jest.FunctionLike) = jest.fn(() => []);
     (handleDocument as jest.FunctionLike) = jest.fn(() => []);

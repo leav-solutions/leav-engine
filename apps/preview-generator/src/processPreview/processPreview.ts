@@ -6,6 +6,7 @@ import {type ConsumeMessage} from 'amqplib';
 import {handleCheck} from '../check/handleCheck';
 import {type IConfig, type IMessageConsume, type IResponse, type IResult} from '../types/types';
 import {generatePreview} from './../generatePreview/generatePreview';
+import {logger} from '@leav/logger';
 
 export const processPreview = async (msg: ConsumeMessage, config: IConfig): Promise<IResponse> => {
     let msgContent: IMessageConsume;
@@ -16,7 +17,7 @@ export const processPreview = async (msg: ConsumeMessage, config: IConfig): Prom
     }
 
     if (config.verbose) {
-        console.info('input:', msgContent.input);
+        logger.info(`input: ${msgContent.input}`);
     }
 
     let type: string;
@@ -29,7 +30,7 @@ export const processPreview = async (msg: ConsumeMessage, config: IConfig): Prom
     } catch (e) {
         // is not a custom error
         if (typeof e.params === 'undefined') {
-            console.error(e);
+            logger.error(`Error in processPreview: ${e.stack}`);
         }
 
         const {error, params} = e;
