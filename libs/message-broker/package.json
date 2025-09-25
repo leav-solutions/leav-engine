@@ -28,6 +28,7 @@
     "typescript": "5.5.3"
   },
   "dependencies": {
+    "@leav/logger": "workspace:libs/logger",
     "amqplib": "0.10.9"
   },
   "stableVersion": "1.0.0"

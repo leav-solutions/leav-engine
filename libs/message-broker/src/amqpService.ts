@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
 import {type IAmqp, type onMessageFunc} from './types/amqp';
+import {logger} from '@leav/logger';
 
 export interface IAmqpService {
     publisher: {connection: amqp.ChannelModel; channel: amqp.ConfirmChannel};
@@ -82,13 +83,12 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
                 try {
                     await onMessage(msg);
                 } catch (e) {
-                    console.error(process.pid, 'err amqp', e);
-                    console.error(
-                        `[${queue}/${routingKey}] Error while processing message:
-                        ${e}.
-                        Message was: ${msg.content.toString()}
-                    `
-                    );
+                    logger.error(`[${queue}/${routingKey}] Error while processing message: ${e.stack}`, {
+                        message: {
+                            ...msg,
+                            content: msg.content.toString()
+                        }
+                    });
                 } finally {
                     // TODO: add ack if msg has not been acked
                 }

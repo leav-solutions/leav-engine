@@ -10188,6 +10188,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/message-broker@workspace:libs/message-broker"
   dependencies:
+    "@leav/logger": "workspace:libs/logger"
     "@types/amqplib": "npm:0.10.7"
     "@types/jest": "npm:29.0.2"
     amqplib: "npm:0.10.9"
