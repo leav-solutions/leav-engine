@@ -8,6 +8,7 @@ import {
     HttpLink,
     InMemoryCache,
     Observable,
+    type Operation,
     type ServerError,
     split
 } from '@apollo/client';
@@ -83,7 +84,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             errorLink,
             splitLink,
             new HttpLink({
-                uri: `${ORIGIN_URL}/${API_ENDPOINT}`,
+                uri: (operation: Operation) => `${ORIGIN_URL}/${API_ENDPOINT}?&opName=${operation.operationName}`,
                 fetch
             })
         ]),

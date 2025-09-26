@@ -45,7 +45,7 @@ export const useInitApollo = (
 
     // TODO: get lang from context
     const httpLink = new HttpLink({
-        uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=fr`
+        uri: (operation: Operation) => `${ORIGIN_URL}/${API_ENDPOINT}?lang=fr&opName=${operation.operationName}`
     });
 
     const splitLink = split(

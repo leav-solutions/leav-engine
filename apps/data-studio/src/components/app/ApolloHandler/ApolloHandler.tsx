@@ -94,6 +94,14 @@ const ApolloHandler: FunctionComponent = ({children}) => {
         })
     );
 
+
+    // set uri in operation context because it is the only way for createUploadLink to have custom url by operation
+    const _setOperationUri = new ApolloLink((operation, forward) => {
+        operation.setContext({...operation.getContext(), uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}&opName=${operation.operationName}`});
+
+        return forward(operation);
+    });
+
     const splitLink = split(({query}) => {
         const definition = getMainDefinition(query);
         return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
@@ -103,8 +111,8 @@ const ApolloHandler: FunctionComponent = ({children}) => {
         link: ApolloLink.from([
             errorLink,
             splitLink,
+            _setOperationUri,
             createUploadLink({
-                uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}`,
                 headers: {
                     'Apollo-Require-Preflight': 'true' // Required to get upload working with Apollo Server v4+
                 }

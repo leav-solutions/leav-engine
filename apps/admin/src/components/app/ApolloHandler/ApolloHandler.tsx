@@ -9,6 +9,7 @@ import {
     HttpLink,
     InMemoryCache,
     Observable,
+    type Operation,
     type PossibleTypesMap,
     type ServerError,
     split
@@ -111,7 +112,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             splitLink,
             _mutationsWatcherLink,
             new HttpLink({
-                uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}`,
+                uri: (operation: Operation) => `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}&opName=${operation.operationName}`,
                 fetch
             })
         ]),
