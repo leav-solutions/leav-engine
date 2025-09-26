@@ -8,3 +8,4 @@ export {default as permissionsByActions} from './permissionsByActions';
 export {default as reducePermissionsArray} from './reducePermissionsArray';
 export {default as simplePermission} from './simplePermission';
 export {default as treeBasedPermissions} from './treeBasedPermissions';
+export {default as recordInCreationByPass} from './recordInCreationBypass';

@@ -18,6 +18,8 @@ import {
     IGetDefaultPermissionParams,
     IGetRecordAttributeHeritedPermissionsParams as IGetRecordAttributeInheritedPermissionsParams
 } from './_types';
+import {type IRecordRepo} from '../../infra/record/recordRepo';
+import {type IRecordInCreationByPassHelper} from './helpers/recordInCreationBypass';
 
 export interface IRecordAttributePermissionDomain {
     getRecordAttributePermission(
@@ -40,8 +42,10 @@ export interface IRecordAttributePermissionDomainDeps {
     'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
+    'core.domain.permission.helpers.recordInCreationByPass': IRecordInCreationByPassHelper;
     'core.domain.attribute': IAttributeDomain;
     'core.infra.value': IValueRepo;
+    'core.infra.record': IRecordRepo;
 }
 
 export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAttributePermissionDomain {
@@ -50,8 +54,10 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
         'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+        'core.domain.permission.helpers.recordInCreationByPass': recordInCreationByPassHelper,
         'core.domain.attribute': attributeDomain,
-        'core.infra.value': valueRepo
+        'core.infra.value': valueRepo,
+        'core.infra.record': recordRepo
     } = deps;
     return {
         async getRecordAttributePermission(
@@ -63,7 +69,10 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
             ctx: IQueryInfos
         ): Promise<boolean> {
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
-            if (typeof attrProps.permissions_conf === 'undefined') {
+            if (
+                typeof attrProps.permissions_conf === 'undefined' ||
+                !attrProps.permissions_conf.permissionTreeAttributes.length
+            ) {
                 // Check if action is present in library permissions
                 const isAttrAction =
                     Object.values(AttributePermissionsActions).indexOf(
@@ -104,7 +113,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                     ctx
                 });
 
-            return treeBasedPermissionsHelper.getTreeBasedPermission(
+            const treeBasedPermission = await treeBasedPermissionsHelper.getTreeBasedPermission(
                 {
                     type: PermissionTypes.RECORD_ATTRIBUTE,
                     action,
@@ -116,6 +125,14 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAtt
                 },
                 ctx
             );
+
+            // If record is in creation and user is the creator, we allow all actions
+            if (treeBasedPermission === false) {
+                const record = await recordRepo.getRecord({libraryId: recordLibrary, recordId, ctx});
+                return recordInCreationByPassHelper.recordInCreationByPass(record, ctx);
+            }
+
+            return treeBasedPermission;
         },
         async getInheritedRecordAttributePermission(
             {action, attributeId, userGroupId, permTree, permTreeNode},

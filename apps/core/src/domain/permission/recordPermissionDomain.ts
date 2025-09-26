@@ -14,13 +14,15 @@ import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {
-    IGetDefaultPermissionParams,
-    IGetInheritedRecordPermissionParams,
-    IGetRecordPermissionParams,
-    IGetTreeBasedPermissionParams,
-    IEstimateTreeValueRecordPermissionParams
+    type IEstimateTreeValueRecordPermissionParams,
+    type IGetDefaultPermissionParams,
+    type IGetInheritedRecordPermissionParams,
+    type IGetRecordPermissionParams,
+    type IGetTreeBasedPermissionParams
 } from './_types';
-import {ITreeRepo} from '../../infra/tree/treeRepo';
+import {type ITreeRepo} from '../../infra/tree/treeRepo';
+import {type IRecordRepo} from '../../infra/record/recordRepo';
+import {type IRecordInCreationByPassHelper} from './helpers/recordInCreationBypass';
 
 export interface IRecordPermissionDomain {
     getRecordPermission(params: IGetRecordPermissionParams): Promise<boolean>;
@@ -33,10 +35,12 @@ export interface IRecordPermissionDomainDeps {
     'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
+    'core.domain.permission.helpers.recordInCreationByPass': IRecordInCreationByPassHelper;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.infra.value': IValueRepo;
     'core.infra.tree': ITreeRepo;
+    'core.infra.record': IRecordRepo;
 }
 
 export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDomain {
@@ -45,10 +49,12 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupHelper,
         'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+        'core.domain.permission.helpers.recordInCreationByPass': recordInCreationByPassHelper,
         'core.domain.attribute': attributeDomain,
         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
         'core.infra.value': valueRepo,
-        'core.infra.tree': treeRepo
+        'core.infra.tree': treeRepo,
+        'core.infra.record': recordRepo
     } = deps;
 
     return {
@@ -108,7 +114,10 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                 throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
             }
 
-            if (typeof libProps.permissions_conf === 'undefined') {
+            if (
+                typeof libProps.permissions_conf === 'undefined' ||
+                !libProps.permissions_conf.permissionTreeAttributes.length
+            ) {
                 // Check if action is present in library permissions
                 const isLibAction =
                     Object.values(LibraryPermissionsActions).indexOf(action as unknown as LibraryPermissionsActions) !==
@@ -145,7 +154,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                 {}
             );
 
-            return treeBasedPermissionsHelper.getTreeBasedPermission(
+            const treeBasedPermission = await treeBasedPermissionsHelper.getTreeBasedPermission(
                 {
                     type: PermissionTypes.RECORD,
                     action,
@@ -163,6 +172,14 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                 },
                 ctx
             );
+
+            // If record is in creation and user is the creator, we allow all actions
+            if (treeBasedPermission === false) {
+                const record = await recordRepo.getRecord({libraryId: library, recordId, ctx});
+                return recordInCreationByPassHelper.recordInCreationByPass(record, ctx);
+            }
+
+            return treeBasedPermission;
         },
         async getInheritedRecordPermission({
             action,

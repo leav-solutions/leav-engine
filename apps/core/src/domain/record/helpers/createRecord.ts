@@ -7,8 +7,8 @@ import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomai
 import {IRecordRepo} from 'infra/record/recordRepo';
 import moment from 'moment';
 import {LibraryPermissionsActions} from '../../../_types/permissions';
-import {IQueryInfos} from '../../../_types/queryInfos';
-import {IRecord} from '../../../_types/record';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {CORE_IN_CREATION_BY} from '../../../_types/record';
 import PermissionError from '../../../errors/PermissionError';
 import {ICreateRecordResult, ICreateRecordValueError} from '../_types';
 
@@ -42,7 +42,8 @@ export default function ({
             created_by: String(ctx.userId),
             modified_at: moment().unix(),
             modified_by: String(ctx.userId),
-            active
+            active,
+            ...(!active && {[CORE_IN_CREATION_BY]: String(ctx.userId)})
         };
 
         const canCreate = await libraryPermissionDomain.getLibraryPermission({

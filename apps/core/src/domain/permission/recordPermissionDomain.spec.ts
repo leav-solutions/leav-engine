@@ -19,7 +19,9 @@ const depsBase: ToAny<IRecordPermissionDomainDeps> = {
     'core.domain.attribute': jest.fn(),
     'core.domain.helpers.getCoreEntityById': jest.fn(),
     'core.infra.value': jest.fn(),
-    'core.infra.tree': jest.fn()
+    'core.infra.tree': jest.fn(),
+    'core.domain.permission.helpers.recordInCreationByPass': jest.fn(),
+    'core.infra.record': jest.fn()
 };
 
 describe('recordPermissionDomain', () => {

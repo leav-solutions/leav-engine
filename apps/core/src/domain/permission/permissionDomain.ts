@@ -337,7 +337,8 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
     };
 
     const isAllowed = async ({type, action, userId, applyTo, target, ctx}: IIsAllowedParams): Promise<boolean> => {
-        let perm;
+        let perm: boolean;
+
         switch (type) {
             case PermissionTypes.RECORD:
                 if (!target || !target.recordId) {
@@ -372,7 +373,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     });
                 }
 
-                perm = recordAttributePermissionDomain.getRecordAttributePermission(
+                perm = await recordAttributePermissionDomain.getRecordAttributePermission(
                     action as RecordAttributePermissionsActions,
                     userId,
                     target.attributeId,
@@ -495,7 +496,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
             .filter(p => skipApplyOn || !p.applyOn || p.applyOn.indexOf(applyOn) !== -1)
             .map(p => p.name);
 
-        const res: ILabeledPermissionsAction[] = [...perms, ...pluginPermissions].map(p => ({
+        return [...perms, ...pluginPermissions].map(p => ({
             name: p,
             label: config.lang.available.reduce(
                 // Retrieve label for all available languages
@@ -506,8 +507,6 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                 {}
             )
         }));
-
-        return res;
     };
 
     const registerActions = (type: PermissionTypes, actions: string[], applyOn?: string[]) => {

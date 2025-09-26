@@ -38,12 +38,13 @@ import {
 import {IQueryInfos} from '../../_types/queryInfos';
 import {
     AttributeCondition,
-    IRecord,
-    IRecordFilterLight,
-    IRecordFilterOption,
-    IRecordIdentity,
-    IRecordIdentityConf,
-    IRecordSort,
+    CORE_IN_CREATION_BY,
+    type IRecord,
+    type IRecordFilterLight,
+    type IRecordFilterOption,
+    type IRecordIdentity,
+    type IRecordIdentityConf,
+    type IRecordSort,
     Operator,
     TreeCondition
 } from '../../_types/record';
@@ -941,6 +942,16 @@ export default function ({
                     valuesErrors
                 };
             }
+
+            // The record is not in creation anymore
+            await recordRepo.updateRecord({
+                libraryId: library,
+                recordData: {
+                    id: recordId,
+                    [CORE_IN_CREATION_BY]: null
+                },
+                ctx
+            });
 
             return {
                 record: recordActivateds[0],

@@ -100,7 +100,6 @@ export default function ({
             await recordRepo.updateRecord({
                 libraryId,
                 recordData: {id: recordId, [CORE_INDEX_FIELD]: data},
-                mergeObjects: true,
                 ctx
             });
         },
