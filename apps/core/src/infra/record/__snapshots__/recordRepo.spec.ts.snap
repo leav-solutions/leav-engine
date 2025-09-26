@@ -113,6 +113,7 @@ exports[`RecordRepo getRecord Should return records in same order 1`] = `
 exports[`RecordRepo updateRecord Should update a record 1`] = `
 "
                     UPDATE @value0 WITH @value1 IN @@value2
+                    OPTIONS { keepNull: false }
                     RETURN {old: OLD, new: NEW}
                 "
 `;

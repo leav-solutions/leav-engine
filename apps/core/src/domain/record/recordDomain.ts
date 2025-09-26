@@ -45,6 +45,7 @@ import {
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {
     AttributeCondition,
+    CORE_IN_CREATION_BY,
     type IRecord,
     type IRecordFilterLight,
     type IRecordFilterOption,
@@ -948,6 +949,16 @@ export default function ({
                     valuesErrors
                 };
             }
+
+            // The record is not in creation anymore
+            await recordRepo.updateRecord({
+                libraryId: library,
+                recordData: {
+                    id: recordId,
+                    [CORE_IN_CREATION_BY]: null
+                },
+                ctx
+            });
 
             return {
                 record: recordActivateds[0],

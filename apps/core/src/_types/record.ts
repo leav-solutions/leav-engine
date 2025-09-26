@@ -14,8 +14,11 @@ export interface IRecord {
     modified_at?: number;
     modified_by?: string;
     active?: boolean;
+    [CORE_IN_CREATION_BY]?: string;
     [attributeName: string]: any;
 }
+
+export const CORE_IN_CREATION_BY = '__in_creation_by__'; // key used to flag records that are in creation process
 
 export enum Operator {
     AND = 'AND',

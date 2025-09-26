@@ -198,7 +198,10 @@ describe('RecordDomain', () => {
                 id: '222435651',
                 library: 'test'
             };
-            const recRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
+            const recRepo = {
+                createRecord: global.__mockPromise(createdRecordData),
+                updateRecord: global.__mockPromise()
+            } satisfies Mockify<IRecordRepo>;
             const formRepo = {getForms: global.__mockPromise({list: []})} satisfies Mockify<IFormRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {

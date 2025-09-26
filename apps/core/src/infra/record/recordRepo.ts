@@ -30,7 +30,7 @@ import {type IFilterTypesHelper} from './helpers/filterTypes';
 import {type GetSearchVariableName} from './helpers/getSearchVariableName';
 import {type GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
 import {type IGetAccessPermissionsValue} from 'domain/record/helpers/getAccessPermissionFilters';
-import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
+import {VALUES_LINKS_COLLECTION} from '../value/valueRepo';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 
 export interface IFindRequestResult {
@@ -55,7 +55,6 @@ export interface IRecordRepo {
     }: {
         libraryId: string;
         recordData: IRecord;
-        mergeObjects?: boolean;
         ctx: IQueryInfos;
     }): Promise<{old: IRecord; new: IRecord}>;
     deleteRecord({libraryId, recordId, ctx}: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<IRecord>;
@@ -172,7 +171,7 @@ export default function ({
 
         // Replace missing records with null to match input order
         const recordsById = new Map(records.map(r => [r?._key ?? r?._id, r]));
-        const result = recordIds.map(id => {
+        return recordIds.map(id => {
             const rec = recordsById.get(id);
             return rec
                 ? (dbUtils.cleanup({
@@ -181,7 +180,6 @@ export default function ({
                   }) as IRecord)
                 : null;
         });
-        return result;
     };
 
     return {
@@ -429,6 +427,7 @@ export default function ({
             >({
                 query: aql`
                     UPDATE ${dbDocument} WITH ${dataToSave} IN ${collection}
+                    OPTIONS { keepNull: false }
                     RETURN {old: OLD, new: NEW}
                 `,
                 ctx
