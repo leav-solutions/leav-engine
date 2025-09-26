@@ -17,6 +17,10 @@ jest.mock('./helpers/hasTransparency', () => ({
     hasTransparency: () => Promise.resolve(true)
 }));
 
+jest.mock('../../getConfig/getConfig', () => ({
+    getConfig: async () => ({})
+}));
+
 describe('getImageArgs', () => {
     test('Compute preview command args', async () => {
         const ext = 'jpg';
