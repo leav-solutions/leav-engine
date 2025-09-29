@@ -4,7 +4,7 @@
 import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
 import {KitSelect} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {AttributeConditionFilter, IRecordIdentity, type ITreeNodeWithRecord} from '_ui/types';
+import {AttributeConditionFilter, type IRecordIdentity, type ITreeNodeWithRecord} from '_ui/types';
 import {RecordFilterCondition} from '_ui/_gqlTypes';
 import {type IFilterChildrenTreeDropDownProps} from './_types';
 import {SelectTreeNode} from '_ui/components/SelectTreeNode';

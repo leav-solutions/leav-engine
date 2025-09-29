@@ -13,7 +13,6 @@ export const handleRemoveEvent = async (
     ctx: IQueryInfos
 ): Promise<boolean> => {
     const {filePath, fileName} = getInputData(scanMsg.pathBefore);
-    const {userId} = deps.config.filesManager;
 
     const directoriesLibraryId = deps.utils.getDirectoriesLibraryId(library);
     const filesLibraryId = library;
@@ -43,7 +42,7 @@ export const handleRemoveEvent = async (
 
     // Deactivate the record
     try {
-        await deps.recordDomain.deactivateRecord(record, {userId});
+        await deps.recordDomain.deactivateRecord(record, ctx);
     } catch (e) {
         deps.logger.warn(`[FilesManager] Error when deactivating the record: ${record.id}`);
     }

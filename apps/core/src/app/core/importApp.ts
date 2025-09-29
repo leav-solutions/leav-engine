@@ -2,11 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import fs from 'fs';
-import {type AwilixContainer} from 'awilix';
 import {type StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {type IImportDomain} from 'domain/import/importDomain';
 import {type FileUpload, GraphQLUpload} from 'graphql-upload';
-import {type IDbUtils} from 'infra/db/dbUtils';
 import {nanoid} from 'nanoid';
 import {type IUtils} from 'utils/utils';
 import type * as Config from '_types/config';
@@ -17,6 +15,7 @@ import {Errors} from '../../_types/errors';
 import {ImportMode, ImportType} from '../../_types/import';
 import {TaskCallbackType} from '../../_types/tasksManager';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
+import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 
 export interface ICoreImportApp extends IGraphqlAppModule {
     importConfig(filepath: string, clear: boolean): Promise<void>;
@@ -28,6 +27,7 @@ interface IDeps {
     'core.domain.helpers.storeUploadFile': StoreUploadFileFunc;
     'core.utils': IUtils;
     config: Config.IConfig;
+    'core.utils.getSystemQueryContext': GetSystemQueryContext;
 }
 
 interface IImportConfigParams {
@@ -58,6 +58,7 @@ export default function ({
     'core.domain.import': importDomain,
     'core.domain.helpers.storeUploadFile': storeUploadFile,
     'core.utils': utils,
+    'core.utils.getSystemQueryContext': getSystemQueryContext,
     config
 }: IDeps): ICoreImportApp {
     const _validateFileFormat = (filename: string, allowed: string[]) => {
@@ -105,15 +106,7 @@ export default function ({
 
     return {
         importConfig: async (filepath: string, clear: boolean): Promise<void> => {
-            await _importConfig(
-                filepath,
-                clear,
-                {
-                    userId: config.defaultUserId,
-                    queryId: 'ImportConfig'
-                },
-                true
-            );
+            await _importConfig(filepath, clear, getSystemQueryContext('importConfig'), true);
         },
         importData: async (filepath: string): Promise<void> => {
             // extract filename from filepath
@@ -136,7 +129,7 @@ export default function ({
             // delete original filepath
             await fs.promises.unlink(filepath);
 
-            await importDomain.importData({filename, ctx: {userId: config.defaultUserId, queryId: 'ImportData'}});
+            await importDomain.importData({filename, ctx: getSystemQueryContext('importData')});
         },
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {

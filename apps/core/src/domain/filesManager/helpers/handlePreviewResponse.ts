@@ -10,7 +10,6 @@ import {type IRecordDomain} from 'domain/record/recordDomain';
 import {type IValueDomain} from 'domain/value/valueDomain';
 import {type IRecordRepo} from 'infra/record/recordRepo';
 import {type IUtils} from 'utils/utils';
-import {v4 as uuidv4} from 'uuid';
 import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {
@@ -35,14 +34,16 @@ export interface IHandlePreviewResponseDeps {
     utils: IUtils;
 }
 
-const _onMessage = async (msg: amqp.ConsumeMessage, logger: winston.Winston, deps: IHandlePreviewResponseDeps) => {
+const _onMessage = async (
+    msg: amqp.ConsumeMessage,
+    logger: winston.Winston,
+    ctx: IQueryInfos,
+    deps: IHandlePreviewResponseDeps
+) => {
     deps.amqpService.consumer.channel.ack(msg);
 
     let previewResponse: IPreviewResponse;
-    const ctx: IQueryInfos = {
-        userId: deps.config.filesManager.userId,
-        queryId: uuidv4()
-    };
+
     try {
         previewResponse = JSON.parse(msg.content.toString());
     } catch (e) {
@@ -109,6 +110,7 @@ const _onMessage = async (msg: amqp.ConsumeMessage, logger: winston.Winston, dep
 export const initPreviewResponseHandler = async (
     config: Config.IConfig,
     logger: winston.Winston,
+    ctx: IQueryInfos,
     deps: IHandlePreviewResponseDeps
 ) => {
     await deps.amqpService.consumer.channel.assertQueue(config.filesManager.queues.previewResponse);
@@ -121,6 +123,6 @@ export const initPreviewResponseHandler = async (
     await deps.amqpService.consume(
         config.filesManager.queues.previewResponse,
         config.filesManager.routingKeys.previewResponse,
-        (msg: amqp.ConsumeMessage) => _onMessage(msg, logger, deps)
+        (msg: amqp.ConsumeMessage) => _onMessage(msg, logger, ctx, deps)
     );
 };

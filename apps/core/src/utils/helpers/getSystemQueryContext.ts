@@ -10,17 +10,18 @@ interface IDeps {
     config?: IConfig;
 }
 
-export type GetSystemQueryContext = () => IQueryInfos;
+export type GetSystemQueryContext = (trigger?: string) => IQueryInfos;
 
 // FIXME: System should not be a user in records and permissions should be bypassed with this system query context
 // https://aristid.atlassian.net/browse/LEAVC-256
 
 export default function ({config = null}: IDeps): GetSystemQueryContext {
-    return () => ({
+    return (trigger?: string) => ({
         userId: systemUserId,
         lang: config.lang.default,
         queryId: uuidv4(),
         groupsId: [adminsGroupId, filesAdminsGroupId],
-        errors: []
+        errors: [],
+        trigger
     });
 }

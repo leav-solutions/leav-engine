@@ -156,8 +156,6 @@ export interface IFilesManager {
     rootKeys: {
         files1: string;
     };
-    userId: string;
-    userGroupsIds: string;
     allowFilesList: string;
     ignoreFilesList: string;
 }

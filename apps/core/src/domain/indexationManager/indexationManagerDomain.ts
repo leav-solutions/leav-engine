@@ -221,7 +221,7 @@ export default function ({
         amqpService.consumer.channel.ack(msg);
 
         const event: IDbEvent = JSON.parse(msg.content.toString());
-        const ctx = getSystemQueryContext();
+        const ctx = getSystemQueryContext('indexationManager:onMessage');
 
         try {
             _validateMsg(event);

@@ -35,6 +35,7 @@ import {
     TaskStatus,
     TaskType
 } from '../../_types/tasksManager';
+import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 
 export interface IUpdateData {
     status?: TaskStatus;
@@ -81,6 +82,7 @@ export interface ITasksManagerDomainDeps {
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.utils.logger': winston.Winston;
     'core.utils': IUtils;
+    'core.utils.getSystemQueryContext': GetSystemQueryContext;
 }
 
 type DepsManagerFunc = <T extends any[]>(...args: [...args: T, task: ITaskFuncParams] | [...args: T]) => Promise<any>;
@@ -92,14 +94,11 @@ export default function ({
     'core.depsManager': depsManager,
     'core.domain.eventsManager': eventsManager,
     'core.utils.logger': logger,
-    'core.utils': utils
+    'core.utils': utils,
+    'core.utils.getSystemQueryContext': getSystemQueryContext
 }: ITasksManagerDomainDeps): ITasksManagerDomain {
     const tag = `${process.pid}_${nanoid(3)}`;
-
-    const workerCtx = {
-        userId: config.defaultUserId,
-        queryId: 'TasksManagerWorker'
-    };
+    const workerCtx = getSystemQueryContext('tasksManager:worker');
 
     const _monitorTasks = (ctx: IQueryInfos): NodeJS.Timer =>
         // check if tasks waiting for execution and execute them

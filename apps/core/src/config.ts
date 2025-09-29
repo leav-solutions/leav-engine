@@ -137,8 +137,6 @@ export const validateConfig = (conf: IConfig) => {
             rootKeys: Joi.object().keys({
                 files1: Joi.string().required()
             }),
-            userId: Joi.string().required(),
-            userGroupsIds: Joi.string().required(),
             allowFilesList: Joi.string().required().allow(''),
             ignoreFilesList: Joi.string().required().allow('')
         }),

@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IAmqpService} from '@leav/message-broker';
 import type * as amqp from 'amqplib';
-import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
+import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type ITaskRepo} from '../../infra/task/taskRepo';
 import {type IUtils, type ToAny} from '../../utils/utils';
 import {type IServer, type IConfig} from '../../_types/config';
 import {TaskCallbackStatus, TaskStatus} from '../../_types/tasksManager';
-import {mockCtx} from '../../__tests__/mocks/shared';
+import {mockCtx, mockSystemQueryContext} from '../../__tests__/mocks/shared';
 import {mockTask} from '../../__tests__/mocks/task';
 import tasksManager, {type ITasksManagerDomainDeps} from './tasksManagerDomain';
 import {type Mockify} from '@leav/utils';
@@ -36,7 +36,8 @@ const depsBase: ToAny<ITasksManagerDomainDeps> = {
     'core.depsManager': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     'core.utils.logger': jest.fn(),
-    'core.utils': jest.fn()
+    'core.utils': jest.fn(),
+    'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext)
 };
 
 describe('Tasks Manager', () => {

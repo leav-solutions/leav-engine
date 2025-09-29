@@ -21,14 +21,12 @@ import Joi from 'joi';
 import * as Path from 'path';
 import {type Progress} from 'progress-stream';
 import {type IUtils} from 'utils/utils';
-import {v4 as uuidv4} from 'uuid';
 import type winston from 'winston';
 import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type ITreeNode} from '_types/tree';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {USERS_GROUP_LIB_NAME, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {Errors} from '../../_types/errors';
 import {TriggerNames} from '../../_types/eventsManager';
 import {FileEvents, FilesAttributes, type IFileEventData, type IFileMetadata} from '../../_types/filesManager';
@@ -42,6 +40,7 @@ import {requestPreviewGeneration} from './helpers/handlePreview';
 import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
 import {type IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
 import {systemPreviewsSettings} from './_constants';
+import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 
 interface IForcePreviewsGenerationParams {
     ctx: IQueryInfos;
@@ -107,6 +106,7 @@ export interface IFilesManagerDomainDeps {
     'core.domain.helpers.createDirectory': CreateDirectoryFunc;
     'core.infra.record': IRecordRepo;
     'core.domain.eventsManager': IEventsManagerDomain;
+    'core.utils.getSystemQueryContext': GetSystemQueryContext;
     translator: i18n;
 }
 
@@ -127,39 +127,13 @@ export default function ({
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.domain.eventsManager': eventsManager,
     'core.infra.record': recordRepo,
+    'core.utils.getSystemQueryContext': getSystemQueryContext,
     translator
 }: IFilesManagerDomainDeps): IFilesManagerDomain {
-    let _defaultCtx: IQueryInfos;
-    const _initDefaultCtx = async () => {
-        _defaultCtx = {
-            userId: config.filesManager.userId,
-            queryId: uuidv4()
-        };
-        const groupsNodes = (
-            await Promise.all(
-                config.filesManager.userGroupsIds.split(',').map(groupId =>
-                    treeDomain.getNodesByRecord({
-                        treeId: USERS_GROUP_TREE_NAME,
-                        record: {
-                            id: groupId,
-                            library: USERS_GROUP_LIB_NAME
-                        },
-                        ctx: {..._defaultCtx}
-                    })
-                )
-            )
-        )[0];
-        _defaultCtx.groupsId = groupsNodes;
-    };
-
     const _onMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
         amqpService.consumer.channel.ack(msg);
 
         let msgBody: IFileEventData;
-        const ctx: IQueryInfos = {
-            ..._defaultCtx,
-            queryId: uuidv4()
-        };
 
         try {
             msgBody = JSON.parse(msg.content.toString());
@@ -174,7 +148,7 @@ export default function ({
 
             return;
         }
-        messagesHandler.handleMessage(msgBody, ctx);
+        messagesHandler.handleMessage(msgBody, getSystemQueryContext('filesManager:onMessage'));
     };
 
     const _validateMsg = (msg: IFileEventData): void => {
@@ -259,7 +233,7 @@ export default function ({
                 config.filesManager.routingKeys.events
             );
 
-            await initPreviewResponseHandler(config, logger, {
+            await initPreviewResponseHandler(config, logger, getSystemQueryContext('filesManager:init'), {
                 amqpService,
                 libraryDomain,
                 recordDomain,
@@ -271,8 +245,6 @@ export default function ({
                 logger,
                 utils
             });
-
-            await _initDefaultCtx();
 
             await amqpService.consume(
                 config.filesManager.queues.events,
@@ -343,11 +315,6 @@ export default function ({
 
             const creationRes = await recordDomain.createRecord({library, ctx});
 
-            const systemCtx: IQueryInfos = {
-                userId: config.defaultUserId,
-                queryId: 'saveValueBatchOnCreatingFolder'
-            };
-
             await recordDomain.updateRecord({
                 library,
                 recordData: {
@@ -356,7 +323,7 @@ export default function ({
                     [FilesAttributes.FILE_PATH]: path,
                     [FilesAttributes.ROOT_KEY]: rootKey
                 },
-                ctx: systemCtx
+                ctx: getSystemQueryContext('filesManager:createDirectory')
             });
 
             await createDirectory(name, fullPath, ctx);
@@ -471,11 +438,6 @@ export default function ({
                         file.data.filename = newPath.split('/').pop();
                     }
 
-                    const systemCtx: IQueryInfos = {
-                        userId: config.defaultUserId,
-                        queryId: 'saveValueBatchOnStoringFiles'
-                    };
-
                     await recordDomain.updateRecord({
                         library,
                         recordData: {
@@ -484,7 +446,7 @@ export default function ({
                             [FilesAttributes.FILE_PATH]: path,
                             [FilesAttributes.ROOT_KEY]: rootKey
                         },
-                        ctx: systemCtx
+                        ctx: getSystemQueryContext('filesManager:storeFiles')
                     });
                 }
 

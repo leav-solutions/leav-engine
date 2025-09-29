@@ -22,6 +22,7 @@ import runMigrationFiles from './helpers/runMigrationFiles';
 import {type IExecuteWithCount} from './_types';
 import {CORE_INDEX_FIELD} from '../indexation/indexationService';
 import {CORE_IN_CREATION_BY} from '../../_types/record';
+import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 
 export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 
@@ -57,13 +58,15 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICachesService;
     'core.utils.logger'?: winston.Winston;
     config?: IConfig;
+    'core.utils.getSystemQueryContext'?: GetSystemQueryContext;
 }
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.cache.cacheService': cacheService = null,
     'core.utils.logger': logger = null,
-    config = null
+    config = null,
+    'core.utils.getSystemQueryContext': getSystemQueryContext
 }: IDeps = {}): IDbUtils {
     /**
      * Create the collections used to managed db migrations
@@ -247,7 +250,7 @@ export default function ({
                 sort = null,
                 customFilterConditions = {},
                 nonStrictFields = ['label', '_key'],
-                ctx = {userId: ''}
+                ctx = getSystemQueryContext('dbUtils:findCoreEntity')
             } = params;
 
             const collec = dbService.db.collection(collectionName);

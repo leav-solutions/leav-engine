@@ -36,11 +36,10 @@ export const createRecordFile = async (
     deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
 ) => {
-    const {userId} = deps.config.filesManager;
     let newRecord: IRecord;
 
     try {
-        newRecord = (await deps.recordDomain.createRecord({library, ctx: {...ctx, userId}})).record;
+        newRecord = (await deps.recordDomain.createRecord({library, ctx})).record;
     } catch (e) {
         deps.logger.warn(`[FilesManager] Error when create new record : ${e.message}`);
     }

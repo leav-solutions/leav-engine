@@ -66,7 +66,6 @@ describe('handleFileSystemEvent', () => {
 
     const mockConfig: Partial<IConfig> = {
         filesManager: {
-            userId: 'userId',
             queues: {
                 events: '',
                 previewRequest: '',
@@ -81,8 +80,7 @@ describe('handleFileSystemEvent', () => {
                 events: '',
                 previewRequest: '',
                 previewResponse: ''
-            },
-            userGroupsIds: ''
+            }
         }
     };
 

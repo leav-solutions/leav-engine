@@ -26,6 +26,7 @@ import filesManager, {type IFilesManagerDomainDeps, type IStoreFilesParams} from
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import {systemPreviewsSettings} from './_constants';
 import winston = require('winston');
+import {mockSystemQueryContext} from '../../__tests__/mocks/shared';
 
 const mockConfig: Mockify<Config.IConfig> = {
     amqp: {
@@ -47,8 +48,6 @@ const mockConfig: Mockify<Config.IConfig> = {
         rootKeys: {
             files1: 'files'
         },
-        userId: '0',
-        userGroupsIds: '1',
         allowFilesList: '',
         ignoreFilesList: ''
     },
@@ -105,7 +104,8 @@ const depsBase: ToAny<IFilesManagerDomainDeps> = {
     'core.domain.helpers.createDirectory': jest.fn(),
     'core.infra.record': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
-    translator: {}
+    translator: {},
+    'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext)
 };
 
 describe('FilesManager', () => {

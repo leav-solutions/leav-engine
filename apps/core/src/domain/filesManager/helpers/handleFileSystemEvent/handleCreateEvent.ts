@@ -16,7 +16,6 @@ import {
 } from '../handleFileUtilsHelper';
 import {requestPreviewGeneration} from '../handlePreview';
 import {type IHandleFileSystemEventDeps, type IHandleFileSystemEventResources} from './_types';
-import {IRecord} from '_types/record';
 
 export const handleCreateEvent = async (
     scanMsg: IFileEventData,
@@ -44,9 +43,7 @@ export const handleCreateEvent = async (
 
     if (record) {
         try {
-            const {userId} = deps.config.filesManager;
-
-            await deps.recordDomain.activateRecord(record, {userId});
+            await deps.recordDomain.activateRecord(record, ctx);
 
             const recordData: IFileMetadata = {
                 [FilesAttributes.ROOT_KEY]: scanMsg.rootKey,
