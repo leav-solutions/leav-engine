@@ -9,7 +9,7 @@ import {type IAuthApp} from '../../auth/authApp';
 import {type IApplicationDomain} from '../../../domain/application/applicationDomain';
 import {type IUtils, type ToAny} from '../../../utils/utils';
 import {type IGlobalSettingsDomain} from '../../../domain/globalSettings/globalSettingsDomain';
-import {IAuth, IConfig, type IServer} from '_types/config';
+import {type IConfig} from '_types/config';
 
 const depsBase: ToAny<IApplicationAppDeps> = {
     config: {},

@@ -126,7 +126,7 @@ describe('RecordDomain', () => {
         getRecordsCacheKey: jest.fn().mockReturnValue('cache_key'),
         getCoreEntityCacheKey: jest.fn().mockReturnValue('cache_key'),
         getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-        getPreviewUrl: jest.fn().mockImplementation((url) => `/preview/${url}` ),
+        getPreviewUrl: jest.fn().mockImplementation(url => `/preview/${url}`),
         isLinkAttribute: jest.fn().mockReturnValue(false),
         isTreeAttribute: jest.fn().mockReturnValue(false)
     };
