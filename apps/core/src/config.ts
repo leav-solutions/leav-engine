@@ -15,7 +15,6 @@ export const validateConfig = (conf: IConfig) => {
             port: Joi.number().required(),
             publicUrl: Joi.string().required(),
             basePath: Joi.string().required().allow(''),
-            wsUrl: Joi.string().required(),
             uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required(),
             supportEmail: Joi.string().required(),
             allowIntrospection: Joi.boolean().required(),

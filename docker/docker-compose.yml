@@ -64,7 +64,6 @@ x-env-core: &env-core
   # Uncomment following lines if you want to serve the apps from a subpath (eg. /campaigns-manager)
   # SERVER_PUBLIC_URL: http://core.leav.localhost/campaigns-manager
   # SERVER_BASE_PATH: /campaigns-manager
-  SERVER_WS_URL: ws://core.leav.localhost
   SERVER_UPLOAD_LIMIT: "15000mb"
   SERVER_SUPPORT_EMAIL: support@example.com
   REDIS_HOST: redis

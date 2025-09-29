@@ -10,7 +10,6 @@ module.exports = {
         host: process.env.SERVER_HOST || 'localhost',
         port: envToNumber(process.env.SERVER_PORT, 4001),
         publicUrl: process.env.SERVER_PUBLIC_URL || 'http://localhost:4001',
-        wsUrl: process.env.SERVER_WS_URL || 'ws://localhost:4001',
         basePath: process.env.SERVER_BASE_PATH || '',
         allowIntrospection: envToBool(process.env.SERVER_ALLOW_INTROSPECTION, false),
         /**

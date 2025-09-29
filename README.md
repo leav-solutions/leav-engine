@@ -106,7 +106,6 @@ Here are the few modifications on the base docker-compose file to do so:
 
     ```
     SERVER_PUBLIC_URL: https://<your public domain>
-    SERVER_WS_URL: wss://<your public domain>
     ```
 
 ### Getting quicker
