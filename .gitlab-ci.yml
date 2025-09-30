@@ -153,6 +153,22 @@ libs/config-manager-unit-tests:
         - *new_lib_installed_changes
         - libs/config-manager/**/*
 
+libs/logger-unit-tests:
+  stage: test
+  script:
+    - yarn workspaces focus @leav/logger
+    - yarn workspace @leav/logger run test:ci
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *mr_rule
+      changes:
+        - *new_lib_installed_changes
+        - libs/logger/**/*
+
 libs/message-broker-unit-tests:
   stage: test
   script:

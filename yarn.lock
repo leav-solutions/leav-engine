@@ -9369,6 +9369,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/logger@workspace:libs/logger"
   dependencies:
+    "@types/jest": "npm:29.0.2"
+    jest: "npm:29.0.3"
+    ts-jest: "npm:29.0.1"
     typescript: "npm:5.5.3"
     winston: "npm:3.17.0"
   languageName: unknown

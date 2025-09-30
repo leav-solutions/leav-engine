@@ -1,8 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as winston from 'winston';
+import winston from 'winston';
 import {type ILoggerConfig, defaultLoggerConfig} from './config';
+import {addLocationInfoInLog, mergeLocationInfoInLog} from './locationInfoFormatters';
 
 export type ILogger = Pick<typeof winston, 'error' | 'warn' | 'info' | 'log' | 'verbose' | 'debug' | 'silly'>;
 
@@ -17,14 +18,16 @@ export function configureLogger(config: ILoggerConfig): void {
             silent: config.silent,
             format: useJsonFormat
                 ? winston.format.json()
-                : winston.format.combine(winston.format.colorize(), winston.format.simple())
+                : winston.format.combine(winston.format.colorize(), mergeLocationInfoInLog(), winston.format.simple())
         })
     ];
     if (destinationFile) {
         transports.push(
             new winston.transports.File({
                 filename: destinationFile,
-                format: useJsonFormat ? winston.format.json() : winston.format.simple()
+                format: useJsonFormat
+                    ? winston.format.json()
+                    : winston.format.combine(mergeLocationInfoInLog(), winston.format.simple())
             })
         );
     }
@@ -45,10 +48,14 @@ export function configureLogger(config: ILoggerConfig): void {
         level,
         handleExceptions: true,
         transports,
-        format: catchErrorLog?.()
+        format: catchErrorLog ? winston.format.combine(addLocationInfoInLog(), catchErrorLog()) : addLocationInfoInLog()
     });
 
-    winston.info(`Logger configured with level=${config.level}`);
+    // Use setImmediate to ensure that logger stack trace location info is correct
+    // Important for first call, otherwise callerLineIndexInStack will be wrong
+    setImmediate(() => {
+        winston.info(`Logger configured with level=${config.level}`);
+    });
 }
 
 // Default logger configuration, for testing and to avoid errors if not configured
