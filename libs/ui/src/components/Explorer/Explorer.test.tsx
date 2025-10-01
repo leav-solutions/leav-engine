@@ -467,6 +467,9 @@ describe('Explorer', () => {
         label: {
             en: 'Campaigns',
             fr: campaignName
+        },
+        permissions: {
+            create_record: true
         }
     };
 
@@ -1515,6 +1518,36 @@ describe('Explorer', () => {
                 render(
                     <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                         <Explorer entrypoint={{...libraryEntrypoint, allowFreeEntry: false}} showCreateOnNoResultOnly />
+                    </Explorer.EditSettingsContextProvider>
+                );
+                expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+            });
+
+            test('should not display the primary actions button if link library data is empty and user permission for create_record on linked library is set to false', () => {
+                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+
+                jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+                    () =>
+                        ({
+                            loading: false,
+                            called: true,
+                            data: {
+                                libraries: {
+                                    list: [
+                                        {
+                                            ...mockLibraryDetailsQueryResultList,
+                                            permissions: {create_record: false},
+                                            behavior: gqlTypes.LibraryBehavior.standard
+                                        }
+                                    ]
+                                }
+                            }
+                        }) as gqlTypes.ExplorerLibraryDetailsQueryResult
+                );
+
+                render(
+                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                        <Explorer entrypoint={{...linkEntrypoint}} showCreateOnNoResultOnly />
                     </Explorer.EditSettingsContextProvider>
                 );
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();

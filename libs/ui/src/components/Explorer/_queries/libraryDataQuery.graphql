@@ -4,6 +4,9 @@ query ExplorerLibraryDetails($libraryId: ID!) {
             id
             label
             behavior
+            permissions {
+                create_record
+            }
         }
     }
 }

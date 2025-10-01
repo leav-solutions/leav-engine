@@ -141,18 +141,19 @@ export const useLinkRecords = ({
                         hideTableHeader
                     />
                 </ExplorerWrapper>
-
                 <KitSpace size="xs" style={{padding: '1rem'}}>
-                    <ActionButton
-                        type="secondary"
-                        size="m"
-                        $hasNoValue={hasNoValue}
-                        icon={explorerActions?.createAction?.icon}
-                        disabled={isReadOnly || explorerActions?.createAction?.disabled}
-                        onClick={explorerActions?.createAction?.callback}
-                    >
-                        {explorerActions?.createAction?.label}
-                    </ActionButton>
+                    {explorerActions?.createAction && (
+                        <ActionButton
+                            type="secondary"
+                            size="m"
+                            $hasNoValue={hasNoValue}
+                            icon={explorerActions?.createAction?.icon}
+                            disabled={isReadOnly || explorerActions?.createAction?.disabled}
+                            onClick={explorerActions?.createAction?.callback}
+                        >
+                            {explorerActions?.createAction?.label}
+                        </ActionButton>
+                    )}
                     <ActionButton
                         type="secondary"
                         size="m"

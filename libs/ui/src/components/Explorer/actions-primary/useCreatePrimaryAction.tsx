@@ -81,7 +81,9 @@ export const useCreatePrimaryAction = ({
         skip: !isEnabled
     });
 
-    if (error || loading || !isVisible) {
+    const hasCreateRecordPermission = data?.libraries?.list[0]?.permissions?.create_record ?? false;
+
+    if (error || loading || !isVisible || !hasCreateRecordPermission) {
         return {createPrimaryAction: null, createModal: null};
     }
 
