@@ -20,7 +20,6 @@ import {DataView} from './DataView';
 import {ExplorerTitle} from './ExplorerTitle';
 import {ExplorerToolbar} from './ExplorerToolbar';
 import {useEditStatusItemAction} from './actions-item/useEditStatusItemAction';
-import {useEditItemAction} from './actions-item/useEditItemAction';
 import {usePrimaryActionsButton} from './actions-primary/usePrimaryActions';
 import {useCreatePrimaryAction} from './actions-primary/useCreatePrimaryAction';
 import {useLinkPrimaryAction} from './actions-primary/useLinkPrimaryAction';
@@ -36,7 +35,7 @@ import {
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
-import {MASS_SELECTION_ALL} from './_constants';
+import {MASS_SELECTION_ALL, WHO_AM_I_COLUMN} from './_constants';
 import {useDeleteLinkValues} from './actions-mass/useDeleteLinkValues';
 import {useReplaceItemAction} from './actions-item/useReplaceItemAction';
 import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
@@ -77,13 +76,12 @@ export interface IExplorerProps {
     entrypoint: Entrypoint;
     noPagination?: true;
     itemActions?: IItemAction[];
-    iconsOnlyItemActions?: boolean;
     primaryActions?: IPrimaryAction[];
     massActions?: IMassActions[];
     title?: string;
     selectionMode?: 'multiple' | 'simple';
     emptyPlaceholder?: ReactNode;
-    defaultActionsForItem?: Array<'edit' | 'replaceLink' | 'remove' | 'activate'>;
+    defaultActionsForItem?: Array<'replaceLink' | 'remove' | 'activate'>;
     defaultPrimaryActions?: Array<'create'>;
     defaultMassActions?: Array<'deactivate'>;
     defaultViewSettings?: DefaultViewSettings;
@@ -122,7 +120,6 @@ export interface IExplorerProps {
     hidePrimaryActions?: boolean;
     hideTableHeader?: boolean;
     creationFormId?: string;
-    editionFormId?: string;
     joinLibraryContext?: JoinLibraryContextFragment;
 }
 
@@ -144,19 +141,17 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             emptyPlaceholder,
             noPagination,
             creationFormId,
-            editionFormId,
             showCreateOnNoResultOnly = false,
             showFilters = false,
             showSorts = false,
             disableSelection = false,
             hideSelectAllAction = false,
-            iconsOnlyItemActions = false,
             showTitle = false,
             showSearch = false,
             hidePrimaryActions = false,
             hideTableHeader = false,
             ignoreViewByDefault = false,
-            defaultActionsForItem = ['edit', 'replaceLink', 'remove', 'activate'],
+            defaultActionsForItem = ['replaceLink', 'remove', 'activate'],
             defaultPrimaryActions = ['create'],
             defaultMassActions = ['deactivate'],
             defaultCallbacks,
@@ -212,13 +207,6 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             isMultivalue,
             onReplace: defaultCallbacks?.item?.replaceLink,
             canReplaceLinkValues: canEditLinkAttributeValues
-        });
-
-        const {editItemAction, editItemModal} = useEditItemAction({
-            isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit'),
-            onEdit: defaultCallbacks?.item?.edit,
-            formId: editionFormId,
-            refetch
         });
 
         const totalCount = data?.totalCount ?? 0;
@@ -349,8 +337,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                         <DataView
                             dataGroupedFilteredSorted={data?.records ?? emptyArray}
                             attributesProperties={data?.attributes ?? emptyObject}
-                            attributesToDisplay={['whoAmI', ...view.attributesIds]}
-                            iconsOnlyItemActions={iconsOnlyItemActions}
+                            attributesToDisplay={[WHO_AM_I_COLUMN, ...view.attributesIds]}
                             hideTableHeader={hideTableHeader}
                             paginationProps={
                                 entrypoint.type === 'library' && !noPagination
@@ -364,7 +351,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                       }
                                     : undefined
                             }
-                            itemActions={[editItemAction, replaceItemAction, editStatusItemAction, ...itemActions]
+                            itemActions={[...itemActions, replaceItemAction, editStatusItemAction]
                                 .filter(Boolean)
                                 .map(action => ({
                                     ...action,
@@ -382,7 +369,6 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                     )}
                 </ExplorerPageDivStyled>
                 {settingsPanelElement && createPortal(<SidePanel />, settingsPanelElement?.() ?? document.body)}
-                {editItemModal}
                 {replaceItemModal}
                 {createModal}
                 {linkModal}

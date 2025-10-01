@@ -17,7 +17,6 @@ describe('mapperToExplorerProps', () => {
                 freezeView: true,
                 showAttributeLabels: true,
                 creationFormId: 'create-id',
-                editionFormId: 'edit-id',
                 noPagination: true,
                 showActionsLabels: true
             };
@@ -29,9 +28,7 @@ describe('mapperToExplorerProps', () => {
                 ignoreViewByDefault: true,
                 hideTableHeader: false,
                 creationFormId: 'create-id',
-                editionFormId: 'edit-id',
                 noPagination: true,
-                iconsOnlyItemActions: false,
                 defaultPrimaryActions: ['create']
             });
 
@@ -52,7 +49,6 @@ describe('mapperToExplorerProps', () => {
                 freezeView: false,
                 showAttributeLabels: false,
                 creationFormId: 'create-id',
-                editionFormId: 'edit-id',
                 noPagination: true,
                 showActionsLabels: false
             };
@@ -64,9 +60,7 @@ describe('mapperToExplorerProps', () => {
                 ignoreViewByDefault: false,
                 hideTableHeader: true,
                 creationFormId: 'create-id',
-                editionFormId: 'edit-id',
                 noPagination: true,
-                iconsOnlyItemActions: true,
                 defaultPrimaryActions: ['create']
             });
         });
@@ -85,8 +79,6 @@ describe('mapperToExplorerProps', () => {
     it('should handle missing optional props gracefully with default value', () => {
         const explorerProps = undefined;
 
-        expect(mapToCommonExplorerProps({explorerProps})).toEqual({
-            iconsOnlyItemActions: true
-        });
+        expect(mapToCommonExplorerProps({explorerProps})).toEqual({});
     });
 });

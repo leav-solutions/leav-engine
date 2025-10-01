@@ -1,27 +1,19 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    cloneElement,
-    type ComponentProps,
-    type FunctionComponent,
-    type Key,
-    memo,
-    type ReactElement,
-    type ReactNode
-} from 'react';
-import {KitButton, KitDropDown, KitPagination, KitTable} from 'aristid-ds';
+import {type ComponentProps, type FunctionComponent, type Key, memo} from 'react';
+import {KitPagination, KitTable} from 'aristid-ds';
 import {type KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
-import {FaEllipsisH} from 'react-icons/fa';
-import {type Override} from '@leav/utils';
 import styled from 'styled-components';
 import isEqual from 'lodash/isEqual';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type IExplorerData, type IItemAction, type IItemData} from './_types';
 import {TableCell} from './TableCell';
-import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
 import {useColumnWidth} from './useColumnWidth';
+import {WHO_AM_I_COLUMN} from './_constants';
+import {TableNameCell} from './TableNameCell';
+import cn from 'classnames';
 
 const USELESS = '';
 
@@ -50,11 +42,6 @@ const DataViewContainerDivStyled = styled.div`
     }
 `;
 
-const StyledActionsList = styled.div`
-    display: inline-flex;
-    gap: calc(var(--general-spacing-xs) * 1px);
-`;
-
 // TODO: Table component should be updated fix header display
 const StyledTable = styled(KitTable)`
     .ant-table-thead > tr > th {
@@ -67,11 +54,11 @@ const StyledTable = styled(KitTable)`
             height: auto !important;
             padding: 0 calc(var(--general-spacing-s) * 1px) 0 0;
         }
+    }
 
-        &.actions {
-            .ant-table-cell {
-                padding-right: 0;
-            }
+    .ant-table-tbody > tr:hover .ant-table-cell {
+        .actions-list {
+            display: inline-flex;
         }
     }
 
@@ -81,17 +68,17 @@ const StyledTable = styled(KitTable)`
             height: auto !important;
         }
     }
-`;
 
-const ActionsHeaderStyledDiv = styled.div`
-    justify-self: right;
-    text-align: left;
+    &.row-clickable {
+        .ant-table-tbody > tr {
+            cursor: pointer;
+        }
+    }
 `;
 
 interface IDataViewProps {
     dataGroupedFilteredSorted: IItemData[];
     itemActions: IItemAction[];
-    iconsOnlyItemActions: boolean;
     attributesProperties: IExplorerData['attributes'];
     attributesToDisplay: string[];
     paginationProps?: {
@@ -126,9 +113,6 @@ const arePropsEqual = (prevProps: IDataViewProps, nextProps: IDataViewProps) =>
         }
     );
 
-const resolveItemActionProp = (itemData: IItemData, itemActionProp: IItemAction[keyof IItemAction]) =>
-    typeof itemActionProp === 'function' ? itemActionProp(itemData) : itemActionProp;
-
 export const DataView: FunctionComponent<IDataViewProps> = memo(
     ({
         dataGroupedFilteredSorted,
@@ -137,134 +121,34 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
         paginationProps,
         itemActions,
         selection: {onSelectionChange, selectedKeys, isMassSelectionAll, mode},
-        iconsOnlyItemActions,
         hideTableHeader = false
     }) => {
         const {t} = useSharedTranslation();
 
         const {containerRef, scrollHeight} = useTableScrollableHeight(!!paginationProps);
-        const {ref, getFieldColumnWidth, columnWidth, actionsColumnHeaderWidth} = useColumnWidth();
+        const {getFieldColumnWidth} = useColumnWidth();
 
-        const _getActionButtons = (
-            actions: Array<Override<IItemAction, {callback: () => void}>>,
-            item: IItemData,
-            columnRef: typeof ref | null
-        ): ReactNode => {
-            const isLessThanFourActions = actions.length < 4;
+        const columns = attributesToDisplay.map<KitTableColumnType<IItemData>>(attributeName => ({
+            title: attributeName === WHO_AM_I_COLUMN ? t('explorer.name') : attributesProperties[attributeName].label,
+            dataIndex: USELESS,
+            width: getFieldColumnWidth(attributesProperties[attributeName]),
+            shouldCellUpdate: (record, prevRecord) =>
+                attributeName === WHO_AM_I_COLUMN
+                    ? record.whoAmI !== prevRecord.whoAmI
+                    : record.propertiesById[attributeName] !== prevRecord.propertiesById[attributeName],
+            render: (_, item) =>
+                attributeName === WHO_AM_I_COLUMN ? (
+                    <TableNameCell item={item} itemActions={itemActions} />
+                ) : (
+                    <TableCell
+                        attributeProperties={attributesProperties[attributeName]}
+                        values={item.propertiesById[attributeName]}
+                    />
+                )
+        }));
 
-            return (
-                <StyledActionsList ref={columnRef}>
-                    {isLessThanFourActions ? (
-                        <>
-                            {actions.map(({label, icon, isDanger, iconOnly, callback, disabled}, actionIndex) => (
-                                <KitButton
-                                    key={actionIndex}
-                                    title={resolveItemActionProp(item, label) as string}
-                                    icon={resolveItemActionProp(item, icon) as ReactElement}
-                                    onClick={callback}
-                                    danger={resolveItemActionProp(item, isDanger) as boolean}
-                                    size="m"
-                                    disabled={resolveItemActionProp(item, disabled) as boolean}
-                                >
-                                    {!iconsOnlyItemActions &&
-                                        !iconOnly &&
-                                        (typeof label === 'function' ? label(item) : label)}
-                                </KitButton>
-                            ))}
-                        </>
-                    ) : (
-                        <>
-                            <KitButton
-                                size="m"
-                                icon={resolveItemActionProp(item, actions[0].icon) as ReactNode}
-                                title={resolveItemActionProp(item, actions[0].label) as string}
-                                onClick={actions[0].callback}
-                                danger={resolveItemActionProp(item, actions[0].isDanger) as boolean}
-                                disabled={resolveItemActionProp(item, actions[0].disabled) as boolean}
-                            />
-                            <KitButton
-                                size="m"
-                                icon={resolveItemActionProp(item, actions[1].icon) as ReactElement}
-                                onClick={actions[1].callback}
-                                title={resolveItemActionProp(item, actions[1].label) as string}
-                                danger={resolveItemActionProp(item, actions[1].isDanger) as boolean}
-                                disabled={resolveItemActionProp(item, actions[1].disabled) as boolean}
-                            />
-                            <KitDropDown
-                                menu={{
-                                    items: actions.slice(2).map(({callback, icon, label, isDanger, disabled}) => ({
-                                        key: resolveItemActionProp(item, label) as string,
-                                        title: resolveItemActionProp(item, label) as string,
-                                        danger: resolveItemActionProp(item, isDanger) as boolean,
-                                        disabled: resolveItemActionProp(item, disabled) as boolean,
-                                        label: resolveItemActionProp(item, label) as string,
-                                        icon: icon
-                                            ? cloneElement(resolveItemActionProp(item, icon) as ReactElement, {
-                                                  size: '2em'
-                                              })
-                                            : null, // TODO: find better tuning
-                                        onClick: callback
-                                    }))
-                                }}
-                            >
-                                <KitButton
-                                    size="m"
-                                    title={t('explorer.more-actions') ?? undefined}
-                                    icon={<FaEllipsisH />}
-                                />
-                            </KitDropDown>
-                        </>
-                    )}
-                </StyledActionsList>
-            );
-        };
-
-        const columns = attributesToDisplay
-            .map<KitTableColumnType<IItemData>>(attributeName => ({
-                title: attributeName === 'whoAmI' ? t('explorer.name') : attributesProperties[attributeName].label,
-                dataIndex: USELESS,
-                width: getFieldColumnWidth(attributesProperties[attributeName]),
-                shouldCellUpdate: (record, prevRecord) =>
-                    attributeName === 'whoAmI'
-                        ? record.whoAmI !== prevRecord.whoAmI
-                        : record.propertiesById[attributeName] !== prevRecord.propertiesById[attributeName],
-                render: (_, {whoAmI, propertiesById}) =>
-                    attributeName === 'whoAmI' ? (
-                        <IdCard item={whoAmI} />
-                    ) : (
-                        <TableCell
-                            attributeProperties={attributesProperties[attributeName]}
-                            values={propertiesById[attributeName]}
-                        />
-                    )
-            }))
-            .concat(
-                itemActions.length === 0
-                    ? []
-                    : [
-                          {
-                              title: (
-                                  <ActionsHeaderStyledDiv style={{width: `${actionsColumnHeaderWidth}px`}}>
-                                      {t('explorer.actions')}
-                                  </ActionsHeaderStyledDiv>
-                              ),
-                              dataIndex: USELESS,
-                              align: 'right',
-                              className: 'actions',
-                              shouldCellUpdate: () => false,
-                              width: columnWidth,
-                              render: (_, item, index) =>
-                                  _getActionButtons(
-                                      itemActions.map(action => ({
-                                          ...action,
-                                          callback: () => action.callback(item)
-                                      })),
-                                      item,
-                                      index === 0 ? ref : null
-                                  )
-                          }
-                      ]
-            );
+        //TODO: test row click
+        const itemActionToUseOnRowClick = itemActions.find(itemAction => itemAction.useItemActionOnRowClick);
 
         const _rowSelection: ComponentProps<typeof KitTable>['rowSelection'] =
             onSelectionChange === null
@@ -285,8 +169,11 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
 
         // TODO: handle columns width based on attribute type/format
         return (
-            <DataViewContainerDivStyled ref={containerRef} className={hideTableHeader ? 'headless' : ''}>
+            <DataViewContainerDivStyled ref={containerRef} className={cn({headless: hideTableHeader})}>
                 <StyledTable
+                    className={cn({
+                        'row-clickable': itemActionToUseOnRowClick
+                    })}
                     showHeader={dataGroupedFilteredSorted.length > 0 && !hideTableHeader}
                     columns={columns}
                     tableLayout="fixed"
@@ -294,6 +181,9 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                     dataSource={dataGroupedFilteredSorted}
                     pagination={false}
                     rowSelection={_rowSelection}
+                    onRow={(item: IItemData) => ({
+                        onClick: () => itemActionToUseOnRowClick?.callback(item)
+                    })}
                 />
                 {paginationProps && (
                     <div className="pagination">

@@ -37,6 +37,7 @@ export const mapperToItemActions = ({
         return {
             icon: <FontAwesomeIcon icon={icon} />,
             label: localizedTranslation(action.what.name, lang),
+            useItemActionOnRowClick: action.useItemActionOnRowClick,
             callback: item => {
                 // TODO: When we will address the feature to open a popup through a popup panel, we might need to use routes.panel/routes.popupPanel instead of routes.popupPanel
                 const {route, params} = {

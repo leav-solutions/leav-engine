@@ -16,7 +16,6 @@ const CommonExplorerPropsSchema = z.object({
     freezeView: z.boolean().optional(),
     showAttributeLabels: z.boolean().optional(),
     creationFormId: z.string().optional(),
-    editionFormId: z.string().optional(),
     noPagination: z.literal(true).optional(),
     showActionsLabels: z.boolean().optional()
 });
@@ -26,7 +25,7 @@ const LinkExplorerPropsSchema = CommonExplorerPropsSchema;
 export const LibraryExplorerPropsSchema = CommonExplorerPropsSchema.extend({
     defaultPrimaryActions: z.array(z.union([z.literal('create')])).optional(),
     defaultActionsForItem: z
-        .array(z.union([z.literal('edit'), z.literal('replaceLink'), z.literal('remove'), z.literal('activate')]))
+        .array(z.union([z.literal('replaceLink'), z.literal('remove'), z.literal('activate')]))
         .optional(),
     defaultMassActions: z.array(z.union([z.literal('deactivate')])).optional()
 });
@@ -34,7 +33,8 @@ export const LibraryExplorerPropsSchema = CommonExplorerPropsSchema.extend({
 export const ItemActionsSchema = z.array(
     z.object({
         where: z.union([z.literal('popup'), z.literal('slider'), z.literal('fullpage')]),
-        what: z.lazy(() => PanelSchema)
+        what: z.lazy(() => PanelSchema),
+        useItemActionOnRowClick: z.boolean().optional()
     })
 );
 

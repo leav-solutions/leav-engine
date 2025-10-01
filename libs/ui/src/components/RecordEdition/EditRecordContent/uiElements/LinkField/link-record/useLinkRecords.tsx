@@ -76,7 +76,7 @@ export const useLinkRecords = ({
         }
     };
 
-    const _getExplorerItemActions = (): Array<'edit' | 'remove'> => {
+    const _getExplorerItemActions = (): Array<'remove'> => {
         if (isReadOnly) {
             return [];
         }
@@ -85,10 +85,10 @@ export const useLinkRecords = ({
             (!attribute.multiple_values && attribute.required) ||
             (attribute.multiple_values && backendValues.length === 1 && attribute.required)
         ) {
-            return ['edit'];
+            return [];
         }
 
-        return ['edit', 'remove'];
+        return ['remove'];
     };
 
     useEffect(() => {
@@ -139,7 +139,6 @@ export const useLinkRecords = ({
                         joinLibraryContext={joinLibraryContext}
                         hidePrimaryActions
                         hideTableHeader
-                        iconsOnlyItemActions
                     />
                 </ExplorerWrapper>
 

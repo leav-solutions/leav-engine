@@ -995,7 +995,6 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>
             );
             expect(screen.getByText('explorer.name')).toBeInTheDocument();
-            expect(screen.getByText('explorer.actions')).toBeInTheDocument();
         });
 
         test('should not display the table headers', () => {
@@ -1352,40 +1351,6 @@ describe('Explorer', () => {
         );
     });
 
-    test('Should be able to edit a record with default actions', async () => {
-        const onEdit = jest.fn();
-        render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{item: {edit: onEdit}}} />
-            </Explorer.EditSettingsContextProvider>
-        );
-
-        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
-        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.edit-item'}));
-        expect(screen.getByText(EditRecordModalMock)).toBeVisible();
-
-        await user.click(screen.getByRole('button', {name: 'close-modal'}));
-        expect(onEdit).toHaveBeenCalledWith(
-            expect.objectContaining({
-                key: mockRecords[1].id,
-                itemId: mockRecords[1].id
-            })
-        );
-    });
-
-    test('Should be able to edit a record with custom form Id', async () => {
-        render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={libraryEntrypoint} editionFormId="test-edition" />
-            </Explorer.EditSettingsContextProvider>
-        );
-
-        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
-        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.edit-item'}));
-        expect(screen.getByText(EditRecordModalMock)).toBeVisible();
-        expect(editRecordFn).toHaveBeenCalledWith(expect.objectContaining({editionFormId: 'test-edition'}));
-    });
-
     test('Should call the useGetRecordUpdatesSubscription', async () => {
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1462,16 +1427,17 @@ describe('Explorer', () => {
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             await user.hover(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
 
+            expect(within(firstRecordRow).getByRole('button', {name: /Test 1/})).toBeVisible();
+            expect(within(firstRecordRow).getByRole('button', {name: /Test 2/})).toBeVisible();
+
             await waitFor(() => {
-                expect(screen.getByRole('menuitem', {name: /Test 1/})).toBeVisible();
-                expect(screen.getByRole('menuitem', {name: /Test 2/})).toBeVisible();
                 expect(screen.getByRole('menuitem', {name: /Test 3/})).toBeVisible();
                 expect(screen.getByRole('menuitem', {name: /Test 4/})).toBeVisible();
             });
 
-            await user.click(screen.getByRole('menuitem', {name: customActions[0].label}));
+            await user.click(screen.getByRole('menuitem', {name: customActions[2].label}));
 
-            expect(customActions[0].callback).toHaveBeenCalled();
+            expect(customActions[2].callback).toHaveBeenCalled();
         });
 
         test('Should display the list of records with no actions', () => {
@@ -1483,6 +1449,25 @@ describe('Explorer', () => {
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             expect(within(firstRecordRow).queryByRole('button')).not.toBeInTheDocument();
+        });
+
+        test('Should call the action on row click if item action is flagged as useItemActionOnRowClick', async () => {
+            const customAction = {
+                icon: <Fa500Px />,
+                label: 'Custom action',
+                useItemActionOnRowClick: true,
+                callback: jest.fn()
+            } satisfies IItemAction;
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer entrypoint={libraryEntrypoint} itemActions={[customAction]} />
+                </Explorer.EditSettingsContextProvider>
+            );
+
+            const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+            await user.click(firstRecordRow);
+            expect(customAction.callback).toHaveBeenCalled();
         });
     });
 
@@ -2968,7 +2953,7 @@ describe('Explorer', () => {
 
             const [firstRecordRow] = tableRows;
             const cells = within(firstRecordRow).getAllByRole('cell');
-            expect(cells.length).toEqual(4);
+            expect(cells.length).toEqual(3);
 
             expect(within(firstRecordRow).queryByText(booleanMockAttribute.label.fr)).not.toBeInTheDocument();
         });

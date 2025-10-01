@@ -66,7 +66,6 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                 itemActions={itemActions}
                 {...linkExplorerProps}
                 defaultMassActions={[]}
-                defaultActionsForItem={['edit']}
                 defaultCallbacks={{
                     primary: {
                         create: ({recordIdCreated}) =>

@@ -54,6 +54,7 @@ export interface IItemAction {
     iconOnly?: boolean;
     isDanger?: boolean | ((item: IItemData) => boolean);
     disabled?: boolean | ((item: IItemData) => boolean);
+    useItemActionOnRowClick?: boolean;
 }
 
 export interface IPrimaryAction {

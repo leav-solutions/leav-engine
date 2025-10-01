@@ -11,7 +11,7 @@ interface IIdCardProps {
 }
 
 export const IdCard: FunctionComponent<IIdCardProps> = ({item}) => {
-    const {id, label, library, preview, subLabel} = item;
+    const {id, label, preview, subLabel} = item;
     const itemLabel = label ?? id;
     const avatarProps: IKitAvatar = {label: itemLabel};
 

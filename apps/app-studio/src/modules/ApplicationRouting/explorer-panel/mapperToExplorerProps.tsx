@@ -14,9 +14,7 @@ type CommonOverridablePropsByUser =
     | 'ignoreViewByDefault'
     | 'hideTableHeader'
     | 'creationFormId'
-    | 'editionFormId'
     | 'noPagination'
-    | 'iconsOnlyItemActions'
     | 'defaultPrimaryActions';
 
 type LibraryOverridablePropsByUser = 'defaultActionsForItem' | 'defaultMassActions';
@@ -36,7 +34,7 @@ export const mapToCommonExplorerProps = ({
     explorerProps: LibraryExplorerProps | undefined;
 }): Pick<ComponentProps<typeof Explorer>, CommonOverridablePropsByUser> => {
     if (!explorerProps) {
-        return {iconsOnlyItemActions: true};
+        return {};
     }
     return {
         showSearch: isBoolean(explorerProps.showSearch) ? explorerProps.showSearch : undefined,
@@ -45,9 +43,7 @@ export const mapToCommonExplorerProps = ({
         ignoreViewByDefault: isBoolean(explorerProps.freezeView) ? explorerProps.freezeView : undefined,
         hideTableHeader: isBoolean(explorerProps.showAttributeLabels) ? !explorerProps.showAttributeLabels : undefined,
         creationFormId: explorerProps.creationFormId,
-        editionFormId: explorerProps.editionFormId,
         noPagination: explorerProps.noPagination ?? undefined,
-        iconsOnlyItemActions: isBoolean(explorerProps.showActionsLabels) ? !explorerProps.showActionsLabels : true,
         defaultPrimaryActions: explorerProps.defaultPrimaryActions
     };
 };
