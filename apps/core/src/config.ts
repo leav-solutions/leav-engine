@@ -218,6 +218,11 @@ export const validateConfig = (conf: IConfig) => {
                 is: true,
                 then: Joi.string().required(),
                 otherwise: Joi.string()
+            }),
+            releaseStage: Joi.alternatives().conditional('enable', {
+                is: true,
+                then: Joi.string().required(),
+                otherwise: Joi.string()
             })
         })
     });

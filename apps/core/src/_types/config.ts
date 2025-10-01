@@ -262,4 +262,5 @@ export interface IBugsnag {
     apiKey?: string;
     appVersion?: string;
     appType?: string;
+    releaseStage?: string;
 }

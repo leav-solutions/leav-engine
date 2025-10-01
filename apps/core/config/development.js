@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const {envToBool} = require('@leav/config-manager');
+const {release} = require('os');
 
 module.exports = {
     server: {
@@ -20,5 +21,8 @@ module.exports = {
     debug: true,
     dbProfiler: {
         enable: envToBool(process.env.DB_PROFILER_ENABLE, true)
+    },
+    bugsnag: {
+        releaseStage: 'development'
     }
 };

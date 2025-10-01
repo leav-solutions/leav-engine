@@ -410,7 +410,19 @@ export default function ({
                             });
                             const modifiedIndex = indexContent
                                 .replaceAll(/{{APPLICATION_BASE_URL}}/g, applicationBaseUrl)
-                                .replaceAll(/{{GLOBAL_BASE_URL}}/g, config.server.basePath);
+                                .replaceAll(/{{GLOBAL_BASE_URL}}/g, config.server.basePath)
+                                .replaceAll(
+                                    /{{BUGSNAG_API_KEY}}/g,
+                                    (config.bugsnag.enable && config.bugsnag.apiKey) || ''
+                                )
+                                .replaceAll(
+                                    /{{BUGSNAG_APP_VERSION}}/g,
+                                    (config.bugsnag.enable && config.bugsnag.appVersion) || ''
+                                )
+                                .replaceAll(
+                                    /{{BUGSNAG_RELEASE_STAGE}}/g,
+                                    (config.bugsnag.enable && config.bugsnag.releaseStage) || ''
+                                );
                             res.send(modifiedIndex);
                             return next(); // needed to update consultation history
                         }

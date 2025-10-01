@@ -36,10 +36,15 @@ import {setupLogger} from './utils/logger/logger';
     setupLogger(conf);
 
     if (conf.bugsnag.enable) {
+        logger.info(
+            `Starting Bugsnag monitoring appVersion=${conf.bugsnag.appVersion} releaseStage=${conf.bugsnag.releaseStage}`
+        );
         Bugsnag.start({
             apiKey: conf.bugsnag.apiKey,
             appVersion: conf.bugsnag.appVersion,
             appType: conf.bugsnag.appType,
+            releaseStage: conf.bugsnag.releaseStage,
+            hostname: new URL(conf.server.publicUrl).host,
             logger
         });
     }
