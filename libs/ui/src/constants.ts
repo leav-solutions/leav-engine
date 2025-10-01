@@ -43,6 +43,9 @@ declare global {
     interface Window {
         __dynamic_base__?: string;
         __global_base_url__?: string;
+        __bugsnag_api_key__?: string;
+        __bugsnag_app_version__?: string;
+        __bugsnag_release_stage__?: string;
     }
 }
 

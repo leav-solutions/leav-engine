@@ -33,7 +33,10 @@ export const devIndexHtmlReplaceVarsPlugin = () => {
         transformIndexHtml(html) {
             return html
                 .replace(/{{APPLICATION_BASE_URL}}/g, process.env.APPLICATION_BASE_URL || `/app/${appName}`)
-                .replace(/{{GLOBAL_BASE_URL}}/g, process.env.GLOBAL_BASE_URL || '');
+                .replace(/{{GLOBAL_BASE_URL}}/g, process.env.GLOBAL_BASE_URL || '')
+                .replace(/{{BUGSNAG_API_KEY}}/g, process.env.BUGSNAG_API_KEY || '')
+                .replace(/{{BUGSNAG_APP_VERSION}}/g, process.env.BUGSNAG_APP_VERSION || '')
+                .replace(/{{BUGSNAG_RELEASE_STAGE}}/g, process.env.BUGSNAG_RELEASE_STAGE || '');
         }
     };
 }
