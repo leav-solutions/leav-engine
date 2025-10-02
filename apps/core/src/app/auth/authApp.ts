@@ -30,7 +30,8 @@ import {type IncomingHttpHeaders} from 'http';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {type IServerRouteAppModule} from 'interface/server';
-import {adminsGroupId} from '../../_constants/users';
+import {adminsGroupId, filesAdminsGroupId} from '../../_constants/users';
+import {type GetSystemQueryContext} from 'utils/helpers/getSystemQueryContext';
 
 export interface IAuthApp extends IGraphqlAppModule, IServerRouteAppModule {
     validateRequestToken(
@@ -64,6 +65,7 @@ export interface IAuthAppDeps {
     'core.infra.oidc.oidcClientService': IOIDCClientService;
     'core.app.helpers.initQueryContext': InitQueryContextFunc;
     'core.app.helpers.convertOIDCIdentifier': IConvertOIDCIdentifier;
+    'core.utils.getSystemQueryContext': GetSystemQueryContext;
     config: IConfig;
 }
 
@@ -81,6 +83,7 @@ export default function ({
     'core.infra.oidc.oidcClientService': oidcClientService,
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier,
+    'core.utils.getSystemQueryContext': getSystemQueryContext,
     config
 }: IAuthAppDeps): IAuthApp {
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
@@ -138,12 +141,18 @@ export default function ({
         return [cookieName, value, cookieOptions];
     };
 
+    const _getSystemContextFromQuery = (req: Request, trigger: string): IQueryInfos => ({
+        ...initQueryContext(req),
+        userId: config.defaultUserId,
+        groupsId: [adminsGroupId, filesAdminsGroupId],
+        trigger
+    });
+
     const _checkIfUserExistsById = async (userId: string, ctx: IQueryInfos) => {
         const users = await recordDomain.find({
             params: {
                 library: 'users',
-                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}],
-                ignorePermissions: true
+                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}]
             },
             ctx
         });
@@ -259,19 +268,14 @@ export default function ({
                         const decodedAccessToken = jwt.decode(oidcTokenSet.access_token) as jwt.JwtPayload;
                         const email = decodedToken[config.auth.oidc.idTokenUserClaim];
 
-                        const ctx: IQueryInfos = {
-                            ...initQueryContext(req),
-                            userId: config.defaultUserId,
-                            queryId: 'authenticate'
-                        };
+                        const systemCtx = _getSystemContextFromQuery(req, 'oidc:verify');
 
                         const userRecords = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}],
-                                ignorePermissions: true
+                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}]
                             },
-                            ctx
+                            ctx: systemCtx
                         });
 
                         let user = userRecords.list[0];
@@ -287,7 +291,7 @@ export default function ({
                                     {payload: email, attribute: 'email'},
                                     {payload: decodedToken.name, attribute: 'login'} // used to display the username in the UI instead of record id
                                 ],
-                                ctx
+                                ctx: systemCtx
                             });
                             logger.info(`User ${email} created during auto provisioning step`);
                             user = createdUser;
@@ -300,14 +304,14 @@ export default function ({
                                     recordId: user.id,
                                     attribute: 'user_groups',
                                     value: {payload: adminsGroupId},
-                                    ctx
+                                    ctx: systemCtx
                                 });
                             }
                         }
 
                         await oidcClientService.saveOIDCTokens({userId: user.id, tokens: oidcTokenSet});
 
-                        const accessToken = await _generateAccessToken(user.id, ctx);
+                        const accessToken = await _generateAccessToken(user.id, systemCtx);
 
                         const refreshToken = _generateRefreshToken({
                             userId: user.id,
@@ -346,20 +350,15 @@ export default function ({
                             return res.status(401).send('Missing credentials');
                         }
 
-                        // Check if user is active
-                        const ctx: IQueryInfos = {
-                            ...initQueryContext(req),
-                            userId: config.defaultUserId,
-                            queryId: 'authenticate'
-                        };
+                        const systemCtx = _getSystemContextFromQuery(req, 'authenticate');
 
+                        // Check if user is active
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'login', condition: AttributeCondition.EQUAL, value: login}],
-                                ignorePermissions: true
+                                filters: [{field: 'login', condition: AttributeCondition.EQUAL, value: login}]
                             },
-                            ctx
+                            ctx: systemCtx
                         });
 
                         if (!users.list.length) {
@@ -372,7 +371,7 @@ export default function ({
                             library: 'users',
                             recordId: user.id,
                             attribute: 'password',
-                            ctx
+                            ctx: systemCtx
                         });
 
                         const isValidPwd =
@@ -382,7 +381,7 @@ export default function ({
                             return res.status(401).send('Invalid credentials');
                         }
 
-                        const accessToken = await _generateAccessToken(user.id, ctx);
+                        const accessToken = await _generateAccessToken(user.id, systemCtx);
 
                         const refreshToken = _generateRefreshToken({
                             userId: user.id,
@@ -442,20 +441,14 @@ export default function ({
                             return res.status(400).send('Missing parameters');
                         }
 
-                        // Get user id
-                        const ctx: IQueryInfos = {
-                            ...initQueryContext(req),
-                            userId: config.defaultUserId,
-                            queryId: 'forgot-password'
-                        };
+                        const systemCtx = _getSystemContextFromQuery(req, 'forgot-password');
 
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}],
-                                ignorePermissions: true
+                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}]
                             },
-                            ctx
+                            ctx: systemCtx
                         });
 
                         if (!users.list.length) {
@@ -484,7 +477,7 @@ export default function ({
                             ua.browser,
                             ua.os,
                             lang,
-                            ctx
+                            systemCtx
                         );
 
                         return res.sendStatus(200);
@@ -517,13 +510,9 @@ export default function ({
                             throw new AuthenticationError('Invalid token');
                         }
 
-                        const ctx: IQueryInfos = {
-                            ...initQueryContext(req),
-                            userId: config.defaultUserId,
-                            queryId: 'resetPassword'
-                        };
+                        const systemCtx = _getSystemContextFromQuery(req, 'reset-password');
 
-                        await _checkIfUserExistsById(payload.userId, ctx);
+                        await _checkIfUserExistsById(payload.userId, systemCtx);
 
                         try {
                             // save new password
@@ -532,7 +521,7 @@ export default function ({
                                 recordId: payload.userId,
                                 attribute: 'password',
                                 value: {payload: newPassword},
-                                ctx
+                                ctx: systemCtx
                             });
                         } catch (e) {
                             return res.status(422).send('Invalid password');
@@ -548,14 +537,7 @@ export default function ({
             app.post('/auth/login-checker', async (req: IRequestWithContext, res, next) => {
                 try {
                     // Get user data
-                    const ctx: IQueryInfos = {
-                        ...initQueryContext(req),
-                        userId: config.defaultUserId,
-                        queryId: 'refresh'
-                    };
-                    req.ctx = initQueryContext(req);
-                    req.ctx.userId = ctx.userId;
-                    req.ctx.queryId = ctx.queryId;
+                    const systemCtx = _getSystemContextFromQuery(req, 'login-checker');
 
                     const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
 
@@ -583,7 +565,7 @@ export default function ({
                         throw new AuthenticationError('Invalid token');
                     }
 
-                    await _checkIfUserExistsById(payload.userId, ctx);
+                    await _checkIfUserExistsById(payload.userId, systemCtx);
 
                     const userSessionId = (
                         await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
@@ -598,7 +580,7 @@ export default function ({
                         return res.status(401).send('Invalid session');
                     }
 
-                    await _generateAccessAndRefreshTokens(payload.userId, req.headers, res, ctx);
+                    await _generateAccessAndRefreshTokens(payload.userId, req.headers, res, systemCtx);
 
                     return res.status(200).json({});
                 } catch (err) {
@@ -607,11 +589,7 @@ export default function ({
             });
         },
         async validateRequestToken({apiKey, headers, cookies}, res) {
-            const ctx: IQueryInfos = {
-                ...initQueryContext(),
-                userId: config.defaultUserId,
-                queryId: 'validateToken'
-            };
+            const systemCtx = getSystemQueryContext('validateToken');
 
             const accessToken = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
             const refreshToken = cookies?.[REFRESH_TOKEN_COOKIE_NAME];
@@ -621,7 +599,7 @@ export default function ({
                     library: USERS_LIBRARY,
                     recordId: uid,
                     attribute: USERS_GROUP_ATTRIBUTE_NAME,
-                    ctx
+                    ctx: systemCtx
                 })) as ITreeValue[];
                 return userGroups.map(g => g.payload?.id);
             };
@@ -643,7 +621,7 @@ export default function ({
                     // To avoid this, we check if the error is a token expired error, and if so, we regenerate the tokens
                     if (e.name === 'TokenExpiredError' && refreshToken) {
                         const refreshPayload = await _verifyRefreshToken(refreshToken, headers);
-                        await _generateAccessAndRefreshTokens(refreshPayload.userId, headers, res, ctx);
+                        await _generateAccessAndRefreshTokens(refreshPayload.userId, headers, res, systemCtx);
                         userId = refreshPayload.userId;
                         groupsId = await getUserGroups(userId);
                     } else {
@@ -652,7 +630,7 @@ export default function ({
                 }
             } else if (refreshToken) {
                 const payload = await _verifyRefreshToken(refreshToken, headers);
-                await _generateAccessAndRefreshTokens(payload.userId, headers, res, ctx);
+                await _generateAccessAndRefreshTokens(payload.userId, headers, res, systemCtx);
                 userId = payload.userId;
                 groupsId = await getUserGroups(userId);
             } else {
@@ -660,7 +638,7 @@ export default function ({
                     throw new AuthenticationError('No api key provided');
                 }
 
-                const apiKeyData = await apiKeyDomain.validateApiKey({apiKey, ctx});
+                const apiKeyData = await apiKeyDomain.validateApiKey({apiKey, ctx: systemCtx});
 
                 const hasExpired = apiKeyData.expiresAt && new Date(apiKeyData.expiresAt) < new Date();
                 if (hasExpired) {
@@ -671,7 +649,7 @@ export default function ({
                 groupsId = await getUserGroups(userId);
             }
 
-            await _checkIfUserExistsById(userId, ctx);
+            await _checkIfUserExistsById(userId, systemCtx);
 
             return {
                 userId,

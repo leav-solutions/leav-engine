@@ -6,7 +6,6 @@ import {type IOIDCClientService} from '../../../infra/oidc/oidcClientService';
 import {type Express} from 'express';
 import {identity} from 'lodash';
 import {convertOIDCIdentifier} from '../../helpers';
-import initQueryContext from '../../helpers/initQueryContext';
 
 jest.mock('jsonwebtoken');
 
@@ -20,6 +19,7 @@ import {type DeepPartial} from '../../../_types/utils';
 import {type Mockify} from '@leav/utils';
 import {type ToAny} from '../../../utils/utils';
 import {adminsGroupId} from '../../../_constants/users';
+import {mockCtx, mockSystemQueryContext} from '../../../__tests__/mocks/shared';
 
 const depsBase: ToAny<IAuthAppDeps> = {
     'core.domain.value': jest.fn(),
@@ -33,8 +33,9 @@ const depsBase: ToAny<IAuthAppDeps> = {
         error: jest.fn()
     },
     'core.infra.oidc.oidcClientService': jest.fn(),
-    'core.app.helpers.initQueryContext': jest.fn(),
+    'core.app.helpers.initQueryContext': jest.fn(() => mockCtx),
     'core.app.helpers.convertOIDCIdentifier': jest.fn(),
+    'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext),
     config: {}
 };
 
@@ -80,7 +81,6 @@ describe('authApp', () => {
 
             const authApp = createAuthApp({
                 ...depsBase,
-                'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
@@ -375,7 +375,6 @@ describe('authApp', () => {
 
             const authApp = createAuthApp({
                 ...depsBase,
-                'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
                 config: mockConfig as IConfig
             });
@@ -449,7 +448,6 @@ describe('authApp', () => {
 
             const authApp = createAuthApp({
                 ...depsBase,
-                'core.app.helpers.initQueryContext': initQueryContext({config: mockConfig as IConfig}),
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
@@ -597,7 +595,6 @@ describe('authApp', () => {
                 'core.infra.cache.cacheService': mockCachesService as any,
                 'core.infra.oidc.oidcClientService': mockOidcService as any,
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
-                'core.app.helpers.initQueryContext': initQueryContext({}),
                 config: mockConfig as IConfig
             });
 
@@ -736,7 +733,6 @@ describe('authApp', () => {
                 'core.infra.cache.cacheService': mockCachesService as any,
                 'core.infra.oidc.oidcClientService': mockOidcService as any,
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
-                'core.app.helpers.initQueryContext': initQueryContext({}),
                 config: mockConfig as IConfig
             });
 
@@ -823,7 +819,6 @@ describe('authApp', () => {
                 'core.infra.cache.cacheService': mockCachesService as any,
                 'core.infra.oidc.oidcClientService': mockOidcService as any,
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
-                'core.app.helpers.initQueryContext': initQueryContext({}),
                 config: mockConfig as IConfig
             });
 

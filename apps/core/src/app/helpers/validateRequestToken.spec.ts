@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import validateRequestTokenHelper from './validateRequestToken';
 import createAuthApp, {type IAuthApp, type IAuthAppDeps} from '../auth/authApp';
-import initQueryContext from './initQueryContext';
 import {type Mockify} from '@leav/utils';
 import {type IConfig} from '../../_types/config';
 import {type DeepPartial} from '../../_types/utils';
@@ -15,6 +14,7 @@ import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {type IValueDomain} from '../../domain/value/valueDomain';
 import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';
 import {type ToAny} from 'utils/utils';
+import {mockCtx, mockSystemQueryContext} from '../../__tests__/mocks/shared';
 
 describe('validateRequestToken', () => {
     const invalidAccessToken = 'invalid_access_token';
@@ -74,8 +74,9 @@ describe('validateRequestToken', () => {
         'core.infra.cache.cacheService': jest.fn(),
         'core.utils.logger': jest.fn(),
         'core.infra.oidc.oidcClientService': jest.fn(),
-        'core.app.helpers.initQueryContext': jest.fn(),
+        'core.app.helpers.initQueryContext': jest.fn(() => mockCtx),
         'core.app.helpers.convertOIDCIdentifier': jest.fn(),
+        'core.utils.getSystemQueryContext': jest.fn(() => mockSystemQueryContext),
         config: {}
     };
 
@@ -83,7 +84,6 @@ describe('validateRequestToken', () => {
         it('Should throw an error if access token is invalid', async () => {
             const authApp = createAuthApp({
                 ...authAppdepsBase,
-                'core.app.helpers.initQueryContext': initQueryContext({config: mockConfig as IConfig}),
                 config: mockConfig as IConfig
             });
 
@@ -110,7 +110,6 @@ describe('validateRequestToken', () => {
         it("Should throw an error if access token payload doesn't contain userId", async () => {
             const authApp = createAuthApp({
                 ...authAppdepsBase,
-                'core.app.helpers.initQueryContext': initQueryContext({config: mockConfig as IConfig}),
                 config: mockConfig as IConfig
             });
 
@@ -139,7 +138,6 @@ describe('validateRequestToken', () => {
         it('Should throw an error if refresh token is invalid', async () => {
             const authApp = createAuthApp({
                 ...authAppdepsBase,
-                'core.app.helpers.initQueryContext': initQueryContext({config: mockConfig as IConfig}),
                 config: mockConfig as IConfig
             });
 
@@ -166,7 +164,6 @@ describe('validateRequestToken', () => {
         it("Should throw an error if refresh token payload doesn't contain userId", async () => {
             const authApp = createAuthApp({
                 ...authAppdepsBase,
-                'core.app.helpers.initQueryContext': initQueryContext({config: mockConfig as IConfig}),
                 config: mockConfig as IConfig
             });
 
@@ -193,7 +190,6 @@ describe('validateRequestToken', () => {
         it('Should set new access and refresh token', async () => {
             const authApp = createAuthApp({
                 ...authAppdepsBase,
-                'core.app.helpers.initQueryContext': initQueryContext({config: mockConfig as IConfig}),
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
@@ -260,7 +256,6 @@ describe('validateRequestToken', () => {
     it('Should use refresh token when access token is expired (TokenExpiredError)', async () => {
         const authApp = createAuthApp({
             ...authAppdepsBase,
-            'core.app.helpers.initQueryContext': initQueryContext({config: mockConfig as IConfig}),
             'core.infra.cache.cacheService': mockCachesService as ICachesService,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
@@ -336,7 +331,6 @@ describe('validateRequestToken', () => {
     it('Should return userId and groupId if accessToken is valid and userId payload exist', async () => {
         const authApp = createAuthApp({
             ...authAppdepsBase,
-            'core.app.helpers.initQueryContext': initQueryContext({config: mockConfig as IConfig}),
             'core.infra.cache.cacheService': mockCachesService as ICachesService,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
