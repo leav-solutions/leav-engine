@@ -9,9 +9,9 @@ import {DeleteAllValuesButton} from '../../shared/DeleteAllValuesButton';
 import {type DeleteMultipleValuesFunc} from '../../../_types';
 import {type JoinLibraryContextFragment, type RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
 import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
-import {AntForm, KitSpace} from 'aristid-ds';
+import {AntForm, KitSpace, KitTooltip} from 'aristid-ds';
 import {useExplorerLinkRecords} from './useExplorerLinkRecords';
-import {FaList} from 'react-icons/fa';
+import {FaPlus} from 'react-icons/fa';
 import {ActionButton} from './ActionButton';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
@@ -142,28 +142,19 @@ export const useLinkRecords = ({
                     />
                 </ExplorerWrapper>
                 <KitSpace size="xs" style={{padding: '1rem'}}>
-                    {explorerActions?.createAction && (
+                    <KitTooltip title={explorerActions?.linkAction?.label}>
                         <ActionButton
                             type="secondary"
                             size="m"
                             $hasNoValue={hasNoValue}
-                            icon={explorerActions?.createAction?.icon}
-                            disabled={isReadOnly || explorerActions?.createAction?.disabled}
-                            onClick={explorerActions?.createAction?.callback}
-                        >
-                            {explorerActions?.createAction?.label}
-                        </ActionButton>
-                    )}
-                    <ActionButton
-                        type="secondary"
-                        size="m"
-                        $hasNoValue={hasNoValue}
-                        icon={<FaList />}
-                        disabled={isReadOnly || (attribute.multiple_values && explorerActions?.linkAction?.disabled)}
-                        onClick={explorerActions?.linkAction?.callback}
-                    >
-                        {explorerActions?.linkAction?.label}
-                    </ActionButton>
+                            icon={<FaPlus />}
+                            disabled={
+                                isReadOnly || (attribute.multiple_values && explorerActions?.linkAction?.disabled)
+                            }
+                            onClick={explorerActions?.linkAction?.callback}
+                            aria-label={explorerActions?.linkAction?.label}
+                        />
+                    </KitTooltip>
                 </KitSpace>
             </>
         )
