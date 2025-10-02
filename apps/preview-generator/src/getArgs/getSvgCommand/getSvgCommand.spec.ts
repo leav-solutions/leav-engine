@@ -2,16 +2,28 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getSvgCommand} from './getSvgCommand';
+import fs from 'fs';
+
+const svgContent = (width: number, height: number) => `
+    <svg width="${width}" height="${height}" /> 
+`;
 
 describe('test getSvgCommand', () => {
-    test('command and args return', () => {
-        const input = 'test.svg';
-        const output = 'test.png';
-        const size = 800;
+    const input = 'test.svg';
+    const output = 'test.png';
+    const size = 800;
 
-        const {command, args} = getSvgCommand(input, output, size);
-
+    test('Command and args return on width larger', async () => {
+        jest.spyOn(fs.promises, 'readFile').mockResolvedValue(svgContent(200, 100));
+        const {command, args} = await getSvgCommand(input, output, size);
         expect(command).toBe('inkscape');
-        expect(args).toEqual(expect.arrayContaining([input, output, size.toString()]));
+        expect(args).toEqual(expect.arrayContaining([input, output, '-w', size.toString()]));
+    });
+
+    test('Command and args return on height larger', async () => {
+        jest.spyOn(fs.promises, 'readFile').mockResolvedValue(svgContent(100, 200));
+        const {command, args} = await getSvgCommand(input, output, size);
+        expect(command).toBe('inkscape');
+        expect(args).toEqual(expect.arrayContaining([input, output, '-h', size.toString()]));
     });
 });

@@ -39,6 +39,7 @@
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
         "amqplib": "0.10.9",
+        "fast-xml-parser": "5.2.5",
         "uuid": "3.3.3"
     },
     "stableVersion": "1.0.0"
