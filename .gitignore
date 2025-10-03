@@ -89,10 +89,12 @@ docker/docker-compose.override.yml
 apps/core/applications/*
 apps/core/config/local.js
 
+!.dockerignore
+
 ### Local builds ###
 apps/*/dist
 apps/*/build
-libs/ui/dist
+libs/*/dist
 *.tsbuildinfo
 
 ### GRAPHQL ###
