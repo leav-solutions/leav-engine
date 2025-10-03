@@ -77,7 +77,7 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
         [isValuesListEnabled, linkAttributeData]
     );
     const allowFreeEntry = useMemo(
-        () => (isValuesListEnabled ? Boolean(linkAttributeData.valuesList?.allowFreeEntry) : false),
+        () => (isValuesListEnabled ? Boolean(linkAttributeData.valuesList?.allowFreeEntry) : true),
         [isValuesListEnabled, linkAttributeData]
     );
 
