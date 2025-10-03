@@ -5,44 +5,57 @@
 # Exceptions for preview-generator are handled by the "target" feature of buildkit.
 # More info here: https://docs.docker.com/build/building/multi-stage/#differences-between-legacy-builder-and-buildkit
 
-### BASE ###
-FROM node:18-alpine3.18 AS base
-
-# The name of the service we are building (core, automate-scan, ...)
+# Create base builder
+FROM node:18-alpine3.18 AS builder
 ARG APP
-
-WORKDIR /app
+WORKDIR /build
 
 # Copy required files for builds
 COPY .yarn ./.yarn
-COPY *.json yarn.lock .yarnrc.yml vite-config-common.js ./
+COPY *.json yarn.lock .yarnrc.yml ./
 COPY apps/ ./apps
-COPY libs/ ./libs/
-COPY assets/ ./assets
+COPY libs/ ./libs
 
-### BUILDER ###
-FROM base AS builder
+# Install dev module to build app
+RUN yarn workspaces focus $APP && \
+    yarn workspace $APP build && \
+    apk --no-cache --update add rsync
+
+WORKDIR /install
+
+# Copy only production files for $APP and its dependencies
+# We use rsync to be able to include/exclude files and folders easily
+# And install only production dependencies for $APP
+RUN rsync -av \
+    --exclude=".yarn/cache" \
+    --exclude="vite-config-*.js" \
+    --exclude="babel.config.json" \
+    --exclude="tsconfig.json" \
+    --exclude="node_modules/" \
+    --include="package.json" \
+    --include="apps/$APP/dist/" \
+    --include="apps/$APP/profile/" \
+    --include="apps/$APP/config/" \
+    --include="apps/$APP/package.json" \
+    --include="apps/$APP/" \
+    --exclude="apps/$APP/*" \
+    --exclude="apps/*/" \
+    --exclude="libs/ui/" \
+    --exclude="libs/types/" \
+    --include="libs/*/" \
+    --include="libs/*/dist/" \
+    --include="libs/*/package.json" \
+    --exclude="libs/*/*" \
+    /build/ /install/ && \
+    yarn config set cacheFolder /build/.yarn/cache && \
+    yarn workspaces focus $APP --production && \
+    rm -rf .yarn yarn.lock .yarnrc.yml
+
+FROM node:18-alpine3.18 AS runner
 ARG APP
+WORKDIR /app
 
-# Install dev modules, needed for build and build project
-RUN yarn workspaces focus $APP && yarn workspace $APP build
-
-### RUNNER ###
-FROM base as runner
-ARG APP
-
-# Retrieve code
-COPY --from=builder /app/apps/$APP/dist ./apps/$APP/dist/
-
-# Install production only modules
-RUN yarn workspaces focus $APP --production
-
-RUN rm -rf ./apps/$APP/src \
-    && rm -rf .yarn/cache
-
-COPY ./docker/scripts ./scripts
-COPY libs ./libs
-COPY assets ./assets
+COPY --from=builder /install ./
 
 # Get ready for runtime
 WORKDIR /app/apps/$APP
@@ -50,7 +63,7 @@ ENV APP_ROOT_PATH=/app/apps/$APP
 CMD ["yarn", "run",  "start"]
 
 ### RUNNER FOR PREVIEW-GENERATOR ###
-FROM runner as runner-preview-generator
+FROM runner AS runner-preview-generator
 ## Install libs required for previews generation
 
 # imagemagick is used to convert images
@@ -59,7 +72,7 @@ FROM runner as runner-preview-generator
 # libreoffice and unoconv are used to convert documents
 RUN apk add --update --no-cache imagemagick~=7.1 ffmpeg inkscape
 
-ENV UNO_URL https://raw.githubusercontent.com/dagwieers/unoconv/master/unoconv
+ENV UNO_URL=https://raw.githubusercontent.com/dagwieers/unoconv/master/unoconv
 
 # Install unoconv
 RUN apk --no-cache add bash mc openjdk8 \
