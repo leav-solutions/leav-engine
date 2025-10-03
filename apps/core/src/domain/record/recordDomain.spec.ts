@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ErrorTypes} from '@leav/utils';
 import {Errors} from '../../_types/errors';
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -19,7 +18,6 @@ import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IStandardValue, type IValue} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
-import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {LibraryBehavior} from '../../_types/library';
@@ -41,11 +39,11 @@ import {mockStandardValue} from '../../__tests__/mocks/value';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain, {type IRecordDomainDeps} from './recordDomain';
 import {type IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
-import {type IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
-import * as ValidateValue from '../value/helpers/validateValue';
 import {type ICreateRecordValueError} from './_types';
 import {createRecord as createRecordHelper, deleteRecord as deleteRecordHelper} from './helpers';
 import {type IFormRepo} from 'infra/form/formRepo';
+import mockLogger from '../../__tests__/mockers/logger';
+import {ErrorTypes} from '@leav/utils';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
@@ -66,7 +64,6 @@ const depsBase: ToAny<IRecordDomainDeps> = {
     'core.domain.value': jest.fn(),
     'core.domain.permission.record': jest.fn(),
     'core.domain.permission.library': jest.fn(),
-    'core.domain.permission.attribute': jest.fn(),
     'core.domain.permission.recordAttribute': jest.fn(),
     'core.domain.permission.helpers.defaultPermission': jest.fn(),
     'core.domain.helpers.getCoreEntityById': jest.fn(),
@@ -77,10 +74,9 @@ const depsBase: ToAny<IRecordDomainDeps> = {
     'core.infra.library': jest.fn(),
     'core.infra.tree': jest.fn(),
     'core.domain.tree.helpers.elementAncestors': jest.fn(),
-    'core.infra.value': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     'core.infra.cache.cacheService': jest.fn(),
-    'core.utils.logger': jest.fn(),
+    'core.utils.logger': mockLogger,
     'core.utils': jest.fn(),
     'core.infra.form': jest.fn(),
     'core.infra.permission': jest.fn(),
@@ -149,7 +145,7 @@ describe('RecordDomain', () => {
                 created_at: 1519303348,
                 modified_at: 1519303348
             };
-            const recRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
+            const mockRecRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryFullTextAttributes: global.__mockPromise([])
@@ -159,37 +155,31 @@ describe('RecordDomain', () => {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
-                getAttributePermission: global.__mockPromise(true)
-            };
-
             const recDomain = recordDomain({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.record': recRepo as IRecordRepo,
+                'core.infra.record': mockRecRepo as IRecordRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
                 'core.domain.record.helpers.createRecord': createRecordHelper({
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.infra.record': recRepo as IRecordRepo
+                    'core.infra.record': mockRecRepo as IRecordRepo
                 })
             });
 
             const createdEmptyRecord = await recDomain.createEmptyRecord({library: 'test', ctx});
 
-            expect(recRepo.createRecord.mock.calls.length).toBe(1);
-            expect(typeof recRepo.createRecord.mock.calls[0][0]).toBe('object');
-            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
-            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
-            expect(recRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe('1');
-            expect(recRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
+            expect(mockRecRepo.createRecord.mock.calls.length).toBe(1);
+            expect(typeof mockRecRepo.createRecord.mock.calls[0][0]).toBe('object');
+            expect(Number.isInteger(mockRecRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
+            expect(Number.isInteger(mockRecRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
+            expect(mockRecRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe('1');
+            expect(mockRecRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
 
-            expect(createdEmptyRecord.record).toMatchObject(createdRecordData);
-            expect(createdEmptyRecord.valuesErrors).toBe(null);
+            expect(createdEmptyRecord).toMatchObject(createdRecordData);
         });
     });
     describe('Activate new record', () => {
@@ -198,7 +188,7 @@ describe('RecordDomain', () => {
                 id: '222435651',
                 library: 'test'
             };
-            const recRepo = {
+            const mockRecRepo = {
                 createRecord: global.__mockPromise(createdRecordData),
                 updateRecord: global.__mockPromise()
             } satisfies Mockify<IRecordRepo>;
@@ -217,51 +207,46 @@ describe('RecordDomain', () => {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
-                getAttributePermission: global.__mockPromise(true)
-            };
-
             const recDomain = recordDomain({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.record': recRepo as IRecordRepo,
+                'core.infra.record': mockRecRepo as IRecordRepo,
                 'core.infra.form': formRepo as IFormRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
                 'core.domain.record.helpers.createRecord': createRecordHelper({
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.infra.record': recRepo as IRecordRepo
+                    'core.infra.record': mockRecRepo as IRecordRepo
                 })
             });
 
             const createdEmptyRecord = await recDomain.createEmptyRecord({library: 'test', ctx});
             const activatedRecord = await recDomain.activateNewRecord({
                 library: 'test',
-                recordId: createdEmptyRecord.record.id,
+                recordId: createdEmptyRecord.id,
                 ctx
             });
 
-            expect(recRepo.createRecord.mock.calls.length).toBe(1);
-            expect(typeof recRepo.createRecord.mock.calls[0][0]).toBe('object');
-            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
-            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
-            expect(recRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe('1');
-            expect(recRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
+            expect(mockRecRepo.createRecord.mock.calls.length).toBe(1);
+            expect(typeof mockRecRepo.createRecord.mock.calls[0][0]).toBe('object');
+            expect(Number.isInteger(mockRecRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
+            expect(Number.isInteger(mockRecRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
+            expect(mockRecRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe('1');
+            expect(mockRecRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
 
             expect(activatedRecord.record).toMatchObject(createdRecordData);
-            expect(activatedRecord.valuesErrors).toEqual([]);
+            expect(activatedRecord.valuesErrors).toEqual(null);
         });
         test('Should not activate a new record if required field is missing', async function () {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test'
             };
-            const recRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
+            const mockRecRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
             const formRepo = {getForms: global.__mockPromise({list: []})} satisfies Mockify<IFormRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -273,24 +258,19 @@ describe('RecordDomain', () => {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
-                getAttributePermission: global.__mockPromise(true)
-            };
-
             const recDomain = recordDomain({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.record': recRepo as IRecordRepo,
+                'core.infra.record': mockRecRepo as IRecordRepo,
                 'core.infra.form': formRepo as IFormRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
                 'core.domain.record.helpers.createRecord': createRecordHelper({
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.infra.record': recRepo as IRecordRepo
+                    'core.infra.record': mockRecRepo as IRecordRepo
                 }),
                 'core.utils': mockUtils as IUtils
             });
@@ -299,16 +279,16 @@ describe('RecordDomain', () => {
             const createdEmptyRecord = await recDomain.createEmptyRecord({library: 'test', ctx});
             const activatedRecord = await recDomain.activateNewRecord({
                 library: 'test',
-                recordId: createdEmptyRecord.record.id,
+                recordId: createdEmptyRecord.id,
                 ctx
             });
 
-            expect(recRepo.createRecord.mock.calls.length).toBe(1);
-            expect(typeof recRepo.createRecord.mock.calls[0][0]).toBe('object');
-            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
-            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
-            expect(recRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe('1');
-            expect(recRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
+            expect(mockRecRepo.createRecord.mock.calls.length).toBe(1);
+            expect(typeof mockRecRepo.createRecord.mock.calls[0][0]).toBe('object');
+            expect(Number.isInteger(mockRecRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
+            expect(Number.isInteger(mockRecRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
+            expect(mockRecRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe('1');
+            expect(mockRecRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
 
             expect(activatedRecord.record).toBe(null);
             expect(activatedRecord.valuesErrors[0]).toMatchObject({
@@ -319,51 +299,65 @@ describe('RecordDomain', () => {
         });
     });
     describe('createRecord', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+        });
         test('Should create a new record', async function () {
             const createdRecordData = {
-                id: '222435651',
-                library: 'test',
-                created_at: 1519303348,
-                modified_at: 1519303348
+                id: '222536515',
+                library: 'test'
             };
-            const recRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
+            const mockRecRepo = {
+                createRecord: global.__mockPromise(createdRecordData),
+                updateRecord: global.__mockPromise(),
+                find: global.__mockPromise({
+                    totalCount: 1,
+                    list: [createdRecordData]
+                })
+            } satisfies Mockify<IRecordRepo>;
+
+            const formRepo = {getForms: global.__mockPromise({list: []})} satisfies Mockify<IFormRepo>;
+
+            const mockValueDomain = {
+                saveValue: global.__mockPromise([{payload: true}]),
+                saveValueBatch: global.__mockPromise([])
+            } satisfies Mockify<IValueDomain>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getLibraryFullTextAttributes: global.__mockPromise([])
+                getAttributeProperties: global.__mockPromise(mockUniqueAttrSimple),
+                getLibraryAttributes: global.__mockPromise([mockUniqueAttrSimple])
             };
 
             const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
-                getAttributePermission: global.__mockPromise(true)
-            };
-
             const recDomain = recordDomain({
                 ...depsBase,
-                config: mockConfig as Config.IConfig,
-                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.record': recRepo as IRecordRepo,
-                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.value': mockValueDomain as IValueDomain,
+                'core.infra.record': mockRecRepo as IRecordRepo,
+                'core.infra.form': formRepo as IFormRepo,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.record.helpers.createRecord': createRecordHelper({
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.infra.record': recRepo as IRecordRepo
+                    'core.infra.record': mockRecRepo as IRecordRepo
                 })
             });
+            jest.spyOn(recDomain, 'activateNewRecord');
 
             const createdRecord = await recDomain.createRecord({library: 'test', ctx});
 
-            expect(recRepo.createRecord.mock.calls.length).toBe(1);
-            expect(typeof recRepo.createRecord.mock.calls[0][0]).toBe('object');
-            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
-            expect(Number.isInteger(recRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
-            expect(recRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe('1');
-            expect(recRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
+            expect(mockRecRepo.createRecord).toHaveBeenCalledTimes(1);
+            expect(Number.isInteger(mockRecRepo.createRecord.mock.calls[0][0].recordData.created_at)).toBe(true);
+            expect(Number.isInteger(mockRecRepo.createRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
+            expect(mockRecRepo.createRecord.mock.calls[0][0].recordData.created_by).toBe('1');
+            expect(mockRecRepo.createRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
+            expect(mockValueDomain.saveValueBatch).toHaveBeenCalledTimes(1);
+            expect(recDomain.activateNewRecord).toHaveBeenCalled();
 
             expect(createdRecord.record).toMatchObject(createdRecordData);
             expect(createdRecord.valuesErrors).toBe(null);
@@ -376,43 +370,51 @@ describe('RecordDomain', () => {
                 created_at: 1519303348,
                 modified_at: 1519303348
             };
-            const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
+            const mockRecRepo: Mockify<IRecordRepo> = {
+                createRecord: global.__mockPromise(createdRecordData),
+                updateRecord: global.__mockPromise(),
+                find: global.__mockPromise({
+                    totalCount: 1,
+                    list: [createdRecordData]
+                })
+            };
+
+            const formRepo = {getForms: global.__mockPromise({list: []})} satisfies Mockify<IFormRepo>;
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
                 getLibraryFullTextAttributes: global.__mockPromise([]),
-                getAttributeProperties: global.__mockPromise(mockAttrSimple)
+                getAttributeProperties: global.__mockPromise(mockAttrSimple),
+                getLibraryAttributes: global.__mockPromise([mockUniqueAttrSimple])
             };
 
             const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
-                getAttributePermission: global.__mockPromise(true)
-            };
-
             const mockValueDomain: Mockify<IValueDomain> = {
-                saveValueBatch: global.__mockPromise({values: [], errors: null}),
-                runActionsList: global.__mockPromise()
+                saveValue: global.__mockPromise([{payload: true}]),
+                saveValueBatch: global.__mockPromise({values: [], errors: null})
             };
 
             const recDomain = recordDomain({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.infra.record': recRepo as IRecordRepo,
-                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
+                'core.infra.record': mockRecRepo as IRecordRepo,
+                'core.infra.form': formRepo as IFormRepo,
                 'core.domain.record.helpers.createRecord': createRecordHelper({
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.infra.record': recRepo as IRecordRepo
+                    'core.infra.record': mockRecRepo as IRecordRepo
                 }),
                 'core.utils': mockUtils as IUtils
             });
+            jest.spyOn(recDomain, 'activateNewRecord');
 
             const createdRecord = await recDomain.createRecord({
                 library: 'test',
@@ -425,9 +427,9 @@ describe('RecordDomain', () => {
                 ctx
             });
 
-            expect(recRepo.createRecord).toHaveBeenCalled();
-            expect(mockValueDomain.runActionsList).toHaveBeenCalled();
+            expect(mockRecRepo.createRecord).toHaveBeenCalled();
             expect(mockValueDomain.saveValueBatch).toHaveBeenCalled();
+            expect(recDomain.activateNewRecord).toHaveBeenCalled();
             expect(createdRecord.valuesErrors).toBe(null);
         });
 
@@ -439,7 +441,22 @@ describe('RecordDomain', () => {
                 modified_at: 1519303348
             };
 
-            const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
+            const mockRecRepo: Mockify<IRecordRepo> = {
+                createRecord: global.__mockPromise(createdRecordData),
+                deleteRecord: global.__mockPromise(createdRecordData),
+                find: global.__mockPromise({
+                    totalCount: 1,
+                    list: [createdRecordData]
+                })
+            };
+
+            const mockValueRepo: Mockify<IValueRepo> = {
+                deleteAllValuesByRecord: global.__mockPromise()
+            };
+
+            const mockTreeRepo: Mockify<ITreeRepo> = {
+                getTrees: global.__mockPromise({list: []})
+            };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
                 getLibraryFullTextAttributes: global.__mockPromise([]),
@@ -450,65 +467,42 @@ describe('RecordDomain', () => {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
-            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
-                getAttributePermission: global.__mockPromise(true)
+            const mockRecordPermissionDomain: Mockify<IRecordPermissionDomain> = {
+                getRecordPermission: global.__mockPromise(true)
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                saveValueBatch: global.__mockPromise(),
-                runActionsList: jest
-                    .fn()
-                    .mockRejectedValueOnce(
-                        new ValidationError(
-                            {some_attribute: 'invalid value', attribute: 'some_attribute'},
-                            'mock error',
-                            false,
-                            {
-                                attribute: 'some_attribute',
-                                values: [
-                                    {
-                                        payload: 'some_value'
-                                    }
-                                ]
-                            }
-                        )
-                    )
-                    .mockRejectedValueOnce(
-                        new ValidationError(
-                            {other_attribute: 'invalid value', attribute: 'other_attribute'},
-                            'mock error',
-                            false,
-                            {
-                                attribute: 'other_attribute',
-                                values: [
-                                    {
-                                        payload: 'some other value'
-                                    }
-                                ]
-                            }
-                        )
-                    )
+                saveValueBatch: global.__mockPromise({errors: [{message: 'bad values'}]})
             };
 
             const recDomain = recordDomain({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
-                'core.infra.record': recRepo as IRecordRepo,
+                'core.infra.record': mockRecRepo as IRecordRepo,
                 'core.utils': mockUtils as IUtils,
                 'core.domain.record.helpers.createRecord': createRecordHelper({
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.infra.record': recRepo as IRecordRepo
+                    'core.infra.record': mockRecRepo as IRecordRepo
+                }),
+                'core.domain.record.helpers.deleteRecord': deleteRecordHelper({
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain,
+                    'core.infra.record': mockRecRepo as IRecordRepo,
+                    'core.infra.tree': mockTreeRepo as ITreeRepo,
+                    'core.infra.value': mockValueRepo as IValueRepo
                 })
             });
+            jest.spyOn(recDomain, 'activateNewRecord');
+            jest.spyOn(recDomain, 'purgeRecord');
 
-            // Assert that create record throw an exception with two fields: some_attribute and other_attribute
             const res = await recDomain.createRecord({
                 library: 'test',
                 values: [
@@ -524,104 +518,15 @@ describe('RecordDomain', () => {
                 ctx
             });
 
-            expect(mockValueDomain.runActionsList).toBeCalled();
-            expect(recRepo.createRecord).not.toBeCalled();
-            expect(mockValueDomain.saveValueBatch).not.toBeCalled();
-
-            expect(res.record).toBe(null);
-            expect(res.valuesErrors).toHaveLength(2);
-            expect(res.valuesErrors).toEqual([
-                {
-                    attribute: 'some_attribute',
-                    type: ErrorTypes.VALIDATION_ERROR,
-                    message: 'mock error',
-                    input: 'some_value'
-                },
-                {
-                    attribute: 'other_attribute',
-                    type: ErrorTypes.VALIDATION_ERROR,
-                    message: 'mock error',
-                    input: 'some other value'
-                }
-            ] as ICreateRecordValueError[]);
-        });
-
-        test('Should return errors and not create record when try to add no unique value on unique attribute', async () => {
-            const createdRecordData = {
-                id: '222435651',
-                library: 'test',
-                created_at: 1519303348,
-                modified_at: 1519303348
-            };
-            const mockValidateValue = jest.spyOn(ValidateValue, 'default');
-
-            const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
-
-            const mockAttributeDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise(mockUniqueAttrSimple)
-            };
-
-            const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
-                getLibraryPermission: global.__mockPromise(true)
-            };
-
-            const mockAttrPermissionDomain: Mockify<IAttributePermissionDomain> = {
-                getAttributePermission: global.__mockPromise(true)
-            };
-
-            mockValidateValue.mockResolvedValueOnce({
-                [mockUniqueAttrSimple.id]: 'mock error',
-                attribute: mockUniqueAttrSimple.id
-            });
-
-            const mockValueDomain: Mockify<IValueDomain> = {
-                saveValueBatch: global.__mockPromise(),
-                runActionsList: global.__mockPromise()
-            };
-
-            const recDomain = recordDomain({
-                ...depsBase,
-                config: mockConfig as Config.IConfig,
-                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                'core.domain.value': mockValueDomain as IValueDomain,
-                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.permission.attribute': mockAttrPermissionDomain as IAttributePermissionDomain,
-                'core.infra.record': recRepo as IRecordRepo,
-                'core.utils': mockUtils as IUtils,
-                'core.domain.record.helpers.createRecord': createRecordHelper({
-                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.infra.record': recRepo as IRecordRepo
-                })
-            });
-
-            // Assert that create record throw an exception with two fields: some_attribute and other_attribute
-            const res = await recDomain.createRecord({
-                library: 'test',
-                values: [
-                    {
-                        attribute: mockUniqueAttrSimple.id,
-                        payload: 'some_unique_value'
-                    }
-                ],
-                ctx
-            });
-
-            expect(mockValueDomain.runActionsList).not.toHaveBeenCalled();
-            expect(recRepo.createRecord).not.toHaveBeenCalled();
-            expect(mockValueDomain.saveValueBatch).not.toHaveBeenCalled();
-
-            expect(res.record).toBe(null);
+            expect(mockRecRepo.createRecord).toHaveBeenCalledTimes(1);
+            expect(mockValueDomain.saveValueBatch).toHaveBeenCalledTimes(1);
+            expect(recDomain.activateNewRecord).toHaveBeenCalledTimes(0);
+            expect(recDomain.purgeRecord).toHaveBeenCalledTimes(1);
+            expect(mockRecRepo.deleteRecord).toHaveBeenCalledTimes(1);
+            expect(res.record).toBe(createdRecordData);
             expect(res.valuesErrors).toHaveLength(1);
             expect(res.valuesErrors).toEqual([
-                {
-                    type: ErrorTypes.VALIDATION_ERROR,
-                    attribute: mockUniqueAttrSimple.id,
-                    message: 'mock error',
-                    input: 'some_unique_value'
-                }
+                {attribute: null, message: 'Invalid request', type: ErrorTypes.VALIDATION_ERROR}
             ] as ICreateRecordValueError[]);
         });
     });

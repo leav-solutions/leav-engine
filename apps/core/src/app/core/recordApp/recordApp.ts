@@ -332,10 +332,16 @@ export default function ({
                     },
                     Mutation: {
                         async createEmptyRecord(_, {library}: ICreateRecordParams, ctx: IQueryInfos) {
-                            return recordDomain.createEmptyRecord({
+                            const record = await recordDomain.createEmptyRecord({
                                 library,
                                 ctx
                             });
+
+                            return {
+                                record,
+                                // TODO : remove valuesErrors after all fronts are updated
+                                valuesErrors: null
+                            };
                         },
                         async activateNewRecord(_, {library, recordId, formId}, ctx: IQueryInfos) {
                             return recordDomain.activateNewRecord({
@@ -345,7 +351,6 @@ export default function ({
                                 ctx
                             });
                         },
-                        // TODO : remove after creation process completed
                         async createRecord(_, {library, data}: ICreateRecordParams, ctx: IQueryInfos) {
                             const valuesVersion = data?.version ? convertVersionFromGqlFormat(data.version) : null;
                             const valuesToSave = data
@@ -360,7 +365,6 @@ export default function ({
                             return recordDomain.createRecord({
                                 library,
                                 values: valuesToSave,
-                                verifyRequiredAttributes: true,
                                 ctx
                             });
                         },

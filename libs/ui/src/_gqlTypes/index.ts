@@ -1262,7 +1262,7 @@ export type CreateEmptyRecordMutationVariables = Exact<{
 }>;
 
 
-export type CreateEmptyRecordMutation = { createEmptyRecord: { record?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, valuesErrors?: Array<{ type: string, attribute: string, input?: string | null, message: string }> | null } };
+export type CreateEmptyRecordMutation = { createEmptyRecord: { record?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } };
 
 export type CreateRecordMutationVariables = Exact<{
   library: Scalars['ID'];
@@ -3599,12 +3599,6 @@ export const CreateEmptyRecordDocument = gql`
   createEmptyRecord(library: $library) {
     record {
       ...RecordIdentity
-    }
-    valuesErrors {
-      type
-      attribute
-      input
-      message
     }
   }
 }

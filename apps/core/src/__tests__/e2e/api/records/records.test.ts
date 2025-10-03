@@ -56,10 +56,10 @@ describe('Records', () => {
 
             // Create and activate a record for later use
             const resultCreation = await makeGraphQlCall(`mutation {
-                c1: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c1: createEmptyRecord(library: "${testLibName}") { record { id } }
             }`);
             const resCreationLink = await makeGraphQlCall(`mutation {
-                linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record {id} },
+                linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record { id } },
             }`);
             const recordId = resultCreation.data.data.c1.record.id;
             await makeGraphQlCall(
@@ -112,7 +112,7 @@ describe('Records', () => {
         test('Create Empty records', async () => {
             // Create an empty record and check its initial state (not active, has permissions)
             const res = await makeGraphQlCall(`mutation {
-                c1: createEmptyRecord(library: "${testLibName}") { record {id permissions {edit_record} active } }
+                c1: createEmptyRecord(library: "${testLibName}") { record { id permissions {edit_record} active } }
             }`);
 
             expect(res.status).toBe(200);
@@ -126,7 +126,7 @@ describe('Records', () => {
         test('Should NOT activate a new record when required fields are missing', async () => {
             // Create an empty record without required fields
             const resCreation = await makeGraphQlCall(`mutation {
-                recordCreated: createEmptyRecord(library: "${testLibName}") { record {id} },
+                recordCreated: createEmptyRecord(library: "${testLibName}") { record { id } },
             }`);
             expect(resCreation.status).toBe(200);
 
@@ -156,13 +156,13 @@ describe('Records', () => {
         test('Should activate a new record when all required fields are filled', async () => {
             // Create an empty record
             const resCreation = await makeGraphQlCall(`mutation {
-                recordCreated: createEmptyRecord(library: "${testLibName}") { record {id} },
+                recordCreated: createEmptyRecord(library: "${testLibName}") { record { id } },
                 }`);
             expect(resCreation.status).toBe(200);
 
             // Create a linked record for the required link attribute
             const resCreationLink = await makeGraphQlCall(`mutation {
-                linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record {id} },
+                linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record { id } },
             }`);
             expect(resCreationLink.status).toBe(200);
 
@@ -207,7 +207,7 @@ describe('Records', () => {
             expect(resActivation.data.data.recordActivated.record).toEqual({
                 id: resCreation.data.data.recordCreated.record.id
             });
-            expect(resActivation.data.data.recordActivated.valuesErrors).toEqual([]);
+            expect(resActivation.data.data.recordActivated.valuesErrors).toEqual(null);
         });
 
         describe('Dependent form with required attributes', () => {
@@ -269,7 +269,7 @@ describe('Records', () => {
             test('Should activate a new record even if a required field is only in a dependent form (so not filled)', async () => {
                 // Create a record without filling the dependent attribute
                 const resCreation = await makeGraphQlCall(`mutation {
-                    recordCreated: createEmptyRecord(library: "${testLibName}") { record {id} }
+                    recordCreated: createEmptyRecord(library: "${testLibName}") { record { id } }
                 }`);
                 expect(resCreation.status).toBe(200);
 
@@ -290,14 +290,14 @@ describe('Records', () => {
                 expect(resActivation.data.data.recordActivated.record).toEqual({
                     id: resCreation.data.data.recordCreated.record.id
                 });
-                expect(resActivation.data.data.recordActivated.valuesErrors).toEqual([]);
+                expect(resActivation.data.data.recordActivated.valuesErrors).toEqual(null);
             });
         });
 
         test('should purge the new record when cancel creation', async () => {
             // Create a new record
             const resCreation = await makeGraphQlCall(`mutation {
-                c1: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c1: createEmptyRecord(library: "${testLibName}") { record { id } }
             }`);
             expect(resCreation.status).toBe(200);
 
@@ -369,10 +369,10 @@ describe('Records', () => {
 
             // Create and activate a record for later use
             const resultCreation = await makeGraphQlCall(`mutation {
-                c1: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c1: createEmptyRecord(library: "${testLibName}") { record { id } }
             }`);
             const resCreationLink = await makeGraphQlCall(`mutation {
-                linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record {id} },
+                linkRecordCreated: createEmptyRecord(library: "${testLibLink}") { record { id } },
             }`);
             recordId = resultCreation.data.data.c1.record.id;
             await makeGraphQlCall(
@@ -424,16 +424,16 @@ describe('Records', () => {
         });
         test('Create and activate records', async () => {
             const res = await makeGraphQlCall(`mutation {
-                c0: createEmptyRecord(library: "${testLibName}") { record {id permissions {edit_record} active } }
-                c1: createEmptyRecord(library: "${testLibName}") { record {id} }
-                c2: createEmptyRecord(library: "${testLibName}") { record {id} }
-                c3: createEmptyRecord(library: "${testLibName}") { record {id} }
-                c4: createEmptyRecord(library: "${testLibName}") { record {id} }
-                c5: createEmptyRecord(library: "${testLibName}") { record {id} }
-                c6: createEmptyRecord(library: "${testLibName}") { record {id} }
-                c7: createEmptyRecord(library: "${testLibName}") { record {id} }
-                c8: createEmptyRecord(library: "${testLibName}") { record {id} }
-                c9: createEmptyRecord(library: "${testLibName}") { record {id} }
+                c0: createEmptyRecord(library: "${testLibName}") { record { id permissions {edit_record} active } }
+                c1: createEmptyRecord(library: "${testLibName}") { record { id } }
+                c2: createEmptyRecord(library: "${testLibName}") { record { id } }
+                c3: createEmptyRecord(library: "${testLibName}") { record { id } }
+                c4: createEmptyRecord(library: "${testLibName}") { record { id } }
+                c5: createEmptyRecord(library: "${testLibName}") { record { id } }
+                c6: createEmptyRecord(library: "${testLibName}") { record { id } }
+                c7: createEmptyRecord(library: "${testLibName}") { record { id } }
+                c8: createEmptyRecord(library: "${testLibName}") { record { id } }
+                c9: createEmptyRecord(library: "${testLibName}") { record { id } }
             }`);
             expect(res.status).toBe(200);
 
@@ -450,7 +450,7 @@ describe('Records', () => {
                         }
                     }`);
                     expect(activateRes.status).toBe(200);
-                    expect(activateRes.data.data[`a${idx}`].valuesErrors).toEqual([]);
+                    expect(activateRes.data.data[`a${idx}`].valuesErrors).toEqual(null);
                 })
             );
         });

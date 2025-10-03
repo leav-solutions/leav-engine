@@ -3,11 +3,5 @@ mutation createEmptyRecord($library: ID!) {
         record {
             ...RecordIdentity
         }
-        valuesErrors {
-            type
-            attribute
-            input
-            message
-        }
     }
 }

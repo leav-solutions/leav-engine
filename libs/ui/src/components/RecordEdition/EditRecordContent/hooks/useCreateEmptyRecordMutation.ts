@@ -16,17 +16,10 @@ export default function useExecuteCreateEmptyRecordMutation(): ICreateRecordHook
             const creationResult = await executeCreateEmptyRecord({
                 variables: {library: libraryId}
             });
-            if (creationResult.data.createEmptyRecord.valuesErrors?.length > 0) {
-                return {
-                    status: APICallStatus.ERROR,
-                    errors: creationResult.data.createEmptyRecord.valuesErrors
-                };
-            } else {
-                return {
-                    status: APICallStatus.SUCCESS,
-                    record: creationResult.data.createEmptyRecord.record.whoAmI
-                };
-            }
+            return {
+                status: APICallStatus.SUCCESS,
+                record: creationResult.data.createEmptyRecord.record.whoAmI
+            };
         }
     };
 }

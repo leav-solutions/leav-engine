@@ -1,30 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ErrorTypes, EventAction, localizedTranslation} from '@leav/utils';
+import {ErrorTypes, EventAction, localizedTranslation} from '@leav/utils';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {type GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {type IValidateHelper} from 'domain/helpers/validate';
 import {type ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {type ISaveBatchValueError, type IValueDomain} from 'domain/value/valueDomain';
+import {type IValueDomain} from 'domain/value/valueDomain';
 import {type i18n} from 'i18next';
 import {type IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {type ILibraryRepo} from 'infra/library/libraryRepo';
 import {type IRecordRepo} from 'infra/record/recordRepo';
 import {type ITreeRepo} from 'infra/tree/treeRepo';
-import {type IValueRepo} from 'infra/value/valueRepo';
 import {type IUtils} from 'utils/utils';
 import type * as Config from '_types/config';
 import {type IListWithCursor} from '_types/list';
 import {type IPreview} from '_types/preview';
-import {
-    type ISaveTreeValue,
-    type ISaveValue,
-    type IStandardValue,
-    type ITreeValue,
-    type IValue,
-    type IValuesOptions
-} from '_types/value';
+import {type ISaveValue, type IStandardValue, type ITreeValue, type IValue, type IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
@@ -35,7 +27,6 @@ import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/at
 import {Errors} from '../../_types/errors';
 import {type ILibrary, LibraryBehavior} from '../../_types/library';
 import {
-    AttributePermissionsActions,
     LibraryPermissionsActions,
     RecordAttributePermissionsActions,
     RecordPermissionsActions
@@ -61,7 +52,6 @@ import {isRecordWithId, type SendRecordUpdateEventHelper} from './helpers/sendRe
 import {type ICreateRecordResult, type ICreateRecordValueError, type IFindRecordParams} from './_types';
 import {type IFormRepo} from 'infra/form/formRepo';
 import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
-import validateValue from '../value/helpers/validateValue';
 import {type IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 import getAccessPermissionFilters from './helpers/getAccessPermissionFilters';
 import {type IPermissionRepo, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
@@ -126,7 +116,7 @@ export interface IRecordDomain {
      * Create empty record
      * Used when create a record, set active to false and inCreation to true
      */
-    createEmptyRecord(params: {library: string; ctx: IQueryInfos}): Promise<ICreateRecordResult>;
+    createEmptyRecord(params: {library: string; ctx: IQueryInfos}): Promise<IRecord>;
 
     activateNewRecord(params: {
         library: string;
@@ -135,12 +125,7 @@ export interface IRecordDomain {
         ctx: IQueryInfos;
     }): Promise<ICreateRecordResult>;
 
-    createRecord(params: {
-        library: string;
-        values?: ISaveValue[];
-        verifyRequiredAttributes?: boolean;
-        ctx: IQueryInfos;
-    }): Promise<ICreateRecordResult>;
+    createRecord(params: {library: string; values?: ISaveValue[]; ctx: IQueryInfos}): Promise<ICreateRecordResult>;
 
     /**
      * Update record
@@ -223,7 +208,6 @@ export interface IRecordDomainDeps {
     'core.domain.value': IValueDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
     'core.domain.permission.library': ILibraryPermissionDomain;
-    'core.domain.permission.attribute': IAttributePermissionDomain;
     'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
@@ -234,7 +218,6 @@ export interface IRecordDomainDeps {
     'core.infra.library': ILibraryRepo;
     'core.infra.tree': ITreeRepo;
     'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
-    'core.infra.value': IValueRepo;
     'core.infra.form': IFormRepo;
     'core.infra.permission': IPermissionRepo;
     'core.domain.eventsManager': IEventsManagerDomain;
@@ -251,7 +234,6 @@ export default function ({
     'core.domain.value': valueDomain,
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.permission.library': libraryPermissionDomain,
-    'core.domain.permission.attribute': attrPermissionDomain,
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
     'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
@@ -262,7 +244,6 @@ export default function ({
     'core.infra.library': libraryRepo,
     'core.infra.tree': treeRepo,
     'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
-    'core.infra.value': valueRepo,
     'core.infra.form': formRepo,
     'core.infra.permission': permissionRepo,
     'core.domain.eventsManager': eventsManager,
@@ -845,17 +826,12 @@ export default function ({
     };
 
     const ret: IRecordDomain = {
-        async createEmptyRecord({library, ctx}) {
-            const {record, valuesErrors} = await createRecordHelper({
+        createEmptyRecord({library, ctx}) {
+            return createRecordHelper({
                 library,
                 ctx,
                 active: false
             });
-
-            return {
-                record,
-                valuesErrors: valuesErrors ?? null
-            };
         },
         async activateNewRecord({library, recordId, formId, ctx}) {
             const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
@@ -930,11 +906,11 @@ export default function ({
             if (!recordActivateds?.length) {
                 const valuesErrors: ICreateRecordValueError[] = [
                     {
-                        type: Errors.RECORD_ACTIVATION_FAILED,
+                        type: ErrorTypes.VALIDATION_ERROR,
                         attribute: null,
                         message: utils.translateError(
                             {
-                                msg: Errors.RECORD_ACTIVATION_FAILED,
+                                msg: ErrorTypes.VALIDATION_ERROR,
                                 vars: {recordId}
                             },
                             ctx.lang
@@ -959,209 +935,45 @@ export default function ({
 
             return {
                 record: recordActivateds[0],
-                valuesErrors: []
+                valuesErrors: null
             };
         },
-        async createRecord({library, values, ctx, verifyRequiredAttributes}) {
-            const {record, valuesErrors} = await createRecordHelper({
-                library,
-                preCreateCallback: async () => {
-                    const valuesByAttribute = (values ??= []).reduce<Record<string, ISaveValue[]>>((acc, value) => {
-                        if (!acc[value.attribute]) {
-                            acc[value.attribute] = [];
-                        }
-                        acc[value.attribute].push(value);
-                        return acc;
-                    }, {});
+        async createRecord({library, values, ctx}) {
+            let record: IRecord;
+            try {
+                const createdRecord = await this.createEmptyRecord({library, ctx});
+                record = createdRecord;
 
-                    if (verifyRequiredAttributes) {
-                        const creationForm = (
-                            await formRepo.getForms({
-                                params: {filters: {id: 'creation', library}, strictFilters: true, withCount: false},
-                                ctx
-                            })
-                        ).list[0];
-
-                        const requiredAttributes = (
-                            creationForm
-                                ? await attributeDomain.getFormAttributes({libraryId: library, formId: 'creation', ctx})
-                                : await attributeDomain.getLibraryAttributes(library, ctx)
-                        ).filter(attribute => attribute.required);
-
-                        const missingAttributes = requiredAttributes.filter(
-                            attribute => !Object.keys(valuesByAttribute).includes(attribute.id)
-                        );
-
-                        const attributeLabel = label =>
-                            typeof label === 'string' ? label : localizedTranslation(label, [ctx.lang]);
-
-                        if (missingAttributes.length) {
-                            return missingAttributes.map(
-                                (attribute): ICreateRecordValueError => ({
-                                    type: Errors.REQUIRED_ATTRIBUTE,
-                                    attribute: attribute.id,
-                                    message: utils.translateError(
-                                        {
-                                            msg: Errors.REQUIRED_ATTRIBUTE,
-                                            vars: {attribute: attributeLabel(attribute.label)}
-                                        },
-                                        ctx.lang
-                                    )
-                                })
-                            );
-                        }
-                    }
-
-                    if (Object.keys(valuesByAttribute).length) {
-                        // First, check if values are ok. If not, we won't create the record at all
-                        const res = await Promise.allSettled(
-                            Object.entries(valuesByAttribute).map(async ([attributeId, attributeValues]) => {
-                                const attributeProperties = await attributeDomain.getAttributeProperties({
-                                    id: attributeId,
-                                    ctx
-                                });
-
-                                const canEditAttr = await attrPermissionDomain.getAttributePermission({
-                                    action: AttributePermissionsActions.EDIT_VALUE,
-                                    attributeId,
-                                    ctx
-                                });
-
-                                if (!canEditAttr) {
-                                    throw new PermissionError<IValue>(AttributePermissionsActions.EDIT_VALUE, {
-                                        attribute: attributeId,
-                                        [attributeId]: 'Permission denied'
-                                    });
-                                }
-
-                                if (utils.isTreeAttribute(attributeProperties)) {
-                                    await Promise.all(
-                                        (attributeValues as ISaveTreeValue[]).map(async treeValue => {
-                                            const treeValuePermission =
-                                                await recordPermissionDomain.evaluateTreeValueRecordPermission({
-                                                    action: RecordPermissionsActions.CREATE_RECORD,
-                                                    userId: ctx.userId,
-                                                    libraryId: library,
-                                                    attributeId,
-                                                    nodeId: treeValue.payload,
-                                                    ctx
-                                                });
-
-                                            if (!treeValuePermission) {
-                                                throw new PermissionError<ISaveTreeValue>(
-                                                    RecordPermissionsActions.CREATE_RECORD,
-                                                    {
-                                                        attribute: attributeId,
-                                                        [attributeId]: `Record creation permission denied with nodeId ${treeValue.payload}`
-                                                    }
-                                                );
-                                            }
-                                        })
-                                    );
-                                }
-
-                                const valueChecksParams = {
-                                    attributeProps: attributeProperties,
-                                    library,
-                                    keepEmpty: false,
-                                    infos: ctx
-                                };
-
-                                const [validationErrors] = await Promise.all(
-                                    attributeValues.map(value =>
-                                        validateValue({
-                                            ...valueChecksParams,
-                                            value,
-                                            deps: {
-                                                attributeDomain,
-                                                recordRepo,
-                                                valueRepo,
-                                                treeRepo
-                                            },
-                                            ctx
-                                        })
-                                    )
-                                );
-
-                                if (Object.keys(validationErrors).length > 0) {
-                                    throw new ValidationError<IValue>(validationErrors, 'Validation error', false, {
-                                        attribute: attributeProperties.id,
-                                        values: attributeValues
-                                    });
-                                }
-
-                                return valueDomain.runActionsList({
-                                    listName: ActionsListEvents.SAVE_VALUE,
-                                    values: attributeValues,
-                                    attribute: attributeProperties,
-                                    library,
-                                    ctx
-                                });
-                            })
-                        );
-
-                        const errors = res
-                            .filter(r => r.status === 'rejected')
-                            .map((rejection: PromiseRejectedResult): ICreateRecordValueError => {
-                                const errorAttribute =
-                                    rejection.reason.fields?.attribute ||
-                                    // coming from attributeDomain.getAttributeProperties
-                                    rejection.reason.fields?.id?.vars?.attribute;
-                                const errorReason =
-                                    rejection.reason.fields?.[errorAttribute] ||
-                                    // coming from attributeDomain.getAttributeProperties
-                                    rejection.reason.fields?.id;
-
-                                return {
-                                    type: rejection.reason.type,
-                                    attribute: errorAttribute,
-                                    input: rejection.reason.context?.values[0].payload,
-                                    message: utils.translateError(errorReason, ctx.lang)
-                                };
-                            });
-
-                        return errors;
-                    }
-                    return [];
-                },
-                ctx,
-                active: true
-            });
-
-            if (valuesErrors?.length) {
-                return {
-                    record: null,
-                    valuesErrors
-                };
-            }
-            if (values?.length) {
                 // Make sure we don't have any id_value hanging on as we're on creation here
-                const cleanValues = values.map(v => ({...v, id_value: null}));
+                const cleanValues = (values ?? []).map(v => ({...v, id_value: null}));
 
                 const {errors} = await valueDomain.saveValueBatch({
                     library,
                     recordId: record.id,
                     values: cleanValues,
-                    skipPermission: true,
                     ctx
                 });
+                if (errors?.length) {
+                    throw new ValidationError({
+                        message: errors.map(e => e.message).join(', ')
+                    });
+                }
+                return await this.activateNewRecord({library, recordId: record.id, ctx});
+            } catch (error) {
+                logger.error(`Error in createRecord: ${error.stack}`);
+                const purgedRecord =
+                    record && record.id ? await this.purgeRecord({libraryId: library, recordId: record.id, ctx}) : null;
                 return {
-                    record,
-                    valuesErrors:
-                        errors?.map(
-                            (e: ISaveBatchValueError): ICreateRecordValueError => ({
-                                type: e.type as ErrorTypes | Errors,
-                                attribute: e.attribute,
-                                message: e.message,
-                                input: e.input
-                            })
-                        ) || null
+                    record: purgedRecord ?? null,
+                    valuesErrors: [
+                        {
+                            type: error?.type ?? ErrorTypes.INTERNAL_ERROR,
+                            attribute: null,
+                            message: error && typeof error.message === 'string' ? error.message : String(error)
+                        }
+                    ]
                 };
             }
-            return {
-                record,
-                valuesErrors: null
-            };
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
             const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({
@@ -1603,7 +1415,7 @@ export default function ({
                 },
                 ctx
             });
-            if (!record.list.length) {
+            if (!record?.list?.length) {
                 logger.warn(
                     `Trying to purge record ${recordId} from library ${libraryId} but it doesn't exist or is active`
                 );

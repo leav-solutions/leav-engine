@@ -8,22 +8,18 @@ import {type IRecordRepo} from 'infra/record/recordRepo';
 import moment from 'moment';
 import {LibraryPermissionsActions} from '../../../_types/permissions';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {CORE_IN_CREATION_BY} from '../../../_types/record';
+import {CORE_IN_CREATION_BY, type IRecord} from '../../../_types/record';
 import PermissionError from '../../../errors/PermissionError';
-import {type ICreateRecordResult, type ICreateRecordValueError} from '../_types';
+import {type ICreateRecordValueError} from '../_types';
 
 export type IPreCreateRecordCallback = () => Promise<ICreateRecordValueError[]>;
 
 export type CreateRecordHelper = (params: {
     library: string;
-    /**
-     * Can be use to validate potential values to post create insert to record
-     */
-    preCreateCallback?: IPreCreateRecordCallback;
     ctx: IQueryInfos;
     // TODO : remove after creation process completed
     active?: boolean;
-}) => Promise<ICreateRecordResult>;
+}) => Promise<IRecord>;
 
 interface IDeps {
     'core.domain.eventsManager': IEventsManagerDomain;
@@ -36,7 +32,7 @@ export default function ({
     'core.domain.permission.library': libraryPermissionDomain,
     'core.infra.record': recordRepo
 }: IDeps): CreateRecordHelper {
-    return async ({library, preCreateCallback, active, ctx}) => {
+    return async ({library, active, ctx}) => {
         const recordData = {
             created_at: moment().unix(),
             created_by: String(ctx.userId),
@@ -57,14 +53,6 @@ export default function ({
             throw new PermissionError(LibraryPermissionsActions.CREATE_RECORD);
         }
 
-        const valuesErrors = await preCreateCallback?.();
-        if (valuesErrors?.length) {
-            return {
-                record: null,
-                valuesErrors
-            };
-        }
-
         const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
 
         // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
@@ -83,9 +71,6 @@ export default function ({
             ctx
         );
 
-        return {
-            record: newRecord,
-            valuesErrors: null
-        };
+        return newRecord;
     };
 }

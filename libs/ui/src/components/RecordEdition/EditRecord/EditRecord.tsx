@@ -216,7 +216,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             }
         });
         const errors = activateNewRecordResult?.data?.activateNewRecord.valuesErrors;
-        if (errors?.length === 0) {
+        if (errors == null || errors?.length === 0) {
             if (onCreate) {
                 onCreate(activateNewRecordResult?.data?.activateNewRecord?.record?.whoAmI);
             }

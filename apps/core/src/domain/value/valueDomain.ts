@@ -361,7 +361,7 @@ const valueDomain = function ({
             return ifLibraryJoinLinkAttribute(
                 attributeProps,
                 async (joinLibId: string, joinAttributeProps: IAttribute) => {
-                    const {record: joinRecord} = await createRecordHelper({
+                    const joinRecord = await createRecordHelper({
                         library: joinLibId,
                         ctx,
                         active: true
