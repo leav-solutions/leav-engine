@@ -4,7 +4,12 @@
         "js"
     ],
     "transform": {
-        "\\.(ts|tsx)$": "ts-jest"
+        "\\.(ts|tsx)$": [
+            "ts-jest",
+            {
+                "isolatedModules": true
+            }
+        ]
     },
     "testRegex": "src\/__tests__\/e2e\/.*(.test.ts)$",
     "roots":  ["<rootDir>/src/__tests__/e2e"],

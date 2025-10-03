@@ -5,8 +5,8 @@
     "main": "dist/index.js",
     "scripts": {
         "start": "node .",
-        "start:dev": "NODE_ENV=development ts-node --transpileOnly  src/index.ts",
-        "test:e2e": "NODE_ENV=test jest -c jest-e2e.config.json --forceExit --detectOpenHandles",
+        "start:dev": "NODE_ENV=development tsx src/index.ts",
+        "test:e2e": "NODE_ENV=test NODE_OPTIONS='--import tsx' jest -c jest-e2e.config.json --forceExit --detectOpenHandles",
         "test": "NODE_ENV=test jest -c jest-unit.config.json",
         "test:ci": "NODE_ENV=test jest -c jest-unit.config.json --maxWorkers=2",
         "test:commit": "NODE_ENV=test jest -c jest-unit.config.json --maxWorkers=50% --onlyChanged ",
@@ -25,10 +25,9 @@
         "jest-jasmine2": "29.0.3",
         "prettier": "3.3.3",
         "ts-jest": "29.0.1",
-        "ts-node": "10.9.1",
-        "ts-node-dev": "2.0.0",
         "tslint": "6.1.0",
         "tslint-eslint-rules": "5.4.0",
+        "tsx": "4.20.5",
         "typescript": "5.5.3"
     },
     "dependencies": {

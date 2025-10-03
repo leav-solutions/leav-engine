@@ -6,6 +6,11 @@
     "composite": true,
     "noImplicitReturns": true
   },
+  "references": [
+      {
+          "path": "../logger"
+      }
+  ],
   "include": ["./src"],
   "exclude": ["**/*.spec.ts"]
 }

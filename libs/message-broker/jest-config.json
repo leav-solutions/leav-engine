@@ -4,7 +4,15 @@
         "js"
     ],
     "transform": {
-        "\\.(ts|tsx)$": "ts-jest"
+        "\\.(ts|tsx)$": [
+            "ts-jest",
+            {
+                "isolatedModules": true
+            }
+        ]
+    },
+    "moduleNameMapper": {
+        "^@leav/(.*)$": "<rootDir>/../$1/src"
     },
     "testRegex": ".spec.ts$"
 }

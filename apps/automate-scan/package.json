@@ -6,15 +6,15 @@
     "scripts": {
         "start": "node .",
         "start:watch": "npm run start:dev",
-        "start:dev": "ts-node-dev --transpile-only --respawn ./src ",
-        "start:watch:test": "NODE_ENV=test ts-node-dev --transpile-only --respawn src/",
+        "start:dev": "tsx watch --clear-screen=false ./src ",
+        "start:watch:test": "NODE_ENV=test tsx watch --clear-screen=false src/",
         "dev": "npm run start:watch",
         "build": "tsc -b tsconfig.build.json",
         "test": "jest -c jest-unit-config.json",
         "test:ci": "jest -c jest-unit-config.json --maxWorkers=2",
         "test:commit": "jest -c jest-unit-config.json --maxWorkers=50% --onlyChanged ",
         "test:watch": "jest -c jest-unit-config.json --watch",
-        "test:integration": "NODE_ENV=test-integration jest -c jest-integration-config.json",
+        "test:integration": "NODE_ENV=test-integration NODE_OPTIONS='--import tsx' jest -c jest-integration-config.json",
         "lint": "tslint --fix -p .",
         "prettier": "prettier --write 'src/**/*.ts'",
         "tscheck": "tsc --noEmit -p .",
@@ -36,7 +36,7 @@
         "nodemon": "1.19.4",
         "prettier": "3.3.3",
         "ts-jest": "29.0.1",
-        "ts-node-dev": "2.0.0",
+        "tsx": "4.20.5",
         "typescript": "5.5.3"
     },
     "dependencies": {

@@ -5,7 +5,11 @@
     "dist"
   ],
   "description": "LEAV Engine shared utils and types to use across projects",
-  "main": "dist/esm/index",
+  "main": "src/index",
+  "publishConfig": {
+    "main": "./dist/cjs/index",
+    "module": "./dist/esm/index"
+  },
   "scripts": {
     "prepublishOnly": "npm run build",
     "build": "tsc --project tsconfig.esm.json && tsc --project tsconfig.json",
