@@ -24,20 +24,21 @@ License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
         window.__bugsnag_release_stage__ = `{{BUGSNAG_RELEASE_STAGE}}`;
     </script>
     <script>
-      if (!window.location.hostname.includes('localhost')) {
+      var matomoUrl = `{{MATOMO_URL}}`;
+      var matomoSiteId = `{{MATOMO_SITE_ID}}`;
+      if (matomoUrl && matomoSiteId) {
           // Code provided by Matomo
           var _paq = (window._paq = window._paq || []);
           _paq.push(['trackPageView']);
           _paq.push(['enableLinkTracking']);
           (function () {
-              var u = '//analytics.aristid.com/';
-              _paq.push(['setTrackerUrl', u + 'matomo.php']);
-              _paq.push(['setSiteId', '16']);
+              _paq.push(['setTrackerUrl', matomoUrl + 'matomo.php']);
+              _paq.push(['setSiteId', matomoSiteId]);
               var d = document,
                   g = d.createElement('script'),
                   s = d.getElementsByTagName('script')[0];
               g.async = true;
-              g.src = u + 'matomo.js';
+              g.src = matomoUrl + 'matomo.js';
               s.parentNode.insertBefore(g, s);
           })();
       }

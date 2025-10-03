@@ -85,6 +85,11 @@ module.exports = {
         appType: process.env.BUGSNAG_APP_TYPE || 'core',
         releaseStage: process.env.BUGSNAG_RELEASE_STAGE || 'production'
     },
+    matomo: {
+        enable: envToBool(process.env.MATOMO_ENABLE, false),
+        url: process.env.MATOMO_URL || '//analytics.aristid.com/',
+        siteId: process.env.MATOMO_SITE_ID || ''
+    },
     lang: {
         available: process.env.LANG_AVAILABLE || ['fr', 'en'],
         default: process.env.LANG_DEFAULT || 'en'

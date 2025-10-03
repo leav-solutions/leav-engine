@@ -36,6 +36,7 @@ export interface IConfig {
     elasticSearch: IElasticSearchConfig;
     pluginsPath: string[];
     bugsnag: IBugsnag;
+    matomo: IMatomo;
 }
 
 export enum CoreMode {
@@ -263,4 +264,10 @@ export interface IBugsnag {
     appVersion?: string;
     appType?: string;
     releaseStage?: string;
+}
+
+export interface IMatomo {
+    enable: boolean;
+    url?: string;
+    siteId?: string;
 }

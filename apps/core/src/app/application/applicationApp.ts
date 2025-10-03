@@ -422,6 +422,14 @@ export default function ({
                                 .replaceAll(
                                     /{{BUGSNAG_RELEASE_STAGE}}/g,
                                     (config.bugsnag.enable && config.bugsnag.releaseStage) || ''
+                                )
+                                .replaceAll(
+                                    /{{MATOMO_URL}}/g,
+                                    (config.matomo.enable && config.matomo.url) || ''
+                                )
+                                .replaceAll(
+                                    /{{MATOMO_SITE_ID}}/g,
+                                    (config.matomo.enable && config.matomo.siteId) || ''
                                 );
                             res.send(modifiedIndex);
                             return next(); // needed to update consultation history

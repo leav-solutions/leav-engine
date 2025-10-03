@@ -36,7 +36,9 @@ export const devIndexHtmlReplaceVarsPlugin = () => {
                 .replace(/{{GLOBAL_BASE_URL}}/g, process.env.GLOBAL_BASE_URL || '')
                 .replace(/{{BUGSNAG_API_KEY}}/g, process.env.BUGSNAG_API_KEY || '')
                 .replace(/{{BUGSNAG_APP_VERSION}}/g, process.env.BUGSNAG_APP_VERSION || '')
-                .replace(/{{BUGSNAG_RELEASE_STAGE}}/g, process.env.BUGSNAG_RELEASE_STAGE || '');
+                .replace(/{{BUGSNAG_RELEASE_STAGE}}/g, process.env.BUGSNAG_RELEASE_STAGE || '')
+                .replace(/{{MATOMO_URL}}/g, process.env.MATOMO_URL || '')
+                .replace(/{{MATOMO_SITE_ID}}/g, process.env.MATOMO_SITE_ID || '');
         }
     };
 }

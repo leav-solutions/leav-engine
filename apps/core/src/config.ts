@@ -224,6 +224,19 @@ export const validateConfig = (conf: IConfig) => {
                 then: Joi.string().required(),
                 otherwise: Joi.string()
             })
+        }),
+        matomo: Joi.object().keys({
+            enable: Joi.boolean().required(),
+            url: Joi.alternatives().conditional('enable', {
+                is: true,
+                then: Joi.string().required(),
+                otherwise: Joi.string().required().allow('')
+            }),
+            siteId: Joi.alternatives().conditional('enable', {
+                is: true,
+                then: Joi.string().required(),
+                otherwise: Joi.string().required().allow('')
+            })
         })
     });
 
