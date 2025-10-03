@@ -29,7 +29,7 @@ import ValidationError from '../../errors/ValidationError';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {type IDbUtils} from '../../infra/db/dbUtils';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
-import {Errors} from '../../_types/errors';
+import {type ErrorFieldDetail, Errors} from '../../_types/errors';
 import {
     Action,
     type ICacheParams,
@@ -49,6 +49,7 @@ import {type IValue} from '../../_types/value';
 import {type IValidateHelper} from '../helpers/validate';
 import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
 import {type ILogger} from '@leav/logger';
+import {type ICreateRecordValueError} from 'domain/record/_types';
 
 export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
 export const IMPORT_CONFIG_SCHEMA_PATH = path.resolve(__dirname, './import-config-schema.json');
@@ -975,7 +976,23 @@ export default function ({
 
                         // Create the record if it does not exist
                         if (!recordIds.length) {
-                            recordIds = [(await recordDomain.createRecord({library: element.library, ctx})).record.id];
+                            const {record, valuesErrors} = await recordDomain.createRecord({
+                                library: element.library,
+                                ctx
+                            });
+
+                            if (valuesErrors?.length) {
+                                throw new ValidationError(
+                                    valuesErrors.reduce(
+                                        (acc: ErrorFieldDetail<unknown>, valueError: ICreateRecordValueError) => {
+                                            acc[valueError.attribute] = valueError.message;
+                                            return acc;
+                                        },
+                                        {} as ErrorFieldDetail<unknown>
+                                    )
+                                );
+                            }
+                            recordIds = [record.id];
                             action = ImportAction.CREATED;
                         } else {
                             action = ImportAction.UPDATED;

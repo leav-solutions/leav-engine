@@ -52,7 +52,6 @@ import {isRecordWithId, type SendRecordUpdateEventHelper} from './helpers/sendRe
 import {type ICreateRecordResult, type ICreateRecordValueError, type IFindRecordParams} from './_types';
 import {type IFormRepo} from 'infra/form/formRepo';
 import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
-import {type IAttributePermissionDomain} from '../permission/attributePermissionDomain';
 import getAccessPermissionFilters from './helpers/getAccessPermissionFilters';
 import {type IPermissionRepo, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {type IDefaultPermissionHelper} from 'domain/permission/helpers/defaultPermission';
@@ -122,10 +121,16 @@ export interface IRecordDomain {
         library: string;
         recordId: string;
         formId?: string;
+        skipVerifyRequiredAttributes?: boolean;
         ctx: IQueryInfos;
     }): Promise<ICreateRecordResult>;
 
-    createRecord(params: {library: string; values?: ISaveValue[]; ctx: IQueryInfos}): Promise<ICreateRecordResult>;
+    createRecord(params: {
+        library: string;
+        values?: ISaveValue[];
+        verifyRequiredAttributes?: boolean;
+        ctx: IQueryInfos;
+    }): Promise<ICreateRecordResult>;
 
     /**
      * Update record
@@ -833,98 +838,88 @@ export default function ({
                 active: false
             });
         },
-        async activateNewRecord({library, recordId, formId, ctx}) {
+        async activateNewRecord({library, recordId, formId, skipVerifyRequiredAttributes, ctx}) {
             const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
 
-            const creationForm = (
-                await formRepo.getForms({
-                    params: {filters: {id: formId ?? 'creation', library}, strictFilters: true, withCount: false},
-                    ctx
-                })
-            ).list[0];
-
-            const requiredAttributes = (
-                creationForm
-                    ? await attributeDomain.getFormAttributes({
-                          libraryId: library,
-                          formId: formId ?? 'creation',
-                          checkDependency: false,
-                          ctx
-                      })
-                    : libraryAttributes
-            ).filter(attribute => attribute.required);
-
-            const valuesByAttribute: Record<string, IValue[]> = {};
-            await Promise.all(
-                (requiredAttributes ?? []).map(async attr => {
-                    const values = await this.getRecordFieldValue({
-                        library,
-                        record: {id: recordId, library},
-                        attributeId: attr.id ?? '',
+            if (!skipVerifyRequiredAttributes) {
+                const creationForm = (
+                    await formRepo.getForms({
+                        params: {filters: {id: formId ?? 'creation', library}, strictFilters: true, withCount: false},
                         ctx
-                    });
-                    if (values?.length) {
-                        if (!valuesByAttribute[attr.id]) {
-                            valuesByAttribute[attr.id] = [];
+                    })
+                ).list[0];
+
+                const requiredAttributes = (
+                    creationForm
+                        ? await attributeDomain.getFormAttributes({
+                              libraryId: library,
+                              formId: formId ?? 'creation',
+                              checkDependency: false,
+                              ctx
+                          })
+                        : libraryAttributes
+                ).filter(attribute => attribute.required);
+
+                const valuesByAttribute: Record<string, IValue[]> = {};
+                await Promise.all(
+                    (requiredAttributes ?? []).map(async attr => {
+                        const values = await this.getRecordFieldValue({
+                            library,
+                            record: {id: recordId, library},
+                            attributeId: attr.id ?? '',
+                            ctx
+                        });
+                        if (values?.length) {
+                            if (!valuesByAttribute[attr.id]) {
+                                valuesByAttribute[attr.id] = [];
+                            }
+                            valuesByAttribute[attr.id].push(...values);
                         }
-                        valuesByAttribute[attr.id].push(...values);
-                    }
-                })
-            );
-
-            const missingAttributes = requiredAttributes.filter(
-                attribute =>
-                    !Object.keys(valuesByAttribute).includes(attribute.id) || !valuesByAttribute[attribute.id]?.length
-            );
-
-            if (missingAttributes.length) {
-                const valuesErrors = missingAttributes.map(
-                    (attribute): ICreateRecordValueError => ({
-                        type: Errors.REQUIRED_ATTRIBUTE,
-                        attribute: attribute.id,
-                        message: utils.translateError(
-                            {
-                                msg: Errors.REQUIRED_ATTRIBUTE,
-                                vars: {
-                                    attribute:
-                                        typeof attribute.label === 'string'
-                                            ? attribute.label
-                                            : localizedTranslation(attribute.label, [ctx.lang])
-                                }
-                            },
-                            ctx.lang
-                        )
                     })
                 );
-                return {
-                    record: null,
-                    valuesErrors
-                };
-            }
-            const recordActivateds = await this.activateRecordsBatch({libraryId: library, recordsIds: [recordId], ctx});
 
-            if (!recordActivateds?.length) {
-                const valuesErrors: ICreateRecordValueError[] = [
-                    {
-                        type: ErrorTypes.VALIDATION_ERROR,
-                        attribute: null,
-                        message: utils.translateError(
-                            {
-                                msg: ErrorTypes.VALIDATION_ERROR,
-                                vars: {recordId}
-                            },
-                            ctx.lang
-                        )
-                    }
-                ];
-                return {
-                    record: null,
-                    valuesErrors
-                };
+                const missingAttributes = requiredAttributes.filter(
+                    attribute =>
+                        !Object.keys(valuesByAttribute).includes(attribute.id) ||
+                        !valuesByAttribute[attribute.id]?.length
+                );
+
+                if (missingAttributes.length) {
+                    const valuesErrors = missingAttributes.map(
+                        (attribute): ICreateRecordValueError => ({
+                            type: Errors.REQUIRED_ATTRIBUTE,
+                            attribute: attribute.id,
+                            message: utils.translateError(
+                                {
+                                    msg: Errors.REQUIRED_ATTRIBUTE,
+                                    vars: {
+                                        attribute:
+                                            typeof attribute.label === 'string'
+                                                ? attribute.label
+                                                : localizedTranslation(attribute.label, [ctx.lang]) || attribute.id
+                                    }
+                                },
+                                ctx.lang
+                            )
+                        })
+                    );
+                    return {
+                        record: null,
+                        valuesErrors
+                    };
+                }
             }
+
+            await valueDomain.saveValue({
+                library,
+                recordId,
+                attribute: 'active',
+                value: {payload: true},
+                ctx
+            });
 
             // The record is not in creation anymore
-            await recordRepo.updateRecord({
+            const {new: record} = await recordRepo.updateRecord({
                 libraryId: library,
                 recordData: {
                     id: recordId,
@@ -934,37 +929,75 @@ export default function ({
             });
 
             return {
-                record: recordActivateds[0],
+                record,
                 valuesErrors: null
             };
         },
-        async createRecord({library, values, ctx}) {
-            let record: IRecord;
+        async createRecord({library, values, verifyRequiredAttributes, ctx}): Promise<ICreateRecordResult> {
+            let createdRecord: IRecord;
             try {
-                const createdRecord = await this.createEmptyRecord({library, ctx});
-                record = createdRecord;
+                createdRecord = await this.createEmptyRecord({library, ctx});
 
                 // Make sure we don't have any id_value hanging on as we're on creation here
                 const cleanValues = (values ?? []).map(v => ({...v, id_value: null}));
 
                 const {errors} = await valueDomain.saveValueBatch({
                     library,
-                    recordId: record.id,
+                    recordId: createdRecord.id,
                     values: cleanValues,
                     ctx
                 });
                 if (errors?.length) {
-                    throw new ValidationError({
-                        message: errors.map(e => e.message).join(', ')
+                    logger.error(`Error during save values batch for record ${createdRecord.id} in createRecord`, {
+                        errors
                     });
+                    await this.purgeRecord({libraryId: library, recordId: createdRecord.id, ctx}).catch(err => {
+                        logger.verbose(`Unable to purge record ${createdRecord.id} in createRecord: ${err.message}`);
+                    });
+
+                    return {
+                        record: null,
+                        valuesErrors: errors.map(valueError => ({
+                            type: valueError.type as ErrorTypes,
+                            attribute: valueError.attribute,
+                            message:
+                                valueError.message ||
+                                utils.translateError(
+                                    {msg: valueError.type, vars: {attribute: valueError.attribute}},
+                                    ctx.lang
+                                )
+                        }))
+                    };
                 }
-                return await this.activateNewRecord({library, recordId: record.id, ctx});
+                const {valuesErrors} = await this.activateNewRecord({
+                    library,
+                    recordId: createdRecord.id,
+                    skipVerifyRequiredAttributes: !verifyRequiredAttributes,
+                    ctx
+                });
+                if (valuesErrors?.length) {
+                    logger.error(`Error during activate new record ${createdRecord.id} in createRecord`, {
+                        valuesErrors
+                    });
+                    await this.purgeRecord({libraryId: library, recordId: createdRecord.id, ctx}).catch(err => {
+                        logger.verbose(`Unable to purge record ${createdRecord.id} in createRecord: ${err.message}`);
+                    });
+
+                    return {
+                        record: null,
+                        valuesErrors
+                    };
+                }
+                return {record: createdRecord, valuesErrors: null};
             } catch (error) {
                 logger.error(`Error in createRecord: ${error.stack}`);
-                const purgedRecord =
-                    record && record.id ? await this.purgeRecord({libraryId: library, recordId: record.id, ctx}) : null;
+                if (createdRecord.id) {
+                    await this.purgeRecord({libraryId: library, recordId: createdRecord.id, ctx}).catch(err => {
+                        logger.verbose(`Unable to purge record ${createdRecord.id} in createRecord: ${err.message}`);
+                    });
+                }
                 return {
-                    record: purgedRecord ?? null,
+                    record: null,
                     valuesErrors: [
                         {
                             type: error?.type ?? ErrorTypes.INTERNAL_ERROR,

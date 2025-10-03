@@ -190,7 +190,7 @@ describe('RecordDomain', () => {
             };
             const mockRecRepo = {
                 createRecord: global.__mockPromise(createdRecordData),
-                updateRecord: global.__mockPromise()
+                updateRecord: global.__mockPromise({new: createdRecordData})
             } satisfies Mockify<IRecordRepo>;
             const formRepo = {getForms: global.__mockPromise({list: []})} satisfies Mockify<IFormRepo>;
 
@@ -246,7 +246,10 @@ describe('RecordDomain', () => {
                 id: '222435651',
                 library: 'test'
             };
-            const mockRecRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
+            const mockRecRepo = {
+                createRecord: global.__mockPromise(createdRecordData),
+                updateRecord: global.__mockPromise({new: createdRecordData})
+            } satisfies Mockify<IRecordRepo>;
             const formRepo = {getForms: global.__mockPromise({list: []})} satisfies Mockify<IFormRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -258,6 +261,10 @@ describe('RecordDomain', () => {
                 getLibraryPermission: global.__mockPromise(true)
             };
 
+            const mockValueDomain: Mockify<IValueDomain> = {
+                saveValue: global.__mockPromise([{payload: true}])
+            };
+
             const recDomain = recordDomain({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
@@ -267,6 +274,7 @@ describe('RecordDomain', () => {
                 'core.infra.form': formRepo as IFormRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                'core.domain.value': mockValueDomain as IValueDomain,
                 'core.domain.record.helpers.createRecord': createRecordHelper({
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
@@ -309,7 +317,7 @@ describe('RecordDomain', () => {
             };
             const mockRecRepo = {
                 createRecord: global.__mockPromise(createdRecordData),
-                updateRecord: global.__mockPromise(),
+                updateRecord: global.__mockPromise({new: createdRecordData}),
                 find: global.__mockPromise({
                     totalCount: 1,
                     list: [createdRecordData]
@@ -372,7 +380,7 @@ describe('RecordDomain', () => {
             };
             const mockRecRepo: Mockify<IRecordRepo> = {
                 createRecord: global.__mockPromise(createdRecordData),
-                updateRecord: global.__mockPromise(),
+                updateRecord: global.__mockPromise({new: createdRecordData}),
                 find: global.__mockPromise({
                     totalCount: 1,
                     list: [createdRecordData]
@@ -523,10 +531,10 @@ describe('RecordDomain', () => {
             expect(recDomain.activateNewRecord).toHaveBeenCalledTimes(0);
             expect(recDomain.purgeRecord).toHaveBeenCalledTimes(1);
             expect(mockRecRepo.deleteRecord).toHaveBeenCalledTimes(1);
-            expect(res.record).toBe(createdRecordData);
+            expect(res.record).toBe(null);
             expect(res.valuesErrors).toHaveLength(1);
             expect(res.valuesErrors).toEqual([
-                {attribute: null, message: 'Invalid request', type: ErrorTypes.VALIDATION_ERROR}
+                {attribute: undefined, message: 'bad values', type: undefined}
             ] as ICreateRecordValueError[]);
         });
     });

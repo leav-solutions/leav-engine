@@ -259,6 +259,8 @@ export default function ({
 
                     extend type Mutation {
                         createEmptyRecord(library: ID!): CreateRecordResult!
+                        # activateNewRecord should not have use CreateRecordResult, because it is now coupled with createRecord !
+                        # This methode does not need to return record !
                         activateNewRecord(library: ID!, recordId: ID!, formId: String): CreateRecordResult!
                         createRecord(library: ID!, data: CreateRecordDataInput): CreateRecordResult!
                         deleteRecord(library: ID, id: ID): Record!
@@ -365,6 +367,7 @@ export default function ({
                             return recordDomain.createRecord({
                                 library,
                                 values: valuesToSave,
+                                verifyRequiredAttributes: true,
                                 ctx
                             });
                         },
