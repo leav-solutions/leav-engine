@@ -81,6 +81,7 @@ describe('formatDateRangeAction', () => {
         };
         expect(formattedRangeDate.from).toBe('28/February-37 23:42');
         expect(formattedRangeDate.to).toBe('28/February-37 23:43');
+        expect((result.values[0] as IStandardValue).raw_payload).toEqual(testingRangeDate);
     });
 
     describe('edge cases', () => {
@@ -130,28 +131,29 @@ describe('formatDateRangeAction', () => {
     });
 
     test('localized override universal format', async () => {
-        expect(
-            (
-                await action(
-                    [
-                        {
-                            payload: {from: '2119477320', to: '2119477380'},
-                            raw_payload: {from: '2119477320', to: '2119477380'}
-                        }
-                    ],
+        const value: IStandardValue = (
+            await action(
+                [
                     {
-                        universal: 'D/MMMM/YY',
-                        localized: `{
+                        payload: {from: '2119477320', to: '2119477380'},
+                        raw_payload: {from: '2119477320', to: '2119477380'}
+                    }
+                ],
+                {
+                    universal: 'D/MMMM/YY',
+                    localized: `{
                             "weekday": "long",
                             "era": "short",
                             "month": "narrow",
                             "day": "numeric",
                             "minute": "2-digit"
                         }`
-                    },
-                    {...ctx, lang: 'fr-FR'}
-                )
-            ).values[0].payload
-        ).toEqual({from: 'ap. J.-C. samedi 28 F 42', to: 'ap. J.-C. samedi 28 F 43'});
+                },
+                {...ctx, lang: 'fr-FR'}
+            )
+        ).values[0];
+
+        expect(value.payload).toEqual({from: 'ap. J.-C. samedi 28 F 42', to: 'ap. J.-C. samedi 28 F 43'});
+        expect(value.raw_payload).toEqual({from: '2119477320', to: '2119477380'});
     });
 });

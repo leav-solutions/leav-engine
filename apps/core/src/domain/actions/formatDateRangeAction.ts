@@ -56,18 +56,18 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                 const dateRangeValue = elementValue.raw_payload as IDateRangeValue<number>;
 
                 if (dateRangeValue === null || !dateRangeValue.from || !dateRangeValue.to) {
-                    return {...dateRangeValue, payload: null};
+                    return {...elementValue, payload: null};
                 }
 
                 const {from: numberValFrom, to: numberValTo} = dateRangeValue;
 
                 if (isNaN(Number(numberValFrom)) || isNaN(Number(numberValTo))) {
-                    return {...dateRangeValue, payload: ['', '']};
+                    return {...elementValue, payload: ['', '']};
                 }
 
                 if (!localized && universal) {
                     return {
-                        ...dateRangeValue,
+                        ...elementValue,
                         payload: {
                             from: moment.unix(numberValFrom).format(universal),
                             to: moment.unix(numberValTo).format(universal)
