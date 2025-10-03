@@ -337,6 +337,9 @@ export default function ({
                     await _addValue(library, libraryAttribute, recordId, v, ctx, valueId);
                 } catch (err) {
                     if (!(err instanceof ValidationError) && !(err instanceof PermissionError)) {
+                        logger.error(
+                            `Error adding value for attribute ${libraryAttribute.id} on record ${recordId}: ${err.stack}`
+                        );
                         throw err;
                     }
 
@@ -772,6 +775,7 @@ export default function ({
                 await _jsonSchemaValidation(IMPORT_CONFIG_SCHEMA_PATH, filepath, ctx);
             } catch (err) {
                 if (!(err instanceof ValidatorResultError)) {
+                    logger.error(`Error validating JSON schema during import config task ${task.id}: ${err.stack}`);
                     throw err;
                 }
 
@@ -907,6 +911,7 @@ export default function ({
                 await _jsonSchemaValidation(IMPORT_DATA_SCHEMA_PATH, `${config.import.directory}/${filename}`, ctx);
             } catch (err) {
                 if (!(err instanceof ValidatorResultError)) {
+                    logger.error(`Error validating JSON schema during import data task ${task.id}: ${err.stack}`);
                     throw err;
                 }
 
@@ -1032,6 +1037,9 @@ export default function ({
                         }
                     } catch (e) {
                         if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
+                            logger.error(
+                                `Error importing element at index ${index} during task ${task.id}: ${e.stack}`
+                            );
                             throw e;
                         }
 
@@ -1076,6 +1084,7 @@ export default function ({
                         }
                     } catch (e) {
                         if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
+                            logger.error(`Error importing tree at index ${index} during task ${task.id}: ${e.stack}`);
                             throw e;
                         }
 
@@ -1112,6 +1121,9 @@ export default function ({
                         }
                     } catch (e) {
                         if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
+                            logger.error(
+                                `Error importing links/versions for element at index ${cacheKey} during task ${task.id}: ${e.stack}`
+                            );
                             throw e;
                         }
 
