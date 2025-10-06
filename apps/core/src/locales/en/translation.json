@@ -144,7 +144,8 @@
     "permissions": {
         "access_library": "Access library",
         "admin_library": "Administer library",
-        "access_record": "Access records",
+        "access_record": "Show",
+        "access_record_by_default": "Show by default",
         "create_record": "Create",
         "edit_record": "Edit",
         "delete_record": "Delete",

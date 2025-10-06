@@ -200,6 +200,22 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  category?: InputMaybe<Scalars['String']>;
+  endDate: Scalars['String'];
+  id: Scalars['String'];
+  label: Scalars['String'];
+  startDate: Scalars['String'];
+  thematics?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  type?: InputMaybe<Scalars['String']>;
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String'];
+  id: Scalars['String'];
+  startDate: Scalars['String'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID'];
@@ -294,6 +310,17 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
+}
+
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -504,6 +531,7 @@ export enum PermissionsActions {
   access_attribute = 'access_attribute',
   access_library = 'access_library',
   access_record = 'access_record',
+  access_record_by_default = 'access_record_by_default',
   access_tree = 'access_tree',
   admin_access_api_keys = 'admin_access_api_keys',
   admin_access_applications = 'admin_access_applications',
@@ -629,6 +657,7 @@ export type RecordInput = {
 
 export enum RecordPermissionsActions {
   access_record = 'access_record',
+  access_record_by_default = 'access_record_by_default',
   create_record = 'create_record',
   delete_record = 'delete_record',
   edit_record = 'edit_record'

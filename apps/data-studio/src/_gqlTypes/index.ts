@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IPreviewScalar} from '@leav/utils'
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
@@ -164,6 +161,8 @@ export type AttributeInput = {
   linked_library?: InputMaybe<Scalars['String']>;
   linked_tree?: InputMaybe<Scalars['String']>;
   metadata_fields?: InputMaybe<Array<Scalars['String']>>;
+  multi_link_display_option?: InputMaybe<MultiDisplayOption>;
+  multi_tree_display_option?: InputMaybe<MultiDisplayOption>;
   multiple_values?: InputMaybe<Scalars['Boolean']>;
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
   readonly?: InputMaybe<Scalars['Boolean']>;
@@ -215,6 +214,28 @@ export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
+
+export type CampaignToRenew = {
+  category?: InputMaybe<Scalars['String']>;
+  endDate: Scalars['String'];
+  id: Scalars['String'];
+  label: Scalars['String'];
+  startDate: Scalars['String'];
+  thematics?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  type?: InputMaybe<Scalars['String']>;
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String'];
+  id: Scalars['String'];
+  startDate: Scalars['String'];
+};
+
+export type ChildrenAsRecordValuePermissionFilterInput = {
+  action: RecordPermissionsActions;
+  attributeId: Scalars['ID'];
+  libraryId: Scalars['ID'];
+};
 
 export type CreateRecordDataInput = {
   values?: InputMaybe<Array<ValueBatchInput>>;
@@ -292,12 +313,29 @@ export type FormInput = {
   id: Scalars['ID'];
   label?: InputMaybe<Scalars['SystemTranslation']>;
   library: Scalars['ID'];
+  sidePanel?: InputMaybe<FormSidePanelInput>;
+};
+
+export type FormSidePanelInput = {
+  enable: Scalars['Boolean'];
+  isOpenByDefault: Scalars['Boolean'];
 };
 
 export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
+}
+
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -383,6 +421,7 @@ export type LibraryInput = {
   icon?: InputMaybe<LibraryIconInput>;
   id: Scalars['ID'];
   label?: InputMaybe<Scalars['SystemTranslation']>;
+  mandatoryAttribute?: InputMaybe<Scalars['ID']>;
   permissions_conf?: InputMaybe<TreepermissionsConfInput>;
   previewsSettings?: InputMaybe<Array<LibraryPreviewsSettingsInput>>;
   recordIdentityConf?: InputMaybe<RecordIdentityConfInput>;
@@ -415,7 +454,6 @@ export enum LogAction {
   PERMISSION_SAVE = 'PERMISSION_SAVE',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
-  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -478,6 +516,12 @@ export type LogTopicRecordFilterInput = {
   libraryId?: InputMaybe<Scalars['String']>;
 };
 
+export enum MultiDisplayOption {
+  avatar = 'avatar',
+  badge_qty = 'badge_qty',
+  tag = 'tag'
+}
+
 export type Pagination = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
@@ -520,11 +564,13 @@ export enum PermissionsActions {
   access_attribute = 'access_attribute',
   access_library = 'access_library',
   access_record = 'access_record',
+  access_record_by_default = 'access_record_by_default',
   access_tree = 'access_tree',
   admin_access_api_keys = 'admin_access_api_keys',
   admin_access_applications = 'admin_access_applications',
   admin_access_attributes = 'admin_access_attributes',
   admin_access_libraries = 'admin_access_libraries',
+  admin_access_logs = 'admin_access_logs',
   admin_access_permissions = 'admin_access_permissions',
   admin_access_tasks = 'admin_access_tasks',
   admin_access_trees = 'admin_access_trees',
@@ -552,6 +598,7 @@ export enum PermissionsActions {
   admin_edit_permission = 'admin_edit_permission',
   admin_edit_tree = 'admin_edit_tree',
   admin_edit_version_profile = 'admin_edit_version_profile',
+  admin_import_config_clear_database = 'admin_import_config_clear_database',
   admin_library = 'admin_library',
   admin_manage_global_preferences = 'admin_manage_global_preferences',
   create_record = 'create_record',
@@ -640,6 +687,14 @@ export type RecordInput = {
   id: Scalars['ID'];
   library: Scalars['String'];
 };
+
+export enum RecordPermissionsActions {
+  access_record = 'access_record',
+  access_record_by_default = 'access_record_by_default',
+  create_record = 'create_record',
+  delete_record = 'delete_record',
+  edit_record = 'edit_record'
+}
 
 export type RecordSortInput = {
   field: Scalars['String'];

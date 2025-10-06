@@ -144,7 +144,8 @@
     "permissions": {
         "access_library": "Accéder à la bibliothèque",
         "admin_library": "Administrer la bibliothèque",
-        "access_record": "Accéder aux éléments",
+        "access_record": "Voir",
+        "access_record_by_default": "Voir par défaut",
         "create_record": "Créer",
         "edit_record": "Éditer",
         "delete_record": "Supprimer",

@@ -111,6 +111,7 @@ export enum PermissionsActions {
     access_attribute = 'access_attribute',
     access_library = 'access_library',
     access_record = 'access_record',
+    access_record_by_default = 'access_record_by_default',
     access_tree = 'access_tree',
     admin_access_api_keys = 'admin_access_api_keys',
     admin_access_applications = 'admin_access_applications',

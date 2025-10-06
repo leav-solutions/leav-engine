@@ -26,6 +26,9 @@ export enum LibraryPermissionsActions {
 
 export enum RecordPermissionsActions {
     ACCESS_RECORD = 'access_record',
+    // https://aristid.atlassian.net/browse/LEAVC-165
+    // For record.find, if no record filter is provided, we check this permission, only for extended permission (based on tree)
+    ACCESS_RECORD_BY_DEFAULT = 'access_record_by_default',
     CREATE_RECORD = 'create_record',
     EDIT_RECORD = 'edit_record',
     DELETE_RECORD = 'delete_record'
