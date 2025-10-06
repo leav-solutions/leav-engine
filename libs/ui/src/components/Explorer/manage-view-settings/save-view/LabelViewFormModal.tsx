@@ -43,7 +43,7 @@ export const LabelViewFormModal: FunctionComponent<ISaveViewProps> = ({viewData,
     return (
         <KitModal
             // TODO: remove appElement and put in the test : "KitModal.setAppElement(document.body) once exposed"
-            appElement={document.body}
+            appElement={document.getElementById('root')}
             title={t('explorer.viewList.save-view-as')}
             showCloseIcon={false}
             close={_toggleModal}

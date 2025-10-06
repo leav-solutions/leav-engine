@@ -25,6 +25,7 @@ export const AddModalForPopupPanel: FunctionComponent = ({children}) => {
                 searchParams.delete(popupRecordSearchParamsName);
                 navigate(generatePath(routes.panel, {panelId}) + '?' + searchParams.toString());
             }}
+            appElement={document.getElementById('root')}
         >
             {children}
         </KitModal>

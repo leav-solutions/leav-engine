@@ -58,7 +58,7 @@ export const useDeleteView = () => {
         iconDelete,
         deleteModal: dataViewOnAction.id && dataViewOnAction.label && (
             <KitModal
-                appElement={document.body}
+                appElement={document.getElementById('root')}
                 title={t('explorer.viewList.confirm-delete-view')}
                 isOpen={!!dataViewOnAction.id && !!dataViewOnAction.label}
                 footer={

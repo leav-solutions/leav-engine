@@ -186,6 +186,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
 
     return (
         <KitModalStyled
+            appElement={document.getElementById('root')}
             className={className}
             height={autoHeight ? 'auto' : MODAL_HEIGHT}
             maxHeight={autoHeight ? MODAL_HEIGHT : undefined}

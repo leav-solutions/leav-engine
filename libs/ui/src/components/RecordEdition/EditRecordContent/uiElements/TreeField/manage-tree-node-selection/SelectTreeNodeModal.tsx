@@ -82,6 +82,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
 
     return (
         <KitModal
+            appElement={document.getElementById('root')}
             className={className}
             showCloseIcon
             width={SELECT_TREE_NODE_MODAL_WIDTH}
