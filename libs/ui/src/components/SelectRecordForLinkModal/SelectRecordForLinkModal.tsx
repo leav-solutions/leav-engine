@@ -8,7 +8,7 @@ import {closeKitSnackBar, KitButton, KitSpace, AntModal} from 'aristid-ds';
 // TODO: harmonize icon sources
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
-import {FaExchangeAlt, FaPlus} from 'react-icons/fa';
+import {FaExchangeAlt, FaEye, FaPlus} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     type ExplorerSelectionIdsQuery,
@@ -16,6 +16,7 @@ import {
     useExplorerSelectionIdsLazyQuery
 } from '_ui/_gqlTypes';
 import {Explorer} from '_ui/components/Explorer';
+import {useEditRecordModal} from '../RecordEdition/EditRecordModal/useEditRecordModal';
 
 const modalMaxWidth = 1_200;
 
@@ -113,6 +114,8 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
         onCompleted: onSelectionCompleted
     });
 
+    const {EditRecordModal, openEditRecordModal} = useEditRecordModal();
+
     return (
         <StyledModal
             className={className}
@@ -158,12 +161,32 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                         primaryActions={[]}
                         defaultActionsForItem={[]}
                         defaultMassActions={[]}
-                        itemActions={[]}
+                        itemActions={[
+                            {
+                                label: t('explorer.edit-item'),
+                                icon: <FaEye />,
+                                useItemActionOnRowClick: true,
+                                callback: item => {
+                                    openEditRecordModal({
+                                        library: item.libraryId,
+                                        record: {
+                                            id: item.itemId,
+                                            label: item.whoAmI?.label,
+                                            subLabel: item.whoAmI?.subLabel,
+                                            color: item.whoAmI?.color,
+                                            library: {id: item.libraryId}
+                                        },
+                                        editionFormId: 'edition'
+                                    });
+                                }
+                            }
+                        ]}
                         defaultPrimaryActions={['create']}
                         joinLibraryContext={joinLibraryContext}
                         showSearch
                         ignoreViewByDefault
                     />
+                    {EditRecordModal}
                     {/* TODO: avoid getting last view for user */}
                 </Explorer.EditSettingsContextProvider>
             </ModalMainStyledDiv>

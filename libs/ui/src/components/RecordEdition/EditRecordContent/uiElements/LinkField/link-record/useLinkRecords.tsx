@@ -11,9 +11,10 @@ import {type JoinLibraryContextFragment, type RecordFormAttributeLinkAttributeFr
 import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {AntForm, KitSpace, KitTooltip} from 'aristid-ds';
 import {useExplorerLinkRecords} from './useExplorerLinkRecords';
-import {FaPlus} from 'react-icons/fa';
+import {FaEye, FaPlus} from 'react-icons/fa';
 import {ActionButton} from './ActionButton';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useEditRecordModal} from '_ui/components/RecordEdition/EditRecordModal/useEditRecordModal';
 
 interface ILinkRecords {
     libraryId: string;
@@ -97,6 +98,8 @@ export const useLinkRecords = ({
         }
     }, []);
 
+    const {EditRecordModal, openEditRecordModal} = useEditRecordModal();
+
     return {
         UnlinkAllRecords: backendValues.length > 1 && attribute.multiple_values && !attribute.required && (
             <DeleteAllValuesButton handleDelete={handleDeleteAllValues} disabled={isReadOnly} danger={isFieldInError} />
@@ -136,6 +139,26 @@ export const useLinkRecords = ({
                             (attribute.required && attribute.multiple_values && backendValues.length === 1)
                         }
                         defaultActionsForItem={_getExplorerItemActions()}
+                        itemActions={[
+                            {
+                                label: t('explorer.edit-item'),
+                                icon: <FaEye />,
+                                useItemActionOnRowClick: true,
+                                callback: item => {
+                                    openEditRecordModal({
+                                        library: item.libraryId,
+                                        record: {
+                                            id: item.itemId,
+                                            label: item.whoAmI?.label,
+                                            subLabel: item.whoAmI?.subLabel,
+                                            color: item.whoAmI?.color,
+                                            library: {id: item.libraryId}
+                                        },
+                                        editionFormId: 'edition'
+                                    });
+                                }
+                            }
+                        ]}
                         joinLibraryContext={joinLibraryContext}
                         hidePrimaryActions
                         hideTableHeader
@@ -156,6 +179,7 @@ export const useLinkRecords = ({
                         />
                     </KitTooltip>
                 </KitSpace>
+                {EditRecordModal}
             </>
         )
     };

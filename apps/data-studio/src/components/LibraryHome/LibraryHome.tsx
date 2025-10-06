@@ -22,8 +22,9 @@ import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {explorerLinkQueryParamName, explorerLibraryQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {type IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useSearchParams} from 'react-router-dom';
-import {FaBeer} from 'react-icons/all';
+import {FaBeer, FaEye} from 'react-icons/all';
 import styled from 'styled-components';
+import {useEditRecordModal} from '_ui/components/RecordEdition/EditRecordModal/useEditRecordModal';
 
 interface ILibraryHomeProps {
     library?: string;
@@ -50,6 +51,8 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
     const {activePanel, selection} = useAppSelector(state => state);
 
     const {loading, data, error} = useGetLibraryDetailExtendedQuery({library});
+
+    const {EditRecordModal, openEditRecordModal} = useEditRecordModal();
 
     const hasAccess = data?.libraries?.list[0]?.permissions.access_library;
     const isInApp = isLibraryInApp(appData.currentApp, library);
@@ -141,76 +144,111 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
         );
     };
 
-    return params.has(explorerLibraryQueryParamName) ? (
-        <ExplorerContainerDivStyled>
-            <Explorer
-                entrypoint={{
-                    type: 'library',
-                    libraryId: library
-                }}
-                showTitle
-                showSearch
-                showFilters
-                showSorts
-                defaultViewSettings={{enableConfigureView: true}}
-                defaultActionsForItem={['remove', 'activate']}
-                defaultPrimaryActions={['create']}
-                defaultMassActions={['deactivate']}
-                itemActions={
-                    [
-                        // Example :
-                        // {
-                        //     label: 'Test 1',
-                        //     icon: <FaBeer />,
-                        //     callback: item => console.info(1, item)
-                        // }
-                    ]
-                }
-                massActions={
-                    [
-                        // Example :
-                        // {
-                        //     icon: null,
-                        //     label: 'test',
-                        //     callback: console.log
-                        // }
-                    ]
-                }
-                primaryActions={
-                    [
-                        // Example :
-                        // {
-                        //     icon: <FaBeer />,
-                        //     label: 'Additional action 1',
-                        //     callback: () => console.info('Clicked action 1')
-                        // }
-                    ]
-                }
-            />
-        </ExplorerContainerDivStyled>
-    ) : params.has(explorerLinkQueryParamName) ? (
-        <ExplorerContainerDivStyled>
-            <Explorer
-                showTitle
-                showSearch
-                defaultViewSettings={{enableConfigureView: true}}
-                showFilters
-                showSorts
-                entrypoint={{
-                    type: 'link',
-                    parentLibraryId: 'sebastien_s_librairy',
-                    parentRecordId: '600359434',
-                    linkAttributeId: 'multiple_link'
-                }}
-            />
-        </ExplorerContainerDivStyled>
-    ) : (
-        <LibraryItemsList
-            selectionMode={false}
-            library={data.libraries.list[0]}
-            key={library}
-            onSelectChange={_handleSelectChange}
-        />
+    return (
+        <>
+            {params.has(explorerLibraryQueryParamName) ? (
+                <ExplorerContainerDivStyled>
+                    <Explorer
+                        entrypoint={{
+                            type: 'library',
+                            libraryId: library
+                        }}
+                        showTitle
+                        showSearch
+                        showFilters
+                        showSorts
+                        defaultViewSettings={{enableConfigureView: true}}
+                        defaultActionsForItem={['remove', 'activate']}
+                        defaultPrimaryActions={['create']}
+                        defaultMassActions={['deactivate']}
+                        itemActions={[
+                            {
+                                label: t('explorer.edit-item'),
+                                icon: <FaEye />,
+                                useItemActionOnRowClick: true,
+                                callback: item => {
+                                    openEditRecordModal({
+                                        library: item.libraryId,
+                                        record: {
+                                            id: item.itemId,
+                                            label: item.whoAmI?.label,
+                                            subLabel: item.whoAmI?.subLabel,
+                                            color: item.whoAmI?.color,
+                                            library: {id: item.libraryId}
+                                        },
+                                        editionFormId: 'edition'
+                                    });
+                                }
+                            }
+                        ]}
+                        massActions={
+                            [
+                                // Example :
+                                // {
+                                //     icon: null,
+                                //     label: 'test',
+                                //     callback: console.log
+                                // }
+                            ]
+                        }
+                        primaryActions={
+                            [
+                                // Example :
+                                // {
+                                //     icon: <FaBeer />,
+                                //     label: 'Additional action 1',
+                                //     callback: () => console.info('Clicked action 1')
+                                // }
+                            ]
+                        }
+                    />
+                </ExplorerContainerDivStyled>
+            ) : params.has(explorerLinkQueryParamName) ? (
+                <ExplorerContainerDivStyled>
+                    <Explorer
+                        showTitle
+                        showSearch
+                        defaultViewSettings={{enableConfigureView: true}}
+                        showFilters
+                        showSorts
+                        entrypoint={{
+                            type: 'link',
+                            parentLibraryId: 'sebastien_s_librairy',
+                            parentRecordId: '600359434',
+                            linkAttributeId: 'multiple_link'
+                        }}
+                        itemActions={[
+                            {
+                                label: t('explorer.edit-item'),
+                                icon: <FaEye />,
+                                useItemActionOnRowClick: true,
+                                callback: item => {
+                                    openEditRecordModal({
+                                        library: item.libraryId,
+                                        record: {
+                                            id: item.itemId,
+                                            label: item.whoAmI?.label,
+                                            subLabel: item.whoAmI?.subLabel,
+                                            color: item.whoAmI?.color,
+                                            library: {id: item.libraryId}
+                                        },
+                                        editionFormId: 'edition'
+                                    });
+                                }
+                            }
+                        ]}
+                    />
+                </ExplorerContainerDivStyled>
+            ) : (
+                <LibraryItemsList
+                    selectionMode={false}
+                    library={data.libraries.list[0]}
+                    key={library}
+                    onSelectChange={_handleSelectChange}
+                />
+            )}
+            {EditRecordModal}
+        </>
     );
 };
 
