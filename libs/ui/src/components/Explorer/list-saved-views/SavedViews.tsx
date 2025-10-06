@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {KitRadio, KitSpace, KitTypography} from 'aristid-ds';
+import {KitRadio, KitSpace, KitTypography, useKitNotification} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {localizedTranslation} from '@leav/utils';
@@ -14,7 +14,8 @@ import {type Radio} from 'antd';
 import {useMeQuery} from '_ui/_gqlTypes';
 import {useDeleteView} from '../manage-view-settings/save-view/useDeleteView';
 import {useEditLabelView} from '../manage-view-settings/save-view/useEditLabelView';
-import {IDataViewOnAction, type IUserView} from '../_types';
+import {IoCopy} from 'react-icons/io5';
+import {type IUserView} from '../_types';
 import classNames from 'classnames';
 import {DefaultViewId} from '../manage-view-settings/store-view-settings/viewSettingsInitialState';
 
@@ -69,8 +70,14 @@ const StyledIconsDiv = styled.div`
     }
 `;
 
+const StyledCopySpan = styled.span`
+    margin-left: calc(var(--general-spacing-xs) * 1px);
+    color: var(--general-colors-neutral-grey-400);
+`;
+
 export const SavedViews: FunctionComponent = () => {
     const {t} = useSharedTranslation();
+    const {kitNotification} = useKitNotification();
     const {availableLangs} = useLang();
     const {view} = useViewSettingsContext();
     const {loadView} = useLoadView();
@@ -116,6 +123,23 @@ export const SavedViews: FunctionComponent = () => {
                             <StyledViewDiv className={_selectedViewClass(viewItem.id)} key={viewItem.id}>
                                 <KitRadio value={viewItem.id}>
                                     {localizedTranslation(viewItem.label, availableLangs)}
+                                    {viewItem?.id && (
+                                        <StyledCopySpan
+                                            title={`${t('explorer.viewList.copy-id')} : ${viewItem?.id}`}
+                                            onClick={async e => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                await navigator.clipboard.writeText(viewItem.id || '');
+                                                kitNotification.info({
+                                                    message: `Id : ${viewItem?.id}`,
+                                                    description: t('explorer.viewList.copied'),
+                                                    duration: 3
+                                                });
+                                            }}
+                                        >
+                                            <IoCopy />
+                                        </StyledCopySpan>
+                                    )}
                                 </KitRadio>
                                 <StyledIconsDiv>
                                     <KitSpace>
@@ -137,6 +161,23 @@ export const SavedViews: FunctionComponent = () => {
                                 <StyledViewDiv className={_selectedViewClass(viewItem.id)} key={viewItem.id}>
                                     <KitRadio value={viewItem.id}>
                                         {localizedTranslation(viewItem.label, availableLangs)}
+                                        {viewItem?.id && (
+                                            <StyledCopySpan
+                                                title={`${t('explorer.viewList.copy-id')} : ${viewItem?.id}`}
+                                                onClick={async e => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    await navigator.clipboard.writeText(viewItem.id || '');
+                                                    kitNotification.info({
+                                                        message: `Id : ${viewItem?.id}`,
+                                                        description: t('explorer.viewList.copied'),
+                                                        duration: 3
+                                                    });
+                                                }}
+                                            >
+                                                <IoCopy />
+                                            </StyledCopySpan>
+                                        )}
                                     </KitRadio>
                                     {isOwnerView(viewItem.ownerId) ? (
                                         <StyledIconsDiv>

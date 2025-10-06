@@ -731,7 +731,9 @@
             "save-view-as": "Save as...",
             "share-view": "Share",
             "unshare-view": "Unshare",
-            "reinit-view": "Reset"
+            "reinit-view": "Reset",
+            "copy-id": "Copy view Id",
+            "copied": "Copied"
         },
         "massAction": {
             "itemsTotal_one": "{{count, number}} item",

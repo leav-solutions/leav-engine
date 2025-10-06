@@ -26,20 +26,13 @@ import {useTranslation} from 'react-i18next';
 import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
-import {
-    explorerLibraryQueryParamName,
-    getExplorerLibraryLink,
-    getLibraryLink,
-    getLinkExplorerLink,
-    getTreeLink,
-    localizedTranslation
-} from 'utils';
+import {getExplorerLibraryLink, getLibraryLink, getLinkExplorerLink, getTreeLink, localizedTranslation} from 'utils';
 import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {type GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {type GET_USER_DATA, type GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {type SAVE_USER_DATA, type SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY} from '../../constants';
-import {type FunctionComponent, type MouseEventHandler} from 'react';
+import {useState, type FunctionComponent, type MouseEventHandler} from 'react';
 
 interface IGroupedElements<EntityType> {
     related: EntityType[];
@@ -83,8 +76,13 @@ const FavoriteStarSpan = styled.span<{$isFavorite: boolean}>`
     }
 `;
 
-const explorerTabKey = 'explorer';
-const explorerLinkTabKey = 'explorer-link';
+enum MenuType {
+    DATA_STUDIO = 'data-studio',
+    TREE = 'tree',
+    SETTINGS = 'settings',
+    EXPLORER = 'explorer-library',
+    EXPLORER_LINK = 'explorer-link'
+}
 
 const Sidebar: FunctionComponent = () => {
     const {t} = useTranslation();
@@ -102,6 +100,8 @@ const Sidebar: FunctionComponent = () => {
     const favoritesList = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY]}
     });
+
+    const [menuSelected, setMenuSelected] = useState<string[]>([]);
 
     const [executeSaveUserData] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
 
@@ -168,6 +168,7 @@ const Sidebar: FunctionComponent = () => {
             return;
         }
 
+        setMenuSelected([MenuType.DATA_STUDIO]);
         _goTo(getLibraryLink(activeLibrary.id));
     };
 
@@ -176,6 +177,7 @@ const Sidebar: FunctionComponent = () => {
             return;
         }
 
+        setMenuSelected([MenuType.EXPLORER]);
         _goTo(getExplorerLibraryLink(activeLibrary.id));
     };
 
@@ -184,6 +186,7 @@ const Sidebar: FunctionComponent = () => {
             return;
         }
 
+        setMenuSelected([MenuType.EXPLORER_LINK]);
         _goTo(getLinkExplorerLink(activeLibrary.id));
     };
 
@@ -192,66 +195,76 @@ const Sidebar: FunctionComponent = () => {
             return;
         }
 
+        setMenuSelected([MenuType.TREE]);
         _goTo(getTreeLink(activeTree.id));
     };
 
     const _goToSettings = () => {
+        setMenuSelected([MenuType.SETTINGS]);
         _goTo('/settings');
     };
 
     const _handleClickHome = () => _goTo('/');
 
-    let libsMenuItems: ItemType[];
+    let libsMenuItems: (menuType: MenuType) => ItemType[];
 
     if (librariesLoading || favoritesList.loading) {
-        libsMenuItems = [
+        libsMenuItems = menuType => [
             {
-                key: 'libs-loading',
+                key: `libs-loading_${menuType}`,
                 label: <Spin />
             }
         ];
     } else if (librariesError || favoritesList.error) {
-        libsMenuItems = [
+        libsMenuItems = menuType => [
             {
-                key: 'libs-error',
+                key: `libs-error_${menuType}`,
                 label: <ErrorDisplay message={librariesError || favoritesList?.error?.message} />
             }
         ];
     } else {
-        libsMenuItems = Object.keys(groupedLibraries).map(libraryGroupKey => {
-            if (!groupedLibraries[libraryGroupKey].length) {
-                return null;
-            }
+        libsMenuItems = menuType =>
+            Object.keys(groupedLibraries).map(libraryGroupKey => {
+                if (!groupedLibraries[libraryGroupKey].length) {
+                    return null;
+                }
 
-            return {
-                key: `${libraryGroupKey}_libraries`,
-                type: 'group',
-                label: t(`sidebar.${libraryGroupKey}_libraries`),
-                children: groupedLibraries[libraryGroupKey].map(lib => {
-                    const isFavorite = libraryFavorites.includes(lib.id);
-                    const _handleFavoriteClick: MouseEventHandler<HTMLSpanElement> = e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        _handleToggleFavorite(isFavorite, lib.id, 'library');
-                    };
+                return {
+                    key: `${libraryGroupKey}_libraries_${menuType}`,
+                    type: 'group',
+                    label: t(`sidebar.${libraryGroupKey}_libraries`),
+                    children: groupedLibraries[libraryGroupKey].map(lib => {
+                        const isFavorite = libraryFavorites.includes(lib.id);
+                        const _handleFavoriteClick: MouseEventHandler<HTMLSpanElement> = e => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            _handleToggleFavorite(isFavorite, lib.id, 'library');
+                        };
 
-                    return {
-                        key: `library.${lib.id}`,
-                        label: (
-                            <MenuItemContentSpan>
-                                <LibraryIcon library={lib} />
-                                <LinkSpan onClick={() => _goTo(getLibraryLink(lib.id))}>
-                                    {localizedTranslation(lib.label, lang)}
-                                </LinkSpan>
-                                <FavoriteStarSpan onClick={_handleFavoriteClick} $isFavorite={isFavorite}>
-                                    {isFavorite ? <StarFilled /> : <StarOutlined />}
-                                </FavoriteStarSpan>
-                            </MenuItemContentSpan>
-                        )
-                    };
-                })
-            };
-        });
+                        return {
+                            key: `library.${lib.id}_${menuType}`,
+                            label: (
+                                <MenuItemContentSpan>
+                                    <LibraryIcon library={lib} />
+                                    <LinkSpan
+                                        onClick={() => {
+                                            setMenuSelected([menuType]);
+                                            return menuType === MenuType.DATA_STUDIO
+                                                ? _goTo(getLibraryLink(lib.id))
+                                                : _goTo(getExplorerLibraryLink(lib.id));
+                                        }}
+                                    >
+                                        {localizedTranslation(lib.label, lang)}
+                                    </LinkSpan>
+                                    <FavoriteStarSpan onClick={_handleFavoriteClick} $isFavorite={isFavorite}>
+                                        {isFavorite ? <StarFilled /> : <StarOutlined />}
+                                    </FavoriteStarSpan>
+                                </MenuItemContentSpan>
+                            )
+                        };
+                    })
+                };
+            });
     }
 
     let treesMenuItems: ItemType[];
@@ -292,7 +305,12 @@ const Sidebar: FunctionComponent = () => {
                         label: (
                             <MenuItemContentSpan>
                                 <TreeIcon style={{fontSize: '1.2rem'}} />
-                                <LinkSpan onClick={() => _goTo(getTreeLink(id))}>
+                                <LinkSpan
+                                    onClick={() => {
+                                        setMenuSelected([MenuType.TREE]);
+                                        _goTo(getTreeLink(id));
+                                    }}
+                                >
                                     {localizedTranslation(label, lang)}
                                 </LinkSpan>
                                 <FavoriteStarSpan onClick={_handleFavoriteClick} $isFavorite={isFavorite}>
@@ -308,33 +326,34 @@ const Sidebar: FunctionComponent = () => {
 
     const menuItems: ItemType[] = [
         {
-            key: 'library',
-            icon: <DatabaseOutlined onClick={_goToActiveLibrary} />,
-            label: !!activeLibrary?.name ? activeLibrary.name : t('sidebar.library'),
-            onTitleClick: _goToActiveLibrary,
-            children: libsMenuItems
+            key: MenuType.EXPLORER,
+            icon: <TableOutlined onClick={_goToExplorerOnActiveLibrary} />,
+            label: t('app_settings.explorer'),
+            onTitleClick: _goToExplorerOnActiveLibrary,
+            children: libsMenuItems(MenuType.EXPLORER)
         },
         {
             icon: <TreeIcon onClick={_goToActiveTree} />,
             label: !!activeTree?.label ? activeTree.label : t('sidebar.tree'),
-            key: 'tree',
+            key: MenuType.TREE,
             onTitleClick: _goToActiveTree,
             children: treesMenuItems
         },
         {
-            key: 'settings',
+            key: MenuType.DATA_STUDIO,
+            icon: <DatabaseOutlined onClick={_goToActiveLibrary} />,
+            label: !!activeLibrary?.name ? activeLibrary.name : t('sidebar.library'),
+            onTitleClick: _goToActiveLibrary,
+            children: libsMenuItems(MenuType.DATA_STUDIO)
+        },
+        {
+            key: MenuType.SETTINGS,
             icon: <SettingOutlined />,
             label: t('app_settings.title'),
             onClick: _goToSettings
         },
         {
-            key: explorerTabKey,
-            icon: <TableOutlined />,
-            label: t('app_settings.explorer'),
-            onClick: _goToExplorerOnActiveLibrary
-        },
-        {
-            key: explorerLinkTabKey,
+            key: MenuType.EXPLORER_LINK,
             icon: <LinkOutlined />,
             label: t('app_settings.explorer_link'),
             onClick: _goToLinkExplorer
@@ -356,17 +375,7 @@ const Sidebar: FunctionComponent = () => {
                 />
             </HomeButtonDiv>
             <NavWrapperDiv>
-                <Menu
-                    style={{width: '100%'}}
-                    selectedKeys={
-                        params.has(explorerLibraryQueryParamName)
-                            ? [explorerTabKey]
-                            : params.has(explorerLibraryQueryParamName)
-                              ? [explorerLinkTabKey]
-                              : [activePanel, `${activePanel}.${activeLibrary?.id || activeTree?.id}`]
-                    }
-                    items={menuItems}
-                />
+                <Menu style={{width: '100%'}} selectedKeys={menuSelected} items={menuItems} />
             </NavWrapperDiv>
         </>
     );

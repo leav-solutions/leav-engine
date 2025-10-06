@@ -731,7 +731,9 @@
             "save-view-as": "Enregistrer sous...",
             "share-view": "Partager",
             "unshare-view": "Retirer le partage",
-            "reinit-view": "Réinitialiser"
+            "reinit-view": "Réinitialiser",
+            "copy-id": "Copier l'Id de la vue",
+            "copied": "Copié"
         },
         "massAction": {
             "itemsTotal_one": "{{count, number}} élément",

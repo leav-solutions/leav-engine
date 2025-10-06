@@ -13,7 +13,7 @@ import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import {getLibraryLink, localizedTranslation} from 'utils';
+import {getExplorerLibraryLink, localizedTranslation} from 'utils';
 import {type GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {type GET_USER_DATA, type GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {FAVORITE_LIBRARIES_KEY} from '../../../constants';
@@ -104,7 +104,7 @@ function LibrariesList(): JSX.Element {
                 ];
 
                 return (
-                    <LibraryLink to={getLibraryLink(item.id)}>
+                    <LibraryLink to={getExplorerLibraryLink(item.id)}>
                         <LibraryIcon library={item} /> {label}
                         <FloatingMenu style={{right: '28px'}} actions={actions} />
                     </LibraryLink>

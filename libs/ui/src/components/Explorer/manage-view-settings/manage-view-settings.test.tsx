@@ -563,7 +563,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
             let myViewsElement = screen.getByRole('heading', {name: /my-views/}).parentElement;
-            expect(within(myViewsElement!).getByRole('radio', {name: 'My view'})).toBeInTheDocument();
+            expect(within(myViewsElement!).getByRole('radio', {name: /My view/})).toBeInTheDocument();
 
             await userEvent.click(screen.getByRole('button', {name: /share-view/}));
 
@@ -589,7 +589,7 @@ describe('Integration tests about managing view settings feature', () => {
             expect(screen.queryByRole('button', {name: 'explorer.share-view'})).not.toBeInTheDocument();
 
             const sharedViewsElement = screen.getByRole('heading', {name: /shared-view/}).parentElement;
-            expect(within(sharedViewsElement!).getByRole('radio', {name: 'My view'})).toBeInTheDocument();
+            expect(within(sharedViewsElement!).getByRole('radio', {name: /My view/})).toBeInTheDocument();
 
             await userEvent.click(screen.getByRole('button', {name: /unshare-view/}));
 
@@ -612,7 +612,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             expect(screen.queryByRole('button', {name: /unshare-view/})).not.toBeInTheDocument();
             myViewsElement = screen.getByRole('heading', {name: /my-views/}).parentElement;
-            expect(within(myViewsElement!).getByRole('radio', {name: 'My view'})).toBeInTheDocument();
+            expect(within(myViewsElement!).getByRole('radio', {name: /My view/})).toBeInTheDocument();
             mockSaveViewMutation.mockClear();
         });
 
