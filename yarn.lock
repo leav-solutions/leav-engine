@@ -17086,7 +17086,7 @@ __metadata:
     moment-timezone: "npm:0.5.37"
     ms: "npm:2.1.3"
     nanoid: "npm:3.3.8"
-    nodemailer: "npm:6.9.9"
+    nodemailer: "npm:7.0.7"
     nodemon: "npm:1.19.4"
     npm-run-all: "npm:4.1.5"
     openid-client: "npm:5.6.5"
@@ -27964,10 +27964,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:6.9.9":
-  version: 6.9.9
-  resolution: "nodemailer@npm:6.9.9"
-  checksum: d81f8613c35785aeb60dd0e3ead2c2c0171c709381fde17ada112f5ac635630814ad09492dacaf0fd30158492ed834abb82d9c58b49e9b495e5c675fbc5fffef
+"nodemailer@npm:7.0.7":
+  version: 7.0.7
+  resolution: "nodemailer@npm:7.0.7"
+  checksum: 903d4e0a8320c0e4a2bede6737a9b4996048ddc2e010befc406c8953dcec96ef0e2c17e8b7639654e8bf46844cf7d26f017d8bf9fd629588637b699e09547222
   languageName: node
   linkType: hard
 
