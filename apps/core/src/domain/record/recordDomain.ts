@@ -28,6 +28,7 @@ import {Errors} from '../../_types/errors';
 import {type ILibrary, LibraryBehavior} from '../../_types/library';
 import {
     LibraryPermissionsActions,
+    PermissionTypes,
     RecordAttributePermissionsActions,
     RecordPermissionsActions
 } from '../../_types/permissions';
@@ -1196,9 +1197,14 @@ export default function ({
                     groupsWithAncestorsId.push(ancestorsId);
                 }
 
+                const existingFiltersOnTreeIds = fullFilters
+                    .filter(f => f.attributes?.[0] && utils.isTreeAttribute(f.attributes[0]))
+                    .map(f => f.attributes?.[0].linked_tree);
+
                 accessPermissionFilters = await getAccessPermissionFilters(
                     groupsWithAncestorsId,
                     library,
+                    existingFiltersOnTreeIds,
                     {
                         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
                         'core.infra.tree': treeRepo,

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-
+import _ from 'lodash';
 import {type IAttribute} from '_types/attribute';
 import {type ILibrary} from '_types/library';
 import {PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
@@ -19,23 +19,32 @@ interface IAccessPermissionFilterDeps {
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
 }
 
+interface INodeIdsByPermissions {
+    true: Array<ITreeNode['id']>;
+    false: Array<ITreeNode['id']>;
+}
+
 export interface IGetAccessPermissionsValue {
     treeId: string;
     attribute: IAttribute;
-    permissions: {
-        true: Array<ITreeNode['id']>;
-        false: Array<ITreeNode['id']>;
-    };
+    permissions: INodeIdsByPermissions;
 }
 
 export type IGetAccessPermissions = (
     groupsIds: string[][],
     library: string,
+    existingFiltersOnTreeIds: string[],
     deps: IAccessPermissionFilterDeps,
     ctx: IQueryInfos
 ) => Promise<IGetAccessPermissionsValue[]>;
 
-const getAccessPermissionsFilters: IGetAccessPermissions = async (groupsIds, library, deps, ctx) => {
+const getAccessPermissionsFilters: IGetAccessPermissions = async (
+    groupsIds,
+    library,
+    existingFiltersOnTreeIds,
+    deps,
+    ctx
+) => {
     const {
         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
         'core.infra.tree': treeRepo,
@@ -72,10 +81,12 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (groupsIds, lib
     // if user does not belong to any group, then we should pass at least one time in for loop in _getNodesIdByPermission to get default permissions
     const groupsIdsWithAncestorsId: string[][] = groupsIds.length ? groupsIds : [[]];
 
-    const _getNodesIdByPermission = async (treeId: string): Promise<any> => {
-        const treeContent = await treeRepo.getTreeContent({treeId, ctx});
-
-        const result = {
+    const _getNodesIdByPermission = async (
+        treeId: string,
+        treeContent: ITreeNode[],
+        action: RecordPermissionsActions.ACCESS_RECORD | RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT
+    ): Promise<INodeIdsByPermissions> => {
+        const result: INodeIdsByPermissions = {
             true: [],
             false: []
         };
@@ -85,7 +96,7 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (groupsIds, lib
             const permissions = await permissionRepo.getAllPermissionsForTree({
                 type: PermissionTypes.RECORD,
                 applyTo: library,
-                actionKey: RecordPermissionsActions.ACCESS_RECORD,
+                actionKey: action,
                 treeId,
                 groupsIds: groupWithAncestor,
                 ctx
@@ -95,9 +106,7 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (groupsIds, lib
             const permissionsByTreeTarget = permissions.reduce((acc, p) => {
                 acc[`nodeId:${p.permissionTreeTarget.nodeId}`] = acc[`nodeId:${p.permissionTreeTarget.nodeId}`] ?? [];
 
-                acc[`nodeId:${p.permissionTreeTarget.nodeId}`].push(
-                    p.actions[`${RecordPermissionsActions.ACCESS_RECORD}`]
-                );
+                acc[`nodeId:${p.permissionTreeTarget.nodeId}`].push(p.actions[action]);
                 return acc;
             }, {});
 
@@ -143,8 +152,27 @@ const getAccessPermissionsFilters: IGetAccessPermissions = async (groupsIds, lib
     for (const treeAttribute of treeAttributes) {
         const attributeProps: IAttribute = await getCoreEntityById('attribute', treeAttribute, ctx);
         const treeId = attributeProps.linked_tree;
+        const treeContent = await treeRepo.getTreeContent({treeId, ctx});
 
-        const nodesIdByPermission = await _getNodesIdByPermission(treeId);
+        const nodesIdByPermission = await _getNodesIdByPermission(
+            treeId,
+            treeContent,
+            RecordPermissionsActions.ACCESS_RECORD
+        );
+
+        if (!existingFiltersOnTreeIds.includes(treeId)) {
+            const nodesIdByPermissionByDefault = await _getNodesIdByPermission(
+                treeId,
+                treeContent,
+                RecordPermissionsActions.ACCESS_RECORD_BY_DEFAULT
+            );
+
+            nodesIdByPermission.true = _.intersection(nodesIdByPermission.true, nodesIdByPermissionByDefault.true);
+            nodesIdByPermission.false = _.difference(
+                _.union(nodesIdByPermission.false, nodesIdByPermissionByDefault.false),
+                nodesIdByPermission.true
+            );
+        }
 
         result.push({
             treeId,

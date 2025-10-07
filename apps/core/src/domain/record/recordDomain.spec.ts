@@ -43,7 +43,6 @@ import {type ICreateRecordValueError} from './_types';
 import {createRecord as createRecordHelper, deleteRecord as deleteRecordHelper} from './helpers';
 import {type IFormRepo} from 'infra/form/formRepo';
 import mockLogger from '../../__tests__/mockers/logger';
-import {ErrorTypes} from '@leav/utils';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
@@ -683,7 +682,8 @@ describe('RecordDomain', () => {
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtils as IUtils
             });
 
             await recDomain.find({
@@ -760,7 +760,8 @@ describe('RecordDomain', () => {
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.utils': mockUtils as IUtils
                 });
 
                 await recDomain.find({
@@ -827,7 +828,8 @@ describe('RecordDomain', () => {
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.utils': mockUtils as IUtils
                 });
 
                 await recDomain.find({
@@ -909,7 +911,8 @@ describe('RecordDomain', () => {
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.utils': mockUtils as IUtils
                 });
 
                 await recDomain.find({
@@ -962,7 +965,8 @@ describe('RecordDomain', () => {
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.utils': mockUtils as IUtils
                 });
 
                 await recDomain.find({
@@ -1030,7 +1034,8 @@ describe('RecordDomain', () => {
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.utils': mockUtils as IUtils
                 });
 
                 await recDomain.find({
@@ -1129,7 +1134,8 @@ describe('RecordDomain', () => {
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.utils': mockUtils as IUtils
                 });
 
                 await recDomain.find({
