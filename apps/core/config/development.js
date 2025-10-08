@@ -23,6 +23,6 @@ module.exports = {
         enable: envToBool(process.env.DB_PROFILER_ENABLE, true)
     },
     bugsnag: {
-        releaseStage: 'development'
+        releaseStage: process.env.BUGSNAG_RELEASE_STAGE || 'development'
     }
 };
