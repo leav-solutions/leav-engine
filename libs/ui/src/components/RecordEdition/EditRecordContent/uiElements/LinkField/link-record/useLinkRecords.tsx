@@ -19,6 +19,7 @@ import {useEditRecordModal} from '_ui/components/RecordEdition/EditRecordModal/u
 interface ILinkRecords {
     libraryId: string;
     recordId: string;
+    editionFormId: string;
     isFormCreationMode: boolean;
     attribute: RecordFormAttributeLinkAttributeFragment;
     joinLibraryContext: JoinLibraryContextFragment;
@@ -39,6 +40,7 @@ const _shouldUpdateExplorerActions = (ref: IExplorerRef, explorerActions: IExplo
 export const useLinkRecords = ({
     libraryId,
     recordId,
+    editionFormId,
     isFormCreationMode,
     attribute,
     joinLibraryContext,
@@ -154,7 +156,7 @@ export const useLinkRecords = ({
                                             color: item.whoAmI?.color,
                                             library: {id: item.libraryId}
                                         },
-                                        editionFormId: 'edition'
+                                        editionFormId
                                     });
                                 }
                             }

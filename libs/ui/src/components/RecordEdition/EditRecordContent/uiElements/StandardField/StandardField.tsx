@@ -99,7 +99,7 @@ const StandardField: FunctionComponent<
     const {attribute} = element;
 
     useEffect(() => {
-        if (computedValues && computedValues[attribute.id]) {
+        if (computedValues && computedValues[attribute.id] && Array.isArray(computedValues[attribute.id])) {
             setBackendValues(computedValues[attribute.id]);
             antdForm.setFieldValue(attribute.id, getAntdDisplayedValue(computedValues[attribute.id], attribute));
         }

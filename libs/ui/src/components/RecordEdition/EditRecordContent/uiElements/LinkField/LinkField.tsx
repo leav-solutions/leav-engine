@@ -109,9 +109,12 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
         ]
     });
 
+    const editionFormId = settings.editFormId ? settings.editFormId : 'edition';
+
     const {UnlinkAllRecords, LinkRecordsExplorer} = useLinkRecords({
         libraryId: state.libraryId,
         recordId: state.record?.id,
+        editionFormId,
         isFormCreationMode,
         attribute,
         joinLibraryContext,
