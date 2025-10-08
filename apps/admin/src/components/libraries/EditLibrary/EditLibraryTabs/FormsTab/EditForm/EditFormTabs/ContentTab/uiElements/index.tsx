@@ -154,6 +154,11 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
                 name: 'displayRecordIdentity',
                 inputType: FormElementSettingsInputTypes.CHECKBOX,
                 defaultValue: true
+            },
+            {
+                name: 'editFormId',
+                inputType: FormElementSettingsInputTypes.INPUT,
+                defaultValue: ''
             }
             // TODO: uncomment when select in tag mode is implemented
             // {

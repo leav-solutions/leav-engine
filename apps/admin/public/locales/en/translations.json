@@ -340,6 +340,7 @@
             },
             "displayRecordIdentity": "Display information column",
             "useAttributeLabel": "Use attribute label",
+            "linkAttributeEditFormId": "Linked element edit form ID",
             "tagDisplayMode": "Tag(s) display mode"
         },
         "rte": {
