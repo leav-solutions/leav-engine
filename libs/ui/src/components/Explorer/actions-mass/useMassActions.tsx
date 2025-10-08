@@ -12,8 +12,6 @@ import {MASS_SELECTION_ALL} from '../_constants';
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {prepareFiltersForRequest} from '../_queries/prepareFiltersForRequest';
 
-export const SNACKBAR_MASS_ID = 'SNACKBAR_MASS_ID';
-
 /**
  * Hook used to manage mass selection as the snackbar and all kind of selection (manual, all in page, all in filters)
  *
@@ -23,13 +21,15 @@ export const SNACKBAR_MASS_ID = 'SNACKBAR_MASS_ID';
  * @param totalCount - used for display only
  * @param allVisibleKeys - list of all ids currently selected
  * @param massActions - array of all actions available on mass selection
+ * @param snackbarId - id of the snackbar displayed
  */
 export const useMassActions = ({
     isEnabled,
     store: {dispatch, view},
     totalCount,
     allVisibleKeys,
-    massActions
+    massActions,
+    snackbarId
 }: {
     isEnabled: boolean;
     store: {
@@ -39,22 +39,17 @@ export const useMassActions = ({
     totalCount: number;
     allVisibleKeys: string[];
     massActions: IMassActions[];
+    snackbarId: string;
 }) => {
     const {t} = useSharedTranslation();
-
-    /**
-     * Use in the case of two `<Explorer />` components on the same page to avoid closing the snackbar of the other one.
-     *
-     * > Can be replaced by `useId` when we will migrate to React 19.
-     */
-    const uniqId = useRef(Date.now());
 
     useEffect(() => {
         if (view.massSelection === MASS_SELECTION_ALL || view.massSelection.length !== 0) {
             openKitSnackBar({
                 duration: 0,
                 closable: true,
-                snackbarId: SNACKBAR_MASS_ID + uniqId.current,
+                snackbarId,
+                toasterId: snackbarId,
                 onClose: () => _setSelectedKeys([]),
                 message: t('explorer.massAction.selectedItems', {
                     count: view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length
@@ -87,11 +82,11 @@ export const useMassActions = ({
                 }))
             });
         } else {
-            closeKitSnackBar(SNACKBAR_MASS_ID + uniqId.current);
+            closeKitSnackBar(snackbarId);
         }
     }, [view.massSelection, view.filters, totalCount]);
 
-    useEffect(() => () => closeKitSnackBar(SNACKBAR_MASS_ID + uniqId.current), []);
+    useEffect(() => () => closeKitSnackBar(snackbarId), []);
 
     const isOnePage = view.pageSize > totalCount;
     const hasSelectedAllAvailableItems =
@@ -103,6 +98,7 @@ export const useMassActions = ({
 
     const _selectAllButton = isOnePage ? (
         <KitCheckbox
+            aria-checked={hasSelectedSomeItems ? 'mixed' : hasSelectedAllAvailableItems ? 'true' : 'false'}
             indeterminate={hasSelectedSomeItems}
             checked={hasSelectedAllAvailableItems}
             onChange={_ => {
@@ -145,7 +141,11 @@ export const useMassActions = ({
                 ]
             }}
         >
-            <KitCheckbox indeterminate={hasSelectedSomeItems} checked={hasSelectedAllAvailableItems}>
+            <KitCheckbox
+                aria-checked={hasSelectedSomeItems ? 'mixed' : hasSelectedAllAvailableItems ? 'true' : 'false'}
+                indeterminate={hasSelectedSomeItems}
+                checked={hasSelectedAllAvailableItems}
+            >
                 <KitSpace size="s">
                     {t('explorer.massAction.itemsTotal', {count: totalCount})}
                     <FaChevronDown />
