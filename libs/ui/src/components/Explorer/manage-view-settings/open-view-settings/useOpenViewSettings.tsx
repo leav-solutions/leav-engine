@@ -74,6 +74,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
         setButton(
             <KitButton
                 type="secondary"
+                size="m"
                 icon={<FaSlidersH />}
                 onClick={() => _openSettingsPanel()}
                 disabled={isMassSelectionAll}
@@ -83,6 +84,7 @@ export const useOpenViewSettings = ({view, isEnabled = true}: FeatureHook<{view:
         setViewListButton(
             <KitButton
                 type="secondary"
+                size="m"
                 icon={<FaBars />}
                 onClick={() => _openSettingsPanel('viewList.my-views')}
                 disabled={isMassSelectionAll}

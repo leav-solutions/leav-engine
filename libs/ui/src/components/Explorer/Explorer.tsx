@@ -51,12 +51,6 @@ const ExplorerHeaderDivStyled = styled.div`
     padding: calc(var(--general-spacing-xs) * 1px);
 `;
 
-const ExplorerActionsDivStyled = styled.div`
-    display: flex;
-    justify-content: space-between;
-    padding: calc(var(--general-spacing-xs) * 1px);
-`;
-
 const ExplorerPageDivStyled = styled.div`
     display: flex;
     flex-direction: column;
@@ -108,6 +102,7 @@ export interface IExplorerProps {
     showCreateOnNoResultOnly?: boolean;
     showFilters?: boolean;
     showSorts?: boolean;
+    hideFirstActionLabel?: boolean;
     /**
      * Optional to `false` load the last added view when `props.defaultViewSettings.viewId` is `undefined`,
      * if set to `true` load default view.
@@ -144,6 +139,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             showCreateOnNoResultOnly = false,
             showFilters = false,
             showSorts = false,
+            hideFirstActionLabel = false,
             disableSelection = false,
             hideSelectAllAction = false,
             showTitle = false,
@@ -279,7 +275,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {primaryButton} = usePrimaryActionsButton({
             view,
-            actions: [createPrimaryAction, linkPrimaryAction, ...primaryActions].filter(Boolean)
+            actions: [createPrimaryAction, linkPrimaryAction, ...primaryActions].filter(Boolean),
+            hideFirstActionLabel
         });
 
         const {viewSettingsButton, viewListButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
@@ -315,26 +312,19 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                 </KitTypography.Title>
                             </ExplorerHeaderDivStyled>
                         )}
-                        {(showSearch || view?.enableConfigureView || !hidePrimaryActions) && (
-                            <ExplorerActionsDivStyled>
-                                <div>{showSearch && searchInput}</div>
-                                <KitSpace size="xs">
-                                    {view?.enableConfigureView && viewListButton}
-                                    {view?.enableConfigureView && viewSettingsButton}
-                                    {!hidePrimaryActions && primaryButton}
-                                </KitSpace>
-                            </ExplorerActionsDivStyled>
-                        )}
-                        {!viewSettingsLoading && (
-                            <ExplorerToolbar
-                                showFilters={showFilters}
-                                showSorts={showSorts}
-                                isMassSelectionAll={isMassSelectionAll}
-                                headless={hideTableHeader}
-                            >
-                                {!hideSelectAllAction && selectAllButton}
-                            </ExplorerToolbar>
-                        )}
+                        <ExplorerToolbar
+                            showFilters={showFilters}
+                            showSorts={showSorts}
+                            isMassSelectionAll={isMassSelectionAll}
+                            headless={hideTableHeader}
+                            selectAllButton={hideSelectAllAction ? null : selectAllButton}
+                            viewSettingsLoading={viewSettingsLoading}
+                        >
+                            {view?.enableConfigureView ? viewListButton : null}
+                            {showSearch ? searchInput : null}
+                            {view?.enableConfigureView ? viewSettingsButton : null}
+                            {hidePrimaryActions ? null : primaryButton}
+                        </ExplorerToolbar>
                         {loadingData || viewSettingsLoading ? (
                             <Loading />
                         ) : hasNoResults ? (

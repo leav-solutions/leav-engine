@@ -44,6 +44,7 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
                 itemActions={itemActions}
                 {...commonExplorerProps}
                 {...libraryExplorerProps}
+                hideFirstActionLabel={true}
             />
         </div>
     );

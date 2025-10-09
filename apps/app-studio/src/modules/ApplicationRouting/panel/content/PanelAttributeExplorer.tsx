@@ -86,6 +86,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                             )
                     }
                 }}
+                hideFirstActionLabel={true}
             />
         </div>
     );

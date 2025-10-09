@@ -1513,6 +1513,25 @@ describe('Explorer', () => {
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
 
+            test('multiple actions should be in a dropdown', async () => {
+                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+                render(
+                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                        <Explorer entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} />
+                    </Explorer.EditSettingsContextProvider>
+                );
+
+                expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+                expect(screen.queryByText(customPrimaryAction1.label)).not.toBeInTheDocument();
+                expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
+
+                const dropdownButton = await screen.findByRole('dropdown-trigger');
+                await user.click(dropdownButton);
+                expect(screen.getByRole('menuitem', {name: 'explorer.create-one'})).toBeVisible();
+                expect(screen.getByRole('menuitem', {name: customPrimaryAction1.label})).toBeVisible();
+                expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
+            });
+
             test('should not display the primary actions button if library data is empty and entrypoint has allowFreeEntry set to false', () => {
                 spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
                 render(
@@ -1730,8 +1749,13 @@ describe('Explorer', () => {
                 }
             );
 
-            const createOneButton = await screen.findByRole('button', {name: 'explorer.create-one'});
-            await user.click(createOneButton);
+            const dropdownButton = await screen.findByRole('dropdown-trigger');
+            expect(dropdownButton).toBeVisible();
+            await user.click(dropdownButton);
+
+            const createOneAction = screen.getByRole('menuitem', {name: 'explorer.create-one'});
+            expect(createOneAction).toBeVisible();
+            await user.click(createOneAction);
 
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
 
@@ -1829,13 +1853,12 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>
             );
 
-            const firstActionButton = screen.queryByRole('button', {name: 'explorer.create-one'});
-            // TODO in DS : find a way to move dropdown hidden input somewhere else
-            const dropdownButton = firstActionButton?.nextElementSibling?.nextElementSibling;
+            const dropdownButton = await screen.findByRole('dropdown-trigger');
+
             expect(screen.queryByText(customPrimaryAction1.label)).not.toBeInTheDocument();
             expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
 
-            await user.click(dropdownButton!);
+            await user.click(dropdownButton);
 
             expect(screen.getByRole('menuitem', {name: customPrimaryAction1.label})).toBeVisible();
             expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
@@ -1856,20 +1879,19 @@ describe('Explorer', () => {
             );
 
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
-            const firstActionButton = screen.getByRole('button', {name: customPrimaryAction1.label});
+
+            const dropdownButton = await screen.findByRole('dropdown-trigger');
+            await user.click(dropdownButton);
+
+            const firstActionButton = screen.getByRole('menuitem', {name: customPrimaryAction1.label});
+            const secondActionButton = screen.getByRole('menuitem', {name: customPrimaryAction2.label});
             expect(firstActionButton).toBeVisible();
+            expect(secondActionButton).toBeVisible();
 
             await user.click(firstActionButton);
             expect(customPrimaryActions[0].callback).toHaveBeenCalled();
 
-            const dropdownButton = firstActionButton?.nextElementSibling?.nextElementSibling;
-            expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
-
-            await user.click(dropdownButton!);
-
-            expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
-
-            await user.click(screen.getByRole('menuitem', {name: customPrimaryAction2.label}));
+            await user.click(secondActionButton);
             expect(customPrimaryActions[1].callback).toHaveBeenCalled();
         });
     });
@@ -3255,9 +3277,13 @@ describe('Explorer', () => {
                 }
             );
 
-            const createOneButton = await screen.findByRole('button', {name: 'explorer.create-one'});
-            expect(createOneButton).toBeVisible();
-            expect(createOneButton).toBeDisabled();
+            const dropdownButton = await screen.findByRole('dropdown-trigger');
+            await user.click(dropdownButton);
+
+            const createOneAction = await screen.findByRole('menuitem', {name: 'explorer.create-one'});
+            expect(createOneAction).toBeVisible();
+            expect(createOneAction).toHaveAttribute('aria-disabled', 'true');
+            expect(createOneAction).toHaveClass('ant-dropdown-menu-item-disabled');
         });
 
         test('Should be able to link existing record', async () => {

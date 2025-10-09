@@ -62,6 +62,7 @@ export const useSearchInput = ({
                         value={search ?? ''}
                         disabled={view.massSelection === MASS_SELECTION_ALL}
                         onChange={_handleChange}
+                        size="middle"
                     />
                 </form>
             ) : null
