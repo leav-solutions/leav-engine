@@ -11,7 +11,6 @@ const amqpMockConfig: Mockify<IAmqp> = {connOpt: {hostname: 'localhost'}, exchan
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),
-    checkExchange: jest.fn(),
     assertQueue: jest.fn(),
     bindQueue: jest.fn(),
     consume: jest.fn(),
@@ -59,8 +58,6 @@ describe('amqp', () => {
 
     test('Publish a message', async () => {
         await amqpServ.publish('exchange', 'someRoutingKey', JSON.stringify({test: 'Some value'}));
-
-        expect(mockAmqpChannel.checkExchange).toBeCalled();
         expect(mockAmqpChannel.publish).toBeCalled();
     });
 

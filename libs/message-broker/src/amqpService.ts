@@ -43,7 +43,6 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
 
     const publish: IAmqpService['publish'] = async (exchange, routingKey, msg, priority): Promise<void> => {
         try {
-            await publisher.channel.checkExchange(exchange);
             await new Promise((resolve, reject) => {
                 publisher.channel.publish(
                     exchange,
