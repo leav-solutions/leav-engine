@@ -471,7 +471,10 @@ integration-test-core:
   stage: test
   services:
     - *e2e_service_arangodb
+    - *e2e_service_redis
   variables:
+    REDIS_HOST: "redis"
+    REDIS_PORT: "6379"
     ARANGO_URL: "http://root:@arangodb:8529"
     APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/core"
   script:
