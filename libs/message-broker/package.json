@@ -4,7 +4,7 @@
   "description": "Shared message broker to use across projects",
   "scripts": {
     "prepublishOnly": "npm run build",
-    "build": "tsc --build",
+    "build": "tsc --build tsconfig.build.json",
     "tscheck": "tsc --noEmit -p .",
     "tscheck:watch": "tsc -w --noEmit -p .",
     "test": "jest -c jest-config.json",

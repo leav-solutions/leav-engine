@@ -7,8 +7,7 @@
     "test:ci": "",
     "test:commit": "",
     "prepublishOnly": "npm run build",
-    "build": "tsc --build",
-    "build:watch": "tsc --build -w",
+    "build": "tsc --build tsconfig.build.json",
     "tscheck": "tsc --noEmit -p .",
     "tscheck:watch": "tsc -w --noEmit -p ."
   },

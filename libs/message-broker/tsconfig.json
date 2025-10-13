@@ -1,16 +1,8 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "baseUrl": "src",
     "outDir": "dist",
-    "rootDir": "src",
-    "composite": true,
-    "noImplicitReturns": true
+    "isolatedModules": false
   },
-  "references": [
-      {
-          "path": "../logger"
-      }
-  ],
-  "include": ["./src"],
-  "exclude": ["**/*.spec.ts"]
 }

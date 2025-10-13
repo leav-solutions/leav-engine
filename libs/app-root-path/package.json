@@ -7,7 +7,7 @@
     "test:ci": "jest -c jest-config.json --maxWorkers=2",
     "test:commit": "jest -c jest-config.json --maxWorkers=50% --onlyChanged ",
     "prepublishOnly": "npm run build",
-    "build": "tsc --build",
+    "build": "tsc --build tsconfig.build.json",
     "tscheck": "tsc --noEmit -p .",
     "tscheck:watch": "tsc -w --noEmit -p ."
   },

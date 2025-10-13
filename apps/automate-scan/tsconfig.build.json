@@ -13,19 +13,19 @@
     },
     "references": [
       {
-        "path": "../../libs/app-root-path"
+        "path": "../../libs/app-root-path/tsconfig.build.json"
       },
       {
-        "path": "../../libs/config-manager"
+        "path": "../../libs/config-manager/tsconfig.build.json"
       },
       {
-        "path": "../../libs/logger"
+        "path": "../../libs/logger/tsconfig.build.json"
       },
       {
-        "path": "../../libs/utils"
+        "path": "../../libs/utils/tsconfig.json"
       },
       {
-        "path": "../../libs/monitoring-server"
+        "path": "../../libs/monitoring-server/tsconfig.build.json"
       }
     ],
     "include": ["src/**/*"],
