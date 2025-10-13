@@ -14,7 +14,6 @@ x-dir-portal: &dir-portal /app/apps/portal
 x-dir-automate_scan: &dir-automate_scan /app/apps/automate-scan
 x-dir-preview_generator: &dir-preview_generator /app/apps/preview-generator
 x-dir-sync_scan: &dir-sync_scan /app/apps/sync-scan
-x-dir-logs_collector: &dir-logs_collector /app/apps/logs-collector
 
 x-volume-yarn-cache: &volume-yarn-cache yarn_cache:/app/.yarn/cache
 x-volume-shared-modules: &volume-shared-modules node_modules_shared:/app/node_modules
@@ -27,7 +26,6 @@ x-volume-portal-modules: &volume-portal-modules node_modules_portal:/app/apps/po
 x-volume-preview_generator-modules: &volume-preview_generator-modules node_modules_preview-generator:/app/apps/preview-generator/node_modules
 x-volume-automate_scan-modules: &volume-automate_scan-modules node_modules_automate-scan:/app/apps/automate-scan/node_modules
 x-volume-sync_scan-modules: &volume-sync_scan-modules node_modules_sync-scan:/app/apps/sync-scan/node_modules
-x-volume-logs_collector-modules: &volume-logs_collector-modules node_modules_logs-collector:/app/apps/logs-collector/node_modules
 x-volume-config_manager-modules: &volume-config_manager-modules node_modules_config-manager:/app/libs/config-manager/node_modules
 x-volume-app_root_path-modules: &volume-app_root_path-modules node_modules_app-root-path:/app/libs/app-root-path/node_modules
 x-volume-utils-modules: &volume-utils-modules node_modules_utils:/app/libs/utils/node_modules
@@ -226,7 +224,7 @@ services:
     depends_on:
       core:
         condition: service_healthy
-    command: [sh, -c, "yarn run start:indexation"]
+    command: [sh, -c, "yarn run start:indexationManager"]
 
   tasks-manager-master:
     build: *env-build-core
@@ -285,6 +283,34 @@ services:
       core:
         condition: service_healthy
     command: [sh, -c, "yarn run start:tasksWorker"]
+
+  logs-collector:
+    profiles: ["logs"]
+    build: *env-build-core
+    stdin_open: true
+    environment:
+      <<: [*env-core, *env-amqp]
+      CORE_MODE: logsCollector
+    volumes:
+      - *mount_point-repo
+      - *mount_point-scripts
+      - *volume-yarn-cache
+      - *volume-shared-modules
+      - *volume-core-modules
+      - *volume-app_root_path-modules
+      - *volume-config_manager-modules
+      - *volume-logger-modules
+      - *volume-message_broker-modules
+      - *volume-monitoring_server-modules
+      - *volume-utils-modules
+    ports:
+      - "9235:9235"
+    working_dir: *dir-core
+    healthcheck: *healthcheck-localhost-44444
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start:logsCollector"]
 
   admin:
     image: *node_image
@@ -519,36 +545,6 @@ services:
       - *volume-message_broker-modules
     working_dir: *dir-sync_scan
 
-  # Feel free to comment out logs-collector and elasticsearch if don't need logs
-  logs-collector:
-    profiles: ["logs"]
-    image: *node_image
-    labels:
-      - traefik.enable=true
-    environment:
-      <<: [*env-amqp]
-      APP_ROOT_PATH: *dir-logs_collector
-      DEBUG: false
-      NODE_ENV: development
-    volumes:
-      - *mount_point-repo
-      - *mount_point-scripts
-      - *volume-yarn-cache
-      - *volume-shared-modules
-      - *volume-logs_collector-modules
-      - *volume-app_root_path-modules
-      - *volume-config_manager-modules
-      - *volume-logger-modules
-      - *volume-message_broker-modules
-      - *volume-monitoring_server-modules
-      - *volume-utils-modules
-    working_dir: *dir-logs_collector
-    healthcheck: *healthcheck-localhost-44444
-    depends_on:
-      message-broker:
-        condition: service_healthy
-    command: [sh, -c, "yarn run start:dev"]
-
   # Proxy
   traefik:
     image: *traefik_image
@@ -568,7 +564,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.dashboard.rule=Host(`traefik.leav.localhost`)"
       - "traefik.http.routers.dashboard.service=api@internal"
-    
+
   arangodb:
     image: *arango_image
     environment:
@@ -706,8 +702,6 @@ volumes:
   node_modules_automate-scan:
     driver: local
   node_modules_sync-scan:
-    driver: local
-  node_modules_logs-collector:
     driver: local
   node_modules_config-manager:
     driver: local

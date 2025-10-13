@@ -25,7 +25,9 @@ describe('logRepo', () => {
             instanceId: 'instanceId',
             elasticSearch: {
                 indexPrefix: 'leav-logs-',
-                url: 'http://localhost:9200'
+                url: 'http://localhost:9200',
+                ilmPolicyName: '',
+                templateName: ''
             }
         };
 

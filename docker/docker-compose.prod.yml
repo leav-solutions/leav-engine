@@ -194,18 +194,16 @@ services:
       - *mount_point-files
 
   logs-collector:
-    image: leavengine/logs-collector:latest
+    image: leavengine/core:latest
+    stdin_open: true
     restart: always
-    labels:
-      - traefik.enable=true
     environment:
-      <<: [*env-amqp]
+      <<: [*env-core, *env-amqp]
+      CORE_MODE: logsCollector
     depends_on:
-      message-broker:
+      core:
         condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-    command: [sh, -c, "yarn run start"]
+    command: [sh, -c, "yarn start --logsCollector"]
 
   # Proxy
   traefik:

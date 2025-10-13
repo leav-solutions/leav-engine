@@ -363,28 +363,6 @@ apps/login-unit-tests:
         - apps/login/**/*
         - libs/ui/**/*
 
-apps/logs-collector-unit-tests:
-  stage: test
-  script:
-    - yarn workspaces focus logs-collector
-    - yarn workspace logs-collector run test:ci
-  cache:
-    <<: *yarn_cache
-  rules:
-    - *disable_test_rule
-    - *no_tag_rule
-    - *no_duplicate_rule
-    - <<: *mr_rule
-      changes:
-        - *new_lib_installed_changes
-        - apps/logs-collector/**/*
-        - libs/app-root-path/**/*
-        - libs/config-manager/**/*
-        - libs/logger/**/*
-        - libs/message-broker/**/*
-        - libs/monitoring-server/**/*
-        - libs/utils/**/*
-
 apps/portal-unit-tests:
   stage: test
   script:
@@ -814,25 +792,6 @@ build-docker-sync-scan:
       --target runner
       --label "LEAV Engine"
       --label "Sync scan"
-      $DOCKER_IMAGE_TAG
-      $DOCKER_IMAGE_LATEST
-      $DOCKER_PUSH
-      .
-
-build-docker-logs-collector:
-  <<: *default_docker_build
-  variables:
-    <<: *docker_build_variables
-    DOCKER_IMAGE_APP: "logs-collector"
-  script:
-    - *set_version
-    - docker buildx build
-      --platform $DOCKER_PLATFORM
-      --file docker/DOCKERFILES/build/generic.Dockerfile
-      --build-arg APP=$DOCKER_IMAGE_APP
-      --target runner
-      --label "LEAV Engine"
-      --label "Logs Collector"
       $DOCKER_IMAGE_TAG
       $DOCKER_IMAGE_LATEST
       $DOCKER_PUSH

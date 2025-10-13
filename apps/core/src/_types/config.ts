@@ -34,6 +34,7 @@ export interface IConfig {
     dbProfiler: IDbProfilerConfig;
     instanceId: string;
     elasticSearch: IElasticSearchConfig;
+    logsCollector: ILogsCollector;
     pluginsPath: string[];
     bugsnag: IBugsnag;
     matomo: IMatomo;
@@ -46,6 +47,7 @@ export enum CoreMode {
     INDEXATION_MANAGER = 'indexationManager',
     TASKS_MANAGER_MASTER = 'tasksManager:master',
     TASKS_MANAGER_WORKER = 'tasksManager:worker',
+    LOGS_COLLECTOR = 'logsCollector',
     CLI = 'cli' // default
 }
 
@@ -256,6 +258,8 @@ export interface IDbProfilerConfig {
 export interface IElasticSearchConfig {
     indexPrefix: string;
     url: string;
+    ilmPolicyName: string;
+    templateName: string;
 }
 
 export interface IBugsnag {
@@ -270,4 +274,8 @@ export interface IMatomo {
     enable: boolean;
     url?: string;
     siteId?: string;
+}
+
+export interface ILogsCollector {
+    queue: string;
 }

@@ -346,9 +346,7 @@ export default function ({
                 payload: Joi.object()
                     .keys({
                         trigger: Joi.string(),
-                        action: Joi.string()
-                            .valid(...eventsManager.getActions())
-                            .required(),
+                        action: Joi.string().required(),
                         topic: Joi.object()
                             .keys({
                                 record: Joi.object().keys({

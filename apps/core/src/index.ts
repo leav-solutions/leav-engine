@@ -21,6 +21,7 @@ import Bugsnag from '@bugsnag/js';
 import {type IUtils} from './utils/utils';
 import {logger} from '@leav/logger';
 import {setupLogger} from './utils/logger/logger';
+import {type ILogsCollectorInterface} from './interface/logsCollector';
 
 (async function () {
     let conf: IConfig;
@@ -77,6 +78,7 @@ import {setupLogger} from './utils/logger/logger';
     const server: IServer = coreContainer.cradle['core.interface.server'];
     const filesManager: IFilesManagerInterface = coreContainer.cradle['core.interface.filesManager'];
     const indexationManager: IIndexationManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
+    const logsCollector: ILogsCollectorInterface = coreContainer.cradle['core.interface.logsCollector'];
     const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
@@ -131,6 +133,10 @@ import {setupLogger} from './utils/logger/logger';
                 break;
             case CoreMode.TASKS_MANAGER_WORKER:
                 await tasksManager.initWorker();
+                await monitoringServerInstance.init();
+                break;
+            case CoreMode.LOGS_COLLECTOR:
+                await logsCollector.init();
                 await monitoringServerInstance.init();
                 break;
             case CoreMode.CLI:

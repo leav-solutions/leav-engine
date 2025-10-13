@@ -15,6 +15,12 @@ services:
             -c,
             "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start --indexationManager"
         ]
+    logs-collector:
+      command: [
+        sh,
+        -c,
+        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start --logsCollector"
+      ]
     tasks-manager-master:
         command: [
             sh,

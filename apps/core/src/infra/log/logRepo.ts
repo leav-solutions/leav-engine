@@ -100,20 +100,17 @@ export default function ({'core.infra.elasticSearch.service': esService, config}
                 return acc;
             }, []);
 
-            const response = await esService.search<Log>(
-                {
-                    index: indexName,
-                    limit: pagination?.limit,
-                    offset: pagination?.offset,
-                    sort,
-                    query: {
-                        bool: {
-                            must: queryParts
-                        }
+            const response = await esService.search<Log>({
+                index: indexName,
+                limit: pagination?.limit,
+                offset: pagination?.offset,
+                sort,
+                query: {
+                    bool: {
+                        must: queryParts
                     }
-                },
-                ctx
-            );
+                }
+            });
 
             return {
                 logs: response.hits,

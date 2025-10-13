@@ -194,7 +194,12 @@ module.exports = {
     },
     elasticSearch: {
         indexPrefix: process.env.ELASTICSEARCH_INDEX_PREFIX || 'leav-logs-',
-        url: process.env.ELASTICSEARCH_URL || process.env.ELASTIC_SEARCH_URL || 'http://elasticsearch:9200'
+        url: process.env.ELASTICSEARCH_URL || process.env.ELASTIC_SEARCH_URL || 'http://elasticsearch:9200',
+        ilmPolicyName: process.env.ELASTICSEARCH_ILM_POLICY_NAME || 'leav-logs-policy',
+        templateName: process.env.ELASTICSEARCH_TEMPLATE_NAME || 'leav-logs-template'
+    },
+    logsCollector: {
+        queue: process.env.LOGS_MANAGER_QUEUE || 'logs_events'
     },
     pluginsPath: process.env.PLUGINS_PATH || []
 };
