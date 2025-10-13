@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {type IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {type IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {type IFormRepo} from 'infra/form/formRepo';
@@ -606,7 +605,7 @@ describe('attributeDomain', () => {
 
             attrDomain.getAttributes = global.__mockPromise([attrData]);
 
-            const updatedAttr = await attrDomain.saveAttribute({
+            await attrDomain.saveAttribute({
                 attrData: {
                     id: mockAttrAdvVersionable.id,
                     type: AttributeTypes.ADVANCED,
@@ -924,7 +923,7 @@ describe('attributeDomain', () => {
                 const mockAttrRepo: Mockify<IAttributeRepo> = {
                     getAttributes: jest
                         .fn()
-                        .mockImplementation(({params: {filters}, ctx: ct}) =>
+                        .mockImplementation(({params: {filters}}) =>
                             filters.id === 'metadata_attribute'
                                 ? {list: [{...mockAttrAdv, id: 'metadata_attribute'}]}
                                 : {list: []}
@@ -969,7 +968,8 @@ describe('attributeDomain', () => {
         test('Should delete an attribute and return deleted attribute', async function () {
             const mockAttrRepo = {
                 deleteAttribute: global.__mockPromise(attrData),
-                getAttributes: global.__mockPromise({list: []})
+                getAttributes: global.__mockPromise({list: []}),
+                getAttributeLibraries: global.__mockPromise([])
             } satisfies Mockify<IAttributeRepo>;
 
             const mockFormRepo: Mockify<IFormRepo> = {
@@ -1032,10 +1032,29 @@ describe('attributeDomain', () => {
             await expect(attrDomain.deleteAttribute({id: attrData.id, ctx})).rejects.toThrow(PermissionError);
         });
 
+        test('Should throw if attribute is used by a library', async () => {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getAttributeLibraries: global.__mockPromise([{id: 'library1'}, {id: 'library2'}])
+            };
+
+            const attrDomain = attributeDomain({
+                ...depsBase,
+                'core.domain.permission.admin': mockAdminPermDomain,
+                'core.infra.attribute': mockAttrRepo,
+                'core.infra.cache.cacheService': mockCachesService,
+                'core.utils': mockUtils
+            } as ToAny<IAttributeDomainDeps>);
+
+            attrDomain.getAttributes = global.__mockPromise({list: [attrData], totalCount: 1});
+
+            await expect(attrDomain.deleteAttribute({id: attrData.id, ctx})).rejects.toThrow(ValidationError);
+        });
+
         test('Should throw if attribute is used in metadata of another attribute', async () => {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 deleteAttribute: global.__mockPromise(attrData),
-                getAttributes: global.__mockPromise({list: [{mockAttrAdv}]})
+                getAttributes: global.__mockPromise({list: [{mockAttrAdv}]}),
+                getAttributeLibraries: global.__mockPromise([])
             };
 
             const attrDomain = attributeDomain({

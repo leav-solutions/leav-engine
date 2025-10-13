@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
+import {type ApolloError, useQuery} from '@apollo/client';
 import {type History} from 'history';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -11,11 +11,12 @@ import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
-import {addWildcardToFilters} from '../../../utils/utils';
+import {addWildcardToFilters} from '../../../utils';
 import {type GET_ATTRIBUTES, type GET_ATTRIBUTESVariables} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import AttributesList from '../AttributesList';
 import DeleteAttribute from '../DeleteAttribute';
+import ErrorDisplay from '../../shared/ErrorDisplay';
 
 const Title = styled(Header)`
     display: flex;
@@ -39,6 +40,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
     const {history} = props;
     const [filters, setFilters] = useState<IAttributesFilters>({});
     const userData = useUserData();
+    const [deleteError, setDeleteError] = useState<ApolloError | null>(null);
 
     const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
         variables: {...addWildcardToFilters(filters)}
@@ -56,6 +58,8 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
             ...filters,
             [filterElem.name]: newElemState
         });
+
+        setDeleteError(null);
     };
 
     const _onRowClick = attribute => history.push('/attributes/edit/' + attribute.id);
@@ -78,6 +82,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
                     </Grid.Column>
                 )}
             </Grid>
+            {deleteError && <ErrorDisplay message={deleteError.message} />}
             {!error ? (
                 <AttributesList
                     loading={loading || !data}
@@ -87,7 +92,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
                     filters={filters}
                     actions={
                         userData.permissions[PermissionsActions.admin_delete_attribute] ? (
-                            <DeleteAttribute key="delete_attr" filters={filters} />
+                            <DeleteAttribute key="delete_attr" filters={filters} onError={setDeleteError} />
                         ) : (
                             <></>
                         )

@@ -100,11 +100,16 @@ describe('Records', () => {
                     `mutation { purgeRecord(libraryId: "${testLibName}", recordId: "${id}") { id } }`
                 );
             }
+
+            // unlink attributes before deleting them
+            await gqlSaveLibrary(testLibName, 'Test', []);
+            await gqlSaveLibrary(testLibLink, 'Test2', []);
+
             // Need to delete attribute BEFORE library,
             // Otherwise cache is not deleted and the next saveAttribute will try to update it
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAttributeId}") { id } }`);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testLinkAttributeId}") { id } }`);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testTreeAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAttributeId}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testLinkAttributeId}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testTreeAttributeId}") { id } }`, true);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibName}") { id } }`);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibLink}") { id } }`);
             await makeGraphQlCall(`mutation { deleteTree(id: "${testTreeName}") { id } }`);
@@ -263,7 +268,9 @@ describe('Records', () => {
                 await makeGraphQlCall(
                     `mutation { deleteForm(library: "${testLibName}", id: "${formWithDependency}") { id } }`
                 );
-                await makeGraphQlCall(`mutation { deleteAttribute(id: "${dependentAttrId}") { id } }`);
+
+                await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]); // remove dependentAttrId attribute from lib before delete
+                await makeGraphQlCall(`mutation { deleteAttribute(id: "${dependentAttrId}") { id } }`, true);
             });
 
             test('Should activate a new record even if a required field is only in a dependent form (so not filled)', async () => {
@@ -413,11 +420,16 @@ describe('Records', () => {
                     `mutation { purgeRecord(libraryId: "${testLibName}", recordId: "${id}") { id } }`
                 );
             }
+
+            // unlink attributes before deleting them
+            await gqlSaveLibrary(testLibName, 'Test', []);
+            await gqlSaveLibrary(testLibLink, 'Test2', []);
+
             // Need to delete attribute BEFORE library,
             // Otherwise cache is not deleted and the next saveAttribute will try to update it
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAttributeId}") { id } }`);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testLinkAttributeId}") { id } }`);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testTreeAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAttributeId}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testLinkAttributeId}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testTreeAttributeId}") { id } }`, true);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibName}") { id } }`);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibLink}") { id } }`);
             await makeGraphQlCall(`mutation { deleteTree(id: "${testTreeName}") { id } }`);
@@ -976,17 +988,29 @@ describe('Records', () => {
                     `mutation { purgeRecord(libraryId: "${sfTestLibTreeId}", recordId: "${id}") { id } }`
                 );
             }
+
+            // unlink attributes before deleting them
+            await gqlSaveLibrary(sfTestLibId, 'Test', [testTreeAttrId]);
+            await gqlSaveLibrary(sfTestLibLinkId, 'Test', [
+                testAdvThroughLinkAttrId,
+                testAdvRevLinkAttrId,
+                testAdvRevLinkToSimpleLinkAttrId
+            ]);
+            await gqlSaveLibrary(sfTestLibTreeId, 'Test', []);
+
             // Need to delete attribute BEFORE library,
             // Otherwise cache is not deleted and the next saveAttribute will try to update it
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleAttrId}") { id } }`);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleAttrId2}") { id } }`);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleExtAttrId}") { id } }`);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleLinkAttrId}") { id } }`);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAdvAttrId}") { id } }`);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAdvLinkAttrId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleAttrId}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleAttrId2}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleExtAttrId}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleLinkAttrId}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAdvAttrId}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAdvLinkAttrId}") { id } }`, true);
+
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${sfTestLibId}") { id } }`);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${sfTestLibLinkId}") { id } }`);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${sfTestLibTreeId}") { id } }`);
+
             await makeGraphQlCall(`mutation { deleteTree(id: "${testTreeId}") { id } }`);
         });
 

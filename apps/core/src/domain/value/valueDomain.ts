@@ -463,33 +463,39 @@ const valueDomain = function ({
             });
         }
 
-        const isRequired =
-            attributeProps.required &&
-            (!attributeProps.multiple_values ||
-                (await _isLastValue({
-                    attribute: attributeProps,
-                    library,
-                    recordId,
-                    ctx,
-                    reverseLink
-                })));
+        const attributeIsLinkedToLibrary = (
+            await attributeDomain.getAttributeLibraries({attributeId: attribute, ctx})
+        ).filter(l => l === library).length;
 
-        const attributeLabel =
-            typeof attributeProps.label === 'string'
-                ? attributeProps.label
-                : localizedTranslation(attributeProps.label, [ctx.lang]);
+        if (attributeIsLinkedToLibrary) {
+            const isRequired =
+                attributeProps.required &&
+                (!attributeProps.multiple_values ||
+                    (await _isLastValue({
+                        attribute: attributeProps,
+                        library,
+                        recordId,
+                        ctx,
+                        reverseLink
+                    })));
 
-        if (attributeProps.readonly) {
-            throw new ValidationError<IValue>({
-                [attribute]: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeLabel}}
-            });
-        } else if (isRequired) {
-            throw new ValidationError<IValue>({
-                [attribute]: {
-                    msg: Errors.REQUIRED_ATTRIBUTE,
-                    vars: {attribute: attributeLabel}
-                }
-            });
+            const attributeLabel =
+                typeof attributeProps.label === 'string'
+                    ? attributeProps.label
+                    : localizedTranslation(attributeProps.label, [ctx.lang]);
+
+            if (attributeProps.readonly) {
+                throw new ValidationError<IValue>({
+                    [attribute]: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeLabel}}
+                });
+            } else if (isRequired) {
+                throw new ValidationError<IValue>({
+                    [attribute]: {
+                        msg: Errors.REQUIRED_ATTRIBUTE,
+                        vars: {attribute: attributeLabel}
+                    }
+                });
+            }
         }
 
         const existingValue: IValue = await _getExistingValue({
@@ -501,8 +507,11 @@ const valueDomain = function ({
             ctx
         });
 
-        if (!existingValue) {
+        if (value && !existingValue) {
             throw new ValidationError({id: Errors.UNKNOWN_VALUE});
+        } else if (!existingValue) {
+            // there is no values on this attribute, we have nothing to do.
+            return [];
         }
 
         const actionsListRes = !!attributeProps.actions_list?.deleteValue
@@ -881,8 +890,7 @@ const valueDomain = function ({
                 values = options?.forceGetAllValues ? allValues : findValue(trees, allValues);
             }
 
-            // Runs actionsList
-            const actionsListRes = await _runActionsList({
+            return _runActionsList({
                 listName: ActionsListEvents.GET_VALUE,
                 values,
                 attribute: attr,
@@ -890,8 +898,6 @@ const valueDomain = function ({
                 library,
                 ctx
             });
-
-            return actionsListRes;
         },
         saveValue,
         async saveValueBatch({

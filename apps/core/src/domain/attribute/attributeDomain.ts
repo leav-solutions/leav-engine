@@ -187,9 +187,7 @@ export default function ({
         async getAttributeLibraries({attributeId, ctx}): Promise<ILibrary[]> {
             // Validate attribute
             await this.getAttributeProperties({id: attributeId, ctx});
-
-            const libraries = await attributeRepo.getAttributeLibraries({attributeId, ctx});
-            return libraries;
+            return attributeRepo.getAttributeLibraries({attributeId, ctx});
         },
         async getLibraryFullTextAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
             const library = await getCoreEntityById('library', libraryId, ctx);
@@ -360,6 +358,18 @@ export default function ({
 
             if (attrProps.system) {
                 throw new ValidationError<IAttribute>({id: Errors.SYSTEM_ATTRIBUTE_DELETION});
+            }
+
+            const librariesUsingAttribute = await attributeRepo.getAttributeLibraries({attributeId: id, ctx});
+            if (librariesUsingAttribute.length) {
+                throw utils.generateExplicitValidationError(
+                    'id',
+                    {
+                        msg: Errors.ATTRIBUTE_USED_BY_LIBRARY,
+                        vars: {libraries: librariesUsingAttribute.map(l => l.id).join(', ')}
+                    },
+                    ctx.lang
+                );
             }
 
             // Check if attribute is used in metadata of another attribute
