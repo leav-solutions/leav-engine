@@ -37,7 +37,7 @@ import {mockTranslatorWithOptions} from '../../__tests__/mocks/translator';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import recordDomain, {type IRecordDomainDeps} from './recordDomain';
+import recordDomain, {ATTRIBUTE_ACTIVE, type IRecordDomainDeps} from './recordDomain';
 import {type IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 import {type ICreateRecordValueError} from './_types';
 import {createRecord as createRecordHelper, deleteRecord as deleteRecordHelper} from './helpers';
@@ -509,7 +509,7 @@ describe('RecordDomain', () => {
                 })
             });
             jest.spyOn(recDomain, 'activateNewRecord');
-            jest.spyOn(recDomain, 'purgeRecord');
+            jest.spyOn(recDomain, 'deleteRecord');
 
             const res = await recDomain.createRecord({
                 library: 'test',
@@ -529,7 +529,7 @@ describe('RecordDomain', () => {
             expect(mockRecRepo.createRecord).toHaveBeenCalledTimes(1);
             expect(mockValueDomain.saveValueBatch).toHaveBeenCalledTimes(1);
             expect(recDomain.activateNewRecord).toHaveBeenCalledTimes(0);
-            expect(recDomain.purgeRecord).toHaveBeenCalledTimes(1);
+            expect(recDomain.deleteRecord).toHaveBeenCalledTimes(1);
             expect(mockRecRepo.deleteRecord).toHaveBeenCalledTimes(1);
             expect(res.record).toBe(null);
             expect(res.valuesErrors).toHaveLength(1);
@@ -2278,7 +2278,7 @@ describe('RecordDomain', () => {
 
             expect(mockValueDomain.saveValue).toBeCalled();
             expect(typeof mockValueDomain.saveValue.mock.calls[0][0]).toBe('object');
-            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(ATTRIBUTE_ACTIVE);
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(false);
             expect(recordAfter.active).toBe(false);
         });
@@ -2304,7 +2304,7 @@ describe('RecordDomain', () => {
 
             expect(mockValueDomain.saveValue).toBeCalled();
             expect(typeof mockValueDomain.saveValue.mock.calls[0][0]).toBe('object');
-            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(ATTRIBUTE_ACTIVE);
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(true);
 
             expect(recordAfter.active).toBe(true);
@@ -2330,7 +2330,7 @@ describe('RecordDomain', () => {
             const recordAfter = await recDomain.deactivateRecord(record, {userId: '1'});
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(ATTRIBUTE_ACTIVE);
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(false);
             expect(recordAfter.active).toBe(false);
         });
@@ -2355,7 +2355,7 @@ describe('RecordDomain', () => {
             const recordAfter = await recDomain.activateRecord(record, {userId: '1'});
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(ATTRIBUTE_ACTIVE);
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(true);
             expect(recordAfter.active).toBe(true);
         });
@@ -2457,6 +2457,29 @@ describe('RecordDomain', () => {
             await domain.purgeInactiveRecords({libraryId: 'test_lib', ctx: mockCtx});
 
             expect(domain.deleteRecord).toBeCalledTimes(2);
+        });
+    });
+
+    describe('purgeRecord', () => {
+        test('Purge a record if inactive', async () => {
+            const mockRecRepo = {getRecord: global.__mockPromise({active: false})} satisfies Mockify<IRecordRepo>;
+            const domain = recordDomain({...depsBase, 'core.infra.record': mockRecRepo as IRecordRepo});
+            domain.deleteRecord = jest.fn().mockImplementation(() => Promise.resolve());
+
+            await domain.purgeRecord({libraryId: 'test_lib', recordId: '12345', ctx: mockCtx});
+
+            expect(mockRecRepo.getRecord).toHaveBeenCalled();
+            expect(domain.deleteRecord).toHaveBeenCalled();
+        });
+        test('Do not purge a record if active', async () => {
+            const mockRecRepo = {getRecord: global.__mockPromise({active: true})} satisfies Mockify<IRecordRepo>;
+            const domain = recordDomain({...depsBase, 'core.infra.record': mockRecRepo as IRecordRepo});
+            domain.deleteRecord = jest.fn().mockImplementation(() => Promise.resolve());
+
+            await domain.purgeRecord({libraryId: 'test_lib', recordId: '12345', ctx: mockCtx});
+
+            expect(mockRecRepo.getRecord).toHaveBeenCalled();
+            expect(domain.deleteRecord).not.toHaveBeenCalled();
         });
     });
 });

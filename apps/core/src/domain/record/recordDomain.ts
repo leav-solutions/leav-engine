@@ -110,6 +110,8 @@ const allowedTypeOperator = {
     object: [AttributeCondition.BETWEEN]
 };
 
+export const ATTRIBUTE_ACTIVE = 'active';
+
 export interface IRecordDomain {
     /**
      * Create empty record
@@ -913,7 +915,7 @@ export default function ({
             await valueDomain.saveValue({
                 library,
                 recordId,
-                attribute: 'active',
+                attribute: ATTRIBUTE_ACTIVE,
                 value: {payload: true},
                 ctx
             });
@@ -951,7 +953,11 @@ export default function ({
                     logger.error(`Error during save values batch for record ${createdRecord.id} in createRecord`, {
                         errors
                     });
-                    await this.purgeRecord({libraryId: library, recordId: createdRecord.id, ctx}).catch(err => {
+                    await this.deleteRecord({
+                        library,
+                        id: createdRecord.id,
+                        ctx
+                    }).catch(err => {
                         logger.verbose(`Unable to purge record ${createdRecord.id} in createRecord: ${err.message}`);
                     });
 
@@ -979,7 +985,7 @@ export default function ({
                     logger.error(`Error during activate new record ${createdRecord.id} in createRecord`, {
                         valuesErrors
                     });
-                    await this.purgeRecord({libraryId: library, recordId: createdRecord.id, ctx}).catch(err => {
+                    await this.deleteRecord({library, id: createdRecord.id, ctx}).catch(err => {
                         logger.verbose(`Unable to purge record ${createdRecord.id} in createRecord: ${err.message}`);
                     });
 
@@ -992,7 +998,7 @@ export default function ({
             } catch (error) {
                 logger.error(`Error in createRecord: ${error.stack}`);
                 if (createdRecord.id) {
-                    await this.purgeRecord({libraryId: library, recordId: createdRecord.id, ctx}).catch(err => {
+                    await this.deleteRecord({library, id: createdRecord.id, ctx}).catch(err => {
                         logger.verbose(`Unable to purge record ${createdRecord.id} in createRecord: ${err.message}`);
                     });
                 }
@@ -1319,7 +1325,7 @@ export default function ({
             const savedValues = await valueDomain.saveValue({
                 library: record.library,
                 recordId: record.id,
-                attribute: 'active',
+                attribute: ATTRIBUTE_ACTIVE,
                 value: {payload: false},
                 ctx
             });
@@ -1330,7 +1336,7 @@ export default function ({
             const savedValues = await valueDomain.saveValue({
                 library: record.library,
                 recordId: record.id,
-                attribute: 'active',
+                attribute: ATTRIBUTE_ACTIVE,
                 value: {payload: true},
                 ctx
             });
@@ -1413,7 +1419,7 @@ export default function ({
             const inactiveRecords = await this.find({
                 params: {
                     library: libraryId,
-                    filters: [{field: 'active', condition: AttributeCondition.EQUAL, value: 'false'}]
+                    filters: [{field: ATTRIBUTE_ACTIVE, condition: AttributeCondition.EQUAL, value: 'false'}]
                 },
                 ctx
             });
@@ -1440,20 +1446,18 @@ export default function ({
                 logger.warn(`Trying to purge unknown record from library ${libraryId}`);
                 return null;
             }
-            const record = await this.find({
-                params: {
-                    library: libraryId,
-                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: recordId}],
-                    retrieveInactive: true
-                },
-                ctx
-            });
-            if (!record?.list?.length) {
-                logger.warn(
-                    `Trying to purge record ${recordId} from library ${libraryId} but it doesn't exist or is active`
-                );
+
+            const record = await recordRepo.getRecord({libraryId, recordId, ctx});
+
+            if (record == null) {
+                logger.warn(`Trying to purge record ${recordId} from library ${libraryId} but record not found.`);
                 return null;
             }
+            if (record.active) {
+                logger.warn(`Trying to purge record ${recordId} from library ${libraryId} that is active.`);
+                return null;
+            }
+
             return this.deleteRecord({
                 library: libraryId,
                 id: recordId,
