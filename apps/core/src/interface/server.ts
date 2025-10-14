@@ -361,6 +361,8 @@ export default function ({
 
                 applicationApp.registerRoute(baseRouter);
 
+                // Must be sync with proxy to avoid 502 errors when the server is overloaded
+                httpServer.keepAliveTimeout = config.server.keepAliveTimeout;
                 await new Promise<void>(resolve => httpServer.listen(config.server.port, resolve));
                 logger.info(`🚀 Server ready at http://localhost:${config.server.port}/graphql`);
             } catch (e) {

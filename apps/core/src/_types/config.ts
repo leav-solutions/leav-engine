@@ -54,6 +54,7 @@ export enum CoreMode {
 export interface IServer {
     host: string;
     port: number;
+    keepAliveTimeout: number;
     publicUrl: string;
     basePath: string;
     allowIntrospection: boolean;

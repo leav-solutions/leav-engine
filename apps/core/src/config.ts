@@ -13,6 +13,7 @@ export const validateConfig = (conf: IConfig) => {
         server: Joi.object().keys({
             host: Joi.string().required(),
             port: Joi.number().required(),
+            keepAliveTimeout: Joi.number().required(),
             publicUrl: Joi.string().required(),
             basePath: Joi.string().required().allow(''),
             uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required(),

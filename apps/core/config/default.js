@@ -9,6 +9,7 @@ module.exports = {
     server: {
         host: process.env.SERVER_HOST || 'localhost',
         port: envToNumber(process.env.SERVER_PORT, 4001),
+        keepAliveTimeout: envToNumber(process.env.SERVER_KEEP_ALIVE_TIMEOUT, 60000),
         publicUrl: process.env.SERVER_PUBLIC_URL || 'http://localhost:4001',
         basePath: process.env.SERVER_BASE_PATH || '',
         allowIntrospection: envToBool(process.env.SERVER_ALLOW_INTROSPECTION, false),
