@@ -68,6 +68,7 @@ export interface IAuthAppDeps {
 }
 
 type authCookieName = typeof ACCESS_TOKEN_COOKIE_NAME | typeof REFRESH_TOKEN_COOKIE_NAME;
+const ONE_MINUTE = 60 * 1000;
 
 export default function ({
     'core.domain.value': valueDomain,
@@ -115,13 +116,14 @@ export default function ({
         value: string,
         host: string | null
     ): [authCookieName, string, CookieOptions] => {
-        const cookieExpires = ms(
-            String(
-                cookieName === ACCESS_TOKEN_COOKIE_NAME
-                    ? config.auth.tokenExpiration
-                    : config.auth.refreshTokenExpiration
-            )
-        );
+        const cookieExpires =
+            ms(
+                String(
+                    cookieName === ACCESS_TOKEN_COOKIE_NAME
+                        ? config.auth.tokenExpiration
+                        : config.auth.refreshTokenExpiration
+                )
+            ) - ONE_MINUTE; // we subtract one minute to avoid overlapping the access token
         if (!host) {
             throw new AuthenticationError('Missing host, cannot scope cookie domain.');
         }
