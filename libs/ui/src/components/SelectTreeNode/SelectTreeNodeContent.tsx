@@ -244,19 +244,15 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             defaultExpandedKeys={selectedNodes?.length > 0 ? [...selectedNodes, tree.id] : [tree.id]}
             selectedKeys={selectedNodes}
             checkedKeys={selectedNodes}
-            titleRender={node => {
-                const dataNode = node as ITreeMapElement;
-
-                return (
-                    <TreeNodeTitle
-                        title={dataNode.title}
-                        checkable={checkable}
-                        // We don't want to select the "show more" text
-                        isSelected={selectedNodes?.includes(dataNode.id) && !dataNode.isShowMore}
-                        isDisabled={disabledNodes?.includes(dataNode.id)}
-                    />
-                );
-            }}
+            titleRender={node => (
+                <TreeNodeTitle
+                    checkable={checkable}
+                    disabledNodes={disabledNodes}
+                    loadRecursively={loadRecursively}
+                    node={node as ITreeMapElement}
+                    selectedNodes={selectedNodes}
+                />
+            )}
             onSelect={_handleSelect}
             onCheck={_handleCheck}
         />
