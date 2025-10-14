@@ -21,7 +21,6 @@
   "license": "LGPL3",
   "devDependencies": {
     "@types/jest": "29.0.2",
-    "eslint": "8.57.0",
     "jest": "29.0.3",
     "prettier": "3.3.3",
     "ts-jest": "29.0.1",

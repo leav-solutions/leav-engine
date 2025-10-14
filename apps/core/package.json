@@ -20,7 +20,6 @@
         "test:e2e:api": "CONFIG_IGNORE_LOCAL=true NODE_ENV=test NODE_OPTIONS='--import tsx' jest -c jest-e2e-api-config.json --maxWorkers=2 --forceExit --detectOpenHandles",
         "test:e2e:filesManager": "CONFIG_IGNORE_LOCAL=true NODE_ENV=test NODE_OPTIONS='--import tsx' jest -c jest-e2e-filesManager-config.json --forceExit --detectOpenHandles",
         "test:e2e:indexationManager": "CONFIG_IGNORE_LOCAL=true NODE_ENV=test NODE_OPTIONS='--import tsx' jest -c jest-e2e-indexationManager-config.json --forceExit --detectOpenHandles",
-        "lint": "eslint --fix src/",
         "prettier": "prettier --write 'src/**/*.ts'",
         "db:migrate": "CORE_MODE=migrate node .",
         "db:migrate:dev": "CORE_MODE=migrate tsx src/",
