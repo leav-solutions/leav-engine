@@ -39,7 +39,6 @@ const FormGroupWithMargin = styled(Form.Group)`
 `;
 
 // TODO: add validation, getfielderror on attribute
-/* tslint:disable-next-line:variable-name */
 const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfosFormProps): JSX.Element => {
     const {t} = useTranslation();
     const {defaultLang, availableLangs, lang} = useLang();

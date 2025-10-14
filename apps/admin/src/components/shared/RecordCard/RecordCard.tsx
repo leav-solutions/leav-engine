@@ -20,7 +20,6 @@ interface IWrapperProps {
     style?: CSSObject;
 }
 
-/* tslint:disable:variable-name */
 const Wrapper = styled.div<IWrapperProps>`
     border-left: 5px solid ${props => props.recordColor || 'transparent'};
     display: flex;

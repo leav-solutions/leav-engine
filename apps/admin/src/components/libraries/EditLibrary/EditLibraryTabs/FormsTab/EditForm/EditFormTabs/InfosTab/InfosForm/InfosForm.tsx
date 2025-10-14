@@ -23,7 +23,6 @@ type FormValues = Pick<GET_FORM_forms_list, 'id' | 'system' | 'label' | 'sidePan
     dependencyAttributes: string[];
 };
 
-/* tslint:disable-next-line:variable-name */
 const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;

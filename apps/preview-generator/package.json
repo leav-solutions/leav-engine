@@ -12,7 +12,6 @@
         "test:ci": "jest -c jest-unit-config.json --maxWorkers=2",
         "test:commit": "jest -c jest-unit-config.json --maxWorkers=50% --onlyChanged ",
         "test:integration": "NODE_OPTIONS='--import tsx' jest -c jest-integration-config.json",
-        "lint": "tslint --fix -p .",
         "prettier": "prettier --write 'src/**/*.ts'",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p ."
