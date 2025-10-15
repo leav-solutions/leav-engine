@@ -50,12 +50,6 @@ export function configureLogger(config: ILoggerConfig): void {
         transports,
         format: catchErrorLog ? winston.format.combine(addLocationInfoInLog(), catchErrorLog()) : addLocationInfoInLog()
     });
-
-    // Use setImmediate to ensure that logger stack trace location info is correct
-    // Important for first call, otherwise callerLineIndexInStack will be wrong
-    setImmediate(() => {
-        winston.info(`Logger configured with level=${config.level}`);
-    });
 }
 
 // Default logger configuration, for testing and to avoid errors if not configured
