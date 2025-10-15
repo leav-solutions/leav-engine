@@ -59,7 +59,7 @@ export default function ({
         return JSON.parse(cacheContent[0]) as AuthRedirectStoredData;
     };
 
-    const _writeCodeVerifierRedirectUriByQueryId = async (queryId: string, data: AuthRedirectStoredData) =>
+    const _writeCodeVerifierRedirectUriByQueryId = (queryId: string, data: AuthRedirectStoredData): Promise<void> =>
         cache.storeData({
             key: _buildAuthVerificationKeysCacheKey(queryId),
             data: JSON.stringify(data),
@@ -80,14 +80,12 @@ export default function ({
         return new TokenSet(JSON.parse(cacheContent[0]));
     };
 
-    const _writeTokensSetByUserId = async (userId: string, tokens: TokenSet): Promise<void> =>
+    const _writeTokensSetByUserId = (userId: string, tokens: TokenSet): Promise<void> =>
         cache.storeData({
             key: _buildTokensCacheKey(userId),
             data: JSON.stringify(tokens),
             expiresIn: ms(config.auth.refreshTokenExpiration) + 1_000 * 60
         });
-
-    const _deleteTokenSetByUserId = async (userId: string) => cache.deleteData([_buildTokensCacheKey(userId)]);
 
     const _writeOriginalUrlByQueryId = (queryId: string, originalUrl: string) =>
         cache.storeData({
@@ -113,6 +111,7 @@ export default function ({
         oidcClient,
         getTokensFromCodes: async ({authorizationCode, queryId}) => {
             const [codeVerifier, redirectUri] = await _getCodeVerifierRedirectUriByQueryId(queryId);
+            // No need to await delete fn, it's just for clean up
             _deleteCodeVerifierRedirectUriByQueryId(queryId);
 
             return oidcClient.grant({
@@ -150,14 +149,17 @@ export default function ({
             const tokenSet = await _getTokenSetByUserId(userId);
 
             if (tokenSet.expired()) {
-                _deleteTokenSetByUserId(userId);
+                // TODO: Many successive calls to this function can happen in parallel, we need to refactor to improve this behavior
                 const newTokenSet = await oidcClient.refresh(tokenSet);
+                // We do not delete the old token set, as it might be needed for a short period of time
+                // We had race condition on multiple refresh requests, so we need to make sure that the old token can be used
                 await _writeTokensSetByUserId(userId, newTokenSet);
             }
         },
         saveOriginalUrl: ({originalUrl, queryId}) => _writeOriginalUrlByQueryId(queryId, originalUrl),
         getOriginalUrl: async queryId => {
             const originalUrl = _getOriginalUrlByQueryId(queryId);
+            // No need to await delete fn, it's just for clean up
             _deleteOriginalUrlByQueryId(queryId);
             return originalUrl;
         }

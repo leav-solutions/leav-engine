@@ -156,7 +156,6 @@ export default function ({
 
     const _generateAccessAndRefreshTokens = async (
         userId: string,
-        refreshToken: string,
         headers: IncomingHttpHeaders,
         res: Response,
         ctx: IQueryInfos
@@ -169,22 +168,25 @@ export default function ({
             agent: headers['user-agent'] ?? null
         });
 
+        // We do not delete the refresh afterward, we let the cache service expiration handle it
         await cacheService.getCache(ECacheType.RAM).storeData({
             key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
             data: userId,
             expiresIn: ms(config.auth.refreshTokenExpiration)
         });
 
-        await cacheService.getCache(ECacheType.RAM).deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
         const host = headers.host ?? null;
         res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, host));
         res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, host));
     };
 
-    const _verifyRefreshToken = async (token: string, reqHeaders: IncomingHttpHeaders): Promise<ISessionPayload> => {
+    const _verifyRefreshToken = async (
+        refreshToken: string,
+        reqHeaders: IncomingHttpHeaders
+    ): Promise<ISessionPayload> => {
         let refreshPayload: ISessionPayload;
         try {
-            refreshPayload = jwt.verify(token, config.auth.key) as ISessionPayload;
+            refreshPayload = jwt.verify(refreshToken, config.auth.key) as ISessionPayload;
         } catch {
             throw new AuthenticationError('Invalid refreshToken');
         }
@@ -202,7 +204,7 @@ export default function ({
         }
 
         const userSessionId = (
-            await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${token}`])
+            await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
         )[0];
 
         if (!userSessionId || refreshPayload.agent !== reqHeaders['user-agent']) {
@@ -596,7 +598,7 @@ export default function ({
                         return res.status(401).send('Invalid session');
                     }
 
-                    await _generateAccessAndRefreshTokens(payload.userId, refreshToken, req.headers, res, ctx);
+                    await _generateAccessAndRefreshTokens(payload.userId, req.headers, res, ctx);
 
                     return res.status(200).json({});
                 } catch (err) {
@@ -641,7 +643,7 @@ export default function ({
                     // To avoid this, we check if the error is a token expired error, and if so, we regenerate the tokens
                     if (e.name === 'TokenExpiredError' && refreshToken) {
                         const refreshPayload = await _verifyRefreshToken(refreshToken, headers);
-                        await _generateAccessAndRefreshTokens(refreshPayload.userId, refreshToken, headers, res, ctx);
+                        await _generateAccessAndRefreshTokens(refreshPayload.userId, headers, res, ctx);
                         userId = refreshPayload.userId;
                         groupsId = await getUserGroups(userId);
                     } else {
@@ -650,7 +652,7 @@ export default function ({
                 }
             } else if (refreshToken) {
                 const payload = await _verifyRefreshToken(refreshToken, headers);
-                await _generateAccessAndRefreshTokens(payload.userId, refreshToken, headers, res, ctx);
+                await _generateAccessAndRefreshTokens(payload.userId, headers, res, ctx);
                 userId = payload.userId;
                 groupsId = await getUserGroups(userId);
             } else {
