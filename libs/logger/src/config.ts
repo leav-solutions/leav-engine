@@ -6,7 +6,7 @@ export interface ILoggerConfig {
      * Log level (error, warn, info, log, verbose, debug, silly)
      * @default info
      */
-    level: string;
+    level?: string;
 
     /**
      * If true, disable all logging
@@ -25,6 +25,41 @@ export interface ILoggerConfig {
      */
     useJsonFormat?: boolean;
 
+    /**
+     * If true, add timestamp to each log line, ISO format
+     */
+    addTimestamp?: boolean;
+
+    /**
+     * If true, add file and line number of the code that called the logger function (error, warn, info, debug, etc.)
+     */
+    addLocationInfo?: boolean;
+
+    /**
+     * Add those metadata to all logs
+     */
+    additionalMeta?: {
+        /**
+         * any string to identify the application those logs came from
+         */
+        app?: string;
+
+        /**
+         * any string to identify each client those logs came from
+         */
+        client?: string;
+
+        /**
+         * environment, like production, development, test, integration
+         */
+        env?: string;
+
+        /**
+         * application version, maybe semver format
+         */
+        version?: string;
+    };
+
     onErrorLog?: (message: string, meta: any) => void;
 }
 
@@ -41,9 +76,17 @@ export function envToBool(value: string, defaultValue = false) {
     return defaultValue;
 }
 
-export const defaultLoggerConfig: ILoggerConfig = {
+export const defaultLoggerConfig: ILoggerConfig & Required<Omit<ILoggerConfig, 'onErrorLog'>> = {
     level: process.env.LOG_LEVEL || 'info',
     silent: envToBool(process.env.LOG_SILENT, process.env.TS_JEST === '1'),
     destinationFile: process.env.LOG_FILE,
-    useJsonFormat: envToBool(process.env.LOG_USE_JSON_FORMAT, false)
+    useJsonFormat: envToBool(process.env.LOG_USE_JSON_FORMAT, false),
+    addTimestamp: envToBool(process.env.LOG_ADD_TIMESTAMP, false),
+    addLocationInfo: envToBool(process.env.LOG_ADD_LOCATION_INFO, false),
+    additionalMeta: {
+        app: process.env.LOG_ADDITIONAL_META_APP,
+        client: process.env.LOG_ADDITIONAL_META_CLIENT,
+        env: process.env.LOG_ADDITIONAL_META_ENV,
+        version: process.env.LOG_ADDITIONAL_META_VERSION
+    }
 };

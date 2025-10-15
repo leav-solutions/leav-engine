@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import winston from 'winston';
 import {type ILoggerConfig, defaultLoggerConfig} from './config';
-import {addLocationInfoInLog, mergeLocationInfoInLog} from './locationInfoFormatters';
+import {addLocationInfoInLog} from './locationInfoFormatters';
 
 export type ILogger = Pick<typeof winston, 'error' | 'warn' | 'info' | 'log' | 'verbose' | 'debug' | 'silly'>;
 
@@ -11,6 +11,9 @@ export function configureLogger(config: ILoggerConfig): void {
     const level = config.level ?? defaultLoggerConfig.level;
     const useJsonFormat = config.useJsonFormat ?? defaultLoggerConfig.useJsonFormat;
     const destinationFile = config.destinationFile ?? defaultLoggerConfig.destinationFile;
+    const addLocationInfo = config.addLocationInfo ?? defaultLoggerConfig.addLocationInfo;
+    const addTimestamp = config.addTimestamp ?? defaultLoggerConfig.addTimestamp;
+    const additionalMeta = config.additionalMeta ?? defaultLoggerConfig.additionalMeta;
     const onErrorLog = config.onErrorLog;
 
     const transports: winston.transport[] = [
@@ -18,16 +21,14 @@ export function configureLogger(config: ILoggerConfig): void {
             silent: config.silent,
             format: useJsonFormat
                 ? winston.format.json()
-                : winston.format.combine(winston.format.colorize(), mergeLocationInfoInLog(), winston.format.simple())
+                : winston.format.combine(winston.format.colorize(), winston.format.simple())
         })
     ];
     if (destinationFile) {
         transports.push(
             new winston.transports.File({
                 filename: destinationFile,
-                format: useJsonFormat
-                    ? winston.format.json()
-                    : winston.format.combine(mergeLocationInfoInLog(), winston.format.simple())
+                format: useJsonFormat ? winston.format.json() : winston.format.combine(winston.format.simple())
             })
         );
     }
@@ -44,11 +45,18 @@ export function configureLogger(config: ILoggerConfig): void {
         });
     }
 
+    const formats = [
+        addLocationInfo ? addLocationInfoInLog() : undefined,
+        addTimestamp ? winston.format.timestamp() : undefined,
+        catchErrorLog ? catchErrorLog() : undefined
+    ].filter(f => !!f) as winston.Logform.Format[];
+
     winston.configure({
         level,
         handleExceptions: true,
         transports,
-        format: catchErrorLog ? winston.format.combine(addLocationInfoInLog(), catchErrorLog()) : addLocationInfoInLog()
+        defaultMeta: additionalMeta,
+        format: winston.format.combine(...formats)
     });
 }
 

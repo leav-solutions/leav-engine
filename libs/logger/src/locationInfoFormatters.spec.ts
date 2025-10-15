@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import winston from 'winston';
-import {addLocationInfoInLog, mergeLocationInfoInLog} from './locationInfoFormatters';
+import {addLocationInfoInLog} from './locationInfoFormatters';
 
 describe('addLocationInfo', () => {
     const fakeFormat = winston.format(info => info)();
@@ -54,24 +54,6 @@ describe('addLocationInfo', () => {
                 level: 'info',
                 message: 'Test log 2',
                 location: expect.stringMatching(new RegExp(`${__filename}:\\d+`))
-            }),
-            {}
-        );
-    });
-
-    it('mergeLocationInfoInLog should add location property to log info', () => {
-        const logger = winston.createLogger({
-            level: 'info',
-            format: winston.format.combine(addLocationInfoInLog(), mergeLocationInfoInLog(), fakeFormat),
-            transports: [new winston.transports.Console({silent: true})]
-        });
-
-        logger.info('Test log');
-
-        expect(fakeFormatTransformSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                level: 'info',
-                message: expect.stringMatching(new RegExp(`\\[${__filename}:\\d+\\] Test log`))
             }),
             {}
         );

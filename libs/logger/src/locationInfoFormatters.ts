@@ -60,9 +60,3 @@ export const addLocationInfoInLog = winston.format(info => {
     }
     return info;
 });
-
-export const mergeLocationInfoInLog = winston.format(info => {
-    info.message = `[${info.location}] ${info.message}`;
-    delete info.location;
-    return info;
-});
