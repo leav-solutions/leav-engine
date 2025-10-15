@@ -106,6 +106,16 @@ x-env-automate-scan: &env-automate-scan
   ROOT_KEY: files1
   APP_ROOT_PATH: *dir-automate_scan
 
+x-env-logger: &env-logger
+  LOG_LEVEL: "silly"
+  LOG_USE_JSON_FORMAT: "false"
+  LOG_ADD_LOCATION_INFO: "false"
+  LOG_ADD_TIMESTAMP: "false"
+  # LOG_ADDITIONAL_META_ENV: "local"
+  # LOG_ADDITIONAL_META_CLIENT: "aristid"
+  # LOG_ADDITIONAL_META_VERSION: "develop"
+  # LOG_ADDITIONAL_META_APP: "xstream"
+
 x-env-sync-scan: &env-sync-scan
   ALLOW_FILES_LIST: *allow-list
   IGNORE_FILES_LIST: *ignore-list
@@ -160,7 +170,7 @@ services:
       - traefik.http.services.core.loadbalancer.server.port=4001
       - traefik.http.routers.core.entrypoints=web
     environment:
-      <<: [*env-core, *env-amqp]
+      <<: [*env-core, *env-amqp, *env-logger]
       CORE_MODE: server
     volumes: # We must load every volume for installation
       - *mount_point-repo
@@ -203,7 +213,7 @@ services:
     build: *env-build-core
     stdin_open: true
     environment:
-      <<: [*env-core, *env-amqp]
+      <<: [*env-core, *env-amqp, *env-logger]
       CORE_MODE: indexationManager
     volumes:
       - *mount_point-repo
@@ -230,7 +240,7 @@ services:
     build: *env-build-core
     stdin_open: true
     environment:
-      <<: [*env-core, *env-amqp]
+      <<: [*env-logger, *env-core, *env-amqp]
       CORE_MODE: tasksManager:master
     volumes:
       - *mount_point-repo
@@ -259,7 +269,7 @@ services:
     build: *env-build-core
     restart: always
     environment:
-      <<: [*env-core, *env-amqp]
+      <<: [*env-logger, *env-core, *env-amqp]
       CORE_MODE: tasksManager:worker
     volumes:
       - *mount_point-repo
@@ -289,7 +299,7 @@ services:
     build: *env-build-core
     stdin_open: true
     environment:
-      <<: [*env-core, *env-amqp]
+      <<: [*env-logger, *env-core, *env-amqp]
       CORE_MODE: logsCollector
     volumes:
       - *mount_point-repo
@@ -443,7 +453,7 @@ services:
     image: *node_image
     restart: always
     environment:
-      <<: [*env-automate-scan, *env-amqp]
+      <<: [*env-logger, *env-automate-scan, *env-amqp]
     volumes:
       - *mount_point-repo
       - *mount_point-files
@@ -468,7 +478,7 @@ services:
     build: *env-build-core
     restart: always
     environment:
-      <<: [*env-core, *env-amqp]
+      <<: [*env-logger, *env-core, *env-amqp]
       CORE_MODE: filesManager
     volumes:
       - *mount_point-repo
@@ -499,7 +509,7 @@ services:
       dockerfile: ../../docker/DOCKERFILES/PREVIEW_GENERATOR/Dockerfile
     restart: always
     environment:
-      <<: [*env-amqp, *env-preview-generator]
+      <<: [*env-logger, *env-amqp, *env-preview-generator]
     volumes:
       - *mount_point-repo
       - *mount_point-files
@@ -530,7 +540,7 @@ services:
     labels:
       - traefik.enable=true
     environment:
-      <<: [*env-sync-scan, *env-amqp]
+      <<: [*env-logger, *env-sync-scan, *env-amqp]
     depends_on:
         core:
             condition: service_healthy
