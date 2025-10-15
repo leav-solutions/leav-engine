@@ -8,10 +8,6 @@ module.exports = {
     server: {
         allowIntrospection: true
     },
-    logs: {
-        level: 'silly',
-        transport: 'console'
-    },
     auth: {
         refreshTokenExpiration: '99y',
         cookie: {

@@ -12,7 +12,7 @@ export default function () {
 }
 
 export function setupLogger(config: IConfig) {
-    const onLogError = config.bugsnag.enable
+    const onErrorLog = config.bugsnag.enable
         ? (message: string, meta: any) => {
               const error = new Error(JSON.stringify({message, meta}));
 
@@ -24,7 +24,6 @@ export function setupLogger(config: IConfig) {
         : undefined;
 
     configureLogger({
-        ...config.logs,
-        onErrorLog: onLogError
+        onErrorLog
     });
 }

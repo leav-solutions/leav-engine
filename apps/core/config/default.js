@@ -95,12 +95,6 @@ module.exports = {
         available: process.env.LANG_AVAILABLE || ['fr', 'en'],
         default: process.env.LANG_DEFAULT || 'en'
     },
-    logs: {
-        level: process.env.LOG_LEVEL || 'info',
-        transport: process.env.LOG_TRANSPORT || 'console,file', // Comma separated list of transport, including : console, file
-        destinationFile: process.env.LOG_FILE, // If logging in file
-        useJsonFormat: envToBool(process.env.LOG_USE_JSON_FORMAT, false) // logging using json format
-    },
     permissions: {
         default: true,
         enableCache: envToBool(process.env.PERMISSIONS_ENABLE_CACHE, true)
