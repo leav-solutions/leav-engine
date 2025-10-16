@@ -5,21 +5,20 @@ import {getConfig} from '../../config';
 import i18nextInit from '../../i18nextInit';
 import {initDI} from '../../depsManager';
 import {initDb} from '../../infra/db/db';
-import {type RedisClientType} from 'infra/cache/redis';
 import {type IDbUtils} from 'infra/db/dbUtils';
+import {initRedis} from '../../infra/cache';
 
 export async function setup() {
     try {
         const conf = await getConfig();
         const translator = await i18nextInit(conf);
-        const redis: RedisClientType = {
-            FLUSHDB: async () => undefined // for migration scripts !
-        } as unknown as RedisClientType;
 
         await initDb(conf);
+        const redisClient = await initRedis({config: conf});
+
         const {coreContainer} = await initDI({
             translator,
-            'core.infra.redis': redis
+            'core.infra.redis': redisClient
         });
 
         const dbUtils: IDbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
