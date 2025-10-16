@@ -1,15 +1,16 @@
 FROM node:24-alpine3.21
 
-# imagemagick is use for image
-# ffmpeg is use for convert video
-# inkscape is use to convert svg, imageMagick can't do it correctly
-RUN apk update
-RUN apk add --no-cache imagemagick~=7.1 ffmpeg inkscape
+# imagemagick is used to convert images
+# ffmpeg is used to convert videos
+# inkscape is used to convert svg
+# ghostscript is by imagemagick for pdf detection/conversion
+# libreoffice and unoconv are used to convert documents
+RUN apk add --upgrade --no-cache imagemagick~=7.1 ffmpeg inkscape ghostscript
 
 ENV UNO_URL https://raw.githubusercontent.com/dagwieers/unoconv/master/unoconv
 
 # Install unoconv
-RUN apk --no-cache add bash mc openjdk8 \
+RUN apk --no-cache add \
     curl \
     util-linux \
     libreoffice-common \
@@ -26,6 +27,8 @@ RUN apk --no-cache add bash mc openjdk8 \
     ttf-dejavu \
     ttf-freefont \
     ttf-liberation \
+    # for unoconv
+    py3-setuptools \
     && curl -Ls $UNO_URL -o /usr/local/bin/unoconv \
     && chmod +x /usr/local/bin/unoconv \
     && ln -sf /usr/bin/python3 /usr/bin/python \
