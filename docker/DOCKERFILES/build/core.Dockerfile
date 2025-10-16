@@ -53,6 +53,7 @@ WORKDIR /app
 
 COPY --from=builder /install ./
 COPY docker/scripts/plugins_install.sh ./scripts/plugins_install.sh
+COPY assets/ ./assets
 
 # Dependencies needed to retrieve files metadata with exiftool-vendored pkg
 RUN apk --update --no-cache add perl pkgconfig
