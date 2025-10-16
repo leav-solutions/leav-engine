@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type i18n} from 'i18next';
-import {type IConfig} from '_types/config';
+import {type IServer, type IConfig} from '_types/config';
 import {type IValue} from '_types/value';
 import {AttributeFormats} from '../_types/attribute';
 import {Errors} from '../_types/errors';
@@ -351,6 +351,29 @@ describe('Utils', () => {
             const error = utilsModule.generateExplicitValidationError('id', Errors.UNKNOWN_ELEMENT, 'fr');
             expect(error.fields.id).toMatch('UNKNOWN_ELEMENT');
             expect(error.message).toMatch('[TRANSLATED]');
+        });
+    });
+
+    describe('getPreviewUrl', () => {
+        test('Generate a full URL for a preview file with basePAth', async () => {
+            const mockConfig: Partial<IConfig> = {
+                server: {
+                    basePath: '/base'
+                } as IServer
+            };
+            const utilsModule = utils({config: mockConfig as IConfig});
+            const url = utilsModule.getPreviewUrl('my_lib/small/12345.png');
+            expect(url).toBe('/base/previews/my_lib/small/12345.png');
+        });
+
+        test('Generate a full URL for a preview file without basePath', async () => {
+            // No base path
+            const mockConfigNoBase: Partial<IConfig> = {
+                server: {} as IServer
+            };
+            const utilsModuleNoBase = utils({config: mockConfigNoBase as IConfig});
+            const urlNoBase = utilsModuleNoBase.getPreviewUrl('my_lib/small/12345.png');
+            expect(urlNoBase).toBe('/previews/my_lib/small/12345.png');
         });
     });
 

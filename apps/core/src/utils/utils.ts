@@ -329,7 +329,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
             return `${os.hostname()}-${process.pid}`;
         },
         getPreviewUrl(relativeUrl: string): string {
-            return pathLib.join(config.server.basePath, 'previews', relativeUrl);
+            return pathLib.join(config.server.basePath || '/', 'previews', relativeUrl);
         },
         getPreviewsAttributeName(libraryId) {
             return getPreviewsAttributeName(libraryId);
