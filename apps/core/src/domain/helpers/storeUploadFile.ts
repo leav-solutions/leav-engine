@@ -38,7 +38,7 @@ export default function () {
                 });
             }
 
-            writeStream.on('finish', resolve);
+            writeStream.on('finish', () => resolve(undefined));
 
             writeStream.on('error', error => {
                 logger.error(`Error while writing file because ${error.stack}`);
