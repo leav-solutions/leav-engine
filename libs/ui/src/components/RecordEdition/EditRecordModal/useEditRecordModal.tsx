@@ -20,8 +20,10 @@ export const useEditRecordModal = () => {
                 {...editRecordModalProps}
                 open
                 onClose={() => {
+                    if (editRecordModalProps && editRecordModalProps.onClose) {
+                        editRecordModalProps.onClose();
+                    }
                     setEditRecordModalProps(null);
-                    editRecordModalProps?.onClose();
                 }}
             />
         ),

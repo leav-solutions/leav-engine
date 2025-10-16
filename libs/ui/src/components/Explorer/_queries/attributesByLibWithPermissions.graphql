@@ -2,7 +2,6 @@ fragment AttributesByLibLinkAttributeWithPermissions on LinkAttribute {
     valuesList: values_list {
         enable
         allowFreeEntry
-        allowListUpdate
         linkedValues: values {
             ...RecordIdentity
         }
