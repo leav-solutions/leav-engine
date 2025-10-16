@@ -55,7 +55,7 @@
         "@types/i18next-browser-languagedetector": "3.0.0",
         "@types/i18next-xhr-backend": "1.4.2",
         "@types/jest": "30.0.0",
-        "@types/node": "18.7.18",
+        "@types/node": "24.7.2",
         "@types/react": "18.2.14",
         "@types/react-dom": "18.2.6",
         "@types/styled-components": "5.1.26",

@@ -1,4 +1,4 @@
-FROM node:18-alpine3.18
+FROM node:24-alpine3.21
 
 # imagemagick is use for image
 # ffmpeg is use for convert video
