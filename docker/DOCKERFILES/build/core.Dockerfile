@@ -64,5 +64,8 @@ RUN apk --update --no-cache add perl pkgconfig
 # Get ready for runtime
 WORKDIR /app/apps/core
 ENV APP_ROOT_PATH=/app/apps/core
+# To avoid error at startup, since https://github.com/yarnpkg/yarn/releases/tag/v1.22.21
+# error This project's package.json defines "packageManager": "yarn@4.0.2". However the current global version of Yarn is 1.22.22.
+ENV SKIP_YARN_COREPACK_CHECK=1
 
 CMD ["sh", "-c", "/app/scripts/plugins_install.sh && yarn run db:migrate && yarn run start"]
