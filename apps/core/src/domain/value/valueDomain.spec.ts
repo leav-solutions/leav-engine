@@ -34,6 +34,7 @@ import {type IValidateHelper} from '../helpers/validate';
 import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import valueDomain, {type IValueDomainDeps} from './valueDomain';
+import {type IRecordInCreationBypassHelper} from '../permission/helpers/recordInCreationBypass';
 
 const depsBase: ToAny<IValueDomainDeps> = {
     config: {},
@@ -47,6 +48,7 @@ const depsBase: ToAny<IValueDomainDeps> = {
     'core.domain.tree.helpers.elementAncestors': jest.fn(),
     'core.domain.tree.helpers.getDefaultElement': jest.fn(),
     'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
+    'core.domain.permission.helpers.recordInCreationBypass': jest.fn(),
     'core.domain.versionProfile': jest.fn(),
     'core.infra.record': jest.fn(),
     'core.infra.tree': jest.fn(),
@@ -139,6 +141,10 @@ describe('ValueDomain', () => {
 
     const mockGetDefaultElementHelper: Mockify<IGetDefaultElementHelper> = {
         getDefaultElement: global.__mockPromise({id: '12345'})
+    };
+
+    const mockRecordInCreationBypassHelper: Mockify<IRecordInCreationBypassHelper> = {
+        recordInCreationBypassById: global.__mockPromise(false)
     };
 
     const mockUpdateRecordLastModif = jest.fn();
@@ -1545,7 +1551,7 @@ describe('ValueDomain', () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
                 getAttributeProperties: global.__mockPromise({...mockAttrAdv}),
-                getAttributeLibraries: global.__mockPromise(['test_lib'])
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
             const valDomain = valueDomain({
@@ -1562,7 +1568,9 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
-                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
+                'core.domain.permission.helpers.recordInCreationBypass':
+                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper
             });
 
             await valDomain.saveValueBatch({
@@ -1742,7 +1750,7 @@ describe('ValueDomain', () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE}),
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
-                getAttributeLibraries: global.__mockPromise(['test_lib'])
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
             const valDomain = valueDomain({
@@ -1756,7 +1764,9 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
-                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
+                'core.domain.permission.helpers.recordInCreationBypass':
+                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper
             });
 
             const deletedValue = await valDomain.deleteValue({
@@ -1892,7 +1902,7 @@ describe('ValueDomain', () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrSimple, required: true}),
                 getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1}),
-                getAttributeLibraries: global.__mockPromise(['test_lib'])
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
             const mockValRepo = {
@@ -1911,7 +1921,9 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.permission.helpers.recordInCreationBypass':
+                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper
             });
 
             const deleteVal = valDomain.deleteValue({
@@ -1924,6 +1936,55 @@ describe('ValueDomain', () => {
 
             await expect(deleteVal).rejects.toThrow(ValidationError);
             await expect(deleteVal).rejects.toHaveProperty('fields.test_attr');
+        });
+
+        test('Should not throw on delete value of required attribute if record in creation', async function () {
+            const deletedValueData = {payload: 'test val', attribute: 'test_attr'};
+
+            const mockValRepo = {
+                deleteValue: global.__mockPromise({payload: 'test val', attribute: 'test_attr', id_value: '123'}),
+                getValueById: global.__mockPromise({id_value: '12345'}),
+                getValues: global.__mockPromise([{payload: 'test val', attribute: 'test_attr'}])
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({
+                    ...mockAttribute,
+                    type: AttributeTypes.SIMPLE,
+                    required: true
+                }),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}])
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                config: mockConfig as Config.IConfig,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
+                'core.domain.permission.helpers.recordInCreationBypass': {
+                    ...mockRecordInCreationBypassHelper,
+                    recordInCreationBypassById: global.__mockPromise(true)
+                } as IRecordInCreationBypassHelper
+            });
+
+            const deletedValue = await valDomain.deleteValue({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                value: {id_value: '123'},
+                ctx
+            });
+
+            expect(mockValRepo.deleteValue.mock.calls.length).toBe(1);
+            expect(deletedValue[0]).toMatchObject(deletedValueData);
         });
 
         test('Should throw if unknown value', async function () {
@@ -1954,7 +2015,7 @@ describe('ValueDomain', () => {
         test('Should return an empty array if no values', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise(mockAttrSimple),
-                getAttributeLibraries: global.__mockPromise(['test_lib'])
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}])
             };
 
             const mockValRepo = {
@@ -1973,7 +2034,9 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.permission.helpers.recordInCreationBypass':
+                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper
             });
 
             const deletedValues = valDomain.deleteValue({

@@ -224,7 +224,7 @@ services:
     depends_on:
       core:
         condition: service_healthy
-    command: [sh, -c, "yarn run start:indexationManager"]
+    command: [sh, -c, "yarn run start:indexation"]
 
   tasks-manager-master:
     build: *env-build-core

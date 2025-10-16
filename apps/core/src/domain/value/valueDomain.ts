@@ -44,6 +44,7 @@ import {type IDeleteValueParams, type IRunActionListParams} from './_types';
 import {type DeleteRecordHelper} from 'domain/record/helpers/deleteRecord';
 import {type CreateRecordHelper} from 'domain/record/helpers/createRecord';
 import {type IfLibraryJoinLinkAttribute} from '../attribute/helpers/ifLibraryJoinLinkAttribute';
+import {type IRecordInCreationBypassHelper} from '../permission/helpers/recordInCreationBypass';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -154,6 +155,7 @@ export interface IValueDomainDeps {
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.domain.record.helpers.createRecord': CreateRecordHelper;
     'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
+    'core.domain.permission.helpers.recordInCreationBypass': IRecordInCreationBypassHelper;
     'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': IfLibraryJoinLinkAttribute;
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.infra.record': IRecordRepo;
@@ -177,6 +179,7 @@ const valueDomain = function ({
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.domain.record.helpers.createRecord': createRecordHelper,
+    'core.domain.permission.helpers.recordInCreationBypass': recordInCreationBypassHelper,
     'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
     'core.domain.attribute.helpers.ifLibraryJoinLinkAttribute': ifLibraryJoinLinkAttribute,
     'core.domain.versionProfile': versionProfileDomain,
@@ -463,32 +466,37 @@ const valueDomain = function ({
             });
         }
 
-        const attributeIsLinkedToLibrary = (
-            await attributeDomain.getAttributeLibraries({attributeId: attribute, ctx})
-        ).filter(l => l === library).length;
+        const attributeIsLinkedToLibrary =
+            (await attributeDomain.getAttributeLibraries({attributeId: attribute, ctx})).find(l => l.id === library) !==
+            undefined;
 
         if (attributeIsLinkedToLibrary) {
-            const isRequired =
-                attributeProps.required &&
-                (!attributeProps.multiple_values ||
-                    (await _isLastValue({
-                        attribute: attributeProps,
-                        library,
-                        recordId,
-                        ctx,
-                        reverseLink
-                    })));
+            const deletingLastValue =
+                !attributeProps.multiple_values ||
+                (await _isLastValue({
+                    attribute: attributeProps,
+                    library,
+                    recordId,
+                    ctx,
+                    reverseLink
+                }));
 
             const attributeLabel =
                 typeof attributeProps.label === 'string'
                     ? attributeProps.label
                     : localizedTranslation(attributeProps.label, [ctx.lang]);
 
+            const inCreationBypass = await recordInCreationBypassHelper.recordInCreationBypassById(
+                library,
+                recordId,
+                ctx
+            );
+
             if (attributeProps.readonly) {
                 throw new ValidationError<IValue>({
                     [attribute]: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeLabel}}
                 });
-            } else if (isRequired) {
+            } else if (attributeProps.required && !inCreationBypass && deletingLastValue) {
                 throw new ValidationError<IValue>({
                     [attribute]: {
                         msg: Errors.REQUIRED_ATTRIBUTE,

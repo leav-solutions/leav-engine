@@ -86,6 +86,7 @@ describe('Records', () => {
             }`);
             await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId});
         });
+
         afterAll(async () => {
             // Clean up test data for Creation
             // Purge all records in the test library using purgeRecord
@@ -215,6 +216,40 @@ describe('Records', () => {
             expect(resActivation.data.data.recordActivated.valuesErrors).toEqual(null);
         });
 
+        test('should be possible to delete a required value during record creation', async () => {
+            // Create an empty record
+            const createEmptyRecordResult = await makeGraphQlCall(
+                `mutation {
+                    recordCreated: createEmptyRecord(library: "${testLibName}") { record { id } },
+                }`,
+                true
+            );
+
+            const recordId = createEmptyRecordResult.data.data.recordCreated.record.id;
+
+            // Fill required simple attribute
+            await makeGraphQlCall(
+                `mutation {
+                saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testAttributeId}", value: {
+                    payload: "test value"
+                }) {
+                    id_value
+                }
+            }`,
+                true
+            );
+
+            const deleteValueResult = await makeGraphQlCall(`mutation {
+                deleteValue(
+                    library: "${testLibName}",
+                    recordId: "${recordId}",
+                    attribute: "${testAttributeId}") { id_value }
+              }`);
+
+            expect(deleteValueResult.status).toBe(200);
+            expect(deleteValueResult.data.errors).toBeUndefined();
+        });
+
         describe('Dependent form with required attributes', () => {
             const dependentAttrId = 'dependent_required_attr';
             const formWithDependency = 'creation_with_dependency';
@@ -329,6 +364,7 @@ describe('Records', () => {
                     }
                 }
             }`);
+
             expect(res.status).toBe(200);
             expect(res.data.errors).toBeUndefined();
             expect(res.data.data.records.list.length).toBe(0);
@@ -406,6 +442,7 @@ describe('Records', () => {
             }`);
             recordNode = await gqlAddElemToTree(testTreeName, {library: testLibName, id: recordId});
         });
+
         afterAll(async () => {
             // Clean up test data for Get records
             // Purge all records in the test library using purgeRecord
@@ -434,6 +471,7 @@ describe('Records', () => {
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibLink}") { id } }`);
             await makeGraphQlCall(`mutation { deleteTree(id: "${testTreeName}") { id } }`);
         });
+
         test('Create and activate records', async () => {
             const res = await makeGraphQlCall(`mutation {
                 c0: createEmptyRecord(library: "${testLibName}") { record { id permissions {edit_record} active } }

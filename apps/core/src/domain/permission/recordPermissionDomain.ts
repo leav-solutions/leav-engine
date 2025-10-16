@@ -22,7 +22,7 @@ import {
 } from './_types';
 import {type ITreeRepo} from '../../infra/tree/treeRepo';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
-import {type IRecordInCreationByPassHelper} from './helpers/recordInCreationBypass';
+import {type IRecordInCreationBypassHelper} from './helpers/recordInCreationBypass';
 
 export interface IRecordPermissionDomain {
     getRecordPermission(params: IGetRecordPermissionParams): Promise<boolean>;
@@ -35,7 +35,7 @@ export interface IRecordPermissionDomainDeps {
     'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
-    'core.domain.permission.helpers.recordInCreationByPass': IRecordInCreationByPassHelper;
+    'core.domain.permission.helpers.recordInCreationBypass': IRecordInCreationBypassHelper;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.infra.value': IValueRepo;
@@ -49,7 +49,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupHelper,
         'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
-        'core.domain.permission.helpers.recordInCreationByPass': recordInCreationByPassHelper,
+        'core.domain.permission.helpers.recordInCreationBypass': recordInCreationBypassHelper,
         'core.domain.attribute': attributeDomain,
         'core.domain.helpers.getCoreEntityById': getCoreEntityById,
         'core.infra.value': valueRepo,
@@ -176,7 +176,7 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
             // If record is in creation and user is the creator, we allow all actions
             if (treeBasedPermission === false) {
                 const record = await recordRepo.getRecord({libraryId: library, recordId, ctx});
-                return recordInCreationByPassHelper.recordInCreationByPass(record, ctx);
+                return recordInCreationBypassHelper.recordInCreationBypass(record, ctx);
             }
 
             return treeBasedPermission;
