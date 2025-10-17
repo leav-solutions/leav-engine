@@ -98,7 +98,6 @@ export default function ({
     'core.utils.getSystemQueryContext': getSystemQueryContext
 }: ITasksManagerDomainDeps): ITasksManagerDomain {
     const tag = `${process.pid}_${nanoid(3)}`;
-    const workerCtx = getSystemQueryContext('tasksManager:worker');
 
     const _monitorTasks = (ctx: IQueryInfos): NodeJS.Timer =>
         // check if tasks waiting for execution and execute them
@@ -126,7 +125,6 @@ export default function ({
         }, config.tasksManager.checkingInterval);
 
     const _executeTask = async (task: ITask, ctx: IQueryInfos): Promise<ITask> => {
-        await _attachWorker(task.id, process.pid, workerCtx);
         await _updateTask(
             task.id,
             {startedAt: utils.getUnixTime(), status: TaskStatus.RUNNING, progress: {percent: 0}},
@@ -418,6 +416,9 @@ export default function ({
             amqpService.consumer.channel.ack(msg);
         }
 
+        // create new ctx for each task execution
+        const workerCtx = getSystemQueryContext('tasksManager:worker:execMessage');
+
         // We stop listening to the execution order queue because if we ack the message we receive a new task.
         // We can't wait for the task to finish before the ack because it can be long and exceed the rabbitmq timeout.
         amqpService.consumer.channel.cancel(tag);
@@ -425,6 +426,7 @@ export default function ({
 
         const task = order.payload as ITask;
 
+        await _attachWorker(task.id, process.pid, workerCtx);
         await _executeTask(task, {userId: task.created_by});
         await _detachWorker(task.id, workerCtx);
 
@@ -445,6 +447,9 @@ export default function ({
         } finally {
             amqpService.consumer.channel.ack(msg);
         }
+
+        // create new ctx for each task cancel
+        const workerCtx = getSystemQueryContext('tasksManager:worker:cancelMessage');
 
         const task = order.payload as ITask;
 
