@@ -103,21 +103,25 @@ export default function ({
     const _monitorTasks = (ctx: IQueryInfos): NodeJS.Timer =>
         // check if tasks waiting for execution and execute them
         setInterval(async () => {
-            const taskToExecute = (await taskRepo.getTasksToExecute(ctx))?.list[0];
-            const taskToCancel = (await taskRepo.getTasksToCancel(ctx))?.list[0];
-            const taskWithPendingCallbacks = (await taskRepo.getTasksWithPendingCallbacks(ctx))?.list[0];
+            try {
+                const taskToExecute = (await taskRepo.getTasksToExecute(ctx))?.list[0];
+                const taskToCancel = (await taskRepo.getTasksToCancel(ctx))?.list[0];
+                const taskWithPendingCallbacks = (await taskRepo.getTasksWithPendingCallbacks(ctx))?.list[0];
 
-            if (taskToCancel) {
-                await _sendOrder(config.tasksManager.routingKeys.cancelOrders, taskToCancel, ctx);
-            }
+                if (taskToCancel) {
+                    await _sendOrder(config.tasksManager.routingKeys.cancelOrders, taskToCancel, ctx);
+                }
 
-            if (taskWithPendingCallbacks) {
-                await _executeCallbacks(taskWithPendingCallbacks, ctx);
-            }
+                if (taskWithPendingCallbacks) {
+                    await _executeCallbacks(taskWithPendingCallbacks, ctx);
+                }
 
-            if (taskToExecute) {
-                await _updateTask(taskToExecute.id, {status: TaskStatus.PENDING}, ctx);
-                await _sendOrder(config.tasksManager.routingKeys.execOrders, taskToExecute, ctx);
+                if (taskToExecute) {
+                    await _updateTask(taskToExecute.id, {status: TaskStatus.PENDING}, ctx);
+                    await _sendOrder(config.tasksManager.routingKeys.execOrders, taskToExecute, ctx);
+                }
+            } catch (e) {
+                logger.error(`Error monitoring tasks because ${e.stack}`);
             }
         }, config.tasksManager.checkingInterval);
 
