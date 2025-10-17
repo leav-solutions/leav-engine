@@ -33,7 +33,7 @@ export interface IConfig {
     files: IFilesConfig;
     dbProfiler: IDbProfilerConfig;
     instanceId: string;
-    elasticSearch: IElasticSearchConfig;
+    elasticsearch: IElasticsearchConfig;
     logsCollector: ILogsCollector;
     pluginsPath: string[];
     bugsnag: IBugsnag;
@@ -256,7 +256,7 @@ export interface IDbProfilerConfig {
     enable: boolean;
 }
 
-export interface IElasticSearchConfig {
+export interface IElasticsearchConfig {
     indexPrefix: string;
     url: string;
     ilmPolicyName: string;

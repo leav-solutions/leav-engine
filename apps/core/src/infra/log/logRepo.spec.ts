@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
-import {type IElasticSearchService} from 'infra/elasticSearch/elasticSearchService';
+import {type IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {type IConfig} from '_types/config';
 import {mockLog} from '../../__tests__/mocks/log';
 import {mockCtx} from '../../__tests__/mocks/shared';
@@ -14,7 +14,7 @@ describe('logRepo', () => {
             jest.clearAllMocks();
         });
 
-        const mockESService: Mockify<IElasticSearchService> = {
+        const mockESService: Mockify<IElasticsearchService> = {
             search: global.__mockPromise({
                 hits: [mockLog],
                 total: 1
@@ -23,7 +23,7 @@ describe('logRepo', () => {
 
         const mockConfig: Partial<IConfig> = {
             instanceId: 'instanceId',
-            elasticSearch: {
+            elasticsearch: {
                 indexPrefix: 'leav-logs-',
                 url: 'http://localhost:9200',
                 ilmPolicyName: '',
@@ -31,9 +31,9 @@ describe('logRepo', () => {
             }
         };
 
-        test('Read logs from ElasticSearch', async () => {
+        test('Read logs from Elasticsearch', async () => {
             const repo = logRepo({
-                'core.infra.elasticSearch.service': mockESService as IElasticSearchService,
+                'core.infra.elasticsearch.service': mockESService as IElasticsearchService,
                 config: mockConfig as IConfig
             });
             const logs = await repo.getLogs({}, mockCtx);
@@ -45,7 +45,7 @@ describe('logRepo', () => {
 
         test('Convert filters to ES format', async () => {
             const repo = logRepo({
-                'core.infra.elasticSearch.service': mockESService as IElasticSearchService,
+                'core.infra.elasticsearch.service': mockESService as IElasticsearchService,
                 config: mockConfig as IConfig
             });
             const logs = await repo.getLogs(

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getLogsIndexName} from '@leav/utils';
-import {type IElasticSearchService} from 'infra/elasticSearch/elasticSearchService';
+import {type IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {type IConfig} from '_types/config';
 import {type ILogFilters, type ILogPagination, type ILogResponse, type ILogSort, type Log} from '_types/log';
 import {type IQueryInfos} from '_types/queryInfos';
@@ -15,13 +15,13 @@ export interface ILogRepo {
 }
 
 interface IDeps {
-    'core.infra.elasticSearch.service'?: IElasticSearchService;
+    'core.infra.elasticsearch.service'?: IElasticsearchService;
     config?: IConfig;
 }
 
-type SearchQueryType = Parameters<IElasticSearchService['search']>[0]['query'];
+type SearchQueryType = Parameters<IElasticsearchService['search']>[0]['query'];
 
-export default function ({'core.infra.elasticSearch.service': esService, config}: IDeps): ILogRepo {
+export default function ({'core.infra.elasticsearch.service': esService, config}: IDeps): ILogRepo {
     return {
         async getLogs({filters, sort, pagination}, ctx) {
             /**
@@ -51,7 +51,7 @@ export default function ({'core.infra.elasticSearch.service': esService, config}
                 return result;
             };
 
-            const indexName = getLogsIndexName(config.elasticSearch.indexPrefix, config.instanceId);
+            const indexName = getLogsIndexName(config.elasticsearch.indexPrefix, config.instanceId);
             const queryParts: SearchQueryType[] = Object.entries(filters ?? {}).reduce((acc, [field, value]) => {
                 if (value === null || typeof value === 'undefined') {
                     return acc;

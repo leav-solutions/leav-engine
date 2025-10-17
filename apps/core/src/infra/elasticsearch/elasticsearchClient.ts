@@ -11,7 +11,7 @@ interface IDeps {
 export default function (deps: IDeps = {}): Client {
     const _getClient = (config: IConfig): Client =>
         new Client({
-            node: config.elasticSearch.url
+            node: config.elasticsearch.url
         });
 
     return _getClient(deps.config);

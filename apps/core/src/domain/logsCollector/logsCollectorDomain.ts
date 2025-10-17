@@ -8,7 +8,7 @@ import Joi from 'joi';
 import {type ILogger} from '@leav/logger';
 import type * as Config from '_types/config';
 import {type IIndexationService} from '../../infra/indexation/indexationService';
-import {type IElasticSearchService} from '../../infra/elasticSearch/elasticSearchService';
+import {type IElasticsearchService} from '../../infra/elasticsearch/elasticsearchService';
 
 export interface ILogsCollectorDomain {
     init(): Promise<void>;
@@ -19,7 +19,7 @@ export interface ILogsCollectorDomainDeps {
     'core.infra.amqpService': IAmqpService;
     'core.infra.indexation.indexationService': IIndexationService;
     'core.utils.logger': ILogger;
-    'core.infra.elasticSearch.service': IElasticSearchService;
+    'core.infra.elasticsearch.service': IElasticsearchService;
 }
 
 export default function ({
@@ -27,7 +27,7 @@ export default function ({
     'core.infra.amqpService': amqpService,
     'core.infra.indexation.indexationService': indexationService,
     'core.utils.logger': logger,
-    'core.infra.elasticSearch.service': esService
+    'core.infra.elasticsearch.service': esService
 }: ILogsCollectorDomainDeps): ILogsCollectorDomain {
     const _validateMsg = (msg: IDbEvent) => {
         const msgBodySchema = Joi.object()
@@ -85,7 +85,7 @@ export default function ({
 
         const {payload, emitter, ...msgMetadata} = event;
 
-        const indexName = getLogsIndexName(config.elasticSearch.indexPrefix, msgMetadata.instanceId);
+        const indexName = getLogsIndexName(config.elasticsearch.indexPrefix, msgMetadata.instanceId);
         const dataToSave = {
             '@timestamp': event.time,
             ...msgMetadata,

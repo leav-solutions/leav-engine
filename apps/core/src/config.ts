@@ -198,7 +198,7 @@ export const validateConfig = (conf: IConfig) => {
             enable: Joi.boolean().required()
         }),
         instanceId: Joi.string().required(),
-        elasticSearch: Joi.object().keys({
+        elasticsearch: Joi.object().keys({
             indexPrefix: Joi.string().required(),
             url: Joi.string().required(),
             ilmPolicyName: Joi.string().required(),

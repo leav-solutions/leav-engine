@@ -69,7 +69,7 @@ export interface IAuthAppDeps {
     config: IConfig;
 }
 
-type authCookieName = typeof ACCESS_TOKEN_COOKIE_NAME | typeof REFRESH_TOKEN_COOKIE_NAME;
+type AuthCookieName = typeof ACCESS_TOKEN_COOKIE_NAME | typeof REFRESH_TOKEN_COOKIE_NAME;
 const ONE_MINUTE = 60 * 1000;
 
 export default function ({
@@ -115,10 +115,10 @@ export default function ({
         });
 
     const _getAuthCookieArgs = (
-        cookieName: authCookieName,
+        cookieName: AuthCookieName,
         value: string,
         host: string | null
-    ): [authCookieName, string, CookieOptions] => {
+    ): [AuthCookieName, string, CookieOptions] => {
         const cookieExpires =
             ms(
                 String(

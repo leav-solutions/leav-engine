@@ -20,20 +20,20 @@ interface IElasticsearchServiceSearchParams {
     query?: estypes.QueryDslQueryContainer;
 }
 
-export interface IElasticSearchService {
+export interface IElasticsearchService {
     client: Client;
     search: <T>(params: IElasticsearchServiceSearchParams) => Promise<IElasticsearchServiceSearchResponse<T>>;
     writeData: (indexName: string, data: Log) => Promise<void>;
 }
 
-export interface IElasticSearchServiceDeps {
-    'core.infra.elasticSearch.client'?: Client;
+export interface IElasticsearchServiceDeps {
+    'core.infra.elasticsearch.client'?: Client;
     config?: IConfig;
 }
 
-export default function ({config}: IElasticSearchServiceDeps): IElasticSearchService {
+export default function ({config}: IElasticsearchServiceDeps): IElasticsearchService {
     const client = new Client({
-        node: config.elasticSearch.url
+        node: config.elasticsearch.url
     });
 
     const _createILMPolicyIfNotExists = async (ilmPolicyName: string) => {
@@ -81,7 +81,7 @@ export default function ({config}: IElasticSearchServiceDeps): IElasticSearchSer
 
             await client.indices.putIndexTemplate({
                 name: templateName,
-                index_patterns: [`${config.elasticSearch.indexPrefix}*`],
+                index_patterns: [`${config.elasticsearch.indexPrefix}*`],
                 data_stream: {},
                 priority: 100,
                 template: {
@@ -111,10 +111,10 @@ export default function ({config}: IElasticSearchServiceDeps): IElasticSearchSer
     const _createIndexIfNotExists = async (indexName: string) => {
         const indexExists = await client.indices.exists({index: indexName});
         if (!indexExists) {
-            const ilmPolicyName = config.elasticSearch.ilmPolicyName;
+            const ilmPolicyName = config.elasticsearch.ilmPolicyName;
             await _createILMPolicyIfNotExists(ilmPolicyName);
 
-            const templateName = config.elasticSearch.templateName;
+            const templateName = config.elasticsearch.templateName;
             await _createIndexTemplateIfNotExists(templateName, ilmPolicyName);
 
             logger.info(`Creating elasticsearch index ${indexName}`);

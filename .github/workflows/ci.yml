@@ -157,7 +157,7 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - name: Configure sysctl limits for ElasticSearch
+      - name: Configure sysctl limits for Elasticsearch
         run: |
           sudo swapoff -a
           sudo sysctl -w vm.swappiness=1
@@ -218,7 +218,7 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - name: Configure sysctl limits for ElasticSearch
+      - name: Configure sysctl limits for Elasticsearch
         run: |
           sudo swapoff -a
           sudo sysctl -w vm.swappiness=1

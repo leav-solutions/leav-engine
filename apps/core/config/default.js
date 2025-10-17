@@ -193,7 +193,7 @@ module.exports = {
     dbProfiler: {
         enable: envToBool(process.env.DB_PROFILER_ENABLE, false)
     },
-    elasticSearch: {
+    elasticsearch: {
         indexPrefix: process.env.ELASTICSEARCH_INDEX_PREFIX || 'leav-logs-',
         url: process.env.ELASTICSEARCH_URL || process.env.ELASTIC_SEARCH_URL || 'http://elasticsearch:9200',
         ilmPolicyName: process.env.ELASTICSEARCH_ILM_POLICY_NAME || 'leav-logs-policy',
