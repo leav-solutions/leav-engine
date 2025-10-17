@@ -2,14 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import winston from 'winston';
-import {addLocationInfoInLog} from './locationInfoFormatters';
+import {addLocationInfoInLog} from './locationInfoFormatter';
 
 describe('addLocationInfo', () => {
     const fakeFormat = winston.format(info => info)();
     const fakeFormatTransformSpy = jest.spyOn(fakeFormat, 'transform');
 
+    const initialErrorStackTraceLimit = Error.stackTraceLimit;
     beforeEach(() => {
+        Error.stackTraceLimit = 10; // default in prod
         jest.resetAllMocks();
+    });
+
+    afterAll(() => {
+        Error.stackTraceLimit = initialErrorStackTraceLimit;
     });
 
     it('addLocationInfoInLog should add location property to log info', () => {

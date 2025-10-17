@@ -60,7 +60,7 @@ export interface ILoggerConfig {
         version?: string;
     };
 
-    onErrorLog?: (message: string, meta: any) => void;
+    onErrorLog?: (message: string, meta: any, getCallStackTrace: () => string) => void;
 }
 
 // duplicate of libs/config-manager/src/envTo.ts

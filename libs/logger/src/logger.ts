@@ -3,7 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import winston from 'winston';
 import {type ILoggerConfig, defaultLoggerConfig} from './config';
-import {addLocationInfoInLog} from './locationInfoFormatters';
+import {addLocationInfoInLog} from './locationInfoFormatter';
+import {catchErrorFormatter} from './catchErrorFormatter';
 
 export type ILogger = Pick<typeof winston, 'error' | 'warn' | 'info' | 'log' | 'verbose' | 'debug' | 'silly'>;
 
@@ -33,27 +34,12 @@ export function configureLogger(config: ILoggerConfig): void {
         );
     }
 
-    let catchErrorLog: winston.Logform.FormatWrap | null = null;
-
-    if (typeof onErrorLog === 'function') {
-        catchErrorLog = winston.format(info => {
-            if (info.level === 'error') {
-                const meta = {...info, level: undefined, message: undefined, splat: undefined};
-                onErrorLog(info.message as string, meta);
-            }
-            return info;
-        });
-    }
-
-    // Increase stack trace limit to allow location info retrieval due to winston internal calls
-    if (addLocationInfo && Error.stackTraceLimit <= 12) {
-        Error.stackTraceLimit = 12;
-    }
+    const catchErrorLog = catchErrorFormatter(onErrorLog);
 
     const formats = [
+        catchErrorLog ? catchErrorLog() : undefined,
         addLocationInfo ? addLocationInfoInLog() : undefined,
-        addTimestamp ? winston.format.timestamp() : undefined,
-        catchErrorLog ? catchErrorLog() : undefined
+        addTimestamp ? winston.format.timestamp() : undefined
     ].filter(f => !!f) as winston.Logform.Format[];
 
     winston.configure({

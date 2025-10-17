@@ -13,11 +13,14 @@ export default function () {
 
 export function setupLogger(config: IConfig) {
     const onErrorLog = config.bugsnag.enable
-        ? (message: string, meta: any) => {
+        ? (message: string, meta: any, getCallStackTrace: () => string) => {
               const error = new Error(JSON.stringify({message, meta}));
 
               // When error log comes from bugsnag, do not notify again
               if (!error.stack.match(/node_modules\/@bugsnag\//)) {
+                  // Improve stack trace to start from the caller of logger.error
+                  error.stack = error.stack.split('\n')[0] + '\n' + getCallStackTrace();
+
                   Bugsnag.notify(error);
               }
           }
