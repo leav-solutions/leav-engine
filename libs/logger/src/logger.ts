@@ -45,6 +45,11 @@ export function configureLogger(config: ILoggerConfig): void {
         });
     }
 
+    // Increase stack trace limit to allow location info retrieval due to winston internal calls
+    if (addLocationInfo && Error.stackTraceLimit <= 12) {
+        Error.stackTraceLimit = 12;
+    }
+
     const formats = [
         addLocationInfo ? addLocationInfoInLog() : undefined,
         addTimestamp ? winston.format.timestamp() : undefined,
