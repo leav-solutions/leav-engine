@@ -102,52 +102,50 @@ import {type ILogsCollectorInterface} from './interface/logsCollector';
         }
     };
 
-    try {
-        await _createRequiredDirectories();
+    await _createRequiredDirectories();
 
-        logger.info(`Starting core in mode ${conf.coreMode}`);
+    logger.info(`Starting core in mode ${conf.coreMode}`);
 
-        switch (conf.coreMode) {
-            case CoreMode.SERVER:
-                await initPlugins(conf.pluginsPath, pluginsContainer);
-                await server.init();
-                await server.initConsumers();
-                await monitoringServerInstance.init();
-                break;
-            case CoreMode.MIGRATE:
-                // Run db migrations
-                await dbUtils.migrate(coreContainer);
-                // Make sure we always exit process. Sometimes we don't and we're stuck here forever
-                process.exit(0);
-            case CoreMode.FILES_MANAGER:
-                await filesManager.init();
-                await monitoringServerInstance.init();
-                break;
-            case CoreMode.INDEXATION_MANAGER:
-                await indexationManager.init();
-                await monitoringServerInstance.init();
-                break;
-            case CoreMode.TASKS_MANAGER_MASTER:
-                await tasksManager.initMaster();
-                await monitoringServerInstance.init();
-                break;
-            case CoreMode.TASKS_MANAGER_WORKER:
-                await tasksManager.initWorker();
-                await monitoringServerInstance.init();
-                break;
-            case CoreMode.LOGS_COLLECTOR:
-                await logsCollector.init();
-                await monitoringServerInstance.init();
-                break;
-            case CoreMode.CLI:
-            default:
-                await cli.run();
-        }
-    } catch (e) {
-        logger.error(`Fatal error during startup ${e.stack}`);
-        process.exit(1);
+    switch (conf.coreMode) {
+        case CoreMode.SERVER:
+            await initPlugins(conf.pluginsPath, pluginsContainer);
+            await server.init();
+            await server.initConsumers();
+            await monitoringServerInstance.init();
+            break;
+        case CoreMode.MIGRATE:
+            // Run db migrations
+            await dbUtils.migrate(coreContainer);
+            // Make sure we always exit process. Sometimes we don't and we're stuck here forever
+            process.exit(0);
+        case CoreMode.FILES_MANAGER:
+            await filesManager.init();
+            await monitoringServerInstance.init();
+            break;
+        case CoreMode.INDEXATION_MANAGER:
+            await indexationManager.init();
+            await monitoringServerInstance.init();
+            break;
+        case CoreMode.TASKS_MANAGER_MASTER:
+            await tasksManager.initMaster();
+            await monitoringServerInstance.init();
+            break;
+        case CoreMode.TASKS_MANAGER_WORKER:
+            await tasksManager.initWorker();
+            await monitoringServerInstance.init();
+            break;
+        case CoreMode.LOGS_COLLECTOR:
+            await logsCollector.init();
+            await monitoringServerInstance.init();
+            break;
+        case CoreMode.CLI:
+        default:
+            await cli.run();
     }
-})().catch(e => logger.error(`Fatal error during initialization ${e.stack}`));
+})().catch(e => {
+    logger.error(`Fatal error during initialization ${e.stack}`);
+    process.exit(1);
+});
 
 process.on('unhandledRejection', (reason: Error | any) => {
     logger.error(`Unhandled Rejection at: ${reason.stack}`);

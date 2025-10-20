@@ -9,36 +9,34 @@ import {type IConfig} from './_types/config';
 import {logger} from '@leav/logger';
 
 (async function () {
-    try {
-        const cfg: IConfig = await getConfig();
-        logger.info('Scanning filesystem...');
-        const fsScan = await scan.filesystem(cfg);
+    const cfg: IConfig = await getConfig();
+    logger.info('Scanning filesystem...');
+    const fsScan = await scan.filesystem(cfg);
 
-        logger.info('Scanning database...');
-        const dbElements = await scan.database(cfg);
+    logger.info('Scanning database...');
+    const dbElements = await scan.database(cfg);
 
-        const dbSettings = {
-            filesLibraryId: dbElements.filesLibraryId,
-            directoriesLibraryId: dbElements.directoriesLibraryId
-        };
-        const dbScan = extractChildrenDbElements(dbSettings, dbElements.treeContent);
+    const dbSettings = {
+        filesLibraryId: dbElements.filesLibraryId,
+        directoriesLibraryId: dbElements.directoriesLibraryId
+    };
+    const dbScan = extractChildrenDbElements(dbSettings, dbElements.treeContent);
 
-        logger.info('RabbitMQ connection initialization...');
-        const amqp = await amqpService({config: cfg.amqp});
+    logger.info('RabbitMQ connection initialization...');
+    const amqp = await amqpService({config: cfg.amqp});
 
-        const begin = Date.now();
-        logger.info('Synchronization...');
-        await automate(fsScan, dbScan, dbSettings, amqp);
+    const begin = Date.now();
+    logger.info('Synchronization...');
+    await automate(fsScan, dbScan, dbSettings, amqp);
 
-        logger.info('Closing RabbitMQ connection...');
+    logger.info('Closing RabbitMQ connection...');
 
-        await amqp.close();
-        logger.info(`Synchronization time ${Date.now() - begin} ms`);
-    } catch (e) {
-        logger.error(`Fatal error during init because ${e.stack || e}`);
-        process.exit(1);
-    }
-})();
+    await amqp.close();
+    logger.info(`Synchronization time ${Date.now() - begin} ms`);
+})().catch(e => {
+    logger.error(`Fatal error during init because ${e.stack || e}`);
+    process.exit(1);
+});
 
 process.on('unhandledRejection', (reason: Error | any) => {
     logger.error(`Unhandled Rejection at: ${reason.stack}`, {reason});
