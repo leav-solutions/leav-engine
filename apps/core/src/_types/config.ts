@@ -109,6 +109,10 @@ export interface IMailer {
     host: string;
     port: number;
     secure: boolean;
+    from: {
+        name: string;
+        email: string;
+    };
     auth: {
         user: string;
         password: string;

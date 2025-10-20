@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {logger} from '@leav/logger';
 import {type IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
 import type nodemailer from 'nodemailer';
 import {type Attachment} from 'nodemailer/lib/mailer';
@@ -35,9 +36,12 @@ export default function ({
         mailer,
         async sendEmail({to, subject, text, html, attachments}, ctx): Promise<void> {
             const globalSettings = await globalSettingsDomain.getSettings(ctx);
+            const from = `${globalSettings.name || config.mailer.from.name} <${config.mailer.from.email}>`;
+
+            logger.debug(`Sending email "${subject}" to ${to} from ${from}`);
 
             await mailer.sendMail({
-                from: `${globalSettings.name} <${config.mailer.auth.user}>`,
+                from,
                 to,
                 subject,
                 text,

@@ -13,7 +13,7 @@ export async function initMailer({config}: IDeps): Promise<nodemailer.Transporte
     const transporter = nodemailer.createTransport({
         host: config.mailer.host,
         port: Number(config.mailer.port),
-        secure: false,
+        secure: config.mailer.secure,
         auth: {
             user: config.mailer.auth.user, //testAccount.user,
             pass: config.mailer.auth.password // testAccount.pass
