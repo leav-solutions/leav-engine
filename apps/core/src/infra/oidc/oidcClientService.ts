@@ -158,7 +158,7 @@ export default function ({
         },
         saveOriginalUrl: ({originalUrl, queryId}) => _writeOriginalUrlByQueryId(queryId, originalUrl),
         getOriginalUrl: async queryId => {
-            const originalUrl = _getOriginalUrlByQueryId(queryId);
+            const originalUrl = await _getOriginalUrlByQueryId(queryId);
             // No need to await delete fn, it's just for clean up
             _deleteOriginalUrlByQueryId(queryId);
             return originalUrl;
