@@ -11,6 +11,9 @@ COPY *.json yarn.lock .yarnrc.yml vite-config-common.js ./
 COPY apps/ ./apps
 COPY libs/ ./libs
 
+# Increase Node.js memory limit to avoid build failures for app-studio on new docker-build gitlab-runner
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 # Install dev modules to build core and fronts
 RUN yarn install && \
     yarn workspace core build && \
