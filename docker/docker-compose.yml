@@ -67,8 +67,11 @@ x-env-core: &env-core
   FILES_ROOT_PATHS: files1:/files
   MAILER_HOST: mailpit
   MAILER_PORT: 1025
-  MAILER_FROM_NAME: 'Leav Engine'
+  MAILER_FROM_NAME: "Leav Engine"
   MAILER_FROM_EMAIL: leav@example.com
+  NOTIFICATION_ENABLE: "true"
+  NOTIFICATION_EMAIL_ENABLE: "true"
+  NOTIFICATION_WEBSOCKET_ENABLE: "true"
   SERVER_ADMIN_LOGIN: admin
   SERVER_ADMIN_PASSWORD: admin
   SERVER_ADMIN_EMAIL: admin@example.com
@@ -80,7 +83,7 @@ x-env-core: &env-core
   # OIDC_POST_LOGOUT_REDIRECT_URI: http://core.leav.localhost/campaigns-manager
 
 x-env-amqp: &env-amqp
-  AMQP_PROTOCOL: 'amqp'
+  AMQP_PROTOCOL: "amqp"
   AMQP_HOST: message-broker
   AMQP_USERNAME: guest
   AMQP_PWD: guest
@@ -289,7 +292,7 @@ services:
     working_dir: *dir-core
     healthcheck: *healthcheck-localhost-44444
     ports:
-        - "9234:9234"
+      - "9234:9234"
     depends_on:
       core:
         condition: service_healthy
@@ -543,8 +546,8 @@ services:
     environment:
       <<: [*env-logger, *env-sync-scan, *env-amqp]
     depends_on:
-        core:
-            condition: service_healthy
+      core:
+        condition: service_healthy
     volumes:
       - *mount_point-repo
       - *mount_point-files
@@ -631,12 +634,12 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-        test: [ "CMD", "redis-cli", "ping" ]
-        start_period: 30s
-        start_interval: 5s
-        interval: 60s
-        timeout: 2s
-        retries: 15
+      test: ["CMD", "redis-cli", "ping"]
+      start_period: 30s
+      start_interval: 5s
+      interval: 60s
+      timeout: 2s
+      retries: 15
 
   redis-commander:
     profiles: ["debug"]
@@ -644,26 +647,26 @@ services:
     image: rediscommander/redis-commander:latest
     restart: always
     environment:
-    - REDIS_HOSTS=local:redis:6379
+      - REDIS_HOSTS=local:redis:6379
     labels:
       - traefik.enable=true
       - traefik.http.routers.redis-commander.rule=Host(`redis.leav.localhost`)
       - traefik.http.services.redis-commander.loadbalancer.server.port=8081
       - traefik.http.routers.rabbitmq.entrypoints=web
     depends_on:
-        redis:
-            condition: service_healthy
+      redis:
+        condition: service_healthy
 
   elasticsearch:
     profiles: ["logs"]
     image: elasticsearch:8.10.2
     healthcheck:
-        test: [ "CMD-SHELL", "curl -s --fail http://elasticsearch:9200" ]
-        start_period: 30s
-        start_interval: 5s
-        interval: 60s
-        timeout: 2s
-        retries: 15
+      test: ["CMD-SHELL", "curl -s --fail http://elasticsearch:9200"]
+      start_period: 30s
+      start_interval: 5s
+      interval: 60s
+      timeout: 2s
+      retries: 15
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -682,8 +685,8 @@ services:
       - "traefik.http.routers.kibana.rule=Host(`kibana.leav.localhost`)"
       - "traefik.http.routers.kibana.entrypoints=web"
     depends_on:
-        elasticsearch:
-            condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
 
   mailpit:
     profiles: ["mail"]

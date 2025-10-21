@@ -7,6 +7,7 @@ import Joi from 'joi';
 import {CoreMode, type IConfig} from './_types/config';
 import {env as appEnv} from './env';
 import {logger} from '@leav/logger';
+import notification from 'domain/notification';
 
 export const validateConfig = (conf: IConfig) => {
     const configSchema = Joi.object().keys({
@@ -204,6 +205,15 @@ export const validateConfig = (conf: IConfig) => {
         }),
         logsCollector: Joi.object().keys({
             queue: Joi.string().required()
+        }),
+        notification: Joi.object().keys({
+            enable: Joi.boolean().required(),
+            email: Joi.object().keys({
+                enable: Joi.boolean().required()
+            }),
+            webSocket: Joi.object().keys({
+                enable: Joi.boolean().required()
+            })
         }),
         pluginsPath: Joi.array().items(Joi.string()).required(),
         bugsnag: Joi.object().keys({

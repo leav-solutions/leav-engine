@@ -20,6 +20,7 @@ export interface IConfig {
     indexationManager: IIndexationManager;
     tasksManager: ITasksManager;
     eventsManager: IEventsManager;
+    notification: INotificationConfig;
     debug?: boolean;
     env?: string;
     defaultUserId: string;
@@ -254,6 +255,16 @@ export interface IFilesConfig {
 
 export interface IDbProfilerConfig {
     enable: boolean;
+}
+
+export interface INotificationConfig {
+    enable: boolean;
+    email: {
+        enable: boolean;
+    };
+    webSocket: {
+        enable: boolean;
+    };
 }
 
 export interface IElasticsearchConfig {

@@ -24,6 +24,7 @@ import {type IValue} from '../../_types/value';
 import {type IValidateHelper} from '../helpers/validate';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import LeavError from '../../errors/LeavError';
+import {type INotificationDomain} from 'domain/notification/notificationDomain';
 
 export interface IExportParams {
     library: string;
@@ -56,6 +57,7 @@ export interface IExportDomainDeps {
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.helpers.updateTaskProgress': UpdateTaskProgress;
     'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.notification': INotificationDomain;
     'core.utils': IUtils;
     translator: i18n;
     config: Config.IConfig;
@@ -70,6 +72,7 @@ export default function ({
     'core.domain.tasksManager': tasksManager,
     'core.domain.helpers.updateTaskProgress': updateTaskProgress,
     'core.domain.eventsManager': eventsManagerDomain,
+    'core.domain.notification': notificationDomain,
     'core.utils': utils,
     translator
 }: IExportDomainDeps): IExportDomain {
@@ -289,141 +292,195 @@ export default function ({
                 return newTaskId;
             }
 
-            await eventsManagerDomain.sendDatabaseEvent<EventAction.EXPORT_START>(
-                {
-                    action: EventAction.EXPORT_START,
-                    topic: null,
-                    metadata: {
-                        params: {
-                            attributes,
-                            filters
-                        }
-                    }
-                },
-                ctx
-            );
-
-            const progress = {
-                recordsNb: 0,
-                position: 0,
-                percent: 0
-            };
-
-            const _updateTaskProgress = async (increasePosition: number, translationKey?: string) => {
-                progress.position += increasePosition;
-                progress.percent = await updateTaskProgress(task.id, progress.percent, ctx, {
-                    position: {
-                        index: progress.position,
-                        total: progress.recordsNb
-                    },
-                    ...(translationKey && {translationKey})
-                });
-            };
-
-            // separate different depths
-            const attrsSplited = attributes.map(a => a.split('.'));
-            const firstAttributes = attrsSplited.map(a => a[0]);
-
-            // Validations
-            await validateHelper.validateLibrary(library, ctx);
-            const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
-            const libraryAttributesIds = libraryAttributes.map(a => a.id);
-            const invalidAttributes = firstAttributes.filter(a => !libraryAttributesIds.includes(a));
-            if (invalidAttributes.length) {
-                throw utils.generateExplicitValidationError(
-                    'attributes',
+            try {
+                await eventsManagerDomain.sendDatabaseEvent<EventAction.EXPORT_START>(
                     {
-                        msg: Errors.INVALID_ATTRIBUTES,
-                        vars: {attributes: invalidAttributes.join(', ')}
+                        action: EventAction.EXPORT_START,
+                        topic: null,
+                        metadata: {
+                            params: {
+                                attributes,
+                                filters
+                            }
+                        }
                     },
-                    ctx.lang
+                    ctx
                 );
-            }
 
-            await _updateTaskProgress(0, 'tasks.export_description.elements_retrieval');
+                const progress = {
+                    recordsNb: 0,
+                    position: 0,
+                    percent: 0
+                };
 
-            const records = await recordDomain.find({params: {library, filters}, ctx});
-
-            progress.recordsNb = records.list.length;
-
-            // Create Excel document
-            const workbook = new ExcelJS.Workbook();
-
-            // Set page
-            const libAttributes = await libraryDomain.getLibraryProperties(library, ctx);
-            const data = workbook.addWorksheet(
-                libAttributes?.label[ctx?.lang] || libAttributes?.label[config.lang.default] || library
-            );
-
-            // Set columns
-            const columns = [];
-            const labels = {};
-            for (const a of attributes) {
-                columns.push({header: a, key: a});
-                const attributeProps = await attributeDomain.getAttributeProperties({id: a.split('.').pop(), ctx});
-                labels[a] =
-                    attributeProps?.label[ctx?.lang] || attributeProps?.label[config.lang.default] || attributeProps.id;
-            }
-
-            data.columns = columns as ExcelJS.Column[];
-            data.addRow(labels);
-
-            for (const record of records.list) {
-                // keep only attributes record to export
-                const subset = pick(record, firstAttributes);
-
-                for (const attr of attrsSplited) {
-                    // get values of full path attribute
-                    const fieldValues = await _getRecFieldValue([record], attr, ctx);
-
-                    // get record label or id if last attribute of full path is a link or tree type
-                    const attributeProps = await attributeDomain.getAttributeProperties({
-                        id: attr[attr.length - 1],
-                        ctx
+                const _updateTaskProgress = async (increasePosition: number, translationKey?: string) => {
+                    progress.position += increasePosition;
+                    progress.percent = await updateTaskProgress(task.id, progress.percent, ctx, {
+                        position: {
+                            index: progress.position,
+                            total: progress.recordsNb
+                        },
+                        ...(translationKey && {translationKey})
                     });
-                    const value = await _getFormattedValues(
-                        attributeProps,
-                        fieldValues.flat(Infinity) as IValue[],
-                        ctx
-                    );
+                };
 
-                    // set value(s) and concat them if there are several
-                    subset[attr.join('.')] = value.map(v => v.payload).join(' | ');
+                // separate different depths
+                const attrsSplited = attributes.map(a => a.split('.'));
+                const firstAttributes = attrsSplited.map(a => a[0]);
+
+                // Validations
+                await validateHelper.validateLibrary(library, ctx);
+                const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
+                const libraryAttributesIds = libraryAttributes.map(a => a.id);
+                const invalidAttributes = firstAttributes.filter(a => !libraryAttributesIds.includes(a));
+                if (invalidAttributes.length) {
+                    throw utils.generateExplicitValidationError(
+                        'attributes',
+                        {
+                            msg: Errors.INVALID_ATTRIBUTES,
+                            vars: {attributes: invalidAttributes.join(', ')}
+                        },
+                        ctx.lang
+                    );
                 }
 
-                // Add subset object record on excel row document
-                data.addRow(subset);
+                await _updateTaskProgress(0, 'tasks.export_description.elements_retrieval');
 
-                await _updateTaskProgress(1, 'tasks.export_description.excel_writing');
-            }
+                const records = await recordDomain.find({params: {library, filters}, ctx});
 
-            const filename = `${library}_${new Date().toLocaleDateString().split('/').join('')}_${Date.now()}.xlsx`;
+                progress.recordsNb = records.list.length;
 
-            await workbook.xlsx.writeFile(`${path.resolve(config.export.directory)}/${filename}`);
+                // Create Excel document
+                const workbook = new ExcelJS.Workbook();
 
-            // This is a public URL users will use to retrieve files.
-            // It must match the route defined in the server.
-            const url = `/${config.export.endpoint}/${filename}`;
-            await tasksManager.setLink(task.id, {name: 'export file', url}, ctx);
+                // Set page
+                const libAttributes = await libraryDomain.getLibraryProperties(library, ctx);
+                const data = workbook.addWorksheet(
+                    libAttributes?.label[ctx?.lang] || libAttributes?.label[config.lang.default] || library
+                );
 
-            await eventsManagerDomain.sendDatabaseEvent<EventAction.EXPORT_END>(
-                {
-                    action: EventAction.EXPORT_END,
-                    topic: {
-                        library
-                    },
-                    metadata: {
-                        file: url,
-                        params: {
-                            attributes,
-                            filters
-                        }
+                // Set columns
+                const columns = [];
+                const labels = {};
+                for (const a of attributes) {
+                    columns.push({header: a, key: a});
+                    const attributeProps = await attributeDomain.getAttributeProperties({id: a.split('.').pop(), ctx});
+                    labels[a] =
+                        attributeProps?.label[ctx?.lang] ||
+                        attributeProps?.label[config.lang.default] ||
+                        attributeProps.id;
+                }
+
+                data.columns = columns as ExcelJS.Column[];
+                data.addRow(labels);
+
+                for (const record of records.list) {
+                    // keep only attributes record to export
+                    const subset = pick(record, firstAttributes);
+
+                    for (const attr of attrsSplited) {
+                        // get values of full path attribute
+                        const fieldValues = await _getRecFieldValue([record], attr, ctx);
+
+                        // get record label or id if last attribute of full path is a link or tree type
+                        const attributeProps = await attributeDomain.getAttributeProperties({
+                            id: attr[attr.length - 1],
+                            ctx
+                        });
+                        const value = await _getFormattedValues(
+                            attributeProps,
+                            fieldValues.flat(Infinity) as IValue[],
+                            ctx
+                        );
+
+                        // set value(s) and concat them if there are several
+                        subset[attr.join('.')] = value.map(v => v.payload).join(' | ');
                     }
-                },
-                ctx
-            );
 
-            return task.id;
+                    // Add subset object record on excel row document
+                    data.addRow(subset);
+
+                    await _updateTaskProgress(1, 'tasks.export_description.excel_writing');
+                }
+
+                const filename = `${library}_${new Date().toLocaleDateString().split('/').join('')}_${Date.now()}.xlsx`;
+
+                await workbook.xlsx.writeFile(`${path.resolve(config.export.directory)}/${filename}`);
+
+                // This is a public URL users will use to retrieve files.
+                // It must match the route defined in the server.
+                const url = `/${config.export.endpoint}/${filename}`;
+                await tasksManager.setLink(task.id, {name: 'export file', url}, ctx);
+
+                await eventsManagerDomain.sendDatabaseEvent<EventAction.EXPORT_END>(
+                    {
+                        action: EventAction.EXPORT_END,
+                        topic: {
+                            library
+                        },
+                        metadata: {
+                            file: url,
+                            params: {
+                                attributes,
+                                filters
+                            }
+                        }
+                    },
+                    ctx
+                );
+
+                await notificationDomain.createNotification(
+                    {
+                        content: {
+                            level: 'info',
+                            title: translator.t('notifications.export_complete_title', {lng: ctx.lang}),
+                            message: translator.t('notifications.export_complete_message', {
+                                lng: ctx.lang,
+                                interpolation: {escapeValue: false},
+                                date: new Date().toLocaleString(ctx.lang)
+                            }),
+                            attachments: [
+                                {
+                                    label: filename,
+                                    url: config.server.publicUrl + url
+                                }
+                            ]
+                        },
+                        recipients: {
+                            userIds: [ctx.userId],
+                            groupIds: []
+                        },
+                        emitterUserId: ctx.userId,
+                        priority: 'normal'
+                    },
+                    ctx
+                );
+
+                return task.id;
+            } catch (error) {
+                await notificationDomain.createNotification(
+                    {
+                        content: {
+                            level: 'warning',
+                            title: translator.t('notifications.export_error_title', {lng: ctx.lang}),
+                            message: translator.t('notifications.export_error_message', {
+                                lng: ctx.lang,
+                                interpolation: {escapeValue: false},
+                                date: new Date().toLocaleString(ctx.lang)
+                            })
+                        },
+                        recipients: {
+                            userIds: [ctx.userId],
+                            groupIds: []
+                        },
+                        emitterUserId: ctx.userId,
+                        priority: 'normal'
+                    },
+                    ctx
+                );
+
+                throw error;
+            }
         }
     };
 }

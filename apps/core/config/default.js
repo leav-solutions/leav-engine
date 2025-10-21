@@ -181,6 +181,15 @@ module.exports = {
     preview: {
         directory: process.env.PREVIEWS_DIRECTORY || '/results'
     },
+    notification: {
+        enable: envToBool(process.env.NOTIFICATION_ENABLE, false),
+        email: {
+            enable: envToBool(process.env.NOTIFICATION_EMAIL_ENABLE, false)
+        },
+        webSocket: {
+            enable: envToBool(process.env.NOTIFICATION_WEBSOCKET_ENABLE, false)
+        }
+    },
     applications: {
         rootFolder: process.env.APPLICATIONS_FOLDER || 'applications'
     },

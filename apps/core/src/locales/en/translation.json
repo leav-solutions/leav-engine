@@ -235,6 +235,13 @@
         "stats_elements": "{{created}} elements created, {{updated}} elements updated, {{ignored}} elements ignored",
         "stats_trees": "{{trees}} elements moved in trees"
     },
+
+    "notifications": {
+        "export_complete_title": "The requested export is complete",
+        "export_complete_message": "You requested an export on {{date}}. The process completed successfully. Go to the link below to retrieve your export.",
+        "export_error_title": "The requested export has failed",
+        "export_error_message": "You requested an export on {{date}}. The process did not complete successfully. Please contact your administrator."
+    },
     "indexation": {
         "index_database": "Indexation {{library}}"
     },
