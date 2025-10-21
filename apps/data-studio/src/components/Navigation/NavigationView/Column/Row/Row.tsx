@@ -163,7 +163,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
             const newSelected = selectionState.selection.selected.filter(element => element.nodeId !== treeElement.id);
 
             const selection: ISharedStateSelectionNavigation = {
-                type: SharedStateSelectionType.navigation,
+                type: SharedStateSelectionType.NAVIGATION,
                 selected: newSelected,
                 parent: parentElement?.id
             };
@@ -182,7 +182,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
             // reset selection if previous selection is not navigation or if the parent change
             let newSelected: ISharedSelected[] = [newElementSelected];
             if (
-                selectionState.selection.type === SharedStateSelectionType.navigation &&
+                selectionState.selection.type === SharedStateSelectionType.NAVIGATION &&
                 parentElement?.id === selectionState.selection.parent
             ) {
                 // keep selection if parent is the same
@@ -190,7 +190,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
             }
 
             const selection: ISharedStateSelectionNavigation = {
-                type: SharedStateSelectionType.navigation,
+                type: SharedStateSelectionType.NAVIGATION,
                 selected: newSelected,
                 parent: parentElement?.id
             };
@@ -290,7 +290,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                 </Tooltip>
             )}
             <RecordCardWrapper>
-                <RecordCard record={record} size={PreviewSize.small} />
+                <RecordCard record={record} size={PreviewSize.SMALL} />
             </RecordCardWrapper>
 
             {!!treeElement.childrenCount && (

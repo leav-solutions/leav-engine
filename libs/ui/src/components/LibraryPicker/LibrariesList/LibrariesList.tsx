@@ -138,10 +138,10 @@ function LibrariesList({
                 const libraryIdentity: IEntityData = {
                     label: library.label,
                     subLabel: library.id,
-                    preview: (library.icon?.whoAmI?.preview?.[PreviewSize.small] as string) ?? null,
+                    preview: (library.icon?.whoAmI?.preview?.[PreviewSize.SMALL] as string) ?? null,
                     color: null
                 };
-                return <EntityCard entity={libraryIdentity} size={PreviewSize.small} />;
+                return <EntityCard entity={libraryIdentity} size={PreviewSize.SMALL} />;
             }
         }
     ];

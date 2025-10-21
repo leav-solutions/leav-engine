@@ -287,7 +287,7 @@ describe('Records', () => {
                                         containerId: "dep_elem_1",
                                         order: 0,
                                         uiElementType: "input_field",
-                                        type: ${FormElementTypes.field},
+                                        type: ${FormElementTypes.FIELD},
                                         settings: [{ 
                                             key: "attribute",
                                             value: "${dependentAttrId}"

@@ -61,9 +61,9 @@ function Sidebar(): JSX.Element {
 
     return (
         <Wrapper $visible={visible} className={visible ? 'wrapped-filter-open' : 'wrapped-filter-close'}>
-            {visible && type === SidebarContentType.filters && <FiltersPanel />}
-            {visible && type === SidebarContentType.view && <ViewPanel />}
-            {visible && type === SidebarContentType.versions && <VersionsPanel />}
+            {visible && type === SidebarContentType.FILTERS && <FiltersPanel />}
+            {visible && type === SidebarContentType.VIEW && <ViewPanel />}
+            {visible && type === SidebarContentType.VERSIONS && <VersionsPanel />}
         </Wrapper>
     );
 }

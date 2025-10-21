@@ -107,14 +107,14 @@ export const initialSearchState: ISearchState = {
     lang: null,
     sideBar: {
         visible: false,
-        type: SidebarContentType.filters
+        type: SidebarContentType.FILTERS
     },
     selection: {
         selected: [],
         allSelected: false
     },
     showTransparency: false,
-    mode: SearchMode.search
+    mode: SearchMode.SEARCH
 };
 
 const checkSync = (

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
-import {type IAmqp, type onMessageFunc} from './types/amqp';
+import {type IAmqp, type OnMessageFunc} from './types/amqp';
 import {logger} from '@leav/logger';
 
 export interface IAmqpService {
@@ -12,7 +12,7 @@ export interface IAmqpService {
     consume(
         queue: string,
         routingKey: string,
-        onMessage: onMessageFunc,
+        onMessage: OnMessageFunc,
         consumerTag?: string
     ): Promise<amqp.Replies.Consume>;
     close(): Promise<void>;
@@ -69,7 +69,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
     const consume = async (
         queue: string,
         routingKey: string,
-        onMessage: onMessageFunc,
+        onMessage: OnMessageFunc,
         consumerTag?: string
     ): Promise<amqp.Replies.Consume> =>
         consumer.channel.consume(

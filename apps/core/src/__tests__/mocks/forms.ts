@@ -7,7 +7,7 @@ import {FormElementTypes, type IFormElement, type IFormStrict} from '../../_type
 export const formField: IFormElement = {
     id: '123456',
     order: 0,
-    type: FormElementTypes.field,
+    type: FormElementTypes.FIELD,
     uiElementType: FormFieldTypes.TEXT_INPUT,
     containerId: '987654',
     settings: {
@@ -18,7 +18,7 @@ export const formField: IFormElement = {
 export const formLayoutElement: IFormElement = {
     id: '987654',
     order: 0,
-    type: FormElementTypes.layout,
+    type: FormElementTypes.LAYOUT,
     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
     containerId: FORM_ROOT_CONTAINER_ID,
     settings: {}

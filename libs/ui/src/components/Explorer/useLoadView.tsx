@@ -4,7 +4,7 @@
 import {useExplorerAttributesLazyQuery, useMeQuery} from '_ui/_gqlTypes';
 import {useRef} from 'react';
 import {useViewSettingsContext} from './manage-view-settings/store-view-settings/useViewSettingsContext';
-import {type IUserView, type validFilter} from './_types';
+import {type IUserView, type ValidFilter} from './_types';
 import {useEditSettings, ViewSettingsActionTypes} from './manage-view-settings';
 import {useTransformFilters, type ValidFiltersArgument} from './manage-view-settings/_shared/useTransformFilters';
 import {mapViewTypeFromExplorerToLegacy, mapViewTypeFromLegacyToExplorer} from './_constants';
@@ -33,7 +33,7 @@ export const useLoadView = () => {
                     display: {type: mapViewTypeFromExplorerToLegacy[view.viewType]},
                     label: {},
                     shared: false,
-                    filters: view.defaultViewSettings.filters as validFilter[]
+                    filters: view.defaultViewSettings.filters as ValidFilter[]
                 };
             } else {
                 viewData = view.savedViews.find(v => v.id === viewId) ?? null;

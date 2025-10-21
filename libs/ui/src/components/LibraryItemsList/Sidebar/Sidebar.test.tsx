@@ -27,13 +27,13 @@ describe('SideItems', () => {
     test('should have Filters', async () => {
         await act(async () => {
             const mockState = {
-                side: {visible: true, type: SidebarContentType.filters}
+                side: {visible: true, type: SidebarContentType.FILTERS}
             };
 
             render(
                 <SearchContext.Provider
                     value={{
-                        state: {...initialSearchState, sideBar: {visible: true, type: SidebarContentType.filters}},
+                        state: {...initialSearchState, sideBar: {visible: true, type: SidebarContentType.FILTERS}},
                         dispatch: jest.fn()
                     }}
                 >
@@ -51,7 +51,7 @@ describe('SideItems', () => {
         render(
             <SearchContext.Provider
                 value={{
-                    state: {...initialSearchState, sideBar: {visible: true, type: SidebarContentType.view}},
+                    state: {...initialSearchState, sideBar: {visible: true, type: SidebarContentType.VIEW}},
                     dispatch: jest.fn()
                 }}
             >

@@ -10,10 +10,10 @@ import {type IRecordCardProps} from './_types';
 
 const _getPreviewBySize = (preview?: IRecordIdentityWhoAmI['preview'], size?: PreviewSize) => {
     const fileSizeByPreviewSize: {[size in PreviewSize]: string} = {
-        [PreviewSize.tiny]: 'tiny',
-        [PreviewSize.small]: 'tiny',
-        [PreviewSize.medium]: 'small',
-        [PreviewSize.big]: 'medium'
+        [PreviewSize.TINY]: 'tiny',
+        [PreviewSize.SMALL]: 'tiny',
+        [PreviewSize.MEDIUM]: 'small',
+        [PreviewSize.BIG]: 'medium'
     };
 
     const previewPath: string = (preview?.[fileSizeByPreviewSize[size]] ?? preview?.small) as string;

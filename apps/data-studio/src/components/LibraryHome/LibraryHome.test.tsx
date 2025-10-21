@@ -26,7 +26,7 @@ describe('LibraryHome', () => {
         info: {
             base: {
                 content: 'base info',
-                type: InfoType.basic
+                type: InfoType.BASIC
             },
             stack: []
         },

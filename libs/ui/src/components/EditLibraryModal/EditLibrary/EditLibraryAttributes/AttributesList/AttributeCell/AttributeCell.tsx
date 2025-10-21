@@ -49,7 +49,7 @@ function AttributeCell({attribute}: IAttributeCellProps): JSX.Element {
 
     return (
         <Wrapper>
-            <EntityCard entity={attributeIdentity} size={PreviewSize.small} />
+            <EntityCard entity={attributeIdentity} size={PreviewSize.SMALL} />
             <FloatingMenu actions={menuActions} />
             {isEditModalOpen && (
                 <EditAttributeModal attributeId={attribute.id} onClose={_handleCloseEditModal} open={isEditModalOpen} />

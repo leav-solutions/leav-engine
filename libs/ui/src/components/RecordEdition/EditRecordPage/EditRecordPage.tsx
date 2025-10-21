@@ -8,7 +8,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type IValueVersion} from '_ui/types';
 import {type RecordIdentityFragment, usePurgeRecordMutation} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
-import {type possibleSubmitButtons, type submitButtonsName} from '../_types';
+import {type PossibleSubmitButtons, type SubmitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
@@ -27,7 +27,7 @@ interface IEditRecordPageProps {
     title?: ReactNode;
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void; // Called after submitting via the "create" button
     onCreateAndEdit?: (newRecord: RecordIdentityFragment['whoAmI']) => void; // Called after submitting via the "create and edit" button
-    submitButtons?: possibleSubmitButtons;
+    submitButtons?: PossibleSubmitButtons;
     valuesVersion?: IValueVersion;
     showRefreshButton?: boolean;
     showHeader?: boolean;
@@ -70,7 +70,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
 }) => {
     const {t} = useSharedTranslation();
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
-    const [clickedSubmitButton, setClickedSubmitButton] = useState<submitButtonsName | null>(null);
+    const [clickedSubmitButton, setClickedSubmitButton] = useState<SubmitButtonsName | null>(null);
     const formElementId = useRef(uuidv4());
     const [isCreation, setIsCreation] = useState(!record);
     const {createEmptyRecord} = useExecuteCreateEmptyRecordMutation();
@@ -94,7 +94,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
         }
     }, []);
 
-    const _handleClickSubmit = (button: submitButtonsName) => {
+    const _handleClickSubmit = (button: SubmitButtonsName) => {
         setClickedSubmitButton(button);
     };
 

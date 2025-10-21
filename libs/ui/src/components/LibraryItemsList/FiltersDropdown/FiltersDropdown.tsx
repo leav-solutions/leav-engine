@@ -181,7 +181,7 @@ function FiltersDropdown({
         searchDispatch({
             type: SearchActionTypes.SET_SIDEBAR,
             visible: true,
-            sidebarType: SidebarContentType.filters
+            sidebarType: SidebarContentType.FILTERS
         });
     };
 

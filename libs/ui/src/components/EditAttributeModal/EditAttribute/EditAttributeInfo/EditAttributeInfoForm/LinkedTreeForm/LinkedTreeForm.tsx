@@ -57,7 +57,7 @@ function LinkedTreeForm({onChange, isReadOnly, extra, selected}: ILinkedTreeForm
                     {treeIdentity ? (
                         <EntityCard
                             entity={treeIdentity}
-                            size={PreviewSize.tiny}
+                            size={PreviewSize.TINY}
                             withSubLabel={false}
                             withColor={false}
                         />

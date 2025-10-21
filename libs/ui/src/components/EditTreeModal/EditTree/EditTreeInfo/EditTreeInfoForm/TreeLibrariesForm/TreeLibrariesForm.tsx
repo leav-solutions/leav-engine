@@ -198,7 +198,7 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
         return (
             <List.Item style={{flexDirection: 'column', padding: '5px 1rem'}}>
                 <ListItemPart style={{justifyContent: 'space-between'}}>
-                    <EntityCard entity={itemIdentity} size={PreviewSize.small} />
+                    <EntityCard entity={itemIdentity} size={PreviewSize.SMALL} />
                     {!readOnly && (
                         <RemoveButton
                             role="button"

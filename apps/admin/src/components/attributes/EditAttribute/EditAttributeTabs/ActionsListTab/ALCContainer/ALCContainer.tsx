@@ -27,7 +27,7 @@ import {
     type IReserveAction
 } from '../interfaces/interfaces';
 import {ExternalContainer, ListsContainer, ReserveContainer} from '../stylesComps';
-import {actionListNames, getColorDictionnary, getCurrentList, getCurrentListOrder} from '../utils/actionsManipulations';
+import {ActionListNames, getColorDictionnary, getCurrentList, getCurrentListOrder} from '../utils/actionsManipulations';
 
 //////////////////// INTERFACES
 
@@ -77,7 +77,11 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
         const currentConfig =
             data && data.attributes && data.attributes.list[0] && data.attributes.list[0].actions_list
                 ? data.attributes.list[0].actions_list
-                : {[actionListNames.saveValue]: [], [actionListNames.getValue]: [], [actionListNames.deleteValue]: []};
+                : {
+                      [ActionListNames.SAVE_VALUE]: [],
+                      [ActionListNames.GET_VALUE]: [],
+                      [ActionListNames.DELETE_VALUE]: []
+                  };
         const attr = data && data.attributes && data.attributes.list[0];
 
         if (attr) {

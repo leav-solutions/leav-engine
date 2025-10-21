@@ -31,7 +31,7 @@ const MenuItemList: FunctionComponent<IMenuItemListProps> = ({refetch, library, 
 
     const canCreateRecord = library.permissions.create_record;
 
-    const selectionMode = searchState.mode === SearchMode.select;
+    const selectionMode = searchState.mode === SearchMode.SELECT;
 
     return (
         <Wrapper>

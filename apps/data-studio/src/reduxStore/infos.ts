@@ -9,7 +9,7 @@ export const infosInitialState: IInfosState = {
     stack: [],
     base: {
         content: '',
-        type: InfoType.basic
+        type: InfoType.BASIC
     }
 };
 

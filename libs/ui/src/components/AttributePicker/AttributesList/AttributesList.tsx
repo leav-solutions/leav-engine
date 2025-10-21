@@ -200,7 +200,7 @@ function AttributesList({
                     preview: null,
                     color: null
                 };
-                return <EntityCard entity={attributeIdentity} size={PreviewSize.small} />;
+                return <EntityCard entity={attributeIdentity} size={PreviewSize.SMALL} />;
             }
         },
         {

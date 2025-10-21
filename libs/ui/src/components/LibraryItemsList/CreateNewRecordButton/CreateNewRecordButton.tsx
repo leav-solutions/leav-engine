@@ -7,7 +7,7 @@ import {Button} from 'antd';
 import {LibraryBehavior} from '_ui/_gqlTypes';
 import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import {type IValueVersion} from '_ui/types';
-import {type possibleSubmitButtons} from '_ui/components/RecordEdition/_types';
+import {type PossibleSubmitButtons} from '_ui/components/RecordEdition/_types';
 
 interface ICreateNewRecordButtonProps {
     label: string;
@@ -66,7 +66,7 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
         }
     };
 
-    const submitButtons: possibleSubmitButtons = ['create'];
+    const submitButtons: PossibleSubmitButtons = ['create'];
     if (canCreateAndEdit) {
         submitButtons.push('createAndEdit');
     }

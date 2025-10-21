@@ -21,5 +21,6 @@ export interface ITreeMap {
 
 type OnCheckFirstParam = Parameters<ComponentProps<typeof KitTree>['onCheck']>[0];
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const _isObjectSelection = (selection: OnCheckFirstParam): selection is Exclude<OnCheckFirstParam, Key[]> =>
     'checked' in selection && 'halfChecked' in selection;

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 declare global {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     interface Window {
         __dynamic_base__?: string;
         __global_base_url__?: string;

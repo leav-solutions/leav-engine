@@ -92,7 +92,7 @@ function FileModalContent({fileData}: IFileModalContentProps): JSX.Element {
     return (
         <Container>
             <Title data-testid="title-section">
-                <RecordCard record={fileData.whoAmI} size={PreviewSize.small} />
+                <RecordCard record={fileData.whoAmI} size={PreviewSize.SMALL} />
             </Title>
             <Content data-testid="content-section">{fileViewer}</Content>
             <FileModalSidebar fileData={fileData} />

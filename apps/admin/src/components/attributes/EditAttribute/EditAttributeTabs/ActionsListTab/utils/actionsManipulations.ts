@@ -8,10 +8,10 @@ import {getColorsRangeFrom} from './getColorRange';
 
 //////////////////// FUNCTIONS TO INITIATE THE STATE
 
-export enum actionListNames {
-    saveValue = 'saveValue',
-    getValue = 'getValue',
-    deleteValue = 'deleteValue'
+export enum ActionListNames {
+    SAVE_VALUE = 'saveValue',
+    GET_VALUE = 'getValue',
+    DELETE_VALUE = 'deleteValue'
 }
 
 export const getCurrentList = (
@@ -21,7 +21,7 @@ export const getCurrentList = (
     const currentList: any = {saveValue: {higherId: 0}, getValue: {higherId: 0}, deleteValue: {higherId: 0}};
 
     if (sourceConfigs && Object.keys(sourceConfigs).length > 0) {
-        Object.keys(actionListNames).forEach(actionListName => {
+        Object.keys(ActionListNames).forEach(actionListName => {
             const sourceConfig = sourceConfigs[actionListName];
             const config = {higherId: 0};
             if (availableActions) {
@@ -71,7 +71,7 @@ export const getActionFromConfig = (configAct: IActionConfig, availableActions: 
 
 export const getCurrentListOrder = (currentConfig: GET_ACTIONS_LIST_QUERY_attributes_list_actions_list) => {
     const currentListOrder = {saveValue: [], getValue: [], deleteValue: []};
-    Object.keys(actionListNames).forEach(actionListName => {
+    Object.keys(ActionListNames).forEach(actionListName => {
         const returnArr: number[] = [];
         if (currentConfig[actionListName] && currentConfig[actionListName].length) {
             currentConfig[actionListName].forEach((act, i) => {

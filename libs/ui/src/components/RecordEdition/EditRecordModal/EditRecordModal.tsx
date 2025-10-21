@@ -10,7 +10,7 @@ import {type RecordIdentityFragment, usePurgeRecordMutation} from '_ui/_gqlTypes
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
-import {type possibleSubmitButtons, type submitButtonsName} from '../_types';
+import {type PossibleSubmitButtons, type SubmitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
@@ -29,7 +29,7 @@ export interface IEditRecordModalProps {
     onClose: () => void;
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void; // Called after submitting via the "create" button
     onCreateAndEdit?: (newRecord: RecordIdentityFragment['whoAmI']) => void; // Called after submitting via the "create and edit" button
-    submitButtons?: possibleSubmitButtons;
+    submitButtons?: PossibleSubmitButtons;
     withInfoButton?: boolean;
     valuesVersion?: IValueVersion;
     showSidebar?: boolean;
@@ -99,7 +99,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     const {t} = useSharedTranslation();
     const [antdForm] = useForm();
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
-    const [clickedSubmitButton, setClickedSubmitButton] = useState<submitButtonsName | null>(null);
+    const [clickedSubmitButton, setClickedSubmitButton] = useState<SubmitButtonsName | null>(null);
     const {createEmptyRecord} = useExecuteCreateEmptyRecordMutation();
     const [purgeRecordMutation] = usePurgeRecordMutation();
 
@@ -127,7 +127,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
         }
     }, [open, currentRecord]);
 
-    const _handleClickSubmit = (button: submitButtonsName) => {
+    const _handleClickSubmit = (button: SubmitButtonsName) => {
         setClickedSubmitButton(button);
     };
 

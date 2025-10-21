@@ -28,33 +28,33 @@ export const localizedTranslation = (translations: any, availableLanguages: Avai
 
 export const sortInfoByPriority = (a: IInfo, b: IInfo) => {
     switch (a.priority) {
-        case InfoPriority.low:
+        case InfoPriority.LOW:
             switch (b.priority) {
-                case InfoPriority.low:
+                case InfoPriority.LOW:
                     return 0;
-                case InfoPriority.medium:
+                case InfoPriority.MEDIUM:
                     return 1;
-                case InfoPriority.high:
+                case InfoPriority.HIGH:
                 default:
                     return 1;
             }
-        case InfoPriority.medium:
+        case InfoPriority.MEDIUM:
             switch (b.priority) {
-                case InfoPriority.low:
+                case InfoPriority.LOW:
                     return -1;
-                case InfoPriority.medium:
+                case InfoPriority.MEDIUM:
                     return 0;
-                case InfoPriority.high:
+                case InfoPriority.HIGH:
                 default:
                     return 1;
             }
-        case InfoPriority.high:
+        case InfoPriority.HIGH:
             switch (b.priority) {
-                case InfoPriority.low:
+                case InfoPriority.LOW:
                     return -1;
-                case InfoPriority.medium:
+                case InfoPriority.MEDIUM:
                     return -1;
-                case InfoPriority.high:
+                case InfoPriority.HIGH:
                 default:
                     return 0;
             }

@@ -581,7 +581,7 @@ describe('formDomain', () => {
                 containerId: FORM_ROOT_CONTAINER_ID,
                 order: 0,
                 uiElementType: 'text_block',
-                type: FormElementTypes.layout,
+                type: FormElementTypes.LAYOUT,
                 settings: {
                     content: 'Missing form warning'
                 },
@@ -593,7 +593,7 @@ describe('formDomain', () => {
                 containerId: FORM_ROOT_CONTAINER_ID,
                 order: 1,
                 uiElementType: 'divider',
-                type: FormElementTypes.layout,
+                type: FormElementTypes.LAYOUT,
                 settings: null,
                 valueError: null,
                 values: null
@@ -603,7 +603,7 @@ describe('formDomain', () => {
                 containerId: FORM_ROOT_CONTAINER_ID,
                 order: 2,
                 uiElementType: 'input_field',
-                type: FormElementTypes.field,
+                type: FormElementTypes.FIELD,
                 settings: {
                     label: 'Attribute 1',
                     attribute: 'attr1'

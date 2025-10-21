@@ -476,7 +476,7 @@ describe('Navigation', () => {
                 selection: {
                     searchSelection: null,
                     selection: {
-                        type: SharedStateSelectionType.navigation,
+                        type: SharedStateSelectionType.NAVIGATION,
                         parent: null,
                         selected: [
                             {
@@ -532,7 +532,7 @@ describe('Navigation', () => {
                 selection: {
                     searchSelection: null,
                     selection: {
-                        type: SharedStateSelectionType.navigation,
+                        type: SharedStateSelectionType.NAVIGATION,
                         parent: null,
                         selected: [
                             {
@@ -589,7 +589,7 @@ describe('Navigation', () => {
                 selection: {
                     searchSelection: null,
                     selection: {
-                        type: SharedStateSelectionType.search,
+                        type: SharedStateSelectionType.SEARCH,
                         allSelected: false,
                         selected: [
                             {

@@ -31,8 +31,8 @@ function HeaderColumnNavigationActions({depth, isDetail}: IActiveHeaderCellNavig
     const _displayMessages: OnMessagesFunc = (tMessageSuccess, tMessageFail, messages) => {
         if (messages.countValid) {
             const info: IInfo = {
-                channel: InfoChannel.trigger,
-                type: InfoType.success,
+                channel: InfoChannel.TRIGGER,
+                type: InfoType.SUCCESS,
                 content: t(tMessageSuccess, {
                     nb: messages.countValid
                 })
@@ -46,8 +46,8 @@ function HeaderColumnNavigationActions({depth, isDetail}: IActiveHeaderCellNavig
 
         for (const error of errors) {
             const info: IInfo = {
-                channel: InfoChannel.trigger,
-                type: InfoType.warning,
+                channel: InfoChannel.TRIGGER,
+                type: InfoType.WARNING,
                 content: t(tMessageFail, {
                     elements: (messages.errors[error] as string[]).reduce(
                         (acc, elementLabel) => (acc ? `${acc}, ${elementLabel}` : `${elementLabel}`),

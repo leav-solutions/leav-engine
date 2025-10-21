@@ -286,11 +286,11 @@ describe('searchReducer', () => {
     test('SET_SIDEBAR', () => {
         const newState = searchReducer(initialSearchState, {
             type: SearchActionTypes.SET_SIDEBAR,
-            sidebarType: SidebarContentType.view,
+            sidebarType: SidebarContentType.VIEW,
             visible: true
         });
 
-        expect(newState.sideBar.type).toBe(SidebarContentType.view);
+        expect(newState.sideBar.type).toBe(SidebarContentType.VIEW);
         expect(newState.sideBar.visible).toBe(true);
     });
 

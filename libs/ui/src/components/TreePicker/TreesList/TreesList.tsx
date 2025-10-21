@@ -138,7 +138,7 @@ function TreesList({onSelect, selected = [], multiple = true, showSelected = fal
                     preview: null,
                     color: null
                 };
-                return <EntityCard entity={treeIdentity} size={PreviewSize.small} />;
+                return <EntityCard entity={treeIdentity} size={PreviewSize.SMALL} />;
             }
         }
     ];

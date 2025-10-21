@@ -25,10 +25,10 @@ function SelectionActions({parent, allowedChildrenLibraries, onMessages}: ISelec
 
     const [activeTree] = useActiveTree();
 
-    const isNavigationSelection = selectionState.selection.type === SharedStateSelectionType.navigation;
+    const isNavigationSelection = selectionState.selection.type === SharedStateSelectionType.NAVIGATION;
 
     const columnIsParent =
-        selectionState.selection.type === SharedStateSelectionType.navigation &&
+        selectionState.selection.type === SharedStateSelectionType.NAVIGATION &&
         selectionState.selection.parent === parent?.id;
 
     const canEditChildren = parent ? parent.permissions.edit_children : activeTree.permissions.edit_children;

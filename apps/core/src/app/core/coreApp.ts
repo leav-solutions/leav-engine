@@ -56,7 +56,9 @@ export default function ({
     'core.domain.core': coreDomain,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.app.graphql.customScalars.systemTranslation': systemTranslation,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     'core.app.graphql.customScalars.dateTime': DateTime,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     'core.app.graphql.customScalars.any': Any,
     config,
     translator

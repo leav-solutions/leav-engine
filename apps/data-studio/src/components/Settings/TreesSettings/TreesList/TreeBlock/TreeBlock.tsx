@@ -98,7 +98,7 @@ function TreeBlock({tree, customMode, readOnly, canDrag, onRemoveTree, dragProvi
             ) : (
                 <div>{/* Keep this empty div for styling purpose when not draggable */}</div>
             )}
-            <EntityCard entity={treeIdentity} style={{padding: '0.7rem 0.5rem'}} size={PreviewSize.small} />
+            <EntityCard entity={treeIdentity} style={{padding: '0.7rem 0.5rem'}} size={PreviewSize.SMALL} />
             <FloatingMenu actions={treeActions} />
             {customMode && !readOnly && <RemoveButton aria-label="remove" onClick={_handleRemoveTree} />}
             {isEditTreeModalVisible && (

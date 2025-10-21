@@ -212,6 +212,7 @@ export const getInitials = (label: string, length = 2) => {
     return wordsRegex !== null ? _getInitialEngine(wordsRegex, length) : _getInitialEngine(words, length);
 };
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const _getInitialEngine = (words: string[], length: number) => {
     let initials = '';
     if (words.length === 1) {

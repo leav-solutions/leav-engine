@@ -61,8 +61,8 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
             messages = {...messages, countValid: 1};
 
             notification = {
-                channel: InfoChannel.trigger,
-                type: InfoType.success,
+                channel: InfoChannel.TRIGGER,
+                type: InfoType.SUCCESS,
                 content: t('navigation.notifications.success-add', {nb: 1})
             };
         } catch (err) {
@@ -79,8 +79,8 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
                 }
             } else {
                 notification = {
-                    channel: InfoChannel.trigger,
-                    type: InfoType.error,
+                    channel: InfoChannel.TRIGGER,
+                    type: InfoType.ERROR,
                     content: `${err.message}`
                 };
             }

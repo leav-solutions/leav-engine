@@ -12,7 +12,7 @@ import DisplayInfo from './DisplayInfo';
 describe('DisplayInfo', () => {
     const mockMessage: IInfo = {
         content: 'test message',
-        type: InfoType.basic
+        type: InfoType.BASIC
     };
 
     const mockActiveTimeouts: {info: any; base: any} = {
@@ -44,7 +44,7 @@ describe('DisplayInfo', () => {
         const mockInfo: IInfo[] = [
             {
                 content: 'test is a text',
-                type: InfoType.basic
+                type: InfoType.BASIC
             }
         ];
         const mockSetTriggerInfo = jest.fn();

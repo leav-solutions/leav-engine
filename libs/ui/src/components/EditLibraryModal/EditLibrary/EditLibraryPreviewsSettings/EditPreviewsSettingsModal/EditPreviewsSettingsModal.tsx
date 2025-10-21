@@ -10,8 +10,8 @@ import FieldsGroup from '../../../../FieldsGroup';
 import {SizesEditor} from './SizesEditor';
 
 enum BackgroundMode {
-    transparent = 'transparent',
-    color = 'color'
+    TRANSPARENT = 'transparent',
+    COLOR = 'color'
 }
 
 interface IEditPreviewsSettingsModalProps {
@@ -58,7 +58,7 @@ function EditPreviewsSettingsModal({
           };
 
     const [backgroundMode, setBackgroundMode] = useState<BackgroundMode>(
-        hasBackground ? BackgroundMode.color : BackgroundMode.transparent
+        hasBackground ? BackgroundMode.COLOR : BackgroundMode.TRANSPARENT
     );
 
     const [form] = Form.useForm<LibraryPreviewsSettingsFragment>();
@@ -82,7 +82,7 @@ function EditPreviewsSettingsModal({
 
     const _handleBackgroundModeChange: ComponentProps<typeof Radio.Group>['onChange'] = e => {
         setBackgroundMode(e.target.value);
-        const newFieldValue = e.target.value === BackgroundMode.transparent ? 'false' : '#ffffff';
+        const newFieldValue = e.target.value === BackgroundMode.TRANSPARENT ? 'false' : '#ffffff';
         form.setFieldValue(['versions', 'background'], newFieldValue);
     };
 
@@ -148,16 +148,16 @@ function EditPreviewsSettingsModal({
                 <Form.Item label={t('libraries.previews_settings.background')}>
                     <Space>
                         <Radio.Group onChange={_handleBackgroundModeChange} value={backgroundMode} buttonStyle="solid">
-                            <Radio.Button value={BackgroundMode.transparent}>
+                            <Radio.Button value={BackgroundMode.TRANSPARENT}>
                                 {t('libraries.previews_settings.transparent')}
                             </Radio.Button>
-                            <Radio.Button value={BackgroundMode.color}>
+                            <Radio.Button value={BackgroundMode.COLOR}>
                                 {t('libraries.previews_settings.color')}
                             </Radio.Button>
                         </Radio.Group>
                         <Form.Item key="background" name={['versions', 'background']} style={{margin: 0}}>
                             <ColorPicker
-                                style={backgroundMode !== BackgroundMode.color ? {display: 'none'} : null}
+                                style={backgroundMode !== BackgroundMode.COLOR ? {display: 'none'} : null}
                                 allowClear
                                 disabled={isReadOnly}
                                 onChange={_handleBackgroundChange}

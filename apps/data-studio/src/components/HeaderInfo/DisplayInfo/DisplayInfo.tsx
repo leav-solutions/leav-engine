@@ -74,16 +74,16 @@ function DisplayInfo({
             const [info, ...restInfos] = triggerInfos;
 
             switch (info.type) {
-                case InfoType.error:
+                case InfoType.ERROR:
                     antMessage.error(info.content);
                     break;
-                case InfoType.success:
+                case InfoType.SUCCESS:
                     antMessage.success(info.content);
                     break;
-                case InfoType.warning:
+                case InfoType.WARNING:
                     antMessage.warning(info.content);
                     break;
-                case InfoType.basic:
+                case InfoType.BASIC:
                 default:
                     antMessage.info(info.content);
                     break;
@@ -113,28 +113,28 @@ function DisplayInfo({
 const Message = ({info}: {info: IInfo}) => {
     const {token: themeToken} = theme.useToken();
     switch (info.type) {
-        case InfoType.error:
+        case InfoType.ERROR:
             return (
                 <ErrorMessage $themeToken={themeToken}>
                     <CloseCircleOutlined />
                     {info.content}
                 </ErrorMessage>
             );
-        case InfoType.warning:
+        case InfoType.WARNING:
             return (
                 <WarningMessage $themeToken={themeToken}>
                     <WarningOutlined />
                     {info.content}
                 </WarningMessage>
             );
-        case InfoType.success:
+        case InfoType.SUCCESS:
             return (
                 <SuccessMessage $themeToken={themeToken}>
                     <CheckCircleOutlined />
                     {info.content}
                 </SuccessMessage>
             );
-        case InfoType.basic:
+        case InfoType.BASIC:
         default:
             return <span>{info.content}</span>;
     }

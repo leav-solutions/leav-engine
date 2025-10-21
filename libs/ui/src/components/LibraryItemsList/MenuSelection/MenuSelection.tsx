@@ -46,7 +46,7 @@ function MenuSelection(): JSX.Element {
             <Dropdown
                 menu={{
                     items: [
-                        searchState.mode !== SearchMode.select
+                        searchState.mode !== SearchMode.SELECT
                             ? {
                                   key: 'select_all',
                                   onClick: selectAll,

@@ -30,7 +30,7 @@ describe('HeaderInfo', () => {
 
         const mockBaseInfo: IBaseInfo = {
             content: 'base info',
-            type: InfoType.basic
+            type: InfoType.BASIC
         };
 
         const mockState = {
@@ -55,10 +55,10 @@ describe('HeaderInfo', () => {
 
         const mockInfo: IInfo = {
             content: 'this is a test',
-            type: InfoType.basic,
+            type: InfoType.BASIC,
             time: 1234567890,
-            priority: InfoPriority.low,
-            channel: InfoChannel.passive
+            priority: InfoPriority.LOW,
+            channel: InfoChannel.PASSIVE
         };
 
         const mockState = {

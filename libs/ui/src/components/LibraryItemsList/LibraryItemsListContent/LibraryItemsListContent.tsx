@@ -123,7 +123,7 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
         lang,
         valuesVersions: defaultView.valuesVersions,
         showTransparency,
-        mode: selectionMode ? SearchMode.select : SearchMode.search
+        mode: selectionMode ? SearchMode.SELECT : SearchMode.SEARCH
     });
 
     useGetRecordUpdatesSubscription({libraries: [library.id]});

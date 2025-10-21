@@ -155,14 +155,14 @@ export interface IFilterLibrary extends IFilter {
 }
 
 export enum SidebarContentType {
-    filters = 'filters',
-    view = 'view',
-    versions = 'versions'
+    FILTERS = 'filters',
+    VIEW = 'view',
+    VERSIONS = 'versions'
 }
 
 export enum SearchMode {
-    search = 'search',
-    select = 'select'
+    SEARCH = 'search',
+    SELECT = 'select'
 }
 
 export interface ITableCell {

@@ -40,7 +40,7 @@ function Home(): JSX.Element {
                 appLabel: `${appData.globalSettings.name} - ${localizedTranslation(appData.currentApp.label, lang)}`,
                 interpolation: {escapeValue: false}
             }),
-            type: InfoType.basic
+            type: InfoType.BASIC
         };
         dispatch(setInfoBase(baseInfo));
     }, [t, dispatch]);

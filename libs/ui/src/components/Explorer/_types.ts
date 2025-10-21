@@ -279,7 +279,7 @@ export type ValidFieldFilterThrough = Override<
     subCondition?: ViewDetailsFilterFragment['condition'];
 };
 
-export type validFilter =
+export type ValidFilter =
     | ValidFieldFilter
     | ValidFieldFilterThrough
     | ValidFieldFilterStandardValuesList
@@ -290,7 +290,7 @@ export type Entrypoint = IEntrypointTree | IEntrypointLibrary | IEntrypointLink;
 export interface IUserView extends Pick<IView, 'shared' | 'display' | 'sort' | 'attributes'> {
     label: Record<string, string>;
     id: IView['id'] | null;
-    filters: validFilter[];
+    filters: ValidFilter[];
     ownerId: string | null;
 }
 

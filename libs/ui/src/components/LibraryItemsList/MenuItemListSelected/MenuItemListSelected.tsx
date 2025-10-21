@@ -148,7 +148,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                                 onClick: selectVisible,
                                 label: t('items-menu-dropdown.select-visible', {nb: searchState.records.length})
                             },
-                            searchState.mode !== SearchMode.select
+                            searchState.mode !== SearchMode.SELECT
                                 ? {
                                       key: 'select-all',
                                       onClick: selectAll,
@@ -173,7 +173,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                     </DropdownButton>
                 </Dropdown>
 
-                {searchState.mode !== SearchMode.select && <ActionsMenu />}
+                {searchState.mode !== SearchMode.SELECT && <ActionsMenu />}
             </div>
         </Wrapper>
     );

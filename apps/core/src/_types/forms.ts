@@ -29,8 +29,8 @@ export interface IRecordForm {
 }
 
 export enum FormElementTypes {
-    field = 'field',
-    layout = 'layout'
+    FIELD = 'field',
+    LAYOUT = 'layout'
 }
 
 export type IFormStrict = Required<IForm>;

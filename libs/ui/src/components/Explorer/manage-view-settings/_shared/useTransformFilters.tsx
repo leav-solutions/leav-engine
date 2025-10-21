@@ -26,7 +26,7 @@ import {
     type ValidFieldFilterLinkValuesList,
     type ValidFieldFilterStandardValuesList,
     type ValidFieldFilterThrough,
-    type validFilter
+    type ValidFilter
 } from '../../_types';
 import {ThroughConditionFilter} from '_ui/types';
 import {isLinkAttribute, isStandardAttribute, isTreeAttribute} from '_ui/_utils/attributeType';
@@ -38,11 +38,11 @@ import {valueListTextConditions} from '../filter-items/filter-type/useConditionO
 const _isValidFieldFilter = (filter: ViewDetailsFilterFragment | ExplorerFilter): filter is ValidFieldFilter =>
     !!filter.field;
 
-const _isValidFieldFilterThrough = (filter: validFilter): filter is ValidFieldFilterThrough =>
+const _isValidFieldFilterThrough = (filter: ValidFilter): filter is ValidFieldFilterThrough =>
     filter.condition === ThroughConditionFilter.THROUGH && !!filter.subCondition && !!filter.subField;
 
 const _isValidFieldFilterStandardValuesList = (
-    filter: validFilter,
+    filter: ValidFilter,
     attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]
 ): filter is ValidFieldFilterStandardValuesList & {attribute: StandardAttributeDetailsFragment} =>
     valueListTextConditions.includes(filter.condition) &&
@@ -51,7 +51,7 @@ const _isValidFieldFilterStandardValuesList = (
     !!attribute.valuesList?.enable;
 
 const _isValidFieldFilterLinkValuesList = (
-    filter: validFilter,
+    filter: ValidFilter,
     attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]
 ): filter is ValidFieldFilterLinkValuesList & {attribute: LinkAttributeDetailsFragment} =>
     valueListTextConditions.includes(filter.condition) &&
@@ -88,8 +88,8 @@ export type ExplorerAttributesById = Record<string, NonNullable<ExplorerAttribut
 export const useTransformFilters = () => {
     const {lang} = useLang();
 
-    const toValidFilters = (filters: ValidFiltersArgument): validFilter[] =>
-        (filters ?? []).reduce<validFilter[]>((acc, filter) => {
+    const toValidFilters = (filters: ValidFiltersArgument): ValidFilter[] =>
+        (filters ?? []).reduce<ValidFilter[]>((acc, filter) => {
             if (!_isValidFieldFilter(filter)) {
                 return acc;
             }
@@ -117,7 +117,7 @@ export const useTransformFilters = () => {
         filters,
         attributesDataById
     }: {
-        filters: validFilter[];
+        filters: ValidFilter[];
         attributesDataById: ExplorerAttributesById;
     }): ExplorerFilter[] =>
         (filters ?? []).reduce<ExplorerFilter[]>((acc, filter) => {

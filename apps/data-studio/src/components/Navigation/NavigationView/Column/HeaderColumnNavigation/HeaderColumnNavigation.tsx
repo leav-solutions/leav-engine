@@ -103,7 +103,7 @@ function HeaderColumnNavigation({
 
         dispatch(
             setSelection({
-                type: SharedStateSelectionType.navigation,
+                type: SharedStateSelectionType.NAVIGATION,
                 selected: columnSelection,
                 parent: treeElement?.id ?? null
             })

@@ -92,7 +92,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 appLabel: localizedTranslation(appData.currentApp.label, lang),
                 interpolation: {escapeValue: false}
             }),
-            type: InfoType.basic
+            type: InfoType.BASIC
         };
 
         dispatch(setInfoBase(baseInfo));
@@ -136,7 +136,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
         dispatch(
             setSelection({
                 ...selection.selection,
-                type: SharedStateSelectionType.search,
+                type: SharedStateSelectionType.SEARCH,
                 selected: newSelection.selected.filter(record => record.library === library),
                 allSelected: newSelection.allSelected,
                 filters

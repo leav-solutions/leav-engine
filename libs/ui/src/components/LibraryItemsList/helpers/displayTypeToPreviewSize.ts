@@ -7,12 +7,12 @@ import {ViewSizes} from '_ui/_gqlTypes';
 export const displayTypeToPreviewSize = (displayType: ViewSizes) => {
     switch (displayType) {
         case ViewSizes.SMALL:
-            return PreviewSize.small;
+            return PreviewSize.SMALL;
         case ViewSizes.MEDIUM:
-            return PreviewSize.medium;
+            return PreviewSize.MEDIUM;
         case ViewSizes.BIG:
-            return PreviewSize.big;
+            return PreviewSize.BIG;
         default:
-            return PreviewSize.small;
+            return PreviewSize.SMALL;
     }
 };

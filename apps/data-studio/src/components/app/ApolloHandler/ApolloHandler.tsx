@@ -70,8 +70,8 @@ const ApolloHandler: FunctionComponent = ({children}) => {
 
             const info: IInfo = {
                 content: errorContent,
-                type: InfoType.error,
-                channel: InfoChannel.trigger
+                type: InfoType.ERROR,
+                channel: InfoChannel.TRIGGER
             };
 
             dispatch(addInfo(info));
@@ -80,8 +80,8 @@ const ApolloHandler: FunctionComponent = ({children}) => {
         if (!graphQLErrors && !networkError) {
             const info: IInfo = {
                 content: t('error.error_occurred'),
-                type: InfoType.error,
-                channel: InfoChannel.trigger
+                type: InfoType.ERROR,
+                channel: InfoChannel.TRIGGER
             };
 
             dispatch(addInfo(info));
@@ -94,10 +94,12 @@ const ApolloHandler: FunctionComponent = ({children}) => {
         })
     );
 
-
     // set uri in operation context because it is the only way for createUploadLink to have custom url by operation
     const _setOperationUri = new ApolloLink((operation, forward) => {
-        operation.setContext({...operation.getContext(), uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}&opName=${operation.operationName}`});
+        operation.setContext({
+            ...operation.getContext(),
+            uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}&opName=${operation.operationName}`
+        });
 
         return forward(operation);
     });

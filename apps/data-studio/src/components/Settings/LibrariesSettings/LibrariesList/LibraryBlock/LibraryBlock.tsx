@@ -94,7 +94,7 @@ function LibraryBlock({
         label: localizedTranslation(library.label, lang),
         subLabel: library.id,
         color: null,
-        preview: library.icon?.whoAmI?.preview?.[PreviewSize.small] as string
+        preview: library.icon?.whoAmI?.preview?.[PreviewSize.SMALL] as string
     };
 
     const isTaskInProgress = (task: GET_TASKS_tasks_list): boolean =>
@@ -127,7 +127,7 @@ function LibraryBlock({
             ) : (
                 <div>{/* Keep this empty div for styling purpose when not draggable */}</div>
             )}
-            <EntityCard entity={libraryIdentity} style={{padding: '0.7rem 0.5rem'}} size={PreviewSize.small} />
+            <EntityCard entity={libraryIdentity} style={{padding: '0.7rem 0.5rem'}} size={PreviewSize.SMALL} />
             {/* <LibraryLabel>{localizedTranslation(library.label, lang)}</LibraryLabel> */}
             <FloatingMenu actions={libraryActions} />
             {customMode && !readOnly && <RemoveButton aria-label="remove" onClick={_handleRemoveLibrary} />}

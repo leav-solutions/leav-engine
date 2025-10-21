@@ -24,9 +24,9 @@ function HeaderInfo(): JSX.Element {
         const {passiveInfos, triggerInfos: triggerInf} = stack.reduce(
             (acc, info) => {
                 switch (info.channel) {
-                    case InfoChannel.trigger:
+                    case InfoChannel.TRIGGER:
                         return {...acc, triggerInfos: [...acc.triggerInfos, info]};
-                    case InfoChannel.passive:
+                    case InfoChannel.PASSIVE:
                     default:
                         return {...acc, passiveInfos: [...acc.passiveInfos, info]};
                 }

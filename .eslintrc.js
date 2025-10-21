@@ -35,7 +35,7 @@ module.exports = {
         '@typescript-eslint/explicit-member-accessibility': ['warn', {accessibility: 'explicit'}],
         '@typescript-eslint/indent': 'off',
         '@typescript-eslint/naming-convention': [
-            'warn',
+            'error',
             // Classes and interfaces
             {selector: 'class', format: ['PascalCase']},
             {selector: 'interface', format: ['PascalCase'], custom: {regex: '^I[A-Z]', match: true}},
@@ -46,6 +46,11 @@ module.exports = {
 
             // Variables
             // React components and function variables: allow PascalCase for const variables, especially components.
+            {
+                selector: 'variable',
+                modifiers: ['destructured'],
+                format: null
+            },
             {
                 selector: 'variable',
                 modifiers: ['exported'],
@@ -69,6 +74,7 @@ module.exports = {
             {selector: 'function', format: ['camelCase', 'PascalCase'], leadingUnderscore: 'allow'},
 
             // Parameters
+            {selector: 'parameter', modifiers: ['destructured'], format: null},
             {selector: 'parameter', format: ['camelCase'], leadingUnderscore: 'allow'},
 
             // Types
@@ -169,13 +175,20 @@ module.exports = {
             rules: {
                 'no-only-tests/no-only-tests': 'error',
                 'no-console': 'off',
-                '@typescript-eslint/consistent-type-assertions': 'off',
+                '@typescript-eslint/consistent-type-assertions': 'off'
             }
         },
         {
-            files: ['libs/ui/**', 'apps/admin/**', 'apps/app-studio/**', 'apps/data-studio/**', 'apps/login/**', 'apps/portal/**'],
+            files: [
+                'libs/ui/**',
+                'apps/admin/**',
+                'apps/app-studio/**',
+                'apps/data-studio/**',
+                'apps/login/**',
+                'apps/portal/**'
+            ],
             rules: {
-                'no-console': ['error', {allow: ['warn', 'error', 'info']}],
+                'no-console': ['error', {allow: ['warn', 'error', 'info']}]
             }
         }
     ]

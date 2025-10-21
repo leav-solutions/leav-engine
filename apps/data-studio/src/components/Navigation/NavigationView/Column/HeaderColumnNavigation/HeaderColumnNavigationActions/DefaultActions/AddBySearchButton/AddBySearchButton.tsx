@@ -84,8 +84,8 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
                     } else {
                         dispatch(
                             addInfo({
-                                channel: InfoChannel.trigger,
-                                type: InfoType.error,
+                                channel: InfoChannel.TRIGGER,
+                                type: InfoType.ERROR,
                                 content: `${e.message}`
                             })
                         );

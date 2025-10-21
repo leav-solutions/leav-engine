@@ -53,28 +53,28 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     const {updateViewsOrder} = useUpdateViewsOrderMutation(library.id);
 
     const _toggleShowView = () => {
-        const visible = !searchState.sideBar.visible || searchState.sideBar.type !== SidebarContentType.view;
+        const visible = !searchState.sideBar.visible || searchState.sideBar.type !== SidebarContentType.VIEW;
         searchDispatch({
             type: SearchActionTypes.SET_SIDEBAR,
-            sidebarType: SidebarContentType.view,
+            sidebarType: SidebarContentType.VIEW,
             visible
         });
     };
 
     const _toggleShowFilters = () => {
-        const visible = !searchState.sideBar.visible || searchState.sideBar.type !== SidebarContentType.filters;
+        const visible = !searchState.sideBar.visible || searchState.sideBar.type !== SidebarContentType.FILTERS;
         searchDispatch({
             type: SearchActionTypes.SET_SIDEBAR,
-            sidebarType: SidebarContentType.filters,
+            sidebarType: SidebarContentType.FILTERS,
             visible
         });
     };
 
     const _toggleShowVersions = () => {
-        const visible = !searchState.sideBar.visible || searchState.sideBar.type !== SidebarContentType.filters;
+        const visible = !searchState.sideBar.visible || searchState.sideBar.type !== SidebarContentType.FILTERS;
         searchDispatch({
             type: SearchActionTypes.SET_SIDEBAR,
-            sidebarType: SidebarContentType.versions,
+            sidebarType: SidebarContentType.VERSIONS,
             visible
         });
     };

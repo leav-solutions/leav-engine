@@ -16,6 +16,7 @@ export const createHashFromFile = (filePath: string): Promise<string> =>
             .on('error', err => reject(err));
     });
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const _logMem = text => {
     const used = process.memoryUsage().heapUsed / 1024 / 1024;
     logger.info(`${text} ${Math.round(used * 100) / 100} MB`);

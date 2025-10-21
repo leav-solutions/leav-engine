@@ -4,7 +4,7 @@
 import {type ISharedSelected, type SharedStateSelection, SharedStateSelectionType} from '_types/types';
 
 export const mockSelection = {
-    type: SharedStateSelectionType.search,
+    type: SharedStateSelectionType.SEARCH,
     selected: []
 };
 
@@ -16,17 +16,17 @@ export const mockSharedSelectedElement: ISharedSelected = {
 
 export const mockSharedSearchSelection: SharedStateSelection = {
     selected: [mockSharedSelectedElement, mockSharedSelectedElement],
-    type: SharedStateSelectionType.search
+    type: SharedStateSelectionType.SEARCH
 };
 
 export const mockSharedNavigationSelection: SharedStateSelection = {
     selected: [mockSharedSelectedElement],
-    type: SharedStateSelectionType.navigation,
+    type: SharedStateSelectionType.NAVIGATION,
     parent: '12345'
 };
 
 export const mockSharedNavigationSelectionWithNoSelected: SharedStateSelection = {
     selected: [],
-    type: SharedStateSelectionType.navigation,
+    type: SharedStateSelectionType.NAVIGATION,
     parent: '12345'
 };

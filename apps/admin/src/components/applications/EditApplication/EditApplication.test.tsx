@@ -38,9 +38,9 @@ jest.mock('react-router-v5', () => ({
 }));
 
 describe('EditApplication', () => {
-    type matchType = match<IEditApplicationMatchParams>;
+    type MatchType = match<IEditApplicationMatchParams>;
     test('Edit existing app', async () => {
-        const mockMatch: Mockify<matchType> = {
+        const mockMatch: Mockify<MatchType> = {
             params: {id: mockApplicationDetails.id}
         };
 
@@ -62,7 +62,7 @@ describe('EditApplication', () => {
             }
         ];
 
-        render(<EditApplication match={mockMatch as matchType} />, {
+        render(<EditApplication match={mockMatch as MatchType} />, {
             apolloMocks: mocks,
             routerProps: {
                 initialEntries: [`/applications/edit/${mockApplicationDetails.id}`]
@@ -78,11 +78,11 @@ describe('EditApplication', () => {
     });
 
     test('Edit new app', async () => {
-        const mockMatch: Mockify<matchType> = {
+        const mockMatch: Mockify<MatchType> = {
             params: {id: null}
         };
 
-        render(<EditApplication match={mockMatch as matchType} />);
+        render(<EditApplication match={mockMatch as MatchType} />);
 
         expect(screen.getByText(/applications.new/)).toBeInTheDocument();
         expect(screen.getByText('InfosTab')).toBeInTheDocument();
@@ -90,7 +90,7 @@ describe('EditApplication', () => {
     });
 
     test('Display a link to open app', async () => {
-        const mockMatch: Mockify<matchType> = {
+        const mockMatch: Mockify<MatchType> = {
             params: {id: mockApplicationDetails.id}
         };
 
@@ -112,7 +112,7 @@ describe('EditApplication', () => {
             }
         ];
 
-        render(<EditApplication match={mockMatch as matchType} />, {apolloMocks: mocks});
+        render(<EditApplication match={mockMatch as MatchType} />, {apolloMocks: mocks});
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();
 

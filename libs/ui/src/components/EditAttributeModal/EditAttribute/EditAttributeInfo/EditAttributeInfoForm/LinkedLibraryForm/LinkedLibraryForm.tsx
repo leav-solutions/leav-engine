@@ -61,7 +61,7 @@ function LinkedLibraryForm({onChange, isReadOnly, extra, selected}: ILinkedLibra
                     {libraryIdentity ? (
                         <EntityCard
                             entity={libraryIdentity}
-                            size={PreviewSize.tiny}
+                            size={PreviewSize.TINY}
                             withSubLabel={false}
                             withColor={false}
                         />

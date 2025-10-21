@@ -25,7 +25,7 @@ function UserMenu(): JSX.Element {
 
     return (
         <Wrapper onClick={_toggleUserPanel}>
-            <RecordCard record={userData.whoAmI} withLibrary={false} size={PreviewSize.small} />
+            <RecordCard record={userData.whoAmI} withLibrary={false} size={PreviewSize.SMALL} />
             <UserPanel onClose={_handleClose} isVisible={isUserPanelVisible} />
         </Wrapper>
     );

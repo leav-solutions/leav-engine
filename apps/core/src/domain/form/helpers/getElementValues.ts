@@ -24,7 +24,7 @@ export const getElementValues = async (params: {
         values: null
     };
 
-    if (element.type !== FormElementTypes.field || !element.settings.attribute || !recordId) {
+    if (element.type !== FormElementTypes.FIELD || !element.settings.attribute || !recordId) {
         return result;
     }
 

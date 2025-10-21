@@ -36,7 +36,7 @@ function LibraryIcon({library}: ILibraryIconProps): JSX.Element {
                     image={library.icon.whoAmI.preview.tiny as string}
                     color={null}
                     label={String(library?.label ?? '')}
-                    size={PreviewSize.tiny}
+                    size={PreviewSize.TINY}
                 />
             ) : (
                 iconNameByBehavior[behavior]

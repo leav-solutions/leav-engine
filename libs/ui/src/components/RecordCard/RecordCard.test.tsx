@@ -27,7 +27,7 @@ describe('RecordCard', () => {
 
     test('should display label', async () => {
         await act(async () => {
-            render(<RecordCard record={mock} size={PreviewSize.small} />);
+            render(<RecordCard record={mock} size={PreviewSize.SMALL} />);
         });
 
         expect(screen.getByText(mock.label)).toBeInTheDocument();

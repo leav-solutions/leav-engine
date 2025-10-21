@@ -59,13 +59,13 @@ export const getPreviewSize = (size?: PreviewSize, simplistic = false) => {
     }
 
     switch (size) {
-        case PreviewSize.medium:
+        case PreviewSize.MEDIUM:
             return '3.5rem';
-        case PreviewSize.big:
+        case PreviewSize.BIG:
             return '6rem';
-        case PreviewSize.small:
+        case PreviewSize.SMALL:
             return '2.5rem';
-        case PreviewSize.tiny:
+        case PreviewSize.TINY:
             return '1.7rem';
         default:
             return '2rem';

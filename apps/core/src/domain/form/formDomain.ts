@@ -119,7 +119,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 containerId: FORM_ROOT_CONTAINER_ID,
                 order: 0,
                 uiElementType: 'text_block',
-                type: FormElementTypes.layout,
+                type: FormElementTypes.LAYOUT,
                 settings: {content: translator.t('forms.missing_form_warning', {idForm: id, lng: ctx.lang})}
             },
             {
@@ -127,7 +127,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 containerId: FORM_ROOT_CONTAINER_ID,
                 order: 1,
                 uiElementType: 'divider',
-                type: FormElementTypes.layout,
+                type: FormElementTypes.LAYOUT,
                 settings: null
             }
         ];
@@ -142,7 +142,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                 containerId: FORM_ROOT_CONTAINER_ID,
                 order: index + 2,
                 uiElementType: 'input_field',
-                type: FormElementTypes.field,
+                type: FormElementTypes.FIELD,
                 settings: {
                     label: att.label || att.id,
                     attribute: att.id
@@ -231,7 +231,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                         let elementError: string;
                         try {
                             isElementVisible =
-                                depElement.uiElementType === FormElementTypes.layout ||
+                                depElement.uiElementType === FormElementTypes.LAYOUT ||
                                 !depElement.settings?.attribute ||
                                 (await _canAccessAttribute(depElement.settings.attribute, libraryId, recordId, ctx));
                         } catch (error) {
@@ -267,7 +267,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                                 for (const [i, tab] of depElement.settings.tabs.entries()) {
                                     const tabContainer = {
                                         id: `${depElement.id}/${tab.id}`,
-                                        type: FormElementTypes.layout,
+                                        type: FormElementTypes.LAYOUT,
                                         uiElementType: FormUIElementTypes.TAB_FIELDS_CONTAINER,
                                         children: [],
                                         values: null,
@@ -341,7 +341,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
                     } else {
                         _childrenToKeep = [omit(elem, ['children'])];
 
-                        if (elem.type === FormElementTypes.field) {
+                        if (elem.type === FormElementTypes.FIELD) {
                             hasFields = true;
                         }
                     }
@@ -435,7 +435,7 @@ export default function (deps: IFormDomainDeps): IFormDomain {
             if (dataToSave.elements?.length) {
                 const attributes: string[] = dataToSave.elements.reduce((attrs, {elements: elements}) => {
                     for (const elem of elements) {
-                        if (elem.type === FormElementTypes.field && typeof elem.settings.attribute !== 'undefined') {
+                        if (elem.type === FormElementTypes.FIELD && typeof elem.settings.attribute !== 'undefined') {
                             attrs.push(elem.settings.attribute);
                         }
                     }

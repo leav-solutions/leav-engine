@@ -83,14 +83,14 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             });
 
             info = {
-                channel: InfoChannel.trigger,
-                type: InfoType.success,
+                channel: InfoChannel.TRIGGER,
+                type: InfoType.SUCCESS,
                 content: t('navigation.infos.success-detach', {nb: 1})
             };
         } catch (e) {
             info = {
-                channel: InfoChannel.trigger,
-                type: InfoType.error,
+                channel: InfoChannel.TRIGGER,
+                type: InfoType.ERROR,
                 content: t('navigation.infos.error-detach', {
                     elementName: label ?? parent.record.id,
                     errorMessage: (e as Error).message

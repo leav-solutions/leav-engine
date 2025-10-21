@@ -81,10 +81,10 @@ const _getGridTemplateAreas = (withPreview: boolean, withSubLabel: boolean, tile
 };
 
 const marginBySize: Record<PreviewSize, string> = {
-    [PreviewSize.tiny]: '0.3rem',
-    [PreviewSize.small]: '0.5rem',
-    [PreviewSize.medium]: '0.8rem',
-    [PreviewSize.big]: '0.8rem'
+    [PreviewSize.TINY]: '0.3rem',
+    [PreviewSize.SMALL]: '0.5rem',
+    [PreviewSize.MEDIUM]: '0.8rem',
+    [PreviewSize.BIG]: '0.8rem'
 };
 
 const Wrapper = styled.div<IWrapperProps>`
@@ -127,7 +127,7 @@ const SubLabel = styled.div`
 
 function EntityCard({
     entity,
-    size = PreviewSize.medium,
+    size = PreviewSize.MEDIUM,
     tile = false,
     simplistic = false,
     withColor = true,

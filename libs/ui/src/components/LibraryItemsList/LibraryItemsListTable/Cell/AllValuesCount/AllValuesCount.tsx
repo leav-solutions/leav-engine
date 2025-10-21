@@ -53,7 +53,7 @@ const AllValuesCount: FunctionComponent<IAllValuesCountProps> = ({values, attrib
                             whoAmI = value.linkValue?.whoAmI;
                         }
 
-                        return whoAmI ? <RecordCard record={whoAmI} size={PreviewSize.small} /> : value;
+                        return whoAmI ? <RecordCard record={whoAmI} size={PreviewSize.SMALL} /> : value;
                     })}
                     size="small"
                     maxHeight="50vh"

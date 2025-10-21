@@ -309,7 +309,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                     title={
                         <Paragraph
                             ellipsis={{rows: 1, tooltip: true}}
-                            style={{marginBottom: 0, fontSize: previewSize === PreviewSize.small ? '.8em' : '1em'}}
+                            style={{marginBottom: 0, fontSize: previewSize === PreviewSize.SMALL ? '.8em' : '1em'}}
                         >
                             {item.whoAmI.label || item.whoAmI.id}
                         </Paragraph>

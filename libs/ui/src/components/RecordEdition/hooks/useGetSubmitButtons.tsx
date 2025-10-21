@@ -3,16 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitButton} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {type possibleSubmitButtons, type submitButtonsName} from '../_types';
+import {type PossibleSubmitButtons, type SubmitButtonsName} from '../_types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPenToSquare, faCheck} from '@fortawesome/free-solid-svg-icons';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formConstants';
 
 export const useGetSubmitButtons = (
-    buttons: possibleSubmitButtons,
+    buttons: PossibleSubmitButtons,
     id: string,
     isInCreateMode: boolean,
-    onClickSubmit: (button: submitButtonsName) => void
+    onClickSubmit: (button: SubmitButtonsName) => void
 ) => {
     const {t} = useSharedTranslation();
     const headerSubmitButtons = [];

@@ -91,8 +91,8 @@ function AddSelectionButton({allowedLibraries, parent, onMessages}: IAddSelectio
             refreshTreeContent();
         } else {
             const notification: IInfo = {
-                channel: InfoChannel.trigger,
-                type: InfoType.warning,
+                channel: InfoChannel.TRIGGER,
+                type: InfoType.WARNING,
                 content: t('navigation.infos.warning-add-no-selection')
             };
 

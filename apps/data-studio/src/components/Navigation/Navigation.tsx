@@ -69,7 +69,7 @@ function Navigation({tree}: INavigationProps): JSX.Element {
                     appLabel: localizedTranslation(appData.currentApp.label, lang),
                     interpolation: {escapeValue: false}
                 }),
-                type: InfoType.basic
+                type: InfoType.BASIC
             };
 
             dispatch(setInfoBase(baseInfo));

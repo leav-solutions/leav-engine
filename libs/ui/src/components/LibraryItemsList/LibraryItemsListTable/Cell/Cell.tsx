@@ -68,7 +68,7 @@ const Cell: FunctionComponent<ICellProps> = ({columnName, data}) => {
                 <RecordCardCellWrapper>
                     <RecordCard
                         record={whoAmI}
-                        size={PreviewSize.small}
+                        size={PreviewSize.SMALL}
                         lang={lang}
                         key={whoAmI.id}
                         withPreview={true}

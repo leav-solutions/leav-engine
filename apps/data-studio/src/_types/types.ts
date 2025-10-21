@@ -33,15 +33,15 @@ export interface IRecordIdentityWhoAmI extends RecordIdentity_whoAmI {
 }
 
 export enum PreviewSize {
-    tiny = 'tiny',
-    small = 'small',
-    medium = 'medium',
-    big = 'big'
+    TINY = 'tiny',
+    SMALL = 'small',
+    MEDIUM = 'medium',
+    BIG = 'big'
 }
 
 export enum AvailableLanguage {
-    en = 'en',
-    fr = 'fr'
+    EN = 'en',
+    FR = 'fr'
 }
 
 export enum FilterType {
@@ -165,21 +165,21 @@ export interface INavigationPath {
 }
 
 export enum InfoType {
-    basic = 'basic',
-    success = 'success',
-    warning = 'warning',
-    error = 'error'
+    BASIC = 'basic',
+    SUCCESS = 'success',
+    WARNING = 'warning',
+    ERROR = 'error'
 }
 
 export enum InfoPriority {
-    low = 'low',
-    medium = 'medium',
-    high = 'high'
+    LOW = 'low',
+    MEDIUM = 'medium',
+    HIGH = 'high'
 }
 
 export enum InfoChannel {
-    trigger = 'trigger',
-    passive = 'passive'
+    TRIGGER = 'trigger',
+    PASSIVE = 'passive'
 }
 
 export interface IBaseInfo {
@@ -194,14 +194,14 @@ export interface IInfo extends IBaseInfo {
 }
 
 export interface ISharedStateSelectionSearch {
-    type: SharedStateSelectionType.search;
+    type: SharedStateSelectionType.SEARCH;
     selected: ISharedSelected[];
     filters?: IFilter[];
     allSelected?: boolean;
 }
 
 export interface ISharedStateSelectionNavigation {
-    type: SharedStateSelectionType.navigation;
+    type: SharedStateSelectionType.NAVIGATION;
     selected: ISharedSelected[];
     parent: string;
 }
@@ -209,8 +209,8 @@ export interface ISharedStateSelectionNavigation {
 export type SharedStateSelection = ISharedStateSelectionSearch | ISharedStateSelectionNavigation;
 
 export enum SharedStateSelectionType {
-    navigation,
-    search
+    NAVIGATION,
+    SEARCH
 }
 
 export interface ISharedSelected {

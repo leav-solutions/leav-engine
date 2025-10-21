@@ -34,12 +34,12 @@ jest.mock(
 );
 
 describe('EditVersionProfile', () => {
-    type matchType = match<IEditVersionProfileMatchParams>;
-    const mockMatch: Mockify<matchType> = {
+    type MatchType = match<IEditVersionProfileMatchParams>;
+    const mockMatch: Mockify<MatchType> = {
         params: {id: mockVersionProfile.id}
     };
 
-    const mockMatchNoId: Mockify<matchType> = {
+    const mockMatchNoId: Mockify<MatchType> = {
         params: {}
     };
 
@@ -72,7 +72,7 @@ describe('EditVersionProfile', () => {
     beforeEach(() => jest.clearAllMocks());
 
     test('Render form', async () => {
-        render(<EditVersionProfile match={mockMatch as matchType} />, {apolloMocks: mocks});
+        render(<EditVersionProfile match={mockMatch as MatchType} />, {apolloMocks: mocks});
 
         expect(screen.getByText(/loading/i)).toBeInTheDocument();
 
@@ -82,7 +82,7 @@ describe('EditVersionProfile', () => {
     });
 
     test('If profile is new, ID and label are editable', async () => {
-        render(<EditVersionProfile match={mockMatchNoId as matchType} />, {apolloMocks: mocks});
+        render(<EditVersionProfile match={mockMatchNoId as MatchType} />, {apolloMocks: mocks});
 
         expect(screen.getByRole('textbox', {name: 'id'})).toBeEnabled();
         expect(screen.getByRole('textbox', {name: 'label.fr'})).toBeEnabled();
@@ -96,7 +96,7 @@ describe('EditVersionProfile', () => {
             permissions: {admin_edit_version_profile: false}
         }));
 
-        render(<EditVersionProfile match={mockMatch as matchType} />, {apolloMocks: mocks});
+        render(<EditVersionProfile match={mockMatch as MatchType} />, {apolloMocks: mocks});
 
         expect(await screen.findByRole('textbox', {name: 'label.fr'})).toBeDisabled();
 
@@ -130,7 +130,7 @@ describe('EditVersionProfile', () => {
             }
         ];
 
-        render(<EditVersionProfile match={mockMatch as matchType} />, {apolloMocks: mocksWithSave});
+        render(<EditVersionProfile match={mockMatch as MatchType} />, {apolloMocks: mocksWithSave});
 
         fireEvent.submit(await screen.findByRole('form'));
 
@@ -138,7 +138,7 @@ describe('EditVersionProfile', () => {
     });
 
     test('Autofill ID with label on new attribute', async () => {
-        render(<EditVersionProfile match={mockMatchNoId as matchType} />, {apolloMocks: mocks});
+        render(<EditVersionProfile match={mockMatchNoId as MatchType} />, {apolloMocks: mocks});
 
         await act(async () => {
             await userEvent.type(screen.getByRole('textbox', {name: 'label.fr'}), 'labelfr', {delay: 5});
@@ -172,7 +172,7 @@ describe('EditVersionProfile', () => {
             }
         ];
 
-        render(<EditVersionProfile match={mockMatchNoId as matchType} />, {apolloMocks: mocksWithIdCheck});
+        render(<EditVersionProfile match={mockMatchNoId as MatchType} />, {apolloMocks: mocksWithIdCheck});
 
         await act(async () => {
             await userEvent.type(screen.getByRole('textbox', {name: 'id'}), 'a', {delay: 5});
@@ -218,7 +218,7 @@ describe('EditVersionProfile', () => {
             }
         ];
         test('Display list of linked attributes', async () => {
-            render(<EditVersionProfile match={mockMatch as matchType} />, {apolloMocks: mocksWithLinkedAttributes});
+            render(<EditVersionProfile match={mockMatch as MatchType} />, {apolloMocks: mocksWithLinkedAttributes});
 
             expect(await screen.findByText('Attribut 1')).toBeInTheDocument();
             expect(await screen.findByText('Attribut 2')).toBeInTheDocument();
@@ -236,7 +236,7 @@ describe('EditVersionProfile', () => {
                 }
             ];
 
-            render(<EditVersionProfile match={mockMatch as matchType} />, {apolloMocks: mocksWithAttributesList});
+            render(<EditVersionProfile match={mockMatch as MatchType} />, {apolloMocks: mocksWithAttributesList});
 
             userEvent.click(await screen.findByRole('button', {name: /link_attributes/}));
 
@@ -263,7 +263,7 @@ describe('EditVersionProfile', () => {
                 }
             ];
 
-            render(<EditVersionProfile match={mockMatch as matchType} />, {
+            render(<EditVersionProfile match={mockMatch as MatchType} />, {
                 apolloMocks: mocksWithLinkedAttributesAndDelete
             });
 
