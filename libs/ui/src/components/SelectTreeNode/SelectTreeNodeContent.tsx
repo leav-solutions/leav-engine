@@ -33,14 +33,14 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     childrenAsRecordValuePermissionFilter,
     onSelect,
     onCheck,
-    selectedNodes,
-    disabledNodes,
+    selectedNodes = [],
+    disabledNodes = [],
     multiple = false,
     checkable = false,
     checkStrictly = true,
     canSelectRoot = false,
     selectableLibraries,
-    loadRecursively = false,
+    loadRecursively = true,
     noPagination = false
 }) => {
     const {t} = useSharedTranslation();
@@ -105,7 +105,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                 children: [],
                 parents: currentParents,
                 paginationOffset: 0,
-                disabled: disabledNodes?.includes(e.id)
+                disabled: disabledNodes.includes(e.id)
             }));
 
             parentElement.children = [
@@ -180,6 +180,10 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     };
 
     const _handleSelect: ComponentProps<typeof KitTree>['onSelect'] = (_, e) => {
+        // Prevent selecting when clicking on select all children button
+        if (e.nativeEvent.target instanceof HTMLButtonElement) {
+            return;
+        }
         // If user clicked on the text "show more", we load more children instead of selecting the node
         if ('isShowMore' in e.node && e.node.isShowMore) {
             _handleLoadData(e.node);
@@ -241,7 +245,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             loadData={loadRecursively ? undefined : _handleLoadData}
             multiple={multiple}
             checkable={checkable}
-            defaultExpandedKeys={selectedNodes?.length > 0 ? [...selectedNodes, tree.id] : [tree.id]}
+            defaultExpandedKeys={selectedNodes.length > 0 ? [...selectedNodes, tree.id] : [tree.id]}
             selectedKeys={selectedNodes}
             checkedKeys={selectedNodes}
             titleRender={node => (
@@ -250,6 +254,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                     disabledNodes={disabledNodes}
                     loadRecursively={loadRecursively}
                     node={node as ITreeMapElement}
+                    onSelect={onSelect}
                     selectedNodes={selectedNodes}
                 />
             )}

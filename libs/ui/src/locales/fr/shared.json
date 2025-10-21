@@ -651,7 +651,9 @@
     "tree-node-selection": {
         "title": "Sélectionner un nœud de l'arbre",
         "title_many": "Sélectionner un ou plusieurs nœuds de l'arbre",
-        "show_more": "Éléments suivants..."
+        "show_more": "Éléments suivants...",
+        "select_children": "Sélectionner tous les éléments N-1",
+        "unselect_children": "Désélectionner tous les éléments N-1"
     },
     "files": {
         "generate_previews": "Générer les aperçus",

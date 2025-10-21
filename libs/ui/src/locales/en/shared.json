@@ -651,7 +651,9 @@
     "tree-node-selection": {
         "title": "Select one tree node",
         "title_many": "Select one or many tree nodes",
-        "show_more": "Next items..."
+        "show_more": "Next items...",
+        "select_children": "Select all N-1 children",
+        "unselect_children": "Unselect all N-1 children"
     },
     "files": {
         "generate_previews": "Generate previews",

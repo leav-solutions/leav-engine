@@ -100,7 +100,7 @@ describe('SelectTreeNode', () => {
             mockResult as gqlTypes.TreeNodeChildrenQueryResult
         ]);
 
-        render(<SelectTreeNode treeId="treeId" onSelect={jest.fn()} />);
+        render(<SelectTreeNode treeId="treeId" onSelect={jest.fn()} loadRecursively={false} />);
 
         await waitFor(() => screen.getByText('Tree Label'));
         expect(screen.getByText('Tree Label')).toBeInTheDocument();
