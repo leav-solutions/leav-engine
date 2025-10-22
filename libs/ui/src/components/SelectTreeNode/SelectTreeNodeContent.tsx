@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ComponentProps, type FunctionComponent, useEffect, useRef, useState} from 'react';
+import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
 import {KitTree} from 'aristid-ds';
 import {Spin} from 'antd';
 import {type EventDataNode} from 'antd/lib/tree';
@@ -64,14 +64,9 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
 
     const [fetchError, setFetchError] = useState<string | undefined>();
     const [loadTreeContent, {error, called}] = useTreeNodeChildrenLazyQuery();
-    const isFetching = useRef(false);
 
     const _fetchTreeContent = async (parentNodeKey?: string, offset = 0, currentTreeMap = {...treeMap}) => {
         try {
-            if (isFetching.current) {
-                return;
-            }
-            isFetching.current = true;
             const {
                 data: {treeNodeChildren}
             } = await loadTreeContent({
@@ -108,9 +103,11 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                 disabled: disabledNodes.includes(e.id)
             }));
 
+            const existingKeys = new Set(parentElement.children.map(child => child.key));
+            const newNodes = formattedNodes.filter(node => !existingKeys.has(node.key));
             parentElement.children = [
                 ...parentElement.children.filter(child => !child.key.startsWith(`__showMore${parentMapKey}`)),
-                ...formattedNodes
+                ...newNodes
             ];
 
             for (const node of formattedNodes) {
@@ -149,8 +146,6 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             setFetchError(undefined);
         } catch (err) {
             setFetchError((err as Error).message);
-        } finally {
-            isFetching.current = false;
         }
     };
 

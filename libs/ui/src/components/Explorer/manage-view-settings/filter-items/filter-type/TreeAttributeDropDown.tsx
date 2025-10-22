@@ -23,15 +23,15 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
 }) => {
     const {t} = useSharedTranslation();
 
-    const [selectedNodes, setSelectedNode] = useState<ITreeNodeWithRecord[]>([]);
+    const [selectedNodes, setSelectedNodes] = useState<ITreeNodeWithRecord[]>([]);
 
     const {conditionOptionsByType: availableConditionsOptions} = useConditionsOptionsByType(filter);
 
     const _handleOnSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
         if (selected) {
-            setSelectedNode([...selectedNodes, node]);
+            setSelectedNodes(prev => [...prev, node]);
         } else {
-            setSelectedNode(selectedNodes.filter(selectedValue => selectedValue.id !== node.id));
+            setSelectedNodes(prev => prev.filter(selectedValue => selectedValue.id !== node.id));
         }
     };
 
@@ -41,7 +41,7 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
 
     useEffect(() => {
         if (filter.value == null) {
-            setSelectedNode([]);
+            setSelectedNodes([]);
         }
     }, [filter]);
 
@@ -70,7 +70,7 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
             .map(node => `${filter.attribute.id}.${node.record?.whoAmI?.library?.id}.id`);
 
     const _handleOnCheck = (selection: ITreeNodeWithRecord[]) => {
-        setSelectedNode(selection.filter(node => !node?.disabled));
+        setSelectedNodes(selection.filter(node => !node?.disabled));
 
         const records = _getRecursiveChildrenRecord(selection);
         const fields = _getRecursiveFieldsFromLibraries(selection);

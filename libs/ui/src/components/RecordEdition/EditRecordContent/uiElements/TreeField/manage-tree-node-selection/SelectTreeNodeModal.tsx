@@ -58,20 +58,20 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
 }) => {
     const {t} = useSharedTranslation();
 
-    const [selectedNodes, setSelectedNode] = useState<ITreeNodeWithRecord[]>([]);
+    const [selectedNodes, setSelectedNodes] = useState<ITreeNodeWithRecord[]>([]);
     const [isMonoValueToReplace, setIsMonoValueToReplace] = useState(false);
 
     const _handleOnSelect: ComponentProps<typeof SelectTreeNode>['onSelect'] = (node, selected) => {
         if (!attribute.multiple_values) {
-            setSelectedNode(selected ? [node] : []);
+            setSelectedNodes(selected ? [node] : []);
             setIsMonoValueToReplace(true);
             return;
         }
 
         if (selected) {
-            setSelectedNode([...selectedNodes, node]);
+            setSelectedNodes(prev => [...prev, node]);
         } else {
-            setSelectedNode(selectedNodes.filter(selectedValue => selectedValue.id !== node.id));
+            setSelectedNodes(prev => prev.filter(selectedValue => selectedValue.id !== node.id));
         }
     };
 
