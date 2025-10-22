@@ -5,26 +5,85 @@ import {logger} from '@leav/logger';
 import {type INotification, type INotificationChannel, NotificationChannels} from '../../../_types/notification';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IMailerService} from 'infra/mailer/mailerService';
+import {type IUserDomain} from 'domain/user/userDomain';
+import * as fs from 'fs';
+import handlebars from 'handlebars';
+import {type IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
+import {type IConfig} from '_types/config';
 
 export interface INotificationByEmailChannelDeps {
+    config: IConfig;
     'core.infra.mailer.mailerService': IMailerService;
+    'core.domain.globalSettings': IGlobalSettingsDomain;
+    'core.domain.user': IUserDomain;
 }
 
+const templateLangs = ['en', 'fr'];
+
 export default function ({
-    'core.infra.mailer.mailerService': mailerService
+    config,
+    'core.infra.mailer.mailerService': mailerService,
+    'core.domain.globalSettings': globalSettingsDomain,
+    'core.domain.user': userDomain
 }: INotificationByEmailChannelDeps): INotificationChannel {
+    const emailTemplatesByLang: Record<string, handlebars.TemplateDelegate> = {};
+
+    const getEmailTemplate = async (lang: string): Promise<handlebars.TemplateDelegate> => {
+        const templateLang = getTemplateLang(lang);
+        if (!emailTemplatesByLang[templateLang]) {
+            const html = await fs.promises.readFile(__dirname + `/email_${templateLang}.html`, {encoding: 'utf-8'});
+            emailTemplatesByLang[templateLang] = handlebars.compile(html);
+        }
+        return emailTemplatesByLang[templateLang];
+    };
+
+    const getTemplateLang = (lang: string): string => {
+        if (templateLangs.includes(lang)) {
+            return lang;
+        }
+        return config.lang.default;
+    };
+
+    const sendNotification = async (notification: INotification, ctx: IQueryInfos): Promise<void> => {
+        const userIdentity = await userDomain.getUserIdentity(notification.recipientUserId, ctx);
+        const email = await userIdentity.getEmail();
+
+        logger.debug(`Sending email notification "${notification.content.title}" to "${email}"`);
+
+        const template = await getEmailTemplate(ctx.lang);
+        const globalSettings = await globalSettingsDomain.getSettings(ctx);
+
+        const htmlWithData = template({
+            appName: globalSettings.name,
+            publicUrl: config.server.publicUrl,
+            message: notification.content.message,
+            links: [...(notification.content.relatedEntities || []), ...(notification.content.attachments || [])]
+        });
+
+        await mailerService.sendEmail(
+            {
+                to: email,
+                subject: notification.content.title,
+                html: htmlWithData
+            },
+            ctx
+        );
+    };
+
     return {
         type: NotificationChannels.EMAIL,
         async sendNotifications(notifications: INotification[], ctx: IQueryInfos): Promise<void> {
-            // userDomain.getUserEmail / getRecordFieldValue ...
-
-            for (const notification of notifications) {
-                logger.debug(
-                    `Sending email notification "${notification.content.title}" to ${notification.recipientUserId}`
-                );
-            }
-
-            // mailerService.sendEmail
+            await Promise.all(
+                notifications.map(async notification => {
+                    try {
+                        await sendNotification(notification, ctx);
+                    } catch (error) {
+                        logger.error(
+                            `Error sending email notification "${notification.content.title}" to user ${notification.recipientUserId}: ${error.message}`
+                        );
+                    }
+                })
+            );
         }
     };
 }

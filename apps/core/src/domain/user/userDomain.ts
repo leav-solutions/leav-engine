@@ -13,9 +13,11 @@ import {type IUtils} from 'utils/utils';
 import {Errors} from '../../_types/errors';
 import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
-import {type IUserData} from '_types/userData';
+import {type IUserIdentity, type IUserData} from '_types/userData';
 import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
+import {type IValueDomain} from 'domain/value/valueDomain';
+import {USERS_LIBRARY} from '../../_types/library';
 
 interface ISaveUserDataParams {
     key: string;
@@ -26,6 +28,7 @@ interface ISaveUserDataParams {
 }
 
 export interface IUserDomain {
+    getUserIdentity(userId: string, ctx: IQueryInfos): Promise<IUserIdentity>;
     saveUserData(params: ISaveUserDataParams): Promise<IUserData>;
     getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
     sendResetPasswordEmail(
@@ -41,6 +44,7 @@ export interface IUserDomain {
 
 export interface IUserDomainDeps {
     config: Config.IConfig;
+    'core.domain.value': IValueDomain;
     'core.domain.permissions': IPermissionDomain;
     'core.infra.userData': IUserDataRepo;
     'core.domain.permission': IPermissionDomain;
@@ -56,6 +60,7 @@ export enum UserCoreDataKeys {
 
 export default function ({
     config,
+    'core.domain.value': valueDomain,
     'core.infra.userData': userDataRepo,
     'core.domain.permission': permissionDomain,
     'core.infra.mailer.mailerService': mailerService,
@@ -63,7 +68,26 @@ export default function ({
     'core.utils': utils,
     translator
 }: IUserDomainDeps): IUserDomain {
+    const getUserEmail = async (userId: string, ctx: IQueryInfos): Promise<string | null> => {
+        const values = await valueDomain.getValues({
+            library: USERS_LIBRARY,
+            recordId: userId,
+            attribute: 'email',
+            ctx
+        });
+        if (!values?.[0].payload) {
+            throw new Error(`User ${userId} has no email defined`);
+        }
+        return values?.[0].payload as string;
+    };
+
     return {
+        async getUserIdentity(userId: string, ctx: IQueryInfos): Promise<IUserIdentity> {
+            return {
+                id: userId,
+                getEmail: () => getUserEmail(userId, ctx)
+            };
+        },
         async sendResetPasswordEmail(
             email: string,
             token: string,

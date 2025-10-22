@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {logger} from '@leav/logger';
 import {EventAction} from '@leav/utils';
 import {type IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -266,6 +267,7 @@ export default function ({
             if (typeof task?.id === 'undefined') {
                 const newTaskId = uuidv4();
 
+                logger.debug(`Creating export task "${newTaskId}" for library "${library}"`);
                 await tasksManager.createTask(
                     {
                         id: newTaskId,
@@ -291,6 +293,8 @@ export default function ({
 
                 return newTaskId;
             }
+
+            logger.debug(`Starting export of library "${library}" with task id "${task.id}"`);
 
             try {
                 await eventsManagerDomain.sendDatabaseEvent<EventAction.EXPORT_START>(
@@ -429,6 +433,8 @@ export default function ({
                     ctx
                 );
 
+                logger.debug(`Export of library "${library}" completed, file available at: ${url}`);
+
                 await notificationDomain.createNotification(
                     {
                         content: {
@@ -458,6 +464,7 @@ export default function ({
 
                 return task.id;
             } catch (error) {
+                logger.error(`Export task "${task.id}" failed: ${error.message}`, {error});
                 await notificationDomain.createNotification(
                     {
                         content: {

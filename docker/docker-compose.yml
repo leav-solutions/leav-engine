@@ -71,7 +71,7 @@ x-env-core: &env-core
   MAILER_FROM_NAME: "Leav Engine"
   MAILER_FROM_EMAIL: leav@example.com
   NOTIFICATION_ENABLE: "true"
-  NOTIFICATION_EMAIL_ENABLE: "true"
+  NOTIFICATION_EMAIL_ENABLE: "false" # Disable by default because mailpit may not be started (docker compose --profile 'mail')
   NOTIFICATION_WEBSOCKET_ENABLE: "true"
   SERVER_ADMIN_LOGIN: admin
   SERVER_ADMIN_PASSWORD: admin
