@@ -8,7 +8,10 @@ module.exports = {
         admin: {
             login: 'admin',
             password: 'admin',
-            email: 'email@domain.com'
+            email: 'admin@test.leav-engine.com'
+        },
+        systemUser: {
+            email: 'system@test.leav-engine.com'
         },
         allowIntrospection: true
     },
@@ -36,15 +39,33 @@ module.exports = {
         }
     },
     tasksManager: {
+        checkingInterval: 50, // reduce latency in tests
         queues: {
-            orders: 'test_tasks_orders'
+            execOrders: 'test_tasks_exec_orders',
+            cancelOrders: 'test_task_cancels_orders'
         },
         routingKeys: {
-            orders: 'test.tasks.orders'
+            execOrders: 'test_tasks.exec.orders',
+            cancelOrders: 'test_tasks.cancel.orders'
         }
     },
     logs: {
         transport: 'console'
+    },
+    notification: {
+        enable: true,
+        email: {
+            enable: true
+        },
+        webSocket: {
+            enable: true
+        }
+    },
+    mailer: {
+        from: {
+            name: 'Mailer Test Leav',
+            email: 'mailer@test.leav-engine.com'
+        }
     },
     debug: true,
     redis: {

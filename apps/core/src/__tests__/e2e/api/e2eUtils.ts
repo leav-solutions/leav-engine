@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import type WebSocket from 'ws';
 import axios from 'axios';
 import type FormData from 'form-data';
 import jwt, {type Algorithm} from 'jsonwebtoken';
@@ -321,4 +322,36 @@ export async function gqlSaveVersionProfile(profileId: string, label: string, tr
  **/
 export function toCleanJSON(obj: {}): string {
     return JSON.stringify(obj).replace(/[\""]/g, '\\"');
+}
+
+export async function waitWebSocketMessage<T>(
+    webSocket: WebSocket,
+    acceptMessage: (msg: T) => boolean,
+    {timeoutMs}: {timeoutMs}
+): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+            webSocket.close();
+            reject(new Error('Wait message timeout'));
+        }, timeoutMs || 20_000);
+
+        webSocket.onmessage = (event: WebSocket.MessageEvent) => {
+            const msg = JSON.parse(event.data.toString());
+            if (acceptMessage(msg)) {
+                clearTimeout(timeout);
+                webSocket.close();
+                resolve(msg);
+            }
+        };
+
+        webSocket.onerror = (error: WebSocket.ErrorEvent) => {
+            clearTimeout(timeout);
+            webSocket.close();
+            reject(error);
+        };
+
+        webSocket.onclose = () => {
+            clearTimeout(timeout);
+        };
+    });
 }

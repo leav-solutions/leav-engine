@@ -17,6 +17,7 @@ import {initOIDCClient} from '../../../infra/oidc';
 import {initDb} from '../../../infra/db/db';
 import {type IDbUtils} from 'infra/db/dbUtils';
 import {type IServer} from 'interface/server';
+import {type ITasksManagerInterface} from 'interface/tasksManager';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
@@ -71,7 +72,9 @@ const _createRequiredDirectories = async conf => {
     if (!fsremaned.existsSync(conf.import.directory)) {
         await fsremaned.promises.mkdir(conf.import.directory);
     }
-
+    if (!fsremaned.existsSync(conf.export.directory)) {
+        await fsremaned.promises.mkdir(conf.export.directory);
+    }
     if (!fsremaned.existsSync(conf.diskCache.directory)) {
         await fsremaned.promises.mkdir(conf.diskCache.directory);
     }
@@ -98,8 +101,11 @@ export async function setup() {
         await dbUtils.migrate(coreContainer);
 
         const server: IServer = coreContainer.cradle['core.interface.server'];
+        const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
 
         await server.init();
+        await tasksManager.initMaster();
+        await tasksManager.initWorker();
     } catch (e) {
         console.error(e);
         console.error(e.stack);

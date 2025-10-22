@@ -461,6 +461,10 @@ apps/sync-scan-unit-tests:
   name: redis:latest
   alias: redis
 
+.e2e_service_mailpit: &e2e_service_mailpit
+  name: axllent/mailpit:v1.27.10
+  alias: mailpit
+
 integration-test-core:
   stage: test
   services:
@@ -530,6 +534,7 @@ e2e-api:
     - *e2e_service_arangodb
     - *e2e_service_rabbitmq
     - *e2e_service_redis
+    - *e2e_service_mailpit
     # Dont need elasticsearch for api tests, but could be added if needed (see file history)
   variables:
     ARANGO_URL: "http://root:@arangodb:8529"
@@ -538,6 +543,10 @@ e2e-api:
     AMQP_PORT: "5672"
     AMQP_USERNAME: "guest"
     AMQP_PWD: "guest"
+    MAILER_HOST: "mailpit"
+    MAILER_PORT: "1025"
+    MAILER_SECURE: "false"
+    MAILER_REQUIRE_TLS: "false"
     APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/core"
     IMPORT_DIR: "$CI_PROJECT_DIR/imports"
     DISK_CACHE_DIRECTORY: "$CI_PROJECT_DIR/cache"
