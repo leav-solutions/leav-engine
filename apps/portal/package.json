@@ -9,7 +9,7 @@
         "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
         "antd": "5.22.2",
-        "aristid-ds": "14.0.0-73ccc64",
+        "aristid-ds": "14.0.0-0d6df85",
         "cross-fetch": "3.1.5",
         "graphql-ws": "5.12.0",
         "i18next": "22.5.0",

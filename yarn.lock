@@ -9437,7 +9437,7 @@ __metadata:
     "@types/uuid": "npm:^9"
     "@uidotdev/usehooks": "npm:2.4.1"
     antd: "npm:5.22.2"
-    aristid-ds: "npm:14.0.0-73ccc64"
+    aristid-ds: "npm:14.0.0-0d6df85"
     babel-jest: "npm:29.3.1"
     commander: "npm:9.5.0"
     dompurify: "npm:3.2.4"
@@ -9471,7 +9471,7 @@ __metadata:
     "@ant-design/icons": ">=5.2"
     "@apollo/client": ">=3.8.1"
     antd: 5.22.2
-    aristid-ds: 14.0.0-73ccc64
+    aristid-ds: 14.0.0-439707f
     dayjs: ^1.11.13
     i18next: 22.5
     react: 18.2.0
@@ -13955,7 +13955,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.22.2"
     apollo: "npm:2.34.0"
-    aristid-ds: "npm:14.0.0-73ccc64"
+    aristid-ds: "npm:14.0.0-0d6df85"
     babel-jest: "npm:29.7.0"
     browserslist: "npm:4.24.4"
     classnames: "npm:2.5.1"
@@ -14101,9 +14101,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:14.0.0-73ccc64":
-  version: 14.0.0-73ccc64
-  resolution: "aristid-ds@npm:14.0.0-73ccc64"
+"aristid-ds@npm:14.0.0-0d6df85":
+  version: 14.0.0-0d6df85
+  resolution: "aristid-ds@npm:14.0.0-0d6df85"
   dependencies:
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
@@ -14131,7 +14131,6 @@ __metadata:
     axe-core: "npm:^4.8.1"
     classnames: "npm:^2.3.2"
     color-convert: "npm:^2.0.1"
-    color-string: "npm:^1.9.1"
     dayjs: "npm:^1.11.13"
     lodash: "npm:^4.17.21"
     rc-util: "npm:^5.37.0"
@@ -14160,7 +14159,7 @@ __metadata:
     react-uuid: ^2.0.0
     remark-gfm: ^3.0.1
     styled-components: ^6.0.7
-  checksum: 7df28f935acf36caf5a7fda4d4a6d9a173f3174a898bb37ca76ac8a3931172b8a5f93fee25663da1a92f42f43388db905031e20ee0da83935b86ae1cdc43e659
+  checksum: 47c35b79946ef45a09a14a15b91d79e6f1f85821019acb6d4d9b3ad7c2a0839bd95b982110d3574ed053439a70c90e3616adc48377dfc5417d2083bef0525226
   languageName: node
   linkType: hard
 
@@ -16489,16 +16488,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-string@npm:^1.9.1":
-  version: 1.9.1
-  resolution: "color-string@npm:1.9.1"
-  dependencies:
-    color-name: "npm:^1.0.0"
-    simple-swizzle: "npm:^0.2.2"
-  checksum: 72aa0b81ee71b3f4fb1ac9cd839cdbd7a011a7d318ef58e6cb13b3708dca75c7e45029697260488709f1b1c7ac4e35489a87e528156c1e365917d1c4ccb9b9cd
-  languageName: node
-  linkType: hard
-
 "color-support@npm:^1.1.3":
   version: 1.1.3
   resolution: "color-support@npm:1.1.3"
@@ -17501,7 +17490,7 @@ __metadata:
     apollo: "npm:2.34.0"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-upload-client: "npm:14.1.3"
-    aristid-ds: "npm:14.0.0-73ccc64"
+    aristid-ds: "npm:14.0.0-0d6df85"
     babel-jest: "npm:29.7.0"
     commander: "npm:5.1.0"
     dayjs: "npm:1.11.13"
@@ -27106,7 +27095,7 @@ __metadata:
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.22.2"
-    aristid-ds: "npm:14.0.0-73ccc64"
+    aristid-ds: "npm:14.0.0-0d6df85"
     babel-jest: "npm:29.7.0"
     graphql: "npm:15.0.0"
     i18next: "npm:22.5.0"
@@ -29932,7 +29921,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.22.2"
     apollo: "npm:2.34.0"
-    aristid-ds: "npm:14.0.0-73ccc64"
+    aristid-ds: "npm:14.0.0-0d6df85"
     babel-jest: "npm:29.7.0"
     commander: "npm:10.0.0"
     cross-fetch: "npm:3.1.5"
