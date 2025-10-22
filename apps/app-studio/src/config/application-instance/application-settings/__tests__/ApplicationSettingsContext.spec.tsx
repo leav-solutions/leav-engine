@@ -7,17 +7,14 @@ import * as GraphQLClient from '../../../../__generated__';
 import {InitApplicationSettingProvider, useApplicationSettingsContext} from '../ApplicationSettingsContext';
 
 describe('ApplicationSettingsContext component', () => {
-    let useGetApplicationInstanceDataByEndpointQuerySpy: jest.SpyInstance;
+    let useGetApplicationDataByEndpointQuerySpy: jest.SpyInstance;
 
     beforeEach(() => {
-        useGetApplicationInstanceDataByEndpointQuerySpy = jest.spyOn(
-            GraphQLClient,
-            'useGetApplicationInstanceDataByEndpointQuery'
-        );
+        useGetApplicationDataByEndpointQuerySpy = jest.spyOn(GraphQLClient, 'useGetApplicationDataByEndpointQuery');
     });
 
     it('should display error if current application is empty', async () => {
-        useGetApplicationInstanceDataByEndpointQuerySpy.mockReturnValue({
+        useGetApplicationDataByEndpointQuerySpy.mockReturnValue({
             data: {
                 applications: {
                     list: []
@@ -32,37 +29,39 @@ describe('ApplicationSettingsContext component', () => {
 
     it('should provide valide application configuration', async () => {
         const valideApplication = {
-            workspaces: [
-                {
-                    id: 'workspace_test',
-                    title: {
-                        fr: 'Workspace de test',
-                        en: 'Test workspace'
-                    },
-                    entrypoint: {
+            application: {
+                workspaces: [
+                    {
+                        id: '1',
+                        icon: 'fa-layer-group',
+                        title: {
+                            fr: 'PACs',
+                            en: 'Roadmap'
+                        },
                         type: 'library',
-                        libraryId: 'library_test'
-                    },
-                    panels: [
-                        {
-                            id: 'panel_test',
-                            name: {
-                                fr: 'Panel de test',
-                                en: 'Test panel'
-                            },
-                            content: {
+                        libraryId: 'map'
+                    }
+                ],
+                libraries: {
+                    map: {
+                        libraryPanels: [
+                            {
+                                id: 'maps',
+                                name: {
+                                    fr: 'Gestion des PACs',
+                                    en: 'MAPs Management'
+                                },
                                 type: 'explorer',
-                                libraryId: '<props>',
-                                viewId: 'view_test',
+                                viewId: '885451776',
                                 actions: []
                             }
-                        }
-                    ]
+                        ],
+                        recordPanels: []
+                    }
                 }
-            ]
+            }
         };
-
-        useGetApplicationInstanceDataByEndpointQuerySpy.mockReturnValue({
+        useGetApplicationDataByEndpointQuerySpy.mockReturnValue({
             data: {
                 applications: {
                     list: [
@@ -85,6 +84,6 @@ describe('ApplicationSettingsContext component', () => {
             </InitApplicationSettingProvider>
         );
 
-        expect(screen.getByText(valideApplication.workspaces[0].id)).toBeVisible();
+        expect(screen.getByText(valideApplication.application.workspaces[0].id)).toBeVisible();
     });
 });

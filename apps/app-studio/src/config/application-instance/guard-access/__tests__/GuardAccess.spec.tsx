@@ -7,7 +7,7 @@ import * as GraphQLClient from '../../../../__generated__';
 
 describe('GuardAccess component', () => {
     it('should display error on permission "access_application" forbidden', async () => {
-        jest.spyOn(GraphQLClient, 'useGetApplicationInstanceDataByEndpointQuery').mockReturnValue({
+        jest.spyOn(GraphQLClient, 'useGetApplicationDataByEndpointQuery').mockReturnValue({
             data: {
                 applications: {
                     list: [
@@ -28,7 +28,7 @@ describe('GuardAccess component', () => {
     });
 
     it('should allow access to children on permission "access_application" allowed', async () => {
-        jest.spyOn(GraphQLClient, 'useGetApplicationInstanceDataByEndpointQuery').mockReturnValue({
+        jest.spyOn(GraphQLClient, 'useGetApplicationDataByEndpointQuery').mockReturnValue({
             data: {
                 applications: {
                     list: [

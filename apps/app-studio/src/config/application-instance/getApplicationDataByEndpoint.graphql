@@ -1,0 +1,12 @@
+query GetApplicationDataByEndpoint($endpoint: String!) {
+    applications(filters: {endpoint: $endpoint}) {
+        list {
+            id
+            label
+            permissions {
+                access_application
+            }
+            settings
+        }
+    }
+}

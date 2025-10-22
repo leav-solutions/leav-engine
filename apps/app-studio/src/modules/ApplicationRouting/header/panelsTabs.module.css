@@ -1,0 +1,6 @@
+/* TODO: Remove this when KitTabs will be responsive */
+.scrollable {
+    overflow-y: hidden;
+    min-width: fit-content;
+    padding-bottom: 2px ;
+}

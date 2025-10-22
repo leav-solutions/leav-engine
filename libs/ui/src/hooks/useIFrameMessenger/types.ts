@@ -6,8 +6,13 @@ import type * as z from 'zod/v4';
 import {type KitNotification} from 'aristid-ds';
 import {type IKitConfirmDialog} from 'aristid-ds/dist/Kit/Feedback/Modal/types';
 import {type ToastedAlertProps} from 'aristid-ds/dist/Kit/Feedback/Alert/types';
-import {type EditRecordModal} from '_ui/components';
-import {type ItemActionsSchema, type PanelIdSchema, type PanelSchema} from '_ui/hooks/useIFrameMessenger/schema';
+import {
+    type LibraryIdSchema,
+    type WhereSchema,
+    type PanelIdSchema,
+    type PanelSchema,
+    type PanelIFrameSchema
+} from '_ui/hooks/useIFrameMessenger/schema';
 
 export const packetId = '__fromIframeMessenger';
 
@@ -26,24 +31,10 @@ export interface IMessageBase {
     __frameId?: string;
 }
 
-export type SidePanelFormMessage = IMessageBase & {
-    type: 'sidepanel-form';
-    id: string;
-    data: ComponentPropsWithKey<typeof EditRecordModal>;
-    overrides?: string[];
-};
-
 export type ModalConfirmMessage = IMessageBase & {
     type: 'modal-confirm';
     id: string;
     data: IKitConfirmDialog;
-    overrides?: string[];
-};
-
-export type ModalFormMessage = IMessageBase & {
-    type: 'modal-form';
-    id: string;
-    data: ComponentPropsWithKey<typeof EditRecordModal> | {open: false};
     overrides?: string[];
 };
 
@@ -84,20 +75,42 @@ export type UnregisterMessage = IMessageBase & {
 
 export type Panel = z.infer<typeof PanelSchema>;
 
-type PanelId = z.infer<typeof PanelIdSchema>;
+export type LibraryId = z.infer<typeof LibraryIdSchema>;
 
-type ItemActions = z.infer<typeof ItemActionsSchema>;
+export type PanelId = z.infer<typeof PanelIdSchema>;
 
-export interface INestedPanel {
-    panelTargetId?: PanelId;
-    recordId?: string;
-    where: ItemActions[number]['where'];
-    what: Panel & {recordId?: string};
-}
+export type Where = z.infer<typeof WhereSchema>;
+
+type PanelIFrame = z.infer<typeof PanelIFrameSchema>;
 
 export type NavigateToPanelMessage = IMessageBase & {
     type: 'navigate-to-panel';
-    data: {panelId: PanelId} | INestedPanel;
+    data: {
+        where: Where;
+        libraryId: LibraryId;
+        panelId?: PanelId;
+        recordId?: string;
+    };
+};
+
+export type ClosePanelMessage = IMessageBase & {
+    type: 'close-panel';
+    data: {
+        recordId: string;
+        where: string;
+        recordPanelId: string;
+    };
+};
+
+export type NavigateToIframeMessage = IMessageBase & {
+    type: 'navigate-to-iframe';
+    data: {
+        panel: PanelIFrame;
+        destination: {libraryId: LibraryId};
+        where: Where;
+        recordId: string;
+        recordPanelId: string;
+    };
 };
 
 export type MessageToPanelMessage = IMessageBase & {
@@ -110,15 +123,15 @@ export type MessageToPanelMessage = IMessageBase & {
 };
 
 export type MessageToParent =
-    | SidePanelFormMessage
     | ModalConfirmMessage
-    | ModalFormMessage
     | AlertMessage
     | NotificationMessage
     | SimpleMessage
     | RegisterMessage
     | UnregisterMessage
     | NavigateToPanelMessage
+    | ClosePanelMessage
+    | NavigateToIframeMessage
     | MessageToPanelMessage;
 
 export type MessageFromParent =
@@ -146,20 +159,8 @@ export interface IUseIFrameMessengerOptions {
     ref?: RefObject<HTMLIFrameElement>;
     id?: string;
     handlers?: {
-        onSidePanelForm?: (
-            data: SidePanelFormMessage['data'],
-            id: string,
-            dispatch: MessageDispatcher,
-            callCb: CallCbFunction
-        ) => void;
         onModalConfirm?: (
             data: ModalConfirmMessage['data'],
-            id: string,
-            dispatch: MessageDispatcher,
-            callCb: CallCbFunction
-        ) => void;
-        onModalForm?: (
-            data: ModalFormMessage['data'],
             id: string,
             dispatch: MessageDispatcher,
             callCb: CallCbFunction
@@ -173,5 +174,7 @@ export interface IUseIFrameMessengerOptions {
         ) => void;
         onMessage?: (data: unknown, id: string, dispatch: MessageDispatcher, callCb: CallCbFunction) => void;
         onNavigateToPanel?: (data: NavigateToPanelMessage['data']) => void;
+        onClosePanel?: (data: ClosePanelMessage['data']) => void;
+        onNavigateToIframe?: (data: NavigateToIframeMessage['data']) => void;
     };
 }

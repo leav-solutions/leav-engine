@@ -9471,7 +9471,7 @@ __metadata:
     "@ant-design/icons": ">=5.2"
     "@apollo/client": ">=3.8.1"
     antd: 5.22.2
-    aristid-ds: 14.0.0-439707f
+    aristid-ds: 14.0.0-0d6df85
     dayjs: ^1.11.13
     i18next: 22.5
     react: 18.2.0
@@ -13954,7 +13954,6 @@ __metadata:
     "@types/styled-components": "npm:5.1.26"
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.22.2"
-    apollo: "npm:2.34.0"
     aristid-ds: "npm:14.0.0-0d6df85"
     babel-jest: "npm:29.7.0"
     browserslist: "npm:4.24.4"
@@ -13975,7 +13974,6 @@ __metadata:
     react: "npm:18.2.0"
     react-dom: "npm:18.2.0"
     react-i18next: "npm:12"
-    react-icons: "npm:4.7.1"
     react-router-dom: "npm:6.22.0"
     styled-components: "npm:6.0.8"
     ts-jest: "npm:29.4.2"

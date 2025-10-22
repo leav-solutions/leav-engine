@@ -51,7 +51,6 @@ export interface IItemAction {
     callback: (item: IItemData) => void;
     icon: ReactElement | ((item: IItemData) => ReactElement);
     label: string | ((item: IItemData) => string);
-    iconOnly?: boolean;
     isDanger?: boolean | ((item: IItemData) => boolean);
     disabled?: boolean | ((item: IItemData) => boolean);
     useItemActionOnRowClick?: boolean;

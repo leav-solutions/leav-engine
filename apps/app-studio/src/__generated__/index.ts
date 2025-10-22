@@ -1250,6 +1250,7 @@ export enum PermissionsActions {
   access_attribute = 'access_attribute',
   access_library = 'access_library',
   access_record = 'access_record',
+  access_record_by_default = 'access_record_by_default',
   access_tree = 'access_tree',
   admin_access_api_keys = 'admin_access_api_keys',
   admin_access_applications = 'admin_access_applications',
@@ -1681,6 +1682,7 @@ export type RecordInput = {
 
 export type RecordPermissions = {
   access_record: Scalars['Boolean'];
+  access_record_by_default: Scalars['Boolean'];
   create_record: Scalars['Boolean'];
   delete_record: Scalars['Boolean'];
   edit_record: Scalars['Boolean'];
@@ -1688,6 +1690,7 @@ export type RecordPermissions = {
 
 export enum RecordPermissionsActions {
   access_record = 'access_record',
+  access_record_by_default = 'access_record_by_default',
   create_record = 'create_record',
   delete_record = 'delete_record',
   edit_record = 'edit_record'
@@ -2419,12 +2422,12 @@ export type SaveValueBatchResult = {
   values?: Maybe<Array<GenericValue>>;
 };
 
-export type GetApplicationInstanceDataByEndpointQueryVariables = Exact<{
+export type GetApplicationDataByEndpointQueryVariables = Exact<{
   endpoint: Scalars['String'];
 }>;
 
 
-export type GetApplicationInstanceDataByEndpointQuery = { applications?: { list: Array<{ id: string, label: any, settings?: any | null, permissions: { access_application: boolean } }> } | null };
+export type GetApplicationDataByEndpointQuery = { applications?: { list: Array<{ id: string, label: any, settings?: any | null, permissions: { access_application: boolean } }> } | null };
 
 export type GetLanguagesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2452,8 +2455,8 @@ export type GetRecordIdCardQueryVariables = Exact<{
 export type GetRecordIdCardQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, color?: string | null, label?: string | null, subLabel?: string | null, preview?: any | null } }> } };
 
 
-export const GetApplicationInstanceDataByEndpointDocument = gql`
-    query GetApplicationInstanceDataByEndpoint($endpoint: String!) {
+export const GetApplicationDataByEndpointDocument = gql`
+    query GetApplicationDataByEndpoint($endpoint: String!) {
   applications(filters: {endpoint: $endpoint}) {
     list {
       id
@@ -2468,37 +2471,37 @@ export const GetApplicationInstanceDataByEndpointDocument = gql`
     `;
 
 /**
- * __useGetApplicationInstanceDataByEndpointQuery__
+ * __useGetApplicationDataByEndpointQuery__
  *
- * To run a query within a React component, call `useGetApplicationInstanceDataByEndpointQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetApplicationInstanceDataByEndpointQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetApplicationDataByEndpointQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApplicationDataByEndpointQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetApplicationInstanceDataByEndpointQuery({
+ * const { data, loading, error } = useGetApplicationDataByEndpointQuery({
  *   variables: {
  *      endpoint: // value for 'endpoint'
  *   },
  * });
  */
-export function useGetApplicationInstanceDataByEndpointQuery(baseOptions: Apollo.QueryHookOptions<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>) {
+export function useGetApplicationDataByEndpointQuery(baseOptions: Apollo.QueryHookOptions<GetApplicationDataByEndpointQuery, GetApplicationDataByEndpointQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>(GetApplicationInstanceDataByEndpointDocument, options);
+        return Apollo.useQuery<GetApplicationDataByEndpointQuery, GetApplicationDataByEndpointQueryVariables>(GetApplicationDataByEndpointDocument, options);
       }
-export function useGetApplicationInstanceDataByEndpointLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>) {
+export function useGetApplicationDataByEndpointLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApplicationDataByEndpointQuery, GetApplicationDataByEndpointQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>(GetApplicationInstanceDataByEndpointDocument, options);
+          return Apollo.useLazyQuery<GetApplicationDataByEndpointQuery, GetApplicationDataByEndpointQueryVariables>(GetApplicationDataByEndpointDocument, options);
         }
-export function useGetApplicationInstanceDataByEndpointSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>) {
+export function useGetApplicationDataByEndpointSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetApplicationDataByEndpointQuery, GetApplicationDataByEndpointQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>(GetApplicationInstanceDataByEndpointDocument, options);
+          return Apollo.useSuspenseQuery<GetApplicationDataByEndpointQuery, GetApplicationDataByEndpointQueryVariables>(GetApplicationDataByEndpointDocument, options);
         }
-export type GetApplicationInstanceDataByEndpointQueryHookResult = ReturnType<typeof useGetApplicationInstanceDataByEndpointQuery>;
-export type GetApplicationInstanceDataByEndpointLazyQueryHookResult = ReturnType<typeof useGetApplicationInstanceDataByEndpointLazyQuery>;
-export type GetApplicationInstanceDataByEndpointSuspenseQueryHookResult = ReturnType<typeof useGetApplicationInstanceDataByEndpointSuspenseQuery>;
-export type GetApplicationInstanceDataByEndpointQueryResult = Apollo.QueryResult<GetApplicationInstanceDataByEndpointQuery, GetApplicationInstanceDataByEndpointQueryVariables>;
+export type GetApplicationDataByEndpointQueryHookResult = ReturnType<typeof useGetApplicationDataByEndpointQuery>;
+export type GetApplicationDataByEndpointLazyQueryHookResult = ReturnType<typeof useGetApplicationDataByEndpointLazyQuery>;
+export type GetApplicationDataByEndpointSuspenseQueryHookResult = ReturnType<typeof useGetApplicationDataByEndpointSuspenseQuery>;
+export type GetApplicationDataByEndpointQueryResult = Apollo.QueryResult<GetApplicationDataByEndpointQuery, GetApplicationDataByEndpointQueryVariables>;
 export const GetLanguagesDocument = gql`
     query getLanguages {
   langs

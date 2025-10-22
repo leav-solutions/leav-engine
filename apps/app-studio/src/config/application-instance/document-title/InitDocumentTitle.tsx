@@ -4,13 +4,13 @@
 import {type FunctionComponent, useContext, useEffect} from 'react';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
-import {useGetApplicationInstanceDataByEndpointQuery} from '../../../__generated__';
+import {useGetApplicationDataByEndpointQuery} from '../../../__generated__';
 import {APP_ENDPOINT} from '../../../constants';
 
 export const InitDocumentTitle: FunctionComponent = ({children}) => {
     const {lang} = useContext(LangContext);
 
-    const {data: applicationData} = useGetApplicationInstanceDataByEndpointQuery({
+    const {data: applicationData} = useGetApplicationDataByEndpointQuery({
         variables: {endpoint: APP_ENDPOINT}
     });
 

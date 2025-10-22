@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {decodeMessage, encodeMessage, getExposedMethods} from './messageHandlers';
-import {type Message, type NavigateToPanelMessage} from './types';
+import {type Message} from './types';
 
 describe('MessageHandlers', () => {
     describe('getExposedMethods', () => {
@@ -14,39 +14,18 @@ describe('MessageHandlers', () => {
             dispatchMock.mockClear();
         });
 
-        it('Should provide 7 methods', async () => {
+        it('Should provide 8 methods', async () => {
             const providedMethods = getExposedMethods({current: null}, jest.fn());
 
             expect(providedMethods).toEqual({
-                showSidePanelForm: expect.any(Function),
                 showModalConfirm: expect.any(Function),
-                showModalForm: expect.any(Function),
                 showAlert: expect.any(Function),
                 showNotification: expect.any(Function),
                 messageToParent: expect.any(Function),
                 messageToPanel: expect.any(Function),
-                navigateToPanel: expect.any(Function)
-            });
-        });
-
-        it('Should expose method showSidePanelForm which dispatch to parent', async () => {
-            const data: any = {someField: 'someValue', someCallback: jest.fn()};
-            const callbacksStore = {current: {}};
-
-            const {showSidePanelForm} = getExposedMethods(callbacksStore, dispatchMock);
-            showSidePanelForm(data);
-
-            expect(dispatchMock).toHaveBeenCalledWith({
-                type: 'sidepanel-form',
-                data,
-                id: String(fakeTime),
-                overrides: ['someCallback']
-            });
-
-            expect(callbacksStore.current).toEqual({
-                [String(fakeTime)]: {
-                    someCallback: data.someCallback
-                }
+                navigateToPanel: expect.any(Function),
+                navigateToIframe: expect.any(Function),
+                closePanel: expect.any(Function)
             });
         });
 
@@ -59,26 +38,6 @@ describe('MessageHandlers', () => {
 
             expect(dispatchMock).toHaveBeenCalledWith({
                 type: 'modal-confirm',
-                data,
-                id: String(fakeTime),
-                overrides: ['someCallback']
-            });
-            expect(callbacksStore.current).toEqual({
-                [String(fakeTime)]: {
-                    someCallback: data.someCallback
-                }
-            });
-        });
-
-        it('Should expose method showModalForm which dispatch to parent and store callback', async () => {
-            const data: any = {someField: 'someValue', someCallback: jest.fn()};
-            const callbacksStore = {current: {}};
-
-            const {showModalForm} = getExposedMethods(callbacksStore, dispatchMock);
-            showModalForm(data);
-
-            expect(dispatchMock).toHaveBeenCalledWith({
-                type: 'modal-form',
                 data,
                 id: String(fakeTime),
                 overrides: ['someCallback']
@@ -148,13 +107,31 @@ describe('MessageHandlers', () => {
             expect(dispatchMock).toHaveBeenCalledWith({type: 'message-to-panel', data});
         });
 
-        it('should expose method navigateToPanel which dispatch to the parent', async () => {
-            const data: NavigateToPanelMessage['data'] = {panelId: 'panelId'};
+        it('Should expose method navigateToPanel which open given panel', async () => {
+            const data: any = {someField: 'someValue'};
 
             const {navigateToPanel} = getExposedMethods({current: null}, dispatchMock);
             navigateToPanel(data);
 
             expect(dispatchMock).toHaveBeenCalledWith({type: 'navigate-to-panel', data});
+        });
+
+        it('Should expose method navigateToIframe which open given iframe panel', async () => {
+            const data: any = {someField: 'someValue'};
+
+            const {navigateToIframe} = getExposedMethods({current: null}, dispatchMock);
+            navigateToIframe(data);
+
+            expect(dispatchMock).toHaveBeenCalledWith({type: 'navigate-to-iframe', data});
+        });
+
+        it('Should expose method closePanel which which close previous opened panel', async () => {
+            const data: any = {someField: 'someValue'};
+
+            const {closePanel} = getExposedMethods({current: null}, dispatchMock);
+            closePanel(data);
+
+            expect(dispatchMock).toHaveBeenCalledWith({type: 'close-panel', data});
         });
     });
 

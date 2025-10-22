@@ -4,81 +4,11 @@
 import {type FunctionComponent} from 'react';
 import {useRoutes} from 'react-router-dom';
 import {Loading} from '@leav/ui';
-import {routes} from './routes';
-import {type AddPanel} from './types';
-import {addChildPanelToApplication} from './utils';
-import {RedirectToFirstPanelOnHome} from './guards/RedirectToFirstPanelOnHome';
-import {RedirectToFirstFullpagePanelOnInvalidFullpagePanel} from './guards/RedirectToFirstFullpagePanelOnInvalidFullpagePanel';
-import {PanelsNavigationMenu} from './navigation-menu/PanelsNavigationMenu';
-import {WorkspacesNavigationMenu} from './navigation-menu/WorkspacesNavigationMenu';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/ApplicationSettingsContext';
-import {FullPagePanel} from './panel/FullPagePanel';
-import {AddModalForPopupPanel} from './panel/AddModalForPopupPanel';
-import {PopupPanel} from './panel/PopupPanel';
-import {SliderPanel} from './panel/SliderPanel';
-import {AddSidePanelForSliderPanel} from './panel/AddSidePanelForSliderPanel';
+import {firstLevelRoutes} from './router/routes';
 
 export const InitApplicationRouter: FunctionComponent = () => {
-    const [application, setApplication] = useApplicationSettingsContext();
+    const [application] = useApplicationSettingsContext();
 
-    const addPanel: AddPanel = (panel, destination) => {
-        setApplication(prevApplication => addChildPanelToApplication(panel, prevApplication, destination));
-    };
-
-    return useRoutes(
-        application === null
-            ? [{element: <Loading />, path: '*'}]
-            : [
-                  {
-                      element: <WorkspacesNavigationMenu application={application} />,
-                      children: [
-                          {
-                              element: (
-                                  <RedirectToFirstFullpagePanelOnInvalidFullpagePanel application={application}>
-                                      <PanelsNavigationMenu level="fullpage" />
-                                  </RedirectToFirstFullpagePanelOnInvalidFullpagePanel>
-                              ),
-                              children: [
-                                  {
-                                      path: routes.panel,
-                                      element: <FullPagePanel addPanel={addPanel} />,
-                                      children: [
-                                          {
-                                              element: (
-                                                  <AddModalForPopupPanel>
-                                                      <PanelsNavigationMenu level="popup" />
-                                                  </AddModalForPopupPanel>
-                                              ),
-                                              children: [
-                                                  {
-                                                      path: routes.popupPanel,
-                                                      element: <PopupPanel addPanel={addPanel} />
-                                                  }
-                                              ]
-                                          },
-                                          {
-                                              element: (
-                                                  <AddSidePanelForSliderPanel>
-                                                      <PanelsNavigationMenu level="slider" />
-                                                  </AddSidePanelForSliderPanel>
-                                              ),
-                                              children: [
-                                                  {
-                                                      path: routes.sliderPanel,
-                                                      element: <SliderPanel addPanel={addPanel} />
-                                                  }
-                                              ]
-                                          }
-                                      ]
-                                  }
-                              ]
-                          },
-                          {
-                              path: '*',
-                              element: <RedirectToFirstPanelOnHome application={application} />
-                          }
-                      ]
-                  }
-              ]
-    );
+    return useRoutes(application === null ? [{element: <Loading />, path: '*'}] : firstLevelRoutes);
 };

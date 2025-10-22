@@ -7,6 +7,7 @@ import {
     type CallbackFunction,
     type Callbacks,
     type CallCbFunction,
+    type ClosePanelMessage,
     type IEncodedMessage,
     type IUseIFrameMessengerOptions,
     type Message,
@@ -14,11 +15,10 @@ import {
     type MessageHandler,
     type MessageToPanelMessage,
     type ModalConfirmMessage,
-    type ModalFormMessage,
+    type NavigateToIframeMessage,
     type NavigateToPanelMessage,
     type NotificationMessage,
     packetId,
-    type SidePanelFormMessage,
     type SimpleMessage
 } from './types';
 
@@ -76,20 +76,6 @@ export const initClientHandlers: (
     callbacksList?: MutableRefObject<Callbacks>
 ) => MessageHandler = (callCb, options, callbacksList) => (message, dispatch) => {
     switch (message.type) {
-        case 'sidepanel-form':
-            options?.handlers?.onSidePanelForm?.(
-                setCallbacks(
-                    message.id,
-                    message.__frameId,
-                    message.data,
-                    callCb,
-                    message.overrides
-                ) as SidePanelFormMessage['data'],
-                message.id,
-                dispatch,
-                callCb
-            );
-            break;
         case 'modal-confirm':
             options?.handlers?.onModalConfirm?.(
                 setCallbacks(
@@ -99,20 +85,6 @@ export const initClientHandlers: (
                     callCb,
                     message.overrides
                 ) as ModalConfirmMessage['data'],
-                message.id,
-                dispatch,
-                callCb
-            );
-            break;
-        case 'modal-form':
-            options?.handlers?.onModalForm?.(
-                setCallbacks(
-                    message.id,
-                    message.__frameId,
-                    message.data,
-                    callCb,
-                    message.overrides
-                ) as ModalFormMessage['data'],
                 message.id,
                 dispatch,
                 callCb
@@ -156,6 +128,12 @@ export const initClientHandlers: (
         case 'navigate-to-panel':
             options?.handlers?.onNavigateToPanel?.(message.data);
             break;
+        case 'close-panel':
+            options?.handlers?.onClosePanel?.(message.data);
+            break;
+        case 'navigate-to-iframe':
+            options?.handlers?.onNavigateToIframe?.(message.data);
+            break;
         default:
             break;
     }
@@ -181,20 +159,10 @@ const storeCallbacks = (
 };
 
 export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, dispatch?: MessageDispatcher) => ({
-    showSidePanelForm: (data: SidePanelFormMessage['data']) => {
-        const id = Date.now().toString();
-        const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
-        dispatch?.({type: 'sidepanel-form', data: nextData as SidePanelFormMessage['data'], id, overrides});
-    },
     showModalConfirm: (data: ModalConfirmMessage['data']) => {
         const id = Date.now().toString();
         const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
         dispatch?.({type: 'modal-confirm', data: nextData as ModalConfirmMessage['data'], id, overrides});
-    },
-    showModalForm: (data: ModalFormMessage['data']) => {
-        const id = Date.now().toString();
-        const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
-        dispatch?.({type: 'modal-form', data: nextData as ModalFormMessage['data'], id, overrides});
     },
     showAlert: (data: AlertMessage['data']) => {
         const id = Date.now().toString();
@@ -212,6 +180,12 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
     },
     navigateToPanel: (data: NavigateToPanelMessage['data']) => {
         dispatch?.({type: 'navigate-to-panel', data});
+    },
+    closePanel: (data: ClosePanelMessage['data']) => {
+        dispatch?.({type: 'close-panel', data});
+    },
+    navigateToIframe: (data: NavigateToIframeMessage['data']) => {
+        dispatch?.({type: 'navigate-to-iframe', data});
     },
     messageToPanel: (data: MessageToPanelMessage['data']) => {
         dispatch?.({type: 'message-to-panel', data});

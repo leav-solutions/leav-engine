@@ -7,7 +7,7 @@ import {InitDocumentTitle} from '../InitDocumentTitle';
 
 describe('InitDocumentTitle component', () => {
     beforeEach(() => {
-        jest.spyOn(GraphQLClient, 'useGetApplicationInstanceDataByEndpointQuery').mockReturnValue({
+        jest.spyOn(GraphQLClient, 'useGetApplicationDataByEndpointQuery').mockReturnValue({
             data: {
                 applications: {
                     list: [

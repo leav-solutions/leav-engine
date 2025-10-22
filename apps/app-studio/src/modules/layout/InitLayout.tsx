@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent, useRef} from 'react';
 import {Explorer} from '@leav/ui';
-import {SIDEBAR_CONTENT_ID} from '../../constants';
+import {FLAP_TARGET_ID} from '../../constants';
 import {RootLayout} from './RootLayout';
 
 export const InitLayout: FunctionComponent = ({children}) => {
@@ -12,7 +12,7 @@ export const InitLayout: FunctionComponent = ({children}) => {
     return (
         <RootLayout ref={explorerContainerRef}>
             <Explorer.EditSettingsContextProvider
-                panelElement={() => document.getElementById(SIDEBAR_CONTENT_ID) ?? explorerContainerRef.current}
+                panelElement={() => document.getElementById(FLAP_TARGET_ID) ?? explorerContainerRef.current}
             >
                 {children}
             </Explorer.EditSettingsContextProvider>

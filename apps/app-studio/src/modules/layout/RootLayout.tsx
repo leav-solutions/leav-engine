@@ -3,7 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {forwardRef, type ReactNode} from 'react';
 import {RootHeader} from './RootHeader';
-import {SidebarContent} from './SidebarContent';
+import {FlagTarget} from './FlagTarget';
+import {SidePanelTarget} from './SidePanelTarget';
+
 import {layout, mainContent} from './layout.module.css';
 
 export const RootLayout = forwardRef<HTMLDivElement, {children: ReactNode}>(({children}, ref) => (
@@ -12,7 +14,8 @@ export const RootLayout = forwardRef<HTMLDivElement, {children: ReactNode}>(({ch
         <RootHeader />
         <section className={mainContent}>
             {children}
-            <SidebarContent />
+            <FlagTarget /> {/* TODO: should be dynamic based on where params (slider, popup and fullpage case) */}
+            <SidePanelTarget />
         </section>
     </main>
 ));

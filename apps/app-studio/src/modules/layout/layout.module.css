@@ -23,6 +23,10 @@
     height: calc(100vh - var(--header-height));
 }
 
-.sidebarContent {
+.flapTarget {
+    position: relative;
+}
+
+.sidePanelTarget {
     position: relative;
 }

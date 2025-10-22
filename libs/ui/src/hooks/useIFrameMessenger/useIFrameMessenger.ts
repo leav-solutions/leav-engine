@@ -25,6 +25,7 @@ export const useIFrameMessenger = (options?: IUseIFrameMessengerOptions) => {
     const selfId = useRef(options?.id ?? uuid());
 
     const {setLang} = useContext(LangContext);
+
     const changeLangInAllFrames = (newLanguage: string) => {
         dispatch(
             {

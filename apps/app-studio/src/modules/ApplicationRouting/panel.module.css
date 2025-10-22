@@ -1,0 +1,79 @@
+.page {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-s) * 1px);
+    display: flex;
+    overflow: hidden;
+}
+
+.fullpagePage {
+    padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
+}
+
+/** TODO: We need to handle the padding of EditRecord.tsx as it came with it's own padding
+ *  When EditRecord will handle it's own header and EditRecordModal/Page will be removed, maybe this will no longer be needed
+ *  Careful with focused inputs, their borders might be cut by the padding
+ */
+.popupFormPanel {
+    div > div:nth-child(2) {
+        padding: 0;
+    }
+}
+
+.popupHeader {
+    width: 100%;
+    display: flex;
+}
+
+.popupHeaderTabs {
+    margin: auto;
+}
+
+/** TODO: We need to handle the padding of EditRecord.tsx as it came with it's own padding
+ *  When EditRecord will handle it's own header and EditRecordModal/Page will be removed, maybe this will no longer be needed
+ *  Careful with focused inputs, their borders might be cut by the padding
+ */
+.sliderFormPanel {
+    section > div:nth-child(2) {
+        padding: 0;
+
+        section > div:nth-child(1) {
+            padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px) 0 calc(var(--general-spacing-m) * 1px);
+        }
+
+        section > div:nth-child(2) > div > div {
+            padding-top: 0;
+        }
+    }
+}
+
+.selfContainingPanel {
+    .page {
+        gap: 0;
+        padding: 0;
+    }
+}
+
+.pageHeader {
+    display: flex;
+    gap: calc(var(--general-spacing-s) * 1px);
+    justify-content: space-between;
+
+    @media screen and (max-width: 1024px) {
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+}
+
+.content {
+    flex: 1;
+    background: var(--general-utilities-light);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+    overflow: hidden;
+}
+
+.fullpageContent {
+    box-shadow: var(--general-utilities-shadow-light);
+}

@@ -11,7 +11,5 @@ export const API_ENDPOINT = GLOBAL_BASE_URL ? `${GLOBAL_BASE_URL.replace(/^\//g,
 export const ORIGIN_URL = window.location.origin;
 export const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}`;
 
-export const UNAUTHENTICATED = 'UNAUTHENTICATED';
-
-export const SIDEBAR_CONTENT_ID = 'sidebar-content';
-export const SIDE_PANEL_CONTENT_ID = 'side-panel-content';
+export const FLAP_TARGET_ID = 'flap-target';
+export const SIDE_PANEL_TARGET_ID = 'side-panel-target';

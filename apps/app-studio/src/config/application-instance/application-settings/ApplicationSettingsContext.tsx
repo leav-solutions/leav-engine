@@ -5,7 +5,7 @@ import {createContext, type FunctionComponent, useContext, useEffect, useState} 
 import {type $ZodIssue} from 'zod/v4/core';
 import {useTranslation} from 'react-i18next';
 import {ErrorDisplay, Loading} from '@leav/ui';
-import {useGetApplicationInstanceDataByEndpointQuery} from '../../../__generated__';
+import {useGetApplicationDataByEndpointQuery} from '../../../__generated__';
 import {type Application} from '../../../modules/ApplicationRouting/types';
 import {ApplicationSchema} from '../../../modules/ApplicationRouting/schema';
 import {APP_ENDPOINT} from '../../../constants';
@@ -17,7 +17,11 @@ export const useApplicationSettingsContext = () => useContext(ApplicationSetting
 export const InitApplicationSettingProvider: FunctionComponent = ({children}) => {
     const {t} = useTranslation();
 
-    const {data, loading, error} = useGetApplicationInstanceDataByEndpointQuery({
+    const {
+        data,
+        loading,
+        error: networkError
+    } = useGetApplicationDataByEndpointQuery({
         variables: {endpoint: APP_ENDPOINT}
     });
 
@@ -25,29 +29,30 @@ export const InitApplicationSettingProvider: FunctionComponent = ({children}) =>
 
     const applicationState = useState<Application | null>(null);
     const [, setApplication] = applicationState;
-    const [errorsOnParsing, setErrorsOnParsing] = useState<$ZodIssue[] | null>(null);
+    const [parsingErrors, setParsingErrors] = useState<$ZodIssue[] | null>(null);
+
     useEffect(() => {
         if (currentApp?.settings) {
-            const result = ApplicationSchema.safeParse(currentApp.settings);
+            const result = ApplicationSchema.safeParse(currentApp.settings.application);
 
             if (result.success === false) {
-                setErrorsOnParsing(result.error.issues);
+                setParsingErrors(result.error.issues);
                 return;
             }
             setApplication(result.data);
         }
-    }, [currentApp?.settings, setApplication, setErrorsOnParsing]);
+    }, [currentApp?.settings, setApplication, setParsingErrors]);
 
     if (loading) {
         return <Loading />;
     }
 
-    if (error) {
-        return <ErrorDisplay message={error.message} />;
+    if (networkError) {
+        return <ErrorDisplay message={networkError.message} />;
     }
 
-    if (errorsOnParsing) {
-        return <ErrorDisplay message={JSON.stringify(errorsOnParsing)} />;
+    if (parsingErrors) {
+        return <ErrorDisplay message={JSON.stringify(parsingErrors)} />;
     }
 
     if (!currentApp) {
