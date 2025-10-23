@@ -89,6 +89,7 @@ export const validateConfig = (conf: IConfig) => {
             host: Joi.string(),
             port: Joi.number(),
             secure: Joi.boolean(),
+            requireTLS: Joi.boolean(),
             from: Joi.object().keys({
                 name: Joi.string().required(),
                 email: Joi.string().email().required()

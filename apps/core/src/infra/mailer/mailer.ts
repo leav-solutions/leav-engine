@@ -14,6 +14,7 @@ export async function initMailer({config}: IDeps): Promise<nodemailer.Transporte
         host: config.mailer.host,
         port: Number(config.mailer.port),
         secure: config.mailer.secure,
+        requireTLS: config.mailer.requireTLS,
         auth: {
             user: config.mailer.auth.user, //testAccount.user,
             pass: config.mailer.auth.password // testAccount.pass

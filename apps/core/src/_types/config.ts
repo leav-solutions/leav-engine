@@ -109,7 +109,15 @@ export interface IAuth {
 export interface IMailer {
     host: string;
     port: number;
+    /**
+     * If true, use SSL/TLS connection (usually port 465). If false, use STARTTLS (usually port 587)
+     */
     secure: boolean;
+
+    /**
+     * If true, require TLS for the connection (STARTTLS). Only used if secure is false
+     */
+    requireTLS: boolean;
     from: {
         name: string;
         email: string;

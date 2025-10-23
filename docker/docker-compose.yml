@@ -67,6 +67,7 @@ x-env-core: &env-core
   FILES_ROOT_PATHS: files1:/files
   MAILER_HOST: mailpit
   MAILER_PORT: 1025
+  MAILER_REQUIRE_TLS: "false"
   MAILER_FROM_NAME: "Leav Engine"
   MAILER_FROM_EMAIL: leav@example.com
   NOTIFICATION_ENABLE: "true"

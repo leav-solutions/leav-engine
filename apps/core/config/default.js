@@ -74,6 +74,7 @@ module.exports = {
         secure: envToBool(process.env.MAILER_SECURE, false), // if true the connection will use TLS when connecting to server.
         // If false (the default) then TLS is used if server supports the STARTTLS extension.
         // In most cases set this value to true if you are connecting to port 465. For port 587 or 25 keep it false
+        requireTLS: envToBool(process.env.MAILER_REQUIRE_TLS, true), // only used if secure is false. If requireTLS is true, the connexion will use STARTTLS
         from: {
             name: process.env.MAILER_FROM_NAME || 'Leav Engine',
             email: process.env.MAILER_FROM_EMAIL || 'leav@example.com'
