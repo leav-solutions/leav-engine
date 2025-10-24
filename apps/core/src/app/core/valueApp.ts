@@ -245,10 +245,6 @@ export default function ({
 
                         deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): [GenericValue!]!
                     }
-
-                    extend type Query {
-                        runActionsListAndFormatOnValue(library: ID, value: ValueBatchInput, version: [ValueVersionInput]): [Value!]!
-                    }
                 `,
                 resolvers: {
                     Mutation: {
@@ -322,30 +318,6 @@ export default function ({
                                 recordId,
                                 attribute,
                                 value: valToDelete,
-                                ctx
-                            });
-                        }
-                    },
-                    // TODO : remove after creation process completed
-                    Query: {
-                        async runActionsListAndFormatOnValue(
-                            _: never,
-                            {
-                                library,
-                                value,
-                                version
-                            }: {library: string; value: IValueFromGql; version: IValueVersionFromGql},
-                            ctx: IQueryInfos
-                        ): Promise<IValue[]> {
-                            const convertedValue = {
-                                ...value,
-                                version: convertVersionFromGqlFormat(version),
-                                metadata: utils.nameValArrayToObj(value.metadata)
-                            };
-
-                            return valueDomain.runActionsListAndFormatOnValue({
-                                library,
-                                value: convertedValue,
                                 ctx
                             });
                         }

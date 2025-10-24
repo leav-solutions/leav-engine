@@ -14,12 +14,7 @@ import {type ICreateRecordValueError} from '../_types';
 
 export type IPreCreateRecordCallback = () => Promise<ICreateRecordValueError[]>;
 
-export type CreateRecordHelper = (params: {
-    library: string;
-    ctx: IQueryInfos;
-    // TODO : remove after creation process completed
-    active?: boolean;
-}) => Promise<IRecord>;
+export type CreateRecordHelper = (params: {library: string; ctx: IQueryInfos; active?: boolean}) => Promise<IRecord>;
 
 interface IDeps {
     'core.domain.eventsManager': IEventsManagerDomain;

@@ -128,17 +128,6 @@ export interface IValueDomain {
     }): Promise<IValue>;
 
     runActionsList(params: IRunActionListParams): Promise<IValue[]>;
-
-    // TODO : remove after creation process completed
-    runActionsListAndFormatOnValue({
-        library,
-        value,
-        ctx
-    }: {
-        library: string;
-        value: IValue;
-        ctx: IQueryInfos;
-    }): Promise<IValue[]>;
 }
 
 export interface IValueDomainDeps {
@@ -1084,23 +1073,6 @@ const valueDomain = function ({
             await validate.validateLibrary(library, ctx);
             await validate.validateRecord(library, recordId, ctx);
             return _executeDeleteValue({library, recordId, attribute, value, ctx});
-        },
-        // TODO : remove after creation process completed
-        async runActionsListAndFormatOnValue({library, value, ctx}) {
-            const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
-
-            if (attributeProps.format === AttributeFormats.DATE_RANGE) {
-                value.payload = JSON.parse(value.payload) as IDateRangeValue;
-            }
-
-            //TODO: When we will adapt Tree attribute to design-system, we will have to adapt this part (like we did for link)
-            if (utils.isLinkAttribute(attributeProps)) {
-                value.payload = {
-                    id: value.payload
-                };
-            }
-
-            return _runActionsListAndFormatValue(library, attributeProps, value, ctx);
         },
         formatValue: _formatValue,
         runActionsList: _runActionsList
