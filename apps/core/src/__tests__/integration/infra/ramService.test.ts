@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {getCoreDep} from './integrationTestRepoUtils';
-import {type ICacheService} from '../../../infra/cache/cacheService';
+import {ECacheType, type ICacheService, type ICachesService} from '../../../infra/cache/cacheService';
 
 describe('infra/cache/ramService integration', () => {
     let ramService: ICacheService;
 
     beforeAll(async () => {
-        ramService = getCoreDep<ICacheService>('core.infra.cache.ramService');
+        ramService = getCoreDep<ICachesService>('core.infra.cache.cacheService').getCache(ECacheType.RAM);
     });
 
     beforeEach(async () => {

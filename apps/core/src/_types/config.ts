@@ -148,7 +148,8 @@ export interface IAmqp {
 export interface IRedis {
     host: string;
     port: number;
-    database: number;
+    cacheDatabase: number;
+    sessionDatabase: number;
 }
 
 export interface IFilesManager {

@@ -17,7 +17,7 @@ import {type IConfig} from '_types/config';
 import {type ErrorFieldDetail} from '_types/errors';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '_types/shared';
-import {systemPreviewsSettings} from '../../domain/filesManager/_constants';
+import {systemPreviewsSettings} from '../filesManager/_constants';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';

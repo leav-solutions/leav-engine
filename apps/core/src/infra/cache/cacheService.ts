@@ -6,6 +6,8 @@ import DataLoader from 'dataloader';
 import {type IQueryInfos} from '_types/queryInfos';
 import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 import {nextTick} from 'process';
+import ramService from './ramService';
+import {type IRedis} from './redis';
 
 export interface IMemoizeParams<T> {
     key: string;
@@ -33,8 +35,8 @@ export interface ICacheService {
     deleteAll(path?: string): Promise<void>;
 }
 
-interface IDeps {
-    'core.infra.cache.ramService': ICacheService;
+interface ICacheServiceDeps {
+    'core.infra.redis': IRedis;
     'core.infra.cache.diskService': ICacheService;
 }
 
@@ -46,9 +48,11 @@ export enum ECacheType {
 type RamCacheDataLoader = DataLoader<string, unknown>;
 
 export default function ({
-    'core.infra.cache.ramService': ramService,
+    'core.infra.redis': redis,
     'core.infra.cache.diskService': diskService
-}: IDeps): ICachesService {
+}: ICacheServiceDeps): ICachesService {
+    const _ramService = ramService(redis.cache);
+
     /**
      * For the current request, keep in RAM the data loaded from redis.
      * This is useful to avoid multiple redis calls for the same key.
@@ -64,7 +68,7 @@ export default function ({
             () =>
                 new DataLoader<string, unknown>(
                     async (keys: readonly string[]) =>
-                        (await ramService.getData([...keys])).map((data: string | null) =>
+                        (await _ramService.getData([...keys])).map((data: string | null) =>
                             data !== null ? JSON.parse(data) : null
                         ),
                     {
@@ -104,13 +108,13 @@ export default function ({
                     cacheService = diskService;
                     break;
                 case ECacheType.RAM:
-                    cacheService = ramService;
+                    cacheService = _ramService;
                     break;
             }
 
             return cacheService;
         },
-        async memoize<T>({key, func, storeNulls, ctx}): Promise<T> {
+        async memoize<T>({key, func, storeNulls, ctx}: IMemoizeParams<T>): Promise<T> {
             const ramCacheDataLoader = getRamCacheDataLoader(ctx);
             const cacheValueFrom = await ramCacheDataLoader.load(key);
             if (cacheValueFrom != null) {
@@ -121,10 +125,9 @@ export default function ({
                 const result = await func();
 
                 if (result !== null || storeNulls) {
-                    const ramCacheService = this.getCache(ECacheType.RAM);
                     ramCacheDataLoader.prime(key, result);
                     // Do not wait for the storeData to finish, we can continue processing
-                    ramCacheService.storeData({key, data: JSON.stringify(result)}).catch(() => undefined);
+                    _ramService.storeData({key, data: JSON.stringify(result)}).catch(() => undefined);
                 }
 
                 return result;

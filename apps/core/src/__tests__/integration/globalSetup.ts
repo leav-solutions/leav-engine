@@ -14,11 +14,11 @@ export async function setup() {
         const translator = await i18nextInit(conf);
 
         await initDb(conf);
-        const redisClient = await initRedis({config: conf});
+        const redis = await initRedis({config: conf});
 
         const {coreContainer} = await initDI({
             translator,
-            'core.infra.redis': redisClient
+            'core.infra.redis': redis
         });
 
         const dbUtils: IDbUtils = coreContainer.cradle['core.infra.db.dbUtils'];

@@ -7,8 +7,9 @@ import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {ECacheType, type ICachesService} from '../../../infra/cache/cacheService';
 import {initDb} from '../../../infra/db/db';
-import {initRedis} from '../../../infra/cache/redis';
+import {initRedis} from '../../../infra/cache';
 import {initMailer} from '../../../infra/mailer';
+import {type ISessionRepo} from '../../../infra/session/sessionRepo';
 
 export async function setup() {
     try {
@@ -21,13 +22,13 @@ export async function setup() {
 
         // Init AMQP
         const amqp = await amqpService({config: conf.amqp});
-        const redisClient = await initRedis({config: conf});
+        const redis = await initRedis({config: conf});
         const mailer = await initMailer({config: conf});
 
         const {coreContainer} = await initDI({
             translator,
             'core.infra.amqpService': amqp,
-            'core.infra.redis': redisClient,
+            'core.infra.redis': redis,
             'core.infra.mailer': mailer
         });
 
@@ -35,6 +36,10 @@ export async function setup() {
         const cacheService: ICachesService = coreContainer.cradle['core.infra.cache.cacheService'];
         await cacheService.getCache(ECacheType.DISK).deleteAll();
         await cacheService.getCache(ECacheType.RAM).deleteAll();
+
+        // Clear sessions
+        const sessionRepo: ISessionRepo = coreContainer.cradle['core.infra.session'];
+        await sessionRepo.deleteAll();
 
         const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 

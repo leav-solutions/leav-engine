@@ -69,7 +69,8 @@ module.exports = {
     },
     debug: true,
     redis: {
-        database: 1
+        cacheDatabase: 14,
+        sessionDatabase: 15
     },
     pluginsPath: ['/plugins/fakeplugin']
 };

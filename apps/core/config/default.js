@@ -119,7 +119,8 @@ module.exports = {
     redis: {
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
-        database: envToNumber(process.env.REDIS_DATABASE, 0)
+        cacheDatabase: envToNumber(process.env.REDIS_CACHE_DATABASE, 0),
+        sessionDatabase: envToNumber(process.env.REDIS_SESSION_DATABASE, 1)
     },
     filesManager: {
         queues: {

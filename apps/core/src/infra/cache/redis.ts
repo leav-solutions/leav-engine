@@ -10,20 +10,32 @@ interface IDeps {
 
 export type RedisClientType = ReturnType<typeof redis.createClient>;
 
-export async function initRedis({config}: IDeps): Promise<RedisClientType> {
-    const client = redis.createClient({
-        socket: {
-            host: config.redis.host,
-            port: config.redis.port
-        },
-        database: config.redis.database
-    });
+export interface IRedis {
+    cache: RedisClientType;
+    session: RedisClientType;
+}
 
-    client.on('error', err => {
-        throw new Error(`Redis Client Error ${err}`);
-    });
+export async function initRedis({config}: IDeps): Promise<IRedis> {
+    const _newClient = async (database: number): Promise<RedisClientType> => {
+        const client = redis.createClient({
+            socket: {
+                host: config.redis.host,
+                port: config.redis.port
+            },
+            database
+        });
 
-    await client.connect();
+        client.on('error', err => {
+            throw new Error(`Redis Client Error ${err}`);
+        });
 
-    return client;
+        await client.connect();
+
+        return client;
+    };
+
+    return {
+        cache: await _newClient(config.redis.cacheDatabase),
+        session: await _newClient(config.redis.sessionDatabase)
+    };
 }

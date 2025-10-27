@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IDbService} from 'infra/db/dbService';
+import {type IRedis} from '../../infra/cache/redis';
 
 export default async function () {
     try {
@@ -11,9 +12,14 @@ export default async function () {
         }
 
         // Try to gracefully close Redis if we created it
-        const redis: any = globalThis.coreContainer?.cradle['core.infra.redis'];
-        if (redis && typeof redis.__client?.quit === 'function') {
-            await redis.__client.quit();
+        const redis = globalThis.coreContainer?.cradle['core.infra.redis'] as IRedis;
+
+        if (redis?.cache && typeof redis.cache?.quit === 'function') {
+            await redis.cache.quit();
+        }
+
+        if (redis?.session && typeof redis.session.quit === 'function') {
+            await redis.session.quit();
         }
     } catch (e) {
         console.error(e);

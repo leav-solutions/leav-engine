@@ -10,8 +10,6 @@ import {mockCtx} from '../../__tests__/mocks/shared';
 import {default as globalSettingsDomain, type IGlobalSettingsDomainDeps} from './globalSettingsDomain';
 import {type ToAny} from 'utils/utils';
 import {type Mockify} from '@leav/utils';
-import {ICachesService} from '../../infra/cache/cacheService';
-import {IAttributeDomainDeps} from '../attribute/attributeDomain';
 import {mockCachesService, mockCacheService} from '../../__tests__/mocks/cache';
 import {type IUtils} from '../../utils/utils';
 

@@ -648,7 +648,7 @@ services:
     image: rediscommander/redis-commander:latest
     restart: always
     environment:
-      - REDIS_HOSTS=local:redis:6379
+      - REDIS_HOSTS=local:redis:6379:0,local:redis:6379:1
     labels:
       - traefik.enable=true
       - traefik.http.routers.redis-commander.rule=Host(`redis.leav.localhost`)

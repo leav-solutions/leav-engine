@@ -68,7 +68,7 @@ describe('getPermissionByUserGroups', () => {
         getDefaultPermission: jest.fn().mockReturnValue(true)
     };
 
-    const mockCacheService: ICachesService = {
+    const mockCacheService: Mockify<ICachesService> = {
         memoize: jest.fn().mockImplementation(({func}) => func()),
         getCache: jest.fn()
     };

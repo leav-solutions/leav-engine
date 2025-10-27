@@ -3,12 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type OidcClient} from './oidcClient';
 import {type EndSessionParameters, generators, TokenSet} from 'openid-client';
-import {ECacheType, type ICachesService} from '../cache/cacheService';
-import LeavError from '../../errors/LeavError';
-import {ErrorTypes} from '../../_types/errors';
 import AuthenticationError from '../../errors/AuthenticationError';
 import {type IConfig} from '../../_types/config';
 import ms from 'ms';
+import {type ISessionRepo} from '../session/sessionRepo';
 
 const AUTH_VERIFICATION_KEYS_HEADER = 'oidc_verificationKeys';
 const ORIGINAL_URL_HEADER = 'oidc_originalUrl';
@@ -30,26 +28,21 @@ export interface IOIDCClientService {
 
 interface IDeps {
     'core.infra.oidcClient'?: OidcClient;
-    'core.infra.cache.cacheService'?: ICachesService;
     config?: IConfig;
+    'core.infra.session'?: ISessionRepo;
 }
 
 export default function ({
     'core.infra.oidcClient': oidcClient = null,
-    'core.infra.cache.cacheService': cacheService = null,
+    'core.infra.session': sessionRepo = null,
     config = null
 }: IDeps = {}): IOIDCClientService {
-    const cache = cacheService?.getCache(ECacheType.RAM);
-    if (cache === undefined) {
-        throw new LeavError(ErrorTypes.INTERNAL_ERROR, 'Cache service not found');
-    }
-
     const _buildAuthVerificationKeysCacheKey = (queryId: string) => `${AUTH_VERIFICATION_KEYS_HEADER}:${queryId}`;
     const _buildOriginalUrlCacheKey = (queryId: string) => `${ORIGINAL_URL_HEADER}:${queryId}`;
     const _buildTokensCacheKey = (userId: string) => `${TOKENS_HEADER}:${userId}`;
 
     const _getCodeVerifierRedirectUriByQueryId = async (queryId: string): Promise<AuthRedirectStoredData> => {
-        const cacheContent = await cache.getData([_buildAuthVerificationKeysCacheKey(queryId)]);
+        const cacheContent = await sessionRepo.getData([_buildAuthVerificationKeysCacheKey(queryId)]);
         if (cacheContent === undefined) {
             throw new AuthenticationError('Unauthorized');
         }
@@ -60,17 +53,17 @@ export default function ({
     };
 
     const _writeCodeVerifierRedirectUriByQueryId = (queryId: string, data: AuthRedirectStoredData): Promise<void> =>
-        cache.storeData({
+        sessionRepo.storeData({
             key: _buildAuthVerificationKeysCacheKey(queryId),
             data: JSON.stringify(data),
             expiresIn: MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS
         });
 
     const _deleteCodeVerifierRedirectUriByQueryId = (queryId: string) =>
-        cache.deleteData([_buildAuthVerificationKeysCacheKey(queryId)]);
+        sessionRepo.deleteData([_buildAuthVerificationKeysCacheKey(queryId)]);
 
     const _getTokenSetByUserId = async (userId: string): Promise<TokenSet> => {
-        const cacheContent = await cache.getData([_buildTokensCacheKey(userId)]);
+        const cacheContent = await sessionRepo.getData([_buildTokensCacheKey(userId)]);
         if (cacheContent === undefined) {
             throw new AuthenticationError('Unauthorized');
         }
@@ -81,21 +74,21 @@ export default function ({
     };
 
     const _writeTokensSetByUserId = (userId: string, tokens: TokenSet): Promise<void> =>
-        cache.storeData({
+        sessionRepo.storeData({
             key: _buildTokensCacheKey(userId),
             data: JSON.stringify(tokens),
             expiresIn: ms(config.auth.refreshTokenExpiration) + 1_000 * 60
         });
 
     const _writeOriginalUrlByQueryId = (queryId: string, originalUrl: string) =>
-        cache.storeData({
+        sessionRepo.storeData({
             key: _buildOriginalUrlCacheKey(queryId),
             data: originalUrl,
             expiresIn: MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS
         });
 
     const _getOriginalUrlByQueryId = async (queryId: string) => {
-        const cacheContent = await cache.getData([_buildOriginalUrlCacheKey(queryId)]);
+        const cacheContent = await sessionRepo.getData([_buildOriginalUrlCacheKey(queryId)]);
         if (cacheContent === undefined) {
             throw new AuthenticationError('Unauthorized');
         }
@@ -105,7 +98,8 @@ export default function ({
         return cacheContent[0];
     };
 
-    const _deleteOriginalUrlByQueryId = (queryId: string) => cache.deleteData([_buildOriginalUrlCacheKey(queryId)]);
+    const _deleteOriginalUrlByQueryId = (queryId: string) =>
+        sessionRepo.deleteData([_buildOriginalUrlCacheKey(queryId)]);
 
     return {
         oidcClient,

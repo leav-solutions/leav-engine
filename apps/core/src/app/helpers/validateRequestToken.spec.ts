@@ -12,9 +12,9 @@ import {API_KEY_PARAM_NAME} from '../../_types/auth';
 import jwt from 'jsonwebtoken';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {type IValueDomain} from '../../domain/value/valueDomain';
-import {type ICacheService, type ICachesService} from '../../infra/cache/cacheService';
 import {type ToAny} from 'utils/utils';
 import {mockCtx, mockSystemQueryContext} from '../../__tests__/mocks/shared';
+import {type ISessionRepo} from '../../infra/session/sessionRepo';
 
 describe('validateRequestToken', () => {
     const invalidAccessToken = 'invalid_access_token';
@@ -51,14 +51,10 @@ describe('validateRequestToken', () => {
         })
     };
 
-    const mockCacheService: Mockify<ICacheService> = {
+    const mockSessionRepo: Mockify<ISessionRepo> = {
         getData: global.__mockPromise(['id']),
         storeData: global.__mockPromise(),
         deleteData: global.__mockPromise()
-    };
-
-    const mockCachesService: Mockify<ICachesService> = {
-        getCache: jest.fn().mockReturnValue(mockCacheService)
     };
 
     const mockValueDomain: Mockify<IValueDomain> = {
@@ -71,7 +67,7 @@ describe('validateRequestToken', () => {
         'core.infra.record': jest.fn(),
         'core.domain.apiKey': jest.fn(),
         'core.domain.user': jest.fn(),
-        'core.infra.cache.cacheService': jest.fn(),
+        'core.infra.session': jest.fn(),
         'core.utils.logger': jest.fn(),
         'core.infra.oidc.oidcClientService': jest.fn(),
         'core.app.helpers.initQueryContext': jest.fn(() => mockCtx),
@@ -190,7 +186,7 @@ describe('validateRequestToken', () => {
         it('Should set new access and refresh token', async () => {
             const authApp = createAuthApp({
                 ...authAppdepsBase,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.infra.session': mockSessionRepo as ISessionRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
                 config: mockConfig as IConfig
@@ -256,7 +252,7 @@ describe('validateRequestToken', () => {
     it('Should use refresh token when access token is expired (TokenExpiredError)', async () => {
         const authApp = createAuthApp({
             ...authAppdepsBase,
-            'core.infra.cache.cacheService': mockCachesService as ICachesService,
+            'core.infra.session': mockSessionRepo as ISessionRepo,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
             config: mockConfig as IConfig
@@ -331,7 +327,7 @@ describe('validateRequestToken', () => {
     it('Should return userId and groupId if accessToken is valid and userId payload exist', async () => {
         const authApp = createAuthApp({
             ...authAppdepsBase,
-            'core.infra.cache.cacheService': mockCachesService as ICachesService,
+            'core.infra.session': mockSessionRepo as ISessionRepo,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
             config: mockConfig as IConfig

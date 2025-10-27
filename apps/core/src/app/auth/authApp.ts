@@ -16,7 +16,6 @@ import {type IAppGraphQLSchema} from '_types/graphql';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type IStandardValue, type ITreeValue} from '_types/value';
 import AuthenticationError from '../../errors/AuthenticationError';
-import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
 import {ACCESS_TOKEN_COOKIE_NAME, type ITokenUserData, REFRESH_TOKEN_COOKIE_NAME} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
@@ -32,6 +31,7 @@ import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 import {type IServerRouteAppModule} from 'interface/server';
 import {adminsGroupId, filesAdminsGroupId} from '../../_constants/users';
 import {type GetSystemQueryContext} from 'utils/helpers/getSystemQueryContext';
+import {type ISessionRepo} from '../../infra/session/sessionRepo';
 
 export interface IAuthApp extends IGraphqlAppModule, IServerRouteAppModule {
     validateRequestToken(
@@ -60,13 +60,13 @@ export interface IAuthAppDeps {
     'core.infra.record': IRecordRepo;
     'core.domain.apiKey': IApiKeyDomain;
     'core.domain.user': IUserDomain;
-    'core.infra.cache.cacheService': ICachesService;
     'core.utils.logger': ILogger;
     'core.infra.oidc.oidcClientService': IOIDCClientService;
     'core.app.helpers.initQueryContext': InitQueryContextFunc;
     'core.app.helpers.convertOIDCIdentifier': IConvertOIDCIdentifier;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
     config: IConfig;
+    'core.infra.session': ISessionRepo;
 }
 
 type AuthCookieName = typeof ACCESS_TOKEN_COOKIE_NAME | typeof REFRESH_TOKEN_COOKIE_NAME;
@@ -79,11 +79,11 @@ export default function ({
     'core.domain.apiKey': apiKeyDomain,
     'core.domain.user': userDomain,
     'core.utils.logger': logger,
-    'core.infra.cache.cacheService': cacheService,
     'core.infra.oidc.oidcClientService': oidcClientService,
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
+    'core.infra.session': sessionRepo,
     config
 }: IAuthAppDeps): IAuthApp {
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
@@ -178,7 +178,7 @@ export default function ({
         });
 
         // We do not delete the refresh afterward, we let the cache service expiration handle it
-        await cacheService.getCache(ECacheType.RAM).storeData({
+        await sessionRepo.storeData({
             key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
             data: userId,
             expiresIn: ms(config.auth.refreshTokenExpiration)
@@ -212,9 +212,7 @@ export default function ({
             }
         }
 
-        const userSessionId = (
-            await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
-        )[0];
+        const userSessionId = (await sessionRepo.getData([`${SESSION_CACHE_HEADER}:${refreshToken}`]))[0];
 
         if (!userSessionId || refreshPayload.agent !== reqHeaders['user-agent']) {
             throw new AuthenticationError('Invalid session');
@@ -320,10 +318,9 @@ export default function ({
                         });
 
                         // store refresh token in cache
-                        const cacheKey = `${SESSION_CACHE_HEADER}:${refreshToken}`;
                         const refreshExpires = ms(config.auth.refreshTokenExpiration);
-                        await cacheService.getCache(ECacheType.RAM).storeData({
-                            key: cacheKey,
+                        await sessionRepo.storeData({
+                            key: `${SESSION_CACHE_HEADER}:${refreshToken}`,
                             data: user.id,
                             expiresIn: refreshExpires
                         });
@@ -390,10 +387,8 @@ export default function ({
                         });
 
                         // store refresh token in cache
-                        const cacheKey = `${SESSION_CACHE_HEADER}:${refreshToken}`;
-
-                        await cacheService.getCache(ECacheType.RAM).storeData({
-                            key: cacheKey,
+                        await sessionRepo.storeData({
+                            key: `${SESSION_CACHE_HEADER}:${refreshToken}`,
                             data: user.id,
                             expiresIn: ms(config.auth.refreshTokenExpiration)
                         });
@@ -567,9 +562,7 @@ export default function ({
 
                     await _checkIfUserExistsById(payload.userId, systemCtx);
 
-                    const userSessionId = (
-                        await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
-                    )[0];
+                    const userSessionId = (await sessionRepo.getData([`${SESSION_CACHE_HEADER}:${refreshToken}`]))[0];
 
                     if (!userSessionId) {
                         return res.status(401).send('Invalid session');

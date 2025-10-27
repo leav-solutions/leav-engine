@@ -9,7 +9,7 @@ import {getConfig} from '../../../config';
 import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {ECacheType, type ICachesService} from '../../../infra/cache/cacheService';
-import {initRedis} from '../../../infra/cache/redis';
+import {initRedis} from '../../../infra/cache';
 import {initMailer} from '../../../infra/mailer';
 import {initPlugins} from '../../../pluginsLoader';
 import {type IConfig} from '../../../_types/config';
@@ -17,6 +17,7 @@ import {initOIDCClient} from '../../../infra/oidc';
 import {initDb} from '../../../infra/db/db';
 import {type IDbUtils} from 'infra/db/dbUtils';
 import {type IServer} from 'interface/server';
+import {type ISessionRepo} from '../../../infra/session/sessionRepo';
 import {type ITasksManagerInterface} from 'interface/tasksManager';
 
 const _setupFakePlugin = async () => {
@@ -44,14 +45,14 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
 
     // Init AMQP
     const amqp = await amqpService({config: conf.amqp});
-    const redisClient = await initRedis({config: conf});
+    const redis = await initRedis({config: conf});
     const mailer = await initMailer({config: conf});
     const oidcClient = conf.auth.oidc.enable ? await initOIDCClient(conf) : undefined;
 
     const {coreContainer, pluginsContainer} = await initDI({
         translator,
         'core.infra.amqpService': amqp,
-        'core.infra.redis': redisClient,
+        'core.infra.redis': redis,
         'core.infra.mailer': mailer,
         'core.infra.oidcClient': oidcClient
     });
@@ -62,6 +63,10 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
     const cacheService: ICachesService = coreContainer.cradle['core.infra.cache.cacheService'];
     await cacheService.getCache(ECacheType.DISK).deleteAll();
     await cacheService.getCache(ECacheType.RAM).deleteAll();
+
+    // Clear sessions
+    const sessionRepo: ISessionRepo = coreContainer.cradle['core.infra.session'];
+    await sessionRepo.deleteAll();
 
     await initPlugins(conf.pluginsPath, pluginsContainer);
 

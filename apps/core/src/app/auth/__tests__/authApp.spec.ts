@@ -12,7 +12,6 @@ jest.mock('jsonwebtoken');
 import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import {type IRecordDomain} from '../../../domain/record/recordDomain';
-import {type ICacheService, type ICachesService} from '../../../infra/cache/cacheService';
 import {type IValueDomain} from '../../../domain/value/valueDomain';
 import {type IConfig} from '../../../_types/config';
 import {type DeepPartial} from '../../../_types/utils';
@@ -20,6 +19,7 @@ import {type Mockify} from '@leav/utils';
 import {type ToAny} from '../../../utils/utils';
 import {adminsGroupId} from '../../../_constants/users';
 import {mockCtx, mockSystemQueryContext} from '../../../__tests__/mocks/shared';
+import {type ISessionRepo} from '../../../infra/session/sessionRepo';
 
 const depsBase: ToAny<IAuthAppDeps> = {
     'core.domain.value': jest.fn(),
@@ -27,7 +27,7 @@ const depsBase: ToAny<IAuthAppDeps> = {
     'core.domain.record': jest.fn(),
     'core.domain.apiKey': jest.fn(),
     'core.domain.user': jest.fn(),
-    'core.infra.cache.cacheService': jest.fn(),
+    'core.infra.session': jest.fn(),
     'core.utils.logger': {
         info: jest.fn(),
         error: jest.fn()
@@ -51,14 +51,10 @@ describe('authApp', () => {
                 })
             };
 
-            const mockCacheService: Mockify<ICacheService> = {
+            const mockSessionRepo: Mockify<ISessionRepo> = {
                 getData: global.__mockPromise(['id']),
                 storeData: global.__mockPromise(),
                 deleteData: global.__mockPromise()
-            };
-
-            const mockCachesService: Mockify<ICachesService> = {
-                getCache: jest.fn().mockReturnValue(mockCacheService)
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
@@ -81,7 +77,7 @@ describe('authApp', () => {
 
             const authApp = createAuthApp({
                 ...depsBase,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.infra.session': mockSessionRepo as ISessionRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
                 config: mockConfig as IConfig
@@ -418,14 +414,10 @@ describe('authApp', () => {
                 })
             };
 
-            const mockCacheService: Mockify<ICacheService> = {
+            const mockSessionRepo: Mockify<ISessionRepo> = {
                 getData: global.__mockPromise(['id']),
                 storeData: global.__mockPromise(),
                 deleteData: global.__mockPromise()
-            };
-
-            const mockCachesService: Mockify<ICachesService> = {
-                getCache: jest.fn().mockReturnValue(mockCacheService)
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
@@ -448,7 +440,7 @@ describe('authApp', () => {
 
             const authApp = createAuthApp({
                 ...depsBase,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.infra.session': mockSessionRepo as ISessionRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
                 config: mockConfig as IConfig
@@ -571,8 +563,8 @@ describe('authApp', () => {
                 createRecord: jest.fn()
             } as unknown as Mockify<IRecordDomain>;
 
-            const mockCachesService: Mockify<ICachesService> = {
-                getCache: jest.fn().mockReturnValue({storeData: jest.fn()})
+            const mockSessionRepo: Mockify<ISessionRepo> = {
+                storeData: global.__mockPromise()
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
@@ -592,7 +584,7 @@ describe('authApp', () => {
                 ...depsBase,
                 'core.domain.record': mockRecordDomain as any,
                 'core.domain.value': mockValueDomain as any,
-                'core.infra.cache.cacheService': mockCachesService as any,
+                'core.infra.session': mockSessionRepo as any,
                 'core.infra.oidc.oidcClientService': mockOidcService as any,
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
                 config: mockConfig as IConfig
@@ -714,8 +706,8 @@ describe('authApp', () => {
                 getValues: jest.fn().mockResolvedValue([])
             };
 
-            const mockCachesService: Mockify<ICachesService> = {
-                getCache: jest.fn().mockReturnValue({storeData: jest.fn()})
+            const mockSessionRepo: Mockify<ISessionRepo> = {
+                storeData: global.__mockPromise()
             };
 
             const mockOidcService: Mockify<IOIDCClientService> = {
@@ -730,7 +722,7 @@ describe('authApp', () => {
                 ...depsBase,
                 'core.domain.record': mockRecordDomain as any,
                 'core.domain.value': mockValueDomain as any,
-                'core.infra.cache.cacheService': mockCachesService as any,
+                'core.infra.session': mockSessionRepo as any,
                 'core.infra.oidc.oidcClientService': mockOidcService as any,
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
                 config: mockConfig as IConfig
@@ -800,8 +792,8 @@ describe('authApp', () => {
                 getValues: jest.fn().mockResolvedValue([])
             } as unknown as Mockify<IValueDomain>;
 
-            const mockCachesService: Mockify<ICachesService> = {
-                getCache: jest.fn().mockReturnValue({storeData: jest.fn()})
+            const mockSessionRepo: Mockify<ISessionRepo> = {
+                storeData: global.__mockPromise()
             };
 
             const mockOidcService: Mockify<IOIDCClientService> = {
@@ -816,7 +808,7 @@ describe('authApp', () => {
                 ...depsBase,
                 'core.domain.record': mockRecordDomain as any,
                 'core.domain.value': mockValueDomain as any,
-                'core.infra.cache.cacheService': mockCachesService as any,
+                'core.infra.session': mockSessionRepo as any,
                 'core.infra.oidc.oidcClientService': mockOidcService as any,
                 'core.app.helpers.convertOIDCIdentifier': mockConvert as any,
                 config: mockConfig as IConfig

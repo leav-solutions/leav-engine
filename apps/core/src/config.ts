@@ -122,7 +122,8 @@ export const validateConfig = (conf: IConfig) => {
         redis: Joi.object().keys({
             host: Joi.string().required(),
             port: Joi.string().required(),
-            database: Joi.number().required()
+            cacheDatabase: Joi.number().required(),
+            sessionDatabase: Joi.number().required()
         }),
         filesManager: Joi.object().keys({
             queues: Joi.object().keys({

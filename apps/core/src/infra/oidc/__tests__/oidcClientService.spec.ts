@@ -3,20 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import createOIDCClientService from '../oidcClientService';
 import {type OidcClient} from '../oidcClient';
-import {type ICacheService, type ICachesService, IStoreDataParams} from '../../cache/cacheService';
 import {type BaseClient, TokenSet} from 'openid-client';
 import {type IConfig} from '../../../_types/config';
+import {type ISessionRepo} from '../../session/sessionRepo';
 
 describe('OIDCClientService', () => {
     it('Should return oidcClient instance', () => {
         const oidcClientMock = {};
-        const cacheServiceMock: Mockify<ICachesService> = {
-            getCache: jest.fn(() => ({}))
-        };
 
         const oidcClientService = createOIDCClientService({
-            'core.infra.oidcClient': oidcClientMock as OidcClient,
-            'core.infra.cache.cacheService': cacheServiceMock as ICachesService
+            'core.infra.oidcClient': oidcClientMock as OidcClient
         });
 
         expect(oidcClientService.oidcClient).toBe(oidcClientMock);
@@ -25,12 +21,10 @@ describe('OIDCClientService', () => {
     describe('saveOIDCTokens', () => {
         it('Should store token in cache with expiration as string', async () => {
             const oidcClientMock = {};
-            const cacheMock: Mockify<ICacheService> = {
+            const sessionRepoMock: Mockify<ISessionRepo> = {
                 storeData: jest.fn()
             };
-            const cacheServiceMock: Mockify<ICachesService> = {
-                getCache: jest.fn(() => cacheMock)
-            };
+
             const config = {
                 auth: {
                     refreshTokenExpiration: '1'
@@ -38,7 +32,7 @@ describe('OIDCClientService', () => {
             };
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
-                'core.infra.cache.cacheService': cacheServiceMock as ICachesService,
+                'core.infra.session': sessionRepoMock as ISessionRepo,
                 config: config as IConfig
             });
 
@@ -51,8 +45,8 @@ describe('OIDCClientService', () => {
                 })
             });
 
-            expect(cacheMock.storeData).toHaveBeenCalledTimes(1);
-            expect(cacheMock.storeData).toHaveBeenCalledWith({
+            expect(sessionRepoMock.storeData).toHaveBeenCalledTimes(1);
+            expect(sessionRepoMock.storeData).toHaveBeenCalledWith({
                 key: 'oidc_tokens:userId',
                 data: '{"access_token":"access_token","refresh_token":"refresh_token","expires_at":42}',
                 expiresIn: 60_000 + Number(config.auth.refreshTokenExpiration)
@@ -72,23 +66,21 @@ describe('OIDCClientService', () => {
             };
 
             const storedCacheKey = JSON.stringify(['codeVerifier', 'redirectUri']);
-            const cacheMock: Mockify<ICacheService> = {
+            const sessionRepoMock: Mockify<ISessionRepo> = {
                 getData: jest.fn(() => [storedCacheKey]),
                 deleteData: jest.fn()
             };
-            const cacheServiceMock: Mockify<ICachesService> = {
-                getCache: jest.fn(() => cacheMock)
-            };
+
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
-                'core.infra.cache.cacheService': cacheServiceMock as ICachesService
+                'core.infra.session': sessionRepoMock as ISessionRepo
             });
             const expectedResponse = await oidcClientService.getTokensFromCodes(getTokensParams);
 
-            expect(cacheMock.getData).toHaveBeenCalledTimes(1);
-            expect(cacheMock.getData).toHaveBeenCalledWith(['oidc_verificationKeys:queryId']);
-            expect(cacheMock.deleteData).toHaveBeenCalledTimes(1);
-            expect(cacheMock.deleteData).toHaveBeenCalledWith(['oidc_verificationKeys:queryId']);
+            expect(sessionRepoMock.getData).toHaveBeenCalledTimes(1);
+            expect(sessionRepoMock.getData).toHaveBeenCalledWith(['oidc_verificationKeys:queryId']);
+            expect(sessionRepoMock.deleteData).toHaveBeenCalledTimes(1);
+            expect(sessionRepoMock.deleteData).toHaveBeenCalledWith(['oidc_verificationKeys:queryId']);
             expect(oidcClientMock.grant).toHaveBeenCalledTimes(1);
             expect(oidcClientMock.grant).toHaveBeenCalledWith({
                 code: '123456789AZERTY',
@@ -101,40 +93,35 @@ describe('OIDCClientService', () => {
 
         it('should throw an error if the cache is not found (possible Redis error)', async () => {
             const oidcClientMock = {};
-            const cacheMock: Mockify<ICacheService> = {
+            const sessionRepoMock: Mockify<ISessionRepo> = {
                 getData: jest.fn(() => undefined)
-            };
-            const cacheServiceMock: Mockify<ICachesService> = {
-                getCache: jest.fn(() => cacheMock)
             };
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
-                'core.infra.cache.cacheService': cacheServiceMock as ICachesService
+                'core.infra.session': sessionRepoMock as ISessionRepo
             });
 
             await expect(async () => oidcClientService.getTokensFromCodes(getTokensParams)).rejects.toThrow(
                 'Unauthorized'
             );
-            expect(cacheMock.getData).toHaveBeenCalledTimes(1);
+            expect(sessionRepoMock.getData).toHaveBeenCalledTimes(1);
         });
 
         it("should throw an error if user didn't complete the login in time (code verifier is expired)", async () => {
             const oidcClientMock = {};
-            const cacheMock: Mockify<ICacheService> = {
+            const sessionRepoMock: Mockify<ISessionRepo> = {
                 getData: jest.fn(() => [null])
             };
-            const cacheServiceMock: Mockify<ICachesService> = {
-                getCache: jest.fn(() => cacheMock)
-            };
+
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
-                'core.infra.cache.cacheService': cacheServiceMock as ICachesService
+                'core.infra.session': sessionRepoMock as ISessionRepo
             });
 
             await expect(async () => oidcClientService.getTokensFromCodes(getTokensParams)).rejects.toThrow(
                 'Unauthorized'
             );
-            expect(cacheMock.getData).toHaveBeenCalledTimes(1);
+            expect(sessionRepoMock.getData).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -144,54 +131,48 @@ describe('OIDCClientService', () => {
 
         it('should do nothing if access token is valid', async () => {
             const oidcClientMock: Mockify<BaseClient> = {refresh: jest.fn()};
-            const cacheMock: Mockify<ICacheService> = {
+            const sessionRepoMock: Mockify<ISessionRepo> = {
                 getData: jest.fn(() => [storedCacheKey])
             };
-            const cacheServiceMock: Mockify<ICachesService> = {
-                getCache: jest.fn(() => cacheMock)
-            };
+
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
-                'core.infra.cache.cacheService': cacheServiceMock as ICachesService
+                'core.infra.session': sessionRepoMock as ISessionRepo
             });
 
             await oidcClientService.checkTokensValidity({userId});
 
-            expect(cacheMock.getData).toHaveBeenCalledTimes(1);
-            expect(cacheMock.getData).toHaveBeenCalledWith(['oidc_tokens:userId']);
+            expect(sessionRepoMock.getData).toHaveBeenCalledTimes(1);
+            expect(sessionRepoMock.getData).toHaveBeenCalledWith(['oidc_tokens:userId']);
             expect(oidcClientMock.refresh).not.toHaveBeenCalled();
         });
 
         it('should throw an error if the cache is not found (possible Redis error)', async () => {
             const oidcClientMock = {};
-            const cacheMock: Mockify<ICacheService> = {
+            const sessionRepoMock: Mockify<ISessionRepo> = {
                 getData: jest.fn(() => undefined)
             };
-            const cacheServiceMock: Mockify<ICachesService> = {
-                getCache: jest.fn(() => cacheMock)
-            };
+
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
-                'core.infra.cache.cacheService': cacheServiceMock as ICachesService
+                'core.infra.session': sessionRepoMock as ISessionRepo
             });
             await expect(async () => oidcClientService.checkTokensValidity({userId})).rejects.toThrow('Unauthorized');
-            expect(cacheMock.getData).toHaveBeenCalledTimes(1);
+            expect(sessionRepoMock.getData).toHaveBeenCalledTimes(1);
         });
 
         it('should throw an error if refresh token is expired in cache', async () => {
             const oidcClientMock = {};
-            const cacheMock: Mockify<ICacheService> = {
+            const sessionRepoMock: Mockify<ISessionRepo> = {
                 getData: jest.fn(() => [null])
             };
-            const cacheServiceMock: Mockify<ICachesService> = {
-                getCache: jest.fn(() => cacheMock)
-            };
+
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
-                'core.infra.cache.cacheService': cacheServiceMock as ICachesService
+                'core.infra.session': sessionRepoMock as ISessionRepo
             });
             await expect(async () => oidcClientService.checkTokensValidity({userId})).rejects.toThrow('Unauthorized');
-            expect(cacheMock.getData).toHaveBeenCalledTimes(1);
+            expect(sessionRepoMock.getData).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -203,21 +184,19 @@ describe('OIDCClientService', () => {
             const oidcClientMock: Mockify<BaseClient> = {
                 authorizationUrl: jest.fn().mockResolvedValueOnce('authorizationUrl return')
             };
-            const cacheMock: Mockify<ICacheService> = {
+            const sessionRepoMock: Mockify<ISessionRepo> = {
                 storeData: jest.fn()
             };
-            const cacheServiceMock: Mockify<ICachesService> = {
-                getCache: jest.fn(() => cacheMock)
-            };
+
             const oidcClientService = createOIDCClientService({
                 'core.infra.oidcClient': oidcClientMock as OidcClient,
-                'core.infra.cache.cacheService': cacheServiceMock as ICachesService
+                'core.infra.session': sessionRepoMock as ISessionRepo
             });
 
             const expectedResponse = await oidcClientService.getAuthorizationUrl({redirectUri, queryId});
 
-            expect(cacheMock.storeData).toHaveBeenCalledTimes(1);
-            expect(cacheMock.storeData).toHaveBeenCalledWith(
+            expect(sessionRepoMock.storeData).toHaveBeenCalledTimes(1);
+            expect(sessionRepoMock.storeData).toHaveBeenCalledWith(
                 expect.objectContaining({expiresIn: 600_000, key: 'oidc_verificationKeys:queryId'})
             );
             expect(oidcClientMock.authorizationUrl).toHaveBeenCalledWith(
