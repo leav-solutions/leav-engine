@@ -46,7 +46,6 @@ import ramService from './infra/cache/ramService';
             appVersion: conf.bugsnag.appVersion,
             appType: conf.bugsnag.appType,
             releaseStage: conf.bugsnag.releaseStage,
-            hostname: new URL(conf.server.publicUrl).host,
             logger
         });
     }

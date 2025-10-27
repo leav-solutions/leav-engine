@@ -88,7 +88,7 @@ module.exports = {
         enable: envToBool(process.env.BUGSNAG_ENABLE, false),
         apiKey: process.env.BUGSNAG_API_KEY,
         appVersion: process.env.BUGSNAG_APP_VERSION,
-        appType: process.env.BUGSNAG_APP_TYPE || 'core',
+        appType: process.env.BUGSNAG_APP_TYPE || process.env.CORE_MODE || 'core',
         releaseStage: process.env.BUGSNAG_RELEASE_STAGE || 'production'
     },
     matomo: {
