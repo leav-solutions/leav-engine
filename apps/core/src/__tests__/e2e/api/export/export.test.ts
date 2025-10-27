@@ -1,19 +1,34 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {type Client as GraphqlWsClient} from 'graphql-ws';
 import {TaskStatus} from '../../../../_types/tasksManager';
 import {getConfig} from '../../../../config';
-import {gqlCreateRecord, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
+import {
+    gqlCreateRecord,
+    gqlSaveLibrary,
+    makeGraphQlCall,
+    makeWebSocketGraphQlCall,
+    waitGraphqlWebSocketMessage
+} from '../e2eUtils';
 import {waitMailpitMessage} from '../mailpitUtils';
+import {type IPubSubNotificationData} from '_types/eventsManager';
 
 describe('Export', () => {
     const exportLibName = 'export_lib';
     let exportTaskId: string;
+    let graphqlClient: GraphqlWsClient;
 
     beforeAll(async () => {
         await gqlSaveLibrary(exportLibName, 'Lib test export');
         await gqlCreateRecord(exportLibName);
         await gqlCreateRecord(exportLibName);
+
+        graphqlClient = await makeWebSocketGraphQlCall();
+    });
+
+    afterAll(async () => {
+        graphqlClient.dispose();
     });
 
     describe('excel success', () => {
@@ -49,6 +64,27 @@ describe('Export', () => {
             expect(mailMsg.HTML).toContain(task.link.url);
             expect(mailMsg.Text).toContain(task.link.url);
         });
+
+        test('should notify by webSocket', async () => {
+            const msg = await waitGraphqlWebSocketMessage<Pick<IPubSubNotificationData, 'notification'>>(
+                graphqlClient,
+                subscriptionGraphqlQuery,
+                {},
+                data => data?.notification?.title?.includes('export'),
+                {timeoutMs: 20000}
+            );
+
+            expect(msg).toBeDefined();
+            expect(msg.notification.title).toContain('complete');
+            expect(msg.notification.level).toContain('info');
+
+            await waitForTaskTerminate();
+            const task = await getTask(exportTaskId);
+            expect(task.status).toBe(TaskStatus.DONE);
+            expect(task.link).toBeDefined();
+
+            expect(msg.notification.attachments?.[0].url).toContain(task.link.url);
+        });
     });
 
     describe('excel failed', () => {
@@ -81,7 +117,44 @@ describe('Export', () => {
             const task = await getTask(exportTaskId);
             expect(task.status).toBe(TaskStatus.FAILED);
         });
+
+        test('should notify by webSocket', async () => {
+            const msg = await waitGraphqlWebSocketMessage<Pick<IPubSubNotificationData, 'notification'>>(
+                graphqlClient,
+                subscriptionGraphqlQuery,
+                {},
+                data => data?.notification?.title?.includes('export'),
+                {timeoutMs: 20000}
+            );
+
+            expect(msg).toBeDefined();
+            expect(msg.notification.title).toContain('failed');
+            expect(msg.notification.level).toContain('warning');
+
+            await waitForTaskTerminate();
+            const task = await getTask(exportTaskId);
+            expect(task.status).toBe(TaskStatus.FAILED);
+        });
     });
+
+    const subscriptionGraphqlQuery = `
+        subscription {
+            notification {
+                level
+                message
+                title
+                date
+                attachments {
+                    label
+                    url
+                }
+                relatedEntities {
+                    label
+                    url
+                }
+            }
+        }
+    `;
 
     // May be listen with subscription in tasks to wait for task termination
     async function waitForTaskTerminate() {

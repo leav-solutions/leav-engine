@@ -202,9 +202,12 @@ export enum AvailableLanguage {
 
 export type CampaignToRenew = {
   category?: InputMaybe<Scalars['String']>;
+  circuitTypes?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   endDate: Scalars['String'];
   id: Scalars['String'];
   label: Scalars['String'];
+  mixed: Scalars['Boolean'];
+  opTrade?: InputMaybe<Scalars['String']>;
   startDate: Scalars['String'];
   thematics?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   type?: InputMaybe<Scalars['String']>;
@@ -487,6 +490,11 @@ export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
   tag = 'tag'
+}
+
+export enum NotificationLevel {
+  info = 'info',
+  warning = 'warning'
 }
 
 export type Pagination = {
@@ -1570,6 +1578,11 @@ export type UpdateViewMutationVariables = Exact<{
 
 
 export type UpdateViewMutation = { updateView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
+
+export type NotificationSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NotificationSubscription = { notification: { level: NotificationLevel, message: string, title: string, date: number, attachments?: Array<{ label: string, url: string }> | null, relatedEntities?: Array<{ label: string, url: string }> | null } };
 
 export type GetRecordHistoryQueryVariables = Exact<{
   record: LogTopicRecordFilterInput;
@@ -5227,6 +5240,46 @@ export function useUpdateViewMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateViewMutationHookResult = ReturnType<typeof useUpdateViewMutation>;
 export type UpdateViewMutationResult = Apollo.MutationResult<UpdateViewMutation>;
 export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMutation, UpdateViewMutationVariables>;
+export const NotificationDocument = gql`
+    subscription Notification {
+  notification {
+    level
+    message
+    title
+    date
+    attachments {
+      label
+      url
+    }
+    relatedEntities {
+      label
+      url
+    }
+  }
+}
+    `;
+
+/**
+ * __useNotificationSubscription__
+ *
+ * To run a query within a React component, call `useNotificationSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNotificationSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNotificationSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNotificationSubscription(baseOptions?: Apollo.SubscriptionHookOptions<NotificationSubscription, NotificationSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NotificationSubscription, NotificationSubscriptionVariables>(NotificationDocument, options);
+      }
+export type NotificationSubscriptionHookResult = ReturnType<typeof useNotificationSubscription>;
+export type NotificationSubscriptionResult = Apollo.SubscriptionResult<NotificationSubscription>;
 export const GetRecordHistoryDocument = gql`
     query getRecordHistory($record: LogTopicRecordFilterInput!, $attributeId: String, $actions: [LogAction!], $pagination: Pagination) {
   logs(

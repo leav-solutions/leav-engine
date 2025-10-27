@@ -8,6 +8,7 @@ import {
     ErrorBoundary,
     ErrorDisplay,
     ErrorDisplayTypes,
+    InitNotificationsSubscription,
     type IUserContext,
     LangContext,
     Loading,
@@ -206,7 +207,9 @@ function AppHandler(): JSX.Element {
                                 }}
                             >
                                 <ConfigProvider theme={customTheme} locale={locale}>
-                                    <Router />
+                                    <InitNotificationsSubscription>
+                                        <Router />
+                                    </InitNotificationsSubscription>
                                 </ConfigProvider>
                             </KitApp>
                         </ApplicationContext.Provider>

@@ -109,6 +109,7 @@ export async function setup() {
         const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
 
         await server.init();
+        await server.initConsumers();
         await tasksManager.initMaster();
         await tasksManager.initWorker();
     } catch (e) {

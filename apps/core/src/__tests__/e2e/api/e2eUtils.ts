@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import type WebSocket from 'ws';
+import WebSocket from 'ws';
+import {type Client as GraphqlWsClient, createClient as createGraphqlWsClient} from 'graphql-ws';
 import axios from 'axios';
 import type FormData from 'form-data';
 import jwt, {type Algorithm} from 'jsonwebtoken';
@@ -322,6 +323,64 @@ export async function gqlSaveVersionProfile(profileId: string, label: string, tr
  **/
 export function toCleanJSON(obj: {}): string {
     return JSON.stringify(obj).replace(/[\""]/g, '\\"');
+}
+
+export async function makeWebSocketGraphQlCall(): Promise<GraphqlWsClient> {
+    const config = await getConfig();
+    const token = await _getAuthToken();
+    const headers = {
+        Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${token}`
+    };
+
+    class MyWebSocket extends WebSocket {
+        public constructor(address, protocols) {
+            super(address, protocols, {
+                headers
+            });
+        }
+    }
+
+    return createGraphqlWsClient({
+        url: `ws://${config.server.host}:${config.server.port}/graphql`,
+        webSocketImpl: MyWebSocket
+    });
+}
+
+export async function waitGraphqlWebSocketMessage<T>(
+    client: GraphqlWsClient,
+    query: string,
+    variables: Record<string, any>,
+    acceptMessage: (msg: T) => boolean,
+    {timeoutMs}: {timeoutMs}
+): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+            reject(new Error('Wait message timeout'));
+        }, timeoutMs || 20_000);
+
+        client.subscribe(
+            {
+                query,
+                variables
+            },
+            {
+                next: data => {
+                    const msg = data.data as unknown as T;
+                    if (acceptMessage(msg)) {
+                        clearTimeout(timeout);
+                        resolve(msg);
+                    }
+                },
+                error: err => {
+                    clearTimeout(timeout);
+                    reject(err);
+                },
+                complete: () => {
+                    clearTimeout(timeout);
+                }
+            }
+        );
+    });
 }
 
 export async function waitWebSocketMessage<T>(

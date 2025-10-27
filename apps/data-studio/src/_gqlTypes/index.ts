@@ -217,9 +217,12 @@ export enum AvailableLanguage {
 
 export type CampaignToRenew = {
   category?: InputMaybe<Scalars['String']>;
+  circuitTypes?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   endDate: Scalars['String'];
   id: Scalars['String'];
   label: Scalars['String'];
+  mixed: Scalars['Boolean'];
+  opTrade?: InputMaybe<Scalars['String']>;
   startDate: Scalars['String'];
   thematics?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   type?: InputMaybe<Scalars['String']>;
@@ -520,6 +523,11 @@ export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
   tag = 'tag'
+}
+
+export enum NotificationLevel {
+  info = 'info',
+  warning = 'warning'
 }
 
 export type Pagination = {

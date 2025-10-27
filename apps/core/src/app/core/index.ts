@@ -20,6 +20,7 @@ export {default as permission} from './permissionApp/permissionApp';
 export {default as plugins} from './pluginsApp';
 export {default as record} from './recordApp/recordApp';
 export {default as tasksManager} from './tasksManagerApp';
+export {default as notification} from './notificationApp';
 export {default as tree} from './treeApp/treeApp';
 export {default as userData} from './userDataApp';
 export {default as value} from './valueApp';

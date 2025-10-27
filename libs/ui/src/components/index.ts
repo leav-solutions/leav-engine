@@ -27,6 +27,7 @@ export * from './LibraryItemsList';
 export * from './LibraryPicker';
 export * from './List';
 export * from './Loading';
+export * from './Notifications';
 export * from './RecordCard';
 export * from './RecordEdition';
 export * from './RecordHistory';

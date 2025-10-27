@@ -17,6 +17,8 @@
         "edit": "Edit",
         "delete": "Delete",
         "duplicate": "Duplicate",
+        "show": "Show",
+        "download": "Download",
         "refresh": "Refresh",
         "element_not_found": "Element not found",
         "apply": "Apply",

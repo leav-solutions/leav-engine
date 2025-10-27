@@ -1,0 +1,16 @@
+subscription Notification {
+    notification {
+        level
+        message
+        title
+        date
+        attachments {
+            label
+            url
+        }
+        relatedEntities {
+            label
+            url
+        }
+    }
+}

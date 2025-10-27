@@ -30,7 +30,11 @@ module.exports = {
     },
     eventsManager: {
         routingKeys: {
-            data_events: 'test.data.event'
+            data_events: 'test_data.events',
+            pubsub_events: 'test_pubsub.events'
+        },
+        queues: {
+            pubsub_events: 'test_pubsub_events'
         }
     },
     indexationManager: {
