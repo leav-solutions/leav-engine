@@ -36,7 +36,8 @@
         "ok": "Ok",
         "max_length": "Max length",
         "confirm": "Confirm",
-        "loading": "Loading"
+        "loading": "Loading",
+        "are_you_sure": "Are you sure?"
     },
     "errors": {
         "default_language_required": "The default language is required",
@@ -414,8 +415,6 @@
         "add_value_link": "Add link",
         "delete_value": "Delete value",
         "delete_value_confirm": "Do you really want to delete this value?",
-        "delete_link_confirm": "Do you really want to delete this link?",
-        "delete_links_confirm": "Do you really want to delete these links?",
         "whoAmI": "Information",
         "no_value": "No value",
         "value_details": "Value details",
@@ -756,6 +755,18 @@
                 "deselect_all": "Deselect all items"
             }
         },
-        "add-existing-item": "Add existing item"
+        "add-existing-item": "Add existing item",
+        "activate_item_one": "Activate this item?",
+        "activate_item_other": "Activate these items?",
+        "activate_item_description_one": "You are about to activate this item.",
+        "activate_item_description_other": "You are about to activate these items.",
+        "deactivate_item_one": "Deactivate this item?",
+        "deactivate_item_other": "Deactivate these items?",
+        "deactivate_item_description_one": "You are about to deactivate this item.",
+        "deactivate_item_description_other": "You are about to deactivate these items.",
+        "delete_link_one": "Delete this link?",
+        "delete_link_other": "Delete these links?",
+        "delete_link_description_one": "You are about to delete this link.",
+        "delete_link_description_other": "You are about to delete these links."
     }
 }

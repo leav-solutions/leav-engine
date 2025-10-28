@@ -9,7 +9,7 @@ import {useExplorerData} from '../_queries/useExplorerData';
 import {FaTrash} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitModal} from 'aristid-ds';
-import {MASS_SELECTION_ALL} from '../_constants';
+import {BREAK_TWO_LINES, MASS_SELECTION_ALL} from '../_constants';
 import {type IValueToSubmit} from '_ui/components/RecordEdition/EditRecordContent/_types';
 
 export const useDeleteLinkValues = ({
@@ -51,11 +51,20 @@ export const useDeleteLinkValues = ({
             icon: <FaTrash />,
             callback: massSelectionFilter => {
                 KitModal.confirm({
+                    width: '100%',
+                    style: {content: {width: '90vw', maxWidth: '656px'}},
                     type: 'confirm',
-                    dangerConfirm: true,
-                    content: t('record_edition.delete_links_confirm', {
-                        count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
-                    }),
+                    icon: false,
+                    title:
+                        t('explorer.delete_link', {
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                        }) ?? undefined,
+                    content:
+                        t('explorer.delete_link_description', {
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                        }) +
+                        BREAK_TWO_LINES +
+                        t('global.are_you_sure'),
                     okText: t('global.submit') ?? undefined,
                     cancelText: t('global.cancel') ?? undefined,
                     onOk: async () => {

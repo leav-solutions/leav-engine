@@ -36,7 +36,8 @@
         "ok": "Ok",
         "max_length": "Longueur maximale",
         "confirm": "Confirmer",
-        "loading": "Chargement"
+        "loading": "Chargement",
+        "are_you_sure": "Êtes-vous sûr ?"
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",
@@ -414,8 +415,6 @@
         "add_value_link": "Ajouter une liaison",
         "delete_value": "Supprimer cette valeur",
         "delete_value_confirm": "Êtes-vous sûr de vouloir supprimer cette valeur ?",
-        "delete_link_confirm": "Êtes-vous sûr de vouloir supprimer cette liaison ?",
-        "delete_links_confirm": "Êtes-vous sûr de vouloir supprimer ces liaisons ?",
         "whoAmI": "Informations",
         "no_value": "Pas de valeur",
         "value_details": "Infos valeur",
@@ -756,6 +755,18 @@
                 "deselect_all": "Tout désélectionner"
             }
         },
-        "add-existing-item": "Ajouter un élément existant"
+        "add-existing-item": "Ajouter un élément existant",
+        "activate_item_one": "Activer cet élément ?",
+        "activate_item_other": "Activer ces éléments ?",
+        "activate_item_description_one": "Vous êtes sur le point d'activer cet élément.",
+        "activate_item_description_other": "Vous êtes sur le point d'activer ces éléments.",
+        "deactivate_item_one": "Désactiver cet élément ?",
+        "deactivate_item_other": "Désactiver ces éléments ?",
+        "deactivate_item_description_one": "Vous êtes sur le point de désactiver cet élément.",
+        "deactivate_item_description_other": "Vous êtes sur le point de désactiver ces éléments.",
+        "delete_link_one": "Supprimer cette liaison ?",
+        "delete_link_other": "Supprimer ces liaisons ?",
+        "delete_link_description_one": "Vous êtes sur le point de supprimer cette liaison.",
+        "delete_link_description_other": "Vous êtes sur le point de supprimer ces liaisons."
     }
 }

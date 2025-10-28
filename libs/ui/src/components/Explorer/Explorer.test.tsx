@@ -1248,8 +1248,9 @@ describe('Explorer', () => {
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
 
-        expect(screen.getByText('records_deactivation.confirm_one')).toBeVisible();
-        await user.click(screen.getByText('global.submit'));
+        expect(screen.getByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
+        expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
+        await user.click(screen.getByText('global.confirm'));
 
         expect(mockDeactivateMutation).toHaveBeenCalled();
         expect(onRemove).toHaveBeenCalledWith(
@@ -1298,8 +1299,9 @@ describe('Explorer', () => {
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.activate-item'}));
 
-        expect(screen.getByText('records_activation.confirm_one')).toBeVisible();
-        await user.click(screen.getByText('global.submit'));
+        expect(screen.getByText('explorer.activate_item_description_one', {exact: false})).toBeVisible();
+        expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
+        await user.click(screen.getByText('global.confirm'));
 
         expect(mockActivateMutation).toHaveBeenCalled();
         expect(onRemove).not.toHaveBeenCalled();
@@ -1343,8 +1345,8 @@ describe('Explorer', () => {
         const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'}));
 
-        expect(screen.getByText('record_edition.delete_link_confirm')).toBeVisible();
-        await user.click(screen.getByText('global.submit'));
+        expect(screen.getByText('explorer.delete_link_one')).toBeVisible();
+        await user.click(screen.getByText('global.confirm'));
 
         expect(mockDeleteValueMutation).toHaveBeenCalled();
         expect(onRemove).toHaveBeenCalledWith(
@@ -2684,9 +2686,10 @@ describe('Explorer', () => {
             await user.click(within(screen.getByRole('status')).getByRole('button', {name: /massAction.deactivate/}));
 
             // THEN a confirmation modal is displayed
-            expect(screen.getByText(/records_deactivation.confirm/)).toBeVisible();
+            expect(screen.getByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
+            expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
             // WHEN the user confirms the deactivation
-            await user.click(screen.getByText(/submit/));
+            await user.click(screen.getByText('global.confirm'));
 
             // THEN the mock mutation is called with the ids of selected items
             expect(mockOnUseDeactivateRecordsMutation).toHaveBeenCalledTimes(1);
@@ -2760,7 +2763,8 @@ describe('Explorer', () => {
             await user.click(within(screen.getByRole('status')).getByRole('button', {name: /massAction.deactivate/}));
 
             // THEN a confirmation modal is displayed
-            expect(screen.getByText(/records_deactivation.confirm/)).toBeVisible();
+            expect(screen.getByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
+            expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
             // WHEN the user confirms the deactivation
             await user.click(screen.getByText(/submit/));
 

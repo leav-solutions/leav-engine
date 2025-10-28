@@ -8,7 +8,7 @@ import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type FeatureHook, type IMassActions} from '../_types';
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
-import {MASS_SELECTION_ALL} from '../_constants';
+import {BREAK_TWO_LINES, MASS_SELECTION_ALL} from '../_constants';
 import {type useExplorerData} from '../_queries/useExplorerData';
 import {SUCCESS_ALERT_DURATION} from '_ui/constants';
 
@@ -52,12 +52,21 @@ export const useDeactivateMassAction = ({
             icon: <FaTrash />,
             callback: massSelectionFilter => {
                 KitModal.confirm({
+                    width: '100%',
+                    style: {content: {width: '90vw', maxWidth: '656px'}},
                     type: 'confirm',
-                    dangerConfirm: true,
-                    content: t('records_deactivation.confirm', {
-                        count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
-                    }),
-                    okText: t('global.submit') ?? undefined,
+                    icon: false,
+                    title:
+                        t('explorer.deactivate_item', {
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                        }) ?? undefined,
+                    content:
+                        t('explorer.deactivate_item_description', {
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                        }) +
+                        BREAK_TWO_LINES +
+                        t('global.are_you_sure'),
+                    okText: t('global.confirm') ?? undefined,
                     cancelText: t('global.cancel') ?? undefined,
                     onOk: async () => {
                         const {data} = await deactivateRecordsMutation({

@@ -7,12 +7,7 @@ import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/type
 export const useOpenConfirmModal = () => {
     const openConfirmModal: IUseIFrameMessengerOptions['handlers']['onModalConfirm'] = data => {
         KitModal[data.type]?.({
-            type: data.type,
-            title: data.title,
-            content: data.content,
-            okCancel: true,
-            onOk: data.onOk,
-            onCancel: data.onCancel,
+            ...data,
             width: '100%',
             style: {content: {width: '90vw', maxWidth: '656px'}}
         });

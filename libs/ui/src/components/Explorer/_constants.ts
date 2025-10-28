@@ -29,3 +29,5 @@ export const EDIT_RECORD_MODAL_CLASSNAME = 'edit-record-modal';
 export const WHO_AM_I_COLUMN = 'whoAmI';
 
 export const SNACKBAR_MASS_ID = 'SNACKBAR_MASS_ID';
+
+export const BREAK_TWO_LINES = '\n\n';

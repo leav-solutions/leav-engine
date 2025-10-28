@@ -15,7 +15,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
 import {type FeatureHook, type Entrypoint, type IEntrypointLink, type IItemAction, type IItemData} from '../_types';
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
-import {MASS_SELECTION_ALL} from '../_constants';
+import {BREAK_TWO_LINES, MASS_SELECTION_ALL} from '../_constants';
 import {type FetchResult} from '@apollo/client';
 
 /**
@@ -154,16 +154,28 @@ export const useEditStatusItemAction = ({
             callback: item => {
                 const {itemId, id_value} = item;
 
+                const title =
+                    entrypoint.type === 'library'
+                        ? item.active
+                            ? t('explorer.deactivate_item_one')
+                            : t('explorer.activate_item_one')
+                        : t('explorer.delete_link_one');
+
+                const content =
+                    entrypoint.type === 'library'
+                        ? item.active
+                            ? t('explorer.deactivate_item_description_one')
+                            : t('explorer.activate_item_description_one')
+                        : t('explorer.delete_link_description_one');
+
                 KitModal.confirm({
+                    width: '100%',
+                    style: {content: {width: '90vw', maxWidth: '656px'}},
                     type: 'confirm',
-                    dangerConfirm: true,
-                    content:
-                        entrypoint.type === 'library'
-                            ? item.active
-                                ? t('records_deactivation.confirm_one')
-                                : t('records_activation.confirm_one')
-                            : t('record_edition.delete_link_confirm'),
-                    okText: t('global.submit') ?? undefined,
+                    icon: false,
+                    title,
+                    content: content + BREAK_TWO_LINES + t('global.are_you_sure'),
+                    okText: t('global.confirm') ?? undefined,
                     cancelText: t('global.cancel') ?? undefined,
                     onOk: async () => {
                         switch (entrypoint.type) {
