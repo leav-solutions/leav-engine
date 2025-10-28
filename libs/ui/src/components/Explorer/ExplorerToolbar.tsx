@@ -14,23 +14,26 @@ const ExplorerToolbarListStyled = styled.ul`
     border-radius: calc(var(--general-border-radius-s) * 1px);
     list-style: none;
     display: flex;
-    flex-wrap: wrap;
-    align-self: center;
     overflow: auto;
     align-items: center;
     gap: calc(var(--general-spacing-xxs) * 1px);
     white-space: nowrap;
     min-height: 26px; // height of the filter chip
-    width: 100%;
     justify-content: space-between;
 
     &.headless {
         margin-bottom: 0;
     }
+
+    & > div:last-of-type {
+        flex-shrink: 0;
+        align-self: start;
+    }
 `;
 
 const Section = styled.div`
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: calc(var(--general-spacing-xxs) * 1px);
 `;
