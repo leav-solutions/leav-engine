@@ -1321,7 +1321,7 @@ export default function ({
                                     values: [{payload: String(cellValue)}],
                                     action: Action.REPLACE
                                 }))
-                                .filter(cell => cell.attribute !== 'id');
+                                .filter(cell => cell.attribute !== 'id' && cell.values[0].payload !== 'null');
                         }
 
                         if (type === ImportType.LINK) {
