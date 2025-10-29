@@ -29,7 +29,10 @@ describe('mapperToExplorerProps', () => {
                 hideTableHeader: false,
                 creationFormId: 'create-id',
                 noPagination: true,
-                defaultPrimaryActions: ['create']
+                defaultPrimaryActions: ['create'],
+                defaultViewSettings: {
+                    enableConfigureView: false
+                }
             });
 
             expect(mapToLibraryExplorerProps({explorerProps})).toEqual({
@@ -61,7 +64,10 @@ describe('mapperToExplorerProps', () => {
                 hideTableHeader: true,
                 creationFormId: 'create-id',
                 noPagination: true,
-                defaultPrimaryActions: ['create']
+                defaultPrimaryActions: ['create'],
+                defaultViewSettings: {
+                    enableConfigureView: true
+                }
             });
         });
     });

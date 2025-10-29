@@ -41,10 +41,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
     return (
         <div className={explorerContainer}>
             <Explorer
-                entrypoint={{
-                    type: 'library',
-                    libraryId
-                }}
+                {...linkExplorerProps}
                 defaultViewSettings={{
                     viewId,
                     filters: [
@@ -62,11 +59,15 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                             subCondition: RecordFilterCondition.EQUAL,
                             value: recordId
                         }
-                    ]
+                    ],
+                    ...linkExplorerProps.defaultViewSettings
+                }}
+                entrypoint={{
+                    type: 'library',
+                    libraryId
                 }}
                 itemActions={itemActions}
-                {...linkExplorerProps}
-                defaultMassActions={[]}
+                hideFirstActionLabel
                 defaultCallbacks={{
                     primary: {
                         create: ({recordIdCreated}) =>
@@ -87,7 +88,6 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                             )
                     }
                 }}
-                hideFirstActionLabel={true}
             />
         </div>
     );

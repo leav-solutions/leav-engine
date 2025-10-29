@@ -35,17 +35,18 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
     return (
         <div className={explorerContainer}>
             <Explorer
+                {...commonExplorerProps}
+                {...libraryExplorerProps}
+                defaultViewSettings={{
+                    viewId,
+                    ...commonExplorerProps.defaultViewSettings
+                }}
                 entrypoint={{
                     type: 'library',
                     libraryId
                 }}
-                defaultViewSettings={{
-                    viewId
-                }}
                 itemActions={itemActions}
-                {...commonExplorerProps}
-                {...libraryExplorerProps}
-                hideFirstActionLabel={true}
+                hideFirstActionLabel
             />
         </div>
     );

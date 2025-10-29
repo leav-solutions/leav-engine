@@ -12,6 +12,7 @@ type CommonOverridablePropsByUser =
     | 'showFilters'
     | 'showSorts'
     | 'ignoreViewByDefault'
+    | 'defaultViewSettings'
     | 'hideTableHeader'
     | 'creationFormId'
     | 'noPagination'
@@ -41,6 +42,9 @@ export const mapToCommonExplorerProps = ({
         showFilters: explorerProps.showFilters,
         showSorts: explorerProps.showSorts,
         ignoreViewByDefault: isBoolean(explorerProps.freezeView) ? explorerProps.freezeView : undefined,
+        defaultViewSettings: {
+            enableConfigureView: isBoolean(explorerProps.freezeView) ? !explorerProps.freezeView : false
+        },
         hideTableHeader: isBoolean(explorerProps.showAttributeLabels) ? !explorerProps.showAttributeLabels : undefined,
         creationFormId: explorerProps.creationFormId,
         noPagination: explorerProps.noPagination ?? undefined,
