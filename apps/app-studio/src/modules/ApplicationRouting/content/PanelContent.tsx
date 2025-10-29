@@ -36,6 +36,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, reco
     if (panel.type === 'editionForm') {
         return (
             <EditRecordPage
+                key={`${recordId}-${panel.formId}`}
                 {...commonFormProps}
                 record={{
                     id: recordId,
