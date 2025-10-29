@@ -29,7 +29,9 @@ export const TreeNodeList: FunctionComponent<IDisplayTreeNodeProps> = ({
                 label={value.treeValue.record.whoAmI.label}
                 ancestors={value.treeValue.ancestors}
                 canDelete={
-                    (attribute.required && attribute.multiple_values && backendValues.length > 1) || !attribute.required
+                    !isReadOnly &&
+                    ((attribute.required && attribute.multiple_values && backendValues.length > 1) ||
+                        !attribute.required)
                 }
                 onClickToDelete={() => removeTreeNode(value)}
             />

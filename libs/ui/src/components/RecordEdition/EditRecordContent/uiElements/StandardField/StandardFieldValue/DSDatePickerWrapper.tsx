@@ -107,7 +107,7 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
             open={attribute.multiple_values ? isFocused : undefined}
             value={value}
             format={isFocused || isErrors || !presentationValue ? undefined : () => presentationValue}
-            disabled={readonly}
+            readonly={readonly}
             allowClear={
                 !!value &&
                 !attribute.multiple_values &&

@@ -147,7 +147,7 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
             showText={isFocused || isErrors || !presentationValue ? true : () => `${presentationValue}`}
             helper={isErrors ? String(errors[0]) : undefined}
             aria-label={label}
-            disabled={readonly}
+            readonly={readonly}
             allowClear={
                 !!value &&
                 !attribute.multiple_values &&

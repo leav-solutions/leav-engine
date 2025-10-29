@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type AnyPrimitive, ErrorTypes, type IRequiredFieldsSettings, localizedTranslation} from '@leav/utils';
 import {type FunctionComponent, useEffect, useRef, useState} from 'react';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
 import {type RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
 import {AttributeFormat, type ValueDetailsFragment} from '_ui/_gqlTypes';
@@ -47,7 +47,7 @@ const StandardFieldValueWrapper = styled.div`
     flex: 1;
 `;
 
-const KitInputWrapperStyled = styled(KitInputWrapper)`
+const KitInputWrapperStyled = styled(KitInputWrapper)<{$readonlyBackground: boolean}>`
     &.bordered > .kit-input-wrapper-content {
         padding: calc((var(--general-spacing-xs) - 3) * 1px);
 
@@ -55,6 +55,14 @@ const KitInputWrapperStyled = styled(KitInputWrapper)`
             margin: 3px;
         }
     }
+
+    ${props =>
+        props.$readonlyBackground &&
+        css`
+            .kit-input-wrapper-content {
+                background-color: var(--general-utilities-neutral-light);
+            }
+        `}
 `;
 
 const KitInputExtraAlignLeft = styled.div`
@@ -309,12 +317,13 @@ const StandardField: FunctionComponent<
         !isFieldInError &&
         attribute.format !== AttributeFormat.boolean &&
         attribute.format !== AttributeFormat.encrypted;
-    const canDeleteAllValues = !attribute.required && hasValue && backendValues.length > 1;
-    const canDeleteSingleValue =
-        !attribute.required || (attribute.required && backendWithoutCalculatedOrInheritedValues.length > 1);
 
     const label = localizedTranslation(element.settings.label, lang);
     const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly;
+    const canDeleteAllValues = !isReadOnly && !attribute.required && hasValue && backendValues.length > 1;
+    const canDeleteSingleValue =
+        !isReadOnly &&
+        (!attribute.required || (attribute.required && backendWithoutCalculatedOrInheritedValues.length > 1));
 
     return (
         <Wrapper $metadataEdit={metadataEdit}>
@@ -322,7 +331,6 @@ const StandardField: FunctionComponent<
                 id={STANDARD_FIELD_ID_PREFIX + attribute.id}
                 label={label}
                 required={attribute.required}
-                disabled={isReadOnly}
                 bordered={attribute.multiple_values}
                 status={isFieldInError ? 'error' : undefined}
                 extra={
@@ -340,6 +348,7 @@ const StandardField: FunctionComponent<
                     </>
                 }
                 htmlFor={attribute.id}
+                $readonlyBackground={isReadOnly && attribute.multiple_values}
             >
                 {attribute.multiple_values ? (
                     <Form.List name={attribute.id}>

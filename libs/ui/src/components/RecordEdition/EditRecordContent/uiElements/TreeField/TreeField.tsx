@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type FunctionComponent, useEffect, useState} from 'react';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import {type ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import {AntForm, KitButton, KitInputWrapper} from 'aristid-ds';
 import {FaList} from 'react-icons/fa';
@@ -34,6 +34,20 @@ const KitInputExtraAlignLeftDiv = styled.div`
 
 const StyledFieldFooterKitButton = styled(KitButton)<{$hasNoValue: boolean}>`
     margin-top: ${props => (props.$hasNoValue ? 0 : 'calc((var(--general-spacing-xs)) * 1px)')};
+`;
+
+const KitInputWrapperStyled = styled(KitInputWrapper)<{$readonlyBackground: boolean}>`
+    .kit-input-wrapper-content {
+        min-height: 48px;
+    }
+
+    ${props =>
+        props.$readonlyBackground &&
+        css`
+            .kit-input-wrapper-content {
+                background-color: var(--general-utilities-neutral-light);
+            }
+        `}
 `;
 
 type TreeFieldProps = IFormElementProps<ICommonFieldsSettings>;
@@ -112,15 +126,15 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
     return (
         <StyledWrapperDiv $metadataEdit={metadataEdit}>
             <AntForm.Item name={attribute.id} noStyle>
-                <KitInputWrapper
+                <KitInputWrapperStyled
                     id={TREE_FIELD_ID_PREFIX + attribute.id}
                     data-testid="tree-field"
                     label={label}
                     required={attribute.required}
                     bordered
-                    disabled={isReadOnly}
                     status={isFieldInError ? 'error' : undefined}
                     helper={isFieldInError ? String(fieldErrors[0]) : undefined}
+                    $readonlyBackground={isReadOnly}
                     extra={
                         <>
                             <KitInputExtraAlignLeftDiv>
@@ -136,17 +150,18 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
                         removeTreeNode={removeTreeNode}
                         isReadOnly={isReadOnly}
                     />
-                    <StyledFieldFooterKitButton
-                        disabled={isReadOnly}
-                        icon={<FaList />}
-                        onClick={openModal}
-                        size="m"
-                        $hasNoValue={!backendValues?.length}
-                    >
-                        {actionButtonLabel}
-                    </StyledFieldFooterKitButton>
+                    {!isReadOnly && (
+                        <StyledFieldFooterKitButton
+                            icon={<FaList />}
+                            onClick={openModal}
+                            size="m"
+                            $hasNoValue={!backendValues?.length}
+                        >
+                            {actionButtonLabel}
+                        </StyledFieldFooterKitButton>
+                    )}
                     {SelectTreeNodeModal}
-                </KitInputWrapper>
+                </KitInputWrapperStyled>
             </AntForm.Item>
         </StyledWrapperDiv>
     );

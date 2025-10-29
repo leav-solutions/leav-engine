@@ -50,7 +50,7 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
             status={isErrors ? 'error' : undefined}
             value={value}
             placeholder={t('record_edition.placeholder.enter_a_password')}
-            disabled={readonly}
+            readonly={readonly}
             allowClear
             onChange={_handleOnChange}
             onBlur={_handleOnBlur}

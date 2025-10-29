@@ -10,7 +10,7 @@ import {type ILinkFieldState} from '../../reducers/linkFieldReducer/linkFieldRed
 import {type IFormElementProps} from '../../_types';
 import {AntForm, KitInputWrapper} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import {LINK_FIELD_ID_PREFIX} from '_ui/constants';
 import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
 import {ComputeIndicator} from '../shared/ComputeIndicator';
@@ -34,7 +34,15 @@ const KitInputExtraAlignLeft = styled.div`
     line-height: 12px;
 `;
 
-const KitInputWrapperStyled = styled(KitInputWrapper)`
+const KitInputWrapperStyled = styled(KitInputWrapper)<{$readonlyBackground: boolean}>`
+    ${props =>
+        props.$readonlyBackground &&
+        css`
+            .kit-input-wrapper-content {
+                background-color: var(--general-utilities-neutral-light);
+            }
+        `}
+
     &.disabled {
         .kit-input-wrapper-content {
             background-color: var(--general-utilities-neutral-light);
@@ -136,7 +144,6 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
                     label={label}
                     required={attribute.required}
                     bordered
-                    disabled={isReadOnly}
                     status={isFieldInError ? 'error' : undefined}
                     helper={isFieldInError ? String(fieldErrors[0]) : undefined}
                     extra={
@@ -147,6 +154,7 @@ const LinkField: FunctionComponent<LinkFieldProps> = ({
                             {UnlinkAllRecords}
                         </>
                     }
+                    $readonlyBackground={isReadOnly}
                 >
                     {LinkRecordsExplorer}
                 </KitInputWrapperStyled>

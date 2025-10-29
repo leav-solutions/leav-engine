@@ -81,7 +81,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
         <KitInput
             id={attribute.id}
             autoFocus={isFocused}
-            disabled={readonly}
+            readonly={readonly}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={valueToDisplay}

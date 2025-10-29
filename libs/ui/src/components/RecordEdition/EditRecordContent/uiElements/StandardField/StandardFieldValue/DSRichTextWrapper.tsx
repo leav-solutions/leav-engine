@@ -87,7 +87,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={valueToDisplay}
-            disabled={readonly}
+            readonly={readonly}
             onChange={_handleOnChange}
             onFocus={_handleFocus}
             onBlur={_handleOnBlur}

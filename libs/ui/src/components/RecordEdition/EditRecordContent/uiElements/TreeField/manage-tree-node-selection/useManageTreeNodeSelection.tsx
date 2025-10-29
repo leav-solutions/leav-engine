@@ -205,7 +205,7 @@ export const useManageTreeNodeSelection = ({
             />
         ),
         RemoveAllTreeNodes:
-            backendValues.length > 1 && attribute.multiple_values && !attribute.required ? (
+            !isReadOnly && backendValues.length > 1 && attribute.multiple_values && !attribute.required ? (
                 <DeleteAllValuesButton
                     handleDelete={_removeAllTreeNodes}
                     disabled={isReadOnly}

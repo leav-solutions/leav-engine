@@ -103,9 +103,16 @@ export const useLinkRecords = ({
     const {EditRecordModal, openEditRecordModal} = useEditRecordModal();
 
     return {
-        UnlinkAllRecords: backendValues.length > 1 && attribute.multiple_values && !attribute.required && (
-            <DeleteAllValuesButton handleDelete={handleDeleteAllValues} disabled={isReadOnly} danger={isFieldInError} />
-        ),
+        UnlinkAllRecords: !isReadOnly &&
+            backendValues.length > 1 &&
+            attribute.multiple_values &&
+            !attribute.required && (
+                <DeleteAllValuesButton
+                    handleDelete={handleDeleteAllValues}
+                    disabled={isReadOnly}
+                    danger={isFieldInError}
+                />
+            ),
         LinkRecordsExplorer: recordId && (
             <>
                 <ExplorerWrapper>
@@ -166,21 +173,23 @@ export const useLinkRecords = ({
                         hideTableHeader
                     />
                 </ExplorerWrapper>
-                <KitSpace size="xs" style={{padding: '1rem'}}>
-                    <KitTooltip title={explorerActions?.linkAction?.label}>
-                        <ActionButton
-                            type="secondary"
-                            size="m"
-                            $hasNoValue={hasNoValue}
-                            icon={<FaPlus />}
-                            disabled={
-                                isReadOnly || (attribute.multiple_values && explorerActions?.linkAction?.disabled)
-                            }
-                            onClick={explorerActions?.linkAction?.callback}
-                            aria-label={explorerActions?.linkAction?.label}
-                        />
-                    </KitTooltip>
-                </KitSpace>
+                {!isReadOnly && (
+                    <KitSpace size="xs" style={{padding: '1rem'}}>
+                        <KitTooltip title={explorerActions?.linkAction?.label}>
+                            <ActionButton
+                                type="secondary"
+                                size="m"
+                                $hasNoValue={hasNoValue}
+                                icon={<FaPlus />}
+                                disabled={
+                                    isReadOnly || (attribute.multiple_values && explorerActions?.linkAction?.disabled)
+                                }
+                                onClick={explorerActions?.linkAction?.callback}
+                                aria-label={explorerActions?.linkAction?.label}
+                            />
+                        </KitTooltip>
+                    </KitSpace>
+                )}
                 {EditRecordModal}
             </>
         )

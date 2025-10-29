@@ -131,7 +131,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             open={attribute.multiple_values ? isFocused : undefined}
             value={value}
             format={!isFocused && !isErrors && !!presentationValue ? () => presentationValue : undefined}
-            disabled={readonly}
+            readonly={readonly}
             allowClear={
                 !!value &&
                 !attribute.multiple_values &&

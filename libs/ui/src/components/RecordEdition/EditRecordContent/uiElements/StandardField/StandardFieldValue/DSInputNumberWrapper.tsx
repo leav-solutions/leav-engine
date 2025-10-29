@@ -92,7 +92,7 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
             status={isErrors ? 'error' : undefined}
             value={value}
             formatter={v => (isFocused || isErrors || !presentationValue ? `${v}` : `${presentationValue}`)}
-            disabled={readonly}
+            readonly={readonly}
             onChange={_handleOnChange}
             onFocus={_handleFocus}
             onBlur={_handleOnBlur}
