@@ -10,15 +10,19 @@ import useExecuteUpdateViewMutation from '../../_queries/useExecuteUpdateViewMut
 import {prepareViewForRequest} from './prepareViewForRequest';
 import {type IViewDisplay} from '_ui/types';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
-import {useTransformFilters} from '../_shared/useTransformFilters';
 import {useEffect, useRef, useState} from 'react';
 import {useMeQuery} from '_ui/_gqlTypes';
 import {type IUserView} from '../../_types';
+import {useTransformFilters} from '_ui/components/Filters/useTransformFilters';
+import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
+import {FiltersActionTypes} from '_ui/components/Filters/context/filtersReducer';
+import {type UIFilter} from '_ui/components/Filters/_types';
 
 export const useUpdateView = () => {
     const {t} = useSharedTranslation();
     const {toValidFilters} = useTransformFilters();
     const {view, dispatch} = useViewSettingsContext();
+    const {filtersData, dispatch: filtersDispatch} = useFiltersContext();
     const {updateView} = useExecuteUpdateViewMutation();
     const [isOwnerView, setIsOwnerView] = useState(false);
     const currentView = useRef<IUserView | undefined>();
@@ -38,7 +42,7 @@ export const useUpdateView = () => {
             return;
         }
         const mappedView = {
-            ...prepareViewForRequest(view, view.viewLabels),
+            ...prepareViewForRequest(view, filtersData.filters, view.viewLabels),
             id: view.viewId,
             shared: currentView.current?.shared ?? false
         };
@@ -48,6 +52,7 @@ export const useUpdateView = () => {
         });
 
         if (data) {
+            const validFilters = toValidFilters(data.updateView.filters);
             dispatch({
                 type: ViewSettingsActionTypes.UPDATE_VIEWS,
                 payload: {
@@ -55,12 +60,20 @@ export const useUpdateView = () => {
                     ownerId: data.updateView.created_by.id,
                     label: data.updateView.label,
                     shared: data.updateView.shared,
-                    filters: toValidFilters(data.updateView.filters),
+                    filters: validFilters,
                     sort: data.updateView.sort ?? [],
                     display: (data.updateView.display as IViewDisplay) ?? {
                         type: mapViewTypeFromExplorerToLegacy[view.viewType]
                     },
                     attributes: data.updateView?.attributes?.map(({id}) => id) ?? []
+                }
+            });
+            filtersDispatch({
+                type: FiltersActionTypes.UPDATE_VIEWS,
+                payload: {
+                    ...filtersData,
+                    viewId: data.updateView.id,
+                    filters: data.updateView.filters as UIFilter[]
                 }
             });
         }

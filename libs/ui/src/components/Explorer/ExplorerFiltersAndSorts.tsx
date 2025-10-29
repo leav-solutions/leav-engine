@@ -4,13 +4,13 @@
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SortOrder} from '_ui/_gqlTypes';
 import {useViewSettingsContext} from './manage-view-settings/store-view-settings/useViewSettingsContext';
-import {CommonFilterItem} from './manage-view-settings/_shared/CommonFilterItem';
 import {useAttributeDetailsData} from './manage-view-settings/_shared/useAttributeDetailsData';
 import {useOpenViewSettings} from './manage-view-settings';
-import {type ExplorerFilter} from './_types';
 import {type ComponentProps, type FunctionComponent, type ReactNode} from 'react';
 import {KitDivider, KitFilter} from 'aristid-ds';
 import styled from 'styled-components';
+import {CommonFilterItem, type ICommonFilterProps} from '_ui/components/Filters/filter-items/CommonFilterItem';
+import {useFilters} from '_ui/components/Filters/useFilters';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
@@ -30,14 +30,15 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
     const {t} = useSharedTranslation();
 
     const {view} = useViewSettingsContext();
-    const {filters, sort} = view;
+    const {sort} = view;
 
     const {openSettingsPanel} = useOpenViewSettings({view, isEnabled: true});
+    const {filtersProps} = useFilters();
 
     const {attributeDetailsById} = useAttributeDetailsData(view.libraryId);
-    const visibleFilters = filters.filter(filterItem => !filterItem.hidden);
+    // const visibleFilters = filters.filter(filterItem => !filterItem.hidden);
 
-    if (((visibleFilters.length === 0 && sort.length === 0) || (!showFilters && !showSorts)) && !selectAllButton) {
+    if (((filtersProps.length === 0 && sort.length === 0) || (!showFilters && !showSorts)) && !selectAllButton) {
         return null;
     }
 
@@ -57,33 +58,23 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
     if (!Object.keys(attributeDetailsById).length) {
         return <></>;
     }
-
     return (
         <>
             {selectAllButton && (
                 <>
                     <li>{selectAllButton}</li>
-                    {((showFilters && visibleFilters.length !== 0) || (showSorts && sort.length > 0)) && (
+                    {((showFilters && filtersProps.length !== 0) || (showSorts && sort.length > 0)) && (
                         <DividerStyled type="vertical" />
                     )}
                 </>
             )}
             {(showFilters || showSorts) && (
                 <>
-                    {visibleFilters.length > 0 &&
-                        visibleFilters.map(filter => (
-                            <li key={filter.id}>
+                    {filtersProps.length > 0 &&
+                        filtersProps.map(filterProps => (
+                            <li key={filterProps.key}>
                                 <CommonFilterItem
-                                    key={filter.id}
-                                    filter={
-                                        {
-                                            ...filter,
-                                            attribute: {
-                                                ...attributeDetailsById[filter?.attribute?.id],
-                                                ...filter.attribute
-                                            }
-                                        } as ExplorerFilter
-                                    }
+                                    {...(filterProps as ICommonFilterProps)}
                                     disabled={isMassSelectionAll}
                                 />
                             </li>

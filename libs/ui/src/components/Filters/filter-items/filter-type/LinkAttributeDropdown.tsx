@@ -4,7 +4,6 @@
 import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
 import {KitInput, KitSelect} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {type ExplorerFilter, type IExplorerFilterThrough, isExplorerFilterThrough} from '../../../_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 import {AttributeConditionFilter, ThroughConditionFilter} from '_ui/types';
 import styled from 'styled-components';
@@ -13,6 +12,7 @@ import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {FilterDropdownContent} from './FilterDropdownContent';
 import {type IFilterChildrenLinkDropDownProps} from './_types';
+import {isUIFilterThrough, type IUIFilterThrough, type UIFilter} from '../../_types';
 
 const InputStyled = styled(KitInput)`
     width: 100%;
@@ -36,7 +36,7 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
         useGetLibraryAttributesLazyQuery();
 
     const [selectedSubField, setSelectedSubField] = useState<string | null>(
-        isExplorerFilterThrough(filter) ? filter.subField : null
+        isUIFilterThrough(filter) ? filter.subField : null
     );
 
     const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition => {
@@ -78,13 +78,13 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
         value: attribute.id
     }));
 
-    const _handleThroughFilterChange = (filterData: ExplorerFilter) => {
+    const _handleThroughFilterChange = (filterData: UIFilter) => {
         onFilterChange({
             ...filter,
             subField: filterData.field,
             subCondition: filterData.condition,
             value: filterData.value
-        } as IExplorerFilterThrough);
+        } as IUIFilterThrough);
     };
 
     const linkedAttribute = libraryLinkAttributes.find(attribute => attribute.id === selectedSubField);

@@ -14,28 +14,28 @@ import {
     type ViewDetailsFilterFragment
 } from '_ui/_gqlTypes';
 import {
-    type ExplorerFilter,
-    type IExplorerFilterBaseAttribute,
-    type IExplorerFilterLink,
-    type IExplorerFilterLinkValueList,
-    type IExplorerFilterStandard,
-    type IExplorerFilterStandardValueList,
-    type IExplorerFilterThrough,
-    type IExplorerFilterTree,
+    type UIFilter,
+    type IUIFilterBaseAttribute,
+    type IUIFilterLink,
+    type IUIFilterLinkValueList,
+    type IUIFilterStandard,
+    type IUIFilterStandardValueList,
+    type IUIFilterThrough,
+    type IUIFilterTree,
     type ValidFieldFilter,
     type ValidFieldFilterLinkValuesList,
     type ValidFieldFilterStandardValuesList,
     type ValidFieldFilterThrough,
     type ValidFilter
-} from '../../_types';
+} from './_types';
 import {ThroughConditionFilter} from '_ui/types';
 import {isLinkAttribute, isStandardAttribute, isTreeAttribute} from '_ui/_utils/attributeType';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {v4 as uuid} from 'uuid';
-import {valueListTextConditions} from '../filter-items/filter-type/useConditionOptionsByType';
+import {valueListTextConditions} from './filter-items/filter-type/useConditionOptionsByType';
 
-const _isValidFieldFilter = (filter: ViewDetailsFilterFragment | ExplorerFilter): filter is ValidFieldFilter =>
+const _isValidFieldFilter = (filter: ViewDetailsFilterFragment | UIFilter): filter is ValidFieldFilter =>
     !!filter.field;
 
 const _isValidFieldFilterThrough = (filter: ValidFilter): filter is ValidFieldFilterThrough =>
@@ -81,9 +81,9 @@ export const isLinkAttributeDetails = (
     };
 } => 'linked_library' in linkAttributeData;
 
-export type ValidFiltersArgument = GetViewsListQuery['views']['list'][number]['filters'] | ExplorerFilter[];
+export type ValidFiltersArgument = GetViewsListQuery['views']['list'][number]['filters'] | UIFilter[];
 
-export type ExplorerAttributesById = Record<string, NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]>;
+export type AttributesById = Record<string, NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]>;
 
 export const useTransformFilters = () => {
     const {lang} = useLang();
@@ -113,20 +113,20 @@ export const useTransformFilters = () => {
             return acc;
         }, []);
 
-    const toExplorerFilters = ({
+    const toUIFilters = ({
         filters,
         attributesDataById
     }: {
         filters: ValidFilter[];
-        attributesDataById: ExplorerAttributesById;
-    }): ExplorerFilter[] =>
-        (filters ?? []).reduce<ExplorerFilter[]>((acc, filter) => {
+        attributesDataById: AttributesById;
+    }): UIFilter[] =>
+        (filters ?? []).reduce<UIFilter[]>((acc, filter) => {
             if (!attributesDataById[filter.field]) {
-                console.warn(`Attribute ${filter.field} from defaultViewSettings or user view not found in database.`);
+                console.warn(`Attribute ${filter.field} from user view not found in database.`);
                 return acc;
             }
 
-            const filterAttributeBase: IExplorerFilterBaseAttribute = {
+            const filterAttributeBase: IUIFilterBaseAttribute = {
                 id: attributesDataById[filter.field].id,
                 label: localizedTranslation(attributesDataById[filter.field].label, lang),
                 type: attributesDataById[filter.field].type
@@ -136,7 +136,7 @@ export const useTransformFilters = () => {
             if (isStandardAttribute(filterAttributeBase.type)) {
                 const attributeData = attributesDataById[filter.field];
                 if (_isValidFieldFilterStandardValuesList(filter, attributeData)) {
-                    const newFilter: IExplorerFilterStandardValueList = {
+                    const newFilter: IUIFilterStandardValueList = {
                         field: filter.field,
                         // TODO : save filter values as string[] when filter and handle fields with libraries
                         value: filter.value ? [filter.value] : [],
@@ -151,7 +151,7 @@ export const useTransformFilters = () => {
                     };
                     acc.push(newFilter);
                 } else {
-                    const newFilter: IExplorerFilterStandard = {
+                    const newFilter: IUIFilterStandard = {
                         field: filter.field,
                         value: filter.value ?? null,
                         hidden: filter.hidden ?? false,
@@ -171,7 +171,7 @@ export const useTransformFilters = () => {
                     filter.field
                 ] as AttributeDetailsLinkAttributeWithPermissionsFragment;
                 if (_isValidFieldFilterThrough(filter)) {
-                    const newFilter: IExplorerFilterThrough = {
+                    const newFilter: IUIFilterThrough = {
                         field: filter.field,
                         value: filter.value ?? null,
                         hidden: filter.hidden ?? false,
@@ -186,7 +186,7 @@ export const useTransformFilters = () => {
                     };
                     acc.push(newFilter);
                 } else if (_isValidFieldFilterLinkValuesList(filter, attributeData)) {
-                    const newFilter: IExplorerFilterLinkValueList = {
+                    const newFilter: IUIFilterLinkValueList = {
                         field: filter.field,
                         // TODO : save filter values as string[] when filter and handle fields with libraries
                         value: filter.value ? [filter.value] : [],
@@ -202,7 +202,7 @@ export const useTransformFilters = () => {
 
                     acc.push(newFilter);
                 } else {
-                    const newFilter: IExplorerFilterLink = {
+                    const newFilter: IUIFilterLink = {
                         field: filter.field,
                         value: filter.value ?? null,
                         hidden: filter.hidden ?? false,
@@ -222,7 +222,7 @@ export const useTransformFilters = () => {
                 const attributeData = attributesDataById[
                     filter.field
                 ] as AttributeDetailsTreeAttributeWithPermissionsFragment;
-                const newFilter: IExplorerFilterTree = {
+                const newFilter: IUIFilterTree = {
                     field: [filter.field],
                     // TODO : save filter values as string[] when tree filter and handle fields with libraries
                     value: filter.value ? [filter.value] : null,
@@ -242,6 +242,6 @@ export const useTransformFilters = () => {
 
     return {
         toValidFilters,
-        toExplorerFilters
+        toUIFilters
     };
 };

@@ -1,0 +1,100 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ReactNode, useEffect, useMemo, useReducer, useState} from 'react';
+import {filtersReducer} from './filtersReducer';
+import {filtersInitialState} from './filtersInitialState';
+import {type AttributesById, useTransformFilters} from '../useTransformFilters';
+import {type GetViewsListQuery, useExplorerAttributesQuery, useGetViewsListQuery} from '_ui/_gqlTypes';
+import {type FiltersOperator, type UIFilter} from '../_types';
+
+export interface IFiltersProviderProps {
+    libraryId: string | null;
+    viewId?: string;
+    filters?: UIFilter[];
+    filtersOperator?: FiltersOperator;
+    ignoreViewByDefault?: boolean;
+    pinFilters?: boolean;
+}
+
+export const useFiltersReducer = ({
+    libraryId,
+    viewId,
+    filters,
+    filtersOperator = 'AND',
+    ignoreViewByDefault = false
+}: IFiltersProviderProps) => {
+    const [refetchViews, setRefetchViews] = useState(false);
+    const [filtersData, dispatch] = useReducer(filtersReducer(setRefetchViews), {
+        ...filtersInitialState,
+        filtersOperator: filtersOperator ?? filtersInitialState.filtersOperator
+    });
+    const {toValidFilters, toUIFilters} = useTransformFilters();
+
+    const needToReload = refetchViews || (libraryId && libraryId !== filtersData.libraryId);
+
+    const {
+        /**
+         * List of my views and shared views
+         */
+        data: viewData,
+        loading: viewsLoading
+    } = useGetViewsListQuery({
+        skip: libraryId === null && !needToReload,
+        variables: {
+            libraryId: libraryId as string
+        }
+    });
+
+    let userView: GetViewsListQuery['views']['list'][number] | undefined;
+    if (viewId) {
+        userView = viewData?.views?.list?.find(viewItem => viewItem.id === viewId);
+    }
+    userView = userView ?? viewData?.views?.list?.at(-1) ?? null;
+
+    const userViewFilters = ignoreViewByDefault ? [] : toValidFilters(userView?.filters ?? []);
+
+    const preparedDefaultFilters = toValidFilters(filters ?? []);
+    const allFilters = preparedDefaultFilters.concat(userViewFilters);
+
+    const attributesToGet = allFilters.map(filter => filter.field);
+
+    const {data: attributesData, loading: attributesLoading} = useExplorerAttributesQuery({
+        variables: {
+            ids: attributesToGet
+        },
+        skip: libraryId === null || viewsLoading || attributesToGet.length === 0
+    });
+
+    const attributesDataById = useMemo(
+        () =>
+            (attributesData?.attributes?.list ?? []).reduce<AttributesById>((acc, attr) => {
+                if (attr.permissions.access_attribute) {
+                    acc[attr.id] = attr;
+                }
+                return acc;
+            }, {}),
+        [attributesData]
+    );
+
+    useEffect(() => {
+        if (!viewsLoading) {
+            setRefetchViews(false);
+            const uiFilters = toUIFilters({filters: allFilters ?? [], attributesDataById});
+            dispatch({
+                type: 'RESET',
+                payload: {
+                    libraryId,
+                    viewId,
+                    filtersOperator: filtersOperator ?? filtersInitialState.filtersOperator,
+                    filters: uiFilters,
+                    initialFilters: uiFilters,
+                    attributesDataById,
+                    loading: viewsLoading || attributesLoading
+                }
+            });
+        }
+    }, [attributesDataById, viewsLoading]);
+
+    return {filtersData, dispatch};
+};

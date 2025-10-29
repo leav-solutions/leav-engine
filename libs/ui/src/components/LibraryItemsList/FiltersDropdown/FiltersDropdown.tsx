@@ -216,7 +216,7 @@ function FiltersDropdown({
 
     // to verify if a filter is used, we have to get the filter attribute/tree base id
     // and check if one of those is used in the list of filters depending on the filter type
-    const isFilterUsed = (id: string) =>
+    const isUIFilterUsed = (id: string) =>
         searchState.filters.some(
             f =>
                 (f as IFilterTree)?.key === id ||
@@ -248,7 +248,7 @@ function FiltersDropdown({
                     key: tree.id,
                     icon: <BranchesOutlined />,
                     onClick: () => addFilter(getTreeFilter(tree)),
-                    label: isFilterUsed(tree.id) ? (
+                    label: isUIFilterUsed(tree.id) ? (
                         <Badge color="blue" text={tree.localizedLabel} />
                     ) : (
                         tree.localizedLabel
@@ -269,7 +269,7 @@ function FiltersDropdown({
                     key: attribute.id,
                     icon: <NumberOutlined />,
                     onClick: () => addFilter(getAttributeFilter(attribute)),
-                    label: isFilterUsed(attribute.id) ? (
+                    label: isUIFilterUsed(attribute.id) ? (
                         <Badge color="blue" text={attribute.localizedLabel} />
                     ) : (
                         attribute.localizedLabel
@@ -290,7 +290,7 @@ function FiltersDropdown({
                     key: library.id,
                     icon: <NumberOutlined />,
                     onClick: () => addFilter(getLibraryFilter(library)),
-                    label: isFilterUsed(library.id) ? (
+                    label: isUIFilterUsed(library.id) ? (
                         <Badge color="blue" text={library.localizedLabel} />
                     ) : (
                         library.localizedLabel

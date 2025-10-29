@@ -2,40 +2,42 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen, within} from '_ui/_tests/testUtils';
-import {type ExplorerFilter, type IExplorerFilterStandardValueList, type IExplorerFilterValueList} from '../../_types';
 import {CommonFilterItem} from './CommonFilterItem';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {AttributeType, RecordFilterCondition, type TreeDataQueryQueryHookResult} from '_ui/_gqlTypes';
 import {AttributeConditionFilter} from '_ui/types';
 import {type FunctionComponent, useReducer} from 'react';
-import {type IViewSettingsState, viewSettingsReducer} from '../store-view-settings/viewSettingsReducer';
-import {ViewSettingsContext} from '../store-view-settings/ViewSettingsContext';
-import {viewSettingsInitialState} from '../store-view-settings/viewSettingsInitialState';
-import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import dayjs from 'dayjs';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
 import userEvent from '@testing-library/user-event';
 import {type Mockify} from '@leav/utils';
+import {filtersReducer as filtersReducerBase, type IUIFiltersState} from '../context/filtersReducer';
+import {FiltersContext} from '../context/filtersContext';
+import {useFiltersContext} from '../useFiltersContext';
+import {type IUIFilterStandardValueList, type IUIFilterValueList, type UIFilter} from '../_types';
+import {filtersInitialState} from '../context/filtersInitialState';
 
 const getAllConditionOptions = (base: ReturnType<typeof render>['baseElement']) =>
     base.getElementsByClassName('rc-virtual-list')[0].getElementsByClassName('kit-select-option');
 
-const MockViewSettingsContextProvider: FunctionComponent<{viewMock: IViewSettingsState}> = ({viewMock, children}) => {
-    const [view, dispatch] = useReducer(viewSettingsReducer, viewMock);
-    return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
+const filtersReducer = filtersReducerBase(null);
+
+const MockFiltersContextProvider: FunctionComponent<{viewMock: IUIFiltersState}> = ({viewMock, children}) => {
+    const [filtersData, dispatch] = useReducer(filtersReducer, viewMock);
+    return <FiltersContext.Provider value={{filtersData, dispatch}}>{children}</FiltersContext.Provider>;
 };
 
 const CommonFilterItemContainer: FunctionComponent = () => {
     const {
-        view: {filters}
-    } = useViewSettingsContext();
+        filtersData: {filters}
+    } = useFiltersContext();
     return <CommonFilterItem filter={filters[0]} />;
 };
 
 describe('CommonFilterItem', () => {
     describe('numeric filter', () => {
         test('should render numeric filter', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'numeric filter',
@@ -56,7 +58,7 @@ describe('CommonFilterItem', () => {
         });
 
         test('should not render numeric input if condition is IS_EMPTY', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'numeric filter',
@@ -70,11 +72,9 @@ describe('CommonFilterItem', () => {
             };
 
             render(
-                <MockViewSettingsContextProvider
-                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
-                >
+                <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockViewSettingsContextProvider>
+                </MockFiltersContextProvider>
             );
             await userEvent.click(screen.getByRole('button', {name: /numeric/}));
             expect(screen.queryByRole('spinbutton')).toBeInTheDocument();
@@ -91,7 +91,7 @@ describe('CommonFilterItem', () => {
 
     describe('text filter', () => {
         test('should render text filter', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'text filter',
@@ -117,7 +117,7 @@ describe('CommonFilterItem', () => {
         });
 
         test('should not render text input if condition is IS_EMPTY', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'text filter',
@@ -131,11 +131,9 @@ describe('CommonFilterItem', () => {
             };
 
             render(
-                <MockViewSettingsContextProvider
-                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
-                >
+                <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockViewSettingsContextProvider>
+                </MockFiltersContextProvider>
             );
             await userEvent.click(screen.getByRole('button', {name: /text/}));
             expect(screen.queryByRole('textbox')).toBeInTheDocument();
@@ -151,7 +149,7 @@ describe('CommonFilterItem', () => {
 
     describe('rich text filter', () => {
         test('should render rich text filter', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'rich text filter',
@@ -177,7 +175,7 @@ describe('CommonFilterItem', () => {
         });
 
         test('should not render rich text input if condition is IS_EMPTY', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'rich text filter',
@@ -191,11 +189,9 @@ describe('CommonFilterItem', () => {
             };
 
             render(
-                <MockViewSettingsContextProvider
-                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
-                >
+                <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockViewSettingsContextProvider>
+                </MockFiltersContextProvider>
             );
             await userEvent.click(screen.getByRole('button', {name: /rich text/}));
             expect(screen.queryByRole('textbox')).toBeInTheDocument();
@@ -211,7 +207,7 @@ describe('CommonFilterItem', () => {
 
     describe('boolean filter', () => {
         test('should render boolean filter', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'boolean filter',
@@ -234,7 +230,7 @@ describe('CommonFilterItem', () => {
         const date = {unix: '1730761200', formatted: dayjs.unix(1730761200).format('YYYY-MM-DD')};
 
         test('should render simple filter', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'date filter',
@@ -255,7 +251,7 @@ describe('CommonFilterItem', () => {
         });
 
         test('should render an DateRangePicker if condition is BETWEEN', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'date filter',
@@ -269,11 +265,9 @@ describe('CommonFilterItem', () => {
             };
 
             render(
-                <MockViewSettingsContextProvider
-                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
-                >
+                <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockViewSettingsContextProvider>
+                </MockFiltersContextProvider>
             );
             await userEvent.click(screen.getByRole('button', {name: /date/}));
             expect(screen.queryByRole('textbox')).toBeInTheDocument();
@@ -290,7 +284,7 @@ describe('CommonFilterItem', () => {
 
     describe('color filter', () => {
         test('should render color filter', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'color filter',
@@ -311,7 +305,7 @@ describe('CommonFilterItem', () => {
 
     describe('encrypted filter', () => {
         test('should render encrypted filter', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'encrypted filter',
@@ -332,7 +326,7 @@ describe('CommonFilterItem', () => {
 
     describe('extended filter', () => {
         test('should render extended filter', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'extended filter',
@@ -353,7 +347,7 @@ describe('CommonFilterItem', () => {
 
     describe('period filter', () => {
         test('should render period filter', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'period filter',
@@ -374,7 +368,7 @@ describe('CommonFilterItem', () => {
 
     describe('link filter', () => {
         test('should behave like a text filter', async () => {
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'link filter',
@@ -431,7 +425,7 @@ describe('CommonFilterItem', () => {
                 mockUseGetLibraryAttributesLazyQuery as gqlTypes.GetLibraryAttributesLazyQueryHookResult
             );
 
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'link filter',
@@ -450,11 +444,9 @@ describe('CommonFilterItem', () => {
 
             // WHEN the filter dropdown is displayed
             const {baseElement} = render(
-                <MockViewSettingsContextProvider
-                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
-                >
+                <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItem filter={filter} />
-                </MockViewSettingsContextProvider>
+                </MockFiltersContextProvider>
             );
             await userEvent.click(screen.getByRole('button', {name: /link/}));
 
@@ -550,7 +542,7 @@ describe('CommonFilterItem', () => {
                 mockResult as gqlTypes.TreeNodeChildrenQueryResult
             ]);
 
-            const filter: ExplorerFilter = {
+            const filter: UIFilter = {
                 id: 'test',
                 attribute: {
                     label: 'tree filter',
@@ -576,7 +568,7 @@ describe('CommonFilterItem', () => {
 
     describe('value list filter', () => {
         test('should render standard value list and allow toggling', async () => {
-            const filter: IExplorerFilterStandardValueList = {
+            const filter: IUIFilterStandardValueList = {
                 id: 'test',
                 attribute: {
                     label: 'text value list',
@@ -594,11 +586,9 @@ describe('CommonFilterItem', () => {
             };
 
             const {baseElement} = render(
-                <MockViewSettingsContextProvider
-                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
-                >
+                <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockViewSettingsContextProvider>
+                </MockFiltersContextProvider>
             );
             await userEvent.click(screen.getByRole('button', {name: /text/}));
 
@@ -624,7 +614,7 @@ describe('CommonFilterItem', () => {
         });
 
         test('should render link value list and allow selection', async () => {
-            const filter: IExplorerFilterValueList = {
+            const filter: IUIFilterValueList = {
                 id: 'test',
                 attribute: {
                     label: 'link value list',
@@ -664,11 +654,9 @@ describe('CommonFilterItem', () => {
             };
 
             const {baseElement} = render(
-                <MockViewSettingsContextProvider
-                    viewMock={{...viewSettingsInitialState, enableConfigureView: false, filters: [filter]}}
-                >
+                <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
-                </MockViewSettingsContextProvider>
+                </MockFiltersContextProvider>
             );
             await userEvent.click(screen.getByRole('button', {name: /link/}));
 

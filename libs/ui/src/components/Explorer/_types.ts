@@ -3,22 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type Override} from '@leav/utils';
 import {
-    type AttributeFormat,
     type AttributePropertiesFragment,
-    AttributeType,
-    type LinkAttributeDetailsFragment,
     type PropertyValueFragment,
-    type RecordFilterCondition,
     type RecordFilterInput,
-    type RecordIdentityFragment,
-    type StandardAttributeDetailsFragment,
-    type ViewDetailsFilterFragment
+    type RecordIdentityFragment
 } from '_ui/_gqlTypes';
 import {type Key, type ReactElement} from 'react';
 import {type IViewSettingsState} from './manage-view-settings';
-import {ThroughConditionFilter} from '_ui/types/search';
 import {type IView} from '_ui/types';
 import {type MASS_SELECTION_ALL} from './_constants';
+import {type UIFilter, type ValidFilter} from '../Filters/_types';
 
 export type MassSelection = Key[] | typeof MASS_SELECTION_ALL;
 
@@ -71,151 +65,11 @@ export interface IMassActions {
 
 export type FeatureHook<T = {}> = {isEnabled: boolean; isVisible?: boolean} & T;
 
-export interface IExplorerFilterBaseAttribute {
-    type: AttributeType;
-    /**
-     * Used to display the label of the filter.
-     *
-     * > Not displayed when filter is hidden
-     */
-    label: string;
-    /**
-     * Used to verify unicity: one filter per attribute
-     */
-    id: string;
-    format?: AttributeFormat | null | undefined;
-    valuesList?:
-        | NonNullable<StandardAttributeDetailsFragment['valuesList']>
-        | NonNullable<LinkAttributeDetailsFragment['valuesList']>;
-}
-
-export interface IExplorerFilterStandardAttribute extends IExplorerFilterBaseAttribute {
-    format: AttributeFormat;
-}
-
-export interface IExplorerFilterLinkAttribute extends IExplorerFilterBaseAttribute {
-    linkedLibrary?: {
-        id: string;
-    };
-}
-
-export interface IExplorerFilterTreeAttribute extends IExplorerFilterBaseAttribute {
-    linkedTree?: {
-        id: string;
-    };
-}
-
-interface IExplorerBaseFilter {
-    id: string;
-    attribute: IExplorerFilterBaseAttribute;
-    condition: RecordFilterCondition | ThroughConditionFilter | null;
-    /**
-     * Used to build filter field.
-     *
-     * - ex: `campaigns_id_pac`
-     * - ex with **subField**: `campaigns_id_pac.id`
-     */
-    field: string;
-    value: string | null;
-    formattedValue?: string | null;
-    hidden?: boolean | undefined;
-}
-
-export interface IExplorerFilterStandard extends IExplorerBaseFilter {
-    attribute: IExplorerFilterStandardAttribute;
-    condition: RecordFilterCondition | null;
-}
-
-export interface IExplorerFilterLink extends IExplorerBaseFilter {
-    attribute: IExplorerFilterLinkAttribute;
-    condition: RecordFilterCondition | null;
-}
-
-export interface IExplorerFilterThrough extends IExplorerBaseFilter {
-    attribute: IExplorerFilterLinkAttribute;
-    condition: ThroughConditionFilter.THROUGH | null;
-    subCondition: RecordFilterCondition | null;
-    subField: string | null;
-}
-
-export interface IExplorerFilterTree extends Omit<IExplorerBaseFilter, 'value' | 'formattedValue' | 'field'> {
-    attribute: IExplorerFilterTreeAttribute;
-    condition: RecordFilterCondition | null;
-    value: string[] | null;
-    formattedValue?: string[] | null;
-    field: string[];
-}
-
-export interface IExplorerFilterValueList extends Omit<IExplorerBaseFilter, 'value' | 'formattedValue'> {
-    attribute: (IExplorerFilterStandardAttribute | IExplorerFilterLinkAttribute) & {
-        valuesList:
-            | NonNullable<StandardAttributeDetailsFragment['valuesList']>
-            | NonNullable<LinkAttributeDetailsFragment['valuesList']>;
-    };
-    value: string[] | null;
-    condition: RecordFilterCondition | null;
-}
-
-export interface IExplorerFilterStandardValueList
-    extends Omit<IExplorerFilterStandard, 'attribute' | 'value'>,
-        IExplorerFilterValueList {
-    attribute: IExplorerFilterStandardAttribute & {
-        valuesList: NonNullable<StandardAttributeDetailsFragment['valuesList']>;
-    };
-}
-
-export interface IExplorerFilterLinkValueList
-    extends Omit<IExplorerFilterLink, 'attribute' | 'value'>,
-        IExplorerFilterValueList {
-    attribute: IExplorerFilterLinkAttribute & {
-        valuesList: NonNullable<LinkAttributeDetailsFragment['valuesList']>;
-    };
-}
-
-export type ExplorerFilter =
-    | IExplorerFilterStandard
-    | IExplorerFilterLink
-    | IExplorerFilterThrough
-    | IExplorerFilterValueList
-    | IExplorerFilterTree;
-
-export const isExplorerFilterStandard = (filter: ExplorerFilter): filter is IExplorerFilterStandard =>
-    [AttributeType.simple, AttributeType.advanced].includes(filter.attribute.type);
-
-export const isExplorerFilterLink = (filter: ExplorerFilter): filter is IExplorerFilterLink =>
-    [AttributeType.simple_link, AttributeType.advanced_link].includes(filter.attribute.type) &&
-    filter.condition !== ThroughConditionFilter.THROUGH;
-
-export const isExplorerFilterThrough = (filter: ExplorerFilter): filter is IExplorerFilterThrough =>
-    [AttributeType.simple_link, AttributeType.advanced_link].includes(filter.attribute.type) &&
-    filter.condition === ThroughConditionFilter.THROUGH;
-
-export const isExplorerFilterValueList = (filter: ExplorerFilter): filter is IExplorerFilterValueList =>
-    (isExplorerFilterStandard(filter) || isExplorerFilterLink(filter)) && isValueList(filter);
-
-export const isExplorerFilterStandardWithValueList = (
-    filter: ExplorerFilter
-): filter is IExplorerFilterStandardValueList =>
-    [AttributeType.simple, AttributeType.advanced].includes(filter.attribute.type) && isValueList(filter);
-
-export const isExplorerFilterLinkWithValueList = (filter: ExplorerFilter): filter is IExplorerFilterLinkValueList =>
-    [AttributeType.simple_link, AttributeType.advanced_link].includes(filter.attribute.type) && isValueList(filter);
-
-export const isExplorerFilterTree = (filter: ExplorerFilter): filter is IExplorerFilterTree =>
-    filter.attribute.type === AttributeType.tree;
-
-const isValueList = (filter: ExplorerFilter): filter is ExplorerFilter & {attribute: {valuesList: {enabled: true}}} =>
-    !!filter.attribute?.valuesList && filter.attribute?.valuesList.enable;
-
-export interface IFilterDropDownProps {
-    filter: ExplorerFilter;
-}
-
 export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,
     {
         filtersOperator?: 'AND' | 'OR';
-        filters?: ExplorerFilter[];
+        filters?: UIFilter[];
     }
 >;
 
@@ -244,46 +98,6 @@ export interface IEntrypointLink {
     parentRecordId: string;
     linkAttributeId: string;
 }
-
-export type ValidFieldFilter = Override<
-    ViewDetailsFilterFragment,
-    {
-        field: NonNullable<ViewDetailsFilterFragment['field']>;
-        condition: NonNullable<ViewDetailsFilterFragment['condition']>;
-        hidden: boolean;
-    }
->;
-
-export type ValidFieldFilterStandardValuesList = Override<
-    ValidFieldFilter,
-    {
-        valuesList: StandardAttributeDetailsFragment['valuesList'];
-    }
->;
-
-export type ValidFieldFilterLinkValuesList = Override<
-    ValidFieldFilter,
-    {
-        valuesList: LinkAttributeDetailsFragment['valuesList'];
-    }
->;
-
-export type ValidFieldFilterThrough = Override<
-    ValidFieldFilter,
-    {
-        condition: ThroughConditionFilter.THROUGH;
-        hidden: boolean;
-    }
-> & {
-    subField: NonNullable<ViewDetailsFilterFragment['field']>;
-    subCondition?: ViewDetailsFilterFragment['condition'];
-};
-
-export type ValidFilter =
-    | ValidFieldFilter
-    | ValidFieldFilterThrough
-    | ValidFieldFilterStandardValuesList
-    | ValidFieldFilterLinkValuesList;
 
 export type Entrypoint = IEntrypointTree | IEntrypointLibrary | IEntrypointLink;
 

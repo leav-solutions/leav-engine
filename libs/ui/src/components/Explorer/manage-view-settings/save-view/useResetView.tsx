@@ -6,13 +6,17 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {FaUndo} from 'react-icons/fa';
+import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
+import {FiltersActionTypes} from '_ui/components/Filters/context/filtersReducer';
 
 export const useResetView = () => {
     const {t} = useSharedTranslation();
     const {dispatch} = useViewSettingsContext();
+    const {dispatch: filtersDispatch} = useFiltersContext();
 
     const _resetView = () => {
         dispatch({type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS});
+        filtersDispatch({type: FiltersActionTypes.RESTORE_INITIAL_VIEW_SETTINGS});
     };
 
     return {

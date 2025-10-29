@@ -10,7 +10,6 @@ import {createRef} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {waitFor} from '@testing-library/react';
-import {toast} from 'react-hot-toast';
 import {type Mockify} from '@leav/utils';
 import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
 import * as gqlTypes from '_ui/_gqlTypes';
@@ -23,7 +22,6 @@ import * as useColumnWidth from './useColumnWidth';
 import {type IExplorerRef} from './Explorer';
 import ResizeObserver from 'resize-observer-polyfill';
 import * as attributeDetailsModule from '_ui/components/Explorer/manage-view-settings/_shared/useAttributeDetailsData';
-import {SNACKBAR_MASS_ID} from './_constants';
 
 global.ResizeObserver = ResizeObserver;
 
@@ -2712,7 +2710,7 @@ describe('Explorer', () => {
             await user.click(screen.getByRole('button', {name: 'Fermer'}));
 
             // AND the selection is cleared
-            expect(screen.queryByRole('status')).not.toBeVisible();
+            waitFor(() => expect(screen.queryByRole('status')).not.toBeVisible());
         });
 
         // For an unknown reason, the success alert from last test is still present in the next test and makes it fail

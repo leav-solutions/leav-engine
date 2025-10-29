@@ -11,12 +11,14 @@ import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReduce
 import {prepareViewForRequest} from './prepareViewForRequest';
 import {type IViewDisplay} from '_ui/types';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
-import {useTransformFilters} from '../_shared/useTransformFilters';
 import {useMeQuery} from '_ui/_gqlTypes';
+import {useTransformFilters} from '_ui/components/Filters/useTransformFilters';
+import {useFiltersContext} from '_ui/components/Filters';
 
 export const useShareView = () => {
     const {t} = useSharedTranslation();
     const {view, dispatch} = useViewSettingsContext();
+    const {filtersData} = useFiltersContext();
     const {saveView} = useExecuteSaveViewMutation();
     const {toValidFilters} = useTransformFilters();
     const [isSharedView, setIsSharedView] = useState(false);
@@ -35,7 +37,7 @@ export const useShareView = () => {
 
     const _toggleShareView = async () => {
         const mappedView = {
-            ...prepareViewForRequest(view, view.viewLabels),
+            ...prepareViewForRequest(view, filtersData.filters, view.viewLabels),
             shared: !isSharedView,
             id: view.viewId
         };

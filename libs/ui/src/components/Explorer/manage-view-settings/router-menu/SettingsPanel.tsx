@@ -15,6 +15,7 @@ import {type SettingsPanelPages} from '../open-view-settings/EditSettingsContext
 import {useOpenViewSettings} from '../open-view-settings/useOpenViewSettings';
 import {SavedViews} from '../../list-saved-views/SavedViews';
 import {ViewActionsButtons} from '../save-view/ViewActionsButtons';
+import {useFiltersContext} from '_ui/components/Filters';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -40,6 +41,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
     const {t} = useSharedTranslation();
 
     const {view} = useViewSettingsContext();
+    const {filtersData} = useFiltersContext();
     const {openSettingsPanel, viewName} = useOpenViewSettings({view, isEnabled: true});
 
     // TODO: look for MemoryRouter
@@ -61,7 +63,9 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                                     <SettingItem
                                         icon={<FaFilter />}
                                         title={t('explorer.filters')}
-                                        value={String(t('explorer.active-items-number', {count: view.filters.length}))}
+                                        value={String(
+                                            t('explorer.active-items-number', {count: filtersData.filters.length})
+                                        )}
                                         onClick={() => openSettingsPanel('filter-items')}
                                     />
                                     <SettingItem

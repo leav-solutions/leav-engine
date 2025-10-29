@@ -6,17 +6,17 @@ import {FaCheck} from 'react-icons/fa';
 import {type ComponentProps, type FunctionComponent, type KeyboardEvent, useMemo, useState} from 'react';
 import {KitInput, KitSelect} from 'aristid-ds';
 import styled from 'styled-components';
-import {
-    type ExplorerFilter,
-    type IExplorerFilterValueList,
-    isExplorerFilterLinkWithValueList,
-    isExplorerFilterStandardWithValueList
-} from '_ui/components/Explorer/_types';
 import {RecordFilterCondition} from '_ui/_gqlTypes';
+import {
+    isUIFilterLinkWithValueList,
+    isUIFilterStandardWithValueList,
+    type IUIFilterValueList,
+    type UIFilter
+} from '../../_types';
 
 interface IFilterValueListDropDownProps {
-    filter: IExplorerFilterValueList;
-    onFilterChange: (filter: ExplorerFilter) => void;
+    filter: IUIFilterValueList;
+    onFilterChange: (filter: UIFilter) => void;
     selectDropDownRef?: React.RefObject<HTMLDivElement>;
 }
 
@@ -81,13 +81,13 @@ export const FilterValueListDropDown: FunctionComponent<IFilterValueListDropDown
     // Generate an option list for the filter dropdown to select a value
     const _createOptionListFromValueList = () => {
         let valueListFormatted: Array<{label: string; value: string}> = [];
-        if (isExplorerFilterStandardWithValueList(filter)) {
+        if (isUIFilterStandardWithValueList(filter)) {
             valueListFormatted =
                 filter.attribute.valuesList?.values?.map(value => ({
                     label: value,
                     value
                 })) || [];
-        } else if (isExplorerFilterLinkWithValueList(filter)) {
+        } else if (isUIFilterLinkWithValueList(filter)) {
             valueListFormatted =
                 filter.attribute.valuesList?.linkedValues?.map(value => ({
                     label: value.whoAmI.label!,

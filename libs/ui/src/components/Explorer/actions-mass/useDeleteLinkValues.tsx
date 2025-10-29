@@ -11,10 +11,13 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitModal} from 'aristid-ds';
 import {BREAK_TWO_LINES, MASS_SELECTION_ALL} from '../_constants';
 import {type IValueToSubmit} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {FiltersOperator, UIFilter} from '_ui/components/Filters';
+import {type IUIFiltersState} from '_ui/components/Filters/context/filtersReducer';
 
 export const useDeleteLinkValues = ({
     isEnabled,
     store: {view, dispatch},
+    filtersStore: {filters, filtersOperator},
     pagination,
     allVisibleKeys,
     onDelete,
@@ -25,6 +28,7 @@ export const useDeleteLinkValues = ({
         view: IViewSettingsState;
         dispatch: Dispatch<IViewSettingsAction>;
     };
+    filtersStore: IUIFiltersState;
     allVisibleKeys: string[];
     onDelete?: IMassActions['callback'];
     refetch: ReturnType<typeof useExplorerData>['refetch'];
@@ -40,8 +44,8 @@ export const useDeleteLinkValues = ({
         fulltextSearch: view.fulltextSearch,
         pagination,
         sorts: view.sort,
-        filtersOperator: view.filtersOperator,
-        filters: view.filters,
+        filtersOperator,
+        filters,
         skip: !isLink
     });
 

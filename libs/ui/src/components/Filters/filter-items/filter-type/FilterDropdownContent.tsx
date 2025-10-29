@@ -15,21 +15,21 @@ import {TextAttributeDropDown} from './TextAttributeDropDown';
 import {TreeAttributeDropDown} from './TreeAttributeDropDown';
 import {FilterValueListDropDown} from './FilterValueListDropDown';
 import {
-    type ExplorerFilter,
-    isExplorerFilterLink,
-    isExplorerFilterStandard,
-    isExplorerFilterThrough,
-    isExplorerFilterTree,
-    isExplorerFilterValueList
-} from '../../../_types';
+    isUIFilterLink,
+    isUIFilterStandard,
+    isUIFilterThrough,
+    isUIFilterTree,
+    isUIFilterValueList,
+    type UIFilter
+} from '../../_types';
 
 export const FilterDropdownContent: FunctionComponent<{
-    filter: ExplorerFilter;
-    onFilterChange: (filterData: ExplorerFilter) => void;
+    filter: UIFilter;
+    onFilterChange: (filterData: UIFilter) => void;
     selectDropDownRef?: RefObject<HTMLDivElement>;
     removeThroughCondition?: boolean;
 }> = ({filter, onFilterChange, selectDropDownRef, removeThroughCondition = false}) => {
-    if (isExplorerFilterValueList(filter)) {
+    if (isUIFilterValueList(filter)) {
         return (
             <FilterValueListDropDown
                 filter={filter}
@@ -39,7 +39,7 @@ export const FilterDropdownContent: FunctionComponent<{
         );
     }
 
-    if (isExplorerFilterStandard(filter)) {
+    if (isUIFilterStandard(filter)) {
         const commonDropDownProps = {
             filter,
             onFilterChange,
@@ -59,7 +59,7 @@ export const FilterDropdownContent: FunctionComponent<{
         return standardFormatDropdown[filter.attribute.format ?? AttributeFormat.text];
     }
 
-    if (isExplorerFilterTree(filter)) {
+    if (isUIFilterTree(filter)) {
         return (
             <TreeAttributeDropDown
                 filter={filter}
@@ -69,7 +69,7 @@ export const FilterDropdownContent: FunctionComponent<{
         );
     }
 
-    if (isExplorerFilterLink(filter) || isExplorerFilterThrough(filter)) {
+    if (isUIFilterLink(filter) || isUIFilterThrough(filter)) {
         return (
             <LinkAttributeDropDown
                 filter={filter}

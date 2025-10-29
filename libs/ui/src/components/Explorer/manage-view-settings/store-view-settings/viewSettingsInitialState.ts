@@ -22,15 +22,12 @@ export const viewSettingsInitialState: IViewSettingsState = {
     fulltextSearch: '',
     sort: [],
     pageSize: defaultPageSizeOptions[0],
-    filtersOperator: 'AND',
-    filters: [],
     massSelection: [],
     initialViewSettings: {
         viewType: 'table',
         attributesIds: [],
         sort: [],
-        pageSize: defaultPageSizeOptions[0],
-        filters: []
+        pageSize: defaultPageSizeOptions[0]
     },
     defaultViewSettings: {
         viewType: 'table',

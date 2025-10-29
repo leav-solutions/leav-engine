@@ -8,8 +8,8 @@ import {AttributeConditionFilter, type IRecordIdentity, type ITreeNodeWithRecord
 import {RecordFilterCondition} from '_ui/_gqlTypes';
 import {type IFilterChildrenTreeDropDownProps} from './_types';
 import {SelectTreeNode} from '_ui/components/SelectTreeNode';
-import {useConditionsOptionsByType} from '_ui/components/Explorer/manage-view-settings/filter-items/filter-type/useConditionOptionsByType';
 import styled from 'styled-components';
+import {useConditionsOptionsByType} from './useConditionOptionsByType';
 
 const DivStyled = styled.div`
     max-height: 30rem;

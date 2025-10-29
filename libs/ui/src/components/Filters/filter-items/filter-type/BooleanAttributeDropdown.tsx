@@ -14,12 +14,22 @@ export const BooleanAttributeDropDown: FunctionComponent<IFilterChildrenDropDown
 }) => {
     const {t} = useSharedTranslation();
     const _onSelectionChanged: ComponentProps<typeof KitSelect>['onChange'] = value => {
-        onFilterChange({
-            ...filter,
-            condition: AttributeConditionFilter.EQUAL,
-            value,
-            formattedValue: value === 'true' ? t('explorer.true') : t('explorer.false')
-        });
+        const filterData =
+            value === undefined
+                ? {
+                      ...filter,
+                      condition: null,
+                      value: null,
+                      formattedValue: undefined
+                  }
+                : {
+                      ...filter,
+                      condition: AttributeConditionFilter.EQUAL,
+                      value,
+                      formattedValue: value === 'true' ? t('explorer.true') : t('explorer.false')
+                  };
+
+        onFilterChange(filterData);
     };
 
     const valuesOptions = [

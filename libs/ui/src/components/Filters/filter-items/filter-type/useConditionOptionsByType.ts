@@ -2,17 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormat, type RecordFilterCondition} from '_ui/_gqlTypes';
-import {
-    type ExplorerFilter,
-    isExplorerFilterLink,
-    isExplorerFilterStandard,
-    isExplorerFilterThrough,
-    isExplorerFilterTree,
-    isExplorerFilterValueList
-} from '../../../_types';
 import {AttributeConditionFilter, type AttributeConditionType, type ThroughConditionFilter} from '_ui/types';
 import {type TFunction} from 'i18next';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {
+    isUIFilterLink,
+    isUIFilterStandard,
+    isUIFilterThrough,
+    isUIFilterTree,
+    isUIFilterValueList,
+    type UIFilter
+} from '../../_types';
 
 export const conditionsByFormat: Record<AttributeFormat, RecordFilterCondition[]> = {
     [AttributeFormat.text]: [
@@ -78,15 +78,13 @@ export const valueListTextConditions: RecordFilterCondition[] = [
     // AttributeConditionFilter.NOT_EQUAL
 ];
 
-interface IExplorerFilterConditionOption<T> {
+interface IUIFilterConditionOption<T> {
     label: string;
     value: T;
     textByFormat?: {[key in AttributeFormat]?: string};
 }
 
-export const getAttributeConditionOptions = (
-    t: TFunction
-): Array<IExplorerFilterConditionOption<AttributeConditionType>> => [
+export const getAttributeConditionOptions = (t: TFunction): Array<IUIFilterConditionOption<AttributeConditionType>> => [
     {label: t('filters.contains'), value: AttributeConditionFilter.CONTAINS},
     {label: t('filters.not-contains'), value: AttributeConditionFilter.NOT_CONTAINS},
     {label: t('filters.equal'), value: AttributeConditionFilter.EQUAL},
@@ -124,50 +122,50 @@ export const getAttributeConditionOptions = (
 ];
 
 export const getFirstConditionByFilterType = (
-    filter: ExplorerFilter
+    filter: UIFilter
 ): Array<RecordFilterCondition | ThroughConditionFilter> => {
-    if (isExplorerFilterValueList(filter)) {
+    if (isUIFilterValueList(filter)) {
         return valueListTextConditions;
     }
-    if (isExplorerFilterStandard(filter)) {
+    if (isUIFilterStandard(filter)) {
         return conditionsByFormat[filter.attribute.format] ?? [];
     }
-    if (isExplorerFilterLink(filter)) {
+    if (isUIFilterLink(filter)) {
         return linkFilterConditions ?? [];
     }
-    if (isExplorerFilterTree(filter)) {
+    if (isUIFilterTree(filter)) {
         return treeFilterConditions ?? [];
     }
-    if (isExplorerFilterThrough(filter)) {
+    if (isUIFilterThrough(filter)) {
         return [AttributeConditionFilter.THROUGH];
     }
     return [];
 };
 
-export const useConditionsOptionsByType = (filter: ExplorerFilter) => {
+export const useConditionsOptionsByType = (filter: UIFilter) => {
     const {t} = useSharedTranslation();
 
     return {
         conditionOptionsByType: getAttributeConditionOptions(t)
             .filter(({value}) => {
                 // Use special condition set for text fields with closed list values
-                if (isExplorerFilterValueList(filter)) {
+                if (isUIFilterValueList(filter)) {
                     return valueListTextConditions.includes(value);
                 }
-                if (isExplorerFilterStandard(filter)) {
+                if (isUIFilterStandard(filter)) {
                     return conditionsByFormat[filter.attribute.format].includes(value);
                 }
-                if (isExplorerFilterLink(filter) || isExplorerFilterThrough(filter)) {
+                if (isUIFilterLink(filter) || isUIFilterThrough(filter)) {
                     return linkFilterConditions.includes(value);
                 }
-                if (isExplorerFilterTree(filter)) {
+                if (isUIFilterTree(filter)) {
                     return treeFilterConditions.includes(value);
                 }
             })
             .map(option => ({
                 ...option,
                 label:
-                    isExplorerFilterStandard(filter) && option.textByFormat?.[filter.attribute.format]
+                    isUIFilterStandard(filter) && option.textByFormat?.[filter.attribute.format]
                         ? option.textByFormat?.[filter.attribute.format]
                         : option.label
             }))

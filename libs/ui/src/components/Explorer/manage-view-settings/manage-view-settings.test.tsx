@@ -15,6 +15,11 @@ import {act, waitFor} from '@testing-library/react';
 import {useViewSettingsReducer} from '../useViewSettingsReducer';
 import {type DefaultViewSettings} from '../_types';
 import {type IViewSettingsState} from './store-view-settings/viewSettingsReducer';
+import {useFiltersReducer} from '_ui/components/Filters/context/useFiltersReducer';
+import {FiltersContext} from '_ui/components/Filters/context/filtersContext';
+import {KitModal} from 'aristid-ds';
+
+KitModal.setAppElement(document.body);
 
 const MockOpenEditSettings: FunctionComponent = () => {
     const {viewSettingsButton, viewListButton} = useOpenViewSettings({view: {}, isEnabled: true} as {
@@ -35,6 +40,11 @@ const MockViewSettingsContextProvider: FunctionComponent<{defaultSettings?: Defa
 }) => {
     const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, defaultSettings, false);
     return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
+};
+
+const MockFilterscontextProvider: FunctionComponent<{defaultSettings?: DefaultViewSettings}> = ({children}) => {
+    const {filtersData, dispatch} = useFiltersReducer({libraryId: 'my_lib'});
+    return <FiltersContext.Provider value={{filtersData, dispatch}}>{children}</FiltersContext.Provider>;
 };
 
 describe('Integration tests about managing view settings feature', () => {
@@ -222,10 +232,12 @@ describe('Integration tests about managing view settings feature', () => {
     test('should be able to open panel and navigate inside to advanced setting and go back', async () => {
         render(
             <EditSettingsContextProvider>
-                <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                    <MockOpenEditSettings />
-                    <SidePanel />
-                </MockViewSettingsContextProvider>
+                <MockFilterscontextProvider>
+                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </MockFilterscontextProvider>
             </EditSettingsContextProvider>
         );
 
@@ -246,10 +258,12 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle attribute visibility', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
 
@@ -295,10 +309,12 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle sort activation', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
 
@@ -342,10 +358,12 @@ describe('Integration tests about managing view settings feature', () => {
 
             render(
                 <EditSettingsContextProvider panelElement={() => document.body}>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
 
@@ -398,10 +416,12 @@ describe('Integration tests about managing view settings feature', () => {
         test('should be able to toggle filter activation', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
 
@@ -437,10 +457,12 @@ describe('Integration tests about managing view settings feature', () => {
         test('Should be able to update view', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
 
@@ -470,10 +492,12 @@ describe('Integration tests about managing view settings feature', () => {
         test('Should be able to edit view name', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
             await userEvent.click(screen.getByRole('button', {name: /manage-views/}));
@@ -515,10 +539,12 @@ describe('Integration tests about managing view settings feature', () => {
         test('Should be able to delete view', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
 
@@ -554,10 +580,12 @@ describe('Integration tests about managing view settings feature', () => {
         test('Should be able to share view', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
 
@@ -619,10 +647,12 @@ describe('Integration tests about managing view settings feature', () => {
         test('Should be able to save view as', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
 
@@ -675,14 +705,16 @@ describe('Integration tests about managing view settings feature', () => {
         });
 
         test('Should be able to load user view', async () => {
-            getViewsListSpy.mockReturnValueOnce(mockViewsResultWithSort as gqlTypes.GetViewsListQueryResult);
+            getViewsListSpy.mockReturnValue(mockViewsResultWithSort as gqlTypes.GetViewsListQueryResult);
 
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
 
@@ -694,14 +726,16 @@ describe('Integration tests about managing view settings feature', () => {
         });
 
         test('Should be able to reset settings to loaded view', async () => {
-            getViewsListSpy.mockReturnValueOnce(mockViewsResultWithSort as gqlTypes.GetViewsListQueryResult);
+            getViewsListSpy.mockReturnValue(mockViewsResultWithSort as gqlTypes.GetViewsListQueryResult);
 
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
 
@@ -802,10 +836,12 @@ describe('Integration tests about managing view settings feature', () => {
 
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
-                        <MockOpenEditSettings />
-                        <SidePanel />
-                    </MockViewSettingsContextProvider>
+                    <MockFilterscontextProvider>
+                        <MockViewSettingsContextProvider defaultSettings={{enableConfigureView: false}}>
+                            <MockOpenEditSettings />
+                            <SidePanel />
+                        </MockViewSettingsContextProvider>
+                    </MockFilterscontextProvider>
                 </EditSettingsContextProvider>
             );
 

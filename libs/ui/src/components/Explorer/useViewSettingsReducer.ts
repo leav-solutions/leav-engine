@@ -18,10 +18,10 @@ import {
     viewSettingsReducer
 } from './manage-view-settings';
 import {
+    type AttributesById,
     isLinkAttributeDetails,
-    type ExplorerAttributesById,
     useTransformFilters
-} from './manage-view-settings/_shared/useTransformFilters';
+} from '_ui/components/Filters/useTransformFilters';
 
 const _areDifferents = <T extends object>(object1: T, object2: T) =>
     Object.keys(object1).some(key => object1[key] !== object2[key]);
@@ -40,7 +40,7 @@ export const useViewSettingsReducer = (
     const {closeSettingsPanel} = useEditSettings();
 
     // FIXME: should be two methods taking `lang` as argument
-    const {toExplorerFilters, toValidFilters} = useTransformFilters();
+    const {toValidFilters} = useTransformFilters();
 
     /**
      * We need to check if the `props.entrypoint` has changed to detect a new `props.entrypoint.libraryId`.
@@ -92,7 +92,6 @@ export const useViewSettingsReducer = (
     if (defaultViewSettings?.viewId) {
         userView = viewData?.views?.list?.find(viewItem => viewItem.id === defaultViewSettings.viewId);
     }
-
     // On still `undefined` view, we take the last added one
     userView = userView ?? viewData?.views?.list?.at(-1);
 
@@ -132,7 +131,7 @@ export const useViewSettingsReducer = (
 
     const attributesDataById = useMemo(
         () =>
-            (attributesData?.attributes?.list ?? []).reduce<ExplorerAttributesById>((acc, attr) => {
+            (attributesData?.attributes?.list ?? []).reduce<AttributesById>((acc, attr) => {
                 if (attr.permissions.access_attribute) {
                     acc[attr.id] = attr;
                 }
@@ -159,7 +158,6 @@ export const useViewSettingsReducer = (
              * Filters merged from `<Explorer />` props and `view`.
              * > Could include hidden filters too.
              */
-            const allFilters = preparedDefaultFilters.concat(userViewFilters);
             const defaultSorts = defaultViewSettings?.sort ?? [];
             const userViewSorts = ignoreViewByDefault ? [] : (userView?.sort ?? []);
             const defaultAttributesIds = (defaultViewSettings?.attributesIds ?? []).filter(
@@ -193,9 +191,7 @@ export const useViewSettingsReducer = (
                         field: s.field,
                         order: s.order
                     }))
-                    .filter(s => attributesDataById[s.field]),
-                filtersOperator: defaultViewSettings?.filtersOperator ?? 'AND',
-                filters: toExplorerFilters({filters: allFilters, attributesDataById})
+                    .filter(s => attributesDataById[s.field])
             };
             dispatch({
                 type: 'RESET',
@@ -205,14 +201,12 @@ export const useViewSettingsReducer = (
                         viewType: hydratedSettings.viewType,
                         attributesIds: hydratedSettings.attributesIds,
                         sort: hydratedSettings.sort,
-                        pageSize: hydratedSettings.pageSize,
-                        filters: hydratedSettings.filters
+                        pageSize: hydratedSettings.pageSize
                     },
                     defaultViewSettings: {
                         viewType: defaultViewSettings.viewType ?? 'table',
                         attributesIds: defaultViewSettings.attributesIds ?? [],
-                        sort: defaultViewSettings.sort ?? [],
-                        filters: defaultViewSettings.filters ?? []
+                        sort: defaultViewSettings.sort ?? []
                     }
                 }
             });

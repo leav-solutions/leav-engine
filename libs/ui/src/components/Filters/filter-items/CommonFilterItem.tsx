@@ -5,29 +5,29 @@ import {type FunctionComponent} from 'react';
 import {FilterDropDown} from '../filter-items/filter-type/FilterDropDown';
 import styled from 'styled-components';
 import {KitFilter} from 'aristid-ds';
-import {isExplorerFilterStandard, isExplorerFilterTree, type ExplorerFilter} from '../../_types';
-import {nullValueConditions} from '../../conditionsHelper';
 import {AttributeFormat} from '_ui/_gqlTypes';
 import {useTranslation} from 'react-i18next';
 import {getAttributeConditionOptions} from '../filter-items/filter-type/useConditionOptionsByType';
 import {type TFunction} from 'i18next';
+import {nullValueConditions} from '../conditionsHelper';
+import {isUIFilterStandard, isUIFilterTree, type UIFilter} from '../_types';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
 `;
 
-const getFilterValues = (filter: ExplorerFilter, t: TFunction) => {
+const getFilterValues = (filter: UIFilter, t: TFunction) => {
     if (filter.condition && nullValueConditions.includes(filter.condition)) {
         const conditionOption = getAttributeConditionOptions(t).find(option => option.value === filter.condition);
         return [conditionOption?.label ?? ''];
     }
 
-    if (isExplorerFilterTree(filter)) {
+    if (isUIFilterTree(filter)) {
         return filter.formattedValue ?? [];
     }
 
     if (
-        isExplorerFilterStandard(filter) &&
+        isUIFilterStandard(filter) &&
         [AttributeFormat.date, AttributeFormat.boolean].includes(filter.attribute.format)
     ) {
         return filter.formattedValue ? [filter.formattedValue] : [];
@@ -36,10 +36,13 @@ const getFilterValues = (filter: ExplorerFilter, t: TFunction) => {
     return Array.isArray(filter.value) ? filter.value : filter.value ? [filter.value] : [];
 };
 
-export const CommonFilterItem: FunctionComponent<{filter: ExplorerFilter; disabled?: boolean}> = ({
-    filter,
-    disabled
-}) => {
+export interface ICommonFilterProps {
+    filter: UIFilter;
+    isPinned?: boolean;
+    disabled?: boolean;
+}
+
+export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({filter, isPinned = false, disabled}) => {
     const {t} = useTranslation();
 
     return (
@@ -50,7 +53,7 @@ export const CommonFilterItem: FunctionComponent<{filter: ExplorerFilter; disabl
             values={getFilterValues(filter, t)}
             dropDownProps={{
                 placement: 'bottomLeft',
-                dropdownRender: () => <FilterDropDown filter={filter} />
+                dropdownRender: () => <FilterDropDown filter={filter} canRemove={!isPinned} />
             }}
         />
     );

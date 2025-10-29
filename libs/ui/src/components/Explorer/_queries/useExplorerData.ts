@@ -8,7 +8,6 @@ import {
     type Entrypoint,
     type IEntrypointLink,
     type IExplorerData,
-    type ExplorerFilter,
     type DefaultViewSettings,
     type IEntrypointLibrary
 } from '../_types';
@@ -21,7 +20,8 @@ import {
     useExplorerLinkAttributeQuery,
     useExplorerLinkDataQuery
 } from '_ui/_gqlTypes';
-import {prepareFiltersForRequest} from './prepareFiltersForRequest';
+import {type UIFilter} from '_ui/components/Filters/_types';
+import {prepareFiltersForRequest} from '_ui/components/Filters';
 
 export const dateValuesSeparator = '\n';
 
@@ -140,7 +140,7 @@ export const useExplorerData = ({
         order: SortOrder;
     }>;
     pagination: null | {limit: number; offset: number};
-    filters: ExplorerFilter[];
+    filters: UIFilter[];
     filtersOperator: DefaultViewSettings['filtersOperator'];
     skip: boolean;
 }) => {

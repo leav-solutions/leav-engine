@@ -3,25 +3,25 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {v4 as uuid} from 'uuid';
 import {AttributeFormat, type RecordFilterCondition, type SortOrder} from '_ui/_gqlTypes';
-import {
-    type DefaultViewSettings,
-    type Entrypoint,
-    type ExplorerFilter,
-    type IExplorerFilterStandard,
-    type IExplorerFilterTree,
-    isExplorerFilterLink,
-    isExplorerFilterStandard,
-    isExplorerFilterThrough,
-    isExplorerFilterTree,
-    isExplorerFilterValueList,
-    type IUserView,
-    type MassSelection
-} from '../../_types';
+import {type DefaultViewSettings, type Entrypoint, type IUserView, type MassSelection} from '../../_types';
 import {hasOnlyNoValueConditions, nullValueConditions} from '../../conditionsHelper';
-import {conditionsByFormat, getFirstConditionByFilterType} from '../filter-items/filter-type/useConditionOptionsByType';
 import {AttributeConditionFilter, ThroughConditionFilter} from '_ui/types';
 import {DefaultViewId} from './viewSettingsInitialState';
 import {isLinkAttribute} from '_ui/_utils/attributeType';
+import {
+    conditionsByFormat,
+    getFirstConditionByFilterType
+} from '_ui/components/Filters/filter-items/filter-type/useConditionOptionsByType';
+import {
+    isUIFilterLink,
+    isUIFilterStandard,
+    isUIFilterThrough,
+    isUIFilterTree,
+    isUIFilterValueList,
+    type IUIFilterStandard,
+    type IUIFilterTree,
+    type UIFilter
+} from '_ui/components/Filters';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 
@@ -67,9 +67,7 @@ export interface IViewSettingsState {
         order: SortOrder;
     }>;
     pageSize: number;
-    filtersOperator: 'AND' | 'OR';
-    filters: ExplorerFilter[] | IExplorerFilterTree[];
-    initialViewSettings: Pick<IViewSettingsState, 'viewType' | 'attributesIds' | 'sort' | 'pageSize' | 'filters'>;
+    initialViewSettings: Pick<IViewSettingsState, 'viewType' | 'attributesIds' | 'sort' | 'pageSize'>;
     defaultViewSettings: DefaultViewSettings;
     massSelection: MassSelection;
     enableConfigureView?: boolean;
@@ -141,22 +139,22 @@ interface IViewSettingsActionClearFulltextSearch {
 
 interface IViewSettingsActionAddFilter {
     type: typeof ViewSettingsActionTypes.ADD_FILTER;
-    payload: Omit<ExplorerFilter, 'id' | 'value' | 'condition'>;
+    payload: Omit<UIFilter, 'id' | 'value' | 'condition'>;
 }
 
 interface IViewSettingsActionResetFilter {
     type: typeof ViewSettingsActionTypes.RESET_FILTER;
-    payload: Pick<ExplorerFilter, 'id'>;
+    payload: Pick<UIFilter, 'id'>;
 }
 
 interface IViewSettingsActionRemoveFilter {
     type: typeof ViewSettingsActionTypes.REMOVE_FILTER;
-    payload: Pick<ExplorerFilter, 'id'>;
+    payload: Pick<UIFilter, 'id'>;
 }
 
 interface IViewSettingsActionChangeFilterConfig {
     type: typeof ViewSettingsActionTypes.CHANGE_FILTER_CONFIG;
-    payload: ExplorerFilter | IExplorerFilterTree;
+    payload: UIFilter | IUIFilterTree;
 }
 
 interface IViewSettingsActionMoveFilter {
@@ -203,7 +201,7 @@ interface IViewSettingsActionDeleteView {
 
 export type IViewSettingsActionLoadViewPayload = Pick<
     IViewSettingsState,
-    'viewId' | 'viewLabels' | 'viewType' | 'attributesIds' | 'sort' | 'filters'
+    'viewId' | 'viewLabels' | 'viewType' | 'attributesIds' | 'sort'
 >;
 
 interface IViewSettingsActionLoadView {
@@ -299,130 +297,6 @@ export const clearFulltextSearch: Reducer = state => ({
     fulltextSearch: ''
 });
 
-const addFilter: Reducer<IViewSettingsActionAddFilter> = (state, payload) => {
-    const hasValueList = payload.attribute.valuesList;
-
-    let condition = hasOnlyNoValueConditions((payload as IExplorerFilterStandard).attribute.format)
-        ? null
-        : (conditionsByFormat[(payload as IExplorerFilterStandard).attribute.format][0] ?? null);
-    if (hasValueList) {
-        condition = AttributeConditionFilter.EQUAL;
-    }
-
-    const filterToAdd = isExplorerFilterTree(payload as ExplorerFilter)
-        ? {
-              ...payload,
-              id: uuid(),
-              field: Array.isArray(payload.field) ? payload.field : [payload.field],
-              condition: hasOnlyNoValueConditions((payload as IExplorerFilterStandard).attribute.format)
-                  ? null
-                  : (getFirstConditionByFilterType(payload as ExplorerFilter) as RecordFilterCondition[])[0],
-              value: null
-          }
-        : {
-              ...payload,
-              field: isLinkAttribute(payload.attribute.type) ? `${payload.field}.id` : (payload.field as string),
-              id: uuid(),
-              condition,
-              value: null,
-              valuesList: hasValueList ? payload.attribute.valuesList : undefined
-          };
-    return {
-        ...state,
-        filters: [...state.filters, filterToAdd],
-        viewModified: true
-    };
-};
-
-const resetFilter: Reducer<IViewSettingsActionResetFilter> = (state, payload) => ({
-    ...state,
-    filters: state.filters.map(filter => {
-        if (filter.id === payload.id) {
-            const initialViewFilter = state.initialViewSettings.filters.find(({id}) => id === payload.id);
-            if (initialViewFilter) {
-                return initialViewFilter;
-            }
-
-            if (isExplorerFilterValueList(filter)) {
-                return {
-                    ...filter,
-                    condition: null,
-                    value: null
-                };
-            }
-
-            if (isExplorerFilterStandard(filter)) {
-                return {
-                    ...filter,
-                    condition: hasOnlyNoValueConditions(filter.attribute.format)
-                        ? null
-                        : conditionsByFormat[filter.attribute.format][0],
-                    value: null
-                };
-            }
-
-            if (isExplorerFilterThrough(filter)) {
-                return {
-                    ...filter,
-                    condition: ThroughConditionFilter.THROUGH,
-                    value: null
-                };
-            }
-
-            if (isExplorerFilterLink(filter)) {
-                return {
-                    ...filter,
-                    condition: conditionsByFormat[AttributeFormat.text][0],
-                    value: null
-                };
-            }
-
-            if (isExplorerFilterTree(filter)) {
-                return {
-                    ...filter,
-                    condition: null,
-                    value: null
-                };
-            }
-        }
-        return filter;
-    })
-});
-
-const removeFilter: Reducer<IViewSettingsActionRemoveFilter> = (state, payload) => ({
-    ...state,
-    filters: state.filters.filter(({id}) => id !== payload.id),
-    viewModified: true
-});
-
-const changeFilterConfig: Reducer<IViewSettingsActionChangeFilterConfig> = (state, payload) => ({
-    ...state,
-    filters: state.filters.map(filter => {
-        if (filter.id !== payload.id) {
-            return filter;
-        }
-        if (isExplorerFilterTree(filter) && payload.value && payload.value.length === 0) {
-            return {...filter, ...payload, value: null};
-        }
-        if (isExplorerFilterValueList(filter) && filter.condition && nullValueConditions.includes(filter.condition)) {
-            return {...filter, ...payload, value: null};
-        }
-        return {...filter, ...payload};
-    }),
-    viewModified: true
-});
-
-const moveFilter: Reducer<IViewSettingsActionMoveFilter> = (state, payload) => {
-    const attributesUsedToFilter = [...state.filters];
-    const [filterToMove] = attributesUsedToFilter.splice(payload.indexFrom, 1);
-    attributesUsedToFilter.splice(payload.indexTo, 0, filterToMove);
-    return {
-        ...state,
-        filters: attributesUsedToFilter,
-        viewModified: true
-    };
-};
-
 const reset: Reducer<IViewSettingsActionReset> = (_, payload) => payload;
 
 const setSelectedKeys: Reducer<IViewSettingsActionSetSelectedKeys> = (state, payload) => ({
@@ -447,8 +321,7 @@ const updateViewListAndCurrentView: Reducer<IViewSettingsActionUpdateViewListAnd
         viewType: state.viewType,
         attributesIds: state.attributesIds,
         sort: state.sort,
-        pageSize: state.pageSize,
-        filters: state.filters
+        pageSize: state.pageSize
     },
     viewModified: false
 });
@@ -492,8 +365,7 @@ const loadView: Reducer<IViewSettingsActionLoadView> = (state, payload) => ({
         viewType: payload.viewType,
         attributesIds: payload.attributesIds,
         sort: payload.sort,
-        pageSize: state.pageSize,
-        filters: payload.filters
+        pageSize: state.pageSize
     },
     viewModified: false
 });
@@ -562,7 +434,7 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         case ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH: {
             return clearFulltextSearch(state);
         }
-        case ViewSettingsActionTypes.ADD_FILTER: {
+        /*case ViewSettingsActionTypes.ADD_FILTER: {
             return addFilter(state, action.payload);
         }
         case ViewSettingsActionTypes.RESET_FILTER: {
@@ -576,7 +448,7 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.MOVE_FILTER: {
             return moveFilter(state, action.payload);
-        }
+        }*/
         case ViewSettingsActionTypes.RESET: {
             return reset(state, action.payload);
         }

@@ -6,24 +6,24 @@ import {AttributeFormat, RecordFilterCondition, type RecordFilterInput, RecordFi
 import {interleaveElement} from '_ui/_utils/interleaveElement';
 import {AttributeConditionFilter} from '_ui/types';
 import {
-    type DefaultViewSettings,
-    type ExplorerFilter,
-    type IExplorerFilterStandard,
-    type IExplorerFilterTree,
-    isExplorerFilterStandard,
-    isExplorerFilterThrough,
-    isExplorerFilterLink,
-    isExplorerFilterTree,
-    isExplorerFilterValueList,
-    type IExplorerFilterValueList
-} from '../_types';
-import {nullValueConditions} from '../conditionsHelper';
+    type UIFilter,
+    type IUIFilterStandard,
+    type IUIFilterTree,
+    isUIFilterStandard,
+    isUIFilterThrough,
+    isUIFilterTree,
+    isUIFilterValueList,
+    type IUIFilterValueList,
+    type FiltersOperator,
+    isUIFilterLinkWithValueList
+} from './_types';
+import {nullValueConditions} from './conditionsHelper';
 
 export const dateValuesSeparator = '\n';
 
 const _getDateAtNoon = (date: number): string => dayjs.unix(Number(date)).add(12, 'hour').unix().toString();
 
-const _getDateRequestFilters = ({field, condition, value}: IExplorerFilterStandard): RecordFilterInput[] => {
+const _getDateRequestFilters = ({field, condition, value}: IUIFilterStandard): RecordFilterInput[] => {
     switch (condition) {
         case RecordFilterCondition.BETWEEN:
             const [from, to] = value!.split(dateValuesSeparator);
@@ -64,7 +64,7 @@ const _getDateRequestFilters = ({field, condition, value}: IExplorerFilterStanda
     }
 };
 
-const _getBooleanRequestFilters = (filter: IExplorerFilterStandard): RecordFilterInput[] => {
+const _getBooleanRequestFilters = (filter: IUIFilterStandard): RecordFilterInput[] => {
     if (filter.value === 'false') {
         return [
             {
@@ -93,9 +93,7 @@ const _addValuesListForFilters = (valuesList: string[]): RecordFilterInput[] => 
     {operator: RecordFilterOperator.CLOSE_BRACKET}
 ];
 
-const _generateConditionsFromMultipleValues = (
-    filter: IExplorerFilterTree | IExplorerFilterValueList
-): RecordFilterInput[] => {
+const _generateConditionsFromMultipleValues = (filter: IUIFilterTree | IUIFilterValueList): RecordFilterInput[] => {
     if (!filter.value || filter.value.length === 0) {
         return [];
     }
@@ -125,15 +123,15 @@ const _generateConditionsFromMultipleValues = (
 };
 
 export const prepareFiltersForRequest = (
-    filters: ExplorerFilter[],
-    filtersOperator: DefaultViewSettings['filtersOperator'],
+    filters: UIFilter[],
+    filtersOperator?: FiltersOperator,
     valuesList?: string[]
 ): RecordFilterInput[] => {
     const interleaveFilter = interleaveElement(
         {operator: filtersOperator === 'OR' ? RecordFilterOperator.OR : RecordFilterOperator.AND},
         filters
             .filter(filter => {
-                if (isExplorerFilterThrough(filter)) {
+                if (isUIFilterThrough(filter)) {
                     return (
                         filter.subField &&
                         filter.subCondition &&
@@ -141,7 +139,7 @@ export const prepareFiltersForRequest = (
                     );
                 }
 
-                if (isExplorerFilterValueList(filter)) {
+                if (isUIFilterValueList(filter)) {
                     return (
                         (!!filter.condition && filter.value?.length) ||
                         (filter.condition && nullValueConditions.includes(filter.condition))
@@ -151,7 +149,7 @@ export const prepareFiltersForRequest = (
                 return filter.value !== null || (filter.condition && nullValueConditions.includes(filter.condition));
             })
             .map(filter => {
-                if (isExplorerFilterTree(filter)) {
+                if (isUIFilterTree(filter)) {
                     return filter;
                 }
                 const condition =
@@ -162,14 +160,15 @@ export const prepareFiltersForRequest = (
                         : filter.field;
 
                 // When a link attribute has a values list, we must filter on the linked record id
-                if (isExplorerFilterLink(filter) && isExplorerFilterValueList(filter) && !field.endsWith('.id')) {
+                if (isUIFilterLinkWithValueList(filter) && typeof field === 'string' && !field.endsWith('.id')) {
                     field = `${field}.id`;
                 }
 
                 return {...filter, condition, field};
             })
             .map(filter => {
-                if (isExplorerFilterTree(filter) || isExplorerFilterValueList(filter)) {
+                //@ts-ignore typscript does not recognize filter as a UIFilter
+                if (isUIFilterValueList(filter) || isUIFilterTree(filter)) {
                     if (filter.condition && nullValueConditions.includes(filter.condition)) {
                         return [
                             {
@@ -179,22 +178,22 @@ export const prepareFiltersForRequest = (
                             }
                         ];
                     }
-                    return _generateConditionsFromMultipleValues(filter);
+                    return _generateConditionsFromMultipleValues(filter as IUIFilterTree | IUIFilterValueList);
                 }
 
-                if (isExplorerFilterStandard(filter)) {
+                if (isUIFilterStandard(filter as UIFilter)) {
                     switch (filter.attribute.format) {
                         case AttributeFormat.date:
-                            return _getDateRequestFilters(filter);
+                            return _getDateRequestFilters(filter as IUIFilterStandard);
                         case AttributeFormat.boolean:
-                            return _getBooleanRequestFilters(filter);
+                            return _getBooleanRequestFilters(filter as IUIFilterStandard);
                         default:
                             break;
                     }
                 }
                 return [
                     {
-                        field: filter.field,
+                        field: filter.field as string,
                         condition: filter.condition,
                         value: filter.value
                     }

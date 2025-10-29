@@ -10,7 +10,8 @@ import {interleaveElement} from '_ui/_utils/interleaveElement';
 import {type IMassActions, type MassSelection} from '../_types';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
-import {prepareFiltersForRequest} from '../_queries/prepareFiltersForRequest';
+import {prepareFiltersForRequest} from '_ui/components/Filters';
+import {type IUIFiltersState} from '_ui/components/Filters/context/filtersReducer';
 
 /**
  * Hook used to manage mass selection as the snackbar and all kind of selection (manual, all in page, all in filters)
@@ -26,6 +27,7 @@ import {prepareFiltersForRequest} from '../_queries/prepareFiltersForRequest';
 export const useMassActions = ({
     isEnabled,
     store: {dispatch, view},
+    filtersStore: {filters, filtersOperator},
     totalCount,
     allVisibleKeys,
     massActions,
@@ -36,6 +38,7 @@ export const useMassActions = ({
         view: IViewSettingsState;
         dispatch: Dispatch<IViewSettingsAction>;
     };
+    filtersStore: IUIFiltersState;
     totalCount: number;
     allVisibleKeys: string[];
     massActions: IMassActions[];
@@ -61,7 +64,7 @@ export const useMassActions = ({
                     onClick: async () => {
                         await callback(
                             view.massSelection === MASS_SELECTION_ALL
-                                ? prepareFiltersForRequest(view.filters, view.filtersOperator)
+                                ? prepareFiltersForRequest(filters, filtersOperator)
                                 : interleaveElement(
                                       {operator: RecordFilterOperator.OR},
                                       view.massSelection.map(key => [
@@ -84,7 +87,7 @@ export const useMassActions = ({
         } else {
             closeKitSnackBar(snackbarId);
         }
-    }, [view.massSelection, view.filters, totalCount]);
+    }, [view.massSelection, filters, totalCount]);
 
     useEffect(() => () => closeKitSnackBar(snackbarId), []);
 

@@ -2,28 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type RefObject} from 'react';
-import {
-    type IExplorerFilterStandard,
-    type IExplorerFilterLink,
-    type IExplorerFilterThrough,
-    type IExplorerFilterTree
-} from '../../../_types';
+import {type IUIFilterLink, type IUIFilterStandard, type IUIFilterThrough, type IUIFilterTree} from '../../_types';
 
 export interface IFilterChildrenDropDownProps {
-    filter: IExplorerFilterStandard;
-    onFilterChange: (filterData: IExplorerFilterStandard) => void;
+    filter: IUIFilterStandard;
+    onFilterChange: (filterData: IUIFilterStandard) => void;
     selectDropDownRef?: RefObject<HTMLDivElement>;
 }
 
 export interface IFilterChildrenLinkDropDownProps {
-    filter: IExplorerFilterLink | IExplorerFilterThrough;
-    onFilterChange: (filterData: IExplorerFilterLink | IExplorerFilterThrough) => void;
+    filter: IUIFilterLink | IUIFilterThrough;
+    onFilterChange: (filterData: IUIFilterLink | IUIFilterThrough) => void;
     removeThroughCondition: boolean;
     selectDropDownRef?: RefObject<HTMLDivElement>;
 }
 
 export interface IFilterChildrenTreeDropDownProps {
-    filter: IExplorerFilterTree;
-    onFilterChange: (filterData: IExplorerFilterTree) => void;
+    filter: IUIFilterTree;
+    onFilterChange: (filterData: IUIFilterTree) => void;
     selectDropDownRef?: RefObject<HTMLDivElement>;
 }

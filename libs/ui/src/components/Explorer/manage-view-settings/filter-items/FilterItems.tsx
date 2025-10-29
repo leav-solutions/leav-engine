@@ -24,11 +24,11 @@ import {
 } from '@dnd-kit/core';
 import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {useAttributeDetailsData} from '../_shared/useAttributeDetailsData';
-import {CommonFilterItem} from '../_shared/CommonFilterItem';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
-import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {FilterListItem} from './FilterListItem';
-import {type ExplorerFilter, type IExplorerFilterBaseAttribute} from '_ui/components/Explorer/_types';
+import {CommonFilterItem} from '_ui/components/Filters/filter-items/CommonFilterItem';
+import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
+import {type IUIFilterBaseAttribute, type UIFilter} from '_ui/components/Filters/_types';
 
 const StyledListContainer = styled.div`
     display: flex;
@@ -64,9 +64,9 @@ const _isLibraryTreeAttribute = (
 export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId}) => {
     const {t} = useSharedTranslation();
     const {
-        view: {filters},
+        filtersData: {filters},
         dispatch
-    } = useViewSettingsContext();
+    } = useFiltersContext();
 
     const {onSearchChanged, searchFilteredColumnsIds, attributeDetailsById} = useAttributeDetailsData(libraryId);
 
@@ -87,7 +87,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                     label: attributeDetailsById[attributeId].label,
                     format: attributeDetailsById[attributeId].format ?? AttributeFormat.text,
                     type: attributeDetailsById[attributeId].type,
-                    valuesList: (attributeDetailsById[attributeId] as IExplorerFilterBaseAttribute).valuesList,
+                    valuesList: (attributeDetailsById[attributeId] as IUIFilterBaseAttribute).valuesList,
                     linkedLibrary: _isLibraryLinkAttribute(attributeDetailsById[attributeId])
                         ? (attributeDetailsById[attributeId].linked_library ?? undefined)
                         : undefined, // TODO : https://aristid.atlassian.net/browse/XSTREAM-1155
@@ -158,7 +158,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                                                     ...activeFilter.attribute,
                                                     ...attributeDetailsById[activeFilter?.attribute?.id]
                                                 }
-                                            } as ExplorerFilter
+                                            } as UIFilter
                                         }
                                     />
                                 </FilterListItem>

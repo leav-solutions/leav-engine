@@ -3,11 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {FilterDropDown} from './FilterDropDown';
-import {type ExplorerFilter} from '../../../_types';
-import {type FunctionComponent, useReducer} from 'react';
-import {type IViewSettingsState, viewSettingsReducer} from '../../store-view-settings/viewSettingsReducer';
-import {ViewSettingsContext} from '../../store-view-settings/ViewSettingsContext';
-import {viewSettingsInitialState} from '../../store-view-settings/viewSettingsInitialState';
+import {type UIFilter} from '../../_types';
 import {AttributeFormat, AttributeType, RecordFilterCondition} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
@@ -16,15 +12,8 @@ jest.mock('_ui/hooks/useSharedTranslation', () => ({
     useSharedTranslation: jest.fn()
 }));
 
-const MockViewSettingsContextProvider: FunctionComponent<{
-    viewMock: IViewSettingsState;
-}> = ({viewMock, children}) => {
-    const [view, dispatch] = useReducer(viewSettingsReducer, viewMock);
-    return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
-};
-
 describe('FilterDropDown', () => {
-    const mockFilter: ExplorerFilter = {
+    const mockFilter: UIFilter = {
         id: 'test',
         attribute: {
             id: 'test_filter',
@@ -51,22 +40,14 @@ describe('FilterDropDown', () => {
         });
     });
 
-    test('should not show delete button when enableConfigureView is false', async () => {
-        render(
-            <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
-                <FilterDropDown filter={mockFilter} />
-            </MockViewSettingsContextProvider>
-        );
+    test('should not show delete button when canRemove is false', async () => {
+        render(<FilterDropDown filter={mockFilter} canRemove={false} />);
 
         expect(screen.queryByText('global.delete')).not.toBeInTheDocument();
     });
 
     test('should show delete button when enableConfigureView is true', async () => {
-        render(
-            <MockViewSettingsContextProvider viewMock={{...viewSettingsInitialState, enableConfigureView: true}}>
-                <FilterDropDown filter={mockFilter} />
-            </MockViewSettingsContextProvider>
-        );
+        render(<FilterDropDown filter={mockFilter} canRemove={true} />);
 
         expect(screen.getByText('global.delete')).toBeInTheDocument();
     });

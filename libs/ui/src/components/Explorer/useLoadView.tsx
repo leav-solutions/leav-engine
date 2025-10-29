@@ -4,16 +4,20 @@
 import {useExplorerAttributesLazyQuery, useMeQuery} from '_ui/_gqlTypes';
 import {useRef} from 'react';
 import {useViewSettingsContext} from './manage-view-settings/store-view-settings/useViewSettingsContext';
-import {type IUserView, type ValidFilter} from './_types';
+import {type IUserView} from './_types';
 import {useEditSettings, ViewSettingsActionTypes} from './manage-view-settings';
-import {useTransformFilters, type ValidFiltersArgument} from './manage-view-settings/_shared/useTransformFilters';
 import {mapViewTypeFromExplorerToLegacy, mapViewTypeFromLegacyToExplorer} from './_constants';
 import {type IViewSettingsActionLoadViewPayload} from './manage-view-settings/store-view-settings/viewSettingsReducer';
+import {useTransformFilters, type ValidFiltersArgument} from '_ui/components/Filters/useTransformFilters';
+import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
+import {FiltersActionTypes} from '_ui/components/Filters/context/filtersReducer';
+import {type ValidFilter} from '../Filters/_types';
 
 export const useLoadView = () => {
     const {view, dispatch} = useViewSettingsContext();
+    const {dispatch: filtersDispatch} = useFiltersContext();
     const {closeSettingsPanel} = useEditSettings();
-    const {toExplorerFilters, toValidFilters} = useTransformFilters();
+    const {toUIFilters, toValidFilters} = useTransformFilters();
     const currentView = useRef<IUserView | null>(null);
 
     const [fetchAttributes] = useExplorerAttributesLazyQuery({
@@ -46,7 +50,7 @@ export const useLoadView = () => {
             currentView.current = viewData;
 
             const attributesToHydrate = [
-                ...new Set([...(viewData?.sort ?? []), ...(viewData?.sort ?? [])].map(({field}) => field))
+                ...new Set([...(viewData?.filters ?? []), ...(viewData?.sort ?? [])].map(({field}) => field))
             ];
 
             const fetchAttributesResult = await fetchAttributes({
@@ -72,16 +76,20 @@ export const useLoadView = () => {
                 sort: (currentView.current?.sort ?? []).map(s => ({
                     field: s.field,
                     order: s.order
-                })),
-                filters: toExplorerFilters({
-                    filters: toValidFilters((currentView.current?.filters as ValidFiltersArgument) ?? []),
-                    attributesDataById
-                })
+                }))
             };
 
             dispatch({
                 type: ViewSettingsActionTypes.LOAD_VIEW,
                 payload: viewSettings
+            });
+            filtersDispatch({
+                type: FiltersActionTypes.LOAD_VIEW,
+                payload: {
+                    viewId: currentView.current?.id ?? null,
+                    filters: [],
+                    attributesDataById
+                }
             });
         }
     };

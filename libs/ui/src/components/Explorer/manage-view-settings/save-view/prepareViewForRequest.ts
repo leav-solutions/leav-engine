@@ -3,17 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type RecordFilterInput, type ViewInput} from '_ui/_gqlTypes';
 import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
-import {isExplorerFilterThrough, isExplorerFilterTree, isExplorerFilterValueList} from '../../_types';
 import {type IViewSettingsState} from '../store-view-settings/viewSettingsReducer';
+import {isUIFilterTree, isUIFilterThrough, isUIFilterValueList, type UIFilter} from '_ui/components/Filters/_types';
 
-export const prepareViewForRequest = (view: IViewSettingsState, label: Record<string, string>): ViewInput => ({
+export const prepareViewForRequest = (
+    view: IViewSettingsState,
+    filters: UIFilter[],
+    label: Record<string, string>
+): ViewInput => ({
     library: view.libraryId,
     shared: false,
     display: {
         type: mapViewTypeFromExplorerToLegacy[view.viewType]
     },
-    filters: view.filters.map((filter): RecordFilterInput => {
-        if (isExplorerFilterTree(filter)) {
+    filters: filters.map((filter): RecordFilterInput => {
+        if (isUIFilterTree(filter)) {
             return {
                 // TODO save filter.field, but need to handle Through an other way in useTransformFilters.toValidFilters to keep that field as saved
                 field: filter.attribute.id,
@@ -22,7 +26,7 @@ export const prepareViewForRequest = (view: IViewSettingsState, label: Record<st
                 condition: filter.condition
             };
         }
-        if (isExplorerFilterThrough(filter)) {
+        if (isUIFilterThrough(filter)) {
             return {
                 field: `${filter.field}.${filter.subField}`,
                 value: filter.value,
@@ -30,7 +34,7 @@ export const prepareViewForRequest = (view: IViewSettingsState, label: Record<st
             };
         }
 
-        if (isExplorerFilterValueList(filter)) {
+        if (isUIFilterValueList(filter)) {
             return {
                 // TODO save filter.field, but need to handle Through an other way in useTransformFilters.toValidFilters to keep that field as saved
                 field: filter.attribute.id,
