@@ -21,3 +21,4 @@ Decision taken
 ## Decisions log
 
 1. [Drag and drop library](ADR-001-dnd.md)
+2. [E2E forms test](ADR-002-tests-e2e-forms.md)
