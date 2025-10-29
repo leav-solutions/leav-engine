@@ -464,6 +464,8 @@ export default function ({
         if (config.tasksManager.restartWorker) {
             await _exit();
         }
+
+        await _listenExecOrders();
     };
 
     const _sendOrder = async (routingKey: string, payload: Payload, ctx: IQueryInfos): Promise<void> => {
