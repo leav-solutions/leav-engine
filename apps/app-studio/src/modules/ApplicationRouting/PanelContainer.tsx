@@ -94,7 +94,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                       <KitSidePanel
                           className={selfContainingPanel}
                           ref={refPanel}
-                          size="m"
+                          size="l"
                           onCloseAfterAnimation={closeContainer}
                           floating
                           useChildrenOnly
@@ -108,7 +108,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                               [sliderFormPanel]: isFormPanel
                           })}
                           ref={refPanel}
-                          size="m"
+                          size="l"
                           headerExtra={<PanelHeader enabled />}
                           onCloseAfterAnimation={closeContainer}
                           floating
