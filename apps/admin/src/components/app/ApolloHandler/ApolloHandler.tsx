@@ -94,7 +94,9 @@ const ApolloHandler: FunctionComponent = ({children}) => {
 
     const wsLink = new GraphQLWsLink(
         createClient({
-            url: `${WS_URL}/${API_ENDPOINT}`
+            url: `${WS_URL}/${API_ENDPOINT}`,
+            retryAttempts: Infinity,
+            shouldRetry: () => true
         })
     );
 
@@ -112,7 +114,8 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             splitLink,
             _mutationsWatcherLink,
             new HttpLink({
-                uri: (operation: Operation) => `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}&opName=${operation.operationName}`,
+                uri: (operation: Operation) =>
+                    `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}&opName=${operation.operationName}`,
                 fetch
             })
         ]),

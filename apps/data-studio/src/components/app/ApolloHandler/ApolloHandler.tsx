@@ -90,7 +90,9 @@ const ApolloHandler: FunctionComponent = ({children}) => {
 
     const wsLink = new GraphQLWsLink(
         createClient({
-            url: `${WS_URL}/${API_ENDPOINT}`
+            url: `${WS_URL}/${API_ENDPOINT}`,
+            retryAttempts: Infinity,
+            shouldRetry: () => true
         })
     );
 
