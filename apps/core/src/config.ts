@@ -166,7 +166,7 @@ export const validateConfig = (conf: IConfig) => {
                 pubsub_events: Joi.string().required()
             }),
             queues: Joi.object().keys({
-                pubsub_events: Joi.string().required()
+                pubsub_events_prefix: Joi.string().required()
             })
         }),
         debug: Joi.boolean(),

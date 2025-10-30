@@ -203,8 +203,8 @@ services:
       - *volume-ui-modules
       - *volume-utils-modules
     ports:
-      - "9229:9229"
-      - "4001:4001"
+      - "9229"
+      - "4001"
     working_dir: *dir-core
     healthcheck: *healthcheck-localhost-44444
     depends_on:

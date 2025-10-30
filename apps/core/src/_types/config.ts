@@ -87,22 +87,22 @@ export interface IAuth {
     resetPasswordExpiration: string;
     oidc:
         | {
-              enable: false;
-              wellKnownEndpoint?: string;
-              clientId?: string;
-              postLogoutRedirectUri?: string;
-              skipLogoutConfirmationPage?: boolean;
-              idTokenUserClaim?: string;
-          }
+        enable: false;
+        wellKnownEndpoint?: string;
+        clientId?: string;
+        postLogoutRedirectUri?: string;
+        skipLogoutConfirmationPage?: boolean;
+        idTokenUserClaim?: string;
+    }
         | {
-              enable: true;
-              wellKnownEndpoint: string;
-              clientId: string;
-              postLogoutRedirectUri: string;
-              skipLogoutConfirmationPage?: boolean;
-              idTokenUserClaim: string;
-              enableAutoProvisioning: boolean;
-          };
+        enable: true;
+        wellKnownEndpoint: string;
+        clientId: string;
+        postLogoutRedirectUri: string;
+        skipLogoutConfirmationPage?: boolean;
+        idTokenUserClaim: string;
+        enableAutoProvisioning: boolean;
+    };
     testApiKey?: string;
 }
 
@@ -176,7 +176,7 @@ export interface IEventsManager {
         pubsub_events: string;
     };
     queues: {
-        pubsub_events: string;
+        pubsub_events_prefix: string;
     };
 }
 

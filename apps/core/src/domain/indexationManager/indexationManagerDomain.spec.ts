@@ -78,7 +78,7 @@ describe('Indexation Manager', () => {
         },
         eventsManager: {
             routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'},
-            queues: {pubsub_events: 'test_pubsub_events'}
+            queues: {pubsub_events_prefix: 'test_pubsub_events-'}
         }
     };
 

@@ -208,10 +208,10 @@ export default function ({
                                     apiKey: apiKeyIncluded ? ctx.extra.request.url.split('key=')[1] : null,
                                     cookies: cookieIncluded
                                         ? {
-                                              [ACCESS_TOKEN_COOKIE_NAME]: _extractAccessTokenFromCookiesString(
-                                                  headers.Cookie
-                                              )
-                                          }
+                                            [ACCESS_TOKEN_COOKIE_NAME]: _extractAccessTokenFromCookiesString(
+                                                headers.Cookie
+                                            )
+                                        }
                                         : null,
                                     headers
                                 },

@@ -71,7 +71,7 @@ describe('Events Manager', () => {
                 pubsub_events: 'test.pubsub.events'
             },
             queues: {
-                pubsub_events: 'test_pubsub_events'
+                pubsub_events_prefix: 'test_pubsub_events-'
             }
         }
     };

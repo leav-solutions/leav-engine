@@ -24,7 +24,6 @@ import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import libraryDomain, {type ILibraryDomainDeps} from './libraryDomain';
-import {deleteAssociatedValues} from './helpers';
 import {type IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
 import {type IUpdateAssociatedFormsHelper} from './helpers/updateAssociatedForms';
 

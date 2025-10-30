@@ -12,11 +12,11 @@ import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {Errors} from '../../_types/errors';
 import {type IDbPayloadInternal} from '_types/events';
+import * as crypto from "node:crypto";
 
 export interface IEventsManagerDomain {
     sendDatabaseEvent<DBPayloadAction extends EventAction>(
         payload: IDbPayloadInternal<DBPayloadAction>,
-
         ctx: IQueryInfos
     ): Promise<void>;
     sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void>;
@@ -111,16 +111,20 @@ export default function ({
 
     return {
         async initPubSubEventsConsumer() {
+            // Generate a unique queue name to allow each instance to receive all events
+            // It's used for websocket to ensure each instance forward subscribed events for theirs current websoket connections
+            const uniqueQueueName = `${config.instanceId}_${config.eventsManager.queues.pubsub_events_prefix}-${crypto.randomUUID()}`;
             // listening pubsub events
-            await amqpService.consumer.channel.assertQueue(config.eventsManager.queues.pubsub_events);
+            await amqpService.consumer.channel.assertQueue(uniqueQueueName,
+                {durable: false, autoDelete: true});
             await amqpService.consumer.channel.bindQueue(
-                config.eventsManager.queues.pubsub_events,
+                uniqueQueueName,
                 config.amqp.exchange,
                 config.eventsManager.routingKeys.pubsub_events
             );
 
             await amqpService.consume(
-                config.eventsManager.queues.pubsub_events,
+                uniqueQueueName,
                 config.eventsManager.routingKeys.pubsub_events,
                 _onPubSubMessage
             );

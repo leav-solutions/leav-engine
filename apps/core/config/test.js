@@ -34,7 +34,7 @@ module.exports = {
             pubsub_events: 'test_pubsub.events'
         },
         queues: {
-            pubsub_events: 'test_pubsub_events'
+            pubsub_events_prefix: 'test_pubsub_events-'
         }
     },
     indexationManager: {

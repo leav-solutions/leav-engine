@@ -158,7 +158,8 @@ module.exports = {
             pubsub_events: 'pubsub.events'
         },
         queues: {
-            pubsub_events: 'pubsub_events'
+            // Used to create a queue by instance to deliver websocket for all clients
+            pubsub_events_prefix: 'pubsub_events-'
         }
     },
     indexationManager: {
