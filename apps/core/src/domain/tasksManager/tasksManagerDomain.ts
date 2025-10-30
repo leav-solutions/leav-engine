@@ -99,6 +99,9 @@ export default function ({
 }: ITasksManagerDomainDeps): ITasksManagerDomain {
     const tag = `${process.pid}_${nanoid(3)}`;
 
+    // Protect multiple listeners in worker mode, to allow listen after cancel task
+    let workerListeningExecOrders = false;
+
     // Ensure a worker process only exec one job at a time to avoid stuck other running job when one is finish and trigger worker process restart, if options enabled
     if (config.tasksManager.restartWorker && config.tasksManager.workerPrefetch !== 1) {
         throw new Error('Restart worker allowed only when worker prefetch is 1');
@@ -427,6 +430,7 @@ export default function ({
 
         // We stop listening to the execution order queue because if we ack the message we receive a new task.
         // We can't wait for the task to finish before the ack because it can be long and exceed the rabbitmq timeout.
+        workerListeningExecOrders = false;
         amqpService.consumer.channel.cancel(tag);
         amqpService.consumer.channel.ack(msg);
 
@@ -485,6 +489,11 @@ export default function ({
     };
 
     const _listenExecOrders = async () => {
+        if (workerListeningExecOrders) {
+            return;
+        }
+        workerListeningExecOrders = true;
+
         await amqpService.consumer.channel.assertQueue(config.tasksManager.queues.execOrders);
 
         await amqpService.consume(
