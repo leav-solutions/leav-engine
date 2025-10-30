@@ -4,7 +4,7 @@
 import {gql} from '@apollo/client';
 
 export const exportQuery = gql`
-    query EXPORT($library: ID!, $attributes: [ID!], $filters: [RecordFilterInput!]) {
-        export(library: $library, attributes: $attributes, filters: $filters)
+    query EXPORT($library: ID!, $attributes: [ID!], $filters: [RecordFilterInput!], $profile: String) {
+        export(library: $library, attributes: $attributes, filters: $filters, profile: $profile)
     }
 `;

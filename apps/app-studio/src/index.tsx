@@ -15,23 +15,26 @@ import {InitLayout} from './modules/layout/InitLayout';
 import {InitApplicationRouter} from './modules/ApplicationRouting/InitApplicationRouter';
 import {BugsnagErrorBoundary} from './BugsnagErrorBoundary';
 import './index.css';
+import {InitNotificationsSubscription} from '@leav/ui';
 
 export const Index: FunctionComponent = () => (
     <InitNetwork>
         <InitTranslation>
             <InitUser>
                 <InitTheme>
-                    <InitRouting>
-                        <InitApplicationSettingProvider>
-                            <InitDocumentTitle>
-                                <GuardAccess>
-                                    <InitLayout>
-                                        <InitApplicationRouter />
-                                    </InitLayout>
-                                </GuardAccess>
-                            </InitDocumentTitle>
-                        </InitApplicationSettingProvider>
-                    </InitRouting>
+                    <InitNotificationsSubscription>
+                        <InitRouting>
+                            <InitApplicationSettingProvider>
+                                <InitDocumentTitle>
+                                    <GuardAccess>
+                                        <InitLayout>
+                                            <InitApplicationRouter />
+                                        </InitLayout>
+                                    </GuardAccess>
+                                </InitDocumentTitle>
+                            </InitApplicationSettingProvider>
+                        </InitRouting>
+                    </InitNotificationsSubscription>
                 </InitTheme>
             </InitUser>
         </InitTranslation>

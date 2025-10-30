@@ -30,7 +30,7 @@ export const LibraryExplorerPropsSchema = CommonExplorerPropsSchema.extend({
     defaultActionsForItem: z
         .array(z.union([z.literal('replaceLink'), z.literal('remove'), z.literal('activate')]))
         .optional(),
-    defaultMassActions: z.array(z.union([z.literal('deactivate')])).optional()
+    defaultMassActions: z.array(z.union([z.literal('deactivate'), z.literal('export')])).optional()
 });
 
 export const ItemActionsSchema = z

@@ -41,6 +41,7 @@ import {useReplaceItemAction} from './actions-item/useReplaceItemAction';
 import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
 import {useFiltersReducer} from '_ui/components/Filters/context/useFiltersReducer';
 import {FiltersContext} from '_ui/components/Filters/context/filtersContext';
+import {useExportMassAction} from './actions-mass/useExportMassAction';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -79,7 +80,7 @@ export interface IExplorerProps {
     emptyPlaceholder?: ReactNode;
     defaultActionsForItem?: Array<'replaceLink' | 'remove' | 'activate'>;
     defaultPrimaryActions?: Array<'create'>;
-    defaultMassActions?: Array<'deactivate'>;
+    defaultMassActions?: Array<'deactivate' | 'export'>;
     defaultViewSettings?: DefaultViewSettings;
     defaultCallbacks?: {
         item?: {
@@ -99,6 +100,7 @@ export interface IExplorerProps {
         };
         mass?: {
             deactivate?: IMassActions['callback'];
+            export?: IMassActions['callback'];
         };
     };
     showCreateOnNoResultOnly?: boolean;
@@ -251,6 +253,13 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
 
+        const {exportMassAction} = useExportMassAction({
+            isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('export'),
+            store: {view, dispatch: viewSettingsDispatch},
+            totalCount,
+            onExport: defaultCallbacks?.mass?.export
+        });
+
         const {deactivateMassAction} = useDeactivateMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
             store: {view, dispatch: viewSettingsDispatch},
@@ -281,7 +290,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             filtersStore: filtersData,
             totalCount,
             allVisibleKeys,
-            massActions: [deactivateMassAction, unlinkMassAction, ...massActions].filter(Boolean),
+            massActions: [exportMassAction, deactivateMassAction, unlinkMassAction, ...massActions].filter(Boolean),
             snackbarId: massActionSnackbarId
         });
 

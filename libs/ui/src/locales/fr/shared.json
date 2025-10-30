@@ -746,6 +746,12 @@
             "deactivate": "Supprimer",
             "deactivate_message": "Élements supprimés",
             "deactivate_description": "{{count, number}}/{{total, number}} éléments pour lesquels vous disposez des permissions nécessaires ont été supprimés. Les autres éléments restent inchangés.",
+            "export": "Exporter",
+            "export_message": "Élements exportés",
+            "export_description": "{{total, number}} éléments vont être exportés.",
+            "export_confirm": "Êtes-vous sûr de vouloir exporter ces éléments ?",
+            "export_error_description": "Une erreur s'est produite lors de l'exportation des enregistrements sélectionnés.",
+            "export_config_error_description": "Aucun profil configuré sur la librairie {{library}}. Veuillez contacter un administrateur.",
             "add-link": "Ajouter",
             "replace-link": "Remplacer",
             "toggle_selection": {

@@ -17,7 +17,7 @@ import {type IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import type * as Config from '../../_types/config';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
-import {ErrorTypes, Errors} from '../../_types/errors';
+import {Errors, ErrorTypes} from '../../_types/errors';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IRecord, type IRecordFilterLight} from '../../_types/record';
 import {type ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
@@ -26,9 +26,12 @@ import {type IValidateHelper} from '../helpers/validate';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import LeavError from '../../errors/LeavError';
 import {type INotificationDomain} from 'domain/notification/notificationDomain';
+import {type IExportProfileDomain} from './exportProfileDomain';
+import CustomConfigError from '../../errors/CustomConfigError';
 
 export interface IExportParams {
     library: string;
+    profile: string;
     attributes: string[];
     filters?: IRecordFilterLight[];
     ctx: IQueryInfos;
@@ -59,6 +62,7 @@ export interface IExportDomainDeps {
     'core.domain.helpers.updateTaskProgress': UpdateTaskProgress;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.notification': INotificationDomain;
+    'core.domain.export.exportProfile': IExportProfileDomain;
     'core.utils': IUtils;
     translator: i18n;
     config: Config.IConfig;
@@ -74,6 +78,7 @@ export default function ({
     'core.domain.helpers.updateTaskProgress': updateTaskProgress,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.domain.notification': notificationDomain,
+    'core.domain.export.exportProfile': exportProfileDomain,
     'core.utils': utils,
     translator
 }: IExportDomainDeps): IExportDomain {
@@ -227,6 +232,26 @@ export default function ({
         return values.join(',');
     };
 
+    const _extractAttributesAndColumnsFromProfile = async (
+        profile: string,
+        library: string,
+        ctx: IQueryInfos
+    ): Promise<[attributes: string[], columnLabels: string[]] | undefined> => {
+        if (profile) {
+            const columns = await exportProfileDomain.getColumnsFromProfileConfig(profile, library, ctx);
+            const attributes = columns?.map(c => c.attribute);
+            const columnLabels = columns?.map(c => c.columnLabel);
+
+            if (!attributes) {
+                throw new CustomConfigError('No attributes provided for exportExcel function');
+            }
+
+            return [attributes, columnLabels];
+        }
+
+        return undefined;
+    };
+
     return {
         async exportData(
             mapping: IExportMapping,
@@ -261,8 +286,17 @@ export default function ({
                 )
             );
         },
+
         async exportExcel(params: IExportParams, task?: ITaskFuncParams): Promise<string> {
-            const {library, attributes, filters, ctx} = params;
+            const {library, profile, filters, ctx} = params;
+
+            // If we found a profile, extract attributes and column labels from it
+            // This code has to be executed before the export, to notify the user if the profile is not valid
+            const [attributes, columnLabels] = (await _extractAttributesAndColumnsFromProfile(
+                profile,
+                library,
+                ctx
+            )) ?? [params.attributes];
 
             if (typeof task?.id === 'undefined') {
                 const newTaskId = uuidv4();
@@ -336,7 +370,10 @@ export default function ({
                 await validateHelper.validateLibrary(library, ctx);
                 const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
                 const libraryAttributesIds = libraryAttributes.map(a => a.id);
-                const invalidAttributes = firstAttributes.filter(a => !libraryAttributesIds.includes(a));
+                // Filter out empty/null attributes before validation
+                const invalidAttributes = firstAttributes.filter(
+                    a => a && a !== '' && !libraryAttributesIds.includes(a)
+                );
                 if (invalidAttributes.length) {
                     throw utils.generateExplicitValidationError(
                         'attributes',
@@ -366,8 +403,16 @@ export default function ({
                 // Set columns
                 const columns = [];
                 const labels = {};
-                for (const a of attributes) {
-                    columns.push({header: a, key: a});
+
+                for (const [index, a] of attributes.entries()) {
+                    columns.push({header: columnLabels?.[index] || a, key: a});
+
+                    // Skip API fetch for empty or null attributes
+                    if (!a || a === '') {
+                        labels[a] = columnLabels[index] || '';
+                        continue;
+                    }
+
                     const attributeProps = await attributeDomain.getAttributeProperties({id: a.split('.').pop(), ctx});
                     labels[a] =
                         attributeProps?.label[ctx?.lang] ||
@@ -383,6 +428,14 @@ export default function ({
                     const subset = pick(record, firstAttributes);
 
                     for (const attr of attrsSplited) {
+                        const attrKey = attr.join('.');
+
+                        // Skip API fetch for empty or null attributes
+                        if (!attrKey || attrKey === '') {
+                            subset[attrKey] = '';
+                            continue;
+                        }
+
                         // get values of full path attribute
                         const fieldValues = await _getRecFieldValue([record], attr, ctx);
 
@@ -398,7 +451,7 @@ export default function ({
                         );
 
                         // set value(s) and concat them if there are several
-                        subset[attr.join('.')] = value.map(v => v.payload).join(' | ');
+                        subset[attrKey] = value.map(v => v.payload).join(' | ');
                     }
 
                     // Add subset object record on excel row document

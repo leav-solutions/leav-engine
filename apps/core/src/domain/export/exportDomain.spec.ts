@@ -15,6 +15,7 @@ const depsBase: ToAny<IExportDomainDeps> = {
     'core.domain.library': jest.fn(),
     'core.domain.tasksManager': jest.fn(),
     'core.domain.helpers.validate': jest.fn(),
+    'core.domain.export.exportProfile': jest.fn(),
     'core.domain.helpers.updateTaskProgress': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     'core.domain.notification': jest.fn(),

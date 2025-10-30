@@ -17,14 +17,14 @@ export default function ({'core.domain.export': exportDomain}: IDeps): ICoreExpo
             const baseSchema = {
                 typeDefs: `
                     extend type Query {
-                        export(library: ID!,  attributes: [ID!], filters: [RecordFilterInput], startAt: Int): String!
+                        export(library: ID!,  attributes: [ID!], filters: [RecordFilterInput], startAt: Float, profile: String): String!
                     }
                 `,
                 resolvers: {
                     Query: {
-                        async export(parent, {library, attributes, filters, startAt}, ctx): Promise<string> {
+                        async export(parent, {library, attributes, filters, startAt, profile}, ctx): Promise<string> {
                             return exportDomain.exportExcel(
-                                {library, attributes, filters, ctx},
+                                {library, attributes, filters, ctx, profile},
                                 {
                                     ...(!!startAt && {startAt})
                                 }

@@ -202,12 +202,9 @@ export enum AvailableLanguage {
 
 export type CampaignToRenew = {
   category?: InputMaybe<Scalars['String']>;
-  circuitTypes?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   endDate: Scalars['String'];
   id: Scalars['String'];
   label: Scalars['String'];
-  mixed: Scalars['Boolean'];
-  opTrade?: InputMaybe<Scalars['String']>;
   startDate: Scalars['String'];
   thematics?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   type?: InputMaybe<Scalars['String']>;
@@ -1161,6 +1158,7 @@ export type ExportQueryVariables = Exact<{
   library: Scalars['ID'];
   attributes?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
   filters?: InputMaybe<Array<RecordFilterInput> | RecordFilterInput>;
+  profile?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -2904,8 +2902,13 @@ export type SaveAttributeMutationHookResult = ReturnType<typeof useSaveAttribute
 export type SaveAttributeMutationResult = Apollo.MutationResult<SaveAttributeMutation>;
 export type SaveAttributeMutationOptions = Apollo.BaseMutationOptions<SaveAttributeMutation, SaveAttributeMutationVariables>;
 export const ExportDocument = gql`
-    query EXPORT($library: ID!, $attributes: [ID!], $filters: [RecordFilterInput!]) {
-  export(library: $library, attributes: $attributes, filters: $filters)
+    query EXPORT($library: ID!, $attributes: [ID!], $filters: [RecordFilterInput!], $profile: String) {
+  export(
+    library: $library
+    attributes: $attributes
+    filters: $filters
+    profile: $profile
+  )
 }
     `;
 
@@ -2924,6 +2927,7 @@ export const ExportDocument = gql`
  *      library: // value for 'library'
  *      attributes: // value for 'attributes'
  *      filters: // value for 'filters'
+ *      profile: // value for 'profile'
  *   },
  * });
  */

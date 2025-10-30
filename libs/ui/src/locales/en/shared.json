@@ -746,6 +746,12 @@
             "deactivate": "Deactivate",
             "deactivate_message": "Elements deleted",
             "deactivate_description": "{{count, number}}/{{total, number}} element for which you have permissions have been deleted. Others remain unchanged.",
+            "export": "Export",
+            "export_message": "Elements exported",
+            "export_description": "{{total, number}} elements will be exported.",
+            "export_confirm": "Do you really want to export the selected records ?",
+            "export_error_description": "An error occurred while exporting the selected records.",
+            "export_config_error_description": "No profile configured on {{library}} library. Please contact an administrator.",
             "add-link": "Add",
             "replace-link": "Replace",
             "toggle_selection": {
