@@ -3,9 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IDbService} from 'infra/db/dbService';
 import {type IRedis} from '../../infra/cache/redis';
+import {type IGlobalThis} from './integrationTestUtils';
+
+declare const globalThis: IGlobalThis;
 
 export default async function () {
     try {
+        // TODO improve master and worker stop, remove rabbitmq consumers ...
+        clearInterval(globalThis.taskManagerMasterTimer);
+
         const dbService: IDbService = globalThis.coreContainer?.cradle['core.infra.db.dbService'];
         if (dbService?.db) {
             dbService.db.close();

@@ -4,7 +4,7 @@
 import {type ITasksManagerApp} from 'app/core/tasksManagerApp';
 
 export interface ITasksManagerInterface {
-    initMaster(): Promise<NodeJS.Timer>;
+    initMaster(): Promise<NodeJS.Timeout>;
     initWorker(): Promise<void>;
 }
 

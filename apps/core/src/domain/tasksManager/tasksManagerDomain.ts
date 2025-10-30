@@ -60,7 +60,7 @@ interface IGetTasksParams extends IGetCoreEntitiesParams {
 }
 
 export interface ITasksManagerDomain {
-    initMaster(): Promise<NodeJS.Timer>;
+    initMaster(): Promise<NodeJS.Timeout>;
     initWorker(): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
     setLink(taskId: string, link: {name: string; url: string}, ctx: IQueryInfos): Promise<void>;
@@ -99,7 +99,12 @@ export default function ({
 }: ITasksManagerDomainDeps): ITasksManagerDomain {
     const tag = `${process.pid}_${nanoid(3)}`;
 
-    const _monitorTasks = (ctx: IQueryInfos): NodeJS.Timer =>
+    // Ensure a worker process only exec one job at a time to avoid stuck other running job when one is finish and trigger worker process restart, if options enabled
+    if (config.tasksManager.restartWorker && config.tasksManager.workerPrefetch !== 1) {
+        throw new Error('Restart worker allowed only when worker prefetch is 1');
+    }
+
+    const _monitorTasks = (ctx: IQueryInfos): NodeJS.Timeout =>
         // check if tasks waiting for execution and execute them
         setInterval(async () => {
             try {
@@ -125,9 +130,15 @@ export default function ({
         }, config.tasksManager.checkingInterval);
 
     const _executeTask = async (task: ITask, ctx: IQueryInfos): Promise<ITask> => {
+        logger.debug(`Executing task ${task.id}...`);
         await _updateTask(
             task.id,
-            {startedAt: utils.getUnixTime(), status: TaskStatus.RUNNING, progress: {percent: 0}},
+            {
+                startedAt: utils.getUnixTime(),
+                status: TaskStatus.RUNNING,
+                progress: {percent: 0},
+                ..._attachWorker(process.pid)
+            },
             ctx
         );
 
@@ -143,6 +154,7 @@ export default function ({
 
             await func(task.func.args, {id: task.id});
 
+            logger.debug(`Task ${task.id} done`);
             status = TaskStatus.DONE;
         } catch (e) {
             logger.error(`Error executing task ${task.id} because ${e.stack}`);
@@ -171,7 +183,8 @@ export default function ({
             {
                 ...progress,
                 completedAt: utils.getUnixTime(),
-                status
+                status,
+                ..._detachWorker()
             },
             ctx
         );
@@ -296,13 +309,9 @@ export default function ({
         return task;
     };
 
-    const _attachWorker = async (taskId: string, workerId: number, ctx: IQueryInfos): Promise<void> => {
-        await _updateTask(taskId, {workerId}, ctx);
-    };
+    const _attachWorker = (workerId: number): Pick<ITask, 'workerId'> => ({workerId});
 
-    const _detachWorker = async (taskId: string, ctx: IQueryInfos): Promise<void> => {
-        await _updateTask(taskId, {workerId: null}, ctx);
-    };
+    const _detachWorker = (): Pick<ITask, 'workerId'> => ({workerId: null});
 
     const _taskWithPublicLinkUrl = (task: ITask): ITask => ({
         ...task,
@@ -416,9 +425,6 @@ export default function ({
             amqpService.consumer.channel.ack(msg);
         }
 
-        // create new ctx for each task execution
-        const workerCtx = getSystemQueryContext('tasksManager:worker:execMessage');
-
         // We stop listening to the execution order queue because if we ack the message we receive a new task.
         // We can't wait for the task to finish before the ack because it can be long and exceed the rabbitmq timeout.
         amqpService.consumer.channel.cancel(tag);
@@ -426,9 +432,7 @@ export default function ({
 
         const task = order.payload as ITask;
 
-        await _attachWorker(task.id, process.pid, workerCtx);
         await _executeTask(task, {userId: task.created_by});
-        await _detachWorker(task.id, workerCtx);
 
         if (config.tasksManager.restartWorker) {
             return _exit();
@@ -458,8 +462,12 @@ export default function ({
             return;
         }
 
-        await _updateTask(task.id, {completedAt: utils.getUnixTime(), status: TaskStatus.CANCELED}, workerCtx);
-        await _detachWorker(task.id, workerCtx);
+        logger.debug(`Cancelling task ${task.id}...`);
+        await _updateTask(
+            task.id,
+            {completedAt: utils.getUnixTime(), status: TaskStatus.CANCELED, ..._detachWorker()},
+            workerCtx
+        );
 
         if (config.tasksManager.restartWorker) {
             await _exit();
@@ -513,7 +521,7 @@ export default function ({
             );
         },
         // Master
-        async initMaster(): Promise<NodeJS.Timer> {
+        async initMaster(): Promise<NodeJS.Timeout> {
             // Create exec queue
             await amqpService.consumer.channel.assertQueue(config.tasksManager.queues.execOrders);
             await amqpService.consumer.channel.bindQueue(

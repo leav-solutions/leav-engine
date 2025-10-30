@@ -19,7 +19,7 @@ import {type ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasks
 import {type IGraphqlAppModule} from 'app/graphql/graphqlApp';
 
 export interface ITasksManagerApp extends IGraphqlAppModule {
-    initMaster(): Promise<NodeJS.Timer>;
+    initMaster(): Promise<NodeJS.Timeout>;
     initWorker(): Promise<void>;
 }
 
