@@ -323,7 +323,7 @@ export default function ({
 
                 const server = new ApolloServer<IQueryInfos>({
                     // Hiding error details in production is handled in _handleError
-                    includeStacktraceInErrorResponses: true,
+                    includeStacktraceInErrorResponses: config.debug,
                     introspection: config.server.allowIntrospection,
                     schema,
                     plugins,
