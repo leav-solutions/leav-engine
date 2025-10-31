@@ -27,7 +27,17 @@ export const LibraryIdCard: FunctionComponent<ILibraryIdCardProps> = ({title, li
     const libraryLabel = localizedTranslation(data?.libraries?.list?.[0]?.label, lang);
 
     if (title) {
-        return <KitIdCard size="s" title={title} />;
+        return (
+            <KitIdCard
+                size="s"
+                title={title}
+                avatarProps={{
+                    shape: 'square',
+                    label: libraryLabel,
+                    size: avatarSize
+                }}
+            />
+        );
     }
 
     if (libraryId === null) {

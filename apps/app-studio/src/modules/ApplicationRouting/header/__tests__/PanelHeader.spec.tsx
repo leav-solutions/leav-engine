@@ -58,7 +58,7 @@ describe('PanelHeader', () => {
             {
                 libraryId: 'test',
                 currentRecordId: '1234567890',
-                avatarSize: 'm'
+                avatarSize: 'l'
             },
             {}
         );
@@ -76,7 +76,7 @@ describe('PanelHeader', () => {
             {
                 libraryId: 'test',
                 currentRecordId: '1234567890',
-                avatarSize: 'm'
+                avatarSize: 'l'
             },
             {}
         );
@@ -105,7 +105,7 @@ describe('PanelHeader', () => {
             {
                 libraryId: 'test',
                 title: 'un',
-                avatarSize: 'm'
+                avatarSize: 'l'
             },
             {}
         );

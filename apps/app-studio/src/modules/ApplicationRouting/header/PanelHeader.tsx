@@ -20,7 +20,7 @@ export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?:
 
     const {libraryId, panelType, currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
 
-    const avatarSize = where === 'fullpage' ? 'l' : 'm';
+    const avatarSize = !where || where === 'fullpage' ? 'l' : 'm';
 
     if (!enabled) {
         return null;
