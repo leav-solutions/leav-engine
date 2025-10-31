@@ -25,3 +25,16 @@ export function envToNumber(value: string, defaultValue = 0) {
     const v = Number(value);
     return Number.isNaN(v) ? defaultValue : v;
 }
+
+/**
+ * To convert process.env string to string array
+ */
+export function envToStringArray(value: string, separator = ',', defaultValue: string[] = []) {
+    if (typeof value !== 'string' || value.trim() === '') {
+        return defaultValue;
+    }
+    return value
+        .split(separator)
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+}

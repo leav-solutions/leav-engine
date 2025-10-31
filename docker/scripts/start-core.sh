@@ -1,6 +1,6 @@
 YARN_INSTALL_DONE=node_modules/.yarn_install_done
 ROOT_YARN_LOCK=../../yarn.lock
-PLUGINS_PATH=./src/plugins
+PLUGINS_DIR_PATH=./src/plugins
 PLUGINS_YARN_LOCK=yarn.lock
 
 # Install dependencies
@@ -14,7 +14,7 @@ else
 fi
 
 # Install plugins dependencies
-find $PLUGINS_PATH -name package.json -not -path "*/node_modules/*" | while read -r pkg_file; do
+find $PLUGINS_DIR_PATH -name package.json -not -path "*/node_modules/*" | while read -r pkg_file; do
   plugin_dir=$(dirname "$pkg_file")
   cd "$plugin_dir" 
   echo "🚧 Install dependencies for plugin $plugin_dir"

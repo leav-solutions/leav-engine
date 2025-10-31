@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-const {envToBool, envToNumber} = require('@leav/config-manager');
+const {envToBool, envToNumber, envToStringArray} = require('@leav/config-manager');
 
 module.exports = {
     instanceId: process.env.INSTANCE_ID || 'leav_engine',
@@ -97,7 +97,7 @@ module.exports = {
         siteId: process.env.MATOMO_SITE_ID || ''
     },
     lang: {
-        available: process.env.LANG_AVAILABLE || ['fr', 'en'],
+        available: envToStringArray(process.env.LANG_AVAILABLE, ',', ['fr', 'en']),
         default: process.env.LANG_DEFAULT || 'en'
     },
     permissions: {
@@ -212,5 +212,5 @@ module.exports = {
     logsCollector: {
         queue: process.env.LOGS_MANAGER_QUEUE || 'logs_events'
     },
-    pluginsPath: process.env.PLUGINS_PATH || []
+    pluginsPath: envToStringArray(process.env.PLUGINS_PATH)
 };

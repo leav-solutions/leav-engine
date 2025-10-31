@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {logger} from '@leav/logger';
 import {type ICorePluginsApp} from 'app/core/pluginsApp';
 import {asValue, type AwilixContainer} from 'awilix';
 import * as fs from 'fs';
@@ -36,6 +37,7 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
 
     const utils: IUtils = depsManager.cradle['core.utils'];
 
+    logger.verbose(`Plugins to load: ${pluginsPath.join(', ')}`);
     // Init plugins
     for (const pluginPath of pluginsPath) {
         // Ignore files (like .gitignore or any other files)

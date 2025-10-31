@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {envToBool, envToNumber} from '../envTo';
+import {envToBool, envToNumber, envToStringArray} from '../envTo';
 
 describe('envTo', () => {
     describe('envToBool', () => {
@@ -56,6 +56,44 @@ describe('envTo', () => {
             expect(envToNumber('NaN')).toBe(0);
             expect(envToNumber('not a number', 12)).toBe(12);
             expect(envToNumber('NaN', 13)).toBe(13);
+        });
+    });
+
+    describe('envToStringArray', () => {
+        it('should split a comma-separated string into an array', () => {
+            expect(envToStringArray('a,b,c')).toEqual(['a', 'b', 'c']);
+            expect(envToStringArray('  a , b ,c  ')).toEqual(['a', 'b', 'c']);
+        });
+
+        it('should handle custom separators', () => {
+            expect(envToStringArray('a|b|c', '|')).toEqual(['a', 'b', 'c']);
+            expect(envToStringArray('x;y;z', ';')).toEqual(['x', 'y', 'z']);
+        });
+
+        it('should trim whitespace from each item', () => {
+            expect(envToStringArray('  foo ,  bar ,baz  ')).toEqual(['foo', 'bar', 'baz']);
+        });
+
+        it('should filter out empty strings', () => {
+            expect(envToStringArray('a,,b, ,c')).toEqual(['a', 'b', 'c']);
+            expect(envToStringArray(' , , ')).toEqual([]);
+        });
+
+        it('should return defaultValue for empty, undefined, or non-string input', () => {
+            expect(envToStringArray('', ',', ['default'])).toEqual(['default']);
+            expect(envToStringArray(undefined as unknown as string, ',', ['def'])).toEqual(['def']);
+            expect(envToStringArray(null as unknown as string, ',', ['x'])).toEqual(['x']);
+            expect(envToStringArray(123 as unknown as string, ',', ['num'])).toEqual(['num']);
+        });
+
+        it('should return empty array if no defaultValue and input is empty', () => {
+            expect(envToStringArray('')).toEqual([]);
+            expect(envToStringArray('   ')).toEqual([]);
+        });
+
+        it('should handle single value', () => {
+            expect(envToStringArray('single')).toEqual(['single']);
+            expect(envToStringArray('  single  ')).toEqual(['single']);
         });
     });
 });
