@@ -287,7 +287,8 @@ describe('Values', () => {
     });
 
     test('Save same value on unique attribute', async () => {
-        const res = await makeGraphQlCall(`mutation {
+        await expect(
+            makeGraphQlCall(`mutation {
             saveValue(
                 library: "${testLibName}",
                 recordId: "${recordUniqueId}",
@@ -299,16 +300,13 @@ describe('Values', () => {
                         payload
                     }
                 }
-          }`);
-
-        expect(res.status).toBe(200);
-
-        expect(res.data.errors).toBeDefined();
-        expect(res.data.errors[0].extensions.fields[attrSimpleName]).toBeDefined();
+          }`)
+        ).rejects.toThrow(/This value has already been registered"/);
     });
 
     test("Don't save invalid value", async () => {
-        const res = await makeGraphQlCall(`mutation {
+        await expect(
+            makeGraphQlCall(`mutation {
                 saveValue(
                     library: "${testLibName}",
                     recordId: "${recordId}",
@@ -320,12 +318,8 @@ describe('Values', () => {
                             payload
                         }
                     }
-              }`);
-
-        expect(res.status).toBe(200);
-
-        expect(res.data.errors).toBeDefined();
-        expect(res.data.errors[0].extensions.fields[attrSimpleName]).toBeDefined();
+              }`)
+        ).rejects.toThrow(/error.INVALID_REGEXP: AAAATEST VAL/);
     });
 
     test('Save value simple extended', async () => {
@@ -373,12 +367,9 @@ describe('Values', () => {
             }
         }`;
 
-        const res = await makeGraphQlCall(query);
-
-        expect(res.status).toBe(200);
-
-        expect(res.data.errors).toBeDefined();
-        expect(res.data.errors[0].extensions.fields[attrSimpleExtendedName]).toBeDefined();
+        await expect(makeGraphQlCall(query)).rejects.toThrow(
+            /"city.zipcode" with value "3800" fails to match the required pattern:/
+        );
     });
 
     test('Save value simple link', async () => {
@@ -1000,7 +991,8 @@ describe('Values', () => {
         });
 
         test("Don't save value if invalid (from > to)", async () => {
-            const res = await makeGraphQlCall(`mutation {
+            await expect(
+                makeGraphQlCall(`mutation {
                 saveValue(
                     library: "${testLibName}",
                     recordId: "${recordId}",
@@ -1015,12 +1007,8 @@ describe('Values', () => {
                         payload
                     }
                 }
-              }`);
-
-            expect(res.status).toBe(200);
-
-            expect(res.data.errors).toBeDefined();
-            expect(res.data.errors[0].extensions.fields[attrDateRangeName]).toBeDefined();
+              }`)
+            ).rejects.toThrow(/error.INVALID_DATE_RANGE/);
         });
     });
 });

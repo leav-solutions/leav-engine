@@ -148,13 +148,9 @@ describe('Libraries', () => {
     });
 
     test('Get error if deleting system library', async () => {
-        const res = await makeGraphQlCall('mutation {deleteLibrary(id: "users") { id }}');
-
-        expect(res.status).toBe(200);
-        expect(res.data.data).toBeNull();
-        expect(res.data.errors).toBeDefined();
-        expect(res.data.errors[0].message).toBeDefined();
-        expect(res.data.errors[0].extensions.fields).toBeDefined();
+        await expect(makeGraphQlCall('mutation {deleteLibrary(id: "users") { id }}')).rejects.toThrow(
+            /Cannot delete system library/
+        );
     });
 
     test('Delete a library', async () => {

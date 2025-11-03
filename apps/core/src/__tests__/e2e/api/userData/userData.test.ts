@@ -114,7 +114,8 @@ describe('User Data', () => {
             ])
         );
 
-        const res = await makeGraphQlCall(`mutation {
+        await expect(
+            makeGraphQlCall(`mutation {
             saveUserData(
                key: "test",
                value: "data",
@@ -123,21 +124,16 @@ describe('User Data', () => {
                 global
                 data
             }
-        }`);
+        }`)
+        ).rejects.toThrow(/Action forbidden/);
 
-        expect(res.status).toBe(200);
-        expect(res.data.errors).toBeDefined();
-        expect(res.data.errors[0].extensions.code).toBe('PERMISSION_ERROR');
-
-        const get = await makeGraphQlCall(`{
+        await expect(
+            makeGraphQlCall(`{
             userData(
                keys: ["test_global"],
                global: true
               ) { global data }
-        }`);
-
-        expect(get.status).toBe(200);
-        expect(get.data.errors).toBeDefined();
-        expect(get.data.errors[0].extensions.code).toBe('PERMISSION_ERROR');
+        }`)
+        ).rejects.toThrow(/Action forbidden/);
     });
 });

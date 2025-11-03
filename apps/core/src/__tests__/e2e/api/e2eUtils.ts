@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+// eslint-disable-next-line max-classes-per-file
 import WebSocket from 'ws';
 import {type Client as GraphqlWsClient, createClient as createGraphqlWsClient} from 'graphql-ws';
-import axios from 'axios';
+import axios, {Axios, type AxiosResponse} from 'axios';
 import type FormData from 'form-data';
 import jwt, {type Algorithm} from 'jsonwebtoken';
 import {type ActionsListConfig} from '_types/actionsList';
@@ -44,7 +45,16 @@ export async function getGraphQLUrl() {
     return `http://${conf.server.host}:${conf.server.port}/graphql`;
 }
 
-export async function makeGraphQlCall(query: string | FormData, throwOnErrors = false): Promise<any> {
+export class E2EGraphQLError extends Error {
+    public constructor(
+        message: string,
+        public readonly response: AxiosResponse
+    ) {
+        super(message);
+    }
+}
+
+export async function makeGraphQlCall(query: string | FormData): Promise<any> {
     try {
         const url = await getGraphQLUrl();
         const token = await _getAuthToken();
@@ -57,19 +67,23 @@ export async function makeGraphQlCall(query: string | FormData, throwOnErrors = 
 
         const res = await axios.post(url, data, {headers});
 
-        if (throwOnErrors && res.data.errors?.length) {
-            throw new Error(
+        if (res.status === 200 && res.data.errors?.length) {
+            throw new E2EGraphQLError(
                 `${res.data.errors[0].message} - ${JSON.stringify(
                     res.data.errors[0]?.extensions?.fields
-                )} - Query was: ${query}`
+                )} - Code ${res.data.errors[0]?.extensions?.code} - Query was: ${query}`,
+                res
             );
+        } else if (res.status !== 200) {
+            throw new E2EGraphQLError(`HTTP error ${res.status} - Query was: ${query}`, res);
         }
 
         return res;
     } catch (e) {
-        console.error('GraphQL query error:', e.message, '\n', e.response?.data ?? '', `- Query was: ${query}`);
-        console.error(e);
-        console.trace();
+        if (!(e instanceof E2EGraphQLError)) {
+            console.error('GraphQL query error:', e.message, '\n', e.response?.data ?? '', `- Query was: ${query}`);
+        }
+        throw e;
     }
 }
 
@@ -84,8 +98,7 @@ export async function gqlSaveLibrary(id: string, label: string, additionalAttrib
             label: {en: "${label}"},
             attributes: [${libAttributes.map(a => `"${a}"`).join(', ')}]
         }) { id }
-    }`,
-        true
+    }`
     );
 
     return saveLibRes.data.data;
@@ -100,8 +113,7 @@ export async function gqlSaveApplication(id: string, label: string, endpoint: st
                 endpoint: "${endpoint}",
                 module: "data-studio"
             }) { id }
-        }`,
-        true
+        }`
     );
 
     return saveAppRes.data.data;
@@ -199,7 +211,7 @@ export async function gqlSaveAttribute(params: {
         ) { id }
     }`;
 
-    const saveAttrRes = await makeGraphQlCall(query, true);
+    const saveAttrRes = await makeGraphQlCall(query);
 
     return saveAttrRes.data.data;
 }
@@ -220,8 +232,7 @@ export async function gqlSaveTree(id: string, label: string, libraries: string[]
         ) {
             id
         }
-    }`,
-        true
+    }`
     );
 
     return saveTreeRes.data.data;
@@ -236,8 +247,7 @@ export async function gqlCreateRecord(library: string): Promise<string> {
             }
         }
     }
-    `,
-        true
+    `
     );
 
     return res.data.data.c.record.id;
@@ -256,8 +266,7 @@ export async function gqlAddUserToGroup(groupNodeId: string) {
         }) {
             id_value
         }
-    }`,
-        true
+    }`
     );
 }
 
@@ -283,8 +292,7 @@ export async function gqlAddElemToTree(
             ${parent ? `parent: ${parent}` : ''}
             order: ${order ?? 0}
         ) { id }
-    }`,
-        true
+    }`
     );
 
     return res.data.data.treeAddElement.id;
@@ -298,8 +306,7 @@ export async function gqlSaveValue(attributeId: string, libraryId: string, recor
         }) {
             id_value
         }
-    }`,
-        true
+    }`
     );
 }
 
@@ -313,8 +320,7 @@ export async function gqlSaveVersionProfile(profileId: string, label: string, tr
             }) {
             id
         }
-    }`,
-        true
+    }`
     );
 }
 

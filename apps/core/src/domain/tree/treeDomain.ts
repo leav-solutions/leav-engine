@@ -800,7 +800,7 @@ export default function ({
             const attrs = await attributeDomain.getAttributes({params: {filters: {id: attribute}}, ctx});
 
             if (!attrs.list.length) {
-                throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
+                throw new ValidationError({id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute}}});
             }
 
             return treeRepo.getLinkedRecords({treeId, attribute, nodeId, ctx});

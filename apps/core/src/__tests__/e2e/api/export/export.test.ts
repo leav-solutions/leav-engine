@@ -34,8 +34,7 @@ describe('Export', () => {
     describe('excel success', () => {
         beforeEach(async () => {
             const resExportQuery = await makeGraphQlCall(
-                `query { export(library: "${exportLibName}", attributes: ["id", "created_by"]) }`,
-                true
+                `query { export(library: "${exportLibName}", attributes: ["id", "created_by"]) }`
             );
 
             expect(resExportQuery.data.errors).toBeUndefined();
@@ -90,8 +89,7 @@ describe('Export', () => {
     describe('excel failed', () => {
         beforeEach(async () => {
             const resExportQuery = await makeGraphQlCall(
-                `query { export(library: "${exportLibName}", attributes: ["id", "not_exists"]) }`,
-                true
+                `query { export(library: "${exportLibName}", attributes: ["id", "not_exists"]) }`
             );
 
             expect(resExportQuery.data.errors).toBeUndefined();
@@ -163,8 +161,7 @@ describe('Export', () => {
 
     async function getTask(taskId: string) {
         const resTaskQuery = await makeGraphQlCall(
-            `query { tasks(filters: {id: "${taskId}"}) { list { id status link { name url } } } }`,
-            true
+            `query { tasks(filters: {id: "${taskId}"}) { list { id status link { name url } } } }`
         );
 
         expect(resTaskQuery.data.errors).toBeUndefined();

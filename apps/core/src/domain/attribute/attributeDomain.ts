@@ -351,7 +351,7 @@ export default function ({
 
             // Check if exists and can delete
             if (!attr.list.length) {
-                throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
+                throw new ValidationError<IAttribute>({id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: id}}});
             }
 
             const attrProps = attr.list.pop();

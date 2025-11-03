@@ -67,7 +67,6 @@ describe('JoinLibraries', () => {
                 d3: deleteRecord(library: "${libThematic}", id: "${thematic3}") { id }
                 d10: deleteLibrary(id: "${libThematic}") { id }
                 d11: deleteLibrary(id: "${libStructureItem}") { id }
-                d20: deleteAttribute(id: "${attrStructureItemThematic}") { id }
             }`);
         });
 
@@ -786,7 +785,6 @@ describe('JoinLibraries', () => {
                     d10: deleteForm(library: "${libCampaign}", id: "${formCampaign}") { id }
                     d20: deleteLibrary(id: "${libCampaign}") { id }
                     d30: deleteAttribute(id: "${attrCampaignStructureItems}") { id }
-                    d31: deleteAttribute(id: "${attrStructureItemThematic}") { id }
                 }`);
             });
 
@@ -1086,8 +1084,8 @@ describe('JoinLibraries', () => {
         const libThematic = 'lib_thematic_bis';
         const libCampaign = 'lib_campaigns_bis';
         const libStructureItem = 'lib_structure_items_bis'; // join library
-        const attrStructureItemThematic = 'attribute_structure_items_thematic_bis'; // simple link
-        const attrCampaignStructureItems = 'attribute_campaign_structure_items_bis'; // advanced link multi
+        const attrStructureItemThematicBis = 'attribute_structure_items_thematic_bis'; // simple link
+        const attrCampaignStructureItemsBis = 'attribute_campaign_structure_items_bis'; // advanced link multi
         const formCampaign = 'form_campaigns_bis';
         let thematic1: string;
         let thematic2: string;
@@ -1096,7 +1094,7 @@ describe('JoinLibraries', () => {
             await makeGraphQlCall(`mutation {
                 saveAttribute(
                     attribute: {
-                        id: "${attrStructureItemThematic}",
+                        id: "${attrStructureItemThematicBis}",
                         type: ${AttributeTypes.ADVANCED_LINK},
                         format: text,
                         linked_library: "${libThematic}",
@@ -1122,9 +1120,9 @@ describe('JoinLibraries', () => {
                     behavior: ${LibraryBehavior.JOIN},
                     attributes: [
                         "id",
-                        "${attrStructureItemThematic}",
+                        "${attrStructureItemThematicBis}",
                     ],
-                    mandatoryAttribute: "${attrStructureItemThematic}"
+                    mandatoryAttribute: "${attrStructureItemThematicBis}"
                 }) { id }
             }`);
 
@@ -1138,7 +1136,6 @@ describe('JoinLibraries', () => {
                 d2: deleteRecord(library: "${libThematic}", id: "${thematic2}") { id }
                 d10: deleteLibrary(id: "${libThematic}") { id }
                 d11: deleteLibrary(id: "${libStructureItem}") { id }
-                d20: deleteAttribute(id: "${attrStructureItemThematic}") { id }
             }`);
         });
 
@@ -1149,7 +1146,7 @@ describe('JoinLibraries', () => {
                 await makeGraphQlCall(`mutation {
                     saveAttribute(
                         attribute: {
-                            id: "${attrCampaignStructureItems}",
+                            id: "${attrCampaignStructureItemsBis}",
                             type: ${AttributeTypes.ADVANCED_LINK},
                             format: text,
                             linked_library: "${libStructureItem}",
@@ -1166,7 +1163,7 @@ describe('JoinLibraries', () => {
                         behavior: ${LibraryBehavior.STANDARD},
                         attributes: [
                             "id",
-                            "${attrCampaignStructureItems}",
+                            "${attrCampaignStructureItemsBis}",
                         ]
                     }) { id }
                 }`);
@@ -1176,7 +1173,7 @@ describe('JoinLibraries', () => {
                 await makeGraphQlCall(`mutation {
                     d10: deleteForm(library: "${libCampaign}", id: "${formCampaign}") { id }
                     d20: deleteLibrary(id: "${libCampaign}") { id }
-                    d30: deleteAttribute(id: "${attrCampaignStructureItems}") { id }
+                    d30: deleteAttribute(id: "${attrCampaignStructureItemsBis}") { id }
                 }`);
             });
 
@@ -1200,9 +1197,9 @@ describe('JoinLibraries', () => {
 
                 const joinLibraryElement = res.data.data.saveForm.elements[0].elements.find(e => e.id === elementId);
                 expect(joinLibraryElement).toBeDefined();
-                expect(joinLibraryElement.attribute.id).toBe(attrCampaignStructureItems);
+                expect(joinLibraryElement.attribute.id).toBe(attrCampaignStructureItemsBis);
                 expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.linked_library.id).toBe(libThematic);
-                expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.id).toBe(attrStructureItemThematic);
+                expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.id).toBe(attrStructureItemThematicBis);
             });
 
             it('saveValue campaign_structure_items with thematic should create join structure_item records bound to that thematic', async () => {
@@ -1210,7 +1207,7 @@ describe('JoinLibraries', () => {
                     saveValue(
                         library: "${libCampaign}",
                         recordId: "${campaign}",
-                        attribute: "${attrCampaignStructureItems}",
+                        attribute: "${attrCampaignStructureItemsBis}",
                         value: {
                             payload: "${thematic1}"
                         }
@@ -1250,11 +1247,11 @@ describe('JoinLibraries', () => {
                             recordId: "${campaign}",
                             values: [
                                 {
-                                    attribute: "${attrCampaignStructureItems}",
+                                    attribute: "${attrCampaignStructureItemsBis}",
                                     payload: "${thematic1}"
                                 },
                                 {
-                                    attribute: "${attrCampaignStructureItems}",
+                                    attribute: "${attrCampaignStructureItemsBis}",
                                     payload: "${thematic2}"
                                 },
                             ]
@@ -1287,7 +1284,7 @@ describe('JoinLibraries', () => {
                         deleteValue(
                             library: "${libCampaign}",
                             recordId: "${campaign}",
-                            attribute: "${attrCampaignStructureItems}",
+                            attribute: "${attrCampaignStructureItemsBis}",
                             value: {
                                 id_value: "${campaignStructureItems[0].id_value}",
                             }
@@ -1329,7 +1326,7 @@ describe('JoinLibraries', () => {
                         saveValue(
                             library: "${libCampaign}",
                             recordId: "${campaign}",
-                            attribute: "${attrCampaignStructureItems}",
+                            attribute: "${attrCampaignStructureItemsBis}",
                             value: {
                                 payload: "${structureItem}"
                             }
@@ -1370,7 +1367,7 @@ describe('JoinLibraries', () => {
                                 id
                             }
                         }
-                        property (attribute: "${attrStructureItemThematic}") {
+                        property (attribute: "${attrStructureItemThematicBis}") {
                             id_value
                             ... on LinkValue {
                                 linkPayload: payload {
@@ -1400,7 +1397,7 @@ describe('JoinLibraries', () => {
                                 id
                             }
                         }
-                        property (attribute: "${attrCampaignStructureItems}") {
+                        property (attribute: "${attrCampaignStructureItemsBis}") {
                             id_value
                             ... on LinkValue {
                                 linkPayload: payload {
@@ -1445,7 +1442,7 @@ describe('JoinLibraries', () => {
                                         settings: [
                                             {
                                                 key: "attribute"
-                                                value: "${attrCampaignStructureItems}"
+                                                value: "${attrCampaignStructureItemsBis}"
                                             }
                                         ]
                                     },

@@ -91,7 +91,8 @@ describe('Forms', () => {
     });
 
     test('Send error if unknown attribute', async () => {
-        const res = await makeGraphQlCall(`mutation {
+        await expect(
+            makeGraphQlCall(`mutation {
             saveForm(
                 form: {
                     id: "${formName}"
@@ -134,10 +135,8 @@ describe('Forms', () => {
                     }
                 }
             }
-        }`);
-
-        expect(res.status).toBe(200);
-        expect(res.data.errors[0].extensions.fields.elements).toBeDefined();
+        }`)
+        ).rejects.toThrow(/forms_unknown_attribute - {"elements":"Unknown attributes: forms_unknown_attribute"}/);
     });
 
     test('Handle 2 forms with same id on different libraries', async () => {

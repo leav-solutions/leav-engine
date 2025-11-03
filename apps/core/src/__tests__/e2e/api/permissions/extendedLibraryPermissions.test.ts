@@ -68,8 +68,7 @@ describe('ExtendedLibraryPermissions', () => {
             }) {
                 id
             }
-        }`,
-            true
+        }`
         );
 
         record1Id = await gqlCreateRecord(libName);
@@ -87,8 +86,7 @@ describe('ExtendedLibraryPermissions', () => {
             ) {
                 id_value
             }
-        }`,
-            true
+        }`
         );
         await makeGraphQlCall(
             `mutation {
@@ -102,8 +100,7 @@ describe('ExtendedLibraryPermissions', () => {
             ) {
                 id_value
             }
-        }`,
-            true
+        }`
         );
     });
 
@@ -116,8 +113,7 @@ describe('ExtendedLibraryPermissions', () => {
             d11: deleteTree(id: "${permTreeName}") { id }
             d12: deleteLibrary(id: "${permNodeLibName}") { id }
             d20: deleteAttribute(id: "${libTreeAttr}") { id }
-        }`,
-            true
+        }`
         );
     });
 
@@ -161,8 +157,7 @@ describe('ExtendedLibraryPermissions', () => {
                 ) { 
                     type
                 }
-            }`,
-                true
+            }`
             );
         });
 
@@ -184,8 +179,7 @@ describe('ExtendedLibraryPermissions', () => {
                 ) { 
                     type
                 }
-            }`,
-                true
+            }`
             );
         });
 
@@ -240,8 +234,7 @@ describe('ExtendedLibraryPermissions', () => {
                     ) { 
                         type
                     }
-                }`,
-                    true
+                }`
                 );
             });
 
@@ -263,8 +256,7 @@ describe('ExtendedLibraryPermissions', () => {
                     ) { 
                         type
                     }
-                }`,
-                    true
+                }`
                 );
             });
 
@@ -296,8 +288,7 @@ describe('ExtendedLibraryPermissions', () => {
                 ) { 
                     type
                 }
-            }`,
-                true
+            }`
             );
         });
 
@@ -319,8 +310,7 @@ describe('ExtendedLibraryPermissions', () => {
                 ) { 
                     type
                 }
-            }`,
-                true
+            }`
             );
         });
 
@@ -376,8 +366,7 @@ describe('ExtendedLibraryPermissions', () => {
                     ) { 
                         type
                     }
-                }`,
-                    true
+                }`
                 );
             });
 
@@ -399,8 +388,7 @@ describe('ExtendedLibraryPermissions', () => {
                     ) { 
                         type
                     }
-                }`,
-                    true
+                }`
                 );
             });
 
@@ -424,7 +412,7 @@ describe('ExtendedLibraryPermissions', () => {
                 }
             }
         }`;
-        const res = await makeGraphQlCall(query, true);
+        const res = await makeGraphQlCall(query);
 
         expect(res.status).toBe(200);
 

@@ -128,13 +128,9 @@ describe('Attributes', () => {
     });
 
     test('Get error if deleting system attribute', async () => {
-        const res = await makeGraphQlCall('mutation {deleteAttribute(id: "modified_by") { id }}');
-
-        expect(res.status).toBe(200);
-        expect(res.data.data).toBeNull();
-        expect(res.data.errors).toBeDefined();
-        expect(res.data.errors[0].message).toBeDefined();
-        expect(res.data.errors[0].extensions.fields).toBeDefined();
+        await expect(makeGraphQlCall('mutation {deleteAttribute(id: "modified_by") { id }}')).rejects.toThrow(
+            /Cannot delete system attribute/
+        );
     });
 
     test('Delete an attribute', async () => {

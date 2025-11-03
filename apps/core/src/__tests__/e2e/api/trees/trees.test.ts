@@ -154,20 +154,16 @@ describe('Trees', () => {
         const nodeRecord5 = await gqlAddElemToTree(testTreeName, {id: recordId5, library: 'users'}, null, 2);
         const nodeRecord6 = await gqlAddElemToTree(testTreeName, {id: recordId6, library: 'users'}, nodeRecord5);
 
-        const resErr = await makeGraphQlCall(`mutation {
+        await expect(
+            makeGraphQlCall(`mutation {
             a1: treeAddElement(
                 treeId: "${testTreeName}",
                     element: {id: "${recordId5}", library: "users"},
                     parent: "${nodeRecord6}",
                     order: 2
             ) {id}
-        }`);
-
-        expect(resErr.status).toBe(200);
-        expect(resErr.data.data).toBeNull();
-        expect(resErr.data.errors).toBeDefined();
-        expect(resErr.data.errors[0].message).toBeDefined();
-        expect(resErr.data.errors[0].extensions.fields).toBeDefined();
+        }`)
+        ).rejects.toThrow(/Element already present in ancestors/);
 
         await gqlAddElemToTree(testTreeName, {id: recordId4, library: 'users'}, nodeRecord1);
 

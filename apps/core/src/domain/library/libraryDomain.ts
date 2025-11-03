@@ -131,7 +131,9 @@ export default function ({
             const attribute = await getCoreEntityById('attribute', attributeId, ctx);
 
             if (!attribute) {
-                throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
+                throw new ValidationError<IAttribute>({
+                    id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: attributeId}}
+                });
             }
 
             return libraryRepo.getLibrariesUsingAttribute(attributeId, ctx);

@@ -67,16 +67,14 @@ describe('Records', () => {
                     saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testAttributeId}", value: {
                         payload: "test value"
                     }) { id_value }
-                }`,
-                true
+                }`
             );
             await makeGraphQlCall(
                 `mutation {
                     saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testLinkAttributeId}", value: {
                         payload: "${resCreationLink.data.data.linkRecordCreated.record.id}"
                     }) { id_value }
-                }`,
-                true
+                }`
             );
             await makeGraphQlCall(`mutation {
                 a1: activateNewRecord(library: "${testLibName}", recordId: "${recordId}", formId: "creation") {
@@ -88,29 +86,15 @@ describe('Records', () => {
         });
 
         afterAll(async () => {
-            // Clean up test data for Creation
-            // Purge all records in the test library using purgeRecord
-            const recordsRes = await makeGraphQlCall(`{
-                records(library: "${testLibName}", retrieveInactive: true) {
-                    list { id }
-                }
-            }`);
-            const recordIds = recordsRes.data.data.records.list.map((r: {id: string}) => r.id);
-            for (const id of recordIds) {
-                await makeGraphQlCall(
-                    `mutation { purgeRecord(libraryId: "${testLibName}", recordId: "${id}") { id } }`
-                );
-            }
-
             // unlink attributes before deleting them
             await gqlSaveLibrary(testLibName, 'Test', []);
             await gqlSaveLibrary(testLibLink, 'Test2', []);
 
             // Need to delete attribute BEFORE library,
             // Otherwise cache is not deleted and the next saveAttribute will try to update it
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAttributeId}") { id } }`, true);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testLinkAttributeId}") { id } }`, true);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testTreeAttributeId}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testLinkAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testTreeAttributeId}") { id } }`);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibName}") { id } }`);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibLink}") { id } }`);
             await makeGraphQlCall(`mutation { deleteTree(id: "${testTreeName}") { id } }`);
@@ -180,8 +164,7 @@ describe('Records', () => {
                 }) {
                     id_value
                 }
-            }`,
-                true
+            }`
             );
             // Fill required link attribute
             await makeGraphQlCall(
@@ -191,8 +174,7 @@ describe('Records', () => {
                 }) {
                     id_value
                 }
-            }`,
-                true
+            }`
             );
             // Try to activate the record, expecting success (no validation errors)
             const resActivation = await makeGraphQlCall(`mutation {
@@ -221,8 +203,7 @@ describe('Records', () => {
             const createEmptyRecordResult = await makeGraphQlCall(
                 `mutation {
                     recordCreated: createEmptyRecord(library: "${testLibName}") { record { id } },
-                }`,
-                true
+                }`
             );
 
             const recordId = createEmptyRecordResult.data.data.recordCreated.record.id;
@@ -235,8 +216,7 @@ describe('Records', () => {
                 }) {
                     id_value
                 }
-            }`,
-                true
+            }`
             );
 
             const deleteValueResult = await makeGraphQlCall(`mutation {
@@ -305,7 +285,7 @@ describe('Records', () => {
                 );
 
                 await gqlSaveLibrary(testLibName, 'Test', [testAttributeId, testLinkAttributeId, testTreeAttributeId]); // remove dependentAttrId attribute from lib before delete
-                await makeGraphQlCall(`mutation { deleteAttribute(id: "${dependentAttrId}") { id } }`, true);
+                await makeGraphQlCall(`mutation { deleteAttribute(id: "${dependentAttrId}") { id } }`);
             });
 
             test('Should activate a new record even if a required field is only in a dependent form (so not filled)', async () => {
@@ -423,16 +403,14 @@ describe('Records', () => {
                     saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testAttributeId}", value: {
                         payload: "test value"
                     }) { id_value }
-                }`,
-                true
+                }`
             );
             await makeGraphQlCall(
                 `mutation {
                     saveValue(library: "${testLibName}", recordId: "${recordId}", attribute: "${testLinkAttributeId}", value: {
                         payload: "${resCreationLink.data.data.linkRecordCreated.record.id}"
                     }) { id_value }
-                }`,
-                true
+                }`
             );
             await makeGraphQlCall(`mutation {
                 a1: activateNewRecord(library: "${testLibName}", recordId: "${recordId}", formId: "creation") {
@@ -444,29 +422,15 @@ describe('Records', () => {
         });
 
         afterAll(async () => {
-            // Clean up test data for Get records
-            // Purge all records in the test library using purgeRecord
-            const recordsRes = await makeGraphQlCall(`{
-                records(library: "${testLibName}", retrieveInactive: true) {
-                    list { id }
-                }
-            }`);
-            const recordIds = recordsRes.data.data.records.list.map((r: {id: string}) => r.id);
-            for (const id of recordIds) {
-                await makeGraphQlCall(
-                    `mutation { purgeRecord(libraryId: "${testLibName}", recordId: "${id}") { id } }`
-                );
-            }
-
             // unlink attributes before deleting them
             await gqlSaveLibrary(testLibName, 'Test', []);
             await gqlSaveLibrary(testLibLink, 'Test2', []);
 
             // Need to delete attribute BEFORE library,
             // Otherwise cache is not deleted and the next saveAttribute will try to update it
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAttributeId}") { id } }`, true);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testLinkAttributeId}") { id } }`, true);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testTreeAttributeId}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testLinkAttributeId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testTreeAttributeId}") { id } }`);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibName}") { id } }`);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${testLibLink}") { id } }`);
             await makeGraphQlCall(`mutation { deleteTree(id: "${testTreeName}") { id } }`);
@@ -989,44 +953,6 @@ describe('Records', () => {
             await gqlAddElemToTree(testTreeId, {id: sfTreeRecord6, library: sfTestLibTreeId}, nodeTreeRecord5);
         });
         afterAll(async () => {
-            // Clean up test data for Sort/filter
-            // Purge all records in the test library using purgeRecord
-            const recordsRes = await makeGraphQlCall(`{
-                sfRecords: records(library: "${sfTestLibId}", retrieveInactive: true) {
-                    list { id }
-                }
-            }`);
-            const recordIds = recordsRes.data.data.sfRecords.list.map((r: {id: string}) => r.id);
-            for (const id of recordIds) {
-                await makeGraphQlCall(
-                    `mutation { purgeRecord(libraryId: "${sfTestLibId}", recordId: "${id}") { id } }`
-                );
-            }
-            // Purge all records in the test library using purgeRecord
-            const linkRecordsRes = await makeGraphQlCall(`{
-                sfLinkedRecords: records(library: "${sfTestLibLinkId}", retrieveInactive: true) {
-                    list { id }
-                }
-            }`);
-            const linkedRecordIds = linkRecordsRes.data.data.sfLinkedRecords.list.map((r: {id: string}) => r.id);
-            for (const id of linkedRecordIds) {
-                await makeGraphQlCall(
-                    `mutation { purgeRecord(libraryId: "${sfTestLibLinkId}", recordId: "${id}") { id } }`
-                );
-            }
-            // Purge all records in the test library using purgeRecord
-            const treeRecordsRes = await makeGraphQlCall(`{
-                sfTreeRecords: records(library: "${sfTestLibTreeId}", retrieveInactive: true) {
-                    list { id }
-                }
-            }`);
-            const treeRecordIds = treeRecordsRes.data.data.sfTreeRecords.list.map((r: {id: string}) => r.id);
-            for (const id of treeRecordIds) {
-                await makeGraphQlCall(
-                    `mutation { purgeRecord(libraryId: "${sfTestLibTreeId}", recordId: "${id}") { id } }`
-                );
-            }
-
             // unlink attributes before deleting them
             await gqlSaveLibrary(sfTestLibId, 'Test', [testTreeAttrId]);
             await gqlSaveLibrary(sfTestLibLinkId, 'Test', [
@@ -1038,12 +964,12 @@ describe('Records', () => {
 
             // Need to delete attribute BEFORE library,
             // Otherwise cache is not deleted and the next saveAttribute will try to update it
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleAttrId}") { id } }`, true);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleAttrId2}") { id } }`, true);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleExtAttrId}") { id } }`, true);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleLinkAttrId}") { id } }`, true);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAdvAttrId}") { id } }`, true);
-            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAdvLinkAttrId}") { id } }`, true);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleAttrId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleAttrId2}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleExtAttrId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testSimpleLinkAttrId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAdvAttrId}") { id } }`);
+            await makeGraphQlCall(`mutation { deleteAttribute(id: "${testAdvLinkAttrId}") { id } }`);
 
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${sfTestLibId}") { id } }`);
             await makeGraphQlCall(`mutation { deleteLibrary(id: "${sfTestLibLinkId}") { id } }`);

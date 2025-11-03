@@ -171,7 +171,8 @@ describe('Permissions', () => {
             expect(resIsAllowedCached.data.errors).toBeUndefined();
 
             // Apply permission
-            const res = await makeGraphQlCall(`mutation {
+            await expect(
+                makeGraphQlCall(`mutation {
                 saveValue(
                     library: "${testLibId}",
                     recordId: "${testLibRecordId}",
@@ -180,12 +181,8 @@ describe('Permissions', () => {
                 ) {
                     id_value
                 }
-            }`);
-
-            expect(res.status).toBe(200);
-            expect(res.data.data).toBe(null);
-            expect(res.data.errors).toBeDefined();
-            expect(res.data.errors.length).toBeGreaterThanOrEqual(1);
+            }`)
+            ).rejects.toThrow(/This library does not use this attribute/);
         });
     });
 

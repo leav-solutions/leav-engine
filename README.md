@@ -335,6 +335,7 @@ You'd better run it locally, on your machine with a standard `yarn run test`.
 End-to-end or integration testing needs to be run inside the container as it starts a server, access to the DB, etc.
 This can be done by either:
 
+- Need to run with mailpit: `docker compose --profile mail up -d`
 - Running a shell in the *core* container and executing `yarn run test:e2e` or `yarn run test:e2e:api` or `yarn run test:integration`
 - Executing the command from your machine: `docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e`
 

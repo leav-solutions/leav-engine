@@ -206,14 +206,11 @@ describe('Records permissions', () => {
         expect(resIsAllowed.data.data.isAllowed[0].allowed).toBe(false);
         expect(resIsAllowed.data.errors).toBeUndefined();
 
-        const resDelRecord = await makeGraphQlCall(`mutation {
+        await expect(
+            makeGraphQlCall(`mutation {
             deleteRecord(library: "${testLibId}", id: "${testLibRecordId}") {id}
-        }`);
-
-        expect(resDelRecord.status).toBe(200);
-        expect(resDelRecord.data.data).toBe(null);
-        expect(resDelRecord.data.errors).toBeDefined();
-        expect(resDelRecord.data.errors.length).toBeGreaterThanOrEqual(1);
+        }`)
+        ).rejects.toThrow(/Action forbidden/);
     });
 
     test('Handle inheritance on subgroups', async () => {
