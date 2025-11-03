@@ -5,11 +5,13 @@ import {RecordPermissionsActions} from '../../../../_types/permissions';
 import {AttributeTypes} from '../../../../_types/attribute';
 import {AttributeCondition} from '../../../../_types/record';
 import {
+    e2eGuestUser,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
+    type IMakeGraphQlCallOptions,
     makeGraphQlCall
 } from '../e2eUtils';
 import {adminsGroupId} from '../../../../_constants/users';
@@ -266,6 +268,44 @@ describe('ExtendedLibraryPermissions', () => {
 
                 expect(records.length).toBe(2);
             });
+
+            it('non admin user should get only one of them', async () => {
+                const records = await getLibRecords(undefined, {user: await e2eGuestUser()});
+
+                expect(records.length).toBe(1);
+                expect(records[0].id).toBe(record2Id);
+            });
+
+            it('non admin user should get none of them with filter on node 1', async () => {
+                const records = await getLibRecords(
+                    `[
+                    {
+                        condition: ${AttributeCondition.EQUAL},
+                        field: "${libTreeAttr}.${permNodeLibName}.id",
+                        value: "${permTreeNodeRecord1Id}"
+                    }
+                ]`,
+                    {user: await e2eGuestUser()}
+                );
+
+                expect(records.length).toBe(0);
+            });
+
+            it('non admin user should get one of them with filter on node 2', async () => {
+                const records = await getLibRecords(
+                    `[
+                    {
+                        condition: ${AttributeCondition.EQUAL},
+                        field: "${libTreeAttr}.${permNodeLibName}.id",
+                        value: "${permTreeNodeRecord2Id}"
+                    }
+                ]`,
+                    {user: await e2eGuestUser()}
+                );
+
+                expect(records.length).toBe(1);
+                expect(records[0].id).toBe(record2Id);
+            });
         });
     });
 
@@ -398,10 +438,49 @@ describe('ExtendedLibraryPermissions', () => {
 
                 expect(records.length).toBe(2);
             });
+
+            it('non admin user should get only one of them', async () => {
+                const records = await getLibRecords(undefined, {user: await e2eGuestUser()});
+
+                expect(records.length).toBe(1);
+                expect(records[0].id).toBe(record2Id);
+            });
+
+            it('non admin user should get none of them with filter on node 1', async () => {
+                const records = await getLibRecords(
+                    `[
+                    {
+                        condition: ${AttributeCondition.EQUAL},
+                        field: "${libTreeAttr}.${permNodeLibName}.id",
+                        value: "${permTreeNodeRecord1Id}"
+                    }
+                ]`,
+                    {user: await e2eGuestUser()}
+                );
+
+                expect(records.length).toBe(1);
+                expect(records[0].id).toBe(record1Id);
+            });
+
+            it('non admin user should get one of them with filter on node 2', async () => {
+                const records = await getLibRecords(
+                    `[
+                    {
+                        condition: ${AttributeCondition.EQUAL},
+                        field: "${libTreeAttr}.${permNodeLibName}.id",
+                        value: "${permTreeNodeRecord2Id}"
+                    }
+                ]`,
+                    {user: await e2eGuestUser()}
+                );
+
+                expect(records.length).toBe(1);
+                expect(records[0].id).toBe(record2Id);
+            });
         });
     });
 
-    async function getLibRecords(filters?: string) {
+    async function getLibRecords(filters?: string, options?: IMakeGraphQlCallOptions) {
         const query = `query {
             records(
                 library: "${libName}",
@@ -412,7 +491,7 @@ describe('ExtendedLibraryPermissions', () => {
                 }
             }
         }`;
-        const res = await makeGraphQlCall(query);
+        const res = await makeGraphQlCall(query, options);
 
         expect(res.status).toBe(200);
 

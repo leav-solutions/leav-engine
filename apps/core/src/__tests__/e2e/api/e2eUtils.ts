@@ -10,7 +10,7 @@ import jwt, {type Algorithm} from 'jsonwebtoken';
 import {type ActionsListConfig} from '_types/actionsList';
 import {type ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
-import {adminsGroupId} from '../../../_constants/users';
+import {adminsGroupId, adminUserId} from '../../../_constants/users';
 import {
     AttributeFormats,
     type AttributeTypes,
@@ -18,26 +18,61 @@ import {
     type IEmbeddedAttribute
 } from '../../../_types/attribute';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
+import {USERS_LIBRARY} from '../../../_types/library';
+import {logger} from '@leav/logger';
 
-async function _getAuthToken() {
-    const conf = await getConfig();
-
-    const token = jwt.sign(
-        {
-            userId: '1',
-            login: 'admin',
-            role: 'admin',
-            groupsId: ['1']
-        },
-        conf.auth.key,
-        {
-            algorithm: conf.auth.algorithm as Algorithm,
-            expiresIn: conf.auth.tokenExpiration
-        }
-    );
-
-    return token;
+interface IE2EUser {
+    getAuthToken: () => Promise<string>;
 }
+
+interface IE2EUserParams {
+    userId: string;
+    groupsId: string[];
+}
+
+const e2eUser = ({userId, groupsId}: IE2EUserParams): IE2EUser => ({
+    getAuthToken: async () => {
+        const conf = await getConfig();
+
+        return jwt.sign(
+            {
+                userId,
+                groupsId
+            },
+            conf.auth.key,
+            {
+                algorithm: conf.auth.algorithm as Algorithm,
+                expiresIn: conf.auth.tokenExpiration
+            }
+        );
+    }
+});
+
+export const e2eAdminUser = (): IE2EUser => e2eUser({userId: adminUserId, groupsId: [adminsGroupId]});
+
+let guestUserId;
+export const e2eGuestUser = async (): Promise<IE2EUser> => {
+    if (!guestUserId) {
+        logger.verbose('Creating guest user...');
+        const res = await makeGraphQlCall(
+            `mutation {
+            createRecord(library: "${USERS_LIBRARY}", data: {
+                values: [{
+                        attribute: "email",
+                        payload: "guest@aristid.com"
+                    }]
+                }
+            ) {
+                record {
+                    id
+                }
+            }
+        }`
+        );
+        guestUserId = res.data.data.createRecord.record.id;
+    }
+    return e2eUser({userId: guestUserId, groupsId: []});
+};
 
 export async function getGraphQLUrl() {
     const conf = await getConfig();
@@ -54,10 +89,15 @@ export class E2EGraphQLError extends Error {
     }
 }
 
-export async function makeGraphQlCall(query: string | FormData): Promise<any> {
+export interface IMakeGraphQlCallOptions {
+    user?: IE2EUser;
+}
+
+export async function makeGraphQlCall(query: string | FormData, options?: IMakeGraphQlCallOptions): Promise<any> {
+    const user = options?.user ?? e2eAdminUser();
     try {
         const url = await getGraphQLUrl();
-        const token = await _getAuthToken();
+        const token = await user.getAuthToken();
 
         const data = typeof query === 'string' ? {query} : query;
         const headers = {
@@ -331,9 +371,10 @@ export function toCleanJSON(obj: {}): string {
     return JSON.stringify(obj).replace(/[\""]/g, '\\"');
 }
 
-export async function makeWebSocketGraphQlCall(): Promise<GraphqlWsClient> {
+export async function makeWebSocketGraphQlCall(options?: {user: IE2EUser}): Promise<GraphqlWsClient> {
+    const user = options?.user ?? e2eAdminUser();
     const config = await getConfig();
-    const token = await _getAuthToken();
+    const token = await user.getAuthToken();
     const headers = {
         Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${token}`
     };
