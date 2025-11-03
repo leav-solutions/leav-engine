@@ -69,3 +69,6 @@ export const STANDARD_FIELD_ID_PREFIX = 'standardfield-';
 export const LINK_FIELD_ID_PREFIX = 'linkfield-';
 
 export const TREE_FIELD_ID_PREFIX = 'treefield-';
+
+export const SUBMIT_BUTTONS_PORTAL = 'submit_buttons_portal';
+export const NEW_RECORD_ID = 'newRecord';

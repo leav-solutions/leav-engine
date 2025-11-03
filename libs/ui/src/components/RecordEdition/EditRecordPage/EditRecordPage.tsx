@@ -18,6 +18,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark} from '@fortawesome/free-solid-svg-icons';
 import {APICallStatus} from '../EditRecordContent/_types';
 import useExecuteCreateEmptyRecordMutation from '../EditRecordContent/hooks/useCreateEmptyRecordMutation';
+import {createPortal} from 'react-dom';
+import {SUBMIT_BUTTONS_PORTAL} from '_ui/constants';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
@@ -36,6 +38,7 @@ interface IEditRecordPageProps {
     showSidebar?: boolean;
     enableSidebar?: boolean;
     sidebarContainer?: HTMLElement;
+    isSubmitButtonsPortal?: boolean;
 }
 
 const Header = styled.div`
@@ -66,7 +69,8 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     onClose = emptyFunction,
     enableSidebar,
     showSidebar,
-    sidebarContainer
+    sidebarContainer,
+    isSubmitButtonsPortal = false
 }) => {
     const {t} = useSharedTranslation();
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
@@ -78,6 +82,17 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     const [formId, setFormId] = useState<string>(
         isCreation ? (creationFormId ?? 'creation') : (editionFormId ?? 'edition')
     );
+
+    const [formCreateButtonsContainer, setFormCreateButtonsContainer] = useState<HTMLElement>();
+
+    useEffect(() => {
+        if (isSubmitButtonsPortal) {
+            const formCreateButtonsElement = document.getElementById(SUBMIT_BUTTONS_PORTAL);
+            if (formCreateButtonsElement) {
+                setFormCreateButtonsContainer(formCreateButtonsElement);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         const createEmptyRecordFunction = async () => {
@@ -178,6 +193,9 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                     <KitDivider noMargin color="lightGrey" />
                 </>
             )}
+            {isSubmitButtonsPortal &&
+                formCreateButtonsContainer &&
+                createPortal(displayedSubmitButtons, formCreateButtonsContainer)}
             <EditRecord
                 antdForm={antdForm}
                 formId={formId}

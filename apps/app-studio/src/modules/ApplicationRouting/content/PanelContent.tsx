@@ -1,13 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
+import {type FunctionComponent, useEffect, useState} from 'react';
 import {EditRecordPage} from '@leav/ui';
 import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
 import {FLAP_TARGET_ID} from '../../../constants';
 import {PanelCustom} from './PanelCustom';
 import {PanelLibraryExplorer} from './PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './PanelAttributeExplorer';
+import {PanelCreationForm} from './PanelCreationForm';
 
 interface IPanelContentProps {
     panel: Panel;
@@ -25,19 +26,16 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, reco
         }
     }, []);
 
-    const commonFormProps: Partial<ComponentProps<typeof EditRecordPage>> = {
-        showRefreshButton: false,
-        showHeader: false,
-        sidebarContainer
-    };
     if (panel.type === 'creationForm') {
-        return <EditRecordPage {...commonFormProps} record={null} creationFormId={panel.formId} library={libraryId} />;
+        return <PanelCreationForm libraryId={libraryId} formId={panel.formId} />;
     }
     if (panel.type === 'editionForm') {
         return (
             <EditRecordPage
                 key={`${recordId}-${panel.formId}`}
-                {...commonFormProps}
+                showRefreshButton={false}
+                showHeader={false}
+                sidebarContainer={sidebarContainer}
                 record={{
                     id: recordId,
                     library: {

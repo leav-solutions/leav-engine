@@ -19,3 +19,4 @@ export {useValuesCacheUpdate} from './useValuesCacheUpdate';
 export {useIFrameMessenger} from './useIFrameMessenger/useIFrameMessenger';
 export {useIFrameMessengerClient} from './useIFrameMessengerClient/useIFrameMessengerClient';
 export {IFrameMessengerClient} from './useIFrameMessengerClient/IFrameMessengerClient';
+export {creationPanelSchema} from './useIFrameMessenger/schema';

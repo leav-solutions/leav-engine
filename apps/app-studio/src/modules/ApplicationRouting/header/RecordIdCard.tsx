@@ -2,11 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useContext, type ComponentProps, type FunctionComponent} from 'react';
-import {useGetLibraryNameQuery, useGetRecordIdCardQuery} from '../../../__generated__';
-import {KitBreadcrumb, KitIdCard} from 'aristid-ds';
-import {PanelIdCardSkeleton} from './PanelIdCardSkeleton';
+import {KitBreadcrumb, KitIdCard, KitTypography} from 'aristid-ds';
+import {useTranslation} from 'react-i18next';
 import {localizedTranslation} from '@leav/utils';
-import {LangContext} from '_ui/contexts';
+import {NEW_RECORD_ID, LangContext} from '@leav/ui';
+import {useGetLibraryNameQuery, useGetRecordIdCardQuery} from '../../../__generated__';
+import {PanelIdCardSkeleton} from './PanelIdCardSkeleton';
 import {RecordIdCardDescription} from './RecordIdCardDescription';
 
 export const RecordIdCard: FunctionComponent<{
@@ -15,6 +16,7 @@ export const RecordIdCard: FunctionComponent<{
     avatarSize: 'l' | 'm';
 }> = ({currentRecordId, libraryId, avatarSize}) => {
     const {lang} = useContext(LangContext);
+    const {t} = useTranslation();
     const {data, loading} = useGetRecordIdCardQuery({
         variables: {
             id: currentRecordId,
@@ -50,19 +52,20 @@ export const RecordIdCard: FunctionComponent<{
 
     const isLoading = loading || libraryLoading;
 
-    return isLoading ? (
-        <PanelIdCardSkeleton />
-    ) : (
-        <KitIdCard
-            size="s"
-            title={<KitBreadcrumb items={breadcrumbItems} />}
-            description={
-                <RecordIdCardDescription
-                    label={data?.records?.list?.[0]?.whoAmI?.label}
-                    sublabel={data?.records?.list?.[0]?.whoAmI?.subLabel}
-                />
-            }
-            avatarProps={avatarProps}
-        />
-    );
+    const labelsProps: Pick<ComponentProps<typeof KitIdCard>, 'title' | 'description'> = currentRecordId ===
+    NEW_RECORD_ID
+        ? {
+              title: <KitTypography.Title level="h2">{t('record_edition.new_record')}</KitTypography.Title>
+          }
+        : {
+              title: <KitBreadcrumb items={breadcrumbItems} />,
+              description: (
+                  <RecordIdCardDescription
+                      label={data?.records?.list?.[0]?.whoAmI?.label}
+                      sublabel={data?.records?.list?.[0]?.whoAmI?.subLabel}
+                  />
+              )
+          };
+
+    return isLoading ? <PanelIdCardSkeleton /> : <KitIdCard size="s" {...labelsProps} avatarProps={avatarProps} />;
 };

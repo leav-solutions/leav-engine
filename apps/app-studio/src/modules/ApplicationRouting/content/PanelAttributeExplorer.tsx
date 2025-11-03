@@ -71,6 +71,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                 defaultCallbacks={{
                     primary: {
                         create: ({recordIdCreated}) =>
+                            // TODO: should be deleted when explorer used panels instead of modal form
                             saveValues(
                                 {
                                     id: recordIdCreated,

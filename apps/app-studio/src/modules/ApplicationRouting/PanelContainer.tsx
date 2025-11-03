@@ -5,6 +5,7 @@ import {type FunctionComponent, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {useMatch, useNavigate, useParams} from 'react-router-dom';
 import cn from 'classnames';
+import {SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
 import {KitModal, KitSidePanel} from 'aristid-ds';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {SIDE_PANEL_TARGET_ID} from '../../constants';
@@ -77,6 +78,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                         />
                     </div>
                 }
+                footer={<div id={SUBMIT_BUTTONS_PORTAL} />}
                 showCloseIcon
                 close={closeContainer}
             >

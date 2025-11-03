@@ -64,9 +64,10 @@ const editionPanelSchema = z.object({
     formId: z.string()
 });
 
-const creationPanelSchema = z.object({
+export const creationPanelSchema = z.object({
     type: z.literal('creationForm'),
-    formId: z.string()
+    formId: z.string(),
+    attributeSource: z.string()
 });
 
 const baseExplorerPanelSchema = z.object({
