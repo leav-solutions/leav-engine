@@ -8,7 +8,7 @@ import {useExportLazyQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type FeatureHook, type IMassActions} from '../_types';
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
-import {MASS_SELECTION_ALL} from '../_constants';
+import {BREAK_TWO_LINES, MASS_SELECTION_ALL} from '../_constants';
 import {ERROR_ALERT_DURATION, SUCCESS_ALERT_DURATION} from '_ui/constants';
 
 /**
@@ -42,9 +42,16 @@ export const useExportMassAction = ({
                     style: {content: {width: '90vw', maxWidth: '656px'}},
                     icon: false,
                     type: 'confirm',
-                    content: t('explorer.massAction.export_confirm', {
-                        count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
-                    }),
+                    title:
+                        t('explorer.export_item', {
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                        }) ?? undefined,
+                    content:
+                        t('explorer.export_item_description', {
+                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length
+                        }) +
+                        BREAK_TWO_LINES +
+                        t('global.are_you_sure'),
                     okText: t('global.confirm') ?? undefined,
                     cancelText: t('global.cancel') ?? undefined,
                     onOk: async () => {

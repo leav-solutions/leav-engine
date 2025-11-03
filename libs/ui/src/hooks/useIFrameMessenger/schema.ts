@@ -20,7 +20,8 @@ const CommonExplorerPropsSchema = z.object({
     showAttributeLabels: z.boolean().optional(),
     creationFormId: z.string().optional(),
     noPagination: z.literal(true).optional(),
-    showActionsLabels: z.boolean().optional()
+    showActionsLabels: z.boolean().optional(),
+    defaultMassActions: z.array(z.union([z.literal('deactivate'), z.literal('export')])).optional()
 });
 
 const LinkExplorerPropsSchema = CommonExplorerPropsSchema;
@@ -29,8 +30,7 @@ export const LibraryExplorerPropsSchema = CommonExplorerPropsSchema.extend({
     defaultPrimaryActions: z.array(z.union([z.literal('create')])).optional(),
     defaultActionsForItem: z
         .array(z.union([z.literal('replaceLink'), z.literal('remove'), z.literal('activate')]))
-        .optional(),
-    defaultMassActions: z.array(z.union([z.literal('deactivate'), z.literal('export')])).optional()
+        .optional()
 });
 
 export const ItemActionsSchema = z

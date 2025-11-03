@@ -16,7 +16,8 @@ type CommonOverridablePropsByUser =
     | 'hideTableHeader'
     | 'creationFormId'
     | 'noPagination'
-    | 'defaultPrimaryActions';
+    | 'defaultPrimaryActions'
+    | 'defaultMassActions';
 
 type LibraryOverridablePropsByUser = 'defaultActionsForItem' | 'defaultMassActions';
 
@@ -25,8 +26,7 @@ export const mapToLibraryExplorerProps = ({
 }: {
     explorerProps: LibraryExplorerProps;
 }): Pick<ComponentProps<typeof Explorer>, LibraryOverridablePropsByUser> => ({
-    defaultActionsForItem: explorerProps.defaultActionsForItem,
-    defaultMassActions: explorerProps.defaultMassActions
+    defaultActionsForItem: explorerProps.defaultActionsForItem
 });
 
 export const mapToCommonExplorerProps = ({
@@ -48,6 +48,7 @@ export const mapToCommonExplorerProps = ({
         hideTableHeader: isBoolean(explorerProps.showAttributeLabels) ? !explorerProps.showAttributeLabels : undefined,
         creationFormId: explorerProps.creationFormId,
         noPagination: explorerProps.noPagination ?? undefined,
-        defaultPrimaryActions: explorerProps.defaultPrimaryActions
+        defaultPrimaryActions: explorerProps.defaultPrimaryActions,
+        defaultMassActions: explorerProps.defaultMassActions
     };
 };

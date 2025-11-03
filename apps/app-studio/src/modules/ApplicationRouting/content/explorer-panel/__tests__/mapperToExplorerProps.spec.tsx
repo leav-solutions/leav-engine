@@ -30,14 +30,14 @@ describe('mapperToExplorerProps', () => {
                 creationFormId: 'create-id',
                 noPagination: true,
                 defaultPrimaryActions: ['create'],
+                defaultMassActions: ['deactivate'],
                 defaultViewSettings: {
                     enableConfigureView: false
                 }
             });
 
             expect(mapToLibraryExplorerProps({explorerProps})).toEqual({
-                defaultActionsForItem: ['activate'],
-                defaultMassActions: ['deactivate']
+                defaultActionsForItem: ['activate']
             });
         });
 
@@ -65,6 +65,7 @@ describe('mapperToExplorerProps', () => {
                 creationFormId: 'create-id',
                 noPagination: true,
                 defaultPrimaryActions: ['create'],
+                defaultMassActions: ['deactivate'],
                 defaultViewSettings: {
                     enableConfigureView: true
                 }
