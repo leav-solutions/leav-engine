@@ -4,8 +4,8 @@
 import {type FunctionComponent} from 'react';
 import {Explorer, useLang} from '@leav/ui';
 import {useNavigate} from 'react-router-dom';
-import {type ItemActions, type LibraryExplorerProps} from '../types';
-import {mapToCommonExplorerProps, mapToLibraryExplorerProps} from './explorer-panel/mapperToExplorerProps';
+import {type ItemActions, type ExplorerProps} from '../types';
+import {mapToCommonExplorerProps} from './explorer-panel/mapperToCommonExplorerProps';
 import {mapperToItemActions} from './explorer-panel/mapperToItemActions';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/ApplicationSettingsContext';
 
@@ -14,7 +14,7 @@ import {explorerContainer} from './panelContent.module.css';
 interface IPanelLibraryExplorerProps {
     libraryId: string;
     viewId: string | undefined;
-    explorerProps: LibraryExplorerProps | undefined;
+    explorerProps: ExplorerProps | undefined;
     actions: ItemActions;
 }
 
@@ -29,14 +29,12 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
     const navigate = useNavigate();
 
     const commonExplorerProps = mapToCommonExplorerProps({explorerProps});
-    const libraryExplorerProps = explorerProps ? mapToLibraryExplorerProps({explorerProps}) : {};
     const itemActions = mapperToItemActions({actions, application, lang, navigate, libraryId});
 
     return (
         <div className={explorerContainer}>
             <Explorer
                 {...commonExplorerProps}
-                {...libraryExplorerProps}
                 defaultViewSettings={{
                     viewId,
                     ...commonExplorerProps.defaultViewSettings

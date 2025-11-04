@@ -12,7 +12,7 @@ export const FontAwesomeIconSchema = z.string().regex(FONT_AWESOME_ICON_REGEX).o
 
 export const WhereSchema = z.union([z.literal('popup'), z.literal('slider'), z.literal('fullpage')]);
 
-const CommonExplorerPropsSchema = z.object({
+export const ExplorerPropsSchema = z.object({
     showSearch: z.boolean().optional(),
     showFilters: z.boolean().optional(),
     showSorts: z.boolean().optional(),
@@ -21,13 +21,8 @@ const CommonExplorerPropsSchema = z.object({
     creationFormId: z.string().optional(),
     noPagination: z.literal(true).optional(),
     showActionsLabels: z.boolean().optional(),
-    defaultMassActions: z.array(z.union([z.literal('deactivate'), z.literal('export')])).optional()
-});
-
-const LinkExplorerPropsSchema = CommonExplorerPropsSchema;
-
-export const LibraryExplorerPropsSchema = CommonExplorerPropsSchema.extend({
     defaultPrimaryActions: z.array(z.union([z.literal('create')])).optional(),
+    defaultMassActions: z.array(z.union([z.literal('deactivate'), z.literal('export')])).optional(),
     defaultActionsForItem: z
         .array(z.union([z.literal('replaceLink'), z.literal('remove'), z.literal('activate')]))
         .optional()
@@ -79,11 +74,11 @@ const baseExplorerPanelSchema = z.object({
 const linkExplorerPanelSchema = z.object({
     attributeSource: z.string(),
     libraryId: LibraryIdSchema.optional(),
-    explorerProps: LinkExplorerPropsSchema.optional()
+    explorerProps: ExplorerPropsSchema.optional()
 });
 
 const libraryExplorerPanelSchema = z.object({
-    explorerProps: LibraryExplorerPropsSchema.optional()
+    explorerProps: ExplorerPropsSchema.optional()
 });
 
 const explorerPanelSchema = baseExplorerPanelSchema.and(z.union([linkExplorerPanelSchema, libraryExplorerPanelSchema]));

@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mapToCommonExplorerProps, mapToLibraryExplorerProps} from '../mapperToExplorerProps';
-import {type LibraryExplorerProps} from '../../../types';
+import {mapToCommonExplorerProps} from '../mapperToCommonExplorerProps';
+import {type ExplorerProps} from '../../../types';
 
-describe('mapperToExplorerProps', () => {
+describe('mapToCommonExplorerProps', () => {
     describe('with defined values', () => {
         it('should return correct props when all values are defined with true boolean', () => {
-            const explorerProps: LibraryExplorerProps = {
+            const explorerProps: ExplorerProps = {
                 showSearch: true,
                 defaultPrimaryActions: ['create'],
                 defaultActionsForItem: ['activate'],
@@ -33,26 +33,22 @@ describe('mapperToExplorerProps', () => {
                 defaultMassActions: ['deactivate'],
                 defaultViewSettings: {
                     enableConfigureView: false
-                }
-            });
-
-            expect(mapToLibraryExplorerProps({explorerProps})).toEqual({
+                },
                 defaultActionsForItem: ['activate']
             });
         });
 
         it('should return correct props when all values are defined with false boolean', () => {
-            const explorerProps: LibraryExplorerProps = {
+            const explorerProps: ExplorerProps = {
                 showSearch: false,
-                defaultPrimaryActions: ['create'],
-                defaultActionsForItem: ['activate'],
-                defaultMassActions: ['deactivate'],
+                defaultPrimaryActions: [],
+                defaultActionsForItem: [],
+                defaultMassActions: [],
                 showFilters: false,
                 showSorts: false,
                 freezeView: false,
                 showAttributeLabels: false,
                 creationFormId: 'create-id',
-                noPagination: true,
                 showActionsLabels: false
             };
 
@@ -63,9 +59,10 @@ describe('mapperToExplorerProps', () => {
                 ignoreViewByDefault: false,
                 hideTableHeader: true,
                 creationFormId: 'create-id',
-                noPagination: true,
-                defaultPrimaryActions: ['create'],
-                defaultMassActions: ['deactivate'],
+                noPagination: undefined,
+                defaultPrimaryActions: [],
+                defaultActionsForItem: [],
+                defaultMassActions: [],
                 defaultViewSettings: {
                     enableConfigureView: true
                 }
@@ -74,13 +71,17 @@ describe('mapperToExplorerProps', () => {
     });
 
     it('should return undefined where booleans are expected of none are provided', () => {
-        const explorerProps: LibraryExplorerProps = {};
+        const explorerProps: ExplorerProps = {};
 
         const commonExplorerProps = mapToCommonExplorerProps({explorerProps});
 
         expect(commonExplorerProps.showSearch).toBeUndefined();
         expect(commonExplorerProps.ignoreViewByDefault).toBeUndefined();
+        expect(commonExplorerProps.defaultViewSettings).toEqual({
+            enableConfigureView: false
+        });
         expect(commonExplorerProps.hideTableHeader).toBeUndefined();
+        expect(commonExplorerProps.noPagination).toBe(undefined);
     });
 
     it('should handle missing optional props gracefully with default value', () => {

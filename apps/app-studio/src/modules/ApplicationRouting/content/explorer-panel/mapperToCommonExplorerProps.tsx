@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ComponentProps} from 'react';
 import {type Explorer} from '@leav/ui';
-import {type LibraryExplorerProps} from '../../types';
+import {type ExplorerProps} from '../../types';
 
 const isBoolean = (val: unknown): val is boolean => 'boolean' === typeof val;
 
-type CommonOverridablePropsByUser =
+type OverridableExplorerPropsByUser =
     | 'showSearch'
     | 'showFilters'
     | 'showSorts'
@@ -17,23 +17,14 @@ type CommonOverridablePropsByUser =
     | 'creationFormId'
     | 'noPagination'
     | 'defaultPrimaryActions'
-    | 'defaultMassActions';
-
-type LibraryOverridablePropsByUser = 'defaultActionsForItem' | 'defaultMassActions';
-
-export const mapToLibraryExplorerProps = ({
-    explorerProps
-}: {
-    explorerProps: LibraryExplorerProps;
-}): Pick<ComponentProps<typeof Explorer>, LibraryOverridablePropsByUser> => ({
-    defaultActionsForItem: explorerProps.defaultActionsForItem
-});
+    | 'defaultMassActions'
+    | 'defaultActionsForItem';
 
 export const mapToCommonExplorerProps = ({
     explorerProps
 }: {
-    explorerProps: LibraryExplorerProps | undefined;
-}): Pick<ComponentProps<typeof Explorer>, CommonOverridablePropsByUser> => {
+    explorerProps: ExplorerProps | undefined;
+}): Pick<ComponentProps<typeof Explorer>, OverridableExplorerPropsByUser> => {
     if (!explorerProps) {
         return {};
     }
@@ -49,6 +40,7 @@ export const mapToCommonExplorerProps = ({
         creationFormId: explorerProps.creationFormId,
         noPagination: explorerProps.noPagination ?? undefined,
         defaultPrimaryActions: explorerProps.defaultPrimaryActions,
-        defaultMassActions: explorerProps.defaultMassActions
+        defaultMassActions: explorerProps.defaultMassActions,
+        defaultActionsForItem: explorerProps.defaultActionsForItem
     };
 };

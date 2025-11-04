@@ -5,9 +5,9 @@ import {type FunctionComponent} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Explorer, ThroughConditionFilter, useExecuteSaveValueBatchMutation, useLang} from '@leav/ui';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/ApplicationSettingsContext';
-import {mapToCommonExplorerProps} from './explorer-panel/mapperToExplorerProps';
+import {mapToCommonExplorerProps} from './explorer-panel/mapperToCommonExplorerProps';
 import {mapperToItemActions} from './explorer-panel/mapperToItemActions';
-import {type ItemActions, type LibraryExplorerProps} from '../types';
+import {type ItemActions, type ExplorerProps} from '../types';
 import {AttributeType, RecordFilterCondition} from '../../../__generated__';
 
 import {explorerContainer} from './panelContent.module.css';
@@ -16,7 +16,7 @@ interface IPanelExplorerProps {
     libraryId: string;
     attributeSource: string;
     viewId: string | undefined;
-    explorerProps: LibraryExplorerProps | undefined;
+    explorerProps: ExplorerProps | undefined;
     actions: ItemActions;
     recordId: string | null;
 }
@@ -35,13 +35,13 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
 
     const {saveValues} = useExecuteSaveValueBatchMutation();
 
-    const linkExplorerProps = explorerProps ? mapToCommonExplorerProps({explorerProps}) : {};
+    const commonExplorerProps = explorerProps ? mapToCommonExplorerProps({explorerProps}) : {};
     const itemActions = mapperToItemActions({actions, application, lang, navigate, libraryId});
 
     return (
         <div className={explorerContainer}>
             <Explorer
-                {...linkExplorerProps}
+                {...commonExplorerProps}
                 defaultViewSettings={{
                     viewId,
                     filters: [
@@ -60,7 +60,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                             value: recordId
                         }
                     ],
-                    ...linkExplorerProps.defaultViewSettings
+                    ...commonExplorerProps.defaultViewSettings
                 }}
                 entrypoint={{
                     type: 'library',
