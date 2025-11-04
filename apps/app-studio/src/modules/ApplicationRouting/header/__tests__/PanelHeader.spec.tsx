@@ -1,8 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render} from '_ui/_tests/testUtils';
+import {render, screen} from '_ui/_tests/testUtils';
 import {render as renderRTL} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as ReactRouter from 'react-router-dom';
 import * as Utils from '../../utils/retrievePanelDetails';
 import * as LibraryIdCardComponent from '../LibraryIdCard';
@@ -18,7 +19,9 @@ jest.mock('../../../../config/application-instance/application-settings/Applicat
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
-    useParams: jest.fn()
+    useParams: jest.fn(),
+    useNavigate: jest.fn(),
+    generatePath: jest.fn()
 }));
 
 jest.mock('../LibraryIdCard', () => ({
@@ -31,6 +34,8 @@ jest.mock('../RecordIdCard', () => ({
 
 describe('PanelHeader', () => {
     const spyUseParams = jest.spyOn(ReactRouter, 'useParams');
+    const spyUseNavigate = jest.spyOn(ReactRouter, 'useNavigate');
+    const spyGeneratePath = jest.spyOn(ReactRouter, 'generatePath');
     const spyLibraryIdCard = jest.spyOn(LibraryIdCardComponent, 'LibraryIdCard');
     const spyRecordIdCard = jest.spyOn(RecordIdCardComponent, 'RecordIdCard');
     const spyRetrievePanelDetails = jest.spyOn(Utils, 'retrievePanelDetails');
@@ -138,5 +143,48 @@ describe('PanelHeader', () => {
         );
 
         expect(container.firstChild).toBeNull();
+    });
+
+    it('should display fullpage button and navigate when clicked in record panel with modal', async () => {
+        const mockNavigate = jest.fn();
+        spyUseNavigate.mockReturnValue(mockNavigate);
+        spyUseParams.mockReturnValue({
+            recordId: '1234567890',
+            recordPanelId: 'panel123',
+            where: 'modal'
+        });
+        spyRetrievePanelDetails.mockReturnValue({libraryId: 'test', panelType: 'recordPanels', currentPanel: null});
+        spyUseApplicationSettingsContext.mockReturnValue([emptyApplication] as any);
+        spyGeneratePath.mockReturnValue('../../../1234567890/fullpage/panel123');
+
+        const user = userEvent.setup();
+
+        render(<PanelHeader enabled />);
+
+        const fullpageButton = screen.getByRole('button', {name: /full_page/i});
+        expect(fullpageButton).toBeInTheDocument();
+
+        await user.click(fullpageButton);
+
+        expect(spyGeneratePath).toHaveBeenCalledWith('../../../:recordId/fullpage/:recordPanelId', {
+            recordId: '1234567890',
+            recordPanelId: 'panel123'
+        });
+        expect(mockNavigate).toHaveBeenCalledWith('../../../1234567890/fullpage/panel123', {relative: 'path'});
+    });
+
+    it('should not display fullpage button when already in fullpage', async () => {
+        spyUseParams.mockReturnValue({
+            recordId: '1234567890',
+            recordPanelId: 'panel123',
+            where: 'fullpage'
+        });
+        spyRetrievePanelDetails.mockReturnValue({libraryId: 'test', panelType: 'recordPanels', currentPanel: null});
+        spyUseApplicationSettingsContext.mockReturnValue([emptyApplication] as any);
+
+        render(<PanelHeader enabled />);
+
+        const fullpageButton = screen.queryByRole('button', {name: /full_page/i});
+        expect(fullpageButton).not.toBeInTheDocument();
     });
 });

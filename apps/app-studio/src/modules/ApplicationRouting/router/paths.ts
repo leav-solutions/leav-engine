@@ -16,5 +16,6 @@ export const UnreachablePaths = {
 export const RelativePaths = {
     nextLevelPanel: ':recordId/:where/:recordPanelId',
     closeCurrentPanel: '../../..',
-    changeLastRecordPanel: '../:recordPanelId'
+    changeLastRecordPanel: '../:recordPanelId',
+    openCurrentPanelInFullpage: '../../../:recordId/fullpage/:recordPanelId'
 };

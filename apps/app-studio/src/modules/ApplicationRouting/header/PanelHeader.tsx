@@ -9,6 +9,10 @@ import {useApplicationSettingsContext} from '../../../config/application-instanc
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 import {LibraryIdCard} from './LibraryIdCard';
 import {RecordIdCard} from './RecordIdCard';
+import {KitSpace} from 'aristid-ds';
+import {panelHeaderInSlider} from './panelHeader.module.css';
+import {OpenInFullpageButton} from './OpenInFullpageButton';
+import cn from 'classnames';
 
 export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?: string}> = ({
     enabled,
@@ -17,22 +21,37 @@ export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?:
     const [application] = useApplicationSettingsContext();
     const {lang} = useContext(LangContext);
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
-
     const {libraryId, panelType, currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
 
-    const avatarSize = !where || where === 'fullpage' ? 'l' : 'm';
+    const isFullpagePanel = !where || where === 'fullpage';
+    const avatarSize = isFullpagePanel ? 'l' : 'm';
 
     if (!enabled) {
         return null;
     }
 
-    return panelType === 'libraryPanels' ? (
-        <LibraryIdCard
-            libraryId={libraryId}
-            title={localizedTranslation(currentPanel.name, lang)}
-            avatarSize={avatarSize}
-        />
-    ) : (
-        <RecordIdCard libraryId={libraryId} currentRecordId={currentRecordId ?? recordId} avatarSize={avatarSize} />
+    return (
+        <KitSpace
+            className={cn({
+                [panelHeaderInSlider]: where === 'slider'
+            })}
+            direction="horizontal"
+            align="center"
+        >
+            {panelType === 'libraryPanels' ? (
+                <LibraryIdCard
+                    libraryId={libraryId}
+                    title={localizedTranslation(currentPanel.name, lang)}
+                    avatarSize={avatarSize}
+                />
+            ) : (
+                <RecordIdCard
+                    libraryId={libraryId}
+                    currentRecordId={currentRecordId ?? recordId}
+                    avatarSize={avatarSize}
+                />
+            )}
+            {!isFullpagePanel && <OpenInFullpageButton recordId={recordId} recordPanelId={recordPanelId} />}
+        </KitSpace>
     );
 };

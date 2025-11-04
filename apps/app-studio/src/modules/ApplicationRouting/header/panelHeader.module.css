@@ -1,0 +1,5 @@
+/* This class positions the action button next to the slider close button by spacing the header content */
+.panelHeaderInSlider {
+    width: 100%;
+    justify-content: space-between;
+}
