@@ -250,23 +250,23 @@ export default function ({
                     ? aql`
                     FOR recordId IN ${recordIds}
                         LET valueEdge = FIRST(
-                            FOR value, edge
-                            IN 1 OUTBOUND CONCAT(${library}, '/', recordId)
-                            ${edgeCollec}
-                            FILTER edge.attribute == ${attribute.id}
-                            ${filterVersion}
-                            RETURN { value, edge }
+                            FOR edge IN ${edgeCollec}
+                                FILTER edge._from == CONCAT(${library}, '/', recordId)
+                                AND edge.attribute == ${attribute.id}
+                                ${filterVersion}
+                                LET value = DOCUMENT(edge._to)
+                                RETURN { value, edge }
                         )
                         RETURN MERGE({ recordId: recordId }, valueEdge)
                 `
                     : aql`
                     FOR recordId IN ${recordIds}
-                        FOR value, edge
-                        IN 1 OUTBOUND CONCAT(${library}, '/', recordId)
-                        ${edgeCollec}
-                        FILTER edge.attribute == ${attribute.id}
-                        ${filterVersion}
-                        RETURN MERGE({ recordId: recordId }, { value, edge })
+                        FOR edge IN ${edgeCollec}
+                            FILTER edge._from == CONCAT(${library}, '/', recordId)
+                            AND edge.attribute == ${attribute.id}
+                            ${filterVersion}
+                            LET value = DOCUMENT(edge._to)
+                            RETURN MERGE({ recordId: recordId }, { value, edge })
                 `;
 
             const resArr = await dbService.execute<Array<{recordId: string; value: any; edge: IValueEdge}>>({

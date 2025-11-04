@@ -323,9 +323,7 @@ export default function ({
             const queryParts = [
                 aql`
                     FOR recordKey IN ${recordsList}
-                        FOR linkedRecord, edge
-                            IN 1 ${direction} recordKey
-                            ${edgeCollec}
+                        FOR linkedRecord, edge IN 1 ${direction} recordKey ${edgeCollec}
                             FILTER edge.attribute == ${edgeAttribute}
                 `
             ];

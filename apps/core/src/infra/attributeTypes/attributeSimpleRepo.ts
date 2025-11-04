@@ -109,9 +109,9 @@ export default function ({
         async getValuesBatch({library, recordIds, attribute, ctx}): Promise<IStandardValue[][]> {
             const coll = dbService.db.collection(library);
             const query = aql`
-                FOR recordId IN ${recordIds}
-                    LET r = DOCUMENT(${coll}, recordId)
-                    RETURN { recordId: recordId, ${attribute.id}: r.${attribute.id} }
+                FOR r IN ${coll}
+                    FILTER r._key IN ${recordIds}
+                    RETURN { recordId: r._key, ${attribute.id}: r.${attribute.id} }
             `;
             const res = await dbService.execute<Array<{recordId: string; [k: string]: any}>>({query, ctx});
             const valuesByRecordId = new Map(res.map(r => [r.recordId, r]));

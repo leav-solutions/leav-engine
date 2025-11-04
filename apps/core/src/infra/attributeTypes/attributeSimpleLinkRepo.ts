@@ -129,14 +129,13 @@ export default function ({
         }): Promise<ILinkValue[][]> {
             const libCollec = dbService.db.collection(advancedLinkAttr.linked_library);
             const query = aql`
-                FOR recordId IN ${values}
-                    LET records = (
-                        FOR r IN ${libCollec}
-                            FILTER r.${(advancedLinkAttr.reverse_link as IAttribute)?.id} == recordId
-                            ${!advancedLinkAttr.multiple_values && !forceGetAllValues ? aql`LIMIT 1` : aql``}
-                            RETURN r
-                    )
-                    RETURN { recordId: recordId, records }
+                FOR r IN ${libCollec}
+                    FILTER r.${(advancedLinkAttr.reverse_link as IAttribute)?.id} IN ${values}
+                    COLLECT recordId = r.${(advancedLinkAttr.reverse_link as IAttribute)?.id} INTO grouped
+                    RETURN {
+                        recordId,
+                        records: ${!advancedLinkAttr.multiple_values && !forceGetAllValues ? aql`SLICE(grouped[*].r, 0, 1)` : aql`grouped[*].r`} 
+                    }
             `;
             const res = await dbService.execute<Array<{recordId: string; records: IRecord[]}>>({query, ctx});
 
@@ -186,12 +185,12 @@ export default function ({
             const libCollec = dbService.db.collection(library);
             const linkedLibCollec = dbService.db.collection(attribute.linked_library);
 
-            const res = await dbService.execute<Array<{recordId: string; link: ILinkValue[]}>>({
+            const res = await dbService.execute<Array<{recordId: string; link: ILinkValue | null}>>({
                 query: aql`
-                    FOR recordId IN ${recordIds}
-                        LET rec = DOCUMENT(${libCollec}, recordId)
-                        LET link = DOCUMENT(${linkedLibCollec}, rec.${attribute.id})
-                        return { recordId: recordId, link: link }
+                    FOR rec IN ${libCollec}
+                        FILTER rec._key IN ${recordIds}
+                        LET link = rec && rec.${attribute.id} ? DOCUMENT(${linkedLibCollec}, rec.${attribute.id}) : null
+                        RETURN { recordId: rec._key, link }
                 `,
                 ctx
             });
@@ -200,7 +199,7 @@ export default function ({
             return recordIds.map(
                 recordId => {
                     const record = valuesByRecordId.get(recordId);
-                    const payload = record.link;
+                    const payload = record?.link;
                     return payload !== null && payload !== undefined
                         ? [
                               {
