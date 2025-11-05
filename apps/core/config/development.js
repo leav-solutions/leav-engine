@@ -20,5 +20,11 @@ module.exports = {
     },
     bugsnag: {
         releaseStage: process.env.BUGSNAG_RELEASE_STAGE || 'development'
+    },
+    actions: {
+        excel: {
+            useNewHyperformula: true,
+            debug: false
+        }
     }
 };

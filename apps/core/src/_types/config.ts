@@ -29,6 +29,7 @@ export interface IConfig {
     plugins: IKeyValue<IKeyValue<any>>;
     preview: IPreview;
     applications: IApplicationsConfig;
+    actions: IActions;
     files: IFilesConfig;
     dbProfiler: IDbProfilerConfig;
     instanceId: string;
@@ -66,6 +67,20 @@ export interface IServer {
     };
     systemUser: {
         email: string;
+    };
+}
+
+export interface IActions {
+    excel: {
+        /**
+         * Replace deprecated hot-formula-parser npm module by new hyperformula npm module
+         * Formulas should be compatible
+         */
+        useNewHyperformula: boolean;
+        /**
+         * Add debug log for each calculation with formula and result or error
+         */
+        debug: boolean;
     };
 }
 

@@ -145,7 +145,7 @@ module.exports = {
         'no-undef-init': 'error',
         'no-unsafe-finally': 'error',
         'no-unused-expressions': 'off',
-        '@typescript-eslint/no-unused-expressions': ['error'],
+        '@typescript-eslint/no-unused-expressions': ['error', { 'allowShortCircuit': true }],
         'no-unused-labels': 'error',
         'no-var': 'error',
         'object-shorthand': 'error',

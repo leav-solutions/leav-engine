@@ -16027,6 +16027,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chevrotain@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "chevrotain@npm:6.5.0"
+  dependencies:
+    regexp-to-ast: "npm:0.4.0"
+  checksum: e98f7cc12bea6732246a0a2c25028bc076d5ed7dda470403599c595e5eece5d60fe808a7cdb187b938ad3364c308c03f9eb603e2743871c861db497186776efb
+  languageName: node
+  linkType: hard
+
 "chokidar@npm:*, chokidar@npm:3.5.3, chokidar@npm:^3.0.0, chokidar@npm:^3.4.0, chokidar@npm:^3.5.2":
   version: 3.5.3
   resolution: "chokidar@npm:3.5.3"
@@ -16999,6 +17008,7 @@ __metadata:
     graphql-ws: "npm:5.10.0"
     handlebars: "npm:4.7.7"
     hot-formula-parser: "npm:4.0.0"
+    hyperformula: "npm:3.1.0"
     i18next: "npm:22.5.0"
     i18next-fs-backend: "npm:2.1.2"
     jest: "npm:29.7.0"
@@ -22141,6 +22151,16 @@ __metadata:
   bin:
     husky: lib/bin.js
   checksum: 7527e831c85d011518222965f2fe8487a30b1a06ed1c15d97143937184423827847e6436f721d8ffc2ab6abcc7ba1e6fff6c42cd43d69dc2d8e2deb0bde0c1b0
+  languageName: node
+  linkType: hard
+
+"hyperformula@npm:3.1.0":
+  version: 3.1.0
+  resolution: "hyperformula@npm:3.1.0"
+  dependencies:
+    chevrotain: "npm:^6.5.0"
+    tiny-emitter: "npm:^2.1.0"
+  checksum: d0c03ae7398a2fe3717b07194402df327b7ae9d9c09678f422a68dce2a4a90e29c4d3e3ba3776928a7ab64cbcfee3e13e8c6972b6cfe7b0a68189e39a4e3071a
   languageName: node
   linkType: hard
 
@@ -32531,6 +32551,13 @@ __metadata:
     extend-shallow: "npm:^3.0.2"
     safe-regex: "npm:^1.1.0"
   checksum: 3081403de79559387a35ef9d033740e41818a559512668cef3d12da4e8a29ef34ee13c8ed1256b07e27ae392790172e8a15c8a06b72962fd4550476cde3d8f77
+  languageName: node
+  linkType: hard
+
+"regexp-to-ast@npm:0.4.0":
+  version: 0.4.0
+  resolution: "regexp-to-ast@npm:0.4.0"
+  checksum: 381f57fa4d056056a50d7bc1365ece93434e1eea87bd3d60144ef6fd85bc4875410757908000c06fbe99ef9554c930c9890e695292b8e49756dfc0762890e777
   languageName: node
   linkType: hard
 

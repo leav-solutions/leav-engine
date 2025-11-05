@@ -84,6 +84,12 @@ module.exports = {
             password: process.env.MAILER_AUTH_PWD
         }
     },
+    actions: {
+        excel: {
+            useNewHyperformula: envToBool(process.env.ACTIONS_EXCEL_USE_NEW_HYPERFORMULA, false),
+            debug: envToBool(process.env.ACTIONS_EXCEL_DEBUG, false)
+        }
+    },
     bugsnag: {
         enable: envToBool(process.env.BUGSNAG_ENABLE, false),
         apiKey: process.env.BUGSNAG_API_KEY,

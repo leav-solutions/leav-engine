@@ -99,6 +99,12 @@ export const validateConfig = (conf: IConfig) => {
                 password: Joi.string()
             }
         }),
+        actions: Joi.object().keys({
+            excel: {
+                useNewHyperformula: Joi.boolean().required(),
+                debug: Joi.boolean().required()
+            }
+        }),
         lang: Joi.object().keys({
             available: Joi.array().items(Joi.string()).required(),
             default: Joi.string().required()

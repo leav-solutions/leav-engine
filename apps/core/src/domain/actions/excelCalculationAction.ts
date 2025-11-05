@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {type ILogger} from '@leav/logger';
 import {type ICalculationVariable} from 'domain/helpers/calculationVariable';
 import {Parser} from 'hot-formula-parser';
-import {type IUtils} from 'utils/utils';
+import {DetailedCellError, HyperFormula} from 'hyperformula';
 import {type IValue} from '_types/value';
 import {
     ActionsListIOTypes,
@@ -12,17 +13,21 @@ import {
     type IActionsListFunction
 } from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
+import {type IConfig} from '_types/config';
 
 interface IDeps {
-    'core.domain.helpers.calculationVariable'?: ICalculationVariable;
-    'core.utils'?: IUtils;
+    'core.domain.helpers.calculationVariable': ICalculationVariable;
+    config: IConfig;
+    'core.utils.logger': ILogger;
 }
 
 type ActionsListExcelValueType = string | number | boolean | {};
 
 export default function ({
-    'core.domain.helpers.calculationVariable': calculationVariable = null
-}: IDeps = {}): IActionsListFunction<{Formula: true; Description: true}> {
+    'core.domain.helpers.calculationVariable': calculationVariable,
+    'core.utils.logger': logger,
+    config
+}: IDeps): IActionsListFunction<{Formula: true; Description: true}> {
     const _processReplacement = async (
         context: IActionsListContext,
         initialValues: ActionsListValueType[],
@@ -64,6 +69,122 @@ export default function ({
         return _replaceAsync(formula, regExp, _processReplacement, context, values);
     };
 
+    const debug = config.actions.excel.debug ?? false;
+    const actionWithHyperformula: IActionsListFunction<{Formula: true; Description: true}>['action'] = async (
+        values,
+        params,
+        ctx
+    ) => {
+        const {Formula: formula} = params;
+
+        if (formula === '') {
+            return {
+                values: [
+                    ...values,
+                    {
+                        id_value: null,
+                        isCalculated: true,
+                        modified_at: null,
+                        modified_by: null,
+                        created_at: null,
+                        created_by: null,
+                        payload: '',
+                        raw_payload: ''
+                    }
+                ],
+                errors: []
+            };
+        }
+
+        // Prepare formula by replacing variables, adding '=' at the beginning
+        const finalFormula = await _replaceVariables(
+            `=${formula}`,
+            ctx,
+            values.map(v => v.payload)
+        );
+
+        // Simulate a sheet with only one cell containing the formula
+        const hfInstance = HyperFormula.buildFromArray([[finalFormula]], {
+            licenseKey: 'gpl-v3'
+        });
+
+        const result = hfInstance.getCellValue({sheet: 0, col: 0, row: 0});
+
+        if (result instanceof DetailedCellError) {
+            debug && logger.debug(`Excel calculation with hyperformula error: ${finalFormula} => ${result.message}`);
+            return {
+                values,
+                errors: [
+                    {
+                        errorType: Errors.EXCEL_CALCULATION_ERROR,
+                        attributeValue: null,
+                        message: `Error: ${result.message} in formula: -- ${finalFormula} --`
+                    }
+                ]
+            };
+        }
+        debug && logger.debug(`Excel calculation with hyperformula: ${finalFormula} => ${result}`);
+
+        const finalResult: IValue = {
+            id_value: null,
+            isCalculated: true,
+            modified_at: null,
+            modified_by: null,
+            created_at: null,
+            created_by: null,
+            payload: String(result),
+            raw_payload: String(result)
+        };
+
+        return {values: [...values, finalResult], errors: []};
+    };
+
+    const actionWithHotFormulaParser: IActionsListFunction<{Formula: true; Description: true}>['action'] = async (
+        values,
+        params,
+        ctx
+    ) => {
+        const {Formula: formula} = params;
+
+        const finalFormula = await _replaceVariables(
+            formula,
+            ctx,
+            values.map(v => v.payload)
+        );
+
+        const parser = new Parser();
+
+        const {error, result} = parser.parse(finalFormula);
+
+        if (error) {
+            debug && logger.debug(`Excel calculation with hot-formula-parser error: ${finalFormula} => ${error}`);
+            return {
+                values,
+                errors: [
+                    {
+                        errorType: Errors.EXCEL_CALCULATION_ERROR,
+                        attributeValue: null,
+                        message: `Error: ${error} in formula: -- ${finalFormula} --`
+                    }
+                ]
+            };
+        }
+        debug && logger.debug(`Excel calculation with hot-formula-parser: ${finalFormula} => ${result}`);
+
+        const finalResult: IValue = {
+            id_value: null,
+            isCalculated: true,
+            modified_at: null,
+            modified_by: null,
+            created_at: null,
+            created_by: null,
+            payload: String(result),
+            raw_payload: String(result)
+        };
+
+        return {values: [...values, finalResult], errors: []};
+    };
+
     return {
         id: 'excelCalculation',
         name: 'Excel calculation',
@@ -87,44 +208,6 @@ export default function ({
                 helper_value: '21*2'
             }
         ],
-        action: async (values, params, ctx) => {
-            const {Formula: formula} = params;
-
-            const finalFormula = await _replaceVariables(
-                formula,
-                ctx,
-                values.map(v => v.payload)
-            );
-
-            const parser = new Parser();
-
-            const {error, result} = parser.parse(finalFormula);
-
-            if (error) {
-                return {
-                    values,
-                    errors: [
-                        {
-                            errorType: Errors.EXCEL_CALCULATION_ERROR,
-                            attributeValue: null,
-                            message: `Error: ${error} in formula: -- ${finalFormula} --`
-                        }
-                    ]
-                };
-            }
-
-            const finalResult: IValue = {
-                id_value: null,
-                isCalculated: true,
-                modified_at: null,
-                modified_by: null,
-                created_at: null,
-                created_by: null,
-                payload: String(result),
-                raw_payload: String(result)
-            };
-
-            return {values: [...values, finalResult], errors: []};
-        }
+        action: config.actions.excel.useNewHyperformula ? actionWithHyperformula : actionWithHotFormulaParser
     };
 }
