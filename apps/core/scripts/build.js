@@ -2,11 +2,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+/* eslint-disable no-console */
 const fs = require('fs');
 const path = require('path');
-const appRoot = require('app-root-path');
 const {execSync} = require('child_process');
-const glob = require('glob');
 
 const root = path.resolve(__dirname + '/..');
 const buildFolder = path.resolve(root + '/dist');
@@ -32,13 +31,16 @@ if (!fs.existsSync(buildPluginsFolder)) {
 }
 
 // Copy plugins package.json files to build folder
-const pkgFiles = glob.sync('*/package.json', {cwd: srcPluginsFolder});
+const pkgFiles = fs.globSync('*/package.json', {cwd: srcPluginsFolder});
 for (const pkgFile of pkgFiles) {
     fs.copyFileSync(srcPluginsFolder + '/' + pkgFile, buildPluginsFolder + '/' + pkgFile);
 }
 
 // Copy html files to build folder
-const htmlFiles = glob.sync('**/*.html', {cwd: root + '/src', ignore: '**/node_modules/**'});
+const htmlFiles = fs.globSync('**/*.html', {
+    cwd: root + '/src',
+    exclude: fileName => fileName.match(/\/node_modules\//)
+});
 for (const htmlFile of htmlFiles) {
     fs.copyFileSync(root + '/src/' + htmlFile, buildFolder + '/' + htmlFile);
 }

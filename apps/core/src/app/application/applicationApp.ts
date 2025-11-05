@@ -11,7 +11,6 @@ import {type IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomai
 import {type IPermissionDomain} from 'domain/permission/permissionDomain';
 import {type IRecordDomain} from 'domain/record/recordDomain';
 import express, {type NextFunction, type Response} from 'express';
-import glob from 'glob';
 import {type GraphQLResolveInfo} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
 import path from 'path';
@@ -76,17 +75,13 @@ export default function ({
     'core.utils': utils,
     config
 }: IApplicationAppDeps): IApplicationApp {
-    const _doesFileExist = async (folder: string, filePath: string) => {
-        const files: string[] = await new Promise((resolve, reject) =>
-            glob(`${folder}${filePath}`, (err, matches) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(matches);
-            })
-        );
-
-        return !!files.length;
+    const _doesFileExist = async (folder: string, filePath: string): Promise<boolean> => {
+        try {
+            await fs.promises.access(`${folder}${filePath}`);
+            return true;
+        } catch {
+            return false;
+        }
     };
 
     return {
