@@ -17,7 +17,7 @@ describe('exportProfileDomain', () => {
     };
 
     const validExportConfig: IExportProfileConfig = {
-        profileSelected: 'Profile 1',
+        defaultProfile: 'Profile 1',
         profiles: [
             {
                 label: 'Profile 1',
@@ -65,9 +65,9 @@ describe('exportProfileDomain', () => {
             expect(mockLibraryDomain.getLibraryProperties).toHaveBeenCalledWith('test_library', mockCtx);
         });
 
-        it('should return columns from the first profile if profileSelected not found', async () => {
+        it('should return columns from the first profile if defaultProfile not found', async () => {
             const configWithNonExistentProfile: IExportProfileConfig = {
-                profileSelected: 'Non-existent Profile',
+                defaultProfile: 'Non-existent Profile',
                 profiles: [
                     {
                         label: 'Profile 1',
@@ -108,9 +108,39 @@ describe('exportProfileDomain', () => {
             ]);
         });
 
-        it('should return undefined and log warning if no profile provided', async () => {
+        it('should return default profile columns when profile is undefined', async () => {
             const mockLibraryDomain: Mockify<ILibraryDomain> = {
-                getLibraryProperties: jest.fn()
+                getLibraryProperties: jest.fn().mockResolvedValue({
+                    id: 'test_library',
+                    settings: {
+                        export: validExportConfig
+                    }
+                })
+            };
+
+            const deps: IExportProfileDomainDeps = {
+                'core.domain.library': mockLibraryDomain as ILibraryDomain
+            };
+
+            const domain = exportProfileDomain(deps);
+            const result = await domain.getColumnsFromProfileConfig(undefined, 'test_library', mockCtx);
+
+            // When profile is undefined, it should use the default profile
+            expect(result).toEqual([
+                {columnLabel: 'Name', attribute: 'name'},
+                {columnLabel: 'Email', attribute: 'email'}
+            ]);
+            expect(mockLibraryDomain.getLibraryProperties).toHaveBeenCalledWith('test_library', mockCtx);
+        });
+
+        it('should return default profile columns when profile is empty string', async () => {
+            const mockLibraryDomain: Mockify<ILibraryDomain> = {
+                getLibraryProperties: jest.fn().mockResolvedValue({
+                    id: 'test_library',
+                    settings: {
+                        export: validExportConfig
+                    }
+                })
             };
 
             const deps: IExportProfileDomainDeps = {
@@ -120,12 +150,15 @@ describe('exportProfileDomain', () => {
             const domain = exportProfileDomain(deps);
             const result = await domain.getColumnsFromProfileConfig('', 'test_library', mockCtx);
 
-            expect(result).toBeUndefined();
-            expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining('No profile or library provided'));
-            expect(mockLibraryDomain.getLibraryProperties).not.toHaveBeenCalled();
+            // When profile is empty, it should use the default profile
+            expect(result).toEqual([
+                {columnLabel: 'Name', attribute: 'name'},
+                {columnLabel: 'Email', attribute: 'email'}
+            ]);
+            expect(mockLibraryDomain.getLibraryProperties).toHaveBeenCalledWith('test_library', mockCtx);
         });
 
-        it('should return undefined and log warning if no library provided', async () => {
+        it('should throw an error if no library provided', async () => {
             const mockLibraryDomain: Mockify<ILibraryDomain> = {
                 getLibraryProperties: jest.fn()
             };
@@ -135,14 +168,14 @@ describe('exportProfileDomain', () => {
             };
 
             const domain = exportProfileDomain(deps);
-            const result = await domain.getColumnsFromProfileConfig('Profile 1', '', mockCtx);
 
-            expect(result).toBeUndefined();
-            expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining('No profile or library provided'));
+            await expect(domain.getColumnsFromProfileConfig('Profile 1', '', mockCtx)).rejects.toThrow(
+                'Invalid request'
+            );
             expect(mockLibraryDomain.getLibraryProperties).not.toHaveBeenCalled();
         });
 
-        it('should return undefined and log warning if export config is missing', async () => {
+        it('should throw an error if export config is missing', async () => {
             const mockLibraryDomain: Mockify<ILibraryDomain> = {
                 getLibraryProperties: jest.fn().mockResolvedValue({
                     id: 'test_library',
@@ -155,15 +188,15 @@ describe('exportProfileDomain', () => {
             };
 
             const domain = exportProfileDomain(deps);
-            const result = await domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx);
 
-            expect(result).toBeUndefined();
-            expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining('Export profile config is missing'));
+            await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
+                'Export profile config is missing'
+            );
         });
 
         it('should handle columns with empty attributes', async () => {
             const configWithEmptyAttrs: IExportProfileConfig = {
-                profileSelected: 'Profile 1',
+                defaultProfile: 'Profile 1',
                 profiles: [
                     {
                         label: 'Profile 1',
@@ -199,9 +232,11 @@ describe('exportProfileDomain', () => {
             ]);
         });
 
-        it('should return undefined and log warning if library properties throw error', async () => {
+        it('should throw an error if getting library properties fails', async () => {
+            // 1. Setup the mock to reject (throw an error)
+            const libraryError = new Error('Library properties failed to load');
             const mockLibraryDomain: Mockify<ILibraryDomain> = {
-                getLibraryProperties: jest.fn().mockRejectedValue(new Error('Library not found'))
+                getLibraryProperties: jest.fn().mockRejectedValue(libraryError)
             };
 
             const deps: IExportProfileDomainDeps = {
@@ -209,10 +244,101 @@ describe('exportProfileDomain', () => {
             };
 
             const domain = exportProfileDomain(deps);
-            const result = await domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx);
 
-            expect(result).toBeUndefined();
-            expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining('Library not found'));
+            // 2. Use 'await expect(...).rejects.toThrow()' to assert that the async function throws
+            await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
+                libraryError
+            );
+
+            // 3. Optional: Verify that the function was called as expected
+            expect(mockLibraryDomain.getLibraryProperties).toHaveBeenCalledWith('test_library', mockCtx);
+        });
+
+        it('should throw an error if export config is invalid (missing defaultProfile)', async () => {
+            const invalidConfig = {
+                profiles: [
+                    {
+                        label: 'Profile 1',
+                        columns: [{columnLabel: 'Name', attribute: 'name'}]
+                    }
+                ]
+            };
+
+            const mockLibraryDomain: Mockify<ILibraryDomain> = {
+                getLibraryProperties: jest.fn().mockResolvedValue({
+                    id: 'test_library',
+                    settings: {
+                        export: invalidConfig
+                    }
+                })
+            };
+
+            const deps: IExportProfileDomainDeps = {
+                'core.domain.library': mockLibraryDomain as ILibraryDomain
+            };
+
+            const domain = exportProfileDomain(deps);
+
+            await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
+                /Invalid request/
+            );
+        });
+
+        it('should throw an error if export config has empty profiles array', async () => {
+            const invalidConfig = {
+                defaultProfile: 'Profile 1',
+                profiles: []
+            };
+
+            const mockLibraryDomain: Mockify<ILibraryDomain> = {
+                getLibraryProperties: jest.fn().mockResolvedValue({
+                    id: 'test_library',
+                    settings: {
+                        export: invalidConfig
+                    }
+                })
+            };
+
+            const deps: IExportProfileDomainDeps = {
+                'core.domain.library': mockLibraryDomain as ILibraryDomain
+            };
+
+            const domain = exportProfileDomain(deps);
+
+            await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
+                /Invalid request/
+            );
+        });
+
+        it('should throw an error if profile has empty columns array', async () => {
+            const invalidConfig = {
+                defaultProfile: 'Profile 1',
+                profiles: [
+                    {
+                        label: 'Profile 1',
+                        columns: []
+                    }
+                ]
+            };
+
+            const mockLibraryDomain: Mockify<ILibraryDomain> = {
+                getLibraryProperties: jest.fn().mockResolvedValue({
+                    id: 'test_library',
+                    settings: {
+                        export: invalidConfig
+                    }
+                })
+            };
+
+            const deps: IExportProfileDomainDeps = {
+                'core.domain.library': mockLibraryDomain as ILibraryDomain
+            };
+
+            const domain = exportProfileDomain(deps);
+
+            await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
+                /Invalid request/
+            );
         });
     });
 });

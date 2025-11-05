@@ -1156,7 +1156,6 @@ export type SaveAttributeMutation = { saveAttribute: { reverse_link?: string | n
 
 export type ExportQueryVariables = Exact<{
   library: Scalars['ID'];
-  attributes?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
   filters?: InputMaybe<Array<RecordFilterInput> | RecordFilterInput>;
   profile?: InputMaybe<Scalars['String']>;
 }>;
@@ -2902,13 +2901,8 @@ export type SaveAttributeMutationHookResult = ReturnType<typeof useSaveAttribute
 export type SaveAttributeMutationResult = Apollo.MutationResult<SaveAttributeMutation>;
 export type SaveAttributeMutationOptions = Apollo.BaseMutationOptions<SaveAttributeMutation, SaveAttributeMutationVariables>;
 export const ExportDocument = gql`
-    query EXPORT($library: ID!, $attributes: [ID!], $filters: [RecordFilterInput!], $profile: String) {
-  export(
-    library: $library
-    attributes: $attributes
-    filters: $filters
-    profile: $profile
-  )
+    query EXPORT($library: ID!, $filters: [RecordFilterInput!], $profile: String) {
+  export(library: $library, filters: $filters, profile: $profile)
 }
     `;
 
@@ -2925,7 +2919,6 @@ export const ExportDocument = gql`
  * const { data, loading, error } = useExportQuery({
  *   variables: {
  *      library: // value for 'library'
- *      attributes: // value for 'attributes'
  *      filters: // value for 'filters'
  *      profile: // value for 'profile'
  *   },

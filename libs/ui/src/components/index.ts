@@ -17,7 +17,6 @@ export * from './ErrorBoundary';
 export * from './ErrorDisplay';
 export * from './ErrorMessage';
 export * from './Explorer';
-export * from './ExportModal';
 export * from './FieldsGroup';
 export * from './Filters';
 export * from './FloatingMenu';

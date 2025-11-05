@@ -12,7 +12,7 @@ Export profiles are configured in the library settings under the `export` key:
 ```json
 {
   "export": {
-    "profileSelected": "Default Export",
+    "defaultProfile": "Default Export",
     "profiles": [
       {
         "label": "Default Export",
@@ -40,10 +40,10 @@ Export profiles are configured in the library settings under the `export` key:
 
 ### Export Config Object
 
-| Field             | Type   | Required | Description                            |
-|-------------------|--------|----------|----------------------------------------|
-| `profileSelected` | string | Yes      | Label of the profile to use by default |
-| `profiles`        | array  | Yes      | Array of profile objects (minimum 1)   |
+| Field            | Type   | Required | Description                            |
+|------------------|--------|----------|----------------------------------------|
+| `defaultProfile` | string | Yes      | Label of the profile to use by default |
+| `profiles`       | array  | Yes      | Array of profile objects (minimum 1)   |
 
 ### Profile Object
 
@@ -65,7 +65,7 @@ Export profiles are configured in the library settings under the `export` key:
 
 ```json
 {
-  "profileSelected": "Basic Info",
+  "defaultProfile": "Basic Info",
   "profiles": [
     {
       "label": "Basic Info",
@@ -92,7 +92,7 @@ Export profiles are configured in the library settings under the `export` key:
 
 ```json
 {
-  "profileSelected": "Full Export",
+  "defaultProfile": "Full Export",
   "profiles": [
     {
       "label": "Full Export",
@@ -138,7 +138,7 @@ Empty or null attributes can be used to create placeholder columns in the export
 
 ```json
 {
-  "profileSelected": "With Placeholders",
+  "defaultProfile": "With Placeholders",
   "profiles": [
     {
       "id": "123e4567-e89b-42d3-a456-426614174000",
@@ -181,7 +181,7 @@ const columns = await exportProfileDomain.getColumnsFromProfileConfig(
 
 ### Behavior
 
-1. **Profile Selection**: The function will use the profile matching `profileSelected`. If not found, it falls back to
+1. **Profile Selection**: The function will use the profile matching `defaultProfile`. If not found, it falls back to
    the first profile in the array.
 
 2. **Empty Attributes**: Columns with empty (`""`) or `null` attributes are valid and will create empty columns in the
@@ -193,7 +193,7 @@ const columns = await exportProfileDomain.getColumnsFromProfileConfig(
 
 The configuration is validated using Joi schema with the following rules:
 
-- **profileSelected**: Must be a non-empty string
+- **defaultProfile**: Must be a non-empty string
 - **profiles**: Must have at least 1 profile
 - **profile.label**: Must be a non-empty string
 - **profile.columns**: Must have at least 1 column
@@ -204,7 +204,7 @@ The configuration is validated using Joi schema with the following rules:
 
 ### Profile Not Found
 
-If `profileSelected` doesn't match any profile label, the first profile in the array will be used automatically.
+If `defaultProfile` doesn't match any profile label, the first profile in the array will be used automatically.
 
 ### Empty Profiles Array
 

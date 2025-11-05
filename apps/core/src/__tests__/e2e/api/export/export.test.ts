@@ -28,6 +28,57 @@ describe('Export', () => {
     const advancedLinkAttrId = 'test_advanced_link_attr';
     const treeAttrId = 'test_tree_attr';
 
+    const exportProfileConfig = `{
+        export: {
+            defaultProfile: "default",
+            profiles: [
+                {
+                    label: "default",
+                    columns: [
+                        {
+                            columnLabel: "campaign id",
+                            attribute: "id"
+                        },
+                        {
+                            columnLabel: "created by",
+                            attribute: "created_by"
+                        }
+                    ]
+                },
+                {
+                    label: "profile1",
+                    columns: [
+                       {
+                            columnLabel: "modified by",
+                            attribute: "modified_by"
+                        }
+                    ]
+                }
+            ]
+        }
+    }`;
+
+    const wrongExportProfileConfig = `{
+        export: {
+            defaultProfile: "default",
+            profiles: [
+                {
+                    label: "default",
+                    columns: [
+                        {
+                            columnLabel: "campaign id",
+                            attribute: "id"
+                        },
+                        {
+                            columnLabel: "wrong_attribute",
+                            attribute: "wrong_attribute"
+                        }
+                    ]
+                }
+            ]
+        }
+    }`;
+
     let exportTaskId: string;
     let graphqlClient: GraphqlWsClient;
     let recordId1: string;
@@ -90,35 +141,7 @@ describe('Export', () => {
             exportLibName,
             'Lib test export',
             [advancedAttrId, advancedLinkAttrId, treeAttrId, ...attributesIdFormats.map(({attrId}) => attrId)],
-            `{
-                export: {
-                    profileSelected: "default",
-                    profiles: [
-                        {
-                            label: "default",
-                            columns: [
-                                {
-                                    columnLabel: "campaign id",
-                                    attribute: "id"
-                                },
-                                {
-                                    columnLabel: "created by",
-                                    attribute: "created_by"
-                                }
-                            ]
-                        },
-                        {
-                            label: "profile1",
-                            columns: [
-                               {
-                                    columnLabel: "modified by",
-                                    attribute: "modified_by"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            }`
+            exportProfileConfig
         );
 
         await gqlSaveTree(testTreeId, 'Test tree', [exportLibName]);
@@ -203,11 +226,8 @@ describe('Export', () => {
     describe('export notifications', () => {
         describe('should notify success', () => {
             beforeEach(async () => {
-                exportTaskId = (
-                    await makeGraphQlCall(
-                        `query { export(library: "${exportLibName}", attributes: ["id", "created_by", "${advancedAttrId}", "${advancedLinkAttrId}", "${treeAttrId}"]) }`
-                    )
-                ).data.data.export;
+                exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data
+                    .export;
             });
 
             test('should notify success by email', async () => {
@@ -247,12 +267,14 @@ describe('Export', () => {
         });
 
         describe('should notify failure', () => {
+            beforeAll(async () => {
+                // Set wrong profile config
+                await gqlSaveLibrary(exportLibName, 'Lib test export', [], wrongExportProfileConfig);
+            });
+
             beforeEach(async () => {
-                exportTaskId = (
-                    await makeGraphQlCall(
-                        `query { export(library: "${exportLibName}", attributes: ["id", "not_exists"]) }`
-                    )
-                ).data.data.export;
+                exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data
+                    .export;
             });
 
             test('should notify failure by email', async () => {
@@ -287,12 +309,13 @@ describe('Export', () => {
     });
 
     describe('excel file', () => {
-        test('should have a valid excel file all attributes types', async () => {
-            exportTaskId = (
-                await makeGraphQlCall(
-                    `query { export(library: "${exportLibName}", attributes: ["id", "created_by", "${advancedAttrId}", "${advancedLinkAttrId}", "${treeAttrId}"]) }`
-                )
-            ).data.data.export;
+        beforeAll(async () => {
+            // Set wrong profile config
+            await gqlSaveLibrary(exportLibName, 'Lib test export', [], exportProfileConfig);
+        });
+
+        test('should have a valid excel file with default profile', async () => {
+            exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data.export;
 
             await waitExportWSNotification();
             await waitForTaskTerminate();
@@ -304,34 +327,38 @@ describe('Export', () => {
 
             expect(excelData).toEqual([
                 [
-                    ['id', 'created_by', advancedAttrId, advancedLinkAttrId, treeAttrId],
-                    ['Identifier', 'Created by', advancedAttrId, advancedLinkAttrId, treeAttrId],
-                    [
-                        recordId2,
-                        'admin',
-                        'advanced_value_2 | advanced_value_1',
-                        `${recordId1} | ${recordId2}`,
-                        recordId1
-                    ],
-                    [
-                        recordId1,
-                        'admin',
-                        'advanced_value_2 | advanced_value_1',
-                        `${recordId2} | ${recordId1}`,
-                        recordId1
-                    ]
+                    ['campaign id', 'created by'],
+                    ['Identifier', 'Created by'],
+                    [recordId2, 'admin'],
+                    [recordId1, 'admin']
                 ]
             ]);
         });
 
-        test('should have a valid excel file all attributes format', async () => {
-            exportTaskId = (
-                await makeGraphQlCall(
-                    `query { export(library: "${exportLibName}", attributes: [${attributesIdFormats
-                        .map(({attrId}) => `"${attrId}"`)
-                        .join(', ')}]) }`
-                )
-            ).data.data.export;
+        test('should export based on profile configuration', async () => {
+            exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data.export;
+
+            await waitExportWSNotification();
+            await waitForTaskTerminate();
+            const task = await getTask(exportTaskId);
+
+            const filepath = task.link.url;
+            const buffer = await getFileDataBuffer(filepath);
+            const excelData = await getExcelData(buffer);
+
+            // Should match the default profile (only id and created_by)
+            expect(excelData).toEqual([
+                [
+                    ['campaign id', 'created by'],
+                    ['Identifier', 'Created by'],
+                    [recordId2, 'admin'],
+                    [recordId1, 'admin']
+                ]
+            ]);
+        });
+
+        test('should export library elements based on default export profile', async () => {
+            exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data.export;
 
             await waitExportWSNotification();
             await waitForTaskTerminate();
@@ -343,60 +370,35 @@ describe('Export', () => {
 
             expect(excelData).toEqual([
                 [
-                    attributesIdFormats.map(({attrId}) => attrId),
-                    attributesIdFormats.map(({attrId}) => attrId),
-                    ['text', '123', '1761837010063', 'true', 'true', '#FF5733', 'rich text'],
-                    ['text', '123', '1761837010063', 'true', 'true', '#FF5733', 'rich text']
+                    ['campaign id', 'created by'], // custom label based on profile
+                    ['Identifier', 'Created by'], // attribute label
+                    [recordId2, 'admin'],
+                    [recordId1, 'admin']
                 ]
             ]);
         });
 
-        // FIXME: should select default profile if not specified in export query ?
-        // TODO: uncomment and update these tests when exportByProfile query is added
-        // test('should export library elements based on default export profile', async () => {
-        //     exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`, true)).data.data
-        //         .export;
-        //
-        //     await waitExportWSNotification();
-        //     await waitForTaskTerminate();
-        //     const task = await getTask(exportTaskId);
-        //
-        //     const filepath = task.link.url;
-        //     const buffer = await getFileDataBuffer(filepath);
-        //     const excelData = await getExcelData(buffer);
-        //
-        //     expect(excelData).toEqual([
-        //         [
-        //             ['campaign id', 'created by'], // custom label based on profile
-        //             ['Identifier', 'Created by'], // attribute label
-        //             [recordId2, 'admin'],
-        //             [recordId1, 'admin']
-        //         ]
-        //     ]);
-        // });
-        //
-        // test('should export library elements based on specified profile', async () => {
-        //     exportTaskId = (
-        //         await makeGraphQlCall(`query { export(library: "${exportLibName}", profile: "profile1") }`, true)
-        //     ).data.data.export;
-        //
-        //     await waitExportWSNotification();
-        //     await waitForTaskTerminate();
-        //     const task = await getTask(exportTaskId);
-        //
-        //     const filepath = task.link.url;
-        //     const buffer = await getFileDataBuffer(filepath);
-        //     const excelData = await getExcelData(buffer);
-        //
-        //     expect(excelData).toEqual([
-        //         [
-        //             ['modified by'], // custom label based on profile
-        //             ['Modified by'], // attribute label
-        //             ['admin'],
-        //             ['admin']
-        //         ]
-        //     ]);
-        // });
+        test('should export library elements based on specified profile', async () => {
+            exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}", profile: "profile1") }`))
+                .data.data.export;
+
+            await waitExportWSNotification();
+            await waitForTaskTerminate();
+            const task = await getTask(exportTaskId);
+
+            const filepath = task.link.url;
+            const buffer = await getFileDataBuffer(filepath);
+            const excelData = await getExcelData(buffer);
+
+            expect(excelData).toEqual([
+                [
+                    ['modified by'], // custom label based on profile
+                    ['Modified by'], // attribute label
+                    ['admin'],
+                    ['admin']
+                ]
+            ]);
+        });
     });
 });
 

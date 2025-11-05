@@ -60,7 +60,7 @@ export const useExportMassAction = ({
                                 variables: {
                                     library: view.libraryId,
                                     filters: massSelectionFilter,
-                                    profile: 'default'
+                                    profile: 'default' // Set 'default' by default, it'll change when we can select a profile from the UI
                                 }
                             });
                             if (error) {

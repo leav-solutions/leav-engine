@@ -1,13 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {logger} from '@leav/logger';
 import {type ILibraryDomain} from '../library/libraryDomain';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import Joi from 'joi';
+import ValidationError from '../../errors/ValidationError';
+import {ErrorTypes} from '../../_types/errors';
+import LeavError from '../../errors/LeavError';
 
 export interface IExportProfileConfig {
-    profileSelected: string;
+    defaultProfile: string;
     profiles: Array<{
         label: string;
         columns: Array<{columnLabel: string; attribute: string}>;
@@ -20,7 +22,11 @@ export interface IExportColumn {
 }
 
 export interface IExportProfileDomain {
-    getColumnsFromProfileConfig(profile: string, library: string, ctx: IQueryInfos): Promise<IExportColumn[]>;
+    getColumnsFromProfileConfig(
+        profile: string | undefined,
+        library: string,
+        ctx: IQueryInfos
+    ): Promise<IExportColumn[]>;
 }
 
 export interface IExportProfileDomainDeps {
@@ -39,49 +45,48 @@ export default function ({'core.domain.library': libraryDomain}: IExportProfileD
     }).required();
 
     const exportProfileConfigSchema = Joi.object({
-        profileSelected: Joi.string().required(),
+        defaultProfile: Joi.string().required(),
         profiles: Joi.array().items(profileSchema).min(1).required()
     }).required();
 
     const _validateExportProfileConfig = (exportProfile: IExportProfileConfig) => {
         if (!exportProfile) {
-            throw new Error('Export profile config is missing');
+            throw new LeavError(ErrorTypes.CUSTOM_CONFIG_ERROR, 'Export profile config is missing');
         }
 
         const isValid = exportProfileConfigSchema.validate(exportProfile);
         if (isValid.error) {
-            throw new Error(`Export profile config is not valid: ${isValid.error.message}`);
+            throw new ValidationError({
+                msg: `Export profile config is not valid: ${isValid.error.message}`
+            });
         }
         return true;
     };
 
     return {
-        async getColumnsFromProfileConfig(
-            profile: string,
-            library: string,
-            ctx: IQueryInfos
-        ): Promise<IExportColumn[]> {
-            try {
-                if (!profile || !library) {
-                    throw new Error('No profile or library provided');
-                }
-                const libraryProperties = await libraryDomain.getLibraryProperties(library, ctx);
-
-                const exportCustomConfig: IExportProfileConfig = libraryProperties?.settings?.export;
-                _validateExportProfileConfig(exportCustomConfig);
-
-                // Get the config from profileSelected label or the first one
-                const exportProfile =
-                    exportCustomConfig.profiles.find(p => p.label === exportCustomConfig.profileSelected) ||
-                    exportCustomConfig.profiles[0];
-
-                return exportProfile.columns;
-            } catch (e) {
-                logger.warn(
-                    `An error occurs while getting attributes from profile ${profile} for library ${library}: ${e.message}`
-                );
-                return undefined;
+        async getColumnsFromProfileConfig(profile, library, ctx) {
+            if (!library) {
+                throw new ValidationError({
+                    msg: 'Export error: No library provided'
+                });
             }
+
+            const libraryProperties = await libraryDomain.getLibraryProperties(library, ctx);
+
+            const config: IExportProfileConfig = libraryProperties?.settings?.export;
+            _validateExportProfileConfig(config);
+
+            const profiles = config.profiles;
+
+            const defaultOrFirstProfile = profiles.find(p => p.label === config.defaultProfile) ?? profiles[0];
+
+            // If we have no profil selected, send back the defaultProfile
+            if (!profile) {
+                return defaultOrFirstProfile.columns;
+            }
+
+            const exportProfile = profiles.find(p => p.label === profile) ?? defaultOrFirstProfile;
+            return exportProfile.columns;
         }
     };
 }

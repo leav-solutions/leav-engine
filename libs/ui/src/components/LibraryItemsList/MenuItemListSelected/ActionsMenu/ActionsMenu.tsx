@@ -5,7 +5,6 @@ import {DeleteOutlined, DownOutlined, ExportOutlined, PictureOutlined} from '@an
 import {Button, Dropdown} from 'antd';
 import {type ReactNode, useState} from 'react';
 import {DeactivateRecordsModal} from '_ui/components/DeactivateRecordsModal';
-import {ExportModal} from '_ui/components/ExportModal';
 import {TriggerPreviewsGenerationModal} from '_ui/components/TriggerPreviewsGenerationModal';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {LibraryBehavior} from '_ui/_gqlTypes';
@@ -29,18 +28,6 @@ function ActionsMenu(): JSX.Element {
     const filters = searchState.filters;
 
     const actions: IMenuAction[] = [
-        {
-            key: 'export',
-            icon: <ExportOutlined rotate={270} />,
-            title: t('export.title'),
-            modalComp: ExportModal,
-            modalProps: {
-                library: searchState.library.id,
-                selection: searchState.selection,
-                filters: searchState.filters
-            },
-            display: true
-        },
         {
             key: 'deactivate',
             icon: <DeleteOutlined />,

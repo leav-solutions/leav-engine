@@ -27,12 +27,11 @@ import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import LeavError from '../../errors/LeavError';
 import {type INotificationDomain} from 'domain/notification/notificationDomain';
 import {type IExportProfileDomain} from './exportProfileDomain';
-import CustomConfigError from '../../errors/CustomConfigError';
+import ValidationError from '../../errors/ValidationError';
 
 export interface IExportParams {
     library: string;
     profile: string;
-    attributes: string[];
     filters?: IRecordFilterLight[];
     ctx: IQueryInfos;
 }
@@ -233,23 +232,21 @@ export default function ({
     };
 
     const _extractAttributesAndColumnsFromProfile = async (
-        profile: string,
+        profile: string | undefined,
         library: string,
         ctx: IQueryInfos
-    ): Promise<[attributes: string[], columnLabels: string[]] | undefined> => {
-        if (profile) {
-            const columns = await exportProfileDomain.getColumnsFromProfileConfig(profile, library, ctx);
-            const attributes = columns?.map(c => c.attribute);
-            const columnLabels = columns?.map(c => c.columnLabel);
+    ): Promise<{attributes: string[]; columnLabels: string[]}> => {
+        const columns = await exportProfileDomain.getColumnsFromProfileConfig(profile, library, ctx);
+        const attributes = columns?.map(c => c.attribute);
+        const columnLabels = columns?.map(c => c.columnLabel);
 
-            if (!attributes) {
-                throw new CustomConfigError('No attributes provided for exportExcel function');
-            }
-
-            return [attributes, columnLabels];
+        if (!attributes || attributes.length === 0) {
+            throw new ValidationError({
+                msg: `No attributes provided for exportExcel function for library ${library}`
+            });
         }
 
-        return undefined;
+        return {attributes, columnLabels};
     };
 
     return {
@@ -292,11 +289,7 @@ export default function ({
 
             // If we found a profile, extract attributes and column labels from it
             // This code has to be executed before the export, to notify the user if the profile is not valid
-            const [attributes, columnLabels] = (await _extractAttributesAndColumnsFromProfile(
-                profile,
-                library,
-                ctx
-            )) ?? [params.attributes];
+            const {attributes, columnLabels} = await _extractAttributesAndColumnsFromProfile(profile, library, ctx);
 
             if (typeof task?.id === 'undefined') {
                 const newTaskId = uuidv4();
@@ -318,7 +311,7 @@ export default function ({
                         role: {
                             type: TaskType.EXPORT
                         },
-                        startAt: !!task.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                        startAt: Math.floor(Date.now() / 1000),
                         priority: TaskPriority.MEDIUM,
                         ...(!!task?.callbacks && {callbacks: task.callbacks})
                     },
