@@ -26,6 +26,7 @@ interface ISelectTreeNodeContentProps {
     selectableLibraries?: string[]; // all by default
     loadRecursively?: boolean;
     noPagination?: boolean;
+    showSelectChildrenButton?: boolean;
 }
 
 export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProps> = ({
@@ -41,7 +42,8 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     canSelectRoot = false,
     selectableLibraries,
     loadRecursively = true,
-    noPagination = false
+    noPagination = false,
+    showSelectChildrenButton = false
 }) => {
     const {t} = useSharedTranslation();
 
@@ -251,6 +253,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                     node={node as ITreeMapElement}
                     onSelect={onSelect}
                     selectedNodes={selectedNodes}
+                    showSelectChildrenButton={showSelectChildrenButton}
                 />
             )}
             onSelect={_handleSelect}
