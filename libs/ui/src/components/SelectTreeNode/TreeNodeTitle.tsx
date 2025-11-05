@@ -26,6 +26,7 @@ interface ITreeNodeTitleProps {
     node: ITreeMapElement;
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
     selectedNodes: string[];
+    showSelectChildrenButton: boolean;
 }
 
 export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
@@ -34,7 +35,8 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
     loadRecursively,
     node,
     onSelect,
-    selectedNodes
+    selectedNodes,
+    showSelectChildrenButton
 }) => {
     const {t} = useSharedTranslation();
 
@@ -66,7 +68,7 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
                 <SelectedChildrenCount node={node} selectedNodes={selectedNodes} loadRecursively={loadRecursively} />
             </TreeNodeLineSection>
             <TreeNodeLineSection>
-                {node.children.length > 0 && hover && (
+                {showSelectChildrenButton && node.children.length > 0 && hover && (
                     <KitButton size="s" onClick={e => handleChildrenSelection(e)}>
                         {t(`tree-node-selection.${buttonInSelectMode ? 'select_children' : 'unselect_children'}`)}
                     </KitButton>
