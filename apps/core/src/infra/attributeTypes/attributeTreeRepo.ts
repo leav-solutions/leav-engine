@@ -261,12 +261,7 @@ export default function ({
             const queryParts = [
                 aql`
                     FOR recordKey IN ${recordsList}
-                        FOR vertex, edge IN 1 OUTBOUND recordKey
-                            ${valuesLinksCollec}, ${treeEdgeCollec}
-                            LET record = DOCUMENT(
-                                vertex.${literal(NODE_LIBRARY_ID_FIELD)},
-                                vertex.${literal(NODE_RECORD_ID_FIELD)}
-                            )
+                        FOR vertex, edge IN 1 OUTBOUND recordKey ${valuesLinksCollec}, ${treeEdgeCollec}
                             FILTER edge.attribute == ${attribute.id}
                 `
             ];
@@ -278,6 +273,12 @@ export default function ({
                     queryParts.push(aql`FILTER edge.version == null`);
                 }
             }
+
+            queryParts.push(aql`
+                LET record = DOCUMENT(
+                    vertex.${literal(NODE_LIBRARY_ID_FIELD)},
+                    vertex.${literal(NODE_RECORD_ID_FIELD)}
+                )`);
 
             if (!attribute.multiple_values && !options?.forceGetAllValues) {
                 queryParts.push(aql`
