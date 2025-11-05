@@ -127,7 +127,12 @@ export async function makeGraphQlCall(query: string | FormData, options?: IMakeG
     }
 }
 
-export async function gqlSaveLibrary(id: string, label: string, additionalAttributes: string[] = []) {
+export async function gqlSaveLibrary(
+    id: string,
+    label: string,
+    additionalAttributes: string[] = [],
+    settings?: string
+) {
     const baseAttributes = ['id', 'modified_by', 'modified_at', 'created_by', 'created_at'];
     const libAttributes = baseAttributes.concat(additionalAttributes);
 
@@ -137,6 +142,7 @@ export async function gqlSaveLibrary(id: string, label: string, additionalAttrib
             id: "${id}",
             label: {en: "${label}"},
             attributes: [${libAttributes.map(a => `"${a}"`).join(', ')}]
+            ${settings ? `settings: ${settings}` : ''}
         }) { id }
     }`
     );

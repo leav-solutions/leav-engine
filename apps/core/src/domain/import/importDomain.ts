@@ -50,6 +50,8 @@ import {type IValidateHelper} from '../helpers/validate';
 import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
 import {type ILogger} from '@leav/logger';
 import {type ICreateRecordValueError} from 'domain/record/_types';
+import getFileDataBuffer from '../../utils/helpers/getFileDataBuffer';
+import getExcelData from '../../utils/helpers/getExcelData';
 
 export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
 export const IMPORT_CONFIG_SCHEMA_PATH = path.resolve(__dirname, './import-config-schema.json');
@@ -530,21 +532,8 @@ export default function ({
                 }
             };
 
-            fileStream.on('error', err =>
-                reject(
-                    new Error(
-                        translator.t(`errors.${Errors.FILE_ERROR}`, {
-                            lng: ctx.lang,
-                            error: err,
-                            interpolation: {escapeValue: false}
-                        })
-                    )
-                )
-            );
-
-            fileStream.on('data', chunk => {
-                parser.write(chunk);
-            });
+            fileStream.on('error', reject);
+            fileStream.on('data', chunk => parser.write(chunk));
 
             fileStream.on('end', async () => {
                 try {
@@ -560,29 +549,6 @@ export default function ({
             });
         });
 
-    const _getFileDataBuffer = async (filepath: string, ctx: IQueryInfos): Promise<Buffer> => {
-        const fileStream = fs.createReadStream(filepath);
-
-        return ((): Promise<Buffer> =>
-            new Promise((resolve, reject) => {
-                const chunks = [];
-
-                fileStream.on('data', chunk => chunks.push(chunk));
-                fileStream.on('error', err => {
-                    reject(
-                        new Error(
-                            translator.t(`errors.${Errors.FILE_ERROR}`, {
-                                lng: ctx.lang,
-                                error: err,
-                                interpolation: {escapeValue: false}
-                            })
-                        )
-                    );
-                });
-                fileStream.on('end', () => resolve(Buffer.concat(chunks)));
-            }))();
-    };
-
     const _jsonSchemaValidation = async (schemaPath: string, filepath: string, ctx: IQueryInfos): Promise<void> => {
         const {size} = await fs.promises.stat(filepath);
         const megaBytesSize = size / (1024 * 1024);
@@ -592,7 +558,7 @@ export default function ({
             return;
         }
 
-        const buffer = await _getFileDataBuffer(filepath, ctx);
+        const buffer = await getFileDataBuffer(filepath);
         const data = JSON.parse(buffer.toString('utf8'));
         const schema = await fs.promises.readFile(schemaPath);
         validate(data, JSON.parse(schema.toString()), {throwAll: true});
@@ -793,7 +759,7 @@ export default function ({
                 throw new Error(`Invalid JSON data. See ${reportFilePath} file for more details.`);
             }
 
-            const buffer = await _getFileDataBuffer(filepath, ctx);
+            const buffer = await getFileDataBuffer(filepath);
             const elements = JSON.parse(buffer.toString());
 
             logger.info('Starting configuration import...');
@@ -1171,32 +1137,8 @@ export default function ({
             return task.id;
         },
         async importExcel({filename, sheets, startAt}: IImportExcelParams, ctx: IQueryInfos): Promise<string> {
-            const buffer = await _getFileDataBuffer(`${config.import.directory}/${filename}`, ctx);
-            const workbook = new ExcelJS.Workbook();
-            await workbook.xlsx.load(buffer);
-            const data: string[][][] = [];
-
-            workbook.eachSheet((s, i) => {
-                s.eachRow(r => {
-                    let elems = (r.values as any[]).slice(1);
-
-                    elems = Array.from(elems, e => {
-                        if (typeof e === 'undefined') {
-                            return null; // we replace empty cell value by null
-                        } else if (typeof e === 'object') {
-                            return e.result; // if cell value is a formula
-                        }
-
-                        return e;
-                    });
-
-                    if (typeof data[i - 1] === 'undefined') {
-                        data[i - 1] = [];
-                    }
-
-                    data[i - 1].push(elems);
-                });
-            });
+            const buffer = await getFileDataBuffer(`${config.import.directory}/${filename}`);
+            const data = await getExcelData(buffer);
 
             const JSONFilename = filename.slice(0, filename.lastIndexOf('.')) + '.json';
             const writeStream = fs.createWriteStream(`${config.import.directory}/${JSONFilename}`, {
@@ -1211,6 +1153,8 @@ export default function ({
             let firstElementWritten = false;
             let elementIndex = 0;
             const excelMapping: IExcelMapping = {};
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(buffer);
 
             for (const [indexSheet, dataSheet] of data.entries()) {
                 let {

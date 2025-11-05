@@ -12,7 +12,7 @@ import type * as Config from '_types/config';
 import {type IQueryInfos} from '_types/queryInfos';
 import {Errors} from '../../_types/errors';
 import {type IDbPayloadInternal} from '_types/events';
-import * as crypto from "node:crypto";
+import * as crypto from 'node:crypto';
 
 export interface IEventsManagerDomain {
     sendDatabaseEvent<DBPayloadAction extends EventAction>(
@@ -115,8 +115,7 @@ export default function ({
             // It's used for websocket to ensure each instance forward subscribed events for theirs current websoket connections
             const uniqueQueueName = `${config.instanceId}_${config.eventsManager.queues.pubsub_events_prefix}-${crypto.randomUUID()}`;
             // listening pubsub events
-            await amqpService.consumer.channel.assertQueue(uniqueQueueName,
-                {durable: false, autoDelete: true});
+            await amqpService.consumer.channel.assertQueue(uniqueQueueName, {durable: false, autoDelete: true});
             await amqpService.consumer.channel.bindQueue(
                 uniqueQueueName,
                 config.amqp.exchange,

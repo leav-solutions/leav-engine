@@ -16,7 +16,6 @@
         "ENCRYPT_ERROR": "Encryption error",
         "ERROR": "Error",
         "EXCEL_CALCULATION_ERROR": "Excel calculation error: {{error}}. Formula: {{formula}}",
-        "FILE_ERROR": "File read error: {{error}}",
         "FILE_NOT_FOUND": "Unknown file",
         "FORBIDDEN_FILES": "Forbidden files: {{files}}",
         "FORBIDDEN_ID": "The specified Id is forbidden",

@@ -102,22 +102,22 @@ export interface IAuth {
     resetPasswordExpiration: string;
     oidc:
         | {
-        enable: false;
-        wellKnownEndpoint?: string;
-        clientId?: string;
-        postLogoutRedirectUri?: string;
-        skipLogoutConfirmationPage?: boolean;
-        idTokenUserClaim?: string;
-    }
+              enable: false;
+              wellKnownEndpoint?: string;
+              clientId?: string;
+              postLogoutRedirectUri?: string;
+              skipLogoutConfirmationPage?: boolean;
+              idTokenUserClaim?: string;
+          }
         | {
-        enable: true;
-        wellKnownEndpoint: string;
-        clientId: string;
-        postLogoutRedirectUri: string;
-        skipLogoutConfirmationPage?: boolean;
-        idTokenUserClaim: string;
-        enableAutoProvisioning: boolean;
-    };
+              enable: true;
+              wellKnownEndpoint: string;
+              clientId: string;
+              postLogoutRedirectUri: string;
+              skipLogoutConfirmationPage?: boolean;
+              idTokenUserClaim: string;
+              enableAutoProvisioning: boolean;
+          };
     testApiKey?: string;
 }
 

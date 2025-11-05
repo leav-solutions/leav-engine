@@ -34,9 +34,7 @@ export default function ({'core.domain.export': exportDomain}: IDeps): ICoreExpo
                 }
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
-            return fullSchema;
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
         }
     };
 }

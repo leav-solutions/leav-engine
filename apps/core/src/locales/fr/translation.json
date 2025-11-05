@@ -16,7 +16,6 @@
         "ENCRYPT_ERROR": "Erreur lors de l'encryptage",
         "ERROR": "Erreur",
         "EXCEL_CALCULATION_ERROR": "Erreur de calcul Excel: {{error}}. Formule: {{formula}}",
-        "FILE_ERROR": "Erreur lors de la lecture du fichier: {{error}}",
         "FILE_NOT_FOUND": "Fichier inconnu",
         "FORBIDDEN_FILES": "Fichiers non autorisés: {{files}}",
         "FORBIDDEN_ID": "L'ID spécifiée est interdit",
