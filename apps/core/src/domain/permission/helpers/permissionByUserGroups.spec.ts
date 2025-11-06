@@ -10,6 +10,7 @@ import {type IDefaultPermissionHelper} from './defaultPermission';
 import {type ToAny} from '../../../utils/utils';
 import {type ICachesService} from '../../../infra/cache/cacheService';
 import type * as Config from '../../../_types/config';
+import {systemUserId} from '../../../_constants/users';
 
 const depsBase: ToAny<IPermissionByUserGroupsHelperDeps> = {
     'core.domain.permission.helpers.simplePermission': jest.fn(),
@@ -226,6 +227,25 @@ describe('getPermissionByUserGroups', () => {
             mockDefaultPermHelper.getDefaultPermission(),
             mockDefaultPermHelper.getDefaultPermission(),
         ]);
+
+        expect(perm).toBe(true);
+    });
+
+    test('Return true if user is system', async () => {
+        const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
+            getSimplePermission: jest.fn(),
+        };
+
+        const permByGroupHelper = permissionByUserGroupsHelper(depsBase);
+
+        const perm = await permByGroupHelper.getPermissionByUserGroups({
+            type: PermissionTypes.ADMIN,
+            action: AdminPermissionsActions.CREATE_ATTRIBUTE,
+            userGroupsPaths: mockUserGroups,
+            ctx: {userId: systemUserId},
+        });
+
+        expect(mockSimplePermHelper.getSimplePermission).not.toHaveBeenCalled();
 
         expect(perm).toBe(true);
     });

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IConfig} from '_types/config';
 import defaultPermission from './defaultPermission';
+import {systemUserId} from '../../../_constants/users';
 
 describe('getDefaultPermission', () => {
     test('Return default permissions', async () => {
@@ -29,6 +30,20 @@ describe('getDefaultPermission', () => {
         const defaultPermHelper = defaultPermission({config: config as IConfig});
 
         const perm = defaultPermHelper.getDefaultPermission({ctx: {userId: '123'}});
+
+        expect(perm).toBe(true);
+    });
+
+    test('Return true if user is system', async () => {
+        const config = {
+            permissions: {
+                default: null,
+            },
+        };
+
+        const defaultPermHelper = defaultPermission({config: config as IConfig});
+
+        const perm = defaultPermHelper.getDefaultPermission({ctx: {userId: systemUserId}});
 
         expect(perm).toBe(true);
     });

@@ -54,6 +54,11 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
             getDefaultGlobalPermission = defaultPermHelper.getDefaultPermission,
             ctx,
         }: IGetPermissionByUserGroupsParams): Promise<boolean> {
+            // For system user, skip memoize, always return true
+            if (ctx.userId === systemUserId) {
+                return true;
+            }
+
             // we reverse to have this group paths order: from current user groups to the added root group
             const reversedGroupsPath = userGroupsPaths.length
                 ? userGroupsPaths.map(path => [...path].reverse().concat({id: null}))
