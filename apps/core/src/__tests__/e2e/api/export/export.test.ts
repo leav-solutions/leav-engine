@@ -28,6 +28,13 @@ describe('Export', () => {
     const advancedLinkAttrId = 'test_advanced_link_attr';
     const treeAttrId = 'test_tree_attr';
 
+    const attributesIdFormats = Object.values(AttributeFormats)
+        .filter(format => format !== AttributeFormats.DATE_RANGE && format !== AttributeFormats.EXTENDED)
+        .map(format => ({
+            format,
+            attrId: `simple_attr_${format.toLowerCase()}`,
+        }));
+
     const exportProfileConfig = `{
         export: {
             defaultProfile: "default",
@@ -46,24 +53,7 @@ describe('Export', () => {
                     ]
                 },
                 {
-                    label: "profile1",
-                    columns: [
-                       {
-                            columnLabel: "modified by",
-                            attribute: "modified_by"
-                        }
-                    ]
-                }
-            ]
-        }
-    }`;
-
-    const wrongExportProfileConfig = `{
-        export: {
-            defaultProfile: "default",
-            profiles: [
-                {
-                    label: "default",
+                    label: "wrongExportProfile",
                     columns: [
                         {
                             columnLabel: "campaign id",
@@ -72,6 +62,44 @@ describe('Export', () => {
                         {
                             columnLabel: "wrong_attribute",
                             attribute: "wrong_attribute"
+                        }
+                    ]
+                },
+                {
+                    label: "testAllAttributesTypes",
+                    columns: [
+                        {
+                            columnLabel: "id",
+                            attribute: "id"
+                        }, 
+                        {
+                            columnLabel: "created_by",
+                            attribute: "created_by"
+                        }, 
+                        {
+                            columnLabel: "${advancedAttrId}",
+                            attribute: "${advancedAttrId}"
+                        }, 
+                        {
+                            columnLabel: "${advancedLinkAttrId}",
+                            attribute: "${advancedLinkAttrId}"
+                        },
+                        {
+                            columnLabel: "${treeAttrId}",
+                            attribute: "${treeAttrId}"
+                        }
+                    ]
+                },
+                {
+                    label: "testAllAttributesFormats",
+                    columns: [${attributesIdFormats.map(({attrId}) => `{columnLabel: "${attrId}", attribute: "${attrId}"}`)}]
+                },
+                {
+                    label: "profile1",
+                    columns: [
+                       {
+                            columnLabel: "modified by",
+                            attribute: "modified_by"
                         }
                     ]
                 }
@@ -92,13 +120,6 @@ describe('Export', () => {
             data => data?.notification?.title?.includes('export'),
             {timeoutMs: 20000},
         );
-
-    const attributesIdFormats = Object.values(AttributeFormats)
-        .filter(format => format !== AttributeFormats.DATE_RANGE && format !== AttributeFormats.EXTENDED)
-        .map(format => ({
-            format,
-            attrId: `simple_attr_${format.toLowerCase()}`,
-        }));
 
     beforeAll(async () => {
         await gqlSaveAttribute({
@@ -226,6 +247,7 @@ describe('Export', () => {
     describe('export notifications', () => {
         describe('should notify success', () => {
             beforeEach(async () => {
+                // use defaultProfile if no specified
                 exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data
                     .export;
             });
@@ -267,14 +289,12 @@ describe('Export', () => {
         });
 
         describe('should notify failure', () => {
-            beforeAll(async () => {
-                // Set wrong profile config
-                await gqlSaveLibrary(exportLibName, 'Lib test export', [], wrongExportProfileConfig);
-            });
-
             beforeEach(async () => {
-                exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data
-                    .export;
+                exportTaskId = (
+                    await makeGraphQlCall(
+                        `query { export(library: "${exportLibName}", profile: "wrongExportProfile") }`,
+                    )
+                ).data.data.export;
             });
 
             test('should notify failure by email', async () => {
@@ -308,56 +328,8 @@ describe('Export', () => {
         });
     });
 
-    describe('excel file', () => {
-        beforeAll(async () => {
-            // Set wrong profile config
-            await gqlSaveLibrary(exportLibName, 'Lib test export', [], exportProfileConfig);
-        });
-
-        test('should have a valid excel file with default profile', async () => {
-            exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data.export;
-
-            await waitExportWSNotification();
-            await waitForTaskTerminate();
-            const task = await getTask(exportTaskId);
-
-            const filepath = task.link.url;
-            const buffer = await getFileDataBuffer(filepath);
-            const excelData = await getExcelData(buffer);
-
-            expect(excelData).toEqual([
-                [
-                    ['campaign id', 'created by'],
-                    ['Identifier', 'Created by'],
-                    [recordId2, 'admin'],
-                    [recordId1, 'admin'],
-                ],
-            ]);
-        });
-
-        test('should export based on profile configuration', async () => {
-            exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data.export;
-
-            await waitExportWSNotification();
-            await waitForTaskTerminate();
-            const task = await getTask(exportTaskId);
-
-            const filepath = task.link.url;
-            const buffer = await getFileDataBuffer(filepath);
-            const excelData = await getExcelData(buffer);
-
-            // Should match the default profile (only id and created_by)
-            expect(excelData).toEqual([
-                [
-                    ['campaign id', 'created by'],
-                    ['Identifier', 'Created by'],
-                    [recordId2, 'admin'],
-                    [recordId1, 'admin'],
-                ],
-            ]);
-        });
-
-        test('should export library elements based on default export profile', async () => {
+    describe('export profiles', () => {
+        test('should export library elements based on default export profile if no specified', async () => {
             exportTaskId = (await makeGraphQlCall(`query { export(library: "${exportLibName}") }`)).data.data.export;
 
             await waitExportWSNotification();
@@ -396,6 +368,70 @@ describe('Export', () => {
                     ['Modified by'], // attribute label
                     ['admin'],
                     ['admin'],
+                ],
+            ]);
+        });
+    });
+
+    describe('excel file', () => {
+        test('should have a valid excel file with all attributes types', async () => {
+            exportTaskId = (
+                await makeGraphQlCall(
+                    `query { export(library: "${exportLibName}", profile: "testAllAttributesTypes") }`,
+                )
+            ).data.data.export;
+
+            await waitExportWSNotification();
+            await waitForTaskTerminate();
+            const task = await getTask(exportTaskId);
+
+            const filepath = task.link.url;
+            const buffer = await getFileDataBuffer(filepath);
+            const excelData = await getExcelData(buffer);
+
+            expect(excelData).toEqual([
+                [
+                    ['id', 'created_by', advancedAttrId, advancedLinkAttrId, treeAttrId],
+                    ['Identifier', 'Created by', advancedAttrId, advancedLinkAttrId, treeAttrId],
+                    [
+                        recordId2,
+                        'admin',
+                        'advanced_value_1 | advanced_value_2',
+                        `${recordId1} | ${recordId2}`,
+                        recordId1,
+                    ],
+                    [
+                        recordId1,
+                        'admin',
+                        'advanced_value_1 | advanced_value_2',
+                        `${recordId2} | ${recordId1}`,
+                        recordId1,
+                    ],
+                ],
+            ]);
+        });
+
+        test('should have a valid excel file with all attributes formats', async () => {
+            exportTaskId = (
+                await makeGraphQlCall(
+                    `query { export(library: "${exportLibName}", profile: "testAllAttributesFormats") }`,
+                )
+            ).data.data.export;
+
+            await waitExportWSNotification();
+            await waitForTaskTerminate();
+            const task = await getTask(exportTaskId);
+
+            const filepath = task.link.url;
+            const buffer = await getFileDataBuffer(filepath);
+            const excelData = await getExcelData(buffer);
+
+            expect(excelData).toEqual([
+                [
+                    attributesIdFormats.map(({attrId}) => attrId),
+                    attributesIdFormats.map(({attrId}) => attrId),
+                    ['text', '123', '1761837010063', 'true', 'true', '#FF5733', 'rich text'],
+                    ['text', '123', '1761837010063', 'true', 'true', '#FF5733', 'rich text'],
                 ],
             ]);
         });
