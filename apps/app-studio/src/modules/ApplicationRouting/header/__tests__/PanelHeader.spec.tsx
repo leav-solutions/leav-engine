@@ -145,35 +145,63 @@ describe('PanelHeader', () => {
         expect(container.firstChild).toBeNull();
     });
 
-    it('should display fullpage button and navigate when clicked in record panel with modal', async () => {
+    it('should display expand button and navigate to popup when clicked in slider', async () => {
         const mockNavigate = jest.fn();
         spyUseNavigate.mockReturnValue(mockNavigate);
         spyUseParams.mockReturnValue({
             recordId: '1234567890',
             recordPanelId: 'panel123',
-            where: 'modal',
+            where: 'slider',
         });
         spyRetrievePanelDetails.mockReturnValue({libraryId: 'test', panelType: 'recordPanels', currentPanel: null});
         spyUseApplicationSettingsContext.mockReturnValue([emptyApplication] as any);
-        spyGeneratePath.mockReturnValue('../../../1234567890/fullpage/panel123');
+        spyGeneratePath.mockReturnValue('../../../1234567890/popup/panel123');
 
         const user = userEvent.setup();
 
         render(<PanelHeader enabled />);
 
-        const fullpageButton = screen.getByRole('button', {name: /full_page/i});
-        expect(fullpageButton).toBeInTheDocument();
+        const expandButton = screen.getByRole('button', {name: /expand/i});
+        expect(expandButton).toBeInTheDocument();
 
-        await user.click(fullpageButton);
+        await user.click(expandButton);
 
-        expect(spyGeneratePath).toHaveBeenCalledWith('../../../:recordId/fullpage/:recordPanelId', {
+        expect(spyGeneratePath).toHaveBeenCalledWith('../../../:recordId/popup/:recordPanelId', {
             recordId: '1234567890',
             recordPanelId: 'panel123',
         });
-        expect(mockNavigate).toHaveBeenCalledWith('../../../1234567890/fullpage/panel123', {relative: 'path'});
+        expect(mockNavigate).toHaveBeenCalledWith('../../../1234567890/popup/panel123', {relative: 'path'});
     });
 
-    it('should not display fullpage button when already in fullpage', async () => {
+    it('should display collapse button and navigate to slider when clicked in popup', async () => {
+        const mockNavigate = jest.fn();
+        spyUseNavigate.mockReturnValue(mockNavigate);
+        spyUseParams.mockReturnValue({
+            recordId: '1234567890',
+            recordPanelId: 'panel123',
+            where: 'popup',
+        });
+        spyRetrievePanelDetails.mockReturnValue({libraryId: 'test', panelType: 'recordPanels', currentPanel: null});
+        spyUseApplicationSettingsContext.mockReturnValue([emptyApplication] as any);
+        spyGeneratePath.mockReturnValue('../../../1234567890/slider/panel123');
+
+        const user = userEvent.setup();
+
+        render(<PanelHeader enabled />);
+
+        const collapseButton = screen.getByRole('button', {name: /collapse/i});
+        expect(collapseButton).toBeInTheDocument();
+
+        await user.click(collapseButton);
+
+        expect(spyGeneratePath).toHaveBeenCalledWith('../../../:recordId/slider/:recordPanelId', {
+            recordId: '1234567890',
+            recordPanelId: 'panel123',
+        });
+        expect(mockNavigate).toHaveBeenCalledWith('../../../1234567890/slider/panel123', {relative: 'path'});
+    });
+
+    it('should not display expand/collapse button when in fullpage', async () => {
         spyUseParams.mockReturnValue({
             recordId: '1234567890',
             recordPanelId: 'panel123',
@@ -184,7 +212,9 @@ describe('PanelHeader', () => {
 
         render(<PanelHeader enabled />);
 
-        const fullpageButton = screen.queryByRole('button', {name: /full_page/i});
-        expect(fullpageButton).not.toBeInTheDocument();
+        const expandButton = screen.queryByRole('button', {name: /expand/i});
+        const collapseButton = screen.queryByRole('button', {name: /collapse/i});
+        expect(expandButton).not.toBeInTheDocument();
+        expect(collapseButton).not.toBeInTheDocument();
     });
 });

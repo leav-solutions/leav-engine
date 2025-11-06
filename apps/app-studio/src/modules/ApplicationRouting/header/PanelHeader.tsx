@@ -11,7 +11,7 @@ import {LibraryIdCard} from './LibraryIdCard';
 import {RecordIdCard} from './RecordIdCard';
 import {KitSpace} from 'aristid-ds';
 import {panelHeaderInSlider} from './panelHeader.module.css';
-import {OpenInFullpageButton} from './OpenInFullpageButton';
+import {ExpandCollapseCurrentPanelButton} from './ExpandCollapseCurrentPanelButton';
 import cn from 'classnames';
 
 export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?: string}> = ({
@@ -23,6 +23,7 @@ export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?:
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
     const {libraryId, panelType, currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
 
+    const isLibraryPanel = panelType === 'libraryPanels';
     const isFullpagePanel = !where || where === 'fullpage';
     const avatarSize = isFullpagePanel ? 'l' : 'm';
 
@@ -38,7 +39,7 @@ export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?:
             direction="horizontal"
             align="center"
         >
-            {panelType === 'libraryPanels' ? (
+            {isLibraryPanel ? (
                 <LibraryIdCard
                     libraryId={libraryId}
                     title={localizedTranslation(currentPanel.name, lang)}
@@ -51,7 +52,9 @@ export const PanelHeader: FunctionComponent<{enabled: boolean; currentRecordId?:
                     avatarSize={avatarSize}
                 />
             )}
-            {!isFullpagePanel && <OpenInFullpageButton recordId={recordId} recordPanelId={recordPanelId} />}
+            {!isFullpagePanel && !isLibraryPanel && (
+                <ExpandCollapseCurrentPanelButton recordId={recordId} where={where} recordPanelId={recordPanelId} />
+            )}
         </KitSpace>
     );
 };

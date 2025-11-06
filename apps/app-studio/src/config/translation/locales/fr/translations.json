@@ -26,7 +26,8 @@
         "or": "ou",
         "create": "Créer",
         "ok": "Ok",
-        "full_page": "Plein écran"
+        "expand": "Agrandir",
+        "collapse": "Réduire"
     },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
