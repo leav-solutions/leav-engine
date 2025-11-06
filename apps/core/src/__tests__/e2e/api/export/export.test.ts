@@ -13,6 +13,7 @@ import {
     gqlSaveValue,
     makeGraphQlCall,
     makeWebSocketGraphQlCall,
+    toCleanJSON,
     waitGraphqlWebSocketMessage,
 } from '../e2eUtils';
 import {waitMailpitMessage} from '../mailpitUtils';
@@ -20,6 +21,7 @@ import {type IPubSubNotificationData} from '_types/eventsManager';
 import getFileDataBuffer from '../../../../utils/helpers/getFileDataBuffer';
 import getExcelData from '../../../../utils/helpers/getExcelData';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
+import moment from 'moment/moment';
 
 describe('Export', () => {
     const exportLibName = 'export_lib';
@@ -29,7 +31,7 @@ describe('Export', () => {
     const treeAttrId = 'test_tree_attr';
 
     const attributesIdFormats = Object.values(AttributeFormats)
-        .filter(format => format !== AttributeFormats.DATE_RANGE && format !== AttributeFormats.EXTENDED)
+        .filter(format => format !== AttributeFormats.EXTENDED)
         .map(format => ({
             format,
             attrId: `simple_attr_${format.toLowerCase()}`,
@@ -202,6 +204,26 @@ describe('Export', () => {
                     case AttributeFormats.RICH_TEXT:
                         await gqlSaveValue(attrId, exportLibName, recordId1, 'rich text');
                         await gqlSaveValue(attrId, exportLibName, recordId2, 'rich text');
+                        break;
+                    case AttributeFormats.DATE_RANGE:
+                        await gqlSaveValue(
+                            attrId,
+                            exportLibName,
+                            recordId1,
+                            toCleanJSON({
+                                from: moment('1987-06-07 12:00:00').unix(),
+                                to: moment('1987-06-09 12:00:00').unix(),
+                            }),
+                        );
+                        await gqlSaveValue(
+                            attrId,
+                            exportLibName,
+                            recordId2,
+                            toCleanJSON({
+                                from: moment('1987-06-07 12:00:00').unix(),
+                                to: moment('1987-06-09 12:00:00').unix(),
+                            }),
+                        );
                         break;
                     default:
                         await Promise.resolve();
@@ -430,8 +452,26 @@ describe('Export', () => {
                 [
                     attributesIdFormats.map(({attrId}) => attrId),
                     attributesIdFormats.map(({attrId}) => attrId),
-                    ['text', '123', '1761837010063', 'true', 'true', '#FF5733', 'rich text'],
-                    ['text', '123', '1761837010063', 'true', 'true', '#FF5733', 'rich text'],
+                    [
+                        'text',
+                        '123',
+                        '1761837010063',
+                        '{"to":550238400,"from":550065600}',
+                        'true',
+                        'true',
+                        '#FF5733',
+                        'rich text',
+                    ],
+                    [
+                        'text',
+                        '123',
+                        '1761837010063',
+                        '{"to":550238400,"from":550065600}',
+                        'true',
+                        'true',
+                        '#FF5733',
+                        'rich text',
+                    ],
                 ],
             ]);
         });
