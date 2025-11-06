@@ -13,14 +13,14 @@ module.exports = {
                 astTransformers: {
                     before: [
                         {
-                            path: 'ts-jest-mock-import-meta'
-                        }
-                    ]
-                }
-            }
+                            path: 'ts-jest-mock-import-meta',
+                        },
+                    ],
+                },
+            },
         ],
         '^.+\\.svg$': '<rootDir>/src/_tests/svgTransform.js',
-        '^.+\\.js$': ['babel-jest', {rootMode: 'upward'}]
+        '^.+\\.js$': ['babel-jest', {rootMode: 'upward'}],
     },
     transformIgnorePatterns: ['node_modules/(?!(@uidotdev/usehooks)/)'],
     testRegex: '.test.(tsx)$',
@@ -34,6 +34,6 @@ module.exports = {
         '^constants/(.*)$': '<rootDir>/src/constants/$1',
         '^_types/(.*)$': '<rootDir>/src/_types/$1',
         '^themingVar$': '<rootDir>/src/themingVar.ts',
-        '\\.css$': '<rootDir>/src/__mocks__/styleMock.js'
-    }
+        '\\.css$': '<rootDir>/src/__mocks__/styleMock.js',
+    },
 };

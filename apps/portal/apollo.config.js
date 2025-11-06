@@ -9,7 +9,7 @@ module.exports = {
     client: {
         service: {
             name: 'default',
-            url: `${apiUrl}/graphql?key=${apiKey}`
-        }
-    }
+            url: `${apiUrl}/graphql?key=${apiKey}`,
+        },
+    },
 };

@@ -23,26 +23,26 @@ module.exports = {
         admin: {
             login: process.env.SERVER_ADMIN_LOGIN,
             password: process.env.SERVER_ADMIN_PASSWORD,
-            email: process.env.SERVER_ADMIN_EMAIL
+            email: process.env.SERVER_ADMIN_EMAIL,
         },
         systemUser: {
-            email: process.env.SERVER_SYSTEM_USER_EMAIL || 'system@leav-engine.com'
-        }
+            email: process.env.SERVER_SYSTEM_USER_EMAIL || 'system@leav-engine.com',
+        },
     },
     db: {
         url: process.env.ARANGO_URL,
-        name: process.env.DB_NAME
+        name: process.env.DB_NAME,
     },
     diskCache: {
-        directory: process.env.DISK_CACHE_DIRECTORY || '/cache'
+        directory: process.env.DISK_CACHE_DIRECTORY || '/cache',
     },
     dataLoaders: {
         valueRepo: {
             getValues: {
                 enableCache: envToBool(process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_ENABLE_CACHE, false), // keep for test for now, may be remove in future
-                useBatch: envToBool(process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_USE_BATCH, true) // for rollback compatibility, keep it true
-            }
-        }
+                useBatch: envToBool(process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_USE_BATCH, true), // for rollback compatibility, keep it true
+            },
+        },
     },
     auth: {
         scheme: 'jwt',
@@ -52,7 +52,7 @@ module.exports = {
         refreshTokenExpiration: process.env.REFRESH_TOKEN_TTL || '2h',
         cookie: {
             sameSite: process.env.AUTH_COOKIE_SAMESITE || 'lax',
-            secure: envToBool(process.env.AUTH_COOKIE_SECURE, true)
+            secure: envToBool(process.env.AUTH_COOKIE_SECURE, true),
         },
         resetPasswordExpiration: process.env.AUTH_RESET_PWD_TTL || '20m',
         oidc: {
@@ -64,9 +64,9 @@ module.exports = {
             postLogoutRedirectUri: process.env.OIDC_POST_LOGOUT_REDIRECT_URI || 'http://localhost:4001',
             skipLogoutConfirmationPage: envToBool(process.env.OIDC_SKIP_LOGOUT_CONFIRMATION_PAGE, false),
             idTokenUserClaim: process.env.ID_TOKEN_USER_CLAIM || 'email',
-            enableAutoProvisioning: envToBool(process.env.OIDC_ENABLE_AUTO_PROVISIONING, false)
+            enableAutoProvisioning: envToBool(process.env.OIDC_ENABLE_AUTO_PROVISIONING, false),
         },
-        testApiKey: process.env.TEST_API_KEY // /!\ do not use in production /!\
+        testApiKey: process.env.TEST_API_KEY, // /!\ do not use in production /!\
     },
     mailer: {
         host: process.env.MAILER_HOST || 'localhost',
@@ -77,38 +77,38 @@ module.exports = {
         requireTLS: envToBool(process.env.MAILER_REQUIRE_TLS, true), // only used if secure is false. If requireTLS is true, the connexion will use STARTTLS
         from: {
             name: process.env.MAILER_FROM_NAME || 'Leav Engine',
-            email: process.env.MAILER_FROM_EMAIL || 'leav@example.com'
+            email: process.env.MAILER_FROM_EMAIL || 'leav@example.com',
         },
         auth: {
             user: process.env.MAILER_AUTH_USER,
-            password: process.env.MAILER_AUTH_PWD
-        }
+            password: process.env.MAILER_AUTH_PWD,
+        },
     },
     actions: {
         excel: {
             useNewHyperformula: envToBool(process.env.ACTIONS_EXCEL_USE_NEW_HYPERFORMULA, false),
-            debug: envToBool(process.env.ACTIONS_EXCEL_DEBUG, false)
-        }
+            debug: envToBool(process.env.ACTIONS_EXCEL_DEBUG, false),
+        },
     },
     bugsnag: {
         enable: envToBool(process.env.BUGSNAG_ENABLE, false),
         apiKey: process.env.BUGSNAG_API_KEY,
         appVersion: process.env.BUGSNAG_APP_VERSION,
         appType: process.env.BUGSNAG_APP_TYPE || process.env.CORE_MODE || 'core',
-        releaseStage: process.env.BUGSNAG_RELEASE_STAGE || 'production'
+        releaseStage: process.env.BUGSNAG_RELEASE_STAGE || 'production',
     },
     matomo: {
         enable: envToBool(process.env.MATOMO_ENABLE, false),
         url: process.env.MATOMO_URL || '//analytics.aristid.com/',
-        siteId: process.env.MATOMO_SITE_ID || ''
+        siteId: process.env.MATOMO_SITE_ID || '',
     },
     lang: {
         available: envToStringArray(process.env.LANG_AVAILABLE, ',', ['fr', 'en']),
-        default: process.env.LANG_DEFAULT || 'en'
+        default: process.env.LANG_DEFAULT || 'en',
     },
     permissions: {
         default: true,
-        enableCache: envToBool(process.env.PERMISSIONS_ENABLE_CACHE, true)
+        enableCache: envToBool(process.env.PERMISSIONS_ENABLE_CACHE, true),
     },
     amqp: {
         connOpt: {
@@ -116,34 +116,34 @@ module.exports = {
             hostname: process.env.AMQP_HOST,
             username: process.env.AMQP_USERNAME,
             password: process.env.AMQP_PWD,
-            port: process.env.AMQP_PORT || '5672'
+            port: process.env.AMQP_PORT || '5672',
         },
         exchange: process.env.AMQP_EXCHANGE || 'leav_core',
         type: process.env.AMQP_TYPE || 'direct',
-        prefetch: envToNumber(process.env.AMQP_PREFETCH, 5)
+        prefetch: envToNumber(process.env.AMQP_PREFETCH, 5),
     },
     redis: {
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
         cacheDatabase: envToNumber(process.env.REDIS_CACHE_DATABASE, 0),
-        sessionDatabase: envToNumber(process.env.REDIS_SESSION_DATABASE, 1)
+        sessionDatabase: envToNumber(process.env.REDIS_SESSION_DATABASE, 1),
     },
     filesManager: {
         queues: {
             events: process.env.FM_EVENTS_QUEUE || 'files_events',
             previewRequest: process.env.FM_PREVIEW_REQUEST_QUEUE || 'files_preview_request',
-            previewResponse: process.env.FM_PREVIEW_RESPONSE_QUEUE || 'files_preview_response'
+            previewResponse: process.env.FM_PREVIEW_RESPONSE_QUEUE || 'files_preview_response',
         },
         routingKeys: {
             events: 'files.event',
             previewRequest: 'files.previewRequest',
-            previewResponse: 'files.previewResponse'
+            previewResponse: 'files.previewResponse',
         },
         rootKeys: {
-            files1: 'files'
+            files1: 'files',
         },
         allowFilesList: process.env.ALLOW_FILES_LIST || '',
-        ignoreFilesList: process.env.IGNORE_FILES_LIST || ''
+        ignoreFilesList: process.env.IGNORE_FILES_LIST || '',
     },
     tasksManager: {
         checkingInterval: 3000,
@@ -151,33 +151,33 @@ module.exports = {
         restartWorker: envToBool(process.env.TM_RESTART_WORKER, false),
         queues: {
             execOrders: process.env.TM_EXEC_ORDERS_QUEUE || 'tasks_exec_orders',
-            cancelOrders: process.env.TM_CANCEL_ORDERS_QUEUE || 'tasks_cancel_orders'
+            cancelOrders: process.env.TM_CANCEL_ORDERS_QUEUE || 'tasks_cancel_orders',
         },
         routingKeys: {
             execOrders: 'tasks.exec.orders',
-            cancelOrders: 'tasks.cancel.orders'
-        }
+            cancelOrders: 'tasks.cancel.orders',
+        },
     },
     eventsManager: {
         routingKeys: {
             data_events: 'data.events',
-            pubsub_events: 'pubsub.events'
+            pubsub_events: 'pubsub.events',
         },
         queues: {
             // Used to create a queue by instance to deliver websocket for all clients
-            pubsub_events_prefix: 'pubsub_events-'
-        }
+            pubsub_events_prefix: 'pubsub_events-',
+        },
     },
     indexationManager: {
         queues: {
-            events: 'indexation_events'
-        }
+            events: 'indexation_events',
+        },
     },
     debug: envToBool(process.env.DEBUG, false),
     defaultUserId: '2', // Used for DB migration and any other action that is not bound to a real user
     export: {
         directory: process.env.EXPORT_DIR || '/exports',
-        endpoint: process.env.EXPORT_ENDPOINT || 'exports'
+        endpoint: process.env.EXPORT_ENDPOINT || 'exports',
     },
     import: {
         directory: process.env.IMPORT_DIR || '/imports',
@@ -185,38 +185,38 @@ module.exports = {
         sizeLimit: envToNumber(process.env.IMPORT_SIZE_LIMIT, 10), // megabytes
         groupData: envToNumber(process.env.IMPORT_GROUP_DATA, 50), // number of elements processed at the same time,
         maxStackedElements: envToNumber(process.env.IMPORT_MAX_STACKED_ELEMENTS, 10000), // We clear the parser value stack based on the number of elements present
-        delayTaskExecMs: envToNumber(process.env.IMPORT_DELAY_TASK_EXEC_MS, 0) // Delay to ensure file is written in nfs due to async behavior
+        delayTaskExecMs: envToNumber(process.env.IMPORT_DELAY_TASK_EXEC_MS, 0), // Delay to ensure file is written in nfs due to async behavior
     },
     preview: {
-        directory: process.env.PREVIEWS_DIRECTORY || '/results'
+        directory: process.env.PREVIEWS_DIRECTORY || '/results',
     },
     notification: {
         enable: envToBool(process.env.NOTIFICATION_ENABLE, false),
         email: {
-            enable: envToBool(process.env.NOTIFICATION_EMAIL_ENABLE, false)
+            enable: envToBool(process.env.NOTIFICATION_EMAIL_ENABLE, false),
         },
         webSocket: {
-            enable: envToBool(process.env.NOTIFICATION_WEBSOCKET_ENABLE, false)
-        }
+            enable: envToBool(process.env.NOTIFICATION_WEBSOCKET_ENABLE, false),
+        },
     },
     applications: {
-        rootFolder: process.env.APPLICATIONS_FOLDER || 'applications'
+        rootFolder: process.env.APPLICATIONS_FOLDER || 'applications',
     },
     files: {
         rootPaths: process.env.FILES_ROOT_PATHS,
-        originalsPathPrefix: process.env.FILES_ORIGINALS_PREFIX || 'originals'
+        originalsPathPrefix: process.env.FILES_ORIGINALS_PREFIX || 'originals',
     },
     dbProfiler: {
-        enable: envToBool(process.env.DB_PROFILER_ENABLE, false)
+        enable: envToBool(process.env.DB_PROFILER_ENABLE, false),
     },
     elasticsearch: {
         indexPrefix: process.env.ELASTICSEARCH_INDEX_PREFIX || 'leav-logs-',
         url: process.env.ELASTICSEARCH_URL || process.env.ELASTIC_SEARCH_URL || 'http://elasticsearch:9200',
         ilmPolicyName: process.env.ELASTICSEARCH_ILM_POLICY_NAME || 'leav-logs-policy',
-        templateName: process.env.ELASTICSEARCH_TEMPLATE_NAME || 'leav-logs-template'
+        templateName: process.env.ELASTICSEARCH_TEMPLATE_NAME || 'leav-logs-template',
     },
     logsCollector: {
-        queue: process.env.LOGS_MANAGER_QUEUE || 'logs_events'
+        queue: process.env.LOGS_MANAGER_QUEUE || 'logs_events',
     },
-    pluginsPath: envToStringArray(process.env.PLUGINS_PATH)
+    pluginsPath: envToStringArray(process.env.PLUGINS_PATH),
 };

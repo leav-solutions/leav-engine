@@ -10,7 +10,7 @@ const path = require('path');
 const _fixDoubleSemicolons = () => {
     const filesToCheck = [
         '../../../node_modules/fomantic-ui-less/themes/default/elements/step.overrides',
-        '../node_modules/fomantic-ui-less/themes/default/elements/step.overrides'
+        '../node_modules/fomantic-ui-less/themes/default/elements/step.overrides',
     ];
 
     console.info('Fixing double semicolons in Semantic UI CSS files...');

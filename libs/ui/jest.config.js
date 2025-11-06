@@ -9,13 +9,13 @@ module.exports = {
         '\\.(ts|tsx)$': [
             'ts-jest',
             {
-                isolatedModules: true
-            }
+                isolatedModules: true,
+            },
         ],
-        '^.+\\.js?$': ['babel-jest', {rootMode: 'upward'}]
+        '^.+\\.js?$': ['babel-jest', {rootMode: 'upward'}],
     },
     transformIgnorePatterns: ['node_modules/(?!(antd|@babel/runtime|@uidotdev/usehooks)/)'],
     testRegex: '.test.(ts|tsx)$',
     testTimeout: 90_000,
-    moduleNameMapper: require('../../jestModuleNameMapper')
+    moduleNameMapper: require('../../jestModuleNameMapper'),
 };

@@ -5,9 +5,9 @@ module.exports = {
     connect: (mapStateToProps, mapDispatchToProps) => ReactComponent => ({
         mapStateToProps,
         mapDispatchToProps,
-        ReactComponent
+        ReactComponent,
     }),
     useDispatch: jest.fn(),
     useSelector: jest.fn(),
-    Provider: ({children}) => children
+    Provider: ({children}) => children,
 };

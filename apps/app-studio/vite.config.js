@@ -16,15 +16,15 @@ export default () =>
         ...commonConfig(__dirname),
         plugins: [
             dynamicBase({
-                transformIndexHtml: true
+                transformIndexHtml: true,
             }),
-            devIndexHtmlReplaceVarsPlugin()
+            devIndexHtmlReplaceVarsPlugin(),
         ],
         css: {
             transformer: 'lightningcss',
             lightningcss: {
-                targets
-            }
+                targets,
+            },
         },
         base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/app-studio',
         build: {
@@ -35,8 +35,8 @@ export default () =>
                         return;
                     }
                     warn(warning);
-                }
+                },
             },
-            sourcemap: true
-        }
+            sourcemap: true,
+        },
     });

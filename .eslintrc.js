@@ -17,19 +17,19 @@ module.exports = {
                 types: {
                     Object: {message: 'Avoid using the `Object` type. Did you mean `object`?'},
                     Function: {
-                        message: 'Avoid using the `Function` type. Prefer a specific function type, like `() => void`.'
+                        message: 'Avoid using the `Function` type. Prefer a specific function type, like `() => void`.',
                     },
                     Boolean: {message: 'Avoid using the `Boolean` type. Did you mean `boolean`?'},
                     Number: {message: 'Avoid using the `Number` type. Did you mean `number`?'},
                     String: {message: 'Avoid using the `String` type. Did you mean `string`?'},
-                    Symbol: {message: 'Avoid using the `Symbol` type. Did you mean `symbol`?'}
+                    Symbol: {message: 'Avoid using the `Symbol` type. Did you mean `symbol`?'},
                 },
-                extendDefaults: false
-            }
+                extendDefaults: false,
+            },
         ],
         '@typescript-eslint/consistent-type-assertions': [
             'error',
-            {assertionStyle: 'as', objectLiteralTypeAssertions: 'allow-as-parameter'}
+            {assertionStyle: 'as', objectLiteralTypeAssertions: 'allow-as-parameter'},
         ],
         '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
         '@typescript-eslint/explicit-member-accessibility': ['warn', {accessibility: 'explicit'}],
@@ -49,19 +49,19 @@ module.exports = {
             {
                 selector: 'variable',
                 modifiers: ['destructured'],
-                format: null
+                format: null,
             },
             {
                 selector: 'variable',
                 modifiers: ['exported'],
                 format: ['PascalCase', 'camelCase', 'UPPER_CASE'],
-                leadingUnderscore: 'forbid'
+                leadingUnderscore: 'forbid',
             },
             {
                 selector: 'variable',
                 modifiers: ['const'],
                 format: ['PascalCase', 'camelCase', 'UPPER_CASE'],
-                leadingUnderscore: 'allow'
+                leadingUnderscore: 'allow',
             },
 
             // Functions
@@ -69,7 +69,7 @@ module.exports = {
                 selector: 'function',
                 modifiers: ['exported'],
                 format: ['camelCase', 'PascalCase'],
-                leadingUnderscore: 'forbid'
+                leadingUnderscore: 'forbid',
             },
             {selector: 'function', format: ['camelCase', 'PascalCase'], leadingUnderscore: 'allow'},
 
@@ -78,11 +78,11 @@ module.exports = {
             {selector: 'parameter', format: ['camelCase'], leadingUnderscore: 'allow'},
 
             // Types
-            {selector: 'typeLike', format: ['PascalCase']}
+            {selector: 'typeLike', format: ['PascalCase']},
         ],
         '@typescript-eslint/member-delimiter-style': [
             'error',
-            {multiline: {delimiter: 'semi', requireLast: true}, singleline: {delimiter: 'semi', requireLast: false}}
+            {multiline: {delimiter: 'semi', requireLast: true}, singleline: {delimiter: 'semi', requireLast: false}},
         ],
         '@typescript-eslint/no-empty-function': 'error',
         '@typescript-eslint/no-empty-interface': 'error',
@@ -145,7 +145,7 @@ module.exports = {
         'no-undef-init': 'error',
         'no-unsafe-finally': 'error',
         'no-unused-expressions': 'off',
-        '@typescript-eslint/no-unused-expressions': ['error', { 'allowShortCircuit': true }],
+        '@typescript-eslint/no-unused-expressions': ['error', {allowShortCircuit: true}],
         'no-unused-labels': 'error',
         'no-var': 'error',
         'object-shorthand': 'error',
@@ -162,12 +162,12 @@ module.exports = {
         'array-bracket-spacing': [
             'error',
             'never',
-            {singleValue: false, objectsInArrays: false, arraysInArrays: false}
+            {singleValue: false, objectsInArrays: false, arraysInArrays: false},
         ],
         'brace-style': ['error', '1tbs'],
         'object-curly-spacing': ['error', 'never'],
         'func-call-spacing': ['error', 'never'],
-        'react-refresh/only-export-components': 'warn'
+        'react-refresh/only-export-components': 'warn',
     },
     overrides: [
         {
@@ -175,8 +175,8 @@ module.exports = {
             rules: {
                 'no-only-tests/no-only-tests': 'error',
                 'no-console': 'off',
-                '@typescript-eslint/consistent-type-assertions': 'off'
-            }
+                '@typescript-eslint/consistent-type-assertions': 'off',
+            },
         },
         {
             files: [
@@ -185,11 +185,11 @@ module.exports = {
                 'apps/app-studio/**',
                 'apps/data-studio/**',
                 'apps/login/**',
-                'apps/portal/**'
+                'apps/portal/**',
             ],
             rules: {
-                'no-console': ['error', {allow: ['warn', 'error', 'info']}]
-            }
-        }
-    ]
+                'no-console': ['error', {allow: ['warn', 'error', 'info']}],
+            },
+        },
+    ],
 };

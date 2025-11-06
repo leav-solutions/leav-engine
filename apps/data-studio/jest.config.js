@@ -20,17 +20,17 @@ module.exports = {
                                     env: {
                                         VITE_APPLICATION_ID: 'my-app',
                                         VITE_API_URL: 'http://localhost:3000/graphql',
-                                        VITE_LOGIN_ENDPOINT: 'my-app'
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
+                                        VITE_LOGIN_ENDPOINT: 'my-app',
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                },
+            },
         ],
         '^.+\\.svg$': '<rootDir>/src/_tests/svgTransform.js',
-        '^.+\\.js$': ['babel-jest', {rootMode: 'upward'}]
+        '^.+\\.js$': ['babel-jest', {rootMode: 'upward'}],
     },
     transformIgnorePatterns: ['node_modules/(?!(antd|@babel/runtime|@uidotdev/usehooks)/)'],
     testRegex: '.test.(ts|tsx)$',
@@ -42,7 +42,7 @@ module.exports = {
         '^utils/(.*)$': '<rootDir>/src/utils/$1',
         '^utils$': '<rootDir>/src/utils',
         '^constants/(.*)$': '<rootDir>/src/constants/$1',
-        '^_types/(.*)$': '<rootDir>/src/_types/$1'
+        '^_types/(.*)$': '<rootDir>/src/_types/$1',
     },
-    testTimeout: 30_000
+    testTimeout: 30_000,
 };

@@ -34,9 +34,9 @@ const renderNodes = reactNodes => {
 const mockI18n = {
     language: 'fr',
     options: {
-        fallbackLng: ['en']
+        fallbackLng: ['en'],
     },
-    changeLanguage: jest.fn()
+    changeLanguage: jest.fn(),
 };
 
 module.exports = {
@@ -44,13 +44,13 @@ module.exports = {
     useTranslation: () => {
         return {
             t: (arg, variables) => `${[arg, ...(!!variables ? Object.values(variables) : [])].join('|')}`,
-            i18n: mockI18n
+            i18n: mockI18n,
         };
     },
     Trans: ({children}) => renderNodes(children),
     I18n: ({children}) =>
         children(k => k, {
-            i18n: mockI18n
+            i18n: mockI18n,
         }),
 
     // mock if needed
@@ -61,7 +61,7 @@ module.exports = {
     setDefaults: reactI18next.setDefaults,
     getDefaults: reactI18next.getDefaults,
     setI18n: reactI18next.setI18n,
-    getI18n: reactI18next.getI18n
+    getI18n: reactI18next.getI18n,
 };
 
 export default undefined;

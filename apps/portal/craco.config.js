@@ -4,9 +4,9 @@ module.exports = {
         configure: {
             resolve: {
                 fallback: {
-                    path: false
-                }
-            }
-        }
-    }
+                    path: false,
+                },
+            },
+        },
+    },
 };

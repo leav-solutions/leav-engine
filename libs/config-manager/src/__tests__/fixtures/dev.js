@@ -5,7 +5,7 @@ module.exports = {
     toto: 'otot',
     tutu: {
         titi: {
-            utut: [3, 4]
-        }
-    }
+            utut: [3, 4],
+        },
+    },
 };

@@ -14,7 +14,7 @@ module.exports = {
         queue: 'test_files_events',
         exchange: 'test_leav_core',
         routingKey: 'files.event',
-        type: process.env.AMQP_TYPE || 'direct'
+        type: process.env.AMQP_TYPE || 'direct',
     },
-    verbose: true
+    verbose: true,
 };

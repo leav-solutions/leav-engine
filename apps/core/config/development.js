@@ -6,25 +6,25 @@ const {release} = require('os');
 
 module.exports = {
     server: {
-        allowIntrospection: true
+        allowIntrospection: true,
     },
     auth: {
         refreshTokenExpiration: '99y',
         cookie: {
-            secure: false
-        }
+            secure: false,
+        },
     },
     debug: true,
     dbProfiler: {
-        enable: envToBool(process.env.DB_PROFILER_ENABLE, true)
+        enable: envToBool(process.env.DB_PROFILER_ENABLE, true),
     },
     bugsnag: {
-        releaseStage: process.env.BUGSNAG_RELEASE_STAGE || 'development'
+        releaseStage: process.env.BUGSNAG_RELEASE_STAGE || 'development',
     },
     actions: {
         excel: {
             useNewHyperformula: true,
-            debug: false
-        }
-    }
+            debug: false,
+        },
+    },
 };

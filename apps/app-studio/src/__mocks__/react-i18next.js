@@ -34,17 +34,17 @@ const renderNodes = reactNodes => {
 const mockI18n = {
     language: 'fr',
     options: {
-        fallbackLng: ['en']
+        fallbackLng: ['en'],
     },
-    changeLanguage: jest.fn()
+    changeLanguage: jest.fn(),
 };
 
 const mockT = (arg, variables) => `${[arg, ...(!!variables ? Object.values(variables) : [])].join('|')}`;
 
 const mockUseTranslation = () => ({
-        t: mockT,
-        i18n: mockI18n
-    });
+    t: mockT,
+    i18n: mockI18n,
+});
 
 module.exports = {
     // this mock makes sure any components using the translate HoC receive the t function as a prop
@@ -52,7 +52,7 @@ module.exports = {
     Trans: ({children}) => renderNodes(children),
     I18n: ({children}) =>
         children(k => k, {
-            i18n: mockI18n
+            i18n: mockI18n,
         }),
 
     // mock if needed
@@ -66,6 +66,6 @@ module.exports = {
     getI18n: reactI18next.getI18n,
     initReactI18next: {
         type: '3rdParty',
-        init: i18next => i18next
-    }
+        init: i18next => i18next,
+    },
 };

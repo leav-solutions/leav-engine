@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const fs = require('fs');
 
-const {getArtifactList, downloadArtifact, initEnvVariables} = require("./utils");
+const {getArtifactList, downloadArtifact, initEnvVariables} = require('./utils');
 
 initEnvVariables();
 
@@ -19,9 +19,9 @@ if (!gitArtifactBranch) {
 
 (async () => {
     try {
-        const { data: list} = await getArtifactList();
+        const {data: list} = await getArtifactList();
         // Find the artifact with the same commit sha1
-        artifact = list.artifacts.find((artifact) => {
+        artifact = list.artifacts.find(artifact => {
             // if artifact.name includes commit Sha1
             return artifact.name.includes(gitArtifactBranch);
         });
@@ -40,4 +40,4 @@ if (!gitArtifactBranch) {
         console.log('error', err);
         process.exit(0);
     }
-})()
+})();

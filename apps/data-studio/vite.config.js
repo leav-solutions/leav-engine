@@ -12,10 +12,10 @@ export default () => {
         ...commonConfig(__dirname),
         plugins: [
             dynamicBase({
-                transformIndexHtml: true
+                transformIndexHtml: true,
             }),
-            devIndexHtmlReplaceVarsPlugin()
+            devIndexHtmlReplaceVarsPlugin(),
         ],
-        base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/data-studio'
+        base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/data-studio',
     });
 };
