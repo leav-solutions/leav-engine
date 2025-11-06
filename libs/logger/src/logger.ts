@@ -17,11 +17,17 @@ export function configureLogger(config: ILoggerConfig): void {
     const additionalMeta = config.additionalMeta ?? defaultLoggerConfig.additionalMeta;
     const onErrorLog = config.onErrorLog;
 
+    // Metadata format to separate metadata fields from main log info
+    const metadataFormat = winston.format.metadata({
+        key: 'metadata',
+        fillExcept: ['message', 'level', 'timestamp', 'env', 'app', 'client', 'version', 'location'],
+    });
+
     const transports: winston.transport[] = [
         new winston.transports.Console({
             silent: config.silent,
             format: useJsonFormat
-                ? winston.format.json()
+                ? winston.format.combine(metadataFormat, winston.format.json())
                 : winston.format.combine(winston.format.colorize(), winston.format.simple()),
         }),
     ];
@@ -29,7 +35,9 @@ export function configureLogger(config: ILoggerConfig): void {
         transports.push(
             new winston.transports.File({
                 filename: destinationFile,
-                format: useJsonFormat ? winston.format.json() : winston.format.combine(winston.format.simple()),
+                format: useJsonFormat
+                    ? winston.format.combine(metadataFormat, winston.format.json())
+                    : winston.format.simple(),
             }),
         );
     }
