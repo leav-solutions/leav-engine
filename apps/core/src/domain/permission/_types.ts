@@ -17,6 +17,7 @@ import {
 } from '_types/permissions';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type TreePath} from '_types/tree';
+import {type IGetDefaultPermissionParams} from './helpers/defaultPermission';
 
 export const PERMISSIONS_CACHE_HEADER = 'permissions';
 export const PERMISSIONS_NULL_PLACEHOLDER = '__null__';
@@ -74,12 +75,14 @@ export interface IGetTreePermissionParams {
     ctx: IQueryInfos;
 }
 
+export type GetDefaultTreeLibraryPermission = (params: IGetDefaultPermissionParams) => boolean | null;
+
 export interface IGetTreeLibraryPermissionParams {
     action: TreeNodePermissionsActions;
     treeId: string;
     libraryId: string;
     userId: string;
-    getDefaultPermission?: (params?: IGetDefaultTreeLibraryPermissionParams) => Promise<boolean> | boolean;
+    getDefaultTreeLibraryPermission?: GetDefaultTreeLibraryPermission;
     ctx: IQueryInfos;
 }
 
@@ -90,13 +93,15 @@ export interface IGetApplicationPermissionParams {
     ctx: IQueryInfos;
 }
 
-export interface IGetDefaultTreeLibraryPermissionParams {
+export interface IGetDefaultGlobalPermissionParams extends IGetDefaultPermissionParams {
     type?: PermissionTypes;
     applyTo?: string;
     userId?: string;
+    userGroups?: TreePath[];
     action?: PermissionsActions;
-    ctx: IQueryInfos;
 }
+
+export type GetDefaultGlobalPermission = (params: IGetDefaultGlobalPermissionParams) => Promise<boolean> | boolean;
 
 export interface IGetTreeNodePermissionParams {
     action: TreeNodePermissionsActions;
@@ -137,20 +142,11 @@ export interface IGetInheritedApplicationPermissionParams {
     ctx: IQueryInfos;
 }
 
-export interface IGetDefaultInheritedTreeLibraryPermissionParams {
-    type?: PermissionTypes;
-    applyTo?: string;
-    userId?: string;
-    action?: PermissionsActions;
-    ctx: IQueryInfos;
-}
-
 export interface IGetInheritedTreeLibraryPermissionParams {
     action: TreeNodePermissionsActions;
     treeId: string;
     libraryId: string;
     userGroupId: string;
-    getDefaultPermission?: (params?: IGetDefaultInheritedTreeLibraryPermissionParams) => boolean | null;
     ctx: IQueryInfos;
 }
 
@@ -197,13 +193,6 @@ export interface IGetRecordAttributeHeritedPermissionsParams {
     permTreeNode: string;
 }
 
-export interface IGetDefaultPermissionParams {
-    action?: any;
-    applyTo?: string;
-    userId?: string;
-    userGroups?: TreePath[];
-}
-
 export interface IGetTreeBasedPermissionParams {
     type: PermissionTypes;
     action: PermissionsActions;
@@ -211,7 +200,7 @@ export interface IGetTreeBasedPermissionParams {
     applyTo: string;
     treeValues: {[treeAttributeId: string]: string[]};
     permissions_conf: ITreePermissionsConf;
-    getDefaultPermission: (params: IGetDefaultPermissionParams) => Promise<boolean> | boolean;
+    getDefaultPermission: GetDefaultGlobalPermission;
 }
 
 export interface IGetInheritedTreeBasedPermissionParams {
@@ -220,7 +209,7 @@ export interface IGetInheritedTreeBasedPermissionParams {
     userGroupId: string;
     applyTo: string;
     permissionTreeTarget: IPermissionsTreeTarget;
-    getDefaultPermission: (params: IGetDefaultPermissionParams) => Promise<boolean> | boolean;
+    getDefaultPermission: GetDefaultGlobalPermission;
 }
 
 export interface IGetRecordPermissionParams {

@@ -7,7 +7,11 @@ import {type IPermissionRepo} from 'infra/permission/permissionRepo';
 import {type IQueryInfos} from '_types/queryInfos';
 import {type TreePath} from '_types/tree';
 import {type PermissionsActions, PermissionsRelations, type PermissionTypes} from '../../../_types/permissions';
-import {type IGetInheritedTreeBasedPermissionParams, type IGetTreeBasedPermissionParams} from '../_types';
+import {
+    type GetDefaultGlobalPermission,
+    type IGetInheritedTreeBasedPermissionParams,
+    type IGetTreeBasedPermissionParams,
+} from '../_types';
 import {type IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {type IReducePermissionsArrayHelper} from './reducePermissionsArray';
 
@@ -45,10 +49,11 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
         userGroupsPaths: TreePath[];
         permTreeId: string;
         permTreeValues: string[];
-        getDefaultPermission: () => Promise<boolean> | boolean;
+        getDefaultGlobalPermission: GetDefaultGlobalPermission;
         ctx: IQueryInfos;
     }): Promise<boolean> => {
-        const {type, action, applyTo, userGroupsPaths, permTreeId, permTreeValues, getDefaultPermission, ctx} = params;
+        const {type, action, applyTo, userGroupsPaths, permTreeId, permTreeValues, getDefaultGlobalPermission, ctx} =
+            params;
 
         // Get permissions for all values, then check if we're allowed somewhere
         const allValuesPermissions = await Promise.all(
@@ -71,7 +76,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                             path: [{id: null}, ...targetPath],
                             tree: permTreeId,
                         },
-                        getDefaultPermission,
+                        getDefaultGlobalPermission,
                         ctx,
                     });
                 },
@@ -88,7 +93,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
         const {type, action, userId, applyTo, treeValues, permissions_conf, getDefaultPermission} = params;
 
         if (!permissions_conf.permissionTreeAttributes.length) {
-            return getDefaultPermission({action, applyTo, userId});
+            return getDefaultPermission({action, applyTo, userId, ctx});
         }
 
         const userGroupsPaths = !!ctx.groupsId
@@ -114,7 +119,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                     userGroupsPaths,
                     permTreeId: permTreeAttrProps.linked_tree,
                     permTreeValues: treeValues[permTreeAttr],
-                    getDefaultPermission: () => getDefaultPermission({action, applyTo, userId}),
+                    getDefaultGlobalPermission: () => getDefaultPermission({action, applyTo, userId, ctx}),
                     ctx,
                 });
             }),
@@ -157,7 +162,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             userGroupsPaths: [groupAncestors.slice(0, -1)],
             applyTo,
             treeTarget: {tree: permissionTreeTarget.tree, path: [{id: permissionTreeTarget.nodeId}]},
-            getDefaultPermission: () => null,
+            getDefaultGlobalPermission: () => null,
             ctx,
         });
 
@@ -174,7 +179,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
                 tree: permissionTreeTarget.tree,
                 path: [{id: null}, ...treeTargetPath.slice(0, -1)],
             },
-            getDefaultPermission: () => null,
+            getDefaultGlobalPermission: () => null,
             ctx,
         });
 
@@ -182,7 +187,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
             return inheritedTargetPathPermission;
         }
 
-        return getDefaultPermission({action, applyTo, userGroups: [groupAncestors]});
+        return getDefaultPermission({action, applyTo, userGroups: [groupAncestors], ctx});
     };
 
     return {

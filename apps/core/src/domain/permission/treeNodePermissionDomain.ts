@@ -21,7 +21,7 @@ import {type ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {type ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
 import {type ITreePermissionDomain} from './treePermissionDomain';
 import {
-    type IGetDefaultPermissionParams,
+    type IGetDefaultGlobalPermissionParams,
     type IGetInheritedTreeNodePermissionParams,
     type IGetTreeNodePermissionParams,
 } from './_types';
@@ -75,7 +75,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 libraryId: library,
                 userId,
                 ctx,
-                getDefaultPermission: () => null,
+                getDefaultTreeLibraryPermission: () => null,
             });
         }
 
@@ -105,7 +105,7 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
                 libraryId: library,
                 userId,
                 ctx,
-                getDefaultPermission: () => null,
+                getDefaultTreeLibraryPermission: () => null,
             });
 
         return treeBasedPermissionsHelper.getTreeBasedPermission(
@@ -204,13 +204,13 @@ export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissi
             permTreeNode,
             ctx,
         }): Promise<boolean> {
-            const _getDefaultPermission = (params: IGetDefaultPermissionParams) =>
+            const _getDefaultPermission = (params: IGetDefaultGlobalPermissionParams) =>
                 permByUserGroupHelper.getPermissionByUserGroups({
                     type: PermissionTypes.TREE_LIBRARY,
                     action,
                     userGroupsPaths: params.userGroups,
                     applyTo: `${treeId}/${libraryId}`,
-                    getDefaultPermission: () =>
+                    getDefaultGlobalPermission: () =>
                         permByUserGroupHelper.getPermissionByUserGroups({
                             type: PermissionTypes.TREE,
                             action,

@@ -10,6 +10,8 @@ import {type IQueryInfos} from '../../../_types/queryInfos';
 import getPermissionCacheKey from './getPermissionCacheKey';
 import {type ICachesService} from '../../../infra/cache/cacheService';
 import {type IConfig} from '_types/config';
+import {type GetDefaultGlobalPermission} from '../_types';
+import {systemUserId} from '../../../_constants/users';
 
 export interface IPermissionByUserGroupsHelperDeps {
     'core.domain.permission.helpers.simplePermission': ISimplePermissionHelper;
@@ -25,7 +27,7 @@ interface IGetPermissionByUserGroupsParams {
     userGroupsPaths: TreePath[]; // from the most general to the most specific (no root required)
     applyTo?: string;
     treeTarget?: {tree: string; path: TreePath}; // from the most general to the most specific (add root if needed)
-    getDefaultPermission?: () => Promise<boolean> | boolean;
+    getDefaultGlobalPermission?: GetDefaultGlobalPermission;
     ctx: IQueryInfos;
 }
 
@@ -49,7 +51,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
             userGroupsPaths,
             applyTo = null,
             treeTarget = null,
-            getDefaultPermission = defaultPermHelper.getDefaultPermission,
+            getDefaultGlobalPermission = defaultPermHelper.getDefaultPermission,
             ctx,
         }: IGetPermissionByUserGroupsParams): Promise<boolean> {
             // we reverse to have this group paths order: from current user groups to the added root group
@@ -63,11 +65,7 @@ export default function (deps: IPermissionByUserGroupsHelperDeps): IPermissionBy
                 reversedTreeTargetPath = [...treeTarget.path].reverse();
             }
 
-            let defaultPermission = getDefaultPermission();
-            defaultPermission =
-                typeof (defaultPermission as Promise<boolean>)?.then === 'function'
-                    ? await defaultPermission
-                    : defaultPermission;
+            const defaultPermission = await getDefaultGlobalPermission({ctx});
 
             const _execute = async () => {
                 const _getPermission = async (groupPath: TreePath, targetPath?: TreePath): Promise<boolean> => {

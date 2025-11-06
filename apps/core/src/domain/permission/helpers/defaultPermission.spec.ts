@@ -14,7 +14,7 @@ describe('getDefaultPermission', () => {
 
         const defaultPermHelper = defaultPermission({config: config as IConfig});
 
-        const perm = defaultPermHelper.getDefaultPermission();
+        const perm = defaultPermHelper.getDefaultPermission({ctx: {userId: '123'}});
 
         expect(perm).toBe(config.permissions.default);
     });
@@ -28,7 +28,7 @@ describe('getDefaultPermission', () => {
 
         const defaultPermHelper = defaultPermission({config: config as IConfig});
 
-        const perm = defaultPermHelper.getDefaultPermission();
+        const perm = defaultPermHelper.getDefaultPermission({ctx: {userId: '123'}});
 
         expect(perm).toBe(true);
     });
