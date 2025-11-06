@@ -8,73 +8,73 @@ module.exports = {
         admin: {
             login: 'admin',
             password: 'admin',
-            email: 'admin@test.leav-engine.com'
+            email: 'admin@test.leav-engine.com',
         },
         systemUser: {
-            email: 'system@test.leav-engine.com'
+            email: 'system@test.leav-engine.com',
         },
-        allowIntrospection: true
+        allowIntrospection: true,
     },
     db: {
-        name: 'leav_test'
+        name: 'leav_test',
     },
     amqp: {
-        exchange: 'test_leav_core'
+        exchange: 'test_leav_core',
     },
     filesManager: {
         queues: {
             events: 'test_files_events',
             previewRequest: 'test_files_preview_request',
-            previewResponse: 'test_files_preview_response'
-        }
+            previewResponse: 'test_files_preview_response',
+        },
     },
     eventsManager: {
         routingKeys: {
             data_events: 'test_data.events',
-            pubsub_events: 'test_pubsub.events'
+            pubsub_events: 'test_pubsub.events',
         },
         queues: {
-            pubsub_events_prefix: 'test_pubsub_events-'
-        }
+            pubsub_events_prefix: 'test_pubsub_events-',
+        },
     },
     indexationManager: {
         queues: {
-            events: 'test_indexation_event'
-        }
+            events: 'test_indexation_event',
+        },
     },
     tasksManager: {
         checkingInterval: 50, // reduce latency in tests
         queues: {
             execOrders: 'test_tasks_exec_orders',
-            cancelOrders: 'test_task_cancels_orders'
+            cancelOrders: 'test_task_cancels_orders',
         },
         routingKeys: {
             execOrders: 'test_tasks.exec.orders',
-            cancelOrders: 'test_tasks.cancel.orders'
-        }
+            cancelOrders: 'test_tasks.cancel.orders',
+        },
     },
     logs: {
-        transport: 'console'
+        transport: 'console',
     },
     notification: {
         enable: true,
         email: {
-            enable: true
+            enable: true,
         },
         webSocket: {
-            enable: true
-        }
+            enable: true,
+        },
     },
     mailer: {
         from: {
             name: 'Mailer Test Leav',
-            email: 'mailer@test.leav-engine.com'
-        }
+            email: 'mailer@test.leav-engine.com',
+        },
     },
     debug: true,
     redis: {
         cacheDatabase: 14,
-        sessionDatabase: 15
+        sessionDatabase: 15,
     },
-    pluginsPath: ['/plugins/fakeplugin']
+    pluginsPath: ['/plugins/fakeplugin'],
 };

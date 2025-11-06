@@ -19,18 +19,18 @@ export default () => {
                 ...conf.resolve.alias,
                 {find: 'themingVar', replacement: path.resolve(__dirname, './src/themingVar')},
                 {find: '../../theme.config', replacement: path.resolve(__dirname, './src/semantic-ui/theme.config')},
-                {find: 'semantic-ui/site', replacement: path.resolve(__dirname, './src/semantic-ui/site')}
-            ]
+                {find: 'semantic-ui/site', replacement: path.resolve(__dirname, './src/semantic-ui/site')},
+            ],
         },
         plugins: [
             react(),
             dynamicBase({
-                transformIndexHtml: true
+                transformIndexHtml: true,
             }),
             devIndexHtmlReplaceVarsPlugin(),
-            reactVirtualized()
+            reactVirtualized(),
         ],
-        base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/admin'
+        base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/admin',
     });
 };
 
@@ -45,11 +45,11 @@ export function reactVirtualized() {
                 .resolve('react-virtualized')
                 .replace(
                     path.join('dist', 'commonjs', 'index.js'),
-                    path.join('dist', 'es', 'WindowScroller', 'utils', 'onScroll.js')
+                    path.join('dist', 'es', 'WindowScroller', 'utils', 'onScroll.js'),
                 );
             const code = fs.readFileSync(file, 'utf-8');
             const modified = code.replace(WRONG_CODE, '');
             fs.writeFileSync(file, modified);
-        }
+        },
     };
 }

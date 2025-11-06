@@ -8,7 +8,7 @@ module.exports = {
     rootKey: process.env.ROOT_KEY,
     redis: {
         host: process.env.REDIS_HOST,
-        port: process.env.REDIS_PORT
+        port: process.env.REDIS_PORT,
     },
     amqp: {
         protocol: process.env.AMQP_PROTOCOL || 'amqp',
@@ -19,14 +19,14 @@ module.exports = {
         queue: process.env.AMQP_QUEUE || 'files_events',
         exchange: process.env.AMQP_EXCHANGE || 'leav_core',
         routingKey: process.env.AMQP_ROUTING_KEY || 'files.event',
-        type: process.env.AMQP_TYPE || 'direct'
+        type: process.env.AMQP_TYPE || 'direct',
     },
     watcher: {
         awaitWriteFinish: {
             stabilityThreshold: 1000,
-            pollInterval: 100
+            pollInterval: 100,
         },
-        delay: 1100
+        delay: 1100,
     },
-    verbose: false
+    verbose: false,
 };

@@ -8,7 +8,7 @@ module.exports = {
     rootKey: 'files1',
     redis: {
         host: 'redis',
-        port: 6379
+        port: 6379,
     },
     amqp: {
         protocol: 'amqp',
@@ -19,14 +19,14 @@ module.exports = {
         queue: 'test_files_events',
         exchange: 'test_leav_core',
         routingKey: 'files.event',
-        type: 'direct'
+        type: 'direct',
     },
     watcher: {
         awaitWriteFinish: {
             stabilityThreshold: 100,
-            pollInterval: 100
+            pollInterval: 100,
         },
-        delay: 150
+        delay: 150,
     },
-    verbose: true
+    verbose: true,
 };

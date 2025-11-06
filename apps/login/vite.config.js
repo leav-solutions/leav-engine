@@ -17,9 +17,9 @@ export default () => {
             ...defaultConf.plugins,
             pluginRewriteAll(),
             dynamicBase({
-                transformIndexHtml: true
-            })
+                transformIndexHtml: true,
+            }),
         ],
-        base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/login'
+        base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/login',
     });
 };

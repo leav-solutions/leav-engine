@@ -7,7 +7,7 @@ module.exports = {
     tutu: {
         titi: {
             tyty: 1337,
-            utut: [1, 2]
-        }
-    }
+            utut: [1, 2],
+        },
+    },
 };

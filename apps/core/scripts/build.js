@@ -39,7 +39,7 @@ for (const pkgFile of pkgFiles) {
 // Copy html files to build folder
 const htmlFiles = fs.globSync('**/*.html', {
     cwd: root + '/src',
-    exclude: fileName => fileName.match(/\/node_modules\//)
+    exclude: fileName => fileName.match(/\/node_modules\//),
 });
 for (const htmlFile of htmlFiles) {
     fs.copyFileSync(root + '/src/' + htmlFile, buildFolder + '/' + htmlFile);

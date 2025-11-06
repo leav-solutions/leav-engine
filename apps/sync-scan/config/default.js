@@ -9,10 +9,10 @@ module.exports = {
     graphql: {
         uri: process.env.GRAPHQL_URI,
         apiKey: process.env.GRAPHQL_API_KEY,
-        treeId: process.env.GRAPHQL_TREE_ID || 'files_tree'
+        treeId: process.env.GRAPHQL_TREE_ID || 'files_tree',
     },
     filesystem: {
-        absolutePath: process.env.FILESYSTEM_ABSOLUTE_PATH
+        absolutePath: process.env.FILESYSTEM_ABSOLUTE_PATH,
     },
     amqp: {
         connOpt: {
@@ -20,12 +20,12 @@ module.exports = {
             hostname: process.env.AMQP_HOST,
             port: envToNumber(process.env.AMQP_PORT, 5672),
             username: process.env.AMQP_USERNAME,
-            password: process.env.AMQP_PWD
+            password: process.env.AMQP_PWD,
         },
         exchange: process.env.AMQP_EXCHANGE || 'leav_core',
         type: process.env.AMQP_TYPE || 'direct',
         prefetch: envToNumber(process.env.AMQP_PREFETCH, 5),
         routingKey: process.env.AMQP_ROUTING_KEY || 'files.event',
-        rootKey: process.env.AMQP_ROOT_KEY || 'files1'
-    }
+        rootKey: process.env.AMQP_ROOT_KEY || 'files1',
+    },
 };
