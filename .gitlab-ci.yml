@@ -714,6 +714,13 @@ e2e-sync-scan:
       if [ "$DOCKER_PLATFORM" == "linux/arm64" ]; then
         export DOCKER_BUILDER="--builder builder-emu"
       fi
+  after_script:
+    # arm64 are build in separate builder, image are not kept in this builder after push
+    - |
+      echo "Remove docker images from local storage to save space"
+      if [ "$DOCKER_PLATFORM" == "linux/amd64" ]; then
+        docker rmi $(docker images --filter=reference="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_APP:*" --format "{{.Repository}}:{{.Tag}}")
+      fi
 
 # Write version to package.json and manifest.json
 .set_version: &set_version
